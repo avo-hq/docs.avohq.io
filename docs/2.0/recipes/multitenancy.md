@@ -63,7 +63,7 @@ end
 
 ## Update the custom tools routes
 
-By default, when generating [custom tools](custom-tools), we're adding them to the parent app's routes. Because we're declaring them there, the link helpers don't hold the account id in the params.
+By default, when generating [custom tools](./../custom-tools.html), we're adding them to the parent app's routes. Because we're declaring them there, the link helpers don't hold the account id in the params.
 
 ```ruby{2-4}
 Rails.application.routes.draw do
@@ -117,7 +117,7 @@ end
 
 ## Retrieve and use the account
 
-Throughout your app you can use `Current.account` or if you add it to Avo's [`context`](customization.html#context) object and use it from there.
+Throughout your app you can use `Current.account` or if you add it to Avo's [`context`](./../customization#context) object and use it from there.
 
 ```ruby{8}
 # config/initializers/avo.rb

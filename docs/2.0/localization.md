@@ -32,7 +32,7 @@ class UserResource < Avo::BaseResource
 end
 ```
 
-```yml{6-10}
+```yaml{6-10}
 # avo.es.yml
 es:
   avo:
@@ -61,7 +61,7 @@ class ProjectResource < Avo::BaseResource
 end
 ```
 
-```yml{6-10}
+```yaml{6-10}
 # avo.es.yml
 es:
   avo:
@@ -108,7 +108,7 @@ The reasoning behind this is that deep localization is a more advanced feature t
 
 Internally the localization works like so `I18n.t(translation_key, count: 1, default: default)` where the `default` is the computed field/resource name. So check the structure of you translation keys.
 
-```yml
+```yaml
 # config/locales/avo.pt-BR.yml
 pt-BR:
   avo:
