@@ -1,7 +1,5 @@
 # Grid view
 
-[[toc]]
-
 <br />
 <img :src="('/assets/img/grid-view.jpg')" alt="Avo grid view" class="border mb-4" />
 

@@ -1,7 +1,5 @@
 # Search
 
-[[toc]]
-
 Finding what you're looking for fast is essential. That's why Avo leverages [ransack's](https://github.com/activerecord-hackery/ransack) powerful query language.
 
 First you need to add `ransack` as a dependency to your app (breaking change from 1.10.0).

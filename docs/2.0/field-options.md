@@ -1,24 +1,26 @@
+---
+feedbackId: 834
+---
+
 # Field options
-
-[[toc]]
-
-<a href="https://github.com/avo-hq/avo/discussions/834" target="_blank" class="rounded bg-purple-600 hover:bg-purple-500 text-white no-underline px-2 py-1 inline leading-none mt-2">
-  Provide feedback
-</a>
 
 ## Defining fields
 
-Each Avo resource has a `field` method that registers your `Resource`'s fields. Avo ships with a variety of fields like `text`, `textarea`, `number`, `password`, `boolean`, `select`, and others. We can use the `field` method like so:
+Each Avo resource has a `field` method that registers your `Resource`'s fields. Avo ships with various simple fields like `text`, `textarea`, `number`, `password`, `boolean`, `select`, and more complex ones like `markdown`, `key_value`, `trix`, and `code`.
+
+We can use the `field` method like so:
 
 ```ruby
 field :name, as: :text
 ```
 
-This will add a few fields to your admin panel. On the **Index** view we will get a new text column. On the **Show** view we will also get a text value of that record's database value. On the **Edit** and **Create** views we will get a text input field that will display & update the `name` field on that model.
+The `name` property is the column in the database where Avo looks for information or a property on your model.
+
+That will add a few fields in your admin panel. On the **Index** view, we will get a new text column. On the **Show** view, we will also get a text value of that record's database value. Finally, on the **Edit** and **Create** views, we will get a text input field that will display & update the `name` field on that model.
 
 ## Field conventions
 
-When we declare a field we specify the database row that's specific for that field. Usually that's a snake case value.
+When we declare a field, we pinpoint the specific database row for that field. Usually, that's a snake case value.
 
 Each field has a label. Avo will convert the snake case name to a humanized version.
 In the following example, the `is_available` field will render the label as *Is available*.
@@ -31,7 +33,7 @@ field :is_available, as: :boolean
 
 ## Change field name
 
-If you want to customize the label, you can use the `name` property to pick a different label.
+To customize the label, you can use the `name` property to pick a different label.
 
 ```ruby
 field :is_available, as: :boolean, name: 'Availability'
@@ -41,22 +43,22 @@ field :is_available, as: :boolean, name: 'Availability'
 
 ## Showing / Hiding fields on different views
 
-There will be cases where you want to conditionally show fields on different views. For example, you may want to display a field in the **Create** and **Edit** views and hide it on the **Index** and **Show** views.
+There will be cases where you want to show fields on different views conditionally. For example, you may want to display a field in the **Create** and **Edit** views and hide it on the **Index** and **Show** views.
 
-For scenarios like that you may use the visibility helpers `hide_on`, `show_on`, `only_on` and `except_on` methods. Available options for these methods are: `:create`, `:edit`, `:index`, `:show`, `:forms` (both `:create` and `:edit`) and `:all` (only for `hide_on` and `show_on`).
+For scenarios like that, you may use the visibility helpers `hide_on`, `show_on`, `only_on`, and `except_on` methods. Available options for these methods are: `:create`, `:edit`, `:index`, `:show`, `:forms` (both `:create` and `:edit`) and `:all` (only for `hide_on` and `show_on`).
 
-Be aware that a few fields are designed in such a way that they override those options (ex: the `id` field is hidden in **Edit** and **Create**).
+Be aware that a few fields are designed to override those options (ex: the `id` field is hidden in **Edit** and **Create**).
 
 ```ruby
 field :body, as: :text, hide_on: [:index, :show]
 ```
 
-## Field visibility
+## Field Visibility
 
-You might want to restrict some fields to be accessible only if a certain condition applies. Like hide fields if the user is not an admin.
+You might want to restrict some fields to be accessible only if a specific condition applies. For example, hide fields if the user is not an admin.
 
 You can use the `visible` block to do that. It can be a `boolean` or a lambda.
-Inside the lambda we have access to the [`context`](./customization.html#context) object and the current `resource`. The `resource` has the current `model` object too (`resource.model`).
+Inside the lambda, we have access to the [`context`](./customization.html#context) object and the current `resource`. The `resource` has the current `model` object, too (`resource.model`).
 
 ```ruby
 field :is_featured, as: :boolean, visible: -> (resource:) { context[:user].is_admin? }  # show field based on the context object
@@ -66,7 +68,7 @@ field :is_featured, as: :boolean, visible: -> (resource:) { resource.model.publi
 
 ### Using `if` for field visibility
 
-You might be tempted to use the `if` statement to show/hide fields conditionally. That's not the best choice because the fields are registered at boot time, and some features are only available at runtime. Let's take the `context` object, for example. You might have the `current_user` assigned to the `context`, which will not be present at the app's boot time. Instead, that's present at request time when you have a `request` present from which you can find the user.
+You might be tempted to use the `if` statement to show/hide fields conditionally. However, that's not the best choice because the fields are registered at boot time, and some features are only available at runtime. Let's take the `context` object, for example. You might have the `current_user` assigned to the `context`, which will not be present at the app's boot time. Instead, that's present at request time when you have a `request` present from which you can find the user.
 
 ```ruby{4-7,13-16}
 # Don't do
@@ -88,15 +90,17 @@ class CommentResource < Avo::BaseResource
 end
 ```
 
-So now, instead of relying on a request object that's not available at boot time, you can pass it a lambda function that will be executed on request time with all the required information.
+So now, instead of relying on a request object unavailable at boot time, you can pass it a lambda function that will be executed on request time with all the required information.
 
 ## Computed Fields
 
-At times you might need to show a field with a value that you don't have in a database row. In that case, you may compute the value using a block that receives the `model` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information you can compute what to show on the field in the **Index** and **Show** views (computed fields are automatically hidden in **Edit** and **Create**).
+You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `model` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information, you can compute what to show on the field in the **Index** and **Show** views (computed fields are automatically hidden in **Edit** and **Create**).
 
 ```ruby
 field 'Has posts', as: :boolean do |model, resource, view|
   model.posts.present?
+rescue
+  false
 end
 ```
 
@@ -114,15 +118,15 @@ field :company_url, as: :text, format_using: -> (url) { link_to(url, url, target
 end
 ```
 
-This example snippet will make the `:is_writer` field to generate emojis instead of 1/0 values.
+This example snippet will make the `:is_writer` field generate emojis instead of 1/0 values.
 
 <img :src="('/assets/img/fields-reference/fields-formatter.jpg')" alt="Fields formatter" class="border mb-4" />
 
 ## Sortable fields
 
-One of the most common operations with database records is sorting the records by one of your fields. For that Avo makes it easy using the `sortable` option.
+One of the most common operations with database records is sorting the records by one of your fields. For that, Avo makes it easy using the `sortable` option.
 
-Just add it to any field to make that column sortable in the **Index** view.
+Add it to any field to make that column sortable in the **Index** view.
 
 ```ruby
 field :name, as: :text, sortable: true
@@ -130,7 +134,7 @@ field :name, as: :text, sortable: true
 
 <img :src="('/assets/img/fields-reference/sortable-fields.jpg')" alt="Sortable fields" class="border mb-4" />
 
-### Custom sortable block
+## Custom sortable block
 
 When using computed fields or `belongs_to` associations, you can't set `sortable: true` to that field because Avo doesn't know what to sort by. However, you can use a block to specify how the records should be sorted in those scenarios.
 
@@ -152,7 +156,7 @@ The block receives the query and the direction in which the sorting should be ma
 
 ## Placeholder
 
-Some fields support the `placeholder` option which will be passed to the inputs on **Edit** and **New** views when they are empty.
+Some fields support the `placeholder` option, which will be passed to the inputs on **Edit** and **New** views when they are empty.
 
 ```ruby
 field :name, as: :text, placeholder: 'John Doe'
@@ -162,7 +166,7 @@ field :name, as: :text, placeholder: 'John Doe'
 
 ## Required
 
-When you will want to show to the user that a field is mandatory. You may use the `required` option that will add an asterisk to that field, indicating that it's mandatory.
+When you want to mark a field as mandatory, you may use the `required` option to add an asterisk to that field, indicating that it's mandatory.
 
 ```ruby
 field :name, as: :text, required: true
@@ -172,8 +176,6 @@ field :name, as: :text, required: true
 
 However, you will need to add validation logic to your model (`validates :name, presence: true`).
 
-**Since v2.9.0**
-
 You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
 
 ```ruby
@@ -182,7 +184,7 @@ field :name, as: :text, required: -> { view == :new } # make the field required 
 
 ## Readonly
 
-When you need to prevent the user from editing a field, the `readonly` option will render the field as `disabled` on **Create** and **Edit** views.
+When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on **Create** and **Edit** views.
 
 ```ruby
 field :name, as: :text, readonly: true
@@ -192,7 +194,7 @@ field :name, as: :text, readonly: true
 
 ## Default Value
 
-When you need to give a default value to your one of your fields on the **Create** view, you may use the `default` block, which takes either a fixed value or a block.
+When you need to give a default value to one of your fields on the **Create** view, you may use the `default` block, which takes either a fixed value or a block.
 
 ```ruby
 # using a value
@@ -208,7 +210,7 @@ Sometimes you will need some extra text to explain better what the field is used
 The value can be either text or HTML.
 
 ```ruby
-# using text value
+# using the text value
 field :custom_css, as: :code, theme: 'dracula', language: 'css', help: "This enables you to edit the user's custom styles."
 
 # using HTML value
@@ -219,7 +221,7 @@ field :password, as: :password, help: 'You may verify the password strength <a h
 
 ## Nullable
 
-When a user uses the **Save** button, Avo is storing the value for each field in the database. There are cases where you may prefer to explicitly instruct Avo to store a `NULL` value in the database row when the field is empty. You do that by using the `nullable` option, which converts `nil` and empty values to `NULL`.
+When a user uses the **Save** button, Avo stores the value for each field in the database. However, there are cases where you may prefer to explicitly instruct Avo to store a `NULL` value in the database row when the field is empty. You do that by using the `nullable` option, which converts `nil` and empty values to `NULL`.
 
 You may also define which values should be interpreted as `NULL` using the `null_values` method.
 
@@ -233,7 +235,7 @@ field :body, as: :textarea, nullable: true, null_values: ['0', '', 'null', 'nil'
 
 ## Link to resource
 
-Sometimes, on the **Index** view, you may want a field in the table to be a link to that resource, so that you don't have to scroll to the right to click on the **Show** icon. You can use `link_to_resource` to change a table cell to be a link to that resource.
+Sometimes, on the **Index** view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click on the **Show** icon. You can use `link_to_resource` to change a table cell to be a link to that resource.
 
 ```ruby
 # for id field
@@ -251,6 +253,11 @@ field :email, as: :gravatar, link_to_resource: true
 You can add this property on `Id`, `Text`, and `Gravatar` fields.
 
 Optionally you can enable the global config `id_links_to_resource`. More on that on the [id links to resource docs page](./customization.html#id-links-to-resource).
+
+Related:
+
+ - [ID links to resource](./customization#id-links-to-resource)
+ - [Resource controls on the left side](./customization#resource-controls-on-the-left-side)
 
 ## Align text on Index view
 

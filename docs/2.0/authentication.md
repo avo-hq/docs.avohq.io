@@ -1,7 +1,5 @@
 # Authentication
 
-[[toc]]
-
 ## Customize the `current_user` method
 
 By default, Avo will not assume your authentication provider (the `current_user` method returns `nil`). That means Avo won't be able to retrieve the current user. You have to tell it how to get it.

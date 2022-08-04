@@ -1,19 +1,20 @@
+---
+feedbackId: 837
+---
+
 # Actions
 
-[[toc]]
+Avo actions allow you to perform specific tasks on one or more of your records.
 
-<FeedbackPill href="https://github.com/avo-hq/avo/discussions/837"/>
+For example, you might want to mark a user as active/inactive and optionally send a message that may be customized by the person that wants to run the action.
 
-
-Avo actions allow you to perform specific tasks on one or more of your records. For example, you might want to mark a user as active/inactive and optionally send a message that may be customized by the person that wants to run the action.
-
-Once you attach an action to a resource using the `action` method it will appear in the **Actions** dropdown. By default, actions appear on the `Index`, `Show`, and `Edit` views. Versions previous to 2.9 would only display the actions on the `Index` and `Show` views.
+Once you attach an action to a resource using the `action` method, it will appear in the **Actions** dropdown. By default, actions appear on the `Index`, `Show`, and `Edit` views. Versions previous to 2.9 would only display the actions on the `Index` and `Show` views.
 
 <img :src="('/assets/img/actions/actions-dropdown.jpg')" alt="Actions dropdown" class="border mb-4" />
 
 ## Overview
 
-You generate one running `bin/rails generate avo:action toggle_active` creating an action configuration file.
+You generate one running `bin/rails generate avo:action toggle_active`, creating an action configuration file.
 
 ```ruby
 class ToggleActive < Avo::BaseAction
@@ -32,7 +33,7 @@ class ToggleActive < Avo::BaseAction
         model.update active: true
       end
 
-      # Optionally you may send a notification with the message to that user from inside the action
+      # Optionally, you may send a notification with the message to that user from inside the action
       UserMailer.with(user: model).toggle_active(fields[:message]).deliver_later
     end
 
@@ -50,7 +51,7 @@ field :message, as: :textarea, default: 'Your account has been marked as inactiv
 
 <img :src="('/assets/img/actions.jpg')" alt="Avo actions" class="border mb-4" />
 
-The `handle` method is where the magic happens. This is where you put your action logic. In this method, you will have access to the selected `models` (if there's only one it will be automatically wrapped in an array) and, the values passed to the `fields`.
+The `handle` method is where the magic happens. That is where you put your action logic. In this method, you will have access to the selected `models` (if there's only one, it will be automatically wrapped in an array) and the values passed to the `fields`.
 
 ```ruby
 def handle(**args)
@@ -63,7 +64,7 @@ def handle(**args)
       model.update active: true
     end
 
-    # Optionally you may send a notification with the message to that user.
+    # Optionally, you may send a notification with the message to that user.
     UserMailer.with(user: model).toggle_active(fields[:message]).deliver_later
   end
 
@@ -89,13 +90,13 @@ end
 
 ## Action responses
 
-After an action runs, you may use a few methods to respond to the user. You may respond with just a message or with a message and an action.
+After an action runs, you may use several methods to respond to the user. For example, you may respond with just a message or with a message and an action.
 
 The default response is to reload the page and show the _Action ran successfully_ message.
 
 ### Message responses
 
-You will have four message response methods at your disposal `succeed`, `fail`, `warn`, and `inform`. These will render out green, red, orange, and blue alerts to the user.
+You will have four message response methods at your disposal `succeed`, `fail`, `warn`, and `inform`. These will render the user green, red, orange, and blue alerts.
 
 ```ruby{6,10}
 def handle(**args)
@@ -137,7 +138,7 @@ You may want to run an action and show no notification when it's done. That is u
 def handle(**args)
   # Demo handle action
 
-  redirect_to '/admin/some-tool'
+  redirect_to "/admin/some-tool"
   silent
 end
 ```
@@ -257,11 +258,11 @@ You may customize the labels for the action buttons using `confirm_button_label`
 
 ### No confirmation actions
 
-By default when you run an action you will be prompted by a confirmation modal. If you don't want to show the confirmation modal, pass in the `self.no_confirmation = true` class attribute. This will execute the action without showing the modal at all.
+You will be prompted by a confirmation modal when you run an action. If you don't want to show the confirmation modal, pass in the `self.no_confirmation = true` class attribute. That will execute the action without showing the modal at all.
 
 ## Standalone actions
 
-You may need to run actions that are not necessarily tied to a model. Standalone actions help you do just that. Add `self.standalone` to an existing action to do that or generate a new one using the `--standalone` option (`bin/rails generate avo:action global_action --standalone`).
+You may need to run actions that are not necessarily tied to a model. Standalone actions help you do just that. Add `self.standalone` to an existing action or generate a new one using the `--standalone` option (`bin/rails generate avo:action global_action --standalone`).
 
 ```ruby{3}
 class DummyAction < Avo::BaseAction
@@ -280,7 +281,7 @@ end
 
 ## Actions visibility
 
-You may want to hide specific actions on specific screens, like a standalone action on the `Show` screen. You can do that using the `self.visible` attribute.
+You may want to hide specific actions on screens, like a standalone action on the `Show` screen. You can do that using the `self.visible` attribute.
 
 ```ruby{4}
 class DummyAction < Avo::BaseAction
@@ -298,7 +299,7 @@ class DummyAction < Avo::BaseAction
 end
 ```
 
-By default, actions are visible on the `Index`, `Show`, and `Edit` views but you can enable them on the `New` screen too (from version 2.9.0).
+By default, actions are visible on the `Index`, `Show`, and `Edit` views, but you can enable them on the `New` screen, too (from version 2.9.0).
 
 ```ruby
 self.visible = -> (resource:, view:) { view == :new }

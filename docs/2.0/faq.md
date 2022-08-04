@@ -1,7 +1,5 @@
 # FAQ
 
-[[toc]]
-
 ## Show/hide buttons throughout the admin
 
 You might want to hide some buttons and not show them to your users. That's pretty handy using the [`Authorization`](authorization) feature. You control the display of those buttons using the policy methods.

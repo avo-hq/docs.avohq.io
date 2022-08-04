@@ -4,8 +4,6 @@ prev: /1.0/
 
 # Installation
 
-[[toc]]
-
 
 ## Requirements
 

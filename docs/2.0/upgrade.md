@@ -1,7 +1,5 @@
 # Upgrade guide
 
-[[toc]]
-
 ## Upgrade from 2.10 to 2.11
 
 ### Avo uses the `locale` configuration from the initializer
