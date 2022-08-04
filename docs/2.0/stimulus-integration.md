@@ -1,10 +1,8 @@
+---
+feedbackId: 943
+---
+
 # Stimulus JS & HTML attributes
-
-[[toc]]
-
-<a href="https://github.com/avo-hq/avo/discussions/943" target="_blank" class="rounded bg-purple-600 hover:bg-purple-500 text-white no-underline px-2 py-1 inline leading-none mt-2">
-  Provide feedback
-</a>
 
 **Since version 2.8**
 

@@ -1,7 +1,5 @@
 # Evaluation hosts
 
-[[toc]]
-
 Avo is a package that does a lot of meta-programming. This means we have a lot of custom functionality passed from the host app to Avo to be executed in different points in time. That functionality can't always be performed in void but requires some pieces of state. We're going to talk all about them below.
 You'll probably never going to implement the hosts yourself, but you'll want to know what they contain and how they work.
 

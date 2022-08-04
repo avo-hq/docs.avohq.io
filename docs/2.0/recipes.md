@@ -1,5 +1,7 @@
 # Recipes & guides
 
+These guides have been submitted by our community members.
+
 [REST API integration](recipes/rest-api-integration)
 
 [Add custom link field](recipes/custom-link-field)
@@ -17,3 +19,5 @@
 [Ruby-on-Rails and Avo Tutorial](https://www.bootrails.com/blog/rails-avohq-tutorial) from [bootrails.com](https://www.bootrails.com).
 
 [Add nested fields to CRUD forms](recipes/add-nested-fields-to-forms)
+
+[Add count to menu items](recipes/add-count-to-menu-items)

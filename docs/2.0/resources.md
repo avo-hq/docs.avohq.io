@@ -1,14 +1,11 @@
-# Resources
-
-[[toc]]
-
-<a href="https://github.com/avo-hq/avo/discussions/835" target="_blank" class="rounded bg-purple-600 hover:bg-purple-500 text-white no-underline px-2 py-1 inline leading-none mt-2">
-  Provide feedback
-</a>
+# Resource options
 
 Avo effortlessly empowers you to build a full admin dashboard for your Ruby on Rails application.
 One of the most powerful features is how easy you can administer your database records.
-Avo does this using **Resources**. Each resource maps out one of your models.
+
+Similarly to how you configure your database layer using Rails models, Avo uses `Resource` files. Each resource maps out one of your models. There can be multiple eesource associated to the same model.
+
+All resources are located in the `app/avo/resources` directory. Resources can't be namespaced yet so they all need to be in the root level of that directory.
 
 ## Defining Resources
 
@@ -16,14 +13,16 @@ Avo does this using **Resources**. Each resource maps out one of your models.
 bin/rails generate avo:resource post
 ```
 
-This command will generate a resource file under your `app/avo/resources` directory. The `app/avo` directory will have all of your Avo resource files.
-
-The created resource file will have the following code:
+This command will generate the `PostResource` file in `app/avo/resources/post_resource.rb` with the following code:
 
 ```ruby
+# app/avo/resources/post_resource.rb
 class PostResource < Avo::BaseResource
   self.title = :id
   self.includes = []
+  # self.search_query = ->(params:) do
+  #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+  # end
 
   field :id, as: :id
   # add fields here
@@ -63,6 +62,26 @@ class PostResource < Avo::BaseResource
 end
 ```
 
+### Using a computed title
+
+You can use a computed `title` property for your resources if the field that is the title is not that unique.
+
+```ruby{2}
+# app/avo/resources/comment_resource.rb
+class CommentResource < Avo::BaseResource
+  self.title = :tiny_name
+
+  # fieldd go here
+end
+
+# app/models/comment.rb
+class Comment < ApplicationRecord
+  def tiny_name
+    ActionView::Base.full_sanitizer.sanitize(body).truncate 30
+  end
+end
+```
+
 ## Resource description
 
 You might want to display some information about the current resource to your users. Using the `description` class attribute, you can add some text to the `Index`, `Show`, `Edit`, and `New` views.
@@ -89,7 +108,7 @@ This is the more customizable method where you have access to the `model`, `view
 ```ruby{3-13}
 class UserResource < Avo::BaseResource
   self.title = :name
-  self.description = -> {
+  self.description = -> do
     if view == :index
     "These are the users of the app"
     else
@@ -99,26 +118,6 @@ class UserResource < Avo::BaseResource
         "You can update some properties for this user: #{model.id}"
       end
     end
-  }
-end
-```
-
-## Using a computed title
-
-You can use a computed `title` property for your resources if the field that is the title is not that unique.
-
-```ruby{2}
-# app/avo/resources/comment_resource.rb
-class CommentResource < Avo::BaseResource
-  self.title = :tiny_name
-
-  # field go here
-end
-
-# app/models/comment.rb
-class Comment < ApplicationRecord
-  def tiny_name
-    ActionView::Base.full_sanitizer.sanitize(body).truncate 30
   end
 end
 ```
@@ -135,25 +134,41 @@ end
 
 ## Views
 
-Each generated resource will have four views **Index** view where you see all your resources listed, **Show** view where you get to see one resource in more detail, **Edit** view where you can edit one resource and **Create** view where you can create a new resource.
+Each resource will be available in four views;
+
+#### Index
+
+**Index** is where you see all your resources listed in a table or a [grid](grid-view.md)
+
+#### Show
+
+**Show** is where you get to see one resource in more detail.
+
+#### Edit
+
+**Edit** is where you can edit one resource.
+
+#### Create
+
+**Create** is where you can create a new resource.
 
 ### Grid view
 
-On **Index view**, the most common view type is `:table`. You might have some data that you want to display in a **grid view**. You change that by setting `default_view_type` to `:grid` and add the `grid` block.
+On **Index**, the most common view type is `:table`, but you might have some data that you want to display in a **grid**. You can change that by setting `default_view_type` to `:grid` and by adding the `grid` block.
 
 <img :src="('/assets/img/grid-view.jpg')" alt="Avo grid view" class="border mb-4" />
 
-```ruby
+```ruby{2}
 class PostResource < Avo::BaseResource
   self.default_view_type = :grid
 end
 ```
 
-See how you can customize the grid item in the additional [grid view documentation](grid-view).
+Find out more on the [grid view documentation page](grid-view).
 
 ## Custom model class
 
-You might have a model that belongs to a namespace or that has a different name than than the resource. For those occasions you can use the `@model` option to tell Avo which model to reference.
+You might have a model that belongs to a namespace or that has a different name than than the resource. For that scenario you can use the `@model` option to tell Avo which model to reference.
 
 ```ruby{2}
 class DelayedJobResource < Avo::BaseResource
@@ -164,26 +179,16 @@ class DelayedJobResource < Avo::BaseResource
 end
 ```
 
-### `model_class` with namespace
+## Routing
 
-Because the controllers are generated, when changing the `model_class` for a resource, you might brake the model->route link, so make sure you update the controller too.
+When generating a resource, Avo will automatically generate routes based on the resource name.
 
-```ruby{7-8,12-13}
-# app/avo/resources/store_resource.rb
-class StoreResource < Avo::BaseResource
-  self.model_class = Spree::Store
-end
-
-# Before
-# app/controllers/avo/stores_controller.rb
-class Avo::StoresController < Avo::ResourcesController
-end
-
-# After
-# app/controllers/avo/spree_stores_controller.rb
-class Avo::SpreeStoresController < Avo::ResourcesController
-end
 ```
+PostResource -> /avo/resources/posts
+PhotoCommentResource -> /avo/resources/photo_comments
+```
+
+If you change the resource name you should change the generated controller name too.
 
 ## Devise password optional
 
@@ -197,7 +202,7 @@ end
 
 ## Unscoped queries on `Index`
 
-You might have a `default_scope` on your model and you don't want it to be applied to your resource when rendered on the Index view.
+You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.
 
 ```ruby{2}
 class Project < ApplicationRecord
@@ -218,8 +223,7 @@ end
 
 ## Hide resource from sidebar
 
-You may hide a resource from the sidebar using the `visible_on_sidebar` class attribute.
-
+When you get started, the sidebar will be auto-generated for you with all the dashboards, resources and custom tools. You may have resources that should not appear on the sidebar which you can hide using the `visible_on_sidebar` option.
 
 ```ruby{3}
 class TeamMembershipResource < Avo::BaseResource
@@ -230,9 +234,11 @@ class TeamMembershipResource < Avo::BaseResource
 end
 ```
 
-**Warning**: This option is for the generated menu, not for the [menu editor](menu-editor.html). You have to use your own logic in the [`visible` block](menu-editor.html#item-visibility) for that.
+<Alert type="warning" details-link="/2.0/menu-editor.html#item-visibility">
+  This option is used in the <strong>auto-generated menu</strong>, not in the <strong>menu editor</strong>. <br/> You'll have to use your own logic in the <code>visible</code> block for that.
+</Alert>
 
-## Extend the Avo::ResourcesController
+## Extending `Avo::ResourcesController`
 
 You may need to execute additional actions on the `ResourcesController` before loading the Avo pages. You can do that by creating an `Avo::BaseResourcesController` and extend your resource controller from it.
 
@@ -250,89 +256,6 @@ end
 ```
 
 *You can't use `Avo::BaseController` and `Avo::ResourcesController` as **your base controller**. They are defined inside Avo.*
-
-## Records ordering
-
-**Requires V 1.24.2 +**
-
-<div class="rounded-md bg-blue-50 p-4">
-  <div class="flex">
-    <div class="flex-shrink-0">
-      <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-      </svg>
-    </div>
-    <div class="ml-3 flex-1 md:flex md:justify-between">
-      <div class="text-sm leading-5 text-blue-700">
-        Records ordering is a <a href="https://avohq.io/purchase/pro" target="_blank" class="underline">pro</a> feature
-      </div>
-    </div>
-  </div>
-</div>
-
-A typical scenario is when you need to set your records into a specific order. Like re-ordering `Slide`s inside a `Carousel` or `MenuItem`s inside a `Menu`.
-
-The `ordering` class attribute is your friend for this. You can set four actions `higher`, `lower`, `to_top` or `to_bottom`, and the `display_inline` and `visible_on` options.
-The actions themselves are simple lambda functions but coupled with your logic or an ordering gem, they can be quite powerful.
-
-I'll demonstrate the ordering feature using the `act_as_list` gem.
-
-You need to install and configure the gem as instructed in the [tutorials](https://github.com/brendon/acts_as_list#example). Please make sure you [give all records position attribut values](https://github.com/brendon/acts_as_list#adding-acts_as_list-to-an-existing-model) so the gem works appropriately.
-
-Next, you add the order actions like below.
-
-```ruby
-class CourseLinkResource < Avo::BaseResource
-  self.ordering = {
-    visible_on: :index,
-    actions: {
-      higher: -> { record.move_higher },
-      lower: -> { record.move_lower },
-      to_top: -> { record.move_to_top },
-      to_bottom: -> { record.move_to_bottom },
-    }
-  }
-end
-```
-
-The `record` is the actual instantiated model. The `move_higher`, `move_lower`, `move_to_top`, and `move_to_bottom` methods are provided by `act_as_list`. If you're not using that gem, you can add your own logic inside to change the position of the record.
-
-The actions have access to `record`, `resource`, `options` (the `ordering` class attribute) and `params` (the `request` params).
-
-That configuration will generate a button with a popover containing the ordering buttons.
-
-<img :src="('/assets/img/resources/ordering_hover.jpg')" alt="Avo ordering" class="border mb-4" />
-
-### Always show the order buttons
-
-If the resource you're trying to update requires re-ordering often, you can have the buttons visible at all times using the `display_inline: true` option.
-
-```ruby
-class CourseLinkResource < Avo::BaseResource
-  self.ordering = {
-    display_inline: true,
-    visible_on: :index,
-    actions: {
-      higher: -> (record) { record.move_higher },
-      lower: -> (record) { record.move_lower },
-      to_top: -> (record) { record.move_to_top },
-      to_bottom: -> (record) { record.move_to_bottom },
-    }
-  }
-end
-```
-
-<img :src="('/assets/img/resources/ordering_visible.jpg')" alt="Avo ordering" class="border mb-4" />
-
-### Display the buttons in the `Index` view or association view
-
-A common scenario is to order the records only in the scope of a parent record like order the `MenuItems` for a `Menu` or `Slides` for a `Slider`. So you wouldn't need to have the order buttons on the `Index` view but only in the association section.
-
-To control that you can use the `visible_on` option. THe possible values are `:index`, `:association` or `[:index, :association]` for both views.
-
-<!-- Follow this video guide on how you could implement the feature in your app.
-
-<iframe style="width: 100%; aspect-ratio: 16/9" src="https://www.youtube.com/embed/LEALfPiyfRk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
 
 ## Show buttons on form footers
 
@@ -382,20 +305,3 @@ end
 
 <img :src="('/assets/img/resources/record_selector.jpg')" alt="Hide the record selector." class="border mb-4" />
 
-## Filters
-
-It's a very common scenario to add filters to your resources to make it easier to find your records. Check out the additional [Filters documentation](./filters.html) to see how easy it is to set up custom filters with Avo.
-
-<img :src="('/assets/img/filters.jpg')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
-
-## Actions
-
-Most of the time, you will want to trigger some events against your records or run more heavy updates. Avo makes this so easy with **Actions**.
-
-<img :src="('/assets/img/actions.jpg')" alt="Avo actions" class="border mb-4" />
-
-Check out the additional [Actions documentation](./actions.html).
-
-## Search
-
-Check out the additional [Search documentation](./search.html).

@@ -2,9 +2,11 @@
  * @type {import('vitepress').UserConfig}
  */
 const config = {
-  title: "VitePress",
+  title: "Avo docs",
   description: "Just playing around.",
   themeConfig: {
+    siteTitle: false,
+    logo: '/logo.svg',
     nav: [{text: "2.0", link: "/2.0/index.html"}],
     sidebar: {
       "/2.0/": [
@@ -15,8 +17,7 @@ const config = {
             {text: "Authentication", link: "/2.0/authentication"},
             {text: "Authorization", link: "/2.0/authorization"},
             {text: "Licensing", link: "/2.0/licensing"},
-            {text: "Upgrade", link: "/2.0/upgrade"},
-            {text: "Grid", link: "/2.0/grid-view"},
+            {text: "Upgrade guide", link: "/2.0/upgrade"},
             {text: "Recipes", link: "/2.0/recipes"},
             {text: "Faq", link: "/2.0/faq"},
           ],
@@ -24,7 +25,8 @@ const config = {
         {
           text: "CRUD UI",
           items: [
-            {text: "Resources", link: '/2.0/resources'},
+            {text: "Resource options", link: '/2.0/resources'},
+            {text: "Records reordering", link: '/2.0/records-reordering'},
             {text: "Field options", link: '/2.0/field-options'},
             {text: "Fields", link: '/2.0/fields'},
             {text: "Associations", link: '/2.0/associations'},
@@ -51,6 +53,7 @@ const config = {
         {
           text: "Customization",
           items: [
+            {text: "Grid view", link: "/2.0/grid-view"},
             {text: "Menu editor", link: '/2.0/menu-editor'},
             {text: "Search", link: '/2.0/search'},
             {text: "Filters", link: '/2.0/filters'},
