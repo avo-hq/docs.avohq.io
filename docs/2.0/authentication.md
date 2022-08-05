@@ -1,8 +1,12 @@
+---
+license: community
+---
+
 # Authentication
 
 ## Customize the `current_user` method
 
-By default, Avo will not assume your authentication provider (the `current_user` method returns `nil`). That means Avo won't be able to retrieve the current user. You have to tell it how to get it.
+Avo will not assume your authentication provider (the `current_user` method returns `nil`). That means that you have to tell Avo who the `current_user` is.
 
 ### Using devise
 
@@ -17,7 +21,7 @@ end
 
 ### Use a different authenticator
 
-If you're using some other authentication provider, you may customize the `current_user` method to something else.
+If you're using another authentication provider, you may customize the `current_user` method to something else.
 
 ```ruby
 # config/initializers/avo.rb
@@ -26,7 +30,7 @@ Avo.configure do |config|
 end
 ```
 
-If you get the current user from some other object like `Current.user`, you may pass a block to the `current_user_method` key.
+If you get the current user from another object like `Current.user`, you may pass a block to the `current_user_method` key.
 
 ```ruby
 # config/initializers/avo.rb
@@ -37,7 +41,7 @@ Avo.configure do |config|
 end
 ```
 
-## Customize the sign out link
+## Customize the sign-out link
 
 The sign-out menu item on the bottom sidebar (when you click the three dots) can be customized using the `current_user_resource_name`. If you follow the `User` -> `current_user` convention, you might have a `destroy_current_user_session_path` that logs the user out.
 
@@ -57,11 +61,11 @@ Avo.configure do |config|
 end
 ```
 
-If your app does not respond to the destroy session path (`destroy_current_user_session_path`) the link will be hidden.
+The link will be hidden if your app does not respond to the destroy session path (`destroy_current_user_session_path`).
 
 ## Filter out requests
 
-You probably do not want to allow Avo access to everybody. If you're using [devise](https://github.com/heartcombo/devise) in your app, use this block to filter out requests to it in your `routes.rb` file.
+You probably do not want to allow Avo access to everybody. If you're using [devise](https://github.com/heartcombo/devise) in your app, use this block to filter out requests in your `routes.rb` file.
 
 ```ruby
 authenticate :user do
@@ -81,7 +85,7 @@ Check out more examples of authentication on [sidekiq's authentication section](
 
 ## `authenticate_with` method
 
-Alternatively you can user the `authenticate_with` config attribute. It takes a block and evaluates it in Avo's `ApplicationController` as a `before_action`.
+Alternatively, you can use the `authenticate_with` config attribute. It takes a block and evaluates it in Avo's `ApplicationController` as a `before_action`.
 
 ```ruby
 # config/initializers/avo.rb
@@ -92,7 +96,7 @@ Avo.configure do |config|
 end
 ```
 
-Note that Avo's `ApplicationController` does not inherit from your app's `ApplicationController`, so any protected methods you defined there would not work, and you would need to write out the authentication logic explicitly in the block. For example, if you store your `user_id` in the session hash, then you can do:
+Note that Avo's `ApplicationController` does not inherit from your app's `ApplicationController`, so any protected methods you defined would not work. Instead, you would need to explicitly write the authentication logic in the block. For example, if you store your `user_id` in the session hash, then you can do:
 
 ```ruby
 # config/initializers/avo.rb
@@ -105,4 +109,4 @@ end
 
 ## Authorization
 
-When you share access to Avo with your clients or large teams, you may want to restrict access to a resource or a subset of resources. To do that, you should set up your authorization rules (policies). Check out the [authorization page](authorization) for details on how to set that up.
+When you share access to Avo with your clients or large teams, you may want to restrict access to a resource or a subset of resources. You should set up your authorization rules (policies) to do that. Check out the [authorization page](authorization) for details on how to set that up.

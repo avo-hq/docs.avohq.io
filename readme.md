@@ -10,7 +10,7 @@
  - [x] recipes
  - [x] actions.md
  - [x] associations.md
- - [ ] authentication.md
+ - [x] authentication.md
  - [ ] authorization.md
  - [ ] cards.md
  - [ ] custom-asset-pipeline.md
