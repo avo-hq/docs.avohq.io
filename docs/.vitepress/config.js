@@ -7,7 +7,11 @@ const config = {
   themeConfig: {
     siteTitle: false,
     logo: '/logo.svg',
-    nav: [{text: "2.0", link: "/2.0/index.html"}],
+    nav: [
+      {text: "Home", link: "/"},
+      {text: "Team", link: "/team.html"},
+      {text: "2.0", link: "/2.0/index.html"}
+    ],
     sidebar: {
       "/2.0/": [
         {
