@@ -15,18 +15,18 @@ features:
     title: Simple and minimal, always
     details: Lorem ipsum...
 
-# title: VitePress
-# titleTemplate: Vite & Vue Powered Static Site Generator
+title: Avo Admin for Rubby on Rails
+titleTemplate: Build apps 10x faster
 
 hero:
   name: Avo
-  text: The easiest way...
-  tagline: Simple, powerful, and performant. Meet the modern SSG framework you've always wanted.
+  text: Build apps 10x faster
+  tagline: Stop building the boilerplate over and over again
   actions:
     - theme: brand
       text: Get Started
       link: /2.0/
     - theme: alt
-      text: View on GitHub ⭐️
+      text: Star on GitHub ⭐️
       link: https://github.com/avo-hq/avo
 ---
