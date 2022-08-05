@@ -15,7 +15,7 @@ field :skills, as: :tags
 
 ## Suggestions
 
-You can pass suggestions to your users to pick from. The `suggestions` option can be an array of strings, an object with the keys `value`, `label`, and (optionally) `avatar`, or a block that returns an array of that type of object. The block is a [`RecordHost`](evaluation-hosts.html#recordhost), so it has access to the `record`.
+You can pass suggestions to your users to pick from. The `suggestions` option can be an array of strings, an object with the keys `value`, `label`, and (optionally) `avatar`, or a block that returns an array of that type of object. The block is a [`RecordHost`](./../evaluation-hosts.html#recordhost), so it has access to the `record`.
 
 ```ruby
 # app/avo/resources/course_resource.rb

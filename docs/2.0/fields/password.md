@@ -15,4 +15,4 @@ field :password, as: :password, placeholder: 'secret',
 
 Related:
 
-- [Devise password optional](./../resources/#devise-password-optional)
+- [Devise password optional](./../resources#devise-password-optional)

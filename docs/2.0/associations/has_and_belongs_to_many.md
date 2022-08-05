@@ -16,7 +16,7 @@ field :users, as: :has_and_belongs_to_many
 </div>
 
 
-Similar to [`belongs_to`](#searchable-belongs-to), the `has_many` associations support the `searchable` option.
+Similar to [`belongs_to`](./belongs_to#searchable-belongs-to), the `has_many` associations support the `searchable` option.
 
 ```ruby{2}
 class CourseLink < Avo::BaseResource
@@ -25,7 +25,7 @@ end
 ```
 
 :::warning
-  Avo uses the **search feature** behind the scenes, so **make sure the target resource has the [`search_query`](search) option configured**.
+  Avo uses the **search feature** behind the scenes, so **make sure the target resource has the [`search_query`](./../search) option configured**.
 :::
 
 ```ruby{3-5}
