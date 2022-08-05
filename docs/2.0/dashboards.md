@@ -37,7 +37,7 @@ end
 
 ## Settings
 
-Each dashboard is organized in a file. It holds information about itself like the `id`, `name`, `description`, and how many columns its grid has.
+Each dashboard is a file. It holds information about itself like the `id`, `name`, `description`, and how many columns its grid has.
 
 The `id` field has to be unique. The `name` is what the user sees in big letters on top of the page, and the `description` is some text you pass to give the user more details regarding the dashboard.
 
@@ -68,7 +68,7 @@ end
 
 ### Control the aggregation using ranges
 
-You may also want to give the user the ability to query data in different ranges. Using the `ranges` attribute, you can control what's passed in the dropdown. The array passed here will be parsed and displayed on the card. All integers are transformed to days, and other string variables will be passed as they are.
+You may also want to give the user the ability to query data in different ranges. You can control what's passed in the dropdown using the' ranges' attribute. The array passed here will be parsed and displayed on the card. All integers are transformed to days, and other string variables will be passed as they are.
 
 You can also set a default range using the `initial_range` attribute.
 
@@ -93,7 +93,7 @@ end
 
 ### Keep the data fresh
 
-If this dashboard is something that you keep on the big screen, you need to keep the data fresh at all times. That's easy using `refresh_every`. You pass it the number of seconds you need to be refreshed in and forget about it. Avo will do it for you.
+If this dashboard is something you keep on the big screen, you must keep the data fresh at all times. That's easy using `refresh_every`. You pass the number of seconds you need to be refreshed and forget about it. Avo will do it for you.
 
 ```ruby{3}
 class UsersMetric < Avo::Dashboards::MetricCard
@@ -116,10 +116,10 @@ end
 
 ### Override card options from the dashboard
 
-We found ourselves in the position to add a few cards that were actually the same card but with a slight difference. Ex: Have one `Users count` card and another `Active users count` card. They both count users, but the latter has an `active: true` condition applied.
+We found ourselves in the position to add a few cards that were the same card but with a slight difference. Ex: Have one `Users count` card and another `Active users count` card. They both count users, but the latter has an `active: true` condition applied.
 
-Before, we'd have to duplicate that card and make that slight modification to the `query` method but end up with duplicated boilerplate code.
-For those scenarios, we created the `options`... card option. It allows you to essentially send arbitrary options to the card from the parent like so.
+Before, we'd have to duplicate that card and modify the `query` method slightly but end up with duplicated boilerplate code.
+For those scenarios, we created the `options` attribute. It allows you to send arbitrary options to the card from the parent.
 
 ```ruby{6-8}
 class Dashy < Avo::Dashboards::BaseDashboard
@@ -153,11 +153,11 @@ class UsersCount < Avo::Dashboards::MetricCard
 end
 ```
 
-This gives you an extra layer of control without code duplication and the best developer experience.
+That gives you an extra layer of control without code duplication and the best developer experience.
 
 #### Control the base settings from the parent
 
-Evidently, you don't want to show the same `label`, `description`, and other details for that second card from the first card;. You can control the `label`, `description`, `cols`, `rows`, and `refresh_every` options from the parent declaration.
+Evidently, you don't want to show the same `label`, `description`, and other details for that second card from the first card;. Therefore, you can control the `label`, `description`, `cols`, `rows`, and `refresh_every` options from the parent declaration.
 
 ```ruby{7-11}
 class Dashy < Avo::Dashboards::BaseDashboard
@@ -179,11 +179,11 @@ end
 
 ## Card types
 
-There are three types of cards you can add to your dashboard: `metric`, `chartkick`, and `partial`.
+You can add three types of cards to your dashboard: `metric`, `chartkick`, and `partial`.
 
 ### Metric card
 
-The metric card is your friend when you only need to display a simple big number on your dashboard. To generate one run `bin/rails g avo:card:metric users_metric`.
+The metric card is your friend when you only need to display a simple significant number on your dashboard. Generate one run `bin/rails g avo:card:metric users_metric`.
 
 <img :src="('/assets/img/dashboards/users_metric.jpg')" alt="Avo Dashboard Metric" class="border mb-4" />
 
@@ -296,7 +296,8 @@ end
 
 #### Chart types
 
-Using the `self.chart_type` class attribute you can change the type of the chart. Supported types are `line_chart`, `pie_chart`, `column_chart`, `bar_chart`, `area_chart`, and `scatter_chart`.
+Using the `self.chart_type` class attribute, you can change the chart type. Supported types are `line_chart`, `pie_chart`, `column_chart`, `bar_chart`, `area_chart`, and `scatter_chart`.
+
 
 #### Customize chart
 
@@ -308,11 +309,11 @@ These are just some of the predefined options we provide out of the box, but you
 
 If you'd like to use [Groupdate](https://github.com/ankane/groupdate), [Hightop](https://github.com/ankane/hightop), and [ActiveMedian](https://github.com/ankane/active_median) you should require them in your `Gemfile`. Only `chartkick` is required by default.
 
-`chart.js` is supported for the time being. So if you need support for other types, please reach out or post a PR (🙏 PR's are much appreciated).
+`chart.js` is supported for the time being. So if you need support for other types, please reach out or post a PR (🙏 PRs are much appreciated).
 
 ### Partial card
 
-You might want to add your own custom content to a card. You can do that using a partial card. You generate one by running `bin/rails g avo:card:partial custom_card`. That will create the card class and the partial for it.
+You can use a partial card to add custom content to a card. Generate one by running `bin/rails g avo:card:partial custom_card`. That will create the card class and the partial for it.
 
 ```ruby{5}
 class ExampleCustomPartial < Avo::Dashboards::PartialCard
@@ -325,7 +326,7 @@ end
 ```
 <img :src="('/assets/img/dashboards/custom_partial_card.jpg')" alt="Custom partial card" class="border mb-4" />
 
-You may even embed a piece of content from another app using an iframe. You can hide the header using the `self.display_header = false` option. That will render the embedded content flush to the container.
+You may embed a piece of content from another app using an iframe. You can hide the header using the `self.display_header = false` option. That will render the embedded content flush to the container.
 
 ```ruby{5}
 # app/avo/cards/map_card.rb
@@ -375,13 +376,13 @@ end
 <img :src="('/assets/img/dashboards/divider.jpg')" alt="Avo Dashboard Divider" class="border mb-4" />
 
 Dividers can be a simple line between your cards or have some text on them that you control using the `label` option.
-When you don't want to show even the line, you can enable the `invisible` option, which adds the divider but does not display a border or label.
+When you don't want to show the line, you can enable the `invisible` option, which adds the divider but does not display a border or label.
 
 ## Dashboards visibility
 
-You might want to hide certain dashboards from certain users. You can do that using the `visible` option. The option can be a boolean `true`/`false` or a block where you have access to the `params`, `current_user`, `context`, and `dashboard`.
+You might want to hide specific dashboards from certain users. You can do that using the `visible` option. The option can be a boolean `true`/`false` or a block where you have access to the `params`, `current_user`, `context`, and `dashboard`.
 
-By default if you don't pass anything to `visible`, the dashboard will be available for anyone.
+If you don't pass anything to `visible`, the dashboard will be available for anyone.
 
 ```ruby{5-11}
 class ComplexDash < Avo::Dashboards::BaseDashboard

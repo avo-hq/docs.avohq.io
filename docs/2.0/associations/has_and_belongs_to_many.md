@@ -24,9 +24,9 @@ class CourseLink < Avo::BaseResource
 end
 ```
 
-<Alert type="warning" details-link="/2.0/search.html">
-  Avo uses the <strong>search feature</strong> behind the scenes, so <strong>make sure the target resource has the `search_query` option configured</strong>.
-</Alert>
+:::warning
+  Avo uses the **search feature** behind the scenes, so **make sure the target resource has the [`search_query`](search) option configured**.
+:::
 
 ```ruby{3-5}
 # app/avo/resources/course_link_resource.rb

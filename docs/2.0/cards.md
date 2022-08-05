@@ -6,9 +6,9 @@ license: pro
 
 # Cards
 
-Cards are the one way of quickly adding custom content for your users.
+Cards are one way of quickly adding custom content for your users.
 
-There are three types of cards you can add to your dashboard: `partial`, `metric`, and`chartkick`.
+You can add three types of cards to your dashboard: `partial`, `metric`, and `chartkick`.
 
 ## Base settings
 
@@ -31,11 +31,11 @@ end
 
 #### Control the aggregation using ranges
 
-You may also want to give the user the ability to query data in different ranges. Using the ' ranges ' attribute, you can control what's passed in the dropdown. The array passed here will be parsed and displayed on the card. All integers are transformed to days, and other string variables will be passed as they are.
+You may also want to give the user the ability to query data in different ranges. You can control what's passed in the dropdown using the' ranges' attribute. The array passed here will be parsed and displayed on the card. All integers are transformed to days, and other string variables will be passed as they are.
 
 You can also set a default range using the `initial_range` attribute.
 
-Since **version 2.8**, the ranges have been changed a bit. The parameter you pass to the `range` option will be directly passed to the [`options_for_select`](https://apidock.com/rails/v5.2.3/ActionView/Helpers/FormOptionsHelper/options_for_select) helper, so it behaves more like a regular `select_tag`.
+The ranges have been changed a bit since **version 2.8**. The parameter you pass to the `range` option will be directly passed to the [`options_for_select`](https://apidock.com/rails/v5.2.3/ActionView/Helpers/FormOptionsHelper/options_for_select) helper, so it behaves more like a regular `select_tag`.
 
 ```ruby{4-15}
 class UsersMetric < Avo::Dashboards::MetricCard
@@ -58,7 +58,7 @@ end
 
 #### Keep the data fresh
 
-If this dashboard is something that you keep on the big screen, you need to keep the data fresh at all times. That's easy using `refresh_every`. You pass it the number of seconds you need to be refreshed in and forget about it. Avo will do it for you.
+If this dashboard is something that you keep on the big screen, you need to keep the data fresh at all times. That's easy using `refresh_every`. You pass the number of seconds you need to be refreshed and forget about it. Avo will do it for you.
 
 ```ruby{3}
 class UsersMetric < Avo::Dashboards::MetricCard
@@ -87,7 +87,7 @@ The metric card is your friend when you only need to display a simple big number
 
 #### Calculate results
 
-To calculate your result, you may use the `query` method. After you make the query, use the `result` method to store the value that will be displayed on the card.
+To calculate your result, you may use the `query` method. After you make the query, use the `result` method to store the value displayed on the card.
 
 In the `query` method you have access to a few variables like `context` (the [App context](https://docs.avohq.io/2.0/customization.html#context)), `params` (the request params), `range` (the range that was requested), `dashboard` (the current dashboard the card is on), and current `card`.
 
@@ -216,11 +216,11 @@ These are just some of the predefined options we provide out of the box, but you
 
 If you'd like to use [Groupdate](https://github.com/ankane/groupdate), [Hightop](https://github.com/ankane/hightop), and [ActiveMedian](https://github.com/ankane/active_median) you should require them in your `Gemfile`. Only `chartkick` is required by default.
 
-`chart.js` is supported for the time being. So if you need support for other types, please reach out or post a PR (🙏 PR's are much appreciated).
+`chart.js` is supported for the time being. So if you need support for other types, please reach out or post a PR (🙏 PRs are much appreciated).
 
 ### Partial card
 
-You might want to add your own custom content to a card. You can do that using a partial card. You generate one by running `bin/rails g avo:card:partial custom_card`. That will create the card class and the partial for it.
+You can use a partial card to add custom content to a card. Generate one by running `bin/rails g avo:card:partial custom_card`. That will create the card class and the partial for it.
 
 ```ruby{5}
 class ExampleCustomPartial < Avo::Dashboards::PartialCard
@@ -233,7 +233,7 @@ end
 ```
 <img :src="('/assets/img/dashboards/custom_partial_card.jpg')" alt="Custom partial card" class="border mb-4" />
 
-You may even embed a piece of content from another app using an iframe. You can hide the header using the `self.display_header = false` option. That will render the embedded content flush to the container.
+You can embed a piece of content from another app using an iframe. You can hide the header using the `self.display_header = false` option. That will render the embedded content flush to the container.
 
 ```ruby{5}
 # app/avo/cards/map_card.rb

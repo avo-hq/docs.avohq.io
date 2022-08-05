@@ -8,15 +8,15 @@ betaStatus: Open beta
 
 # Tabs and panels
 
-Once your Avo resources reach a certain level of complexity you feel the need to better organize them into groups. You can already use the [`heading`](fields.html#heading) to separate the fields inside a panel but maybe you'd like to do more.
+Once your Avo resources reach a certain level of complexity, you might feel the need to better organize the fields, associations, and resource tools into groups. You can already use the [`heading`](fields.html#heading) to separate the fields inside a panel, but maybe you'd like to do more.
 
 ## Panels
 
 <img :src="('/assets/img/tabs-and-panels/panel.png')" alt="Panel" class="border mb-4" />
 
-First we should talk a bit about panels. They are the backbone of Avo's display infrastructure. Most of the information that's on display is wrapped inside a panel. They help to give Avo that uniform design on every page. They are available as a view component too for custom tools and you can make your own pages using the same component.
+First, we should talk a bit about panels. They are the backbone of Avo's display infrastructure. Most of the information that's on display is wrapped inside a panel. They help to give Avo that uniform design on every page. They are also available as a view component `Avo::PanelComponent` for custom tools, and you can make your own pages using it.
 
-When using the fields DSL for resources, all fields declared in the root will be grouped into a "main" panel, but you can add your own panels.
+When using the fields DSL for resources, all fields declared in the root will be grouped into a "main" panel, but you can add your panels.
 
 ```ruby
 class UserResource < Avo::BaseResource
@@ -36,7 +36,7 @@ You can customize the panel `name` and panel `description`.
 
 ### Index view fields
 
-By default only the fields declared in the root will be visible on the `Index` view.
+By default, only the fields declared in the root will be visible on the `Index` view.
 
 ```ruby{3-7}
 class UserResource < Avo::BaseResource
@@ -86,7 +86,7 @@ end
 
 <img :src="('/assets/img/tabs-and-panels/tabs.png')" alt="Avo tabs" class="border mb-4" />
 
-To use tabs you open a tabs group block using `tabs`. Next you add your `tab` block where you add fields and panels like you're used to on resource root. Most fields like `text`, `number`, `gravatar`, `date`, etc. need to be placed in a `panel`. The `has_one`, `has_many`, and `has_and_belongs_to_many` have their own panels and they don't require a `panel` or a `tab`.
+To use tabs, you need to open a `tabs` group block. Next, you add your `tab` block where you add fields and panels like you're used to on resource root. Most fields like `text`, `number`, `gravatar`, `date`, etc. need to be placed in a `panel`. However, the `has_one`, `has_many`, and `has_and_belongs_to_many` have their own panels, and they don't require a `panel` or a `tab`.
 
 The tab `name` is mandatory is what will be displayed on the tab switcher. The tab `description` is what will be displayed in the tooltip on hover.
 
@@ -94,11 +94,11 @@ The tab `name` is mandatory is what will be displayed on the tab switcher. The t
 
 ### Tabs on Show view
 
-Tabs have more than an aesthetic function. They have a performance function too. On the `Show` page, if you have a lot of `has_many` type of fields or tools, they won't load right away making it a bit more lightweight for your Rails app. They will lazy-load only when they are displayed.
+Tabs have more than an aesthetic function. They have a performance function too. On the `Show` page, if you have a lot of `has_many` type of fields or tools, they won't load right away, making it a bit more lightweight for your Rails app. Instead, they will lazy-load only when they are displayed.
 
 ### Tabs on Edit view
 
-On `Edit`, all visibility rules still apply, meaning that `has_*` fields will be hidden by default. You can enable them by adding `show_on: :edit`. All other fields will be loaded and hidden on page load. This way when you submit a form, if you have validation rules in place requiring a field that's in a hidden tab, it will actually be present on the page on submit-time.
+All visibility rules still apply on' Edit', meaning that `has_*` fields will be hidden by default. However, you can enable them by adding `show_on: :edit`. All other fields will be loaded and hidden on page load. This way, when you submit a form, if you have validation rules in place requiring a field that's in a hidden tab, it will be present on the page on submit-time.
 
 <!-- The panel has a few parts available -->
 

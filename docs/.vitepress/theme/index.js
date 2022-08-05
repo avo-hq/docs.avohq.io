@@ -6,7 +6,7 @@ import DemoVideo from "./components/DemoVideo.vue"
 import PageHeader from "./components/PageHeader.vue"
 import Alert from "./components/Alert.vue"
 import BetaStatus from "./components/BetaStatus.vue"
-import {InformationCircleIcon, BeakerIcon} from "@heroicons/vue/outline"
+import {InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/outline"
 import "./styles.css"
 import {h} from "vue"
 
@@ -21,6 +21,7 @@ export default {
     app.component("Alert", Alert)
 
     app.component("BeakerIcon", BeakerIcon)
+    app.component("PlayIcon", PlayIcon)
     app.component("InformationCircleIcon", InformationCircleIcon)
   },
   Layout() {

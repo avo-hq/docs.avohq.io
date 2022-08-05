@@ -3,11 +3,11 @@
 <br />
 <img :src="('/assets/img/grid-view.jpg')" alt="Avo grid view" class="border mb-4" />
 
-Some resources are best displayed in a grid view. We can do that with Avo using a `cover`, a `title` and a `body`.
+Some resources are best displayed in a grid view. We can do that with Avo using a `cover`, a `title`, and a `body`.
 
 ## Enable grid view
 
-To enable grid view for a resource you need to add the `grid` block. This will add the view switcher to the **Index** view.
+To enable grid view for a resource, you need to add the `grid` block. That will add the view switcher to the **Index** view.
 
 ```ruby
 class PostResource < Avo::BaseResource
@@ -24,7 +24,7 @@ end
 
 ## Make default view
 
-To make the grid the default way of viewing a resource **Index** we have to use the `default_view_type` class attribute.
+To make the grid the default way of viewing a resource **Index**, we have to use the `default_view_type` class attribute.
 
 ```ruby{7}
 class PostResource < Avo::BaseResource
@@ -34,10 +34,10 @@ end
 
 ## Fields configuration
 
-Besides the regular `field` methods you should add a new `grid` block that configures the grid fields. The main difference is that the fields are not declared using the `field` class method but three new ones `cover`, `title` and `body`
+Besides the regular `field` methods, you should add a new `grid` block configuring the grid fields. The main difference is that the fields are not declared using the `field` class method but three new ones `cover`, `title`, and `body`
 
 
-```ruby{7-11}
+```ruby{9-13}
 class PostResource < Avo::BaseResource
   self.default_view_type = :grid
 
@@ -54,11 +54,11 @@ class PostResource < Avo::BaseResource
 end
 ```
 
-This will render the `Post` resource index view as a **Grid view** using the selected fields. Avo will also display a button to toggle between the two view types `:grid` and `:table`.
+That will render the `Post` resource index view as a **Grid view** using the selected fields. Avo will also display a button to toggle between the view types `:grid` and `:table`.
 
-These fields take the same options like those in the `fields` method, so you can configure them however you want.
+These fields take the same options as those in the `fields` method, so you can configure them however you want.
 
-For example, in the **Grid view** you might want to truncate the `:body` to a certain length and use an external image for the cover that you compute on the fly. And also render the `:cover` and the `:title` fields as links to that resource with `link_to_resource: true`.
+For example, in the **Grid view**, you might want to truncate the `:body` to a certain length and use an external image for the cover you compute on the fly. And also, render the `:cover` and the `:title` fields as links to that resource with `link_to_resource: true`.
 
 ```ruby
 grid do

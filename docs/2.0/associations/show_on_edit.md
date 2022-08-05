@@ -2,9 +2,9 @@
 
 By default, `has_and_belongs_to_many` is only visible on the **Show** page. If you want to enable it on the **Edit** page, too, you need to add the `show_on: :edit` option.
 
-<Alert type="warning">
-  Adding associations on the <code>New</code> screen is not currently supported. The association needs some information from the parent record that hasn't been created yet (because the user is on the <code>New</code> screen).
-</Alert>
+:::warning
+  Adding associations on the `New` screen is not currently supported. The association needs some information from the parent record that hasn't been created yet (because the user is on the `New` screen).
+:::
 
 You may use the [redirect helpers](./../resources#customize-what-happens-after-record-is-created-edited) to have the following flow:
 

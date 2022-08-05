@@ -14,11 +14,11 @@ Avo has two types of filters available at the moment [Boolean filter](#boolean-f
 
 ### Filter values
 
-Because the filters get serialized back and forth, the final `value`/`values` in the `apply` method will be stringified or have the keys stringified if they are hashes. You can declare them as regular hashes (with the keys symbolized) in the `options` method but they will get stringifed in the end.
+Because the filters get serialized back and forth, the final `value`/`values` in the `apply` method will be stringified or have the keys stringified if they are hashes. You can declare them as regular hashes (with the keys symbolized) in the `options` method, but they will get stringified in the end.
 
 ## Boolean Filter
 
-You generate one running `bin/rails generate avo:filter featured_filter` creating a filter configuration file.
+You generate one running `bin/rails generate avo:filter featured_filter`, creating a filter configuration file.
 
 ```ruby
 class FeaturedFilter < Avo::Filters::BooleanFilter
@@ -57,11 +57,11 @@ class FeaturedFilter < Avo::Filters::BooleanFilter
 end
 ```
 
-Each filter file comes with a `name`, `apply` and `options` methods.
+Each filter file comes with a `name`, `apply`, and `options` methods.
 
 The `name` method lets you set the name of the filter.
 
-The `apply` method is responsible for filtering out the records by giving you access to modify the `query` object. The `apply` method also gives you access to the current `request` object, and the passed `values`. The `values` object is a `Hash` containing all the configured `options` with the option name as the key and `true`/`false` as the value.
+The `apply` method is responsible for filtering out the records by giving you access to modify the `query` object. The `apply` method also gives you access to the current `request` object and the passed `values`. The `values` object is a `Hash` containing all the configured `options` with the option name as the key and `true`/`false` as the value.
 
 ```ruby
 # Example values payload
@@ -75,7 +75,7 @@ The `options` method defines the available values of your filter. They should re
 
 ### Default value
 
-You can set a default value to the filter so it has a predetermined state on load. To do that return the state you desire it from the `default` method.
+You can set a default value to the filter, so it has a predetermined state on load. To do that, return the state you desire from the `default` method.
 
 ```ruby{23-27}
 class FeaturedFilter < Avo::Filters::BooleanFilter
@@ -110,9 +110,9 @@ end
 
 ## Select Filter
 
-Select filters are similar to Boolean ones. You generate one running `rails generate avo:filter published_filter --select`.
+Select filters are similar to Boolean ones. For example, you generate one running `rails generate avo:filter published_filter --select`.
 
-The biggest difference from the **Boolean filter** is in the `apply` method. You only get back one `value` attribute, which represents which entry from the `options` method is selected.
+The most significant difference from the **Boolean filter** is in the `apply` method. You only get back one `value` attribute, which represents which entry from the `options` method is selected.
 
 A finished, select filter might look like this.
 
@@ -248,7 +248,7 @@ end
 
 ## Text Filter
 
-You can also add complex text filters to Avo by running `rails generate avo:filter name_filter --text`.
+You can add complex text filters to Avo by running `rails generate avo:filter name_filter --text`.
 
 ```ruby
 class NameFilter < Avo::Filters::TextFilter
@@ -270,7 +270,7 @@ end
 
 ## Registering filters
 
-To add an filter to one of your resources, you need to declare it on the resource using the `filter` method to which you pass the filter class.
+To add a filter to one of your resources, you need to declare it on the resource using the `filter` method to which you pass the filter class.
 
 ```ruby{8}
 class PostResource < Avo::BaseResource
@@ -286,9 +286,7 @@ end
 
 ## Dynamic filter options
 
-<a href="https://youtu.be/M2RsNPPFOio" target="_blank" class="rounded bg-green-600 hover:bg-green-500 text-white no-underline px-2 py-1 inline leading-none mt-2">
-  Demo video
-</a>
+<DemoVideo demo-video="https://youtu.be/M2RsNPPFOio" />
 
 You might want to compose more advanced filters, like when you have two filters, one for the country and another for cities, and you'd like to have the cities one populated with cities from the selected country.
 
@@ -312,7 +310,7 @@ class Course < ApplicationRecord
 end
 ```
 
-We're going to create two filters—one to choose countries and another for cities.
+We will create two filters—one for choosing countries and another for cities.
 
 ```ruby{3-4}
 # app/avo/resources/course_resource.rb
@@ -402,13 +400,11 @@ end
 
 <img :src="('/assets/img/filters/dynamic-options.png')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 
-The `countries` method above will check if the `CourseCountryFilter` has anything selected. If so, get the names of the chosen ones. This way, you show only the cities from the selected countries and not all them.
+The `countries` method above will check if the `CourseCountryFilter` has anything selected. If so, get the names of the chosen ones. This way, you show only the cities from the selected countries and not all of them.
 
 ## React to filters
 
-<a href="https://youtu.be/M2RsNPPFOio?t=219" target="_blank" class="rounded bg-green-600 hover:bg-green-500 text-white no-underline px-2 py-1 inline leading-none mt-2">
-  Demo video
-</a>
+<DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=219" />
 
 Going further with the example above, a filter can react to other filters. For example, let's say that when a user selects `USA` from the list of countries, you want to display a list of cities from the USA (that's already happening in `options`), and you'd like to select the first one on the list. You can do that with the `react` method.
 
@@ -494,8 +490,8 @@ class CourseCityFilter < Avo::Filters::BooleanFilter
 end
 ```
 
-After all filters are applied, the `react` method is called, so you have access to the `applied_filters` object.
-Using the applied filters payload, you can return the value of the current filter.
+After all, filters are applied, the `react` method is called, so you have access to the `applied_filters` object.
+Using the applied filter payload, you can return the value of the current filter.
 
 ```ruby
 def react
@@ -526,9 +522,7 @@ Of course, you can modify the logic and return all kinds of values based on your
 
 ## Empty message text
 
-<a href="https://youtu.be/M2RsNPPFOio?t=347" target="_blank" class="rounded bg-green-600 hover:bg-green-500 text-white no-underline px-2 py-1 inline leading-none mt-2">
-  Demo video
-</a>
+<DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=347" />
 
 There might be times when you will want to show a message to the user when you're not returning any options. You may customize that message using the `empty_message` option.
 
@@ -562,9 +556,7 @@ end
 
 ## Keep filters panel open
 
-<a href="https://youtu.be/M2RsNPPFOio?t=374" target="_blank" class="rounded bg-green-600 hover:bg-green-500 text-white no-underline px-2 py-1 inline leading-none mt-2">
-  Demo video
-</a>
+<DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=374" />
 
 There are scenarios where you wouldn't want to close the filters panel when you change the values. For that, you can use the `keep_filters_panel_open` resource option.
 

@@ -46,7 +46,7 @@ The partial is ready for you to customize further.
           </p>
 
           <%
-            # In this partial you have access to the following variables:
+            # In this partial, you have access to the following variables:
             # tool
             # @resource
             # @resource.model
@@ -73,7 +73,7 @@ That should give you all the necessary data to scope out the partial content.
 
 ## Tool visibility
 
-The resource tool is visible on the `Show` view of a resource by default. You can change that using the [visibility options](field-options.html#showing-hiding-fields-on-different-views) (`show_on`, `only_on`).
+The resource tool is default visible on the `Show` view of a resource. You can change that using the [visibility options](field-options.html#showing-hiding-fields-on-different-views) (`show_on`, `only_on`).
 
 ```ruby
 # app/avo/resources/post_resource.rb
@@ -84,7 +84,7 @@ end
 
 ### Using path helpers
 
-Because you're in a Rails engine you will have to prepend the engine object to the path.
+Because you're in a Rails engine, you will have to prepend the engine object to the path.
 
 #### For Avo paths
 
@@ -92,15 +92,15 @@ Instead of writing `resources_posts_path(1)` you have to write `avo.resources_po
 
 #### For the main app paths
 
-When you want to reference paths from your main app, instead of writing `posts_path(1)` you have to write `main_app.posts_path`.
+When you want to reference paths from your main app, instead of writing `posts_path(1)`, you have to write `main_app.posts_path`.
 
 ## Add custom fields on forms
 
 **From Avo 2.12**
 
-You might want to add a few more fields or pieces of functionality besides the CRUD generated fields on your forms. You can already create new [custom fields](./custom-fields) to do it in a more structured way but you can also use a resource tool to achieve more custom behavior.
+You might want to add a few more fields or pieces of functionality besides the CRUD-generated fields on your forms. Of course, you can already create new [custom fields](./custom-fields) to do it in a more structured way, but you can also use a resource tool to achieve more custom behavior.
 
-You have acess to the `form` object that is available on the new/edit pages on which you can attach inputs of your choosing. You can even achieve nested forms functionality.
+You have access to the `form` object that is available on the new/edit pages on which you can attach inputs of your choosing. You can even achieve nested form functionality.
 
 You have to follow three steps to enable this functionality:
 
@@ -108,9 +108,9 @@ You have to follow three steps to enable this functionality:
 2. Tell Avo which `params` it should permit to write to the model
 3. Make sure the model is equipped to receive the params
 
-In the example below we'll use the `FishResource`, add a few input fields (they will be a bit unstyled, because this is not the scope of the exercise), and do some actions with some of them.
+In the example below, we'll use the `FishResource`, add a few input fields (they will be a bit unstyled because this is not the scope of the exercise), and do some actions with some of them.
 
-The first thing we need to do is to generate the tool with `bin/rails g avo:resource_tool fish_information` and add the tool to the resource file.
+We first need to generate the tool with `bin/rails g avo:resource_tool fish_information` and add the tool to the resource file.
 
 ```ruby{2}
 class FishResource < Avo::BaseResource
@@ -118,7 +118,7 @@ class FishResource < Avo::BaseResource
 end
 ```
 
-In the `_fish_information.html.erb` partial we'll add a few input fields. Some directly on the `form` and some nested with `form.fields_for`.
+In the `_fish_information.html.erb` partial, we'll add a few input fields. Some are directly on the `form`, and some are nested with `form.fields_for`.
 
 The fields are:
 
@@ -170,7 +170,7 @@ The fields are:
 </div>
 ```
 
-Next we need to tell Avo and Rails which params are welcomed in the `create`/`update` request. We do that using the `extra_params` option on the `FishResource`. The implementation that Avo follows internally is to assign the attributes you specify here to the underlying model (`model.assign_attributes params.permit(extra_params)`).
+Next, we need to tell Avo and Rails which params are welcomed in the `create`/`update` request. We do that using the `extra_params` option on the `FishResource`. Avo's internal implementation is to assign the attributes you specify here to the underlying model (`model.assign_attributes params.permit(extra_params)`).
 
 ```ruby{2}
 class FishResource < Avo::BaseResource
@@ -180,7 +180,7 @@ class FishResource < Avo::BaseResource
 end
 ```
 
-The third step is optional. You have to make sure your model responds to the params your sending. In our example it should have the `fish_type`, `properties`, and `information` attributes or setter methods on the model class. We chose to add setters just to demonstrate the params are called to the model.
+The third step is optional. You must ensure your model responds to the params you're sending. Our example should have the `fish_type`, `properties`, and `information` attributes or setter methods on the model class. We chose to add setters to demonstrate the params are called to the model.
 
 ```ruby
 class Fish < ApplicationRecord
@@ -202,4 +202,4 @@ class Fish < ApplicationRecord
 end
 ```
 
-If you run this code you'll notice that the `information.information_age` param will not reach the `information=` method because we haven't allowed it in the `extra_params` option.
+If you run this code, you'll notice that the `information.information_age` param will not reach the `information=` method because we haven't allowed it in the `extra_params` option.

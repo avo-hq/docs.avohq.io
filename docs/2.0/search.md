@@ -1,8 +1,13 @@
+---
+version: '1.0'
+license: community
+---
+
 # Search
 
 Finding what you're looking for fast is essential. That's why Avo leverages [ransack's](https://github.com/activerecord-hackery/ransack) powerful query language.
 
-First you need to add `ransack` as a dependency to your app (breaking change from 1.10.0).
+First, you need to add `ransack` as a dependency to your app (breaking change from 1.10.0).
 
 ```ruby
 # Gemfile
@@ -102,7 +107,7 @@ end
 
 * Search Avatar is a [Pro feature](https://avohq.io/purchase/pro).
 
-You may improve the results listing by adding an avatar to each search result. You do that by using the `as_avatar` attribute. This attribute has three options `:square`, `:rounded` or `:circle`. This influences the final roundness of the avatar.
+You may improve the results listing by adding an avatar to each search result. You do that by using the `as_avatar` attribute. This attribute has three options `:square`, `:rounded` or `:circle`. That influences the final roundness of the avatar.
 
 ```ruby{17}
 class PostResource < Avo::BaseResource
@@ -128,7 +133,8 @@ end
 <img :src="('/assets/img/search/search_avatar.jpg')" alt="Search avatar" class="border mb-4" />
 
 ### Header Help Text
-You may improve the results listing header by adding a text highlighting the fields you are looking for or any other instruction for the user. You do that by using the `search_query_help` attribute. This attribute takes a string and appends it to the title of the resource.
+
+You may improve the results listing header by adding a piece of text highlighting the fields you are looking for or any other instruction for the user. You do that by using the `search_query_help` attribute. This attribute takes a string and appends it to the title of the resource.
 
 <img :src="('/assets/img/search/search_header_help.jpg')" alt="Search Header Help" class="border mb-4" />
 
@@ -146,26 +152,14 @@ end
 
 ## Resource search
 
-When a resource has the `search_query` attribute, you will see a new search input in the `Index` view. You can use that to search that particular resource.
+When a resource has the `search_query` attribute, a new search input will be displayed on the `Index` view.
 
-<img :src="('/assets/img/search/resource_search.jpg')" alt="Resource search" class="border mb-4" />
+![](/assets/img/search/resource_search.jpg)
 
 ## Global search
 
-<div class="rounded-md bg-blue-50 p-4">
-  <div class="flex">
-    <div class="flex-shrink-0">
-      <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-      </svg>
-    </div>
-    <div class="ml-3 flex-1 md:flex md:justify-between">
-      <div class="text-sm leading-5 text-blue-700">
-        Global search is a <a href="https://avohq.io/purchase/pro" target="_blank" class="underline">pro</a> feature
-      </div>
-    </div>
-  </div>
-</div>
+<LicenseReq license="pro" />
+
 
 Avo also has a global search feature. It will search through all the resources that have the `search_query` attribute present.
 
@@ -175,7 +169,7 @@ You open the global search input by clicking the trigger on the navbar or by usi
 
 ### Hide the global search
 
-If you, by any chance want to hide the global search you can do so using this setting 👇
+If you, by any chance, want to hide the global search, you can do so using this setting 👇
 
 ```ruby{3}
 # config/initializers/avo.rb

@@ -9,7 +9,7 @@ version: '2.3.0'
 
 One common task you need to do is organize your sidebar resources into menus. You can easily do that using the menu editor in the initializer.
 
-When you start with Avo, you'll get an auto-generated sidebar By default. That sidebar will contain all your resources, dashboards, and custom tools. To customize that menu, you have to add the `main_menu` key to your initializer.
+When you start with Avo, you'll get an auto-generated sidebar by default. That sidebar will contain all your resources, dashboards, and custom tools. To customize that menu, you have to add the `main_menu` key to your initializer.
 
 ```ruby{3-22}
 # config/initializers/avo.rb
@@ -163,7 +163,7 @@ end
 
 ## Item visibility
 
-The `visible` option is avaialble on all menu item. It can be a boolean or a block that has access to a few things:
+The `visible` option is available on all menu items. It can be a boolean or a block that has access to a few things:
 
   - the `current_user`. Given that you [set a way](authentication.html#customize-the-current-user-method) for Avo to know who the current user is, that will be available in that block call
   - the [`context`](customization.html#context) object.
@@ -183,7 +183,7 @@ end
 
 ## Using authorization rules
 
-When you switch from a generated menu to a custom one you might want to keep using the same authorization rules as before. To easily to that, use the `authorize` method in the `visible` option.
+When you switch from a generated menu to a custom one, you might want to keep using the same authorization rules as before. To quickly do that, use the `authorize` method in the `visible` option.
 
 ```ruby
 # config/initializers/avo.rb
@@ -221,7 +221,7 @@ end
 
 ## Icons
 
-For [`Section`](#section)s, you can use icons to make them look better. You can use some local ones that we used throughout the app and all [heroicons](https://heroicons.com/) designed by [Steve Schoger](https://twitter.com/steveschoger). You can use the `solid` or `outline` versions. We used the `outline` version throughout the app.
+For [`Section`](#section)s, you can use icons to make them look better. You can use some local ones that we used throughout the app and all [heroicons](https://heroicons.com/) designed by [Steve Schoger](https://twitter.com/steveschoger). In addition, you can use the `solid` or `outline` versions. We used the `outline` version throughout the app.
 
 ```ruby
 section "Resources", icon: "heroicons/outline/academic-cap" do
@@ -251,11 +251,11 @@ end
 
 <img :src="('/assets/img/menu-editor/collapsable.jpg')" alt="Avo menu editor" class="border mb-4" />
 
-That will add the arrow icon next to the section to indicate it's collapsable. When your users collapse and expand it, their choice will be stored in Local Storage and remembered in that browser.
+That will add the arrow icon next to the section to indicate it's collapsable. So when your users collapse and expand it, their choice will be stored in Local Storage and remembered in that browser.
 
 ### Default collapsed state
 
-You can, however set a default collapsed state using the `collapsed` option.
+You can however, set a default collapsed state using the `collapsed` option.
 
 ```ruby
 section "Resources", icon: "resources", collapsable: true, collapsed: true do
@@ -269,11 +269,7 @@ You might want to allow your users to hide certain items from view.
 
 ## Authorization
 
-<div class="space-x-2 mt-2">
-  <a href="https://youtu.be/Eex8CiinQZ8?t=373" target="_blank" class="rounded bg-green-600 hover:bg-green-500 text-white no-underline px-2 py-1 inline leading-none mt-2">
-    Demo video
-  </a>
-</div>
+<DemoVideo demo-video="https://youtu.be/Eex8CiinQZ8?t=373" />
 
 If you use the [authorization feature](authorization), you will need an easy way to authorize your items in the menu builder.
 For that scenario, we added the `authorize` helper.

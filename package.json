@@ -16,6 +16,7 @@
     "serve": "vitepress serve docs"
   },
   "dependencies": {
-    "@heroicons/vue": "^1.0.6"
+    "@heroicons/vue": "^1.0.6",
+    "lodash": "^4.17.21"
   }
 }

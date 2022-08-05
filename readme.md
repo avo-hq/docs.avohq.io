@@ -11,29 +11,29 @@
  - [x] actions.md
  - [x] associations.md
  - [x] authentication.md
- - [ ] authorization.md
- - [ ] cards.md
- - [ ] custom-asset-pipeline.md
- - [ ] custom-fields.md
- - [ ] custom-tools.md
- - [ ] customization.md
- - [ ] dashboards.md
- - [ ] evaluation-hosts.md
- - [ ] faq.md
+ - [x] authorization.md
+ - [x] cards.md
+ - [x] custom-asset-pipeline.md
+ - [x] custom-fields.md
+ - [x] custom-tools.md
+ - [x] customization.md
+ - [x] dashboards.md
+ - [x] evaluation-hosts.md
+ - [x] faq.md
  - [x] field-options.md
- - [ ] fields.md
- - [ ] filters.md
- - [ ] grid-view.md
- - [ ] index.md
- - [ ] installation.md
- - [ ] licensing.md
- - [ ] localization.md
- - [ ] menu-editor.md
- - [ ] recipes.md
+ - [  ] fields.md
+ - [x] filters.md
+ - [x] grid-view.md
+ - [] index.md
+ - [x] installation.md
+ - [x] licensing.md
+ - [x] localization.md
+ - [x] menu-editor.md
+ - [x] recipes.md
  - [x] records-reordering.md
- - [ ] resource-tools.md
- - [ ] resources.md
- - [ ] search.md
- - [ ] stimulus-integration.md
- - [ ] tabs.md
- - [ ] upgrade.md
+ - [x] resource-tools.md
+ - [x] resources.md
+ - [x] search.md
+ - [x] stimulus-integration.md
+ - [x] tabs.md
+ - [x] upgrade.md
