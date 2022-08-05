@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@heroicons/vue": "^1.0.6",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "markdown-it-container": "^3.0.0"
   }
 }
