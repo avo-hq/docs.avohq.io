@@ -11,7 +11,7 @@ Avo makes it easy to add custom tools and pages to your dashboard.
 
 `bin/rails generate avo:tool dashboard` will generate the necessary files to show the new custom tool.
 
-```
+```{2-6}
 ▶ bin/rails generate avo:tool dashboard
       create  app/views/avo/sidebar/items/_dashboard.html.erb
       insert  app/controllers/avo/tools_controller.rb
@@ -48,24 +48,24 @@ Rails.application.routes.draw do
 end
 ```
 
-The route generated is wrapped inside a namespace with the `Avo.configuration.root_path` name. You may move it inside your authentication block next to the Avo mounting call.
+The route generated is wrapped inside a namespace with the `Avo.configuration.root_path` name. Therefore, you may move it inside your authentication block next to the Avo mounting call.
 
 ### Sidebar item
 
-The `_dashboard.html.erb` partial will be added to the `app/views/avo/sidebar/items` directory. All the files in this directory will be loaded by Avo and displayed in the sidebar. They are displayed in alphabetical order so you may change their name to reorder the items.
+The `_dashboard.html.erb` partial will be added to the `app/views/avo/sidebar/items` directory. All the files in this directory will be loaded by Avo and displayed in the sidebar. They are displayed alphabetically, so you may change their names to reorder the items.
 
 ### Customize the sidebar
 
-If you want to further customize the sidebar partial you can [eject](./customization.html#eject-views) it and update it to your liking. We're planning on creating a better sidebar customization experience later this year.
+If you want to customize the sidebar partial further, you can [eject](./customization.html#eject-views) and update it to your liking. We're planning on creating a better sidebar customization experience later this year.
 
 ## Add assets
 
-When creating custom tools or fields, you might want to import assets (javascript and stylesheets files). You can do that so easily from v1.3. Please follow [this guide](./custom-asset-pipeline.html) to bring your assets with your asset pipeline.
+You might want to import assets (javascript and stylesheets files) when creating custom tools or fields. You can do that so easily from v1.3. Please follow [this guide](./custom-asset-pipeline.html) to bring your assets with your asset pipeline.
 
 
 ## Using helpers from your app
 
-You'll probably want to use some of your helpers in your custom tools. In order to have them available inside your custom controllers that inherit from Avo's `ApplicationController` you need to include them using the `helper` method.
+You'll probably want to use some of your helpers in your custom tools. To have them available inside your custom controllers inherited from Avo's `ApplicationController`, you need to include them using the `helper` method.
 
 ```ruby{3-5,10}
 # app/helpers/home_helper.rb
@@ -108,7 +108,7 @@ end
 
 ### Using path helpers
 
-Because you're in a Rails engine you will have to prepend the engine object to the path.
+Because you're in a Rails engine, you will have to prepend the engine object to the path.
 
 #### For Avo paths
 
@@ -116,4 +116,4 @@ Instead of writing `resources_posts_path(1)` you have to write `avo.resources_po
 
 #### For the main app paths
 
-When you want to reference paths from your main app, instead of writing `posts_path(1)` you have to write `main_app.posts_path`.
+When you want to reference paths from your main app, instead of writing `posts_path(1)`, you have to write `main_app.posts_path`.

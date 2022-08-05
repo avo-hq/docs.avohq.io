@@ -1,19 +1,21 @@
 ---
 feedbackId: 943
+version: '2.8'
+demoVideo: https://www.youtube.com/watch?v=ZMOz22FaAUg
 ---
 
 # Stimulus JS & HTML attributes
-
-**Since version 2.8**
-
-**Warning**: This feature is in the **beta** phase. The API might change while seeing how the community uses it to build their apps.
+:::warning
+This feature is in the **beta** phase. The API might change while seeing how the community uses it to build their apps.
 This is not the **dependable fields** feature but a placeholder so we can observe and see what we need to ship to make it helpful to you.
+:::
+
 
 _What we'll be able to do at the end of reading these docs_
 
 <img :src="('/assets/img/stimulus/country-city-select.gif')" alt="Debug on input stimulus method" class="border mb-4" />
 
-**Please note** that in order to have the JS code from your controllers loaded in Avo you'll need to add your own asset pipeline using [these instructions](custom-asset-pipeline.html). It's really easier than it sounds. It's like you'd add a new JS file to your regular Rails app.
+**Please note** that in order to have the JS code from your controllers loaded in Avo you'll need to add your asset pipeline using [these instructions](custom-asset-pipeline.html). It's really easier than it sounds. It's like you'd add a new JS file to your regular Rails app.
 
 <hr/>
 
@@ -32,7 +34,7 @@ class CourseResource < Avo::BaseResource
 end
 ```
 
-You can add more and separate them by a space.
+You can add more and separate them by a space character.
 
 ```ruby
 class CourseResource < Avo::BaseResource
@@ -76,7 +78,7 @@ You can add those targets to your controllers and use them in your JS code.
 
 ### Field inputs as targets
 
-Similarly to the wrapper element, inputs in the `Edit` and `New` views get the `[FIELD_NAME][FIELD_TYPE]InputTarget`. On more complex fields like the searchable, polymorphic `belongs_to` field, where there are mor than one input, the target attributes are attached to all `input`, `select`, and `button` elements.
+Similar to the wrapper element, inputs in the `Edit` and `New` views get the `[FIELD_NAME][FIELD_TYPE]InputTarget`. On more complex fields like the searchable, polymorphic `belongs_to` field, where there is more than one input, the target attributes are attached to all `input`, `select`, and `button` elements.
 
 ```ruby
 # Inputs get the `data-[CONTROLLER]-target="nameTextInput"` attribute and can be targeted using nameTextInputTarget
@@ -167,11 +169,11 @@ field :has_skills,
   }
 ```
 
-We're adding the `hidden` class to the field wrapper on the `Edit` and `New` views in this example.
+In this example, we're adding the `hidden` class to the field wrapper on the `Edit` and `New` views.
 
 ### The `block` notation
 
-If you need to do a more complex transformation to add your attributes, you can use the `block` notation. You'll have access to the `params`, `current_user`, `record`, and `resource` variables. It's handy in multi-tenancy scenarios and when you need to scope out the information across accounts.
+You can use the' block' notation if you need to do a more complex transformation to add your attributes. You'll have access to the `params`, `current_user`, `record`, and `resource` variables. It's handy in multi-tenancy scenarios and when you need to scope out the information across accounts.
 
 ```ruby{3-18}
 field :has_skills,
@@ -216,7 +218,7 @@ field :has_skills,
 
 ## Where are the attributes added?
 
-For the `index`, `show`, or `edit` blocks, you can add attributes to the `wrapper` element.
+You can add attributes to the' wrapper' element for the `index`, `show`, or `edit` blocks.
 
 _Edit field wrapper_
 <img :src="('/assets/img/stimulus/field-wrapper.png')" alt="Edit field wrapper" class="border mb-4" />
@@ -224,7 +226,7 @@ _Edit field wrapper_
 _Index field wrapper_
 <img :src="('/assets/img/stimulus/index-field-wrapper.png')" alt="Index field wrapper" class="border mb-4" />
 
-For the `edit` block, you can add attributes to the `input` field too.
+You can also add attributes to the `edit' field for the' input' block.
 
 _Edit input target_
 <img :src="('/assets/img/stimulus/edit-input-target.png')" alt="Index field wrapper" class="border mb-4" />
@@ -332,7 +334,7 @@ field :country, as: :select, options: Course.countries.map { |country| [country,
 
 ### `resource-edit#debugOnInput`
 
-For debugging purposes only, the `resource_edit` Stimulus JS controller, provides the `debugOnInput` method that outputs to the console the event and value for an action. Use this just to make sure you targeted your fields properly. It doesn't have any real use.
+For debugging purposes only, the `resource_edit` Stimulus JS controller provides the `debugOnInput` method that outputs the event and value for an action to the console. Use this just to make sure you targeted your fields correctly. It doesn't have any real use.
 
 <img :src="('/assets/img/stimulus/debug-on-input.gif')" alt="Debug on input stimulus method" class="border mb-4" />
 
@@ -340,14 +342,14 @@ For debugging purposes only, the `resource_edit` Stimulus JS controller, provide
 
 The bigger purpose of this feature is to create your own Stimulus JS controllers to bring the functionality you need to the CRUD interface.
 
-Below is an example of how you could implement a city & country select feature where the city select will have it's options changed when the user selects a country:
+Below is an example of how you could implement a city & country select feature where the city select will have its options changed when the user selects a country:
 
 1. Add an action to the country select to trigger a change.
 1. The stimulus method `onCountryChange` will be triggered when the user changes the country.
 1. That will trigger a fetch from the server where Rails will return an array of cities for the provided country.
 1. The city field will have a `loading` state while we fetch the results.
 1. The cities will be added to the `city` select field
-1. If the initial value is present in the returned results it will be selected.
+1. If the initial value is present in the returned results, it will be selected.
 1. All of this will happen only on the `New` and `Edit` views because of the condition we added to the `connect` method.
 
 ```ruby{11-12,21,31}

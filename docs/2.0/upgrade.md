@@ -1,10 +1,14 @@
 # Upgrade guide
 
+We generally push changes behind the scenes, so you don't have to update your code, but sometimes the public API is updated too.
+
+Follow these guides to make sure your configuration files are up to date.
+
 ## Upgrade from 2.10 to 2.11
 
 ### Avo uses the `locale` configuration from the initializer
 
-In 2.11 a change was pushed so Avo uses the `locale` configuration option from the `avo.rb` initializer.
+In 2.11 a change was pushed, so Avo uses the `locale` configuration option from the `avo.rb` initializer.
 
 ```ruby{2}
 Avo.configure do |config|
@@ -12,13 +16,13 @@ Avo.configure do |config|
 end
 ```
 
-So if you get locale-related crashes after an update make sure the locale is set to a valid locale or set it to `nil` if you want to fallback to what you have configured in your app.
+So if you get locale-related crashes after an update, make sure the locale is set to a valid locale or set it to `nil` if you want to fall back to what you have configured in your app.
 
 ### Change the `format` option in the date time and date fields
 
-One of the features of the date time field is to show the value in the browser's time zone. We can't know that until we load the page, hence we are going to parse and format the date on the browser side.
+One of the features of the date-_ime field is to show the value in the browser's time zone. However, we can't know that until we load the page, hence we are going to parse and format the date on the browser side.
 
-Avo uses luxon to do that so you'll have to change the tokens to match. Use this list of tokens [here](https://moment.github.io/luxon/#/formatting?id=table-of-tokens).
+Avo uses luxon to do that, so you'll have to change the tokens to match. Use this list of tokens [here](https://moment.github.io/luxon/#/formatting?id=table-of-tokens).
 
 ## Upgrade from 2.8 to 2.9
 

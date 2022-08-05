@@ -1,3 +1,14 @@
+import fields from './getFields'
+import {
+  capitalize, snakeCase, trim,
+} from 'lodash'
+
+export const humanize = (str) => capitalize(trim(snakeCase(str).replace(/_id$/, '').replace(/_/g, ' ')))
+
+const fieldMenuItems = fields
+  .filter(path => path !== 'index.md')
+  .map((path) => ({text: humanize(path.replace('.md', '')), link: `/2.0/fields/${path}`}))
+
 /**
  * @type {import('vitepress').UserConfig}
  */
@@ -10,7 +21,10 @@ const config = {
     nav: [
       {text: "Home", link: "/"},
       {text: "Team", link: "/team.html"},
-      {text: "2.0", link: "/2.0/index.html"}
+      {text: "Fields", link: "/2.0/fields/index"},
+      {text: "2.0", link: "/2.0/index.html"},
+      {text: "Recipes", link: "/2.0/recipes"},
+      {text: "FAQ", link: "/2.0/faq"},
     ],
     sidebar: {
       "/2.0/": [
@@ -22,26 +36,43 @@ const config = {
             {text: "Authorization", link: "/2.0/authorization"},
             {text: "Licensing", link: "/2.0/licensing"},
             {text: "Upgrade guide", link: "/2.0/upgrade"},
-            {text: "Recipes", link: "/2.0/recipes"},
-            {text: "Faq", link: "/2.0/faq"},
           ],
         },
         {
           text: "CRUD UI",
           items: [
-            {text: "Resource options", link: '/2.0/resources'},
-            {text: "Records reordering", link: '/2.0/records-reordering'},
+            {text: "Resource configuration", link: '/2.0/resources'},
+            // {text: "Fields", link: '/2.0/fields/index'},
             {text: "Field options", link: '/2.0/field-options'},
-            {text: "Fields", link: '/2.0/fields'},
+            {text: "Records reordering", link: '/2.0/records-reordering'},
             {text: "Associations", link: '/2.0/associations'},
             {text: "Tabs and panels", link: '/2.0/tabs'},
           ]
+        },
+        {
+          text: "Fields",
+          collapsible: true,
+          collapsed: true,
+          items: fieldMenuItems
         },
         {
           text: "Dashboards and cards",
           items: [
             {text: "Dashboards", link: '/2.0/dashboards'},
             {text: "Cards", link: '/2.0/cards'},
+          ]
+        },
+        {
+          text: "Customize Avo",
+          items: [
+            {text: "Customization options", link: "/2.0/customization"},
+            {text: "Grid view", link: "/2.0/grid-view"},
+            {text: "Menu editor", link: '/2.0/menu-editor'},
+            {text: "Search", link: '/2.0/search'},
+            {text: "Filters", link: '/2.0/filters'},
+            {text: "Actions", link: '/2.0/actions'},
+            {text: "Custom asset pipeline", link: '/2.0/custom-asset-pipeline'},
+            {text: "Localization (I18n)", link: '/2.0/localization'},
           ]
         },
         {
@@ -52,18 +83,6 @@ const config = {
             {text: "Resource tools", link: '/2.0/resource-tools'},
             {text: "Stimulus integration", link: '/2.0/stimulus-integration'},
             {text: "Evaluation hosts", link: '/2.0/evaluation-hosts'},
-          ]
-        },
-        {
-          text: "Customization",
-          items: [
-            {text: "Grid view", link: "/2.0/grid-view"},
-            {text: "Menu editor", link: '/2.0/menu-editor'},
-            {text: "Search", link: '/2.0/search'},
-            {text: "Filters", link: '/2.0/filters'},
-            {text: "Actions", link: '/2.0/actions'},
-            {text: "Custom asset pipeline", link: '/2.0/custom-asset-pipeline'},
-            {text: "Localization (I18n)", link: '/2.0/localization'},
           ]
         },
 

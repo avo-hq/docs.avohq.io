@@ -2,23 +2,23 @@
 feedbackId: 836
 ---
 
-# Customize Avo
+# Customization options
 
 ## Change the app name
 
-On the main navbar next to the logo Avo generates a link to the homepage of your app. The label for the link is usually computed from your Rails app name. You can customize that however you want using `config.app_name = 'Avocadelicious'`.
+On the main navbar next to the logo, Avo generates a link to the homepage of your app. The label for the link is usually computed from your Rails app name. You can customize that however, you want using `config.app_name = 'Avocadelicious'`.
 
-## Timezone and currency
+## Timezone and Currency
 
-In your data-rich app you might have a few fields where you reference `date`, `datetime` and `currency` fields. You may customize the global timezone and currency with `config.timezone = 'UTC'` and `config.currency = 'USD'` config options.
+Your data-rich app might have a few fields where you reference `date`, `datetime`, and `currency` fields. You may customize the global timezone and currency with `config.timezone = 'UTC'` and `config.currency = 'USD'` config options.
 
 ## Resource Index view
 
-There are a few customization options to change the ways resources are displayed in the **Index** view.
+There are a few customization options to change how resources are displayed in the **Index** view.
 
 ### Resources per page
 
-You my customize how many resources you can view per page with `config.per_page = 24`.
+You may customize how many resources you can view per page with `config.per_page = 24`.
 
 <img :src="('/assets/img/resource-index/per-page-config.jpg')" alt="Per page config" class="border mb-4" />
 
@@ -34,7 +34,7 @@ For `has_many` associations you can control how many resources are visible in th
 
 ### Default view type
 
-The `ResourceIndex` component supports two view types `:table` and `:grid`. You can change that by `config.default_view_type = :table`. Read more on the [grid view configuration page](./grid-view.html).
+The `ResourceIndex` component supports two view types:table` and `:grid`. You can change that by `config.default_view_type = :table`. Read more on the [grid view configuration page](./grid-view.html).
 
 <div class="grid grid-flow-row sm:grid-flow-col sm:grid-cols-2 gap-2 w-full">
   <div class="w-full">
@@ -49,9 +49,9 @@ The `ResourceIndex` component supports two view types `:table` and `:grid`. You 
 
 ## ID links to resource
 
-On the **Index** view each row has at the end the controls component which allows the user to go to the **Show** and **Edit** views, and delete that entry. If you have a long row and a not-so-wide monitor it might not be that easy to scroll to the right-most section to click the **Show** link.
+On the **Index** view, each row has the controls component at the end, which allows the user to go to the **Show** and **Edit** views and delete that entry. If you have a long row and a not-so-wide display, it might not be easy to scroll to the right-most section to click the **Show** link.
 
-To make it easier you can enable the `id_links_to_resource` config option.
+You can enable the `id_links_to_resource` config option to make it easier.
 
 ```ruby{4}
 Avo.configure do |config|
@@ -61,13 +61,14 @@ Avo.configure do |config|
 end
 ```
 
-This will render all `id` fields in the **Index** view as link to that resource.
+That will render all `id` fields in the **Index** view as a link to that resource.
 
 <img :src="('/assets/img/fields-reference/as-link-to-resource.jpg')" alt="As link to resource" class="border mb-4" />
 
 ## Resource controls on the left side
+<DemoVideo demo-video="https://youtu.be/MfryUtcXqvU?t=706" />
 
-By default the resource controls are located on the right side of the record rows and they might be hidden if there are a lot of columns. You might want to move the controls to the left side in that situation using the `resource_controls_placement` option
+By default, the resource controls are located on the right side of the record rows, which might be hidden if there are a lot of columns. You might want to move the controls to the left side in that situation using the `resource_controls_placement` option.
 
 ```ruby{2}
 Avo.configure do |config|
@@ -75,9 +76,6 @@ Avo.configure do |config|
 end
 ```
 
-<a href="https://youtu.be/MfryUtcXqvU?t=706" target="_blank" class="rounded bg-green-600 hover:bg-green-500 text-white no-underline px-2 py-1 inline leading-none mt-2">
-  Demo video
-</a>
 
 <img :src="('/assets/img/customization/resource-controls-left.jpg')" alt="Resource controls on the left side" class="border mb-4" />
 
@@ -90,9 +88,9 @@ Avo.configure do |config|
 end
 ```
 
-By default Avo's main content is constrained to a regular [Tailwind CSS container](https://tailwindcss.com/docs/container). If you have a lot of content or prefer to display it full-width you have two options to choose from.
+Avo's default main content is constrained to a regular [Tailwind CSS container](https://tailwindcss.com/docs/container). If you have a lot of content or prefer to display it full-width, you have two options.
 
-### Display only the Index view full-width
+### Display the `Index` view full-width
 
 Using `full_width_index_view: true` tells Avo to display the **Index** view full-width.
 
@@ -100,9 +98,9 @@ Using `full_width_index_view: true` tells Avo to display the **Index** view full
 
 Using `full_width_container: true` tells Avo to display all views full-width.
 
-## Cache resources on Index view
+## Cache resources on the `Index` view
 
-By default Avo caches each resource row (or Grid item for Grid view) for the performance benefits. You can disable that cache using the `cache_resources_on_index_view` configuration option.
+Avo caches each resource row (or Grid item for Grid view) for performance reasons. You can disable that cache using the `cache_resources_on_index_view` configuration option.
 
 ```ruby{2}
 Avo.configure do |config|
@@ -112,9 +110,9 @@ end
 
 ## Context
 
-In the `Resource` and `Action` classes you have a global `context` object to which you can attach a custom payload. For example you may add the `current_user`, the current request `params` or any other arbitrary data.
+In the `Resource` and `Action` classes, you have a global `context` object to which you can attach a custom payload. For example, you may add the `current_user`, the current request `params`, or any other arbitrary data.
 
-You can configure it using the `set_context` method in your initializer. The block you pass in will be instance evaluated in `Avo::ApplicationController` so it will have access to the `current_user` method or `Current` object.
+You can configure it using the `set_context` method in your initializer. The block you pass in will be instance evaluated in `Avo::ApplicationController`, so it will have access to the `current_user` method or `Current` object.
 
 ```ruby{2-8}
 Avo.configure do |config|
@@ -128,7 +126,7 @@ Avo.configure do |config|
 end
 ```
 
-The context data can also be reached using the `::Avo::App.context` object.
+You can access the context data with `::Avo::App.context` object.
 
 ## Eject views
 
@@ -136,7 +134,7 @@ If you want to change one of Avo's built-in views, you can eject it, update it a
 
 ### Prepared templates
 
-We prepared a few templates to make it
+We prepared a few templates to make it.
 
 `bin/rails generate avo:eject :logo` will eject the `_logo.html.erb` partial.
 
@@ -146,7 +144,7 @@ Running via Spring preloader in process 20947
       create  app/views/avo/logo/_logo.html.erb
 ```
 
-A list with prepared templates:
+A list of prepared templates:
 
 - `:logo` ➡️ &nbsp; `app/views/avo/partials/_logo.html.erb`
 - `:head` ➡️ &nbsp; `app/views/avo/partials/_head.html.erb`
@@ -157,7 +155,7 @@ A list with prepared templates:
 
 #### Logo
 
-In the `app/views/avo/partials` directory you will find the `_logo.html.erb` partial which you may customize however you want. It will be displayed in place of Avo's logo.
+In the `app/views/avo/partials` directory, you will find the `_logo.html.erb` partial, which you may customize however you want. It will be displayed in place of Avo's logo.
 
 <img :src="('/assets/img/customization/logo.jpg')" alt="Avo logo customization" class="border mb-4" />
 
@@ -186,7 +184,7 @@ You can eject any partial from Avo using the partial path.
       create  app/views/layouts/avo/application.html.erb
 ```
 
-**Warning:** Once ejected, the views will not be receiving updates on new Avo versions.
+**Warning:** Once ejected, the views will not receive updates on new Avo versions.
 
 ## Breadcrumbs
 
@@ -202,7 +200,7 @@ Avo.configure do |config|
 end
 ```
 
-The first item on the breadcrumb is **Home** with the `root_path` url. You can customize that using the `set_initial_breadcrumbs` block.
+The first item on the breadcrumb is **Home** with the `root_path` URL. You can customize that using the `set_initial_breadcrumbs` block.
 
 ```ruby{2-5}
 Avo.configure do |config|
@@ -243,7 +241,7 @@ Avo uses the [meta-tags](https://github.com/kpumuk/meta-tags) gem to compile and
 
 ## Home path
 
-When a user clicks your logo inside Avo or goes to the `/avo` url, they will be redirected to one of your resources. You might want to change that path to be something else like a custom page. You can do that with the `home_path` configuration.
+When a user clicks your logo inside Avo or goes to the `/avo` URL, they will be redirected to one of your resources. You might want to change that path to something else, like a custom page. You can do that with the `home_path` configuration.
 
 ```ruby{2}
 Avo.configure do |config|
@@ -265,7 +263,7 @@ end
 
 When you configure the `home_path` option, the `Get started` sidebar item will be hidden in the development environment.
 
-Now, whenever a user clicks the logo, they will be redirected to `/avo/dashboard`. You can use this configuration option alongside the `set_initial_breadcrumbs` option to create a more cohesive experience.
+Now, users will be redirected to `/avo/dashboard` whenever they click the logo. You can use this configuration option alongside the `set_initial_breadcrumbs` option to create a more cohesive experience.
 
 ```ruby{2-5}
 Avo.configure do |config|
@@ -278,7 +276,7 @@ end
 
 ## Mount Avo under a nested path
 
-You may need to mount Avo under a nested path; something like `/uk/admin`. To do that there are a few things you need to consider.
+You may need to mount Avo under a nested path, something like `/uk/admin`. In order to do that, you need to consider a few things.
 
 1. Move the engine mount point below any route for custom tools.
 
@@ -335,11 +333,12 @@ end
 ```
 
 ## Custom query scopes
-You may want to change the queries to add sorting or use gems like [friendly](https://github.com/norman/friendly_id).
-You can do that using `query_scope` and `find_scope`.
+You may want to change Avo's queries to add sorting or use gems like [friendly](https://github.com/norman/friendly_id).
+You can do that using `resolve_query_scope` for multiple records and `resolve_find_scope` when fetching one record.
 
 ### Custom query scope
-If you need to replace the queries in order to add a sort condition or more query fields, add the `resolve_query_scope` option to the resource definition.
+
+Using `resolve_query_scope` you tell Avo how to fetch the records for the `Index` view.
 
 ```ruby
 class UserResource < Avo::BaseResource
@@ -350,7 +349,9 @@ end
 ```
 
 ### Custom find scope
-If you need to add to the way of how a record is found, add the `resolve_find_scope` option to the resource definition.
+
+Using `resolve_find_scope` you tell Avo how to fetch one record for `Show` and `Edit` views,
+
 ```ruby
 class UserResource < Avo::BaseResource
   self.resolve_find_scope = ->(model_class:) do
@@ -359,13 +360,14 @@ class UserResource < Avo::BaseResource
 end
 ```
 
-You also have to add the `friendly_id` configuration to the model definition.
+:::details If you're following the `friendly_id` example, you must also add the `friendly_id` configuration to the model definition.
 ```ruby
 class User < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
 end
 ```
+:::
 
 ## Disable features
 
@@ -378,7 +380,7 @@ Avo.configure do |config|
 end
 ```
 
-After this setting the global search will be hidden for users.
+After this setting, the global search will be hidden for users.
 
 Supported options:
 
@@ -390,7 +392,7 @@ You might see on the sidebar footer a small profile widget. The widget displays 
 
 ### Customize the name of the user
 
-Avo checks to see if the object returned by your [`current_user_method`](authentication.html#customize-the-current-user-method) responds to a `name` method. If not it will try the `email` method and then fall back to `Avo user`.
+Avo checks to see if the object returned by your [`current_user_method`](authentication.html#customize-the-current-user-method) responds to a `name` method. If not, it will try the `email` method and then fall back to `Avo user`.
 
 ### Customize the profile photo
 
@@ -400,9 +402,6 @@ Similarly, it will check if that current user responds to `avatar` and use that 
 
 Lastly, it will check if it responds to the `avo_title` method and uses that to display it under the name.
 
-### Customize the sign out link
+### Customize the sign-out link
 
 Please follow [this](authentication.html#customise-the-sign-out-link) guide in [authentication](authentication).
-
-
-<!-- @todo: add docs for use_partials custom functionality -->

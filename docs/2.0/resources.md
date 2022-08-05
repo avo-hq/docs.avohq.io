@@ -1,11 +1,11 @@
 # Resource options
 
-Avo effortlessly empowers you to build a full admin dashboard for your Ruby on Rails application.
+Avo effortlessly empowers you to build an entire customer-facing interface for your Ruby on Rails application.
 One of the most powerful features is how easy you can administer your database records.
 
-Similarly to how you configure your database layer using Rails models, Avo uses `Resource` files. Each resource maps out one of your models. There can be multiple eesource associated to the same model.
+Similar to how you configure your database layer using Rails models, Avo uses `Resource` files. Each resource maps out one of your models. There can be multiple resources associated to the same model.
 
-All resources are located in the `app/avo/resources` directory. Resources can't be namespaced yet so they all need to be in the root level of that directory.
+All resources are located in the `app/avo/resources` directory. Unfortunately, resources can't be namespaced yet, so they all need to be in the root level of that directory.
 
 ## Defining Resources
 
@@ -64,7 +64,7 @@ end
 
 ### Using a computed title
 
-You can use a computed `title` property for your resources if the field that is the title is not that unique.
+If you don't have a `title`, `name`, or `label` attribute in the database, you can add a getter method to your model where you compose the name.
 
 ```ruby{2}
 # app/avo/resources/comment_resource.rb
@@ -84,7 +84,7 @@ end
 
 ## Resource description
 
-You might want to display some information about the current resource to your users. Using the `description` class attribute, you can add some text to the `Index`, `Show`, `Edit`, and `New` views.
+You might want to display information about the current resource to your users. Then, using the `description` class attribute, you can add some text to the `Index`, `Show`, `Edit`, and `New` views.
 
 <img :src="('/assets/img/resources/description.jpg')" alt="Avo message" class="border mb-4" />
 
@@ -103,7 +103,7 @@ This is the quick way to set the label, and it will be displayed **only on the `
 
 ### Set the description as a block
 
-This is the more customizable method where you have access to the `model`, `view`, `user` (the current user), and `params` objects.
+This is the more customizable method where you can access the `model`, `view`, `user` (the current user), and `params` objects.
 
 ```ruby{3-13}
 class UserResource < Avo::BaseResource
@@ -124,7 +124,7 @@ end
 
 ## Eager loading
 
-If you regularly need access to a resource's associations, you can tell Avo to eager load those associations on the **Index** view using `includes`. This will help you avoid those nasty `n+1` performance issues.
+If you regularly need access to a resource's associations, you can tell Avo to eager load those associations on the **Index** view using `includes`. That will help you avoid those nasty `n+1` performance issues.
 
 ```ruby
 class PostResource < Avo::BaseResource
@@ -142,7 +142,7 @@ Each resource will be available in four views;
 
 #### Show
 
-**Show** is where you get to see one resource in more detail.
+**Show** is where you see one resource in more detail.
 
 #### Edit
 
@@ -168,7 +168,7 @@ Find out more on the [grid view documentation page](grid-view).
 
 ## Custom model class
 
-You might have a model that belongs to a namespace or that has a different name than than the resource. For that scenario you can use the `@model` option to tell Avo which model to reference.
+You might have a model that belongs to a namespace or has a different name than the resource. For that scenario, you can use the `@model` option to tell Avo which model to reference.
 
 ```ruby{2}
 class DelayedJobResource < Avo::BaseResource
@@ -181,24 +181,28 @@ end
 
 ## Routing
 
-When generating a resource, Avo will automatically generate routes based on the resource name.
+Avo will automatically generate routes based on the resource name when generating a resource.
 
 ```
 PostResource -> /avo/resources/posts
 PhotoCommentResource -> /avo/resources/photo_comments
 ```
 
-If you change the resource name you should change the generated controller name too.
+If you change the resource name, you should change the generated controller name too.
 
 ## Devise password optional
 
-If you use `devise` and you update your user models (usually `User`) without passing a password you will get a validation error. You can use `devise_password_optional` to stop receiving that error. It will [strip out](https://stackoverflow.com/questions/5113248/devise-update-user-without-password/11676957#11676957) the `password` key from `params`.
+If you use `devise` and update your user models (usually `User`) without passing a password, you will get a validation error. You can use `devise_password_optional` to stop receiving that error. It will [strip out](https://stackoverflow.com/questions/5113248/devise-update-user-without-password/11676957#11676957) the `password` key from `params`.
 
 ```ruby
 class UserResource < Avo::BaseResource
   self.devise_password_optional = true
 end
 ```
+
+Related:
+
+- [Password field](./fields/password)
 
 ## Unscoped queries on `Index`
 
@@ -221,9 +225,9 @@ class ProjectResource < Avo::BaseResource
 end
 ```
 
-## Hide resource from sidebar
+## Hide resource from the sidebar
 
-When you get started, the sidebar will be auto-generated for you with all the dashboards, resources and custom tools. You may have resources that should not appear on the sidebar which you can hide using the `visible_on_sidebar` option.
+When you get started, the sidebar will be auto-generated for you with all the dashboards, resources, and custom tools. However, you may have resources that should not appear on the sidebar, which you can hide using the `visible_on_sidebar` option.
 
 ```ruby{3}
 class TeamMembershipResource < Avo::BaseResource
@@ -234,13 +238,15 @@ class TeamMembershipResource < Avo::BaseResource
 end
 ```
 
-<Alert type="warning" details-link="/2.0/menu-editor.html#item-visibility">
-  This option is used in the <strong>auto-generated menu</strong>, not in the <strong>menu editor</strong>. <br/> You'll have to use your own logic in the <code>visible</code> block for that.
-</Alert>
+:::warning
+  This option is used in the **auto-generated menu**, not in the **menu editor**.
+
+  You'll have to use your own logic in the [`visible`](./menu-editor#item-visibility) block for that.
+:::
 
 ## Extending `Avo::ResourcesController`
 
-You may need to execute additional actions on the `ResourcesController` before loading the Avo pages. You can do that by creating an `Avo::BaseResourcesController` and extend your resource controller from it.
+You may need to execute additional actions on the `ResourcesController` before loading the Avo pages. You can create an `Avo::BaseResourcesController` and extend your resource controller from it.
 
 ```ruby
 # app/controllers/avo/base_resources_controller.rb
@@ -259,7 +265,7 @@ end
 
 ## Show buttons on form footers
 
-If you have a lot of fields on a resource, that form might get pretty tall. It would be useful to have the `Save` button in the footer of that form.
+If you have a lot of fields on a resource, that form might get pretty tall. So it would be useful to have the `Save` button in the footer of that form.
 
 You can do that by setting the `buttons_on_form_footers` option to `true` in your initializer. That will add the `Back` and `Save` buttons on the footer of that form for the `New` and `Edit` screens.
 
@@ -272,9 +278,9 @@ end
 
 <img :src="('/assets/img/resources/buttons_on_footer.jpg')" alt="Buttons on footer" class="border mb-4" />
 
-## Customize what happens after record is created/edited
+## Customize what happens after a record is created/edited
 
-For some resources it might make sense to redirect to something else than the `Show` view. With `after_create_path` and `after_update_path` you can control that.
+For some resources, it might make sense to redirect to something other than the `Show` view. With `after_create_path` and `after_update_path` you can control that.
 
 The valid options are `:show` (default) or `:index`.
 
@@ -290,7 +296,7 @@ end
 
 ## Hide the record selector checkbox
 
-You might have resources that will never be selected and you have no need for that checkbox to waste your horizontal space.
+You might have resources that will never be selected, and you do not need that checkbox to waste your horizontal space.
 
 You can hide it using the `record_selector` class_attribute.
 
