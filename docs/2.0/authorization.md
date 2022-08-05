@@ -1,10 +1,8 @@
 ---
-proFeature: true
+license: pro
 ---
 
 # Authorization
-
-<ProFeature />
 
 When you share access to Avo with your clients or large teams, you may want to restrict access to a resource or a subset of resources. One example may be that only admin level users may delete records. Avo leverages Pundit under the hood to manage the role-based authentication.
 

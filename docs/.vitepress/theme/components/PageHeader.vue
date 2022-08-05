@@ -13,7 +13,6 @@ const version = computed(() => frontmatter.value.version)
 const demoVideo = computed(() => frontmatter.value.demoVideo)
 const betaStatus = computed(() => frontmatter.value.betaStatus)
 
-console.log('id, license, version, demoVideo, betaStatus->', feedbackId.value, license.value, version.value, demoVideo.value, betaStatus.value)
 const shoudHide = computed(() => [feedbackId, license, version, demoVideo, betaStatus].every((i) => i.value === undefined))
 </script>
 

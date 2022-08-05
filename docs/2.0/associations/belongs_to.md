@@ -6,7 +6,7 @@ field :user, as: :belongs_to
 
 You will see three field types when you add a `BelongsTo` association to a model.
 
-On the **Index** view, you'll see a column with the [`@title`](./resources.html#setting-the-title-of-the-resource) value of the associated model.
+On the **Index** view, you'll see a column with the [`@title`](./../resources.html#setting-the-title-of-the-resource) value of the associated model.
 
 <img :src="('/assets/img/associations/belongs-to-index.jpg')" alt="Belongs to index" class="border mb-4" />
 
