@@ -33,21 +33,46 @@ const config = {
       md.use(...createContainer("option", md))
     },
   },
+  head: [
+    // <script async="" src="https://www.google-analytics.com/analytics.js"></script>
+    [
+      'script',
+      { async: true, src: 'https://www.googletagmanager.com/gtag/js?id=UA-174545089-1' }
+    ],
+    [
+      'script',
+      {},
+      "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'UA-174545089-1');"
+    ]
+  ],
   themeConfig: {
     siteTitle: false,
     logo: "/logo.svg",
+    editLink: {
+      pattern: 'https://github.com/avo-hq/vitepress-docs/edit/main/docs/:path'
+    },
+    footer: {
+      // message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2020-present Adrian Marin'
+    },
     nav: [
       {text: "Home", link: "/"},
       {text: "Docs", link: "/2.0/index.html"},
       {text: "Recipes", link: "/2.0/recipes"},
       {text: "FAQ", link: "/2.0/faq"},
       {text: "Team", link: "/team.html"},
+      {text: "Version", items: [
+        {text: "2.12", link: "/2.0/index.html"},
+        {text: "2.0", link: "/1.0/index.html"},
+        {text: "1.0", link: "/1.0/index.html"},
+      ]},
     ],
     sidebar: {
       "/2.0/": [
         {
           text: "Getting started",
           items: [
+            {text: "Intro", link: "/2.0/index.html"},
             {text: "Installation", link: "/2.0/installation"},
             {text: "Authentication", link: "/2.0/authentication"},
             {text: "Authorization", link: "/2.0/authorization"},
