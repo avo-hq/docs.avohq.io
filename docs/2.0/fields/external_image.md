@@ -46,7 +46,7 @@ Use any number to size the image.
 Use any number to set the radius value.
 :::
 
-<!--@include: ./common/link_to_resource_common.md-->
+<!-- @include: ./../common/link_to_resource_common.md-->
 
 ## Use computed values
 

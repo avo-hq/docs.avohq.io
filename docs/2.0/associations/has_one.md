@@ -8,4 +8,4 @@ field :admin, as: :has_one
 
 <img :src="('/assets/img/associations/has-one.jpg')" alt="Has one" class="border mb-4" />
 
-<!--@include: ./common/show_on_edit_common.md-->
+<!-- @include: ./../common/show_on_edit_common.md-->

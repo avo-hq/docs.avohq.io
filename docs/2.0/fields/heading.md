@@ -24,6 +24,6 @@ The `as_html` option will render it as HTML.
 heading '<div class="underline text-gray-800 uppercase">Address fields</,div>', as_html: true
 ```
 
-<!-- @include: ./common/default_boolean_false.md -->
+<!-- @include: ./../common/default_boolean_false.md -->
 :::
 

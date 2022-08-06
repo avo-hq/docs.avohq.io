@@ -13,5 +13,5 @@ field :id, as: :id
 
 ## Options
 
-<!--@include: ./common/link_to_resource_common.md-->
+<!-- @include: ./../common/link_to_resource_common.md-->
 

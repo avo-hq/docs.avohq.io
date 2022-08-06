@@ -105,7 +105,7 @@ field :skills,
 
 <img :src="('/assets/img/fields/tags-field/enforce_suggestions.gif')" alt="Avo tags field" class="border mb-4" />
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `close_on_select`
@@ -120,7 +120,7 @@ field :items,
 
 <img :src="('/assets/img/fields/tags-field/close_on_select.gif')" alt="Avo tags field" class="border mb-4" />
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `acts_as_taggable_on`

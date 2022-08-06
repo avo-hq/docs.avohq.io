@@ -23,7 +23,7 @@ field :description, as: :markdown
 
 By default, the content of the `Markdown` field is not visible on the `Show` view, instead it's hidden under a `Show Content` link, that, when clicked, displays the content. You can set Markdown to always display the content by setting `always_show` to `true`.
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `height`
@@ -46,7 +46,7 @@ Toggles the editors spell checker option.
 field :description, as: :markdown, spell_checker: true
 ```
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 ## Enable spell checker

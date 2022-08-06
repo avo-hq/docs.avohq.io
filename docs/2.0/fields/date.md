@@ -40,4 +40,4 @@ Format the date shown to the user on the `Edit` and `New` views.
 
 Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
 :::
-<!--@include: ./common/date_date_time_common.md-->
+<!-- @include: ./../common/date_date_time_common.md-->

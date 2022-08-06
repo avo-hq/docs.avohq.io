@@ -67,7 +67,7 @@ class ProjectResource < Avo::BaseResource
 end
 ```
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `include_blank`

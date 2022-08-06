@@ -66,19 +66,19 @@ Any string value.
 :::option `disable_editing_keys`
 Toggle on/off the ability to edit the keys for that field. Turning this off will allow the user to customize only the value fields.
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `disable_adding_rows`
 Toggle on/off the ability to add new rows.
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `disable_deleting_rows`
 Toggle on/off the ability to delete rows from that field. Turning this on will prevent the user from deleting existing rows.
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 ## Customizing the labels
