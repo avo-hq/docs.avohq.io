@@ -104,3 +104,7 @@ hero:
       text: Star on GitHub ⭐️
       link: https://github.com/avo-hq/avo
 ---
+
+<div class="container-md max-w-[64rem] mx-auto">
+<!-- @include: ./2.0/common/sponsors_common.md-->
+</div>
