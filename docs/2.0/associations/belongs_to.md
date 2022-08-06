@@ -12,33 +12,76 @@ field :user, as: :belongs_to
 You will see three field types when you add a `BelongsTo` association to a model.
 
 
-        @searchable = args[:searchable] == true
-        @polymorphic_as = args[:polymorphic_as]
-        @types = args[:types]
-        @relation_method = id.to_s.parameterize.underscore
-        @allow_via_detaching = args[:allow_via_detaching] == true
-        @attach_scope = args[:attach_scope]
-        @polymorphic_help = args[:polymorphic_help]
-
 ## Options
 
+<!-- @include: ./../common/associations_searchable_option_common.md-->
 
-:::option `searchable`
-<LicenseReq license="pro" />
-
+:::option `allow_via_detaching`
+Keeps the field enabled when visiting from the parent record.
 
 <!-- @include: ./../common/default_boolean_false.md-->
 :::
 
-On the `Index` view, you'll see a column with the [`@title`](./../resources.html#setting-the-title-of-the-resource) value of the associated model.
+<!-- @include: ./../common/associations_attach_scope_option_common.md-->
+
+:::option `polymorphic_as`
+Sets the field as polymorphic with the key set on the model.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+A symbol used on the `belongs_to` association with `polymorphic: true`.
+:::
+
+:::option `types`
+Sets the types the field can be morph to.
+
+#### Default
+
+`[]`
+
+#### Possible values
+
+`[Post, Project, Team]`. Any array of model names.
+:::
+
+:::option `polymorphic_as`
+Sets the field as polymorphic with the key set on the model.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+A symbol used on the `belongs_to` association with `polymorphic: true`.
+:::
+
+:::option `polymorphic_help`
+Sets the help text for the polymorphic type dropdown. Useful when you need to specify to the user why and what they need to choose as polymorphic.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+Any string.
+:::
+
+
+## Overview
+
+On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`@title`](./../resources.html#setting-the-title-of-the-resource) value.
 
 <img :src="('/assets/img/associations/belongs-to-index.jpg')" alt="Belongs to index" class="border mb-4" />
 
-On the `Show` view, you'll see a link to the associated model.
-
 <img :src="('/assets/img/associations/belongs-to-show.jpg')" alt="Belongs to show" class="border mb-4" />
 
-You'll see a dropdown element with the available records on the `Edit` and `New` views. Here you may change the associated model.
+On the `Edit` and `New` views Avo will generate a dropdown element with the available records where the user can change the associated model.
 
 <img :src="('/assets/img/associations/belongs-to-edit.jpg')" alt="Belongs to edit" class="border mb-4" />
 
@@ -64,9 +107,7 @@ end
 
 ## Polymorphic help
 
-**Requires V 2.5 +**
-
-When displaying a polymorphic association, you will get two dropdowns. One selects the polymorphic type (`Post` or `Project`), and one for choosing the actual record. You may want to give the user explicit information about those dropdowns. For example, you can use the `polymorphic_help` option for the first dropdown and `help` for the second.
+When displaying a polymorphic association, you will see two dropdowns. One selects the polymorphic type (`Post` or `Project`), and one for choosing the actual record. You may want to give the user explicit information about those dropdowns using the `polymorphic_help` option for the first dropdown and `help` for the second.
 
 ```ruby{16-17}
 class CommentResource < Avo::BaseResource
@@ -93,6 +134,7 @@ end
 
 ## Searchable `belongs_to`
 
+<DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
 
 There might be the case that you have a lot of records for the parent resource, and a simple dropdown won't cut it. This is where you can use the `searchable` option to get a better search experience for that resource.
 
@@ -123,20 +165,10 @@ class CommentResource < Avo::BaseResource
 end
 ```
 
-<div class="rounded-md bg-yellow-50 p-4">
-  <div class="flex">
-    <div class="flex-shrink-0">
-      <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-      </svg>
-    </div>
-    <div class="ml-3 flex-1 md:flex md:justify-between">
-      <div class="text-sm leading-5 text-yellow-700">
-        Avo uses the <a href="/2.0/search.html">search feature</a> behind the scenes, so <strong>make sure the target resource has the `search_query` option configured</strong>.
-      </div>
-    </div>
-  </div>
-</div>
+:::info
+Avo uses the [search feature](./../search) behind the scenes, so **make sure the target resource has the `search_query` option configured**.
+:::
+
 
 ```ruby
 # app/avo/resources/post_resource.rb
@@ -154,11 +186,9 @@ class ProjectResource < Avo::BaseResource
 end
 ```
 
-Watch the video below to get an idea on how it works.
-
-<DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
-
 ## Belongs to attach scope
+
+<DemoVideo demo-video="https://youtu.be/Eex8CiinQZ8?t=6" />
 
 When you edit a record that has a `belongs_to` association, on the edit screen, you will have a list of records from which you can choose a record to associate with.
 
@@ -181,9 +211,6 @@ end
 ```
 
 For scenarios where you need to add a record associated with that resource (you create a `Post` through a `Category`), the `parent` is unavailable (the `Post` is not persisted in the database). Therefore, Avo makes the `parent` an instantiated object with its parent populated (a `Post` with the `category_id` populated with the parent `Category` from which you started the creation process) so you can better scope out the data (you know from which `Category` it was initiated).
-
-
-<DemoVideo demo-video="https://youtu.be/Eex8CiinQZ8?t=6" />
 
 ## Allow detaching via the association
 

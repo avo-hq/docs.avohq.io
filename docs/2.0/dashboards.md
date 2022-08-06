@@ -191,7 +191,7 @@ The metric card is your friend when you only need to display a simple significan
 
 To calculate your result, you may use the `query` method. After you run your query, use the `result` method to store the value that will be displayed on the card.
 
-In the `query` method you have access to a few variables like `context` (the [App context](https://docs.avohq.io/2.0/customization.html#context)), `params` (the request params), `range` (the range that was requested), `dashboard` (the current dashboard the card is on), and current `card`.
+In the `query` method you have access to a few variables like `context` (the [App context](./customization#context)), `params` (the request params), `range` (the range that was requested), `dashboard` (the current dashboard the card is on), and current `card`.
 
 ```ruby{13-34,36}
 class UsersMetric < Avo::Dashboards::MetricCard

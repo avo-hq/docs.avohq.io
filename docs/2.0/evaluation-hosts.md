@@ -75,3 +75,7 @@ Different hosts have different pieces of state.
 ## `RecordHost`
 
 The `RecordHost` inherits from `BaseHost` and has the `record` available. The `record` is the model class instantiated with the DB information (like doing `User.find 1`) in that context.
+
+## `AssociationScopeHost`
+
+The `AssociationScopeHost` inherits from `BaseHost` and has the `parent` and the `query` objects available. The `parent` is the instantiated model on which the block is given and the `query` is the actual query that is going to run.
