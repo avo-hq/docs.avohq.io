@@ -13,11 +13,13 @@ field :skills, as: :tags
 
 <img :src="('/assets/img/fields/tags-field/basic.gif')" alt="Avo tags field" class="border mb-4" />
 
-## Suggestions
+## Options
 
-You can pass suggestions to your users to pick from. The `suggestions` option can be an array of strings, an object with the keys `value`, `label`, and (optionally) `avatar`, or a block that returns an array of that type of object. The block is a [`RecordHost`](./../evaluation-hosts.html#recordhost), so it has access to the `record`.
+:::option `suggestions`
 
-```ruby
+You can give suggestions to your users to pick from which will be displayed to the user as a dropdown under the field.
+
+```ruby{3,8-10}
 # app/avo/resources/course_resource.rb
 class CourseResource < Avo::BaseResource
   field :skills, as: :tags, suggestions: -> { record.skill_suggestions }
@@ -33,62 +35,21 @@ end
 
 <img :src="('/assets/img/fields/tags-field/suggestions.gif')" alt="Avo tags field" class="border mb-4" />
 
-The suggestions will be displayed to the user as a dropdown under the field.
+#### Default
 
-## Enforce suggestions
+`[]`
 
-You might only want to allow the user to select from a pre-configured list of items. You can use `enforce_suggestions` to do that. Now the user won't be able to add anything else than what you posted in the `suggestions` option.
+#### Possible values
 
-```ruby
-# app/avo/resources/course_resource.rb
-class CourseResource < Avo::BaseResource
-  field :skills, as: :tags, suggestions: %w(one two three), enforce_suggestions: true
-end
-```
+The `suggestions` option can be an array of strings, an object with the keys `value`, `label`, and (optionally) `avatar`, or a lambda that returns an array of that type of object.
 
-<img :src="('/assets/img/fields/tags-field/enforce_suggestions.gif')" alt="Avo tags field" class="border mb-4" />
+The lambda is run inside a [`RecordHost`](./../evaluation-hosts.html#recordhost), so it has access to the `record` alongs other things (check the link).
 
-## Disallowed
-
-The `disallowed` param works similarly to `suggestions`. Use it to prevent the user from adding specific values.
-
-```ruby
-# app/avo/resources/course_resource.rb
-class CourseResource < Avo::BaseResource
-  field :skills, as: :tags, disallowed: ['not', 'that']
-end
-```
-
-<img :src="('/assets/img/fields/tags-field/disallowed.gif')" alt="Avo tags field" class="border mb-4" />
-
-## Delimiters
-
-By default, the delimiter that cuts off the content when the user inputs data is a comma `,`. You can customize that using the `delimiters` option.
-
-```ruby
-# app/avo/resources/course_resource.rb
-class CourseResource < Avo::BaseResource
-  field :skills, as: :tags, delimiters: [',', ' ']
-end
-```
-
-<img :src="('/assets/img/fields/tags-field/delimiters.gif')" alt="Avo tags field" class="border mb-4" />
-
-Valid values are comma `,` and space ` `.
-
-## Close on select
-
-If you have `suggestions` enabled, the dropdown with the options will keep open after the user selects an option. You can choose to close it after a selection using `close_on_select`.
-
-```ruby
-# app/avo/resources/post_resource.rb
-class PostResource < Avo::BaseResource
-  field :items, as: :tags, suggestions: -> { Post.tags_suggestions }, close_on_select: true
-end
-
+```ruby{5-21}
 # app/models/post.rb
 class Post < ApplicationRecord
   def self.tags_suggestions
+    # Example of an array of more advanced objects
     [
       {
         value: 1,
@@ -110,7 +71,102 @@ class Post < ApplicationRecord
 end
 ```
 
+:::
+
+:::option `dissallowed`
+The `disallowed` param works similarly to `suggestions`. Use it to prevent the user from adding specific values.
+
+```ruby{3}
+field :skills,
+  as: :tags,
+  disallowed: ["not", "that"]
+```
+
+<img :src="('/assets/img/fields/tags-field/disallowed.gif')" alt="Avo tags field" class="border mb-4" />
+
+#### Default
+
+`[]`
+
+#### Possible values
+
+An array of strings representing the value that can't be stored in the database.
+:::
+
+:::option `enforce_suggestions`
+Set whether the field should accept other values outside the suggested ones. If set to true the user won't be able to add anything else than what you posted in the `suggestions` option.
+
+```ruby{4}
+field :skills,
+  as: :tags,
+  suggestions: %w(one two three),
+  enforce_suggestions: true
+```
+
+<img :src="('/assets/img/fields/tags-field/enforce_suggestions.gif')" alt="Avo tags field" class="border mb-4" />
+
+<!--@include: ./common/default_boolean_false.md-->
+:::
+
+:::option `close_on_select`
+Set whether the `suggestions` dropdown should close after the user makes a selection.
+
+```ruby{4}
+field :items,
+  as: :tags,
+  suggestions: -> { Post.tags_suggestions },
+  close_on_select: true
+```
+
 <img :src="('/assets/img/fields/tags-field/close_on_select.gif')" alt="Avo tags field" class="border mb-4" />
+
+<!--@include: ./common/default_boolean_false.md-->
+:::
+
+:::option `acts_as_taggable_on`
+Set the field the `acts_as_taggable_on` is set.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+Any string or symbol you have configured on your corresponding model.
+:::
+
+:::option `disallowed`
+#### Default
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+:::
+
+:::option `delimiters`
+
+Set the characters that will cut off the content into tags when the user inputs the tags.
+
+```ruby{3}
+field :skills,
+  as: :tags,
+  delimiters: [",", " "]
+```
+
+<img :src="('/assets/img/fields/tags-field/delimiters.gif')" alt="Avo tags field" class="border mb-4" />
+
+#### Default
+
+`[","]`
+
+#### Possible values
+
+`[",", " "]`
+
+Valid values are comma `,` and space ` `.
+:::
 
 ## PostgreSQL array fields
 
@@ -126,28 +182,6 @@ end
 class AddSkillsToCourses < ActiveRecord::Migration[6.0]
   def change
     add_column :courses, :skills, :text, array: true, default: []
-  end
-end
-```
-
-## Array fields
-
-We haven't tested all the possibilities, but the tags field should play nicely with any array fields provided by Rails.
-
-```ruby{8-10,12-14}
-# app/avo/resources/post_resource.rb
-class PostResource < Avo::BaseResource
-  field :items, as: :tags
-end
-
-# app/models/post.rb
-class Post < ApplicationRecord
-  def items=(items)
-    puts ["items->", items].inspect
-  end
-
-  def items
-    %w(1 2 3 4)
   end
 end
 ```
@@ -178,3 +212,25 @@ end
 ```
 
 That will let Avo know which attribute should be used to fill with the user's tags.
+
+## Array fields
+
+We haven't tested all the scenarios, but the tags field should play nicely with any array fields provided by Rails.
+
+```ruby{8-10,12-14}
+# app/avo/resources/post_resource.rb
+class PostResource < Avo::BaseResource
+  field :items, as: :tags
+end
+
+# app/models/post.rb
+class Post < ApplicationRecord
+  def items=(items)
+    puts ["items->", items].inspect
+  end
+
+  def items
+    %w(1 2 3 4)
+  end
+end
+```

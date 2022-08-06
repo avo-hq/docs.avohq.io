@@ -18,8 +18,7 @@ field :birthday,
 
 ## Options
 
-:::option format
-
+:::option `format`
 Format the date shown to the user on the `Index` and `Show` views.
 
 #### Default
@@ -29,11 +28,8 @@ Format the date shown to the user on the `Index` and `Show` views.
 #### Possible values
 
 Use [`luxon`](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) formatting tokens.
-
 :::
-
-:::option picker_format
-
+:::option `picker_format`
 Format the date shown to the user on the `Edit` and `New` views.
 
 #### Default
@@ -44,4 +40,4 @@ Format the date shown to the user on the `Edit` and `New` views.
 
 Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
 :::
-<!--@include: ./date_date_time_common.md-->
+<!--@include: ./common/date_date_time_common.md-->

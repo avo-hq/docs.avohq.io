@@ -31,7 +31,7 @@ The `Badge` field is intended to be displayed only on **Index** and **Show** vie
 
 ## Options
 
-### `options`
+:::option `options`
 
 The options should be a hash with the keys one of the four available types (`info`, `success`, `warning`, `danger`) and the values matching your record's database values.
 
@@ -40,6 +40,7 @@ The options should be a hash with the keys one of the four available types (`inf
 `{ info: :info, success: :success, danger: :danger, warning: :warning }`
 
 Below is an example on how you can use two fields in that combination.
+:::
 
 ## Examples
 

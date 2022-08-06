@@ -19,7 +19,7 @@ field :is_published,
 
 ## Options
 
-### `true_value`
+:::option `true_value`
 
 What should count as true. You can use `1`, `yes`, or a different value.
 
@@ -27,11 +27,12 @@ What should count as true. You can use `1`, `yes`, or a different value.
 
 `[true, "true", "1"]`
 
-### `false_value`
+:::
+:::option `false_value`
 
 What should count as false. You can use `0`, `no`, or a different value.
 
 #### Default value
 
 `[false, "false", "0"]`
-
+:::

@@ -14,10 +14,15 @@ field :country, as: :country, display_code: true
 
 ## Options
 
-### `display_code`
+:::option `display_code`
 
 You can easily choose to display the `code` of the country on **Index** and **Show** views by declaring `display_code` to `true`.
 
 ### Default value
 
 `false`
+
+### Possible values
+
+`true`, `false`
+:::

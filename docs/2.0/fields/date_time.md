@@ -21,7 +21,7 @@ filed :joined_at,
 
 ## Options
 
-### `format`
+:::option `format`
 
 Format the date shown to the user on the `Index` and `Show` views.
 
@@ -32,9 +32,8 @@ Format the date shown to the user on the `Index` and `Show` views.
 #### Possible values
 
 Use [`luxon`](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) formatting tokens.
-
-### `picker_format`
-
+:::
+:::option `picker_format`
 Format the date shown to the user on the `Edit` and `New` views.
 
 #### Default
@@ -44,21 +43,13 @@ Format the date shown to the user on the `Edit` and `New` views.
 #### Possible values
 
 Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
-
-### `time_24hr`
-
+:::
+:::option `time_24hr`
 Displays time picker in 24 hour mode or AM/PM selection.
 
-#### Default
-
-`false`
-
-#### Possible values
-
-`true`, `false`
-
-### `timezone`
-
+<!-- @include: ./common/default_boolean_false.md -->
+:::
+:::option `timezone`
 Select in which timezone should the values be casted.
 
 #### Default
@@ -68,5 +59,5 @@ If nothing selected, the browser's timezone will be used.
 #### Possible values
 
 [TZInfo identifiers](https://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html).
-
-<!--@include: ./date_date_time_common.md-->
+:::
+<!--@include: ./common/date_date_time_common.md-->

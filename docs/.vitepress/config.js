@@ -1,7 +1,9 @@
-import fields from "./getFields"
+import {getFiles} from "./getFiles"
 import container from "markdown-it-container"
 
-function createContainer(klass, defaultTitle, md) {
+const fieldsMenuItems = getFiles('fields')
+
+function createContainer(klass, md) {
   return [
     container,
     klass,
@@ -10,10 +12,10 @@ function createContainer(klass, defaultTitle, md) {
         const token = tokens[idx]
         const info = token.info.trim().slice(klass.length).trim()
         if (token.nesting === 1) {
-          const title = md.render(`### \`${info || defaultTitle}\``)
-          return `<div class="${klass}"><p class="custom-block-title">${title}</p><div class="pl-8">\n`
+          const title = md.renderInline(info || klass)
+          return `<section class="${klass}"><h3 class="custom-block-title">${title}</h3><div class="pl-8"><p>\n`
         } else {
-          return `</div></div>\n`
+          return `</p></div></section>\n`
         }
       },
     },
@@ -28,7 +30,7 @@ const config = {
   description: "Just playing around.",
   markdown: {
     config: (md) => {
-      md.use(...createContainer("option", "option", md))
+      md.use(...createContainer("option", md))
     },
   },
   themeConfig: {
@@ -36,11 +38,10 @@ const config = {
     logo: "/logo.svg",
     nav: [
       {text: "Home", link: "/"},
-      {text: "Team", link: "/team.html"},
-      {text: "Fields", link: "/2.0/fields/index"},
-      {text: "2.0", link: "/2.0/index.html"},
+      {text: "Docs", link: "/2.0/index.html"},
       {text: "Recipes", link: "/2.0/recipes"},
       {text: "FAQ", link: "/2.0/faq"},
+      {text: "Team", link: "/team.html"},
     ],
     sidebar: {
       "/2.0/": [
@@ -61,7 +62,6 @@ const config = {
             // {text: "Fields", link: '/2.0/fields/index'},
             {text: "Field options", link: "/2.0/field-options"},
             {text: "Records reordering", link: "/2.0/records-reordering"},
-            {text: "Associations", link: "/2.0/associations"},
             {text: "Tabs and panels", link: "/2.0/tabs"},
           ],
         },
@@ -69,7 +69,19 @@ const config = {
           text: "Fields",
           collapsible: true,
           collapsed: true,
-          items: fields,
+          items: fieldsMenuItems,
+        },
+        {
+          text: "Associations",
+          collapsible: true,
+          collapsed: true,
+          items: [
+            {text: "Customization", link: "/2.0/associations"},
+            {text: 'Belongs to', link: '/2.0/associations/belongs_to.md'},
+            {text: 'Has one', link: '/2.0/associations/has_one.md'},
+            {text: 'Has many', link: '/2.0/associations/has_many.md'},
+            {text: 'Has and belongs to many', link: '/2.0/associations/has_and_belongs_to_many.md'},
+          ],
         },
         {
           text: "Dashboards and cards",

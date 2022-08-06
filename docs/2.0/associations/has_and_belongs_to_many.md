@@ -6,7 +6,7 @@ The `HasAndBelongsToMany` association works similarly to `HasMany`.
 field :users, as: :has_and_belongs_to_many
 ```
 
-<!--@include: ./show_on_edit.md-->
+<!--@include: ./common/show_on_edit_common.md-->
 
 ### Searchable `has_many`
 
@@ -37,5 +37,5 @@ class CourseLinkResource < Avo::BaseResource
 end
 ```
 
-<!--@include: ./scopes.md-->
-<!--@include: ./show_hide_buttons.md-->
+<!--@include: ./common/scopes_common.md-->
+<!--@include: ./common/show_hide_buttons_common.md-->

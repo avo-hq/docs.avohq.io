@@ -6,7 +6,7 @@ features:
     details: Easily browse your data on mobile devices.
     icon: 📱
   - title: Simplest file uploads you've ever seen
-    details: Amazingly easy, single or multi-file integration with <strong>ActiveStorage</strong>.
+    details: Amazingly easy, single or multi-file integration with ActiveStorage.
     icon: 🖇
     image: 'active-storage.png'
     url: https://docs.avohq.io/2.0/fields.html#file

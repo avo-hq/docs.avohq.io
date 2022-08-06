@@ -7,7 +7,7 @@ license: community
 
 You may have a field in the database that has the URL to an image and you want to display that in Avo. This is where the `ExternalImage` field comes in to help.
 
-It will take the value and insert it into an `image_tag`.
+It will take that value, insert it into an `image_tag`, and display it on the `Index` and `Show` views.
 
 ```ruby
 field :logo, as: :external_image
@@ -15,7 +15,7 @@ field :logo, as: :external_image
 
 ## Options
 
-### `width`
+:::option `width`
 
 #### Default value
 
@@ -24,10 +24,9 @@ field :logo, as: :external_image
 #### Possible values
 
 Use any number to size the image.
+:::
 
----
-### `height`
-
+:::option `height`
 #### Default value
 
 `40`
@@ -35,19 +34,40 @@ Use any number to size the image.
 #### Possible values
 
 Use any number to size the image.
+:::
 
----
+:::option `radius`
+#### Default value
 
-### `radius`
+`0`
 
-It takes three options `:width`, `:height` and `:radius` that get used to show the image on the **Index** view.
+#### Possible values
 
-You may also pass in a computed value or pass it as the grid `:cover` position.
+Use any number to set the radius value.
+:::
+
+<!--@include: ./common/link_to_resource_common.md-->
+
+## Use computed values
+
+Another common scenario is to use a value from your database and create a new URL using a computed value.
+
+```ruby
+field :logo, as: :external_image do |model|
+  "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+rescue
+  nil
+end
+```
+
+## Use in the Grid `cover` position
+
+Another common place you could use it is in the grid `:cover` position.
 
 ```ruby
 cover :logo, as: :external_image, link_to_resource: true do |model|
-  if model.url.present?
-    "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
-  end
+  "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+rescue
+  nil
 end
 ```

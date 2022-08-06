@@ -2,22 +2,22 @@
 
 These guides have been submitted by our community members.
 
-[REST API integration](recipes/rest-api-integration)
+## [REST API integration](recipes/rest-api-integration)
 
-[Add custom link field](recipes/custom-link-field)
+## [Add custom link field](recipes/custom-link-field)
 
-[Multilingual content](recipes/multilingual-content)
+## [Multilingual content](recipes/multilingual-content)
 
-[Use in an API only Rails app](recipes/api-only-app)
+## [Use in an API only Rails app](recipes/api-only-app)
 
-[Pretty JSON objects to the code field](recipes/format-ruby-object-to-json)
+## [Pretty JSON objects to the code field](recipes/format-ruby-object-to-json)
 
-[Use route level multitenancy](recipes/multitenancy)
+## [Use route level multitenancy](recipes/multitenancy)
 
-[Manage information-heavy resources](recipes/manage-information-heavy-resources)
+## [Manage information-heavy resources](recipes/manage-information-heavy-resources)
 
-[Ruby-on-Rails and Avo Tutorial](https://www.bootrails.com/blog/rails-avohq-tutorial) from [bootrails.com](https://www.bootrails.com).
+## [Ruby-on-Rails and Avo Tutorial](https://www.bootrails.com/blog/rails-avohq-tutorial) from [bootrails.com](https://www.bootrails.com).
 
-[Add nested fields to CRUD forms](recipes/add-nested-fields-to-forms)
+## [Add nested fields to CRUD forms](recipes/add-nested-fields-to-forms)
 
-[Add count to menu items](recipes/add-count-to-menu-items)
+## [Add count to menu items](recipes/add-count-to-menu-items)

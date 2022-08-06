@@ -5,16 +5,61 @@ license: community
 
 # Trix
 
+```ruby
+field :body, as: :trix
+```
+
+The `Trix` field renders a [WYSIWYG Editor](https://trix-editor.org/) and can be associated to a `string` or `text` column in the database. The value stored in the database will be the resulting `HTML` content from the editor.
+
+
 <img :src="('/assets/img/fields/trix.jpg')" alt="Trix field" class="border mb-4" />
 
-The `Trix` field renders a [WYSIWYG Trix Editor](https://trix-editor.org/) and is associated to a `string` or `text` column in the database.
-`Trix` field converts text within the editor in HTML and stores it back to database.
+Trix field is hidden from the `Index` view.
 
-Trix field is hidden from **Index** view. By default, the Trix field is not directly visible to the user on the **Show** view, instead being hidden under a **Show Content** link, that triggers the visibility of the content. You can set Trix to always display the content by setting `always_show` to `true`.
+## Options
 
-```ruby
-field :body, as: :trix, always_show: true
-```
+:::option `always_show`
+By default, the content of the `Trix` field is not visible on the `Show` view, instead it's hidden under a `Show Content` link, that, when clicked, displays the content. You can set Markdown to always display the content by setting `always_show` to `true`.
+
+<!--@include: ./common/default_boolean_false.md-->
+:::
+
+:::option `attchments_disabled`
+Hides the attachments button from the Trix toolbar.
+
+<!--@include: ./common/default_boolean_false.md-->
+:::
+
+:::option `hide_attachment_filename`
+Hides the name of the attachment from the upload output in the field value.
+
+<!--@include: ./common/default_boolean_false.md-->
+:::
+
+:::option `hide_attachment_filesize`
+Hides the size of the attachment from the upload output in the field value.
+
+<!--@include: ./common/default_boolean_false.md-->
+:::
+
+:::option `hide_attachment_url`
+Hides the URL of the attachment from the upload output in the field value.
+
+<!--@include: ./common/default_boolean_false.md-->
+:::
+
+:::option `attachment_key`
+Enables file attachments.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+`nil`, or a symbol representing the `has_many_attachments` key on the model.
+:::
+
 
 ## File attachments
 
