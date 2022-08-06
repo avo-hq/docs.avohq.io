@@ -23,5 +23,5 @@ If you have large files and you don't want to overload the server with uploads y
 field :cover_video, as: :file, direct_upload: true
 ```
 
-<!-- @include: ./common/default_boolean_false.md -->
+<!-- @include: ./default_boolean_false.md -->
 :::
