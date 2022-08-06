@@ -2,7 +2,7 @@
 next: ./installation
 ---
 
-# Get Started
+# Getting Started
 
 Avo is a beautiful next-generation framework that empowers developers and teams to deliver fast and in a uniform way beautiful admin panels for your Ruby on Rails apps.
 
@@ -66,11 +66,33 @@ Now that you know the basics, you can:
 
 ## Sponsors
 
-<div class="bg-white">
+<SponsorGroup title="Business Sponsors">
+  <Sponsor :blank="true" />
+  <Sponsor
+    href="https://www.equipetechnique.com?ref=avo"
+    title="Equipe Technique – 10+ years seniority in software services ready to serve"
+    src="/img/sponsors/ET-dark.jpeg"
+    alt="Equipe Technique"
+  />
+  <Sponsor :blank="true" />
+</SponsorGroup>
+
+<SponsorGroup title="Startup Sponsors">
+  <Sponsor :blank="true" />
+  <Sponsor
+    href="https://www.wyndy.com/?ref=avo"
+    title="Wyndy – Get a sitter in seconds. Post any job for free."
+    src="/img/sponsors/wyndy.png"
+    alt="Wyndy"
+  />
+  <Sponsor :blank="true" />
+</SponsorGroup>
+
+<div>
   <div class="w-full mx-auto py-12">
-    <p class="text-center text-base font-semibold uppercase text-gray-600 tracking-wider">Business Sponsors</p>
+    <p class="text-center text-base font-semibold uppercase text-gray-600 dark:text-gray-300 tracking-wider">Business Sponsors</p>
     <div class="mt-6 grid grid-cols-2 gap-0.5 md:grid-cols-3 lg:mt-8">
-      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50">
+      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
         <a href="https://github.com/sponsors/adrianthedev"
           target="_blank"
           title="Sponsor Avo"
@@ -78,7 +100,7 @@ Now that you know the basics, you can:
           <img class="max-h-12 opacity-30" src="/img/sponsors/your-logo-here.png" alt="Sponsor Avo">
         </a>
       </div>
-      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50">
+      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
         <a href="https://www.equipetechnique.com?ref=avo"
           target="_blank"
           title="Equipe Technique – 10+ years seniority in software services ready to serve"
@@ -86,7 +108,7 @@ Now that you know the basics, you can:
           <img class="max-h-12" src="/img/sponsors/ET-dark.jpeg" alt="Equipe Technique">
         </a>
       </div>
-      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50">
+      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
         <a href="https://github.com/sponsors/adrianthedev"
           target="_blank"
           title="Sponsor Avo"
@@ -98,9 +120,9 @@ Now that you know the basics, you can:
   </div>
 
   <div class="w-full mx-auto py-12">
-    <p class="text-center text-base font-semibold uppercase text-gray-600 tracking-wider">Startup Sponsors</p>
+    <p class="text-center text-base font-semibold uppercase text-gray-600 dark:text-gray-300 tracking-wider">Startup Sponsors</p>
     <div class="mt-6 grid grid-cols-2 gap-0.5 md:grid-cols-3 lg:mt-8">
-      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50">
+      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
         <a href="https://github.com/sponsors/adrianthedev"
           target="_blank"
           title="Sponsor Avo"
@@ -108,7 +130,7 @@ Now that you know the basics, you can:
           <img class="max-h-12 opacity-30" src="/img/sponsors/your-logo-here.png" alt="Sponsor Avo">
         </a>
       </div>
-      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50">
+      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
         <a href="https://www.wyndy.com/?ref=avo"
           target="_blank"
           title="Wyndy – Get a sitter in seconds. Post any job for free."
@@ -116,7 +138,7 @@ Now that you know the basics, you can:
           <img class="max-h-12" src="/img/sponsors/wyndy.png" alt="Wyndy">
         </a>
       </div>
-      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50">
+      <div class="col-span-1 flex justify-center py-8 px-8 bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
         <a href="https://github.com/sponsors/adrianthedev"
           target="_blank"
           title="Sponsor Avo"

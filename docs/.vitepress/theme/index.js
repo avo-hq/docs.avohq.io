@@ -4,8 +4,9 @@ import LicenseReq from "./components/LicenseReq.vue"
 import VersionReq from "./components/VersionReq.vue"
 import DemoVideo from "./components/DemoVideo.vue"
 import PageHeader from "./components/PageHeader.vue"
-import Alert from "./components/Alert.vue"
 import BetaStatus from "./components/BetaStatus.vue"
+import SponsorGroup from "./components/SponsorGroup.vue"
+import Sponsor from "./components/Sponsor.vue"
 import {InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/outline"
 import "./styles.css"
 import {h} from "vue"
@@ -18,7 +19,8 @@ export default {
     app.component("VersionReq", VersionReq)
     app.component("DemoVideo", DemoVideo)
     app.component("BetaStatus", BetaStatus)
-    app.component("Alert", Alert)
+    app.component("SponsorGroup", SponsorGroup)
+    app.component("Sponsor", Sponsor)
 
     app.component("BeakerIcon", BeakerIcon)
     app.component("PlayIcon", PlayIcon)
