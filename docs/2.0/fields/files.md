@@ -5,18 +5,13 @@ license: community
 
 # Files
 
-The `Files` field is similar to `File` and enables you to upload multiple files at once using [Active Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
+The `Files` field is similar to [`File`](./file) and enables you to upload multiple files at once using the same easy to use [Active Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html) implementation.
 
 ```ruby
 field :documents, as: :files
 ```
 
-## Direct upload support
+## Options
+<!--@include: ./common/file_options_common.md-->
 
-If you have large files and you don't want to overload the server with uploads you can use the `direct_upload` feature which will upload the file directly to your cloud provider.
-
-<!-- @todo: add links to avodemo page, avodemo source code, rails docs and demo video -->
-
-```ruby
-field :files, as: :files, direct_upload: true
-```
+<!--@include: ./common/file_other_common.md-->

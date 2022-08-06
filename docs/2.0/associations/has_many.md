@@ -16,7 +16,7 @@ In a similar fashion, you may detach a model using the detach button.
 
 <img :src="('/assets/img/associations/has-many-detach.jpg')" alt="Has many detach" class="border mb-4" />
 
-<!--@include: ./show_on_edit.md-->
+<!--@include: ./common/show_on_edit_common.md-->
 
 ## Has Many Through
 
@@ -38,5 +38,5 @@ You may use the [redirect helpers](./../resources#customize-what-happens-after-r
 1. User creates the record. They get redirected to the `Show`/`Edit` screen where they can see the association panels.
 1. User attaches associations.
 
-<!--@include: ./scopes.md-->
-<!--@include: ./show_hide_buttons.md-->
+<!--@include: ./common/scopes_common.md-->
+<!--@include: ./common/show_hide_buttons_common.md-->

@@ -5,16 +5,15 @@ license: community
 
 # Text
 
-The `Text` field renders a regular `text` `input`.
+The `Text` field renders a regular `<input type="text" />` element.
 
 ```ruby
 field :title, as: :text
 ```
+## Options
 
-## Display data as HTML
-
-You may want to display some information as HTML. Maybe a link to another record.
-You may use `as_html: true` attribute.
+:::option `as_html`
+Displays the value as HTML on the `Index` and `Show` views. Useful when you need to link to another record.
 
 ```ruby
 field :title, as: :text, as_html: true do |&args|
@@ -22,7 +21,35 @@ field :title, as: :text, as_html: true do |&args|
 end
 ```
 
-You may customize it with as many options as you need.
+<!--@include: ./common/default_boolean_false.md-->
+:::
+
+
+:::option `protocol`
+Render the value with a protocol prefix on `Index` and `Show` views. For example you can make a text field a `mailto` link very quickly.
+
+```ruby{3}
+field :email,
+  as: :text,
+  protocol: :mailto
+```
+
+<DemoVideo demo-video="https://www.youtube.com/watch?v=MfryUtcXqvU&t=662s" />
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+`mailto`, `tel`, or any other string value you need to pass to it.
+:::
+
+<!--@include: ./common/link_to_resource_common.md-->
+
+## Customization
+
+You may customize the `Text` field with as many options as you need.
 
 ```ruby
 field :title, # The database field ID
@@ -34,15 +61,3 @@ field :title, # The database field ID
   placeholder: 'My shiny new post', # Update the placeholder text
   format_using: -> (value) { value.truncate 3 } # Format the output
 ```
-
-## Protocol
-
-You may have fields that can be rendered better than just as text. For that Avo provides the `protocol` option that prepends what you give it to that field. For example you can make a text field a `mailto` link very quick.
-
-
-```ruby
-field :email, as: :text, protocol: :mailto
-```
-
-<DemoVideo demo-video="https://www.youtube.com/watch?v=MfryUtcXqvU&t=662s" />
-

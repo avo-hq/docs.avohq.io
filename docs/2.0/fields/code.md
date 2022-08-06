@@ -15,7 +15,7 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css'
 
 ## Options
 
-### `theme`
+:::option `theme`
 
 Customize the color theme.
 
@@ -28,10 +28,8 @@ Customize the color theme.
 `material-darker`, `eclipse`, or `dracula`
 
 Preview the themes here: [codemirror-themes](https://codemirror.net/demo/theme.html).
-
-
-### `language`
-
+:::
+:::option `language`
 Customize the syntax highlighting using the language method.
 
 #### Default value
@@ -41,3 +39,4 @@ Customize the syntax highlighting using the language method.
 #### Possible values
 
 `css`, `dockerfile`, `htmlmixed`, `javascript`, `markdown`, `nginx`, `php`, `ruby`, `sass`, `shell`, `sql`, `vue` or `xml`.
+:::

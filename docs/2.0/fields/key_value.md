@@ -7,11 +7,79 @@ license: community
 
 <img :src="('/assets/img/fields/key-value.jpg')" alt="KeyValue field" class="border mb-4" />
 
-The `KeyValue` field allows you to edit flat key-value pairs stored in `JSON` format in the database.
+The `KeyValue` field makes it easy to edit flat key-value pairs stored in `JSON` format in the database.
 
 ```ruby
 field :meta, as: :key_value
 ```
+
+## Options
+
+:::option `key_label`
+Customize the label for the key header.
+
+#### Default
+
+`I18n.translate("avo.key_value_field.key")`
+
+#### Possible values
+
+Any string value.
+:::
+
+:::option `value_label`
+Customize the label for the value header.
+
+#### Default
+
+`I18n.translate("avo.key_value_field.value")`
+
+#### Possible values
+
+Any string value.
+:::
+
+:::option `action_text`
+Customize the label for the add row button tooltip.
+
+#### Default
+
+`I18n.translate("avo.key_value_field.add_row")`
+
+#### Possible values
+
+Any string value.
+:::
+
+:::option `delete_text`
+Customize the label for the delete row button tooltip.
+
+#### Default
+
+`I18n.translate("avo.key_value_field.delete_row")`
+
+#### Possible values
+
+Any string value.
+:::
+
+:::option `disable_editing_keys`
+Toggle on/off the ability to edit the keys for that field. Turning this off will allow the user to customize only the value fields.
+
+<!--@include: ./common/default_boolean_false.md-->
+:::
+
+:::option `disable_adding_rows`
+Toggle on/off the ability to add new rows.
+
+<!--@include: ./common/default_boolean_false.md-->
+:::
+
+:::option `disable_deleting_rows`
+Toggle on/off the ability to delete rows from that field. Turning this on will prevent the user from deleting existing rows.
+
+<!--@include: ./common/default_boolean_false.md-->
+:::
 
 ## Customizing the labels
 
@@ -20,10 +88,10 @@ You can easily customize the labels displayed in the UI by mentioning custom val
 ```ruby
 field :meta, # The database field ID
   as: :key_value, # The field type.
-  key_label: 'Meta key', # Custom value for key header. Defaults to 'Key'.
-  value_label: 'Meta value', # Custom value for value header. Defaults to 'Value'.
-  action_text: 'New item', # Custom value for button to add a row. Defaults to 'Add'.
-  delete_text: 'Remove item' # Custom value for button to delete a row.. Defaults to 'Delete'.
+  key_label: "Meta key", # Custom value for key header. Defaults to 'Key'.
+  value_label: "Meta value", # Custom value for value header. Defaults to 'Value'.
+  action_text: "New item", # Custom value for button to add a row. Defaults to 'Add'.
+  delete_text: "Remove item" # Custom value for button to delete a row. Defaults to 'Delete'.
 ```
 
 ## Enforce restrictions
@@ -38,4 +106,4 @@ field :meta, # The database field ID
   disable_deleting_rows: false # Option to disable the ability to delete rows. Defaults to false.
 ```
 
-`KeyValue` is hidden on **Index** view.
+`KeyValue` is hidden on the `Index` view.

@@ -5,8 +5,27 @@ license: community
 
 # Textarea
 
-The `textarea` field renders a `textarea` element and has the `rows` option that controls how many rows it should render.
+The `textarea` field renders a `<textarea />` element.
+
+```ruby
+field :body, as: :textarea
+```
+
+## Options
+
+
+:::option `rows`
+Set the number of rows visible in the `Edit` and `New` views.
 
 ```ruby
 field :body, as: :textarea, rows: 5
 ```
+
+#### Default
+
+`5`
+
+#### Possible values
+
+Any integer.
+:::
