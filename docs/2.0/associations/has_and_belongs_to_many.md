@@ -1,11 +1,23 @@
+---
+version: '1.0'
+license: community
+---
+
 # Has And Belongs To Many
 
-The `HasAndBelongsToMany` association works similarly to `HasMany`.
+The `HasAndBelongsToMany` association works similarly to [`HasMany`](./has_many).
 
 ```ruby
 field :users, as: :has_and_belongs_to_many
 ```
 
+## Options
+<!-- @include: ./../common/associations_searchable_option_common.md-->
+<!-- @include: ./../common/associations_attach_scope_option_common.md-->
+<!-- @include: ./../common/associations_scope_option_common.md-->
+<!-- @include: ./../common/associations_description_option_common.md-->
+<!-- @include: ./../common/associations_use_resource_option_common.md-->
+<!-- @include: ./../common/associations_discreet_pagination_option_common.md-->
 <!-- @include: ./../common/show_on_edit_common.md-->
 
 ### Searchable `has_many`
@@ -18,24 +30,6 @@ field :users, as: :has_and_belongs_to_many
 
 Similar to [`belongs_to`](./belongs_to#searchable-belongs-to), the `has_many` associations support the `searchable` option.
 
-```ruby{2}
-class CourseLink < Avo::BaseResource
-  field :links, as: :has_many, searchable: true, placeholder: "Click to choose a link"
-end
-```
-
-:::warning
-  Avo uses the **search feature** behind the scenes, so **make sure the target resource has the [`search_query`](./../search) option configured**.
-:::
-
-```ruby{3-5}
-# app/avo/resources/course_link_resource.rb
-class CourseLinkResource < Avo::BaseResource
-  self.search_query = ->(params:) do
-    scope.ransack(id_eq: params[:q], link_cont: params[:q], m: "or").result(distinct: false)
-  end
-end
-```
 
 <!-- @include: ./../common/scopes_common.md-->
 <!-- @include: ./../common/show_hide_buttons_common.md-->

@@ -6,7 +6,7 @@ Please make sure you have the `upload_attachments?`, `delete_attachments?`, and 
 :::
 
 Related:
- - [Attachment pundit policies](/2.0/authorization.html#upload-attachments)
+ - [Attachment pundit policies](./../authorization.html#upload-attachments)
 
 ## Deprecated options
 
