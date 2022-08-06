@@ -21,7 +21,7 @@ field :title, as: :text, as_html: true do |&args|
 end
 ```
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 
@@ -45,7 +45,7 @@ field :email,
 `mailto`, `tel`, or any other string value you need to pass to it.
 :::
 
-<!--@include: ./common/link_to_resource_common.md-->
+<!-- @include: ./../common/link_to_resource_common.md-->
 
 ## Customization
 

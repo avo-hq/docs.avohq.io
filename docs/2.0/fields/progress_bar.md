@@ -41,7 +41,7 @@ Any number.
 :::option `display_value`
 Choose if the value is displayed on the `Edit` and `New` views above the slider.
 
-<!--@include: ./common/default_boolean_true.md-->
+<!-- @include: ./../common/default_boolean_true.md-->
 :::
 
 :::option `value_suffix`

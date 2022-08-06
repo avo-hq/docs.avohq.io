@@ -21,7 +21,7 @@ Choose whether the rendered avatar should be rounded or not on the `Index` view.
 
 On `Show`, the image is always a `square` and the size is `responsive`.
 
-<!-- @include: ./common/default_boolean_true.md -->
+<!-- @include: ./../common/default_boolean_true.md -->
 :::
 
 :::option `size`
@@ -48,7 +48,7 @@ Set the default image if the email address was not found in Gravatar's database.
 Any number in pixels. Keep in mind that the size will influence the `Index` table row height.
 :::
 
-<!--@include: ./common/link_to_resource_common.md-->
+<!-- @include: ./../common/link_to_resource_common.md-->
 
 ## Using computed values
 

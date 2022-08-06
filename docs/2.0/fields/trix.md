@@ -21,31 +21,31 @@ Trix field is hidden from the `Index` view.
 :::option `always_show`
 By default, the content of the `Trix` field is not visible on the `Show` view, instead it's hidden under a `Show Content` link, that, when clicked, displays the content. You can set Markdown to always display the content by setting `always_show` to `true`.
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `attchments_disabled`
 Hides the attachments button from the Trix toolbar.
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `hide_attachment_filename`
 Hides the name of the attachment from the upload output in the field value.
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `hide_attachment_filesize`
 Hides the size of the attachment from the upload output in the field value.
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `hide_attachment_url`
 Hides the URL of the attachment from the upload output in the field value.
 
-<!--@include: ./common/default_boolean_false.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `attachment_key`

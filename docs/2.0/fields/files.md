@@ -12,6 +12,6 @@ field :documents, as: :files
 ```
 
 ## Options
-<!--@include: ./common/file_options_common.md-->
+<!-- @include: ./../common/file_options_common.md-->
 
-<!--@include: ./common/file_other_common.md-->
+<!-- @include: ./../common/file_other_common.md-->

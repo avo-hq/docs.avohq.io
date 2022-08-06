@@ -15,7 +15,7 @@ field :avatar, as: :file, is_image: true
 
 ## Options
 
-<!--@include: ./common/file_options_common.md-->
-<!--@include: ./common/link_to_resource_common.md-->
+<!-- @include: ./../common/file_options_common.md-->
+<!-- @include: ./../common/link_to_resource_common.md-->
 
-<!--@include: ./common/file_other_common.md-->
+<!-- @include: ./../common/file_other_common.md-->

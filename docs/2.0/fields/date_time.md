@@ -47,7 +47,7 @@ Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
 :::option `time_24hr`
 Displays time picker in 24 hour mode or AM/PM selection.
 
-<!-- @include: ./common/default_boolean_false.md -->
+<!-- @include: ./../common/default_boolean_false.md -->
 :::
 :::option `timezone`
 Select in which timezone should the values be casted.
@@ -60,4 +60,4 @@ If nothing selected, the browser's timezone will be used.
 
 [TZInfo identifiers](https://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html).
 :::
-<!--@include: ./common/date_date_time_common.md-->
+<!-- @include: ./../common/date_date_time_common.md-->

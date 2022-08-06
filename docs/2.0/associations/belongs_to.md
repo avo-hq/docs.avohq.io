@@ -1,3 +1,8 @@
+---
+version: '1.0'
+license: community
+---
+
 # Belongs to
 
 ```ruby
@@ -6,15 +11,34 @@ field :user, as: :belongs_to
 
 You will see three field types when you add a `BelongsTo` association to a model.
 
-On the **Index** view, you'll see a column with the [`@title`](./../resources.html#setting-the-title-of-the-resource) value of the associated model.
+
+        @searchable = args[:searchable] == true
+        @polymorphic_as = args[:polymorphic_as]
+        @types = args[:types]
+        @relation_method = id.to_s.parameterize.underscore
+        @allow_via_detaching = args[:allow_via_detaching] == true
+        @attach_scope = args[:attach_scope]
+        @polymorphic_help = args[:polymorphic_help]
+
+## Options
+
+
+:::option `searchable`
+<LicenseReq license="pro" />
+
+
+<!-- @include: ./../common/default_boolean_false.md-->
+:::
+
+On the `Index` view, you'll see a column with the [`@title`](./../resources.html#setting-the-title-of-the-resource) value of the associated model.
 
 <img :src="('/assets/img/associations/belongs-to-index.jpg')" alt="Belongs to index" class="border mb-4" />
 
-On the **Show** view, you'll see a link to the associated model.
+On the `Show` view, you'll see a link to the associated model.
 
 <img :src="('/assets/img/associations/belongs-to-show.jpg')" alt="Belongs to show" class="border mb-4" />
 
-You'll see a dropdown element with the available records on the **Edit** and **Create** views. Here you may change the associated model.
+You'll see a dropdown element with the available records on the `Edit` and `New` views. Here you may change the associated model.
 
 <img :src="('/assets/img/associations/belongs-to-edit.jpg')" alt="Belongs to edit" class="border mb-4" />
 
@@ -69,24 +93,6 @@ end
 
 ## Searchable `belongs_to`
 
-**Requires V 1.21 +**
-
-&nbsp;
-
-<div class="rounded-md bg-blue-50 p-4">
-  <div class="flex">
-    <div class="flex-shrink-0">
-      <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-      </svg>
-    </div>
-    <div class="ml-3 flex-1 md:flex md:justify-between">
-      <div class="text-sm leading-5 text-blue-700">
-        Searchable associations are available as a <a href="https://avohq.io/purchase/pro" target="_blank" class="underline">pro</a> feature
-      </div>
-    </div>
-  </div>
-</div>
 
 There might be the case that you have a lot of records for the parent resource, and a simple dropdown won't cut it. This is where you can use the `searchable` option to get a better search experience for that resource.
 
