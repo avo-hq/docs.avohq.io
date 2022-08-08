@@ -10,15 +10,15 @@ For example, you might want to mark a user as active/inactive and optionally sen
 
 Once you attach an action to a resource using the `action` method, it will appear in the **Actions** dropdown. By default, actions appear on the `Index`, `Show`, and `Edit` views. Versions previous to 2.9 would only display the actions on the `Index` and `Show` views.
 
-<img :src="('/assets/img/actions/actions-dropdown.jpg')" alt="Actions dropdown" class="border mb-4" />
+![Actions dropdown](/assets/img/actions/actions-dropdown.gif)
 
 ## Overview
 
 You generate one running `bin/rails generate avo:action toggle_active`, creating an action configuration file.
 
 ```ruby
-class ToggleActive < Avo::BaseAction
-  self.name = 'Toggle active'
+class ToggleInactive < Avo::BaseAction
+  self.name = 'Toggle inactive'
 
   field :notify_user, as: :boolean, default: true
   field :message, as: :text, default: 'Your account has been marked as inactive.'
@@ -49,7 +49,7 @@ field :notify_user, as: :boolean
 field :message, as: :textarea, default: 'Your account has been marked as inactive.'
 ```
 
-<img :src="('/assets/img/actions.jpg')" alt="Avo actions" class="border mb-4" />
+![Actions](/assets/img/actions/action-fields.jpg)
 
 The `handle` method is where the magic happens. That is where you put your action logic. In this method, you will have access to the selected `models` (if there's only one, it will be automatically wrapped in an array) and the values passed to the `fields`.
 
@@ -97,25 +97,6 @@ The default response is to reload the page and show the _Action ran successfully
 ### Message responses
 
 You will have four message response methods at your disposal `succeed`, `fail`, `warn`, and `inform`. These will render the user green, red, orange, and blue alerts.
-
-```ruby{6,10}
-def handle(**args)
-  models = args[:models]
-
-  models.each do |model|
-    if model.admin?
-      fail "Can't mark inactive! The user is an admin."
-    else
-      model.update active: false
-
-      succeed "Done! User marked as inactive!"
-    end
-  end
-end
-```
-
-<img :src="('/assets/img/actions/actions-succeed-message.jpg')" alt="Avo succeed message" class="border inline-block mr-2" />
-<img :src="('/assets/img/actions/actions-fail-message.jpg')" alt="Avo fail message" class="border inline-block" />
 
 ```ruby{4-7}
 def handle(**args)
