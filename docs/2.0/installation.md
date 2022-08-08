@@ -9,6 +9,7 @@ prev: /2.0/
 
 - Ruby on Rails >= 6.0
 - Ruby >= 2.7
+- `api_only` set to `false`. More [here](./recipes/api-only-app).
 
 ## Installing Avo
 

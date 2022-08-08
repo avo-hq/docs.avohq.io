@@ -1,11 +1,14 @@
 # Resource options
 
-Avo effortlessly empowers you to build an entire customer-facing interface for your Ruby on Rails application.
-One of the most powerful features is how easy you can administer your database records.
+Avo effortlessly empowers you to build an entire customer-facing interface for your Ruby on Rails application. One of the most powerful features is how easy you can administer your database records using the CRUD UI.
 
-Similar to how you configure your database layer using Rails models, Avo uses `Resource` files. Each resource maps out one of your models. There can be multiple resources associated to the same model.
+## Overview
 
-All resources are located in the `app/avo/resources` directory. Unfortunately, resources can't be namespaced yet, so they all need to be in the root level of that directory.
+Similar to how you configure your database layer using Rails  `Model` files and their DSL, Avo's CRUD UI is configured using `Resource` files.
+
+Each `Resource` maps out one of your models. There can be multiple `Resource`s associated to the same model if you need that.
+
+All resources are located in the `app/avo/resources` directory. Unfortunately, `Resource`s can't be namespaced yet, so they all need to be in the root level of that directory.
 
 ## Defining Resources
 
@@ -29,9 +32,12 @@ class PostResource < Avo::BaseResource
 end
 ```
 
-From this config, Avo will infer that the resource's model will be the `Post` model.
+From this config, Avo will infer a few things like the resource's model will be the `Post` model and the name of the resource si `Post`. But all of those inferred things are actually overridable.
 
-You can add more fields to this resource below the `id` field.
+### Fields
+
+`Resource` files tell Avo what models should be displayed in the UI, but not what kinds of data they hold. You do that using fields.
+One can add more fields to this resource below the `id` field using the `field DATABASE_COLUMN, as: FIELD_TYPE, **FIELD_OPTIONS` signature.
 
 ```ruby{5-15}
 class PostResource < Avo::BaseResource
@@ -134,11 +140,11 @@ end
 
 ## Views
 
-Each resource will be available in four views;
+Avo generates the admin panel with four main views.
 
 #### Index
 
-**Index** is where you see all your resources listed in a table or a [grid](grid-view.md)
+**Index** is where you see all your resources listed in a table or a [grid](grid-view.md).
 
 #### Show
 
