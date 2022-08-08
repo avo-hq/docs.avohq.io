@@ -1,8 +1,8 @@
+::::option `searchable`
 
-:::option `searchable`
 <div class="space-x-2">
-<LicenseReq license="pro" />
-<DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
+  <LicenseReq license="pro" />
+  <DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
 </div>
 
 Turns the attach field/modal from a `select` input to a searchable experience
@@ -28,5 +28,11 @@ class CourseLinkResource < Avo::BaseResource
 end
 ```
 
-<!-- @include: ./../common/default_boolean_false.md-->
-:::
+#### Default
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+::::
