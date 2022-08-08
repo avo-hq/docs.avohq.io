@@ -62,9 +62,8 @@ const config = {
       {text: "FAQ", link: "/2.0/faq"},
       {text: "Team", link: "/team.html"},
       {text: "Version", items: [
-        {text: "2.12", link: "/2.0/index.html"},
-        {text: "2.0", link: "/1.0/index.html"},
-        {text: "1.0", link: "/1.0/index.html"},
+        {text: "2.0", link: "/2.0/index.html"},
+        {text: "1.0", link: "https://v1-docs.avohq.io/1.0/"},
       ]},
     ],
     sidebar: {
