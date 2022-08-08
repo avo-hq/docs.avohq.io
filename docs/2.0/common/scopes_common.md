@@ -2,7 +2,7 @@
 
 <DemoVideo demo-video="https://youtu.be/3ee9iq2CnzA" />
 
-When displaying `has_many` associations, you might want to scope out some associated records. For example a user might have multiple comments, but on the user's `Show` page you don't want to display all the comments, but only the ones that have been approved beforehand.
+When displaying `has_many` associations, you might want to scope out some associated records. For example, a user might have multiple comments, but on the user's `Show` page, you don't want to display all the comments, but only the approved ones.
 
 ```ruby{5,16,22}
 # app/models/comment.rb

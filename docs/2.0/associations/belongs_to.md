@@ -33,11 +33,11 @@ Sets the field as polymorphic with the key set on the model.
 
 #### Possible values
 
-A symbol used on the `belongs_to` association with `polymorphic: true`.
+A symbol, used on the `belongs_to` association with `polymorphic: true`.
 :::
 
 :::option `types`
-Sets the types the field can be morph to.
+Sets the types the field can morph to.
 
 #### Default
 
@@ -57,7 +57,7 @@ Sets the field as polymorphic with the key set on the model.
 
 #### Possible values
 
-A symbol used on the `belongs_to` association with `polymorphic: true`.
+A symbol, used on the `belongs_to` association with `polymorphic: true`.
 :::
 
 :::option `polymorphic_help`
@@ -81,7 +81,7 @@ On the `Index` and `Show` views, Avo will generate a link to the associated reco
 
 <img :src="('/assets/img/associations/belongs-to-show.jpg')" alt="Belongs to show" class="border mb-4" />
 
-On the `Edit` and `New` views Avo will generate a dropdown element with the available records where the user can change the associated model.
+On the `Edit` and `New` views, Avo will generate a dropdown element with the available records where the user can change the associated model.
 
 <img :src="('/assets/img/associations/belongs-to-edit.jpg')" alt="Belongs to edit" class="border mb-4" />
 

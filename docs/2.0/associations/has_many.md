@@ -5,7 +5,7 @@ license: community
 
 # Has Many
 
-The `HasMany` field is visible, by default, only on the `Show` view. You will see a new panel with the model's associated records below the regular fields panel.
+By default, the `HasMany` field is visible only on the `Show` view. You will see a new panel with the model's associated records below the regular fields panel.
 
 ```ruby
 field :projects, as: :has_many

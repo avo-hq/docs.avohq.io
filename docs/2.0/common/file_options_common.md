@@ -1,5 +1,5 @@
 :::option `accept`
-You can tell the browser to accept only a certain type of files for that input using the `accept` option.
+Instructs the input to accept only a particular file type for that input using the `accept` option.
 
 ```ruby
 field :cover_video, as: :file, accept: "image/*"
@@ -17,7 +17,7 @@ field :cover_video, as: :file, accept: "image/*"
 :::option `direct_upload`
 <LicenseReq license="pro" />
 
-If you have large files and you don't want to overload the server with uploads you can use the `direct_upload` feature which will upload the file directly to your cloud provider.
+If you have large files and don't want to overload the server with uploads, you can use the `direct_upload` feature, which will upload the file directly to your cloud provider.
 
 ```ruby
 field :cover_video, as: :file, direct_upload: true
