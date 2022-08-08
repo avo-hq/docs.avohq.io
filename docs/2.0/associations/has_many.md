@@ -10,14 +10,6 @@ The `HasMany` field is visible, by default, only on the `Show` view. You will se
 ```ruby
 field :projects, as: :has_many
 ```
-@scope = args[:scope].present? ? args[:scope] : nil
-@attach_scope = args[:attach_scope].present? ? args[:attach_scope] : nil
-@display = args[:display].present? ? args[:display] : :show
-@searchable = args[:searchable] == true
-@description = args[:description]
-
-@use_resource = args[:use_resource] || nil
-@discreet_pagination = args[:discreet_pagination] || false
 
 ## Options
 <!-- @include: ./../common/associations_searchable_option_common.md-->
