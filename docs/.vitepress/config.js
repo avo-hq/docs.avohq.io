@@ -73,11 +73,17 @@ const config = {
           text: "Getting started",
           items: [
             {text: "Intro", link: "/2.0/index.html"},
+            {text: "Avo, Rails & Hotwire", link: "/2.0/rails-and-hotwire.html"},
+            {text: "Licensing", link: "/2.0/licensing"},
+            {text: "Upgrade guide", link: "/2.0/upgrade"},
+          ],
+        },
+        {
+          text: "Configuration",
+          items: [
             {text: "Installation", link: "/2.0/installation"},
             {text: "Authentication", link: "/2.0/authentication"},
             {text: "Authorization", link: "/2.0/authorization"},
-            {text: "Licensing", link: "/2.0/licensing"},
-            {text: "Upgrade guide", link: "/2.0/upgrade"},
           ],
         },
         {
