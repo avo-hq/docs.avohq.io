@@ -1,5 +1,5 @@
 ---
-version: '2.0'
+version: '1.0'
 license: community
 ---
 
@@ -13,7 +13,7 @@ heading "User details"
 
 The `Heading` field displays a header that acts as a separation layer between different sections.
 
-`Heading` is not assigned to any column in the database and only visible on the `Show`, `Edit` and `Create` views.
+`Heading` is not assigned to any column in the database and is only visible on the `Show`, `Edit` and `Create` views.
 
 ## Options
 

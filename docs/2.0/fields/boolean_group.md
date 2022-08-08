@@ -1,5 +1,5 @@
 ---
-version: '2.0'
+version: '1.0'
 license: community
 ---
 
@@ -9,7 +9,7 @@ license: community
 
 The `BooleanGroup` is used to update a `Hash` with `string` keys and `boolean` values in the database.
 
-It's useful when you want have something like a roles hash in your database.
+It's useful when you have something like a roles hash in your database.
 
 ```ruby
 field :roles, as: :boolean_group, name: 'User roles', options: { admin: 'Administrator', manager: 'Manager', writer: 'Writer' }
@@ -18,7 +18,7 @@ field :roles, as: :boolean_group, name: 'User roles', options: { admin: 'Adminis
 ## Options
 
 :::option `options`
-`options` should be a `Hash` with the keys one of the four available types (`info`, `success`, `warning`, `danger`) and the values matching your record's database values.
+`options` should be a `Hash` with the keys to one of the four available types (`info`, `success`, `warning`, `danger`) and the values matching your record's database values.
 
 #### Default value
 
