@@ -1,18 +1,18 @@
 # Licensing
 
-Avo has two types of licenses. The **Community edition** which is free to use and works best for personal, hobby, and small commercial projects, and **Pro edition** for whenyou need more advanced features.
+Avo has two types of licenses. The **Community edition**is free to use and works best for personal, hobby, and small commercial projects, and the **Pro edition** for when you need more advanced features.
 
 ## Community vs. Pro
 
 The **Community version** has powerful features that you can use today like [Resource management](./resources.html), most [feature-rich](./field-options.html) [fields](./fields.html), out-of-the box [sorting](./field-options.html#sortable-fields), [filtering](./filters.html) and [actions](./actions.html) and all the [associations](./associations.html) you need.
 
-The **Pro version** has [advanced authorization](./authorization.html) using Pundit, [localization support](./localization.html), [Custom tools](./custom-tools.html), [Custom fields](./custom-tools.html) and much [more](https://avohq.io/pricing). [More](https://avohq.io/roadmap) features are coming soon like Settings screens and Themes.
+The **Pro version** has [advanced authorization](./authorization.html) using Pundit, [localization support](./localization.html), [Custom tools](./custom-tools.html), [Custom fields](./custom-tools.html) and much [more](https://avohq.io/pricing). [More](https://avohq.io/roadmap) features like Settings screens and Themes are coming soon.
 
-The features are separated by their level of complexity and maintenance needs. By selling Avo Pro edition as a paid upgrade allows us to fund this business and work on it full-time. That way, Avo becomes better over time helping developers with more features and customization options.
+The features are separated by their level of complexity and maintenance needs. Selling the Avo Pro edition as a paid upgrade allows us to fund this business and work on it full-time. That way, Avo improves over time, helping developers with more features and customization options.
 
 ## One license per site
 
-Each license can be used to run one application in one production environment on one URL. When an app is on the `production` environment we only need to check that the license key and URL match the purchased license you're using for that app.
+Each license can be used to run one application in one production environment on one URL. So when an app is in the `production` environment, we only need to check that the license key and URL match the purchased license you're using for that app.
 
 ### More installations/environments per site
 
@@ -24,7 +24,7 @@ You can see your license keys on your [licenses](https://avohq.io/licenses) page
 
 ## Add the license key
 
-After you purchase an Avo license, add it to your `config/initializers/avo.rb` file on the `license_key`, along with changing the license type from `community` to `pro`.
+After you purchase an Avo license, add it to your `config/initializers/avo.rb` file on the `license_key`, and change the license type from `community` to `pro`.
 
 ```ruby{3-4}
 # config/initializers/avo.rb

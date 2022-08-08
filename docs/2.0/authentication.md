@@ -22,7 +22,7 @@ end
 
 ### Use a different authenticator
 
-If you're using another authentication provider, you may customize the `current_user` method to something else.
+Using another authentication provider, you may customize the `current_user` method to something else.
 
 ```ruby
 # config/initializers/avo.rb
