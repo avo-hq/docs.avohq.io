@@ -5,7 +5,7 @@ license: community
 
 # Has One
 
-The `HasOne` association shows the unfolded view of your `has_one` association. It's like peaking on the `Show` view of that associated record. The user also has access the `Attach` and `Detach` buttons.
+The `HasOne` association shows the unfolded view of your `has_one` association. It's like peaking on the `Show` view of that associated record. The user can also access the `Attach` and `Detach` buttons.
 
 ```ruby
 field :admin, as: :has_one

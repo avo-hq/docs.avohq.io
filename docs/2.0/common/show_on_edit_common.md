@@ -10,5 +10,5 @@ You may use the [redirect helpers](./../resources#customize-what-happens-after-r
 
 1. User is on the `New` view. They can't see the association panels yet.
 1. User creates the record.
-1. They get redirected to the `Show`/`Edit` view where they can see the association panels.
+1. They get redirected to the `Show`/`Edit` view, where they can see the association panels.
 1. User attaches associations.

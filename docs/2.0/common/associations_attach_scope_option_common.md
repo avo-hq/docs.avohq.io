@@ -1,5 +1,5 @@
 :::option `attach_scope`
-Scope out the records the user sees on the attach modal.
+Scope out the records the user sees on the Attach modal.
 
 #### Default
 
