@@ -72,7 +72,9 @@ Avo pings the [HQ](https://avohq.io) (the license validation service) with some 
 ```
 
 That information helps us to identify your license and return a license valid/invalid response to Avo.
-The requests are made at boot time and every hour when you use Avo.
+The requests are made at boot time and every hour when you use Avo on any license type.
+
+If you need a special build without the license validation mechanism please [get in touch](mailto:adrian@avohq.io).
 
 
 ## Upgrade your 1.0 license to 2.0
