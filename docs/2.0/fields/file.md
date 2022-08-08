@@ -1,5 +1,5 @@
 ---
-version: '2.0'
+version: '1.0'
 license: community
 ---
 
@@ -7,7 +7,7 @@ license: community
 
 The `File` field is the fastest way to implement file uploads in a Ruby on Rails app using [Active Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
 
-Avo will use your application's Active Storage settings with any of the supported [disk services](https://edgeguides.rubyonrails.org/active_storage_overview.html#disk-service).
+Avo will use your application's Active Storage settings with any supported [disk services](https://edgeguides.rubyonrails.org/active_storage_overview.html#disk-service).
 
 ```ruby
 field :avatar, as: :file, is_image: true

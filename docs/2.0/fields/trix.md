@@ -1,5 +1,5 @@
 ---
-version: '2.0'
+version: '1.0'
 license: community
 ---
 
@@ -9,7 +9,7 @@ license: community
 field :body, as: :trix
 ```
 
-The `Trix` field renders a [WYSIWYG Editor](https://trix-editor.org/) and can be associated to a `string` or `text` column in the database. The value stored in the database will be the resulting `HTML` content from the editor.
+The `Trix` field renders a [WYSIWYG Editor](https://trix-editor.org/) and can be associated with a `string` or `text` column in the database. The value stored in the database will be the editor's resulting `HTML` content.
 
 
 <img :src="('/assets/img/fields/trix.jpg')" alt="Trix field" class="border mb-4" />
@@ -19,7 +19,7 @@ Trix field is hidden from the `Index` view.
 ## Options
 
 :::option `always_show`
-By default, the content of the `Trix` field is not visible on the `Show` view, instead it's hidden under a `Show Content` link, that, when clicked, displays the content. You can set Markdown to always display the content by setting `always_show` to `true`.
+By default, the content of the `Trix` field is not visible on the `Show` view; instead, it's hidden under a `Show Content` link that, when clicked, displays the content. You can set Markdown to display the content by setting `always_show` to `true`.
 
 <!-- @include: ./../common/default_boolean_false.md-->
 :::
@@ -31,19 +31,19 @@ Hides the attachments button from the Trix toolbar.
 :::
 
 :::option `hide_attachment_filename`
-Hides the name of the attachment from the upload output in the field value.
+Hides the attachment's name from the upload output in the field value.
 
 <!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `hide_attachment_filesize`
-Hides the size of the attachment from the upload output in the field value.
+Hides the attachment size from the upload output in the field value.
 
 <!-- @include: ./../common/default_boolean_false.md-->
 :::
 
 :::option `hide_attachment_url`
-Hides the URL of the attachment from the upload output in the field value.
+Hides the attachment URL from the upload output in the field value.
 
 <!-- @include: ./../common/default_boolean_false.md-->
 :::
@@ -63,13 +63,13 @@ Enables file attachments.
 
 ## File attachments
 
-Trix supports drag-and-drop file attachments. To enable **Active Storage** integration, you have to add the `attachment_key` option to your Trix field.
+Trix supports drag-and-drop file attachments. To enable **Active Storage** integration, you must add the `attachment_key` option to your Trix field.
 
 ```ruby
 field :body, as: :trix, attachment_key: :trix_attachments
 ```
 
-That `attachment_key` has to have the same name as on the model.
+That `attachment_key` has to have the same name as the model.
 
 ```ruby{2}
 class Post < ApplicationRecord
@@ -89,4 +89,4 @@ field :body, as: :trix, attachments_disabled: true
 
 ## Remove attachment attributes
 
-When adding an attachment, by default, Trix will add some meta-data in the editor (filename, filesize, and url). You might not need those to be present in the document. You can hide them using `hide_attachment_filename`, `hide_attachment_filesize`, and `hide_attachment_url`.
+By default, Trix will add some meta-data in the editor (filename, filesize, and URL) when adding an attachment. You might not need those to be present in the document. You can hide them using `hide_attachment_filename`, `hide_attachment_filesize`, and `hide_attachment_url`.

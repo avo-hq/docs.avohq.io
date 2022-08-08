@@ -1,11 +1,11 @@
 ---
-version: '2.0'
+version: '1.0'
 license: community
 ---
 
 # Country
 
-`Country` field generates a [Select](#select) field on **Edit** view that includes all [ISO 3166-1](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) countries. The value stored in the database is going to be the country code, and the value displayed in Avo is going to be the name of the country.
+`Country` field generates a [Select](#select) field on **Edit** view that includes all [ISO 3166-1](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) countries. The value stored in the database will be the country code, and the value displayed in Avo will be the name of the country.
 
 
 ```ruby

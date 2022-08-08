@@ -1,5 +1,5 @@
 ---
-version: '2.0'
+version: '1.0'
 license: community
 ---
 
@@ -26,7 +26,7 @@ end
 
 
 :::option `protocol`
-Render the value with a protocol prefix on `Index` and `Show` views. For example you can make a text field a `mailto` link very quickly.
+Render the value with a protocol prefix on the `Index` and `Show` views. So, for example, you can make a text field a `mailto` link very quickly.
 
 ```ruby{3}
 field :email,

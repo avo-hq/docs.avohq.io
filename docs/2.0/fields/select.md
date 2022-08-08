@@ -1,5 +1,5 @@
 ---
-version: '2.0'
+version: '1.0'
 license: community
 ---
 
@@ -14,9 +14,9 @@ field :type, as: :select, options: { 'Large container': :large, 'Medium containe
 ## Options
 
 :::option `options`
-A `Hash` representing the options that should be displayed in the select. The keys represent the labels and the values represent the value stored in the database.
+A `Hash` representing the options that should be displayed in the select. The keys represent the labels, and the values represent the value stored in the database.
 
-The options get casted as `ActiveSupport::HashWithIndifferentAccess` objects if they are a `Hash`.
+The options get cast as `ActiveSupport::HashWithIndifferentAccess` objects if they are a `Hash`.
 
 #### Default
 
@@ -28,7 +28,7 @@ The options get casted as `ActiveSupport::HashWithIndifferentAccess` objects if 
 :::
 
 :::option `enum`
-Set the select options to be an Active Record [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html). You use `options` or `enum`, cand can't use them both on the same field.
+Set the select options as an Active Record [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html). You may use `options` or `enum`, not both.
 
 ```ruby{3,10}
 # app/models/project.rb
@@ -73,13 +73,13 @@ end
 :::option `include_blank`
 ## Include blank
 
-The `Select` field also has the `include_blank` option. This can have three values.
+The `Select` field also has the `include_blank` option. That can have three values.
 
-If it's set to `false` (default) it will not show any blank option, but only the options you configured.
+If it's set to `false` (default), it will not show any blank option but only the options you configured.
 
 If it's set to `true` and you have a `placeholder` value assigned, it will use that placeholder string as the first option.
 
-If it's a string `include_blank: "No country"`, the `No country` string will appear as the first option in the `<select>` and it will set the value empty or `nil` depending on your settings.
+If it's a string `include_blank: "No country"`, the `No country` string will appear as the first option in the `<select>` and will set the value empty or `nil` depending on your settings.
 
 ```ruby{5}
 # app/avo/resources/project_resource.rb
@@ -101,7 +101,7 @@ end
 
 ## Computed options
 
-You may want to compute the values on the fly for your `Select` field. You can use a lambda for thatwhere you have access to the `model`, `resource`, `view`, and `field` properties where you can pull data off.
+You may want to compute the values on the fly for your `Select` field. You can use a lambda for that where you have access to the `model`, `resource`, `view`, and `field` properties where you can pull data off.
 
 ```ruby{5-7}
 # app/avo/resources/project_resource.rb

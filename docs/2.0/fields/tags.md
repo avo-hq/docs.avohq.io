@@ -5,7 +5,7 @@ version: '2.6.0'
 
 # Tags field
 
-Adding a list of things to a record is something we need to do pretty frequently, that's why having the `tags` field is really useful.
+Adding a list of things to a record is something we need to do pretty frequently; that's why having the `tags` field is helpful.
 
 ```ruby
 field :skills, as: :tags
@@ -43,7 +43,7 @@ end
 
 The `suggestions` option can be an array of strings, an object with the keys `value`, `label`, and (optionally) `avatar`, or a lambda that returns an array of that type of object.
 
-The lambda is run inside a [`RecordHost`](./../evaluation-hosts.html#recordhost), so it has access to the `record` alongs other things (check the link).
+The lambda is run inside a [`RecordHost`](./../evaluation-hosts.html#recordhost), so it has access to the `record` along with other things (check the link).
 
 ```ruby{5-21}
 # app/models/post.rb
@@ -94,7 +94,7 @@ An array of strings representing the value that can't be stored in the database.
 :::
 
 :::option `enforce_suggestions`
-Set whether the field should accept other values outside the suggested ones. If set to true the user won't be able to add anything else than what you posted in the `suggestions` option.
+Set whether the field should accept other values outside the suggested ones. If set to `true` the user won't be able to add anything else than what you posted in the `suggestions` option.
 
 ```ruby{4}
 field :skills,
@@ -188,7 +188,7 @@ end
 
 ## Acts as taggable on
 
-One very popular gem used for tagging is [`acts-as-taggable-on`](https://github.com/mbleigh/acts-as-taggable-on). The tags field integrates very well with it.
+One popular gem used for tagging is [`acts-as-taggable-on`](https://github.com/mbleigh/acts-as-taggable-on). The tags field integrates very well with it.
 
 You need to add `gem 'acts-as-taggable-on', '~> 9.0'` in your `Gemfile`, add it to your model `acts_as_taggable_on :tags`, and use `acts_as_taggable_on` on the field.
 

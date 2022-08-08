@@ -1,11 +1,11 @@
 ---
-version: '2.0'
+version: '1.0'
 license: community
 ---
 
 # External image
 
-You may have a field in the database that has the URL to an image and you want to display that in Avo. This is where the `ExternalImage` field comes in to help.
+You may have a field in the database that has the URL to an image, and you want to display that in Avo. That is where the `ExternalImage` field comes in to help.
 
 It will take that value, insert it into an `image_tag`, and display it on the `Index` and `Show` views.
 

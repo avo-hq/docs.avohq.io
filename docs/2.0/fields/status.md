@@ -1,5 +1,5 @@
 ---
-version: '2.0'
+version: '1.0'
 license: community
 ---
 
@@ -7,7 +7,7 @@ license: community
 
 Displays the status of a record in three ways; `loading`, `failed`, or `success`.
 
-You may select the `loading` and the `failed` state values and it will fall back to `success`.
+You may select the `loading` and the `failed` state values, and it will fall back to `success`.
 
 ```ruby
 field :progress,

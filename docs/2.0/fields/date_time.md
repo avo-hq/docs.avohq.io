@@ -1,5 +1,5 @@
 ---
-version: '2.0'
+version: '1.0'
 license: community
 ---
 
@@ -7,7 +7,7 @@ license: community
 
 <img :src="('/assets/img/fields/date-time.jpg')" alt="DateTime field" class="border mb-4" />
 
-The `DateTime` field is similar to the Date field with two new attributes. `time_24hr` tells flatpickr to use 24 hours format and `timezone` to tell it in what timezone to display the time. By default it uses your browser's timezone.
+The `DateTime` field is similar to the Date field with two new attributes. `time_24hr` tells flatpickr to use 24 hours format and `timezone` to tell it in what timezone to display the time. By default, it uses your browser's timezone.
 
 ```ruby
 filed :joined_at,
@@ -45,16 +45,16 @@ Format the date shown to the user on the `Edit` and `New` views.
 Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
 :::
 :::option `time_24hr`
-Displays time picker in 24 hour mode or AM/PM selection.
+Displays time picker in 24-hour mode or AM/PM selection.
 
 <!-- @include: ./../common/default_boolean_false.md -->
 :::
 :::option `timezone`
-Select in which timezone should the values be casted.
+Select in which timezone the values should be cast.
 
 #### Default
 
-If nothing selected, the browser's timezone will be used.
+If nothing is selected, the browser's timezone will be used.
 
 #### Possible values
 
