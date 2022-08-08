@@ -30,17 +30,6 @@ field :members,
 ```
 
 ## Overview
-<!-- @todo -->
-
-<!-- <img :src="('/assets/img/associations/has-many-table.jpg')" alt="Has many table" class="border mb-4" />
-
-Here you may attach more records by clicking the "Attach" button.
-
-<img :src="('/assets/img/associations/has-many-attach-modal.jpg')" alt="Has many attach" class="border mb-4" />
-
-In a similar fashion, you may detach a model using the detach button.
-
-<img :src="('/assets/img/associations/has-many-detach.jpg')" alt="Has many detach" class="border mb-4" /> -->
 
 <!-- @include: ./../common/show_on_edit_common.md-->
 <!-- @include: ./../common/scopes_common.md-->
