@@ -27,7 +27,7 @@ function createContainer(klass, md) {
  */
 const config = {
   title: "Avo docs",
-  description: "Just playing around.",
+  description: "Avo Admin for Rails docs.",
   markdown: {
     config: (md) => {
       md.use(...createContainer("option", md))
@@ -89,10 +89,10 @@ const config = {
           text: "CRUD UI",
           items: [
             {text: "Resource configuration", link: "/2.0/resources"},
-            // {text: "Fields", link: '/2.0/fields/index'},
             {text: "Field options", link: "/2.0/field-options"},
             {text: "Records reordering", link: "/2.0/records-reordering"},
             {text: "Tabs and panels", link: "/2.0/tabs"},
+            {text: "Customizable controls", link: "/2.0/customizable-controls"},
           ],
         },
         {
@@ -143,16 +143,12 @@ const config = {
             {text: "Evaluation hosts", link: "/2.0/evaluation-hosts"},
           ],
         },
-
-        // '/2.0/customization',
-        // '/2.0/faq',
-        // {
-        //   title: 'Recipes & guides',
-        //   path: '/2.0/recipes',
-        //   sidebarDepth: 0,
-        //   collapsable: false,
-        //   children: recipeChildren2
-        // },
+        {
+          text: "Native Avo components",
+          items: [
+            {text: "Avo::PanelComponent", link: "/2.0/native-components/avo-panel-component"},
+          ],
+        },
       ],
     },
 
