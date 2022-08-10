@@ -9,7 +9,7 @@ features:
     details: Amazingly easy, single or multi-file integration with ActiveStorage.
     icon: 🖇
     image: 'active-storage.png'
-    url: https://docs.avohq.io/2.0/fields.html#file
+    url: https://docs.avohq.io/2.0/fields/file
   - title: Multi-tenancy ready
     details: Scope out your data as much as you need it
     icon: 👥

@@ -8,7 +8,7 @@ betaStatus: Open beta
 
 # Tabs and panels
 
-Once your Avo resources reach a certain level of complexity, you might feel the need to better organize the fields, associations, and resource tools into groups. You can already use the [`heading`](fields.html#heading) to separate the fields inside a panel, but maybe you'd like to do more.
+Once your Avo resources reach a certain level of complexity, you might feel the need to better organize the fields, associations, and resource tools into groups. You can already use the [`heading`](fields/heading) to separate the fields inside a panel, but maybe you'd like to do more.
 
 ## Panels
 
