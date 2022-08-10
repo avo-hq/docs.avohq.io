@@ -5,6 +5,12 @@
   force = false
 
 [[redirects]]
+  from = "/1.0/*"
+  to = "https://v1-docs.avohq.io/1.0/:splat"
+  status = 301
+  force = false
+
+[[redirects]]
   from = "/0.1/*"
   to = "https://v1-docs.avohq.io/0.4.x/:splat"
   status = 301
