@@ -1,0 +1,3 @@
+# Netlify redirects
+/2.0/fields /2.0/field-options.html
+/2.0/fields#badge /2.0/fields/badge
