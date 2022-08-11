@@ -17,11 +17,11 @@ Because it's a **Rails engine** you'll have to follow a few engine rules. One of
 ```ruby
 # When referencing an Avo route, use avo
 link_to 'Users', avo.resources_users_path
-link_to user.name, avo.resources_user_path user
+link_to user.name, avo.resources_user_path(user)
 
 # When referencing a path for your app, use main_app
 link_to "Contact", main_app.contact_path
-link_to post.name, main_app.posts_path post
+link_to post.name, main_app.posts_path(post)
 ```
 
 ### Use your helpers inside Avo
