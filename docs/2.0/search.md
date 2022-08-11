@@ -21,7 +21,7 @@ To enable search for a resource, you need to add the `search_query` class variab
 ```ruby{3-5}
 class UserResource < Avo::BaseResource
   self.title = :name
-  self.search_query = ->(params:) do
+  self.search_query = -> do
     scope.ransack(id_eq: params[:q], first_name_cont: params[:q], last_name_cont: params[:q], m: "or").result(distinct: false)
   end
 

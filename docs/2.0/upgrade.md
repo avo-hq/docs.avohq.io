@@ -4,6 +4,58 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.12 to 2.13
+
+### Changed the way that resources block `search_query` recieves the params
+
+In 2.13 Avo introduced a breaking change and changed the default scope of a `has_many` associations. 
+
+When the search is made on a `has_many` association the scope now it's provided by the parent of that association. For example, when you are searching for users inside of a team show page, the scope is attached to the team where you are searching so only the users who belongs to that team will apear on the search results. 
+
+In order to made that possible we needed to process more then `params` in the `search_query` block so we decided to take off the keyword `params:` and call the block from a host (dry initializer). It's way more flexible now and future-proof. 
+
+
+**Before**
+```ruby
+self.search_query = ->(params:) do
+  scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+end
+```
+
+**After**
+```ruby
+self.search_query = -> do
+  scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+end
+```
+
+To make it easier for you to migrate, we made this ruby script
+```ruby
+Dont_touch = ['.', '..', $0]
+Old_search_query = "self.search_query = ->(params:) do"
+New_search_query = "self.search_query = -> do"
+
+def remove_params_keyword(file_name)
+  content = File.read file_name
+  content.gsub!(Old_search_query, New_search_query)
+
+  File.open(file_name, "w") { |file| file << content }
+end
+
+Dir.foreach(".") {|file_name| remove_params_keyword file_name unless Dont_touch.include? file_name}
+
+File.delete($0)
+
+```
+
+**Usage**
+- Create a ruby file on your **resources folder** (ex: `remove_params_keyword.rb`)
+- Copy the above script and paste it on that file.
+- Execute the script: `$ ruby script_name.rb` (ex: `$ ruby remove_params_keyword.rb`)
+
+**Expected behavior**
+The script should replace all `self.search_query = ->(params:) do` with `self.search_query = -> do` and then remove himself.
+
 ## Upgrade from 2.10 to 2.11
 
 ### Avo uses the `locale` configuration from the initializer
