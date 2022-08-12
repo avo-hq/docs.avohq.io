@@ -21,7 +21,7 @@ To enable search for a resource, you need to add the `search_query` class variab
 ```ruby{3-5}
 class UserResource < Avo::BaseResource
   self.title = :name
-  self.search_query = ->(params:) do
+  self.search_query = -> do
     scope.ransack(id_eq: params[:q], first_name_cont: params[:q], last_name_cont: params[:q], m: "or").result(distinct: false)
   end
 
@@ -46,7 +46,7 @@ You may configure that to be something more complex using the `as_label` option.
 ```ruby{9-11}
 class PostResource < Avo::BaseResource
   self.title = :name
-  self.search_query = ->(params:) do
+  self.search_query = -> do
     scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
 
@@ -84,7 +84,7 @@ You might want to show more than just the title in the search result. Avo provid
 ```ruby{12-16}
 class PostResource < Avo::BaseResource
   self.title = :name
-  self.search_query = ->(params:) do
+  self.search_query = -> do
     scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
 
@@ -112,7 +112,7 @@ You may improve the results listing by adding an avatar to each search result. Y
 ```ruby{17}
 class PostResource < Avo::BaseResource
   self.title = :name
-  self.search_query = ->(params:) do
+  self.search_query = -> do
     scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
 
@@ -141,7 +141,7 @@ You may improve the results listing header by adding a piece of text highlightin
 ```ruby{6}
 class PostResource < Avo::BaseResource
   self.title = :name
-  self.search_query = ->(params:) do
+  self.search_query = -> do
     scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
   self.search_query_help = "- search by id"
@@ -187,7 +187,7 @@ class TeamMembershipResource < Avo::BaseResource
   self.title = :id
   self.includes = [:user, :team]
   self.visible_on_sidebar = false
-  self.search_query = ->(params:) do
+  self.search_query = -> do
     scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
   self.hide_from_global_search = true
@@ -205,7 +205,7 @@ You may want to perform different searches on the `global` search from the `reso
 
 ```ruby{8}
 class OrderResource < Avo::BaseResource
-  self.search_query = ->(params:) do
+  self.search_query = -> do
     if params[:global]
       # Perform global search
       scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
