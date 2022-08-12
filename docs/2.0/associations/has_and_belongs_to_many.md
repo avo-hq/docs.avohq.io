@@ -19,6 +19,7 @@ field :users, as: :has_and_belongs_to_many
 <!-- @include: ./../common/associations_use_resource_option_common.md-->
 <!-- @include: ./../common/associations_discreet_pagination_option_common.md-->
 <!-- @include: ./../common/associations_hide_search_input_option_common.md-->
+
 <!-- @include: ./../common/search_query_scope_common.md-->
 <!-- @include: ./../common/show_on_edit_common.md-->
 
