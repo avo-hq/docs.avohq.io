@@ -23,7 +23,7 @@ This command will generate the `PostResource` file in `app/avo/resources/post_re
 class PostResource < Avo::BaseResource
   self.title = :id
   self.includes = []
-  # self.search_query = ->(params:) do
+  # self.search_query = -> do
   #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   # end
 
