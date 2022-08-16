@@ -7,7 +7,7 @@ const props = defineProps({
 })
 const version = computed(() => props.version || '2.0')
 const href = null
-const label = computed(() => version.value === "unreleased" ? "Unreleased yet" : `Since: v${version.value}`)
+const label = computed(() => version.value === "unreleased" ? "Unreleased yet" : `Since: Avo v${version.value}`)
 </script>
 
 <template>
