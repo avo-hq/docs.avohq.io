@@ -251,7 +251,7 @@ end
 
 ### Use a lambda function for the home_path
 
-<VersionReq version="2.8" />
+<VersionReq version="2.8" class="mt-2" />
 
 You can also use a lambda function to define that path.
 
