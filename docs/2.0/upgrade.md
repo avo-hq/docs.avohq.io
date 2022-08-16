@@ -4,6 +4,48 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.12 to 2.13
+
+### Remove the params from the `search_query` block
+
+In 2.13, we added scoped search on `has_many` associations. Unfortunately, in that upgrade process, we changed the way `search_query` works, and you need to do a minor update to your code and remove the block params. This way, it's more flexible and future-proof.
+
+```ruby
+# Before
+self.search_query = ->(params:) do
+  scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+end
+
+# After
+self.search_query = -> do
+  scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+end
+```
+
+To make it easier for you to migrate, we made this ruby script
+```ruby
+dont_touch = ['.', '..', $0]
+old_search_query = "self.search_query = ->(params:) do"
+new_search_query = "self.search_query = -> do"
+
+def remove_params_keyword(file_name)
+  content = File.read file_name
+  content.gsub!(old_search_query, new_search_query)
+
+  File.open(file_name, "w") { |file| file << content }
+end
+
+Dir.foreach(".") {|file_name| remove_params_keyword file_name unless dont_touch.include? file_name}
+```
+
+**Usage**
+- Create a ruby file in your **resources folder** (ex: `app/avo/resources/remove_params_keyword.rb`) with the content above.
+- Execute the script: `$ ruby remove_params_keyword.rb`
+- Remove the upgrade script
+
+**Expected behavior**
+The script should replace all `self.search_query = ->(params:) do` with `self.search_query = -> do`.
+
 ## Upgrade from 2.10 to 2.11
 
 ### Avo uses the `locale` configuration from the initializer
