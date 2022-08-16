@@ -22,7 +22,7 @@ end
 ```ruby{3-5}
 # app/avo/resources/course_link_resource.rb
 class CourseLinkResource < Avo::BaseResource
-  self.search_query = ->(params:) do
+  self.search_query = -> do
     scope.ransack(id_eq: params[:q], link_cont: params[:q], m: "or").result(distinct: false)
   end
 end
