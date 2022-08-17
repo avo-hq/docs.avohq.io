@@ -18,7 +18,7 @@ Every new field comes with three [view components](https://viewcomponent.org/), 
 Please restart your rails server after adding a new custom field.
 :::
 
-```{2-9}
+```bash{2-9}
 ▶ bin/rails generate avo:field progress_bar
       create  app/components/avo/fields/progress_bar_field
       create  app/components/avo/fields/progress_bar_field/edit_component.html.erb
