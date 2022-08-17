@@ -8,4 +8,6 @@ license: pro
 
 ![](/assets/img/resources/customizable-controls/index.jpg)
 
+Docs coming soon
+
 <!-- One of the things that we -->
