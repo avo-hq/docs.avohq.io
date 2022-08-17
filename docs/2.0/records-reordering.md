@@ -51,10 +51,10 @@ class CourseLinkResource < Avo::BaseResource
     display_inline: true,
     visible_on: :index,
     actions: {
-      higher: -> (record) { record.move_higher },
-      lower: -> (record) { record.move_lower },
-      to_top: -> (record) { record.move_to_top },
-      to_bottom: -> (record) { record.move_to_bottom },
+      higher: -> { record.move_higher },
+      lower: -> { record.move_lower },
+      to_top: -> { record.move_to_top },
+      to_bottom: -> { record.move_to_bottom },
     }
   }
 end
