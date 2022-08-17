@@ -26,7 +26,9 @@ Take it step by step.
 1. Run `bin/rails generate avo:install` to generate the initializer and add Avo to the `routes.rb` file.
 1. [Generate an Avo Resource](resources)
 
-This will mount the app under `/avo` path. visit that link to see the result.
+:::info
+This will mount the app under `/avo` path. Visit that link to see the result.
+:::
 
 ## Next steps
 
