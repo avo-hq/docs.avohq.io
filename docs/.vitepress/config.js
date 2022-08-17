@@ -89,6 +89,7 @@ const config = {
           text: "CRUD UI",
           items: [
             {text: "Resource configuration", link: "/2.0/resources"},
+            {text: "Controller configuration", link: "/2.0/controllers"},
             {text: "Field options", link: "/2.0/field-options"},
             {text: "Records reordering", link: "/2.0/records-reordering"},
             {text: "Tabs and panels", link: "/2.0/tabs"},
