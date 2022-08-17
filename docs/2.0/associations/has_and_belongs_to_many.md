@@ -23,7 +23,7 @@ field :users, as: :has_and_belongs_to_many
 <!-- @include: ./../common/search_query_scope_common.md-->
 <!-- @include: ./../common/show_on_edit_common.md-->
 
-### Searchable `has_many`
+### Searchable `has_and_belongs_to_many`
 
 <div class="flex gap-2 mt-2">
   <VersionReq version="1.25" />
