@@ -34,6 +34,8 @@ end
 
 From this config, Avo will infer a few things like the resource's model will be the `Post` model and the name of the resource si `Post`. But all of those inferred things are actually overridable.
 
+You can see the result in the admin panel using this URL `/avo`. The `Post` resource will be visible on the left sidebar.
+
 ### Fields
 
 `Resource` files tell Avo what models should be displayed in the UI, but not what kinds of data they hold. You do that using fields.
