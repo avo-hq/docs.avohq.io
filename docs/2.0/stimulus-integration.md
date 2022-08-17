@@ -2,6 +2,7 @@
 feedbackId: 943
 version: '2.8'
 demoVideo: https://www.youtube.com/watch?v=ZMOz22FaAUg
+betaStatus: Beta
 ---
 
 # Stimulus JS & HTML attributes
