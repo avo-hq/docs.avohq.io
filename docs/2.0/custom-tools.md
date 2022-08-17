@@ -11,7 +11,7 @@ Avo makes it easy to add custom tools and pages to your dashboard.
 
 `bin/rails generate avo:tool dashboard` will generate the necessary files to show the new custom tool.
 
-```{2-6}
+```bash{2-6}
 ▶ bin/rails generate avo:tool dashboard
       create  app/views/avo/sidebar/items/_dashboard.html.erb
       insert  app/controllers/avo/tools_controller.rb
