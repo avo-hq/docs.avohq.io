@@ -33,6 +33,5 @@ field :users, as: :has_and_belongs_to_many
 
 Similar to [`belongs_to`](./belongs_to#searchable-belongs-to), the `has_many` associations support the `searchable` option.
 
-
 <!-- @include: ./../common/scopes_common.md-->
 <!-- @include: ./../common/show_hide_buttons_common.md-->
