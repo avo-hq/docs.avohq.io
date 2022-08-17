@@ -174,7 +174,9 @@ field :name, as: :text, required: true
 
 <img :src="('/assets/img/fields-reference/required.jpg')" alt="Required option" class="border mb-4" />
 
-However, you will need to add validation logic to your model (`validates :name, presence: true`).
+:::warning
+This option is only a cosmetic one. It will not add the validation logic to your model. You must add that yourself (`validates :name, presence: true`).
+:::
 
 You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
 

@@ -184,7 +184,9 @@ You can eject any partial from Avo using the partial path.
       create  app/views/layouts/avo/application.html.erb
 ```
 
-**Warning:** Once ejected, the views will not receive updates on new Avo versions.
+:::warning
+Once ejected, the views will not receive updates on new Avo releases. You must maintain them yourself.
+:::
 
 ## Breadcrumbs
 
