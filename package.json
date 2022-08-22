@@ -11,7 +11,7 @@
     "vue": "^3.2.37"
   },
   "scripts": {
-    "dev": "vitepress dev docs",
+    "dev": "vitepress dev docs --port 3011",
     "build": "vitepress build docs",
     "serve": "vitepress serve docs"
   },

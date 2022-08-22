@@ -52,7 +52,7 @@ const config = {
       pattern: 'https://github.com/avo-hq/vitepress-docs/edit/main/docs/:path'
     },
     footer: {
-      // message: 'Released under the MIT License.',
+      message: '',
       copyright: 'Copyright © 2020-present Adrian Marin'
     },
     nav: [
