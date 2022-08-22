@@ -1,8 +1,6 @@
 <script setup>
 import {computed} from 'vue'
 import MonitorPlayIcon from './MonitorPlayIcon.vue'
-console.log('MonitorPlayIcon->', MonitorPlayIcon)
-
 
 const props = defineProps({
   demoVideo: String,
