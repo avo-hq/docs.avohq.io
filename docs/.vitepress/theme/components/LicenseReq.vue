@@ -1,6 +1,6 @@
 <script setup>
 import {computed} from 'vue'
-import { InformationCircleIcon } from '@heroicons/vue/outline'
+import { BadgeCheckIcon } from '@heroicons/vue/outline'
 
 const props = defineProps({
   license: String,
@@ -23,11 +23,11 @@ const label = computed(() => labels[license.value])
   <a :href="href"
     target="_blank"
     :title="title"
-    class="inline-flex items-center rounded !text-white no-underline px-2 py-1 leading-none"
+    class="text-sm inline-flex items-center rounded !text-white no-underline px-2 py-1 leading-none"
     :class="{
-      'bg-green-600 hover:bg-green-500': license == 'community',
-      'bg-orange-600 hover:bg-orange-500': license == 'pro'
+      'bg-blue-500 hover:bg-blue-600': license == 'community',
+      'bg-green-500 hover:bg-green-600': license == 'pro'
     }">
-    <InformationCircleIcon class="h-4 inline mr-1" /> License: {{label}}
+    <BadgeCheckIcon class="h-4 inline mr-1" /> License: {{label}}
   </a>
 </template>

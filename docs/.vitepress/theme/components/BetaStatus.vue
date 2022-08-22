@@ -10,7 +10,7 @@ const href = null
 
 <template>
   <a :href="href" target="_blank"
-    class="inline-flex items-center rounded !text-white no-underline px-2 py-1 leading-none bg-blue-600 hover:bg-gray-500">
+    class="text-sm inline-flex items-center rounded !text-white no-underline px-2 py-1 leading-none bg-gray-700" title="This feature is not stable yet and the API might suffer changes until a stable version is published.">
     <BeakerIcon class="h-4 inline mr-1" /> {{label}}
   </a>
 </template>
