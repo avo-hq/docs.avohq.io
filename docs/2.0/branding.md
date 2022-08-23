@@ -5,13 +5,29 @@ license: pro
 
 # Branding
 
+```ruby
+Avo.configure do |config|
+  config.branding = {
+    colors: {
+      100 => "#C5F1D4",
+      400 => "#3CD070",
+      500 => "#30A65A",
+      600 => "#247D43",
+    },
+    chart_colors: ['#FFB435', "#FFA102", "#CC8102", '#FFB435', "#FFA102", "#CC8102"],
+    logo: "/avo-assets/logo.png",
+    logomark: "/avo-assets/logomark.png"
+  }
+end
+```
+
 Using the branding feature you can easily change the look of your app. You tweak it inside your `avo.rb` initializer in the `branding` attribute. It takes a hash with a few properties.
 
-## Configure the colors
+## Configure brand color
 
 In order to customize the primary color of Avo you must configure the `colors` key with four color variants. `100` for color hints, `500` for the base primary color and `400` and `600` values for highlights.
 
-```ruby
+```ruby{4-7}
 Avo.configure do |config|
   config.branding = {
     colors: {
@@ -65,6 +81,20 @@ config.branding = {
   }
 }
 ```
+
+## Customize the chart colors
+
+For your dashboard you can further customize the colors the charts are generated in. You can do that using the `chart_colors` option. Pass in an array of colors and Avo will do the rest.
+
+```ruby
+Avo.configure do |config|
+  config.branding = {
+    chart_colors: ['#FFB435', "#FFA102", "#CC8102", '#FFB435', "#FFA102", "#CC8102"],
+  }
+end
+```
+
+![](/assets/img/branding/chart-colors.jpg)
 
 ## Customize the logo
 
