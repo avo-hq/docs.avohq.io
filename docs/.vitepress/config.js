@@ -132,6 +132,7 @@ const config = {
             {text: "Actions", link: "/2.0/actions"},
             {text: "Custom asset pipeline", link: "/2.0/custom-asset-pipeline"},
             {text: "Localization (I18n)", link: "/2.0/localization"},
+            {text: "Branding", link: "/2.0/branding"},
           ],
         },
         {
