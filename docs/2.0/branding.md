@@ -26,6 +26,10 @@ end
 
 ![](/assets/img/branding/green.jpg)
 
+![](/assets/img/branding/red.jpg)
+
+![](/assets/img/branding/orange.jpg)
+
 
 Avo uses [Tailwinds color system](https://tailwindcss.com/docs/customizing-colors). You can generate your own using the tools below.
 
