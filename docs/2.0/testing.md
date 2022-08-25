@@ -1,58 +1,55 @@
 # Testing
 
 :::info
-We are aware that the testing guides aren't very
+We are aware that the testing guides aren't very detailed and some testing helpers are needed. Please send your feedback [here](https://github.com/avo-hq/avo/discussions/1168).
 :::
 
 Testing is an important aspect of your app. Most Avo DSLs are Ruby classes, so regular testing methods should apply.
 
 ## Testing Actions
 
-Given this `DummyAction`, this is the `spec` that tests it.
+Given this `ReleaseFish`, this is the `spec` that tests it.
 
 ```ruby
-class DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-  self.standalone = true
-  self.visible = ->(resource:, view:) do
-    if resource.is_a? UserResource
-      view == :index
-    else
-      true
-    end
-  end
+class ReleaseFish < Avo::BaseAction
+  self.name = "Release fish"
+  self.message = "Are you sure you want to release this fish?"
+
+  field :message, as: :textarea, help: "Tell the fish something before releasing."
 
   def handle(**args)
-    # Do something here
+    args[:models].each do |model|
+      model.release
+    end
 
-    succeed "Success response ✌️"
-    warn "Warning response ✌️"
-    inform "Info response ✌️"
-    fail "Error response ✌️"
+    succeed "#{args[:models].count} fish released with message '#{args[:fields][:message]}'."
   end
 end
+
 ```
 
 ```ruby
 require 'rails_helper'
-RSpec.feature DummyAction, type: :feature do
-  let(:user) { create :user }
-  let(:current_user) { user }
-  let(:resource) { UserResource.new.hydrate model: user }
+
+RSpec.feature ReleaseFish, type: :feature do
+  let(:fish) { create :fish }
+  let(:current_user) { create :user }
+  let(:resource) { UserResource.new.hydrate model: fish }
 
   it "tests the dummy action" do
     args = {
+      fields: {
+        message: "Bye fishy!"
+      },
       current_user: current_user,
       resource: resource,
-      models: [user]
+      models: [fish]
     }
 
-    action = described_class.new(model: user, resource: resource, user: current_user, view: :edit)
+    action = described_class.new(model: fish, resource: resource, user: current_user, view: :edit)
 
-    expect(action).to receive(:succeed).with "Success response ✌️"
-    expect(action).to receive(:warn).with "Warning response ✌️"
-    expect(action).to receive(:inform).with "Info response ✌️"
-    expect(action).to receive(:fail).with "Error response ✌️"
+    expect(action).to receive(:succeed).with "1 fish released with message 'Bye fishy!'."
+    expect(fish).to receive(:release)
 
     action.handle **args
   end
