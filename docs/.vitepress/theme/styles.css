@@ -12,3 +12,8 @@
 p > img {
   @apply border
 }
+
+/* Empty lines are not rendered without this tweak. */
+pre code span.line {
+  min-height: 1.5rem;
+}
