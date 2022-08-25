@@ -11,6 +11,15 @@ prev: /2.0/
 - Ruby >= 2.7
 - `api_only` set to `false`. More [here](./recipes/api-only-app).
 
+:::warning Zeitwerk autoloading is required.
+When adding Avo to a Rails app that was previously a Rails 5 app you must ensure that it uses zeitwerk for autoloading and Rails 6 defaults.
+```ruby
+# config/application.rb
+config.autoloader = :zeitwerk
+config.load_defaults 6.0
+```
+:::
+
 ## Installing Avo
 
 Use [this](https://railsbytes.com/public/templates/zyvsME) RailsBytes template for a one-liner install process.
