@@ -24,18 +24,18 @@ end
 
 To make it easier for you to migrate, we made this ruby script
 ```ruby
-dont_touch = ['.', '..', $0]
-old_search_query = "self.search_query = ->(params:) do"
-new_search_query = "self.search_query = -> do"
+DONT_TOUCH = ['.', '..', $0]
+OLD_SEARCH_QUERY = "self.search_query = ->(params:) do"
+NEW_SEARCH_QUERY = "self.search_query = -> do"
 
 def remove_params_keyword(file_name)
   content = File.read file_name
-  content.gsub!(old_search_query, new_search_query)
+  content.gsub!(OLD_SEARCH_QUERY, NEW_SEARCH_QUERY)
 
   File.open(file_name, "w") { |file| file << content }
 end
 
-Dir.foreach(".") {|file_name| remove_params_keyword file_name unless dont_touch.include? file_name}
+Dir.foreach(".") {|file_name| remove_params_keyword file_name unless DONT_TOUCH.include? file_name}
 ```
 
 **Usage**
