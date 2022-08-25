@@ -1,10 +1,10 @@
 # Testing
 
 :::info
-We are aware that the testing guides aren't very detailed and some testing helpers are needed. Please send your feedback [here](https://github.com/avo-hq/avo/discussions/1168).
+We know the testing guides aren't very detailed, and some testing helpers are needed. So please send your feedback [here](https://github.com/avo-hq/avo/discussions/1168).
 :::
 
-Testing is an important aspect of your app. Most Avo DSLs are Ruby classes, so regular testing methods should apply.
+Testing is an essential aspect of your app. Most Avo DSLs are Ruby classes, so regular testing methods should apply.
 
 ## Testing Actions
 
