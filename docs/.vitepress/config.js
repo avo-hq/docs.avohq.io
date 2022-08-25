@@ -151,6 +151,12 @@ const config = {
             {text: "Avo::PanelComponent", link: "/2.0/native-components/avo-panel-component"},
           ],
         },
+        {
+          text: "Internals",
+          items: [
+            {text: "Testing", link: "/2.0/testing"},
+          ],
+        },
       ],
     },
 
