@@ -18,6 +18,8 @@ When adding Avo to a Rails app that was previously a Rails 5 app you must ensure
 config.autoloader = :zeitwerk
 config.load_defaults 6.0
 ```
+
+More on this [here](https://github.com/avo-hq/avo/issues/1096).
 :::
 
 ## Installing Avo
