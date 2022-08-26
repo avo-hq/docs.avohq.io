@@ -61,7 +61,7 @@ class PostResource < Avo::BaseResource
 end
 ```
 
-## Create multiple resources for the same model
+## Use multiple resources for the same model
 
 <VersionReq version="2.14" />
 
