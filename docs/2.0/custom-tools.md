@@ -3,7 +3,7 @@ feedbackId: 836
 license: pro
 ---
 
-# Custom tools
+# Custom views
 
 Avo makes it easy to add custom tools and pages to your dashboard.
 

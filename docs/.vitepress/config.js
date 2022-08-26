@@ -138,7 +138,7 @@ const config = {
         {
           text: "Custom content",
           items: [
-            {text: "Custom tools", link: "/2.0/custom-tools"},
+            {text: "Custom views", link: "/2.0/custom-tools"},
             {text: "Custom fields", link: "/2.0/custom-fields"},
             {text: "Resource tools", link: "/2.0/resource-tools"},
             {text: "Stimulus integration", link: "/2.0/stimulus-integration"},
