@@ -5,7 +5,7 @@ license: pro
 
 # Custom views
 
-Avo makes it easy to add custom tools and pages to your dashboard.
+You may use custom tools to create custom sections or views to add to your app.
 
 ## Generate tools
 
