@@ -61,6 +61,102 @@ class PostResource < Avo::BaseResource
 end
 ```
 
+## Create multiple resources for the same model
+
+<VersionReq version="2.14" />
+
+### `model_resource_mapping`
+
+Usually an Avo Resource maps to one Rails model. So there will be a one-to-one relation between them. But there will be scenarios where you'd like to create another resource for the same model.
+
+Let's take as an example the `User` model. You'll have an `UserResource` associated with it.
+
+```ruby
+# app/models/user.rb
+class User < ApplicationRecord
+end
+
+# app/avo/resources/user_resource.rb
+class UserResource < Avo::BaseResource
+  self.title = :name
+
+  field :id, as: :id, link_to_resource: true
+  field :email, as: :gravatar, link_to_resource: true, as_avatar: :circle
+  field :first_name, as: :text, required: true, placeholder: "John"
+  field :last_name, as: :text, required: true, placeholder: "Doe"
+end
+```
+
+![](/assets/img/resources/model-resource-mapping-1.jpg)
+
+So when you click to the Users sidebar menu item you get to the `Index` page where all the users will be displayed. The information that's going to be displayed will be the gravatar image, the first and the last name.
+
+Now, let's say we have a `Team` model that has many `User`s. You'll have a `TeamResource` like so:
+
+```ruby{11}
+# app/models/team.rb
+class Team < ApplicationRecord
+end
+
+# app/avo/resources/team_resource.rb
+class TeamResource < Avo::BaseResource
+  self.title = :name
+
+  field :id, as: :id, link_to_resource: true
+  field :name, as: :text
+  field :users, as: :has_many
+end
+```
+
+From that configuration, Avo will figure out that the `users` field points out to the `UserResource` and will use that one to display the users.
+
+But, let's imagine that we don't want to display the gravatar on the `has_many` association, and we want to show the name on one column and the number of projects the user has on another column.
+We can create a different resource named `TeamUserResource` and add those fields.
+
+```ruby
+# app/avo/resources/team_user_resource.rb
+class TeamUserResource < Avo::BaseResource
+  self.title = :name
+
+  field :id, as: :id, link_to_resource: true
+  field :name, as: :text
+  field :projects_count, as: :number
+end
+```
+
+We also need to update the `TeamResource` to use the new `TeamUserResource` for reference.
+
+```ruby
+# app/avo/resources/team_resource.rb
+class TeamResource < Avo::BaseResource
+  self.title = :name
+
+  field :id, as: :id, link_to_resource: true
+  field :name, as: :text
+  field :users, as: :has_many, use_resource: TeamUserResource
+end
+```
+
+![](/assets/img/resources/model-resource-mapping-2.jpg)
+
+But now, if visit the `Users` page we will see the fields for the `TeamUserResource` instead of `UserResource`, and that's because Avo fetches the resources in an alphabetical order and `TeamUserResource` is before `UserResource`. That's definitely not what we want.
+The same might happen if you reference the `User` in other associations throughout your resource files.
+
+To mitigate that we are going to use the `model_resource_mapping` option to set the "default" resource for a model.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.model_resource_mapping = {
+    'User': 'UserResource'
+  }
+end
+```
+
+This will "shortcircuit" the regular alphabetical search and use the `UserResource` everytime we don't don't specify otherwise.
+
+We can still tell Avo which resource to use in other `has_many` or `has_and_belongs_to_many` associations with the [`use_resource`](./associations/has_many#default-4) option.
+
 ## Setting the title of the resource
 
 Initially, the `title` attribute is set to `:id`, so the model's `id` attribute will be used to display the resource in search results and belongs select fields. You usually change it to something more representative, like the model's `title`, `name` or `label` attributes.
