@@ -67,7 +67,7 @@ end
 
 ### `model_resource_mapping`
 
-Usually an Avo Resource maps to one Rails model. So there will be a one-to-one relation between them. But there will be scenarios where you'd like to create another resource for the same model.
+Usually, an Avo Resource maps to one Rails model. So there will be a one-to-one relationship between them. But there will be scenarios where you'd like to create another resource for the same model.
 
 Let's take as an example the `User` model. You'll have an `UserResource` associated with it.
 
@@ -89,9 +89,9 @@ end
 
 ![](/assets/img/resources/model-resource-mapping-1.jpg)
 
-So when you click to the Users sidebar menu item you get to the `Index` page where all the users will be displayed. The information that's going to be displayed will be the gravatar image, the first and the last name.
+So when you click on the Users sidebar menu item, you get to the `Index` page where all the users will be displayed. The information displayed will be the gravatar image, the first and the last name.
 
-Now, let's say we have a `Team` model that has many `User`s. You'll have a `TeamResource` like so:
+Let's say we have a `Team` model with many `User`s. You'll have a `TeamResource` like so:
 
 ```ruby{11}
 # app/models/team.rb
@@ -108,7 +108,7 @@ class TeamResource < Avo::BaseResource
 end
 ```
 
-From that configuration, Avo will figure out that the `users` field points out to the `UserResource` and will use that one to display the users.
+From that configuration, Avo will figure out that the `users` field points to the `UserResource` and will use that one to display the users.
 
 But, let's imagine that we don't want to display the gravatar on the `has_many` association, and we want to show the name on one column and the number of projects the user has on another column.
 We can create a different resource named `TeamUserResource` and add those fields.
@@ -139,10 +139,10 @@ end
 
 ![](/assets/img/resources/model-resource-mapping-2.jpg)
 
-But now, if visit the `Users` page we will see the fields for the `TeamUserResource` instead of `UserResource`, and that's because Avo fetches the resources in an alphabetical order and `TeamUserResource` is before `UserResource`. That's definitely not what we want.
+But now, if we visit the `Users` page, we will see the fields for the `TeamUserResource` instead of `UserResource`, and that's because Avo fetches the resources in an alphabetical order, and `TeamUserResource` is before `UserResource`. That's definitely not what we want.
 The same might happen if you reference the `User` in other associations throughout your resource files.
 
-To mitigate that we are going to use the `model_resource_mapping` option to set the "default" resource for a model.
+To mitigate that, we are going to use the `model_resource_mapping` option to set the "default" resource for a model.
 
 ```ruby
 # config/initializers/avo.rb
@@ -153,7 +153,7 @@ Avo.configure do |config|
 end
 ```
 
-This will "shortcircuit" the regular alphabetical search and use the `UserResource` everytime we don't don't specify otherwise.
+That will "shortcircuit" the regular alphabetical search and use the `UserResource` every time we don't specify otherwise.
 
 We can still tell Avo which resource to use in other `has_many` or `has_and_belongs_to_many` associations with the [`use_resource`](./associations/has_many#default-4) option.
 
