@@ -387,12 +387,12 @@ end
 
 For some resources, it might make sense to redirect to something other than the `Show` view. With `after_create_path` and `after_update_path` you can control that.
 
-The valid options are `:show` (default) or `:index`.
+The valid options are `:show` (default), `:edit`, or `:index`.
 
 ```ruby{2-3}
 class CommentResource < Avo::BaseResource
   self.after_create_path = :index
-  self.after_update_path = :index
+  self.after_update_path = :edit
 
   field :id, as: :id
   field :body, as: :textarea
