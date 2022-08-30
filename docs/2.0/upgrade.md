@@ -4,6 +4,10 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.13 to 2.14
+
+Please ensure that you have `Rails.application.secrets.secret_key_base` or `ENV['SECRET_KEY_BASE']` available and at least 32 characters long.
+
 ## Upgrade from 2.12 to 2.13
 
 ### Remove the params from the `search_query` block
