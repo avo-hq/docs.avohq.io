@@ -1,3 +1,8 @@
+---
+version: '2.14'
+demoVideo: https://youtu.be/peKt90XhdOg?t=11
+---
+
 # Controller options
 Each interaction with the CRUD UI results in a request - response cycle. That cycle passes through the `BaseController`. Each auto-generated controller for your resource inherits from `ResourcesController`, which inherits from `BaseController`.
 
