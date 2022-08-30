@@ -8,6 +8,8 @@ Follow these guides to make sure your configuration files are up to date.
 
 Please ensure that you have `Rails.application.secrets.secret_key_base` or `ENV['SECRET_KEY_BASE']` available and at least 32 characters long.
 
+Also, run `bin/rails generate avo:locales` to regenerate the locales files.
+
 ## Upgrade from 2.12 to 2.13
 
 ### Remove the params from the `search_query` block
