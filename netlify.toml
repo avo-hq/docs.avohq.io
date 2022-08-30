@@ -17,6 +17,24 @@
   force = false
 
 [[redirects]]
+  from = "/0.4.x/*"
+  to = "https://v1-docs.avohq.io/0.4.x/:splat"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/0.5.x/*"
+  to = "https://v1-docs.avohq.io/0.5.x/:splat"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/0.x/*"
+  to = "https://v1-docs.avohq.io/0.4.x/:splat"
+  status = 301
+  force = false
+
+[[redirects]]
   from = "/1.0/fields-reference.html"
   to = "https://v1-docs.avohq.io/1.0/field-options.html"
   status = 301
