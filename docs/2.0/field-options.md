@@ -175,13 +175,19 @@ field :name, as: :text, required: true
 <img :src="('/assets/img/fields-reference/required.jpg')" alt="Required option" class="border mb-4" />
 
 :::warning
-This option is only a cosmetic one. It will not add the validation logic to your model. You must add that yourself (`validates :name, presence: true`).
+For Avo versions 2.13 and lower, this option is only a cosmetic one. It will not add the validation logic to your model. You must add that yourself (`validates :name, presence: true`).
 :::
+
+:::info
+For Avo version 2.14 and higher Avo will automatically detect your validation rules and mark the field as required by default.
+:::
+
+<DemoVideo demo-video="https://youtu.be/peKt90XhdOg?t=937" />
 
 You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
 
 ```ruby
-field :name, as: :text, required: -> { view == :new } # make the field required only on the new screen and not on edit
+field :name, as: :text, required: -> { view == :new } # make the field required only on the new view and not on edit
 ```
 
 ## Readonly
@@ -193,6 +199,16 @@ field :name, as: :text, readonly: true
 ```
 
 <img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Readonly option" class="border mb-4" />
+
+### Readonly as a block
+
+<VersionReq version="2.14" class="mt-2" />
+
+You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
+
+```ruby
+field :id, as: :number, readonly: -> { view == :edit } # make the field readonly only on the new edit view
+```
 
 ## Default Value
 

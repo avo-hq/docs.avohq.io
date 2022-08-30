@@ -14,6 +14,6 @@ p > img {
 }
 
 /* Empty lines are not rendered without this tweak. */
-pre code span.line {
+pre code span.line:not(:last-child) {
   min-height: 1.5rem;
 }

@@ -100,9 +100,12 @@ Tabs have more than an aesthetic function. They have a performance function too.
 
 All visibility rules still apply on' Edit', meaning that `has_*` fields will be hidden by default. However, you can enable them by adding `show_on: :edit`. All other fields will be loaded and hidden on page load. This way, when you submit a form, if you have validation rules in place requiring a field that's in a hidden tab, it will be present on the page on submit-time.
 
-### Display as pills
+## Display as pills
 
-<VersionReq version="2.14" class="mt-2" />
+<div class="space-x-2">
+  <VersionReq version="2.14" class="mt-2" />
+  <DemoVideo demo-video="https://youtu.be/peKt90XhdOg?t=710" />
+</div>
 
 When you have a lot of tabs in one group the tab switcher will overflow on the right-hand side. It will become scrollable to allow your users to get to the last tabs in the group.
 
@@ -112,7 +115,7 @@ If you want to be able to see all your tabs in one group at a glance you may cha
 
 ![](/assets/img/tabs-and-panels/tabs-as-pills.gif)
 
-#### Display all tabs as pills
+### Display all tabs as pills
 
 If you want to display all tabs as pills update your initializer's `tabs_style`.
 
@@ -122,7 +125,7 @@ Avo.configure do |config|
 end
 ```
 
-#### Display only some tabs as pills
+### Display only some tabs as pills
 
 If you only need to display certain tabs as pills you can do that using the `style` option.
 
