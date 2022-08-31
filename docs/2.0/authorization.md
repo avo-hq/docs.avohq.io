@@ -127,7 +127,7 @@ Controls whether the view button is visible on the associated record row on the 
 
 ## Scopes
 
-You may specify a scope for the **Index** view in the generated policy.
+You may specify a scope for the <Index />, <Show />, and <Edit /> views.
 
 ```ruby{3-9}
 class PostPolicy < ApplicationPolicy
