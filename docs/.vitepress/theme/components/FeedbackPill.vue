@@ -8,7 +8,7 @@ const props = defineProps({
 })
 
 const feedbackId = props.feedbackId || 832
-const href = props.href || `https://github.com/avo-hq/avo/discussions/${943}`
+const href = props.href || `https://github.com/avo-hq/avo/discussions/${feedbackId}`
 const label = props.label || "Send feedback about this feature"
 </script>
 
