@@ -288,3 +288,11 @@ self.visible = -> (resource:, view:) { view == :new }
 # Or use this if you want them to be visible on any view
 self.visible = -> (resource:, view:) { true }
 ```
+
+## Actions authorization
+
+:::warning
+Using the Pundit policies, you can restrict access to actions using the `act_on?` method. If you think you should see an action on a resource and you don't, please check the policy method.
+
+More info [here](./authorization#act-on)
+:::

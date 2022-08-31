@@ -2,7 +2,7 @@
 
 Because there isn't just one standardized way of handling assets in Rails we took a different approach. We abstracted away our asset pipeline and made it so you can bring in your assets (javascript and CSS files) using your own pipeline (webpacker, sprockets, or a different one).
 
-<img :src="('/assets/img/asset-pipeline.jpg')" alt="Avo and the asset pipeline" class="border mb-4" />
+![Avo and the asset pipeline](/assets/img/asset-pipeline.jpg)
 
 To do that, you have to eject the `_head.html.erb` partial (`bin/rails generate avo:eject :head`), create the asset files (examples below), and add the asset files from your pipeline to the `_head` partial.
 
