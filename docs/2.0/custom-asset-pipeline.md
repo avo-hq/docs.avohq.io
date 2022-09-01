@@ -30,8 +30,6 @@ Avo makes it easy to use your own styles and javascript through your already set
 
 ## Use TailwindCSS utility classes
 
-<VersionReq version="2.15" />
-
 We use TailwindCSS 3.0 with the JIT engine to style Avo, so on release we only pack the used Tailwind classes in our final css file. That's why, when you want to style your custom content (tools, resource tools, fields, or ejected partials), you won't have access to all of Tailwind's utility classes. It's a performance optimization.
 
 But there's an easy way to overcome that limitation. You can add your own TailwindCSS process to watch for your the utility classes you use.
@@ -67,7 +65,6 @@ Inside `app/assets/stylesheets` you'll have a new `avo.tailwind.css` file that's
 ```
 
 ## Add custom JS code and Stimulus controllers
-<VersionReq version="2.15" />
 
 There are more ways of dealing with JS assets, and Avo handles that well.
 
@@ -98,8 +95,6 @@ That will be picked up by the `build` script and create it's own `assets/builds/
 Avo supports the other bundlers too but we just don't have a generator command to configure them for you. If you use the other bundlers and have configured them to use custom assets, then please [open up a PR](https://github.com/avo-hq/avo) and help the community get started faster.
 
 ## Manually add your CSS and JS assets
-
-<VersionReq version="1.0" />
 
 In order to manually add your assets you have to eject the `_head.html.erb` partial (`bin/rails generate avo:eject :head`), create the asset files (examples below), and add the asset files from your pipeline to the `_head` partial. Then, your asset pipeline will pick up those assets and use add them to your app.
 
