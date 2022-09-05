@@ -4,14 +4,14 @@ feedbackId: 943
 
 # Custom asset pipeline
 
-Avo plays well with every Rails asset pipeline.
+Avo plays well with most Rails asset pipelines.
 
 | Asset pipeline | Avo compatibility |
 |---------------|------------|
-| [importmap](https://github.com/rails/importmap-rails) | ✅  |
-| [Propshaft](https://github.com/rails/propshaft)       | ✅  |
-| [Sprockets](https://github.com/rails/sprockets)       | ✅  |
-| [Webpacker](https://github.com/rails/webpacker)       | ✅  |
+| [importmap](https://github.com/rails/importmap-rails) | ✅ Fully supported |
+| [Propshaft](https://github.com/rails/propshaft)       | ✅ Fully supported |
+| [Sprockets](https://github.com/rails/sprockets)       | ✅ Fully supported |
+| [Webpacker](https://github.com/rails/webpacker)       | ❌ Only with Sprockets or Propshaft |
 
 There are two things we need to mention when communicating about assets.
 
@@ -116,6 +116,10 @@ Then add them to Avo using the `_head.html.erb` partial.
 ### Webpacker
 
 :::warning
+We removed support for webpacker. In order to use Avo with your assets you must install Sprockets or Propshaft in order to serve assets like SVG, CSS, or JS files.
+:::
+
+:::info
 Instructions below are for Webpacker version 6. Version 5 has different paths (`app/javascript/packs`).
 :::
 
