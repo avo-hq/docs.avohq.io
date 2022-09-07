@@ -34,7 +34,7 @@ class ToggleInactive < Avo::BaseAction
       end
 
       # Optionally, you may send a notification with the message to that user from inside the action
-      UserMailer.with(user: model).toggle_active(fields[:message]).deliver_later
+      UserMailer.with(user: model).toggle_active(fields["message"]).deliver_later
     end
 
     succeed 'Perfect!'
@@ -65,7 +65,7 @@ def handle(**args)
     end
 
     # Optionally, you may send a notification with the message to that user.
-    UserMailer.with(user: model).toggle_active(fields[:message]).deliver_later
+    UserMailer.with(user: model).toggle_active(fields["message"]).deliver_later
   end
 
   succeed 'Perfect!'
