@@ -405,3 +405,17 @@ Lastly, it will check if it responds to the `avo_title` method and uses that to 
 ### Customize the sign-out link
 
 Please follow [this](authentication.html#customise-the-sign-out-link) guide in [authentication](authentication).
+
+## Default resource view
+
+By default Avo'll redirect to the resource `:show` view after several actions. Adding `config.skip_show_view = true` to yours `avo.rb` configuration file will make avo to skip the `:show` view and to use the `:edit` view as the default resource view.
+
+```ruby{3}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.skip_show_view = true
+end
+```
+
+<img :src="('/assets/img/customization/skip_show_view.gif')" alt="Avo breadcrumbs" class="border mb-4" />
+
