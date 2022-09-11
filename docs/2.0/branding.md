@@ -28,7 +28,7 @@ Using the branding feature, you can easily change the look of your app. You twea
 
 To customize the primary color of Avo, you must configure the `colors` key with four color variants. `100` for color hints, `500` for the base primary color, and `400` and `600` values for highlights.
 
-```ruby{4-7}
+```ruby{4-8}
 Avo.configure do |config|
   config.branding = {
     colors: {
