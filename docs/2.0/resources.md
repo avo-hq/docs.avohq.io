@@ -63,7 +63,7 @@ end
 
 ## Use multiple resources for the same model
 
-<VersionReq version="2.14" />
+<VersionReq version="2.15" />
 
 ### `model_resource_mapping`
 
