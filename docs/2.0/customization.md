@@ -407,3 +407,22 @@ Lastly, it will check if it responds to the `avo_title` method and uses that to 
 ### Customize the sign-out link
 
 Please follow [this](authentication.html#customise-the-sign-out-link) guide in [authentication](authentication).
+
+## Skip show view
+
+<VersionReq version="2.15" />
+
+In the CRUD interface Avo adds the <Show /> view by default. This means that when your users will see the view icon to go to that detail page and they will be redirected to the <Show /> page when doing certain tasks (update a record, run an action, etc.).
+
+You might not want that behavior and you might not use the <Show /> view at all and prefer to skip that and just use the <Edit /> view.
+Adding `config.skip_show_view = true` to your `avo.rb` configuration file will tell Avo to skip it and use the <Edit /> view as the default resource view.
+
+```ruby{3}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.skip_show_view = true
+end
+```
+
+![](/assets/img/customization/skip_show_view.gif)
+
