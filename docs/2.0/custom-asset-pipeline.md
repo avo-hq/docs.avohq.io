@@ -11,7 +11,7 @@ Avo plays well with most Rails asset pipelines.
 | [importmap](https://github.com/rails/importmap-rails) | ✅ Fully supported |
 | [Propshaft](https://github.com/rails/propshaft)       | ✅ Fully supported |
 | [Sprockets](https://github.com/rails/sprockets)       | ✅ Fully supported |
-| [Webpacker](https://github.com/rails/webpacker)       | ❌ Only with Sprockets or Propshaft |
+| [Webpacker](https://github.com/rails/webpacker)       | 🛻 Only with Sprockets or Propshaft |
 
 There are two things we need to mention when communicating about assets.
 
