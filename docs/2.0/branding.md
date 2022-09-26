@@ -1,5 +1,6 @@
 ---
-version: unreleased
+version: '2.15'
+betaStatus: Open beta
 license: pro
 ---
 

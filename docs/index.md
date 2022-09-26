@@ -89,7 +89,7 @@ features:
     url: https://docs.avohq.io/2.0/custom-tools.html
     highlight: true
 
-title: Avo Admin for Rubby on Rails
+title: Avo Admin for Ruby on Rails
 titleTemplate: Build apps 10x faster
 
 hero:
