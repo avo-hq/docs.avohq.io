@@ -30,8 +30,8 @@ Avo.configure do |config|
     end
 
     section I18n.t('avo.other'), icon: "heroicons/outline/finger-print", collapsable: true, collapsed: true do
-      link 'Avo HQ', path: 'https://avohq.io', target: :_blank
-      link 'Jumpstart Rails', path: 'https://jumpstartrails.com/', target: :_blank
+      link_to 'Avo HQ', path: 'https://avohq.io', target: :_blank
+      link_to 'Jumpstart Rails', path: 'https://jumpstartrails.com/', target: :_blank
     end
   }
 end
@@ -75,26 +75,26 @@ Avo.configure do |config|
     end
 
     group do
-      link "Avo", path: "https://avohq.io"
-      link "Google", path: "https://google.com", target: :_blank
+      link_to "Avo", path: "https://avohq.io"
+      link_to "Google", path: "https://google.com", target: :_blank
     end
   }
   config.profile_menu = -> {
-    link "Profile", path: "/profile", icon: "user-circle"
+    link_to "Profile", path: "/profile", icon: "user-circle"
   }
 end
 ```
 
 ## Menu item types
 
-A few menu item types are supported `link`, `section`, `group`, `resource`, and `dashboard`. There are a few helpers too, like `all_resources`, `all_dashboards`, and `all_tools`.
+A few menu item types are supported `link_to`, `section`, `group`, `resource`, and `dashboard`. There are a few helpers too, like `all_resources`, `all_dashboards`, and `all_tools`.
 
-## Link
+## Link to
 
-Link is the menu item that the user will probably interact with the most. It will generate a link on your menu. You can specify the `name`, `path` , and `target`.
+Link to is the menu item that the user will probably interact with the most. It will generate a link on your menu. You can specify the `name`, `path` , and `target`.
 
 ```ruby
-link "Google", path: "https://google.com", target: :_blank
+link_to "Google", path: "https://google.com", target: :_blank
 ```
 <img :src="('/assets/img/menu-editor/external-link.jpg')" alt="Avo menu editor" class="border mb-4" />
 
@@ -177,6 +177,21 @@ Avo.configure do |config|
     resource :user, visible: -> do
       context[:something] == :something_else
     end
+  }
+end
+```
+
+## Add `data` attributes to items
+
+<VersionReq version="2.16" />
+
+You may want to add special data attributes to some items and you can do that using the `data` option. For example you may add `data: {turbo: false}` to make a regular request for a link.
+
+```ruby{4}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    resource :user, data: {turbo: false}
   }
 end
 ```
@@ -299,7 +314,7 @@ You may add the `icon` option to the `profile_menu` links.
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.profile_menu = -> {
-    link "Profile", path: "/profile", icon: "user-circle"
+    link_to "Profile", path: "/profile", icon: "user-circle"
   }
 end
 ```
