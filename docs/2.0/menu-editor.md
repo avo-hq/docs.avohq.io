@@ -232,6 +232,10 @@ section "App", icon: "heroicons/outline/beaker" do
 end
 ```
 
+:::warning
+The `all_resources` helper is taking into account your [authorization](./authorization) rules, so make sure you have `def index?` enabled in your resource policy.
+:::
+
 <img :src="('/assets/img/menu-editor/all-helpers.jpg')" alt="Avo menu editor" class="border mb-4" />
 
 ## Icons
