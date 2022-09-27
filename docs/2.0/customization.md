@@ -410,7 +410,7 @@ Please follow [this](authentication.html#customise-the-sign-out-link) guide in [
 
 ## Skip show view
 
-<VersionReq version="2.15" />
+<VersionReq version="2.16" />
 
 In the CRUD interface Avo adds the <Show /> view by default. This means that when your users will see the view icon to go to that detail page and they will be redirected to the <Show /> page when doing certain tasks (update a record, run an action, etc.).
 
