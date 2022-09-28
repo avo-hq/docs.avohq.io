@@ -41,6 +41,22 @@ Take it step by step.
 This will mount the app under `/avo` path. Visit that link to see the result.
 :::
 
+## Install from GitHub
+
+You may also install Avo from GitHub. When you do that you must compile the assets yourself. You do that using the `rake avo:build-assets` command.
+When pushing to production, make sure you build the assets on deploy time using this task.
+
+```ruby
+# Rakefile
+Rake::Task["assets:precompile"].enhance do
+  Rake::Task["avo:build-assets"].execute
+end
+```
+
+:::info
+If you don't have the `assets:precompile` step in your deployment process, please adjust that with a different step you might have like `db:migrate`.
+:::
+
 ## Next steps
 
 Please follow the next steps to ensure your app is secured and you have access to all the features you need.
