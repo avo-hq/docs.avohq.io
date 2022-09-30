@@ -130,7 +130,6 @@ const config = {
             {text: "Search", link: "/2.0/search"},
             {text: "Filters", link: "/2.0/filters"},
             {text: "Actions", link: "/2.0/actions"},
-            {text: "Custom asset pipeline", link: "/2.0/custom-asset-pipeline"},
             {text: "Localization (I18n)", link: "/2.0/localization"},
             {text: "Branding", link: "/2.0/branding"},
           ],
@@ -143,6 +142,7 @@ const config = {
             {text: "Resource tools", link: "/2.0/resource-tools"},
             {text: "Stimulus integration", link: "/2.0/stimulus-integration"},
             {text: "Evaluation hosts", link: "/2.0/evaluation-hosts"},
+            {text: "Custom asset pipeline", link: "/2.0/custom-asset-pipeline"},
           ],
         },
         {
