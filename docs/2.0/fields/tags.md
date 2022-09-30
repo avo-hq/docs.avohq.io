@@ -1,6 +1,7 @@
 ---
 license: pro
 version: '2.6.0'
+demoVideo: https://youtu.be/DKKSjNUvuBA
 ---
 
 # Tags field
