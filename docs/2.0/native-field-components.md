@@ -48,7 +48,7 @@ When you generate a new [resource tool](./resource-tools) you get access to the 
 ```
 :::
 
-You may add new fields using the `avo_show_field`, or `avo_edit_field` methods and use [the arguments you are used to from resources]('./field-options').
+You may add new fields using the `avo_show_field`, or `avo_edit_field` methods and use [the arguments you are used to from resources](./field-options).
 
 ```ruby
 # In your resource file
@@ -86,7 +86,7 @@ The fields take all the [field options](./field-options) you are used to like, `
 
 ## Component options
 
-The field taks a new `component_options` argument that will be passed to the view component for that field. Please check out the [field wrapper documentation](index-field-wrapper.md) for more details on that.
+The field taks a new `component_options` argument that will be passed to the view component for that field. Please check out the [field wrapper documentation](./field-wrappers.md) for more details on that.
 
 ## `avo_field` helper
 
