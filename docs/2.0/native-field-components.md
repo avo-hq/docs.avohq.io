@@ -62,7 +62,7 @@ field :name, as: :text
 
 ## The `form` option
 
-If this is an <Edit /> or a <Create /> view, you should pass it the `form` object that an Avo resource tool provides for you.
+If this is an <Edit /> or a <New /> view, you should pass it the `form` object that an Avo resource tool provides for you.
 
 ```erb
 <%= avo_edit_field :name, as: :text, form: form %>
@@ -86,7 +86,7 @@ The fields take all the [field options](./field-options) you are used to like, `
 
 ## Component options
 
-The field taks a new `component_options` argument that will be passed to the view component for that field. Please check out the [field wrapper documentation](./field-wrappers.md) for more details on that.
+The field taks a new `component_options` argument that will be passed to the view component for that field. Please check out the [field wrapper documentation](./field-wrappers) for more details on that.
 
 ## `avo_field` helper
 
