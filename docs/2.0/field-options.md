@@ -4,7 +4,7 @@ feedbackId: 834
 
 # Field options
 
-## Defining fields
+## Declaring fields
 
 Each Avo resource has a `field` method that registers your `Resource`'s fields. Avo ships with various simple fields like `text`, `textarea`, `number`, `password`, `boolean`, `select`, and more complex ones like `markdown`, `key_value`, `trix`, and `code`.
 

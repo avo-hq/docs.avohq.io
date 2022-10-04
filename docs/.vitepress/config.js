@@ -149,6 +149,8 @@ const config = {
           text: "Native Avo components",
           items: [
             {text: "Avo::PanelComponent", link: "/2.0/native-components/avo-panel-component"},
+            {text: "Native field components", link: "/2.0/native-field-components"},
+            {text: "Field wrappers", link: "/2.0/field-wrappers"},
           ],
         },
         {

@@ -4,6 +4,34 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.16 to 2.17
+
+### Field internals changes
+
+:::warning
+You only need to follow these instructions if you have added custom fields to Avo. If you haven't, you'll probably be just fine without
+:::
+
+We changed the way we handle the field and field wrapper internals.
+
+1. Merged `edit_field_wrapper` and `show_field_wrapper` and their components into one common `field_wrapper` method and component combo. The `index_field_wrapper` remains the same.
+1. `displayed_in_modal` was renamed to `compact`
+1. Added the `stacked` option to the <Show /> and <Edit /> fields and field wrapper that makes the label and field have a column-like appearance like they do on mobile.
+1. Added a `field_wrapper_args` method to the `Avo::Fields::EditComponent` (to the base fields for <Show /> and <Edit /> fields).
+
+These changes will not affect you at all if you don't have any custom fields added, but if you do, you will need to go into your custom fields and tweak the <Edit /> and <Show /> partials for your custom fields like so:
+
+```diff
+- <%= edit_field_wrapper field: @field, index: @index, form: @form, resource: @resource, displayed_in_modal: @displayed_in_modal do %>
++ <%= field_wrapper **field_wrapper_tags do %>
+```
+
+That will ensure the right arguments are going to be passed to the field wraper component. You may, however, tweak them like so:
+
+```erb
+<%= field_wrapper **field_wrapper_tags, compact: true do %>
+```
+
 ## Upgrade from 2.13 to 2.14
 
 Please ensure that you have `Rails.application.secrets.secret_key_base` or `ENV['SECRET_KEY_BASE']` available and at least 32 characters long.
