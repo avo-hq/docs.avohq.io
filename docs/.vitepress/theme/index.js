@@ -11,7 +11,7 @@ import Index from "./components/Index.vue"
 import Show from "./components/Show.vue"
 import Edit from "./components/Edit.vue"
 import New from "./components/New.vue"
-import {InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/outline"
+import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline/index.js"
 import "./styles.css"
 import {h} from "vue"
 
@@ -33,6 +33,8 @@ export default {
     app.component("BeakerIcon", BeakerIcon)
     app.component("PlayIcon", PlayIcon)
     app.component("InformationCircleIcon", InformationCircleIcon)
+    app.component("CheckBadgeIcon", CheckBadgeIcon)
+    app.component("ChatBubbleBottomCenterIcon", ChatBubbleBottomCenterIcon)
   },
   Layout() {
     return h(DefaultTheme.Layout, null, {

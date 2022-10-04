@@ -1,6 +1,5 @@
 <script setup>
 import {computed} from 'vue'
-import { InformationCircleIcon } from '@heroicons/vue/outline'
 
 const props = defineProps({
   version: String,

@@ -7,7 +7,7 @@
     "autoprefixer": "^10.4.8",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.7",
-    "vitepress": "1.0.0-alpha.5",
+    "vitepress": "^1.0.0-alpha.19",
     "vue": "^3.2.37"
   },
   "scripts": {
@@ -16,7 +16,7 @@
     "serve": "vitepress serve docs"
   },
   "dependencies": {
-    "@heroicons/vue": "^1.0.6",
+    "@heroicons/vue": "^2.0.11",
     "lodash": "^4.17.21",
     "markdown-it-container": "^3.0.0"
   }
