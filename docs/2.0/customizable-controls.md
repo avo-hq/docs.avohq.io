@@ -181,3 +181,22 @@ Sets the classes for that control.
 
 Any string value.
 :::
+
+## Conditionally hiding/showing actions
+
+Actions have the `visible` block where you can control the visibility of an action. In the context of `show_controls` that block is not taken into account, but yiou can use regular `if`/`else` statements because the action declaration is wrapped in a block.
+
+```ruby{6-8}
+class FishResource < Avo::BaseResource
+  self.show_controls = -> do
+    back_button label: "", title: "Go back now"
+
+    # visibility conditional
+    if record.something?
+      action ReleaseFish, style: :primary, color: :fuchsia, icon: "heroicons/outline/globe"
+    end
+
+    edit_button label: ""
+  end
+end
+```
