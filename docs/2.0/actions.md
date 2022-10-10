@@ -183,7 +183,7 @@ def handle(**args)
   end
 
   succeed 'Done!'
-  redirect_to '/avo/resources/users'
+  redirect_to avo.resources_users_path
 end
 ```
 
