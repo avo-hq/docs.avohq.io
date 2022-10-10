@@ -2,6 +2,7 @@ import DefaultTheme from "vitepress/theme"
 import FeedbackPill from "./components/FeedbackPill.vue"
 import LicenseReq from "./components/LicenseReq.vue"
 import VersionReq from "./components/VersionReq.vue"
+import Version from "./components/Version.vue"
 import DemoVideo from "./components/DemoVideo.vue"
 import PageHeader from "./components/PageHeader.vue"
 import BetaStatus from "./components/BetaStatus.vue"
@@ -21,6 +22,7 @@ export default {
     app.component("FeedbackPill", FeedbackPill)
     app.component("LicenseReq", LicenseReq)
     app.component("VersionReq", VersionReq)
+    app.component("Version", Version)
     app.component("DemoVideo", DemoVideo)
     app.component("BetaStatus", BetaStatus)
     app.component("SponsorGroup", SponsorGroup)
