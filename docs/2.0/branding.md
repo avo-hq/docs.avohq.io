@@ -116,3 +116,17 @@ We want to make it easy to change the logo for your app, so we added the `logo` 
 The `logo` should be the "big" logo you want to display on the desktop version of your app, and `logomark` should be a squared-aspect image that Avo displays on the mobile version.
 
 ![](/assets/img/branding/logomark.gif)
+
+## Customize the missing image placeholder
+
+When you view the data in the <Index /> view in a grid, when the `cover` field does not have an image, an avocado is going to be displayed instead as a placeholder.
+
+You might want to change that to something else using the `placeholder` option.
+
+```ruby
+Avo.configure do |config|
+  config.branding = {
+    placeholder: "/YOUR_PLACEHOLDER_IMAGE.jpg",
+  }
+end
+```
