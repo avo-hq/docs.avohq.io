@@ -108,7 +108,7 @@ You may want to compute the values on the fly for your `Select` field. You can u
 class ProjectResource < Avo::BaseResource
   field :type,
     as: :select,
-    options: ->(model: model, resource: resource, view: view, field: field) do
+    options: ->(model:, resource:, view:, field:) do
       model.get_types_from_the_database.map { |type| [type.name, type.id] }
     end,
     placeholder: 'Choose the type of the container.'
