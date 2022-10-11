@@ -93,6 +93,7 @@ const config = {
             {text: "Field options", link: "/2.0/field-options"},
             {text: "Records reordering", link: "/2.0/records-reordering"},
             {text: "Tabs and panels", link: "/2.0/tabs"},
+            {text: "Resource sidebar", link: "/2.0/resource-sidebar"},
             {text: "Customizable controls", link: "/2.0/customizable-controls"},
           ],
         },
