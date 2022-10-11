@@ -186,3 +186,18 @@ end
 ```
 
 Now, you'll have to provide a policy for each resource you have in your app, thus making it a more secure app.
+
+## Custom policies
+
+<VersionReq version="2.17" />
+
+By default, each resource guesses their own policy but you may override that using the custom policy feature.
+You may instruct a resource to use a different policy using the `authorization_policy` option.
+
+```ruby
+class PhotoCommentResource < Avo::BaseResource
+  self.model_class = ::Comment
+  self.authorization_policy = PhotoCommentPolicy
+  # ...
+end
+```
