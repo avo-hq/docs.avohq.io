@@ -31,6 +31,10 @@ field :is_available, as: :boolean
 
 <img :src="('/assets/img/fields-reference/naming-convention.jpg')" alt="Field naming convention" class="border mb-4" />
 
+:::info
+If having the fields stacked one on top of another is not the right layout, try the [resource-sidebar](./resource-sidebar).
+:::
+
 ## Change field name
 
 To customize the label, you can use the `name` property to pick a different label.
