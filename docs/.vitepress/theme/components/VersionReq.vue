@@ -18,7 +18,7 @@ const fullVersion = computed(() => {
     return `${props.version}.0`
   }
 })
-const href = computed(() => `https://avohq.io/releases/${fullVersion.value}`)
+const href = computed(() => version.value === "unreleased" ? null : `https://avohq.io/releases/${fullVersion.value}`)
 const label = computed(() => version.value === "unreleased" ? "Unreleased yet" : `Since v${version.value}`)
 const title = computed(() => version.value === "unreleased" ? "This feature hasn't been released yet." : `You must run at least Avo v${version.value} to enjoy this feature.`)
 </script>
