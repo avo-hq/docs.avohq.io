@@ -48,18 +48,6 @@ Sets the types the field can morph to.
 `[Post, Project, Team]`. Any array of model names.
 :::
 
-:::option `polymorphic_as`
-Sets the field as polymorphic with the key set on the model.
-
-#### Default
-
-`nil`
-
-#### Possible values
-
-A symbol, used on the `belongs_to` association with `polymorphic: true`.
-:::
-
 :::option `polymorphic_help`
 Sets the help text for the polymorphic type dropdown. Useful when you need to specify to the user why and what they need to choose as polymorphic.
 
