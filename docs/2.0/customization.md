@@ -338,7 +338,7 @@ end
 You may want to change Avo's queries to add sorting or use gems like [friendly](https://github.com/norman/friendly_id).
 You can do that using `resolve_query_scope` for multiple records and `resolve_find_scope` when fetching one record.
 
-### Custom query scope
+### Custom scope for `Index` page
 
 Using `resolve_query_scope` you tell Avo how to fetch the records for the `Index` view.
 
@@ -350,7 +350,7 @@ class UserResource < Avo::BaseResource
 end
 ```
 
-### Custom find scope
+### Custom scope for `Show` and `Edit` pages
 
 Using `resolve_find_scope` you tell Avo how to fetch one record for `Show` and `Edit` views,
 
