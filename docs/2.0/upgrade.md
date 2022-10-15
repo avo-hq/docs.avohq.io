@@ -23,14 +23,16 @@ These changes will not affect you at all if you don't have any custom fields add
 
 ```diff
 - <%= edit_field_wrapper field: @field, index: @index, form: @form, resource: @resource, displayed_in_modal: @displayed_in_modal do %>
-+ <%= field_wrapper **field_wrapper_tags do %>
++ <%= field_wrapper **field_wrapper_args do %>
 ```
 
 That will ensure the right arguments are going to be passed to the field wraper component. You may, however, tweak them like so:
 
 ```erb
-<%= field_wrapper **field_wrapper_tags, compact: true do %>
+<%= field_wrapper **field_wrapper_args, compact: true do %>
 ```
+
+Also we recommend using methods instead of instance variables for `field`, `form`, `resource`, etc.
 
 ## Upgrade from 2.13 to 2.14
 
