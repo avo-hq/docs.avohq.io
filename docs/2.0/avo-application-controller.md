@@ -1,6 +1,6 @@
 # `Avo::ApplicationController`
 
-## Extending the `ApplicationController`
+## On extending the `ApplicationController`
 
 You may sometimes want to add functionality to Avo's `ApplicationController`. That functionality may be setting attributes to `Current` or multi-tenancy scenarios.
 
