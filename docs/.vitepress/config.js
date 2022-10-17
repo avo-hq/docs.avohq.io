@@ -158,6 +158,7 @@ const config = {
           text: "Internals",
           items: [
             {text: "Testing", link: "/2.0/testing"},
+            {text: "Avo::ApplicationController", link: "/2.0/avo-application-controller"},
           ],
         },
       ],

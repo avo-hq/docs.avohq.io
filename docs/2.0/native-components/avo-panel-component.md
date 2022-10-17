@@ -1,4 +1,4 @@
-# Avo::PanelComponent
+# `Avo::PanelComponent`
 
 The panel component is one of the most used components in Avo.
 
