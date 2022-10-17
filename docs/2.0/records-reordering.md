@@ -67,3 +67,29 @@ end
 A typical scenario is to order the records only in the scope of a parent record, like order the `MenuItems` for a `Menu` or `Slides` for a `Slider`. So you wouldn't need to have the order buttons on the `Index` view but only in the association section.
 
 To control that, you can use the `visible_on` option. The possible values are `:index`, `:association` or `[:index, :association]` for both views.
+
+## Change the scope on the `Index` view
+
+Naturally, you'll want to apply the `order(position: :asc)` condition to your query. You may do that in two ways.
+
+1. Add a `default_scope` to your model. If you're using this ordering scheme only in Avo, then, this is not the recommended way, because it will add that scope to all queries for that model and you probably don't want that.
+
+2. Use the [`resolve_query_scope`](https://docs.avohq.io/2.0/customization.html#custom-query-scopes) to alter the query in Avo.
+
+```ruby{2-4}
+class CourseLinkResource < Avo::BaseResource
+  self.resolve_query_scope = ->(model_class:) do
+    model_class.order(position: :asc)
+  end
+
+  self.ordering = {
+    display_inline: true,
+    visible_on: :index, # :index or :association
+    actions: {
+      higher: -> { record.move_higher }, # has access to record, resource, options, params
+      lower: -> { record.move_lower },
+      to_top: -> { record.move_to_top },
+      to_bottom: -> { record.move_to_bottom }
+    }
+  }
+end
