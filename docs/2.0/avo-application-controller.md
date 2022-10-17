@@ -16,11 +16,11 @@ module Avo
 
     protect_from_forgery with: :exception
     around_action :set_avo_locale
-    before_action :some_multitenancy
+    before_action :multitenancy_detector
 
     # ... more Avo::ApplicationController methods
 
-    def some_multitenancy
+    def multitenancy_detector
       # your logic here
     end
   end
@@ -42,10 +42,10 @@ module Multitenancy
   extend ActiveSupport::Concern
 
   included do
-    before_action :some_multitenancy
+    before_action :multitenancy_detector
   end
 
-  def some_multitenancy
+  def multitenancy_detector
     # your logic here
   end
 end
@@ -56,4 +56,4 @@ Rails.configuration.to_prepare do
 end
 ```
 
-With this technique, the `some_multitenancy` method and its `before_action` will be included safely in `Avo::ApplicationController`.
+With this technique, the `multitenancy_detector` method and its `before_action` will be included safely in `Avo::ApplicationController`.
