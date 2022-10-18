@@ -1,10 +1,14 @@
+---
+license: pro
+---
+
 # Multilingual content
 
-This is not an official feature yet but until we add it with all the bells and whistles you can use this guide to monkey patch it into your app.
+This is not an official feature yet, but until we add it with all the bells and whistles, you can use this guide to monkey-patch it into your app.
 
-We pushed some code to take in the `set_locale` param and set the `I18n.locale` and `I18n.default_locale` so all subsequent requests will use that locale. **That will change the locale for your whole app. Even to the front-office**.
+We pushed some code to take in the `set_locale` param and set the `I18n.locale` and `I18n.default_locale` so all subsequent requests will use that locale. **That will change the locale for your whole app. Even to the front office**.
 
-If you don't want to change the locale for the whole app you can use `force_locale` that will change the locale for that request only. It will also append `force_locale` to all your links going forward.
+If you don't want to change the locale for the whole app, you can use `force_locale`, which will change the locale for that request only. It will also append `force_locale` to all your links going forward.
 
 ```ruby
 def set_default_locale
@@ -28,7 +32,7 @@ end
 
 ## Install the mobility gem
 
-Follow the install instructions [here](https://github.com/shioyama/mobility#installation). A brief introduction below (but follow their guid for best results)
+Follow the install instructions [here](https://github.com/shioyama/mobility#installation). A brief introduction below (but follow their guide for best results)
 
  - add the gem to your `Gemfile` `gem 'mobility', '~> 1.2.5'`
  - `bundle install`
@@ -42,7 +46,7 @@ Follow the install instructions [here](https://github.com/shioyama/mobility#inst
 
 **Before v 2.3.0**
 
-First you need to eject the `_profile_dropdown` partial using this command `bin/rails generate avo:eject :profile_dropdown`. In that partail add the languages you need to support like so:
+First, you need to eject the `_profile_dropdown` partial using this command `bin/rails generate avo:eject :profile_dropdown`. In that partial, add the languages you need to support like so:
 
 ```erb
 <!-- Before -->
@@ -116,7 +120,7 @@ Feel free to customize the dropdown as much as you need it to and add as many lo
 
 **After v2.3.0**
 
-Use the `profile_menu` to add the language switching links.
+Use the `profile_menu` to add the language-switching links.
 
 ```ruby
 # config/initializers/avo.rb
@@ -130,11 +134,11 @@ end
 
 **After v2.10**
 
-The `set_locale` param will change the locale for the entire website (for you and your customers). If you need to change it just for the current visit, use `force_locale`. This will switch the locale for that request only not for your customers. It will also add the `force_locale` param to each link going forward making it easy to update all the multi-lingual content you have.
+The `set_locale` param will change the locale for the entire website (for you and your customers). If you need to change it just for the current visit, use `force_locale`. That will switch the locale for that request only, not for your customers. It will also add the `force_locale` param to each link as we advance, making it easy to update all your multilingual content.
 
 **After v2.11**
 
-A change was pushed to take into account the `locale` from the initializer. This will change the locale for Avo requests.
+A change was pushed to consider the `locale` from the initializer. That will change the locale for Avo requests.
 
 ```ruby{2}
 Avo.configure do |config|
@@ -144,10 +148,10 @@ end
 
 ## Workflow
 
-You will now be able to edit the attributed you marked as translatable (eg: `name`) in the locale you are in (default is `en`). Next you can go to the navbar on the top and switch to a new locale. The switch will then allow you to edit the record in that locale, and so on.
+You will now be able to edit the attributes you marked as translatable (eg: `name`) in the locale you are in (default is `en`). Next, you can go to the navbar on the top and switch to a new locale. The switch will then allow you to edit the record in that locale and so on.
 
 ## Support
 
-This is the first iteration of multilingual content. It's obvious that this could be done in a better way and we'll add that better way in the future, but until then you can use this method to edit your multilingual content.
+This is the first iteration of multilingual content. It's obvious that this could be done in a better way, and we'll add that better way in the future, but until then, you can use this method to edit your multilingual content.
 
 Thanks!
