@@ -1,40 +1,41 @@
----
-version: '1.0'
-license: community
----
+# Time
 
-# Date
+<!-- Replace this image with one of the Time field -->
+![](/assets/img/fields/time.png)
 
-The `Date` field may be used to display date values.
+The `Time` field is similar to the [DateTime](./date_time) field and uses the time picker of flatpickr (without the calendar). You can use the `time_24hr` option for flatpickr to use the 24-hour format. Add the option `relative: false` if you want the time to stay absolute and not change based on the browser's timezone.
 
 ```ruby
-field :birthday,
-  as: :date,
-  first_day_of_week: 1,
-  picker_format: "F J Y",
-  format: "yyyy-LL-dd",
-  placeholder: "Feb 24th 1955"
+field :starting_at,
+  as: :time,
+  picker_format: 'H:i',
+  format: "HH:mm",
+  relative: true,
+  picker_options: {
+    time_24hr: true
+  }
 ```
 
-## Options
 
 :::option `format`
+
 Format the date shown to the user on the `Index` and `Show` views.
 
 #### Default
 
-`yyyy-LL-dd`
+`TT`
 
 #### Possible values
 
 Use [`luxon`](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) formatting tokens.
 :::
+
 :::option `picker_format`
 Format the date shown to the user on the `Edit` and `New` views.
 
 #### Default
 
-`Y-m-d`
+`H:i:S`
 
 #### Possible values
 
@@ -57,4 +58,3 @@ These options may override other options like `picker_options`.
 :::
 
 ::::
-<!-- @include: ./../common/date_date_time_common.md-->
