@@ -1,3 +1,8 @@
+---
+version: '2.18'
+license: community
+---
+
 # Time
 
 <!-- Replace this image with one of the Time field -->
