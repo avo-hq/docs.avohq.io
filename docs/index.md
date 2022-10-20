@@ -90,12 +90,12 @@ features:
     highlight: true
 
 title: Avo Admin for Ruby on Rails
-titleTemplate: Build apps 10x faster
+titleTemplate: Build business apps 10x faster
 
 hero:
   name: Avo
-  text: Build apps 10x faster
-  tagline: Stop building the boilerplate over and over again
+  text: Build business apps 10x faster
+  tagline: Save time and build fast!
   actions:
     - theme: brand
       text: Get Started
