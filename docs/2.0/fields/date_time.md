@@ -10,7 +10,7 @@ license: community
 The `DateTime` field is similar to the Date field with two new attributes. `time_24hr` tells flatpickr to use 24 hours format and `timezone` to tell it in what timezone to display the time. By default, it uses your browser's timezone.
 
 ```ruby
-filed :joined_at,
+field :joined_at,
   as: :date_time,
   name: "Joined at",
   picker_format: "Y-m-d H:i:S",
@@ -60,4 +60,21 @@ If nothing is selected, the browser's timezone will be used.
 
 [TZInfo identifiers](https://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html).
 :::
+
+:::option `picker_options`;
+Passes the options here to [flatpickr](https://flatpickr.js.org/).
+
+#### Default
+
+`{}`
+
+#### Possible values
+
+Use [`flatpickr`](https://flatpickr.js.org/options) options.
+
+:::warning
+These options may override other options like `picker_options`.
+:::
+
+::::
 <!-- @include: ./../common/date_date_time_common.md-->

@@ -191,8 +191,7 @@ Now, you'll have to provide a policy for each resource you have in your app, thu
 
 <VersionReq version="2.17" />
 
-By default, each resource guesses their own policy but you may override that using the custom policy feature.
-You may instruct a resource to use a different policy using the `authorization_policy` option.
+By default, Avo will infer the policy from the model of the resource object. If you wish to use a different policy for a given resource, you can specify it directly in the resource using the `authorization_policy` option.
 
 ```ruby
 class PhotoCommentResource < Avo::BaseResource
