@@ -4,6 +4,17 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.17 to 2.18
+
+### Manually require some gems
+
+In an effort to slim Avo down and require less gems by default, we removed some default dependencies.
+
+- Removed the `rails` requirement in favor of `activerecord` and `actionview`
+- When using the `file` and `files` fields include `activestorage` and `image_processing` gems
+- When using the `country` field include the `countries` gem
+- When using the [Dashboards](./dashboards) feature include the `chartkick` gem
+
 ## Upgrade from 2.16 to 2.17
 
 ### Field internals changes

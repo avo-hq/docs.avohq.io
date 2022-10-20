@@ -5,6 +5,10 @@ license: pro
 
 # Dashboards
 
+:::warning
+Since version `2.18` you must manually require the `chartkick` gem in you `Gemfile`.
+:::
+
 There comes the point in your app's life when you need to display the data in an aggregated form like a metric or chart. That's what Avo's Dashboards are all about.
 
 ## Generate a dashboard

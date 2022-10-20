@@ -63,6 +63,8 @@ Enables file attachments.
 
 ## File attachments
 
+<!-- @include: ./../common/files_gem_common.md-->
+
 Trix supports drag-and-drop file attachments. To enable **Active Storage** integration, you must add the `attachment_key` option to your Trix field.
 
 ```ruby
