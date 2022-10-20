@@ -43,6 +43,10 @@ const config = {
       'script',
       {},
       "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'UA-174545089-1');"
+    ],
+    [
+      'script',
+      {defer: true, "data-domain": "docs.avohq.io", src: "https://plausible.io/js/plausible.js"}
     ]
   ],
   themeConfig: {
