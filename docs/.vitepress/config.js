@@ -47,6 +47,11 @@ const config = {
     [
       'script',
       {defer: true, "data-domain": "docs.avohq.io", src: "https://plausible.io/js/plausible.js"}
+    ],
+    [
+      'script',
+      {defer: true, "data-site": "WQUTSKKK", src: "https://cdn.usefathom.com/script.js"}
+    ],
     ]
   ],
   themeConfig: {
