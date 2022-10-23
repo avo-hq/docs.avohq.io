@@ -14,10 +14,11 @@ In an effort to slim Avo down and require less gems by default, we removed some 
 - If you're using using the `file` and `files` fields include `activestorage` and `image_processing` gems
 - If you're using using the `country` field include the `countries` gem
 - If you're using using the [Dashboards](./dashboards) feature include the `chartkick` gem
+- If you're using using the [Authorization](./authorization) feature include the `pundit` gem
 :::
 
 :::info No action required
-- Removed the `rails` requirement in favor of `activerecord` and `actionview`. No actions required.
+- Removed the `rails` requirement in favor of `activerecord` and `actionview`.
 :::
 
 ## Upgrade from 2.16 to 2.17
