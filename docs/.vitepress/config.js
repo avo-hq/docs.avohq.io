@@ -154,7 +154,7 @@ const config = {
             {text: "Custom views", link: "/2.0/custom-tools"},
             {text: "Custom fields", link: "/2.0/custom-fields"},
             {text: "Resource tools", link: "/2.0/resource-tools"},
-            {text: "Stimulus integration", link: "/2.0/stimulus-integration"},
+            {text: "Stimulus JS integration", link: "/2.0/stimulus-integration"},
             {text: "Evaluation hosts", link: "/2.0/evaluation-hosts"},
             {text: "Custom asset pipeline", link: "/2.0/custom-asset-pipeline"},
           ],

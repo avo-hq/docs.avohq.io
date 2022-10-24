@@ -148,13 +148,13 @@ field :name, as: :text, html: {
 
 ### Declare the fields from the outside in
 
-When you add these attributes, you need to think from the outside in. So first the `view` (`index`, `show`, or `edit`), next the element to which you add the attribute (`wrapper` or `input`), and then the attribute `style`, `classes`, or `data`.
+When you add these attributes, you need to think from the outside in. So first the `view` (`index`, `show`, or `edit`), next the element to which you add the attribute (`wrapper`, `label`, `content` or `input`), and then the attribute `style`, `classes`, or `data`.
 
 **The `edit` value will be used for both the `Edit` and `New` views.**
 
 There are two notations through which you can attach the attributes; `object` or `block` notation.
 
-### The `object` notation
+## The `object` notation
 
 This is the simplest way of attaching the attribute. You usually use this when you want to add _static_ content and params.
 
@@ -172,7 +172,7 @@ field :has_skills,
 
 In this example, we're adding the `hidden` class to the field wrapper on the `Edit` and `New` views.
 
-### The `block` notation
+## The `block` notation
 
 You can use the' block' notation if you need to do a more complex transformation to add your attributes. You'll have access to the `params`, `current_user`, `record`, and `resource` variables. It's handy in multi-tenancy scenarios and when you need to scope out the information across accounts.
 
@@ -219,18 +219,103 @@ field :has_skills,
 
 ## Where are the attributes added?
 
-You can add attributes to the' wrapper' element for the `index`, `show`, or `edit` blocks.
+You can add attributes to the wrapper element for the `index`, `show`, or `edit` blocks.
 
-_Edit field wrapper_
-<img :src="('/assets/img/stimulus/field-wrapper.png')" alt="Edit field wrapper" class="border mb-4" />
+## Index field wrapper
 
-_Index field wrapper_
-<img :src="('/assets/img/stimulus/index-field-wrapper.png')" alt="Index field wrapper" class="border mb-4" />
+```ruby
+field :name, as: :text, html: {
+  index: {
+    wrapper: {}
+  }
+}
+```
 
-You can also add attributes to the `edit' field for the' input' block.
+<img :src="('/assets/img/stimulus/index-field-wrapper.jpg')" alt="Index field wrapper" class="border mb-4" />
 
-_Edit input target_
-<img :src="('/assets/img/stimulus/edit-input-target.png')" alt="Index field wrapper" class="border mb-4" />
+## Show field wrapper
+
+```ruby
+field :name, as: :text, html: {
+  show: {
+    wrapper: {}
+  }
+}
+```
+
+<img :src="('/assets/img/stimulus/show-field-wrapper.jpg')" alt="Show field wrapper" class="border mb-4" />
+
+## Show label target
+
+```ruby
+field :name, as: :text, html: {
+  show: {
+    label: {}
+  }
+}
+```
+
+<img :src="('/assets/img/stimulus/show-label-target.jpg')" alt="Show label target" class="border mb-4" />
+
+## Show content target
+
+```ruby
+field :name, as: :text, html: {
+  show: {
+    content: {}
+  }
+}
+```
+
+<img :src="('/assets/img/stimulus/show-content-target.jpg')" alt="Show content target" class="border mb-4" />
+
+## Edit field wrapper
+
+```ruby
+field :name, as: :text, html: {
+  edit: {
+    wrapper: {}
+  }
+}
+```
+
+<img :src="('/assets/img/stimulus/edit-field-wrapper.jpg')" alt="Edit field wrapper" class="border mb-4" />
+
+## Edit label target
+
+```ruby
+field :name, as: :text, html: {
+  edit: {
+    label: {}
+  }
+}
+```
+
+<img :src="('/assets/img/stimulus/edit-label-target.jpg')" alt="Edit label target" class="border mb-4" />
+
+## Edit content target
+
+```ruby
+field :name, as: :text, html: {
+  edit: {
+    content: {}
+  }
+}
+```
+
+<img :src="('/assets/img/stimulus/edit-content-target.jpg')" alt="Edit content target" class="border mb-4" />
+
+## Edit input target
+
+```ruby
+field :name, as: :text, html: {
+  edit: {
+    input: {}
+  }
+}
+```
+
+<img :src="('/assets/img/stimulus/edit-input-target.jpg')" alt="Index field wrapper" class="border mb-4" />
 
 ## Composing the attributes together
 
