@@ -54,6 +54,13 @@ field :notify_user, as: :boolean
 field :message, as: :textarea, default: 'Your account has been marked as inactive.'
 ```
 
+:::warning Files authorization
+If you're using the `file` field on an action and attach it to a resource that's using the authorization feature, please ensure you have the `upload_attachments?` policy method returning `true`. Otherwise, the `file` input might be hidden.
+
+More about this on the [authorization page](./authorization#upload-attachments).
+:::
+
+
 ![Actions](/assets/img/actions/action-fields.jpg)
 
 The `handle` method is where the magic happens. That is where you put your action logic. In this method, you will have access to the selected `models` (if there's only one, it will be automatically wrapped in an array) and the values passed to the `fields`.
