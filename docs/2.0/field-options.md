@@ -292,3 +292,30 @@ end
 ```
 
 <img :src="('/assets/img/fields/index_text_align.jpg')" alt="Index text align" class="border mb-4" />
+
+## Stacked layout
+
+For some fields, it might make more sense to use all of the horizontal area to display it. You can do that by changing the layout of the field wrapper using the `stacked` option.
+
+```ruby
+field :meta, as: :key_value, stacked: true
+```
+
+#### `inline` layout (default)
+![](/assets/img/fields/field_wrapper_layout_inline.jpg)
+
+#### `stacked` layout
+
+![](/assets/img/fields/field_wrapper_layout_stacked.jpg)
+
+## Global `stacked` layout
+
+You may also set all the fields to follow the `stacked` layout by changing the `field_wrapper_layout` initializer option from `:inline` (default) to `:stacked`.
+
+```ruby
+Avo.configure do |config|
+  config.field_wrapper_layout = :stacked
+end
+```
+
+Now, all fields will have the stacked layout throughout your app.
