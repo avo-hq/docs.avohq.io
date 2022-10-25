@@ -12,6 +12,15 @@ By default, Avo leverages Pundit under the hood to manage the authorization.
 Pundit is just the default choice. You may plug in your own client using the instructions [here](#custom-authorization-clients).
 :::
 
+:::warning
+You must manually require `pundit` or your authorization library in your `Gemfile`.
+
+```ruby
+# Minimal authorization through OO design and pure Ruby classes
+gem "pundit"
+```
+:::
+
 ## Make sure Avo knows who your current user is
 
 Before setting any policies up, please ensure Avo knows your current user. Usually, this 👇 set up should be fine, but follow [the authentication guide](./authentication#customize-the-current-user-method) for more information.
