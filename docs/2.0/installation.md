@@ -10,6 +10,7 @@ prev: /2.0/
 - Ruby on Rails >= 6.0
 - Ruby >= 2.7
 - `api_only` set to `false`. More [here](./recipes/api-only-app).
+- `propshaft` or `sprockets` gem
 
 :::warning Zeitwerk autoloading is required.
 When adding Avo to a Rails app that was previously a Rails 5 app you must ensure that it uses zeitwerk for autoloading and Rails 6 defaults.
