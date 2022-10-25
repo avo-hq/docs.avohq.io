@@ -17,6 +17,25 @@ In an effort to slim Avo down and require less gems by default, we removed some 
 - If you're using using the [Authorization](./authorization) feature include the `pundit` gem
 :::
 
+To successfully migrate, your `Gemfile` should contain these gems:
+
+```ruby
+# Minimal authorization through OO design and pure Ruby classes
+gem "pundit"
+
+# Active Storage makes it simple to upload and reference files
+gem "activestorage"
+
+# High-level image processing wrapper for libvips and ImageMagick/GraphicsMagick
+gem "image_processing"
+
+# All sorts of useful information about every country packaged as convenient little country objects.
+gem "countries"
+
+# Create beautiful JavaScript charts with one line of Ruby
+gem "chartkick"
+```
+
 :::info No action required
 - Removed the `rails` requirement in favor of `activerecord` and `actionview`.
 :::
