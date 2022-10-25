@@ -4,7 +4,13 @@ license: pro
 
 # Authorization
 
-When you share access to Avo with your clients or large teams, you may want to restrict access to a resource or a subset of resources. One example may be that only admin-level users may delete records. Avo leverages Pundit under the hood to manage the role-based authentication.
+When you share access to Avo with your clients or large teams, you may want to restrict access to a resource or a subset of resources. One example may be that only admin-level users may delete or update records.
+
+By default, Avo leverages Pundit under the hood to manage the authorization.
+
+:::info Pundit alternative
+Pundit is just the default choice. You may plug in your own client using the instructions [here](#custom-authorization-clients).
+:::
 
 ## Make sure Avo knows who your current user is
 
@@ -198,5 +204,73 @@ class PhotoCommentResource < Avo::BaseResource
   self.model_class = ::Comment
   self.authorization_policy = PhotoCommentPolicy
   # ...
+end
+```
+
+## Custom authorization clients
+
+:::info
+Check out the [Pundit client](https://github.com/avo-hq/avo/blob/main/lib/avo/services/authorization_clients/pundit_client.rb) for reference.
+:::
+
+### Client methods
+
+Each authorization client must expose a few methods.
+
+### `authorize`
+
+Receives the `user`, `record`, `action`, and optionally, the `policy_class` and authorizez that action
+
+```ruby
+# Pundit example
+def authorize(user, record, action, policy_class: nil)
+  Pundit.authorize(user, record, action, policy_class: policy_class)
+rescue Pundit::NotDefinedError => error
+  raise NoPolicyError.new error.message
+rescue Pundit::NotAuthorizedError => error
+  raise NotAuthorizedError.new error.message
+end
+```
+
+### `policy`
+
+Receives the `user` and `record` and returns the policy to use.
+
+```ruby
+def policy(user, record)
+  Pundit.policy(user, record)
+end
+```
+
+### `policy!`
+
+Receives the `user` and `record` and returns the policy to use. It will raise an error if no policy is found.
+
+```ruby
+def policy!(user, record)
+  Pundit.policy!(user, record)
+rescue Pundit::NotDefinedError => error
+  raise NoPolicyError.new error.message
+end
+```
+
+### `apply_policy`
+
+Receives the `user`, `record`, and optionally, the policy class to use. It will apply a scope to a query.
+
+```ruby
+def apply_policy(user, model, policy_class: nil)
+  # Try and figure out the scope from a given policy or auto-detected one
+  scope_from_policy_class = scope_for_policy_class(policy_class)
+
+  # If we discover one use it.
+  # Else fallback to pundit.
+  if scope_from_policy_class.present?
+    scope_from_policy_class.new(user, model).resolve
+  else
+    Pundit.policy_scope!(user, model)
+  end
+rescue Pundit::NotDefinedError => error
+  raise NoPolicyError.new error.message
 end
 ```
