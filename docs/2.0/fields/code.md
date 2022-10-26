@@ -29,6 +29,7 @@ Customize the color theme.
 
 Preview the themes here: [codemirror-themes](https://codemirror.net/demo/theme.html).
 :::
+
 :::option `language`
 Customize the syntax highlighting using the language method.
 
@@ -39,4 +40,52 @@ Customize the syntax highlighting using the language method.
 #### Possible values
 
 `css`, `dockerfile`, `htmlmixed`, `javascript`, `markdown`, `nginx`, `php`, `ruby`, `sass`, `shell`, `sql`, `vue` or `xml`.
+:::
+
+:::option `height`
+Customize the height of the editor.
+
+#### Default value
+
+`auto`
+
+#### Possible values
+
+`auto`, or any value in pixels (eg `height: 250px`).
+:::
+
+:::option `tab_size`
+Customize the tab_size of the editor.
+
+#### Default value
+
+`2`
+
+#### Possible values
+
+Any integer value.
+:::
+
+:::option `indent_with_tabs`
+Customize the type of indentation.
+
+#### Default value
+
+`false`
+
+#### Possible values
+
+`true` or `false`
+:::
+
+:::option `line_wrapping`
+Customize whether the editor should apply line wrapping.
+
+#### Default value
+
+`true`
+
+#### Possible values
+
+`true` or `false`
 :::
