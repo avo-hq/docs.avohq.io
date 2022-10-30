@@ -576,3 +576,23 @@ end
 ```
 
 <img :src="('/assets/img/filters/keep-filters-panel-open.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+
+## Visibility
+
+You may want to manipulate your filter visibility on screens. You can do that using the `self.visible` attribute.
+
+Inside the visible block you can acces the following variables:
+```ruby
+  self.visible = -> do
+    #   Access to:
+    #   block
+    #   context
+    #   current_user
+    #   params
+    #   parent_model
+    #   parent_resource
+    #   resource
+    #   view
+    #   view_context
+  end
+```

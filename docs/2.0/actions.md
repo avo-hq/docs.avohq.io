@@ -280,7 +280,7 @@ You may want to hide specific actions on screens, like a standalone action on th
 class DummyAction < Avo::BaseAction
   self.name = "Dummy action"
   self.standalone = true
-  self.visible = -> (resource:, view:) { view == :index }
+  self.visible = -> { view == :index }
 
   def handle(**args)
     fields, current_user, resource = args.values_at(:fields, :current_user, :resource)
@@ -295,10 +295,26 @@ end
 By default, actions are visible on the `Index`, `Show`, and `Edit` views, but you can enable them on the `New` screen, too (from version 2.9.0).
 
 ```ruby
-self.visible = -> (resource:, view:) { view == :new }
+self.visible = -> { view == :new }
 
 # Or use this if you want them to be visible on any view
-self.visible = -> (resource:, view:) { true }
+self.visible = -> { true }
+```
+
+Inside the visible block you can acces the following variables:
+```ruby
+  self.visible = -> do
+    #   Access to:
+    #   block
+    #   context
+    #   current_user
+    #   params
+    #   parent_model
+    #   parent_resource
+    #   resource
+    #   view
+    #   view_context
+  end
 ```
 
 ## Actions authorization
