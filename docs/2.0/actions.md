@@ -304,7 +304,7 @@ self.visible = -> { true }
 Inside the visible block you can acces the following variables:
 ```ruby
   self.visible = -> do
-    #   Access to:
+    #   You have access to:
     #   block
     #   context
     #   current_user
