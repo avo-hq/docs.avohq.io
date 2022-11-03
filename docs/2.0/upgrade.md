@@ -4,6 +4,50 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.18 to 2.19
+
+### Remove the params from the `search_query` block
+
+In 2.19, we added the visibility block for filters. We used the same logic applyed to the actions visible block and in that upgrade process, we changed the way that visibility block works, you need to do a minor update to your code and remove the arguments from yours visibility blocks inside your actions. This way, both, filter and actions, uses the same visibility block and it's more flexible and future-proof. From now on we can give access to new params inside that blocks without making you to change your code again.
+
+```ruby
+# Before
+self.visible = ->(resource:, view:) do
+  true
+end
+
+# After
+self.visible = -> do
+  true
+end
+```
+
+To make it easier for you to migrate, we made this ruby script
+```ruby
+DONT_TOUCH = ['.', '..', $0]
+OLD_VISIBLE_BLOCK = "self.visible = ->(resource:, view:) do"
+NEW_VISIBLE_BLOCK = "self.visible = -> do"
+
+def remove_args_from_visible_block(file_name)
+  content = File.read file_name
+  content.gsub!(OLD_VISIBLE_BLOCK, NEW_VISIBLE_BLOCK)
+
+  File.open(file_name, "w") { |file| file << content }
+end
+
+Dir.foreach(".") {|file_name| remove_args_from_visible_block file_name unless DONT_TOUCH.include? file_name}
+```
+
+**Usage**
+- Create a ruby file in your **actions folder** (ex: `app/avo/actions/remove_args_from_visible_block.rb`) with the content above.
+- Open terminal inside your **actions folder**
+- Execute the script: `$ ruby remove_args_from_visible_block.rb`
+- Remove the upgrade script
+
+**Expected behavior**
+The script should replace all `self.visible = ->(resource:, view:) do` with `self.visible = -> do`.
+
+
 ## Upgrade from 2.17 to 2.18
 
 ### Manually require some gems
