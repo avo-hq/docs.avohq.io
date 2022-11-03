@@ -10,7 +10,39 @@ Each `Resource` maps out one of your models. There can be multiple `Resource`s a
 
 All resources are located in the `app/avo/resources` directory. Unfortunately, `Resource`s can't be namespaced yet, so they all need to be in the root level of that directory.
 
-## Defining Resources
+## Resources from model generation
+
+```bash
+bin/rails generate model car make:string mileage:integer
+```
+
+Running this command will generate the expected Rails files for a model and for Avo the `CarResource` and `CarsController`.
+
+The auto-generated resource file will look like this:
+
+```ruby
+class CarResource < Avo::BaseResource
+  self.title = :id
+  self.includes = []
+  # self.search_query = -> do
+  #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+  # end
+
+  field :id, as: :id
+  # Generated fields from model
+  field :make, as: :text
+  field :mileage, as: :number
+  # add fields here
+end
+```
+
+This behavior can be ommited by using the argument `--skip-avo-resource`. For example if we want to generate a `Car` model but no Avo counterpart we should use the following command:
+
+```bash
+bin/rails generate model car make:string kms:integer --skip-avo-resource
+```
+
+## Manually defining resources
 
 ```bash
 bin/rails generate avo:resource post
@@ -32,7 +64,84 @@ class PostResource < Avo::BaseResource
 end
 ```
 
-From this config, Avo will infer a few things like the resource's model will be the `Post` model and the name of the resource si `Post`. But all of those inferred things are actually overridable.
+From this config, Avo will infer a few things like the resource's model will be the `Post` model and the name of the resource is `Post`. But all of those inferred things are actually overridable.
+
+Now, let's say we already have a model Post well defined with the following attributes:
+
+```ruby
+# == Schema Information
+#
+# Table name: posts
+#
+#  id           :bigint           not null, primary key
+#  name         :string
+#  body         :text
+#  is_featured  :boolean
+#  published_at :datetime
+#  user_id      :bigint
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  status       :integer          default("draft")
+#
+class Post < ApplicationRecord
+ enum status: [:draft, :published, :archived]
+
+ validates :name, presence: true
+
+ has_one_attached :cover_photo
+ has_one_attached :audio
+ has_many_attached :attachments
+
+ belongs_to :user, optional: true
+ has_many :comments, as: :commentable
+ has_many :reviews, as: :reviewable
+
+ acts_as_taggable_on :tags
+end
+```
+
+In this case, the avo resource will generate the fields (without any configuration) from the model attributes and relationships resulting in the following resource:
+
+```ruby
+class PostResource < Avo::BaseResource
+  self.title = :id
+  self.includes = []
+  # self.search_query = -> do
+  #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+  # end
+
+  field :id, as: :id
+  # Generated fields from model
+  field :name, as: :text
+  field :body, as: :textarea
+  field :is_featured, as: :boolean
+  field :published_at, as: :datetime
+  field :user_id, as: :number
+  field :status, as: :select, enum: ::Post.statuses
+  field :cover_photo, as: :file
+  field :audio, as: :file
+  field :attachments, as: :files
+  field :user, as: :belongs_to
+  field :comments, as: :has_many
+  field :reviews, as: :has_many
+  field :tags, as: :tags
+  # add fields here
+end
+```
+
+It's also possible to specify the resource model class. For example, if we want to create a new resource named `MiniPostResource` using the `Post` model we can do that using the following command:
+
+```bash
+bin/rails generate avo:resource mini-post --model-class post
+```
+
+That command will create a new resource with the same attributes as the post resource above with specifying the `model_class`:
+
+```ruby
+class PostResource < Avo::BaseResource
+  self.model_class = ::Post
+end
+```
 
 :::info
 You can see the result in the admin panel using this URL `/avo`. The `Post` resource will be visible on the left sidebar.
