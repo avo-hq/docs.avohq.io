@@ -3,7 +3,15 @@ version: '2.14'
 demoVideo: https://youtu.be/peKt90XhdOg?t=11
 ---
 
-# Controller options
+# Resource controllers
+
+In order to benefit from Rails' amazing REST architecture, Avo generates a controller alongside every resource.
+Generally speaking you don't need to touch those controllers. Everything just works out of the box with configurations added to the resource file.
+
+However, sometimes you might need more granular control about what is happening in the controller actions or their callbacks. In that scenario you may take over and override that behavior.
+
+## Request-Response lifecycle
+
 Each interaction with the CRUD UI results in a request - response cycle. That cycle passes through the `BaseController`. Each auto-generated controller for your resource inherits from `ResourcesController`, which inherits from `BaseController`.
 
 ```ruby
