@@ -160,6 +160,10 @@ class LazyLoader
     self
   end
 
+  def to_sql
+    ""
+  end
+
   private
 
   def api_response
