@@ -131,3 +131,8 @@ Avo.configure do |config|
   }
 end
 ```
+
+## Customize the favicon
+
+We want to make it easy to change the logo for your app, so we added the `favicon` option to the branding feature.
+Overwrite it using an `.ico` file.
