@@ -4,6 +4,8 @@ These guides have been submitted by our community members.
 
 ## [REST API integration](recipes/rest-api-integration)
 
+## [Export to CSV](recipes/export-to-csv)
+
 ## [Add custom link field](recipes/custom-link-field)
 
 ## [Multilingual content](recipes/multilingual-content)
