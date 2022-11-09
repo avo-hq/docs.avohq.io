@@ -12,12 +12,12 @@ In 2.19, we added the visibility block for filters. We used the same logic apply
 
 ```ruby
 # Before
-self.visible = ->(resource:, view:) do
+self.visible = ->(resource:, view:) do // [!code focus]
   true
 end
 
 # After
-self.visible = -> do
+self.visible = -> do // [!code focus]
   true
 end
 ```
