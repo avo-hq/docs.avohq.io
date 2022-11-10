@@ -6,6 +6,12 @@ Follow these guides to make sure your configuration files are up to date.
 
 ## Upgrade from 2.18 to 2.19
 
+### Add a `dashboards` directory
+
+If you happen to get a `Zeitwerk::Error` regarding `/app/avo/dashboards is not a directory`, just create a `dashboards` directory inside `/app/avo`. Run `mkdir app/avo/dashboards` in the root path of your project.
+
+We're not sure why this error pops up, and it doesn't happen to everyone.
+
 ### Remove the params from the `visible` block in actions
 
 In 2.19, we added the visibility block for filters. We used the same logic applyed to the actions visible block and in that upgrade process, we changed the way that visibility block works, you need to do a minor update to your code and remove the arguments from yours visibility blocks inside your actions. This way, both, filter and actions, uses the same visibility block and it's more flexible and future-proof. From now on we can give access to new params inside that blocks without making you to change your code again.
