@@ -138,7 +138,7 @@ bin/rails generate avo:resource mini-post --model-class post
 That command will create a new resource with the same attributes as the post resource above with specifying the `model_class`:
 
 ```ruby
-class PostResource < Avo::BaseResource
+class MiniPostResource < Avo::BaseResource
   self.model_class = ::Post
 end
 ```
