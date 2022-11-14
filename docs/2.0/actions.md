@@ -108,7 +108,7 @@ The default response is to reload the page and show the _Action ran successfully
 
 ### Message responses
 
-You will have four message response methods at your disposal `succeed`, `fail`, `warn`, and `inform`. These will render the user green, red, orange, and blue alerts.
+You will have four message response methods at your disposal `succeed`, `error`, `warn`, and `inform`. These will render the user green, red, orange, and blue alerts.
 
 ```ruby{4-7}
 def handle(**args)
@@ -117,9 +117,13 @@ def handle(**args)
   succeed "Success response ✌️"
   warn "Warning response ✌️"
   inform "Info response ✌️"
-  fail "Error response ✌️"
+  error "Error response ✌️"
 end
 ```
+
+:::warning
+Since Avo 2.20 we deprecated the `fail` method in favor of `error`.
+:::
 
 <img :src="('/assets/img/actions/alert-responses.png')" alt="Avo alert responses" class="border inline-block" />
 
@@ -146,7 +150,7 @@ def handle(**args)
 
   models.each do |model|
     if model.admin?
-      fail "Can't mark inactive! The user is an admin."
+      error "Can't mark inactive! The user is an admin."
     else
       model.update active: false
 
