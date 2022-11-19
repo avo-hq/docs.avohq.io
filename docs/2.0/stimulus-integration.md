@@ -607,3 +607,47 @@ export default class extends Controller {
 This is how the fields behave with this Stimulus JS controller.
 
 <img :src="('/assets/img/stimulus/country-city-select.gif')" alt="Debug on input stimulus method" class="border mb-4" />
+
+## Use Stimulus JS in a tool
+
+There are a few steps you need to take in order to register the Stimulus JS controller in the current app context.
+
+First, you need to have a JS entrypoint (ex: `avo.custom.js`) and have that loaded in the `_head` partial. For instructions on that please follow [these steps](./custom-asset-pipeline#add-custom-js-code-and-stimulus-controllers) to add it to your app (`importmaps` or `esbuild`).
+
+### Set up a controller
+
+```js
+// app/javascript/controllers/sample_controller.js
+import { Controller } from '@hotwired/stimulus'
+
+export default class extends Controller {
+  connect() {
+    console.log("Hey from sample controller 👋")
+  }
+}
+```
+
+### Register that controller with the current Stimulus app
+
+```js
+// app/javascript/avo.custom.js
+import SampleController from './controllers/sample_controller'
+
+// Hook into the stimulus instance provided by Avo
+const application = window.Stimulus
+application.register('course-resource', SampleController)
+
+// eslint-disable-next-line no-console
+console.log('Hi from Avo custom JS 👋')
+```
+
+### Use the controller in the Avo tool
+
+```erb
+<!-- app/views/avo/_sample_tool.html.erb -->
+<div data-controller="sample">
+  <!-- content here -->
+</div>
+```
+
+Done 🙌 Now you have a controller connecting to a custom [Resource tool](./resource-tools) or [Avo tool](./custom-tools) (or Avo views).

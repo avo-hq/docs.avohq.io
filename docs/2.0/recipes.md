@@ -4,6 +4,8 @@ These guides have been submitted by our community members.
 
 ## [REST API integration](recipes/rest-api-integration)
 
+## [Export to CSV](recipes/export-to-csv)
+
 ## [Add custom link field](recipes/custom-link-field)
 
 ## [Multilingual content](recipes/multilingual-content)
@@ -21,3 +23,5 @@ These guides have been submitted by our community members.
 ## [Add nested fields to CRUD forms](recipes/add-nested-fields-to-forms)
 
 ## [Add count to menu items](recipes/add-count-to-menu-items)
+
+## [Use markdown in help attributes](recipes/use-markdown-in-help-attributes.md)

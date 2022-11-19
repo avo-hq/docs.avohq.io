@@ -241,6 +241,10 @@ field :password, as: :password, help: 'You may verify the password strength <a h
 
 <img :src="('/assets/img/fields-reference/help-text.jpg')" alt="Help text" class="border mb-4" />
 
+:::info
+Since version `2.19`, the `default` block is being evaluated in the [`ResourceViewRecordHost`](./evaluation-hosts#resourceviewrecordhost).
+:::
+
 ## Nullable
 
 When a user uses the **Save** button, Avo stores the value for each field in the database. However, there are cases where you may prefer to explicitly instruct Avo to store a `NULL` value in the database row when the field is empty. You do that by using the `nullable` option, which converts `nil` and empty values to `NULL`.
