@@ -230,6 +230,32 @@ class DownloadFile < Avo::BaseAction
 end
 ```
 
+### `keep_modal_open`
+
+There might be situations where you want to run an action and if it fails, respond back to the user with some feedback but still keep it open and the inputs filled in.
+
+`keep_modal_open` will tell Avo to keep the modal open.
+
+```ruby
+class KeepModalOpenAction < Avo::BaseAction
+  self.name = "Keep Modal Open"
+  self.standalone = true
+
+  field :name, as: :text
+  field :birthday, as: :date
+
+  def handle(**args)
+    begin
+    user = User.create args[:fields]
+    rescue => error
+      error "Something happened: #{error.message}"
+      keep_modal_open
+      return
+    end
+
+    succeed "All good ✌️"
+  end
+end
 ## Customization
 
 ```ruby{2-6}
