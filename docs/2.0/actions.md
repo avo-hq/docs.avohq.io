@@ -226,6 +226,34 @@ class DownloadFile < Avo::BaseAction
 end
 ```
 
+### `keep_modla_open`
+
+When you want to keep the running action modal open, you can use `keep_modal_open`.
+
+`keep_modal_open` will tell Avo to don't close the modal after running the action, showing all collected messages from `handle` method.
+
+In some scenarios you'll want to use `return keep_modal_open` to ensure action's `handle` stop executing.
+```ruby
+class KeepModalOpenAction < Avo::BaseAction
+  self.name = "Keep Modal Open"
+  self.standalone = true
+
+  field :some_int_value, as: :number
+
+  def handle(**args)
+    some_int_value = args[:fields][:some_int_value].to_i
+
+    if some_int_value <= 0
+      warn "Something happened"
+      error "Some int value should be positive"
+      return keep_modal_open
+    end
+
+    # complex_method(some_int_value)
+    succeed "All good ✌️"
+  end
+end
+```
 ## Customization
 
 ```ruby{2-6}
