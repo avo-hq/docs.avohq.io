@@ -19,7 +19,7 @@ class ExportCsv < Avo::BaseAction
     # Uncomment below to use the user-selected fields
     # columns = get_columns_from_fields(fields)
 
-    return fail "No record selected" if models.blank?
+    return error "No record selected" if models.blank?
 
     file = CSV.generate(headers: true) do |csv|
       csv << columns
