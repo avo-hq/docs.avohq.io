@@ -108,7 +108,7 @@ The default response is to reload the page and show the _Action ran successfully
 
 ### Message responses
 
-You will have four message response methods at your disposal `succeed`, `fail`, `warn`, and `inform`. These will render the user green, red, orange, and blue alerts.
+You will have four message response methods at your disposal `succeed`, `error`, `warn`, and `inform`. These will render the user green, red, orange, and blue alerts.
 
 ```ruby{4-7}
 def handle(**args)
@@ -117,9 +117,13 @@ def handle(**args)
   succeed "Success response ✌️"
   warn "Warning response ✌️"
   inform "Info response ✌️"
-  fail "Error response ✌️"
+  error "Error response ✌️"
 end
 ```
+
+:::warning
+Since Avo 2.20 we deprecated the `fail` method in favor of `error`.
+:::
 
 <img :src="('/assets/img/actions/alert-responses.png')" alt="Avo alert responses" class="border inline-block" />
 
@@ -146,7 +150,7 @@ def handle(**args)
 
   models.each do |model|
     if model.admin?
-      fail "Can't mark inactive! The user is an admin."
+      error "Can't mark inactive! The user is an admin."
     else
       model.update active: false
 
@@ -308,7 +312,7 @@ You may want to hide specific actions on screens, like a standalone action on th
 class DummyAction < Avo::BaseAction
   self.name = "Dummy action"
   self.standalone = true
-  self.visible = -> (resource:, view:) { view == :index }
+  self.visible = -> { view == :index }
 
   def handle(**args)
     fields, current_user, resource = args.values_at(:fields, :current_user, :resource)
@@ -323,10 +327,26 @@ end
 By default, actions are visible on the `Index`, `Show`, and `Edit` views, but you can enable them on the `New` screen, too (from version 2.9.0).
 
 ```ruby
-self.visible = -> (resource:, view:) { view == :new }
+self.visible = -> { view == :new }
 
 # Or use this if you want them to be visible on any view
-self.visible = -> (resource:, view:) { true }
+self.visible = -> { true }
+```
+
+Inside the visible block you can acces the following variables:
+```ruby
+  self.visible = -> do
+    #   You have access to:
+    #   block
+    #   context
+    #   current_user
+    #   params
+    #   parent_model
+    #   parent_resource
+    #   resource
+    #   view
+    #   view_context
+  end
 ```
 
 ## Actions authorization

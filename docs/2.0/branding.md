@@ -19,7 +19,8 @@ Avo.configure do |config|
     chart_colors: ['#FFB435', "#FFA102", "#CC8102", '#FFB435', "#FFA102", "#CC8102"],
     logo: "/avo-assets/logo.png",
     logomark: "/avo-assets/logomark.png",
-    placeholder: "/avo-assets/placeholder.svg"
+    placeholder: "/avo-assets/placeholder.svg",
+    favicon: "/avo-assets/favicon.ico"
   }
 end
 ```
@@ -131,3 +132,8 @@ Avo.configure do |config|
   }
 end
 ```
+
+## Customize the favicon
+
+We want to make it easy to change the logo for your app, so we added the `favicon` option to the branding feature.
+Overwrite it using an `.ico` file.

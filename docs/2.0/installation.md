@@ -11,6 +11,7 @@ prev: /2.0/
 - Ruby >= 2.7
 - `api_only` set to `false`. More [here](./recipes/api-only-app).
 - `propshaft` or `sprockets` gem
+- Have the `secret_key_base` defined in  any of the following `ENV["SECRET_KEY_BASE"]`, `Rails.application.credentials.secret_key_base`, or `Rails.application.secrets.secret_key_base`
 
 :::warning Zeitwerk autoloading is required.
 When adding Avo to a Rails app that was previously a Rails 5 app you must ensure that it uses zeitwerk for autoloading and Rails 6 defaults.

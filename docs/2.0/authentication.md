@@ -44,25 +44,40 @@ end
 
 ## Customize the sign-out link
 
-The sign-out menu item on the bottom sidebar (when you click the three dots) can be customized using the `current_user_resource_name`. If you follow the `User` -> `current_user` convention, you might have a `destroy_current_user_session_path` that logs the user out.
+If your app responds to `destroy_user_session_path`, a sign-out menu item will be added on the bottom sidebar (when you click the three dots). If your app does not respond to this method, the link will be hidden unless you provide a custom sign-out path. There are two ways to customize the sign-out path. 
 
-```ruby{3}
+### Customize the current user resource name
+
+You can customize just the "user" part of the path name by setting `current_user_resource_name`. For example if you follow the `User` -> `current_user` convention, you might have a `destroy_current_user_session_path` that logs the user out.
+
+```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.current_user_resource_name = :user
+  config.current_user_resource_name = :current_user
 end
 ```
 
-But if you have a different type of user, `current_admin`, you need a `destroy_current_admin_path`.
+Or if your app provides a `destroy_current_admin_session_path` then you would need to set `current_user_resource_name` to `current_admin`.
 
-```ruby{3}
+```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.current_user_resource_name = :admin
+  config.current_user_resource_name = :current_admin
 end
 ```
 
-The link will be hidden if your app does not respond to the destroy session path (`destroy_current_user_session_path`).
+### Customize the entire sign-out path
+
+Alternatively, you can customize the sign-out path name completely by setting `sign_out_path_name`. For example, if your app provides `logout_path` then you would pass this name to `sign_out_path_name`.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.sign_out_path_name = :logout_path
+end
+```
+
+If both `current_user_resource_name` and `sign_out_path_name` are set, `sign_out_path_name` takes precedence.
 
 ## Filter out requests
 
