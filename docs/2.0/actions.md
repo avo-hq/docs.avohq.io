@@ -331,7 +331,7 @@ More info [here](./authorization#act-on)
 
 ## Actions arguments
 
-Actions can have different behaviors according to them host resource. In order to achieve that you must add some arguments like on the example below:
+Actions can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
 
 ```ruby{9-11}
 class FishResource < Avo::BaseResource
@@ -348,7 +348,7 @@ class FishResource < Avo::BaseResource
 end
 ```
 
-Now we can access that arguments inside our action ***handle method*** or and on the ***visible block***!
+Now, the arguments can be accessed inside `DummyAction` ***`handle` method*** and on the ***`visible` block***!
 
 ```ruby{4-6,8-14}
 class DummyAction < Avo::BaseAction
@@ -366,5 +366,4 @@ class DummyAction < Avo::BaseAction
     end
   end
 end
-
 ```
