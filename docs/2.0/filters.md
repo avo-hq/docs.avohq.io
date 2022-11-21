@@ -596,3 +596,43 @@ Inside the visible block you can acces the following variables:
     #   view_context
   end
 ```
+
+## Filters arguments
+
+Filters can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
+
+```ruby{9-11}
+class FishResource < Avo::BaseResource
+  self.title = :name
+
+  field :id, as: :id
+  field :name, as: :text
+  field :user, as: :belongs_to
+  field :type, as: :text, hide_on: :forms
+
+  filter NameFilter, arguments: {
+    case_insensitive: true
+  }
+end
+```
+
+Now, the arguments can be accessed inside `NameFilter` ***`apply` method*** and on the ***`visible` block***!
+
+```ruby{4-6,8-14}
+class NameFilter < Avo::Filters::TextFilter
+  self.name = "Name filter"
+  self.button_label = "Filter by name"
+  self.visible = -> do
+    arguments[:case_insensitive]
+  end
+
+  def apply(request, query, value)
+    if arguments[:case_insensitive]
+      query.where("LOWER(name) LIKE ?", "%#{value.downcase}%")
+    else
+      query.where("name LIKE ?", "%#{value}%")
+    end
+  end
+end
+```
+
