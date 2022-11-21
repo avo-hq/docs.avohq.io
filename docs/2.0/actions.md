@@ -328,3 +328,43 @@ Using the Pundit policies, you can restrict access to actions using the `act_on?
 
 More info [here](./authorization#act-on)
 :::
+
+## Actions arguments
+
+Actions can have different behaviors according to them host resource. In order to achieve that you must add some arguments like on the example below:
+
+```ruby{9-11}
+class FishResource < Avo::BaseResource
+  self.title = :name
+
+  field :id, as: :id
+  field :name, as: :text
+  field :user, as: :belongs_to
+  field :type, as: :text, hide_on: :forms
+
+  action DummyAction, arguments: {
+    special_message: true
+  }
+end
+```
+
+Now we can access that arguments inside our action ***handle method*** or and on the ***visible block***!
+
+```ruby{4-6,8-14}
+class DummyAction < Avo::BaseAction
+  self.name = "Dummy action"
+  self.standalone = true
+  self.visible = -> do
+    arguments[:special_message]
+  end
+
+  def handle(**args)
+    if arguments[:special_message]
+      succeed "I love 🥑"
+    else
+      succeed "Success response ✌️"
+    end
+  end
+end
+
+```
