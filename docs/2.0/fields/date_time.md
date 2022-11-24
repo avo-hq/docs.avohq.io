@@ -61,7 +61,7 @@ If nothing is selected, the browser's timezone will be used.
 [TZInfo identifiers](https://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html).
 :::
 
-:::option `picker_options`;
+:::option `picker_options`
 Passes the options here to [flatpickr](https://flatpickr.js.org/).
 
 #### Default
@@ -71,10 +71,10 @@ Passes the options here to [flatpickr](https://flatpickr.js.org/).
 #### Possible values
 
 Use [`flatpickr`](https://flatpickr.js.org/options) options.
-
-:::warning
-These options may override other options like `picker_options`.
 :::
 
-::::
+:::warning
+These options may override other options like `time_24hr`.
+:::
+
 <!-- @include: ./../common/date_date_time_common.md-->
