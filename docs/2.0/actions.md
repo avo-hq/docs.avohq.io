@@ -230,6 +230,32 @@ class DownloadFile < Avo::BaseAction
 end
 ```
 
+### `keep_modal_open`
+
+There might be situations where you want to run an action and if it fails, respond back to the user with some feedback but still keep it open and the inputs filled in.
+
+`keep_modal_open` will tell Avo to keep the modal open.
+
+```ruby
+class KeepModalOpenAction < Avo::BaseAction
+  self.name = "Keep Modal Open"
+  self.standalone = true
+
+  field :name, as: :text
+  field :birthday, as: :date
+
+  def handle(**args)
+    begin
+    user = User.create args[:fields]
+    rescue => error
+      error "Something happened: #{error.message}"
+      keep_modal_open
+      return
+    end
+
+    succeed "All good ✌️"
+  end
+end
 ## Customization
 
 ```ruby{2-6}
@@ -328,3 +354,42 @@ Using the Pundit policies, you can restrict access to actions using the `act_on?
 
 More info [here](./authorization#act-on)
 :::
+
+## Actions arguments
+
+Actions can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
+
+```ruby{9-11}
+class FishResource < Avo::BaseResource
+  self.title = :name
+
+  field :id, as: :id
+  field :name, as: :text
+  field :user, as: :belongs_to
+  field :type, as: :text, hide_on: :forms
+
+  action DummyAction, arguments: {
+    special_message: true
+  }
+end
+```
+
+Now, the arguments can be accessed inside `DummyAction` ***`handle` method*** and on the ***`visible` block***!
+
+```ruby{4-6,8-14}
+class DummyAction < Avo::BaseAction
+  self.name = "Dummy action"
+  self.standalone = true
+  self.visible = -> do
+    arguments[:special_message]
+  end
+
+  def handle(**args)
+    if arguments[:special_message]
+      succeed "I love 🥑"
+    else
+      succeed "Success response ✌️"
+    end
+  end
+end
+```
