@@ -12,11 +12,11 @@ The features are separated by their level of complexity and maintenance needs. S
 
 ## One license per site
 
-Each license can be used to run one application in one production environment on one URL. So when an app is in the `production` environment, we only need to check that the license key and URL match the purchased license you're using for that app.
+Each license can be used to run one application in one `production` environment on one URL. So when an app is in the `production` environment (`Rails.env.production?` is `true`), we only need to check that the license key and URL match the purchased license you're using for that app.
 
 ### More installations/environments per site
 
-You might have the same site running in multiple environments (`development`, `staging`, `test`, `QA`, etc.) for non-production purposes. You don't need extra licenses for those environments as long as they are not production environments.
+You might have the same site running in multiple environments (`development`, `staging`, `test`, `QA`, etc.) for non-production purposes. You don't need extra licenses for those environments as long as they are not production environments (`Rails.env.production?` returns `false`).
 
 ### Sites
 
