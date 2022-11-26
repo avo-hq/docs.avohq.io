@@ -98,6 +98,12 @@ Controls whether the user can see the actions button on the `Index` page.
 
 When using relationships, you would like to set policies for `creating` new records on the association, allowing to `attach`, `detach`, `create` or `destroy` relevant records. Again, Avo makes this easy using a straightforward naming schema.
 
+:::warning
+make sure you use the same pluralization as the association name.
+
+For a `has_many :users` association use the plural version method `view_users?`, `edit_users?`, `detach_users?`, etc., not the singular version `detach_user?`.
+:::
+
 ### attach_{association}?
 
 When you have a `Post` resource with many `Comment`s through the `has_many :comments` association and want to authorize which users can attach `comments` to a post, you should define an `attach_comment?` policy on your post model's policy class. Use the association name as the suffix of the policy method.
