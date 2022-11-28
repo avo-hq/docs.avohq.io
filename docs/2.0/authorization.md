@@ -96,7 +96,7 @@ Controls whether the user can see the actions button on the `Index` page.
 
 ## Associations
 
-When using relationships, you would like to set policies for `creating` new records on the association, allowing to `attach`, `detach`, `create` or `destroy` relevant records. Again, Avo makes this easy using a straightforward naming schema.
+When using associations, you would like to set policies for `creating` new records on the association, allowing to `attach`, `detach`, `create` or `destroy` relevant records. Again, Avo makes this easy using a straightforward naming schema.
 
 :::warning
 make sure you use the same pluralization as the association name.
@@ -145,6 +145,18 @@ Controls whether the view button is visible on the associated record row on the 
 `act_on_` method works similarly to `attach`, but for showing actions.
 
 <img :src="('/assets/img/authorization/actions.jpg')" class="border mb-4" />
+
+:::info A note on duplication
+Let's take the following example:
+
+A `User` has many `Contract`s. And you represent that in your Avo resource. How do you handle authorization to the `ContractResource`?
+
+For one, you set the `ContractPolicy.index?` and `ContractPolicy.edit?` methods to `false` so regular users don't have access to all contracts (see and edit), and the `UserPolicy.view_contracts?` and `UserPolicy.edit_contracts?` set to `false`, because, when viewing a user you want to see all the contracts associated with that user and don't let them edit it.
+
+You might be thinking that there's code duplication here. "Why do I need to set a different rule for `UserPolicy.edit_contracts?` when I already set the `ContractPolicy.edit?` to `false`? Isn't that going to take precedence?"
+
+Now, let's imagine we have a user that is an admin in the application. The business need is that an admin has access to all contracts and can edit them. This is when we go back to the `ContractPolicy.edit?` and turn that to true for the admin user. And now we can separately control who and where a user can edit a contract.
+:::
 
 ## Scopes
 
