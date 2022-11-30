@@ -1,7 +1,3 @@
----
-next: ./installation
----
-
 # Getting Started
 
 Avo is a tool that helps developers and teams build apps 10x faster. It takes the things we always build for every app and abstracts them in familiar configuration files.
