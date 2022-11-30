@@ -271,6 +271,28 @@ class TogglePublished < Avo::BaseAction
 
 You may update the `self.message` class attribute to customize the message if there are no fields present.
 
+#### Callable message
+
+<VersionReq version="2.21" />
+
+Since version `2.21` you can pass a block to `self.message` where you have access to a baunch of variables.
+
+```ruby
+class ReleaseFish < Avo::BaseAction
+  self.message = -> {
+    # you have access to:
+    # - params
+    # - current_user
+    # - context
+    # - view_context
+    # - request
+    # - resource
+    # - record
+    "Are you sure you want to release the #{record.name}?"
+  }
+end
+```
+
 <!-- <img :src="('/assets/img/actions/actions-message.jpg')" alt="Avo message" class="border mb-4" /> -->
 
 ### Customize the buttons
