@@ -16,7 +16,7 @@ We prepared this scenario where a `Fish` model `has_many` `Review`s. I know, it'
 
 The full code is available in Avo's [dummy app](https://github.com/avo-hq/avo/tree/main/spec/dummy) and the changes in [this PR](https://github.com/avo-hq/avo/pull/1472).
 
-## Guide to add it tho your app
+## Guide to add it to your app
 
 You can add this functionality using these steps.
 
