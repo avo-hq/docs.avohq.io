@@ -130,22 +130,21 @@ action PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 ```
 :::
 
-:::warning Until Avo 3.0
-Action arguments are not readed from show controls.
-```ruby
+:::warning
+The way `show_controls` works is like a shortcut the the actions that you already declared on your resource, so you should also declare it on the resource as you normally would in order to have it here.
+
+```ruby{5, 9}
 class FishResource < Avo::BaseResource
   self.title = :name
 
   self.show_controls = -> do
-    # In order to use arguments here
+    # In order to use it here
     action ReleaseFish, style: :primary, color: :fuchsia
   end
 
-  # Should declare arguments  here
+  # Also declare it here
   action ReleaseFish, arguments: { both_actions: "Will use them" }
 end
-```
-:::
 
 ## Control Options
 
