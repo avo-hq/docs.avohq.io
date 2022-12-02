@@ -362,7 +362,7 @@ The paget where you see one resource in more detail.
 
 The paget where you can edit one resource.
 
-#### Create
+#### New
 
 The paget where you can create a new resource.
 

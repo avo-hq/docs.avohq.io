@@ -2,6 +2,8 @@
 
 These guides have been submitted by our community members.
 
+## [Nested records when creating](recipes/nested-records-when-creating)
+
 ## [REST API integration](recipes/rest-api-integration)
 
 ## [Export to CSV](recipes/export-to-csv)
