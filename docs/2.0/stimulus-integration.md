@@ -6,17 +6,19 @@ betaStatus: Beta
 ---
 
 # Stimulus JS & HTML attributes
+
 :::warning
 This feature is in the **beta** phase. The API might change while seeing how the community uses it to build their apps.
 This is not the **dependable fields** feature but a placeholder so we can observe and see what we need to ship to make it helpful to you.
 :::
 
-
 _What we'll be able to do at the end of reading these docs_
 
 <img :src="('/assets/img/stimulus/country-city-select.gif')" alt="Debug on input stimulus method" class="border mb-4" />
 
+:::info
 **Please note** that in order to have the JS code from your controllers loaded in Avo you'll need to add your asset pipeline using [these instructions](custom-asset-pipeline.html). It's really easier than it sounds. It's like you'd add a new JS file to your regular Rails app.
+:::
 
 <hr/>
 
