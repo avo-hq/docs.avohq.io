@@ -145,6 +145,7 @@ class FishResource < Avo::BaseResource
   # Also declare it here
   action ReleaseFish, arguments: { both_actions: "Will use them" }
 end
+:::
 
 ## Control Options
 
