@@ -130,7 +130,22 @@ action PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 ```
 :::
 
+:::warning
+The way `show_controls` works is like a shortcut the the actions that you already declared on your resource, so you should also declare it on the resource as you normally would in order to have it here.
 
+```ruby{5, 9}
+class FishResource < Avo::BaseResource
+  self.title = :name
+
+  self.show_controls = -> do
+    # In order to use it here
+    action ReleaseFish, style: :primary, color: :fuchsia
+  end
+
+  # Also declare it here
+  action ReleaseFish, arguments: { both_actions: "Will use them" }
+end
+:::
 
 ## Control Options
 
