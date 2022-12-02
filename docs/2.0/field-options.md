@@ -196,13 +196,14 @@ field :name, as: :text, required: -> { view == :new } # make the field required 
 
 ## Readonly
 
-When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on **Create** and **Edit** views.
+When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on **Create** and **Edit** views and the value will not be passed to that record in the database. This prevents a bad actor to go into the DOM, enable that field, update it, and then submit it, updating the record.
 
 ```ruby
 field :name, as: :text, readonly: true
 ```
 
 <img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Readonly option" class="border mb-4" />
+
 
 ### Readonly as a block
 
@@ -213,6 +214,16 @@ You may use a block as well. It will be executed in the `ViewRecordHost` and you
 ```ruby
 field :id, as: :number, readonly: -> { view == :edit } # make the field readonly only on the new edit view
 ```
+
+## Disabled
+
+When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on **Create** and **Edit** views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
+
+```ruby
+field :name, as: :text, disabled: true
+```
+
+<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Disabled option" class="border mb-4" />
 
 ## Default Value
 
