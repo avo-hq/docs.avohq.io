@@ -1,3 +1,7 @@
+---
+demo: https://main.avodemo.com/avo/resources/fish/new
+---
+
 # Nested records when creating
 
 ![](/assets/img/recipes/nested-records-when-creating/nested-records-demo.gif)
