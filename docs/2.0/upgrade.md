@@ -4,6 +4,25 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.19 to 2.20
+If you have some action declared inside `self.show_controls = -> do` block, you should assure that action it's also declared on the host resource, outside of that block. That happens because we added `arguments` on actions and in order to get the action arguments we search inside resource declared actions. We already noticed that arguments declared inside `self.show_controls = -> do` are not respected and we are improving this whole experience on Avo 3.0.
+
+```ruby
+class FishResource < Avo::BaseResource
+  self.title = :name
+
+  self.show_controls = -> do
+    # In order to be used here
+    action ReleaseFish, style: :primary, color: :fuchsia
+  end
+
+  # Should be declared here
+  action ReleaseFish, arguments: { both_actions: "Will use them" }
+end
+
+```
+
+
 ## Upgrade from 2.18 to 2.19
 
 ### Add a `dashboards` directory
