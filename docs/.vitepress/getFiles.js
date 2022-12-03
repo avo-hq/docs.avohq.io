@@ -6,8 +6,8 @@ import {
 
 export const humanize = (str) => capitalize(trim(snakeCase(str).replace(/_id$/, '').replace(/_/g, ' ')))
 
-const getFiles = (directory) => {
-  const dir = path.join(__dirname, '..', '2.0', directory);
+const getFiles = (directory, version) => {
+  const dir = path.join(__dirname, '..', version, directory);
   let files = []
 
   const fls = fs.readdirSync(dir)
@@ -19,7 +19,7 @@ const getFiles = (directory) => {
     .filter(path => path !== 'index.md')
     .filter(path => path !== 'common')
     .filter(path => !path.includes('_common.md'))
-    .map((path) => ({text: humanize(path.replace('.md', '')), link: `/2.0/${directory}/${path}`}))
+    .map((path) => ({text: humanize(path.replace('.md', '')), link: `/${version}/${directory}/${path}`}))
 }
 
 export {getFiles}
