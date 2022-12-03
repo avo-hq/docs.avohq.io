@@ -4,6 +4,16 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.20 to 2.21
+
+In version 2.20 we discovered a bug in the [associated policy methods](./authorization#associations) (`create_{association}?`, `attach_{association}?`, etc.).
+The record that you would get in that method would have been the parent record, not the actual record that you were trying to authorize.
+After further investigation we found out that we can sometimes expose the parent record and sometimes expose the child record.
+
+In the `Post` `has_many` `Comments` example, when you want to authorize `show_comments?` in `PostPolicy` you will have a `Comment` instance as the `record` variable, but when you try to authorize the `attach_comments?`, you won't have that `Comment` instance because you want to create one, but we expose the parent `Post` instance so you have more information about that authorization action that you're trying to make.
+
+So there isn't a guide to follow per-se for this upgrade, but you just have to check your association policy methods are applied correctly.
+
 ## Upgrade from 2.19 to 2.20
 If you have some action declared inside `self.show_controls = -> do` block, you should assure that action it's also declared on the host resource, outside of that block. That happens because we added `arguments` on actions and in order to get the action arguments we search inside resource declared actions. We already noticed that arguments declared inside `self.show_controls = -> do` are not respected and we are improving this whole experience on Avo 3.0.
 
