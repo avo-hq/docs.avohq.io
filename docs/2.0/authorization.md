@@ -58,7 +58,7 @@ When setting `show?` to `false`, the user will not see the show icon on the reso
 
 ### create?
 
-The `create?` method will prevent the users from creating a resource. That will also apply to the `Create new {model}` button on the `Index`, the `Save` button on the `/new` page, and `Create new {model}` button on the association `Show` page.
+The `create?` method will prevent the users from creating a resource. That will also apply to the `Create new {model}` button on the <Index />, the `Save` button on the `/new` page, and `Create new {model}` button on the association `Show` page.
 
 ### new?
 
@@ -90,13 +90,17 @@ Controls whether the attachment delete button should be visible in the `File` an
 
 ### act_on?
 
-Controls whether the user can see the actions button on the `Index` page.
+Controls whether the user can see the actions button on the <Index /> page.
 
 <img :src="('/assets/img/authorization/actions_button.jpg')" alt="Actions button" class="border mb-4" />
 
 ## Associations
 
 When using associations, you would like to set policies for `creating` new records on the association, allowing to `attach`, `detach`, `create` or `destroy` relevant records. Again, Avo makes this easy using a straightforward naming schema.
+
+### Example scenario
+
+We'll have this example of a `Post` resource with many `Comment`s through the `has_many :comments` association.
 
 :::warning
 Make sure you use the same pluralization as the association name.
@@ -105,50 +109,60 @@ For a `has_many :users` association use the plural version method `view_users?`,
 :::
 
 :::info The `record` variable in policy methods
-In the `Post` `has_many` `Comments` example, when you want to authorize `show_comments?` you will have a `Comment` instance as the `record` variable in `PostPolicy`, but when you try to authorize the `attach_comments?` policy method, you won't have a `Comment` instance, because you want to create one, but we expose the parent `Post` instance so you have more information about that authorization action that you're trying to make.
+In the `Post` `has_many` `Comments` example, when you want to authorize `show_comments?` in `PostPolicy` you will have a `Comment` instance as the `record` variable, but when you try to authorize the `attach_comments?`, you won't have that `Comment` instance because you want to create one, but we expose the parent `Post` instance so you have more information about that authorization action that you're trying to make.
 :::
 
 ### attach_{association}?
 
-When you have a `Post` resource with many `Comment`s through the `has_many :comments` association and want to authorize which users can attach `comments` to a post, you should define an `attach_comment?` policy on your post model's policy class. Use the association name as the suffix of the policy method.
+Controls whether the `Attach comment` button is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
 <img :src="('/assets/img/authorization/attach.jpg')" class="border mb-4" />
 
 ### detach_{association}?
 
-`detach` method works similarly to `attach`, but for detaching.
+Controls whether the **detach button is available** on the associated record row on the <Index /> view. The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
 <img :src="('/assets/img/authorization/detach.jpg')" class="border mb-4" />
 
 ### view_{association}?
 
-Controls whether the view button is visible on the associated record row on the `Index` page. This **does not** control whether the user has access to that record. You can control that using the Policy of that record.
+Controls whether the **view button is visible** on the associated record row on the <Index /> page.The `record` variable is the actual row record (a `Comment` instance in our scenario).
+
+:::warning
+This **does not** control whether the user has access to that record. You control that using the Policy of that record (`PostPolicy.show?` in our example).
+:::
 
 <img :src="('/assets/img/authorization/view.jpg')" class="border mb-4" />
 
 ### edit_{association}?
 
-`edit` method works similarly to `attach`, but for editing.
+Controls whether the **edit button is visible** on the associated record row on the <Index /> page.The `record` variable is the actual row record (a `Comment` instance in our scenario).
+
+:::warning
+This **does not** control whether the user has access to that record's edit page. You control that using the Policy of that record (`PostPolicy.show?` in our example).
+:::
 
 <img :src="('/assets/img/authorization/edit.jpg')" class="border mb-4" />
 
 ### create_{association}?
 
-`create` method works similarly to `attach`, but for creating.
+Controls whether the `Create comment` button is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
 <img :src="('/assets/img/authorization/create.jpg')" class="border mb-4" />
 
 ### destroy_{association}?
 
-`destroy` method works similarly to `attach`, but for destroying.
+Controls whether the **delete button is visible** on the associated record row on the <Index /> page.The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
 <img :src="('/assets/img/authorization/destroy.jpg')" class="border mb-4" />
 
 ### act_on_{association}?
 
-`act_on_` method works similarly to `attach`, but for showing actions.
+Controls whether the `Actions` dropdown is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
 <img :src="('/assets/img/authorization/actions.jpg')" class="border mb-4" />
+
+### Removing duplication
 
 :::info A note on duplication
 Let's take the following example:
@@ -161,6 +175,26 @@ You might be thinking that there's code duplication here. "Why do I need to set 
 
 Now, let's imagine we have a user that is an admin in the application. The business need is that an admin has access to all contracts and can edit them. This is when we go back to the `ContractPolicy.edit?` and turn that to true for the admin user. And now we can separately control who and where a user can edit a contract.
 :::
+
+You may remove duplication by applying the same policy rule from the original policy.
+
+```ruby
+class CommentPolicy
+  # ... more policy methods
+  def edit
+    record.user_id == current_user.id
+  end
+end
+
+class PostPolicy
+  # ... more policy methods
+  def edit_comments?
+    Pundit.policy!(user, record).edit?
+  end
+end
+```
+
+Now, whatever action you take for one comment, it will be available for the `edit_comments?` method in `PostPolicy`.
 
 ## Scopes
 
