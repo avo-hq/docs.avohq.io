@@ -99,9 +99,13 @@ Controls whether the user can see the actions button on the `Index` page.
 When using associations, you would like to set policies for `creating` new records on the association, allowing to `attach`, `detach`, `create` or `destroy` relevant records. Again, Avo makes this easy using a straightforward naming schema.
 
 :::warning
-make sure you use the same pluralization as the association name.
+Make sure you use the same pluralization as the association name.
 
 For a `has_many :users` association use the plural version method `view_users?`, `edit_users?`, `detach_users?`, etc., not the singular version `detach_user?`.
+:::
+
+:::info The `record` variable in policy methods
+In the `Post` `has_many` `Comments` example, when you want to authorize `show_comments?` you will have a `Comment` instance as the `record` variable in `PostPolicy`, but when you try to authorize the `attach_comments?` policy method, you won't have a `Comment` instance, because you want to create one, but we expose the parent `Post` instance so you have more information about that authorization action that you're trying to make.
 :::
 
 ### attach_{association}?
