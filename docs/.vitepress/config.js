@@ -1,7 +1,8 @@
 import {getFiles} from "./getFiles"
 import container from "markdown-it-container"
 
-const fieldsMenuItems = getFiles('fields')
+const fieldsMenuItems2 = getFiles('fields', '2.0')
+const fieldsMenuItems3 = getFiles('fields', '3.0')
 
 function createContainer(klass, md) {
   return [
@@ -75,11 +76,107 @@ const config = {
       {text: "FAQ", link: "/2.0/faq"},
       {text: "Team", link: "/team.html"},
       {text: "Version", items: [
+        {text: "3.0", link: "/3.0/index.html"},
         {text: "2.0", link: "/2.0/index.html"},
         {text: "1.0", link: "https://v1-docs.avohq.io/1.0/"},
       ]},
     ],
     sidebar: {
+      "/3.0/": [
+        {
+          text: "Getting started",
+          items: [
+            {text: "Intro", link: "/3.0/index.html"},
+            {text: "Avo, Rails & Hotwire", link: "/3.0/rails-and-hotwire.html"},
+            {text: "Licensing", link: "/3.0/licensing"},
+            {text: "Upgrade guide", link: "/3.0/upgrade"},
+          ],
+        },
+        {
+          text: "Configuration",
+          items: [
+            {text: "Installation", link: "/3.0/installation"},
+            {text: "Authentication", link: "/3.0/authentication"},
+            {text: "Authorization", link: "/3.0/authorization"},
+          ],
+        },
+        {
+          text: "CRUD UI",
+          items: [
+            {text: "Resource configuration", link: "/3.0/resources"},
+            {text: "Controller configuration", link: "/3.0/controllers"},
+            {text: "Field options", link: "/3.0/field-options"},
+            {text: "Records reordering", link: "/3.0/records-reordering"},
+            {text: "Tabs and panels", link: "/3.0/tabs"},
+            {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
+            {text: "Customizable controls", link: "/3.0/customizable-controls"},
+          ],
+        },
+        {
+          text: "Fields",
+          collapsible: true,
+          collapsed: true,
+          items: fieldsMenuItems3,
+        },
+        {
+          text: "Associations",
+          collapsible: true,
+          collapsed: true,
+          items: [
+            {text: "Customization", link: "/3.0/associations"},
+            {text: 'Belongs to', link: '/3.0/associations/belongs_to.md'},
+            {text: 'Has one', link: '/3.0/associations/has_one.md'},
+            {text: 'Has many', link: '/3.0/associations/has_many.md'},
+            {text: 'Has and belongs to many', link: '/3.0/associations/has_and_belongs_to_many.md'},
+          ],
+        },
+        {
+          text: "Dashboards and cards",
+          items: [
+            {text: "Dashboards", link: "/3.0/dashboards"},
+            {text: "Cards", link: "/3.0/cards"},
+          ],
+        },
+        {
+          text: "Customize Avo",
+          items: [
+            {text: "Customization options", link: "/3.0/customization"},
+            {text: "Grid view", link: "/3.0/grid-view"},
+            {text: "Menu editor", link: "/3.0/menu-editor"},
+            {text: "Search", link: "/3.0/search"},
+            {text: "Filters", link: "/3.0/filters"},
+            {text: "Actions", link: "/3.0/actions"},
+            {text: "Localization (I18n)", link: "/3.0/localization"},
+            {text: "Branding", link: "/3.0/branding"},
+          ],
+        },
+        {
+          text: "Custom content",
+          items: [
+            {text: "Custom views", link: "/3.0/custom-tools"},
+            {text: "Custom fields", link: "/3.0/custom-fields"},
+            {text: "Resource tools", link: "/3.0/resource-tools"},
+            {text: "Stimulus JS integration", link: "/3.0/stimulus-integration"},
+            {text: "Evaluation hosts", link: "/3.0/evaluation-hosts"},
+            {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline"},
+          ],
+        },
+        {
+          text: "Native Avo components",
+          items: [
+            {text: "Avo::PanelComponent", link: "/3.0/native-components/avo-panel-component"},
+            {text: "Native field components", link: "/3.0/native-field-components"},
+            {text: "Field wrappers", link: "/3.0/field-wrappers"},
+          ],
+        },
+        {
+          text: "Internals",
+          items: [
+            {text: "Testing", link: "/3.0/testing"},
+            {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
+          ],
+        },
+      ],
       "/2.0/": [
         {
           text: "Getting started",
@@ -114,7 +211,7 @@ const config = {
           text: "Fields",
           collapsible: true,
           collapsed: true,
-          items: fieldsMenuItems,
+          items: fieldsMenuItems2,
         },
         {
           text: "Associations",
