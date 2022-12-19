@@ -14,7 +14,10 @@ In the `Post` `has_many` `Comments` example, when you want to authorize `show_co
 
 So there isn't a guide to follow per-se for this upgrade, but you just have to check your association policy methods are applied correctly.
 
-We also found some incoherences around I18n localization on empty tables messages. Fixing that for multilingual would add some unnecessary complexity so we decided to keep it simple changing that messages to a generic message that apply to all tables. This apply for every locale file, make sure you update yours.
+## Updated a few translation strings
+
+We found some incoherences around I18n localization on empty tables messages. More info on that in [this discussion](https://github.com/avo-hq/avo/issues/1487).
+So we decided to keep it simple, changing those messages to a generic message that applies to all tables. This applies to every locale file. 
 
 ```ruby
 # Before
@@ -24,8 +27,6 @@ no_related_item_found: No related %{item} found // [!code focus]
 # After
 no_item_found: No record found // [!code focus]
 no_related_item_found: No related record found // [!code focus]
-```
-
 ## Upgrade from 2.19 to 2.20
 If you have some action declared inside `self.show_controls = -> do` block, you should assure that action it's also declared on the host resource, outside of that block. That happens because we added `arguments` on actions and in order to get the action arguments we search inside resource declared actions. We already noticed that arguments declared inside `self.show_controls = -> do` are not respected and we are improving this whole experience on Avo 3.0.
 
