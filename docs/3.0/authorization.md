@@ -126,10 +126,24 @@ Controls whether the **detach button is available** on the associated record row
 
 ### view_{association}?
 
-Controls whether the **view button is visible** on the associated record row on the <Index /> page.The `record` variable is the actual row record (a `Comment` instance in our scenario).
+Controls whether the whole association is being displayed on the parent record. The `record` variable is the actual row record (a `Comment` instance in our scenario).
+
+### show_{association}?
+
+Controls whether the **view button is visible** on the associated record row on the <Index /> page. The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
 :::warning
 This **does not** control whether the user has access to that record. You control that using the Policy of that record (`PostPolicy.show?` in our example).
+:::
+
+<img :src="('/assets/img/authorization/show.jpg')" class="border mb-4" />
+
+:::info Difference between `view_{association}?` and `show_{association}?`
+Let's take a `Post` `has_many` `Comment`s.
+
+When you use the `view_comments?` policy method you get the `Post` instance as the `record` and you control if the whole listing of comments appears on that record's <Show /> page.
+
+When you use `show_comments?` policy method, the `record` variable is each `Comment` instance and you control whether the view button is displayed on each individual row.
 :::
 
 <img :src="('/assets/img/authorization/view.jpg')" class="border mb-4" />
