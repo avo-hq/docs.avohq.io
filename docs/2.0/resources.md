@@ -352,19 +352,19 @@ Avo generates the admin panel with four main views.
 
 #### Index
 
-The paget where you see all your resources listed in a table or a [grid](grid-view.md).
+The page where you see all your resources listed in a table or a [grid](grid-view.md).
 
 #### Show
 
-The paget where you see one resource in more detail.
+The page where you see one resource in more detail.
 
 #### Edit
 
-The paget where you can edit one resource.
+The page where you can edit one resource.
 
 #### New
 
-The paget where you can create a new resource.
+The page where you can create a new resource.
 
 ### Grid view
 
