@@ -119,12 +119,16 @@ Avo.configure do |config|
   config.set_context do
     {
       foo: 'bar',
-      user: current_user,
+      user: _current_user,
       params: request.params,
     }
   end
 end
 ```
+
+:::warning `_current_user`
+The `_current_user` variable holds what gets resolved from the [`current_user_method`](./authentication.html#customize-the-current-user-method) config.
+:::
 
 You can access the context data with `::Avo::App.context` object.
 
