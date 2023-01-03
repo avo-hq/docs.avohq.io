@@ -217,16 +217,15 @@ class DownloadFile < Avo::BaseAction
     models = args[:models]
 
     filename = "projects.csv"
+    report_data = []
 
     models.each do |project|
-      project.update active: false
-
-      report_data = project.generate_report_data
+      report_data << project.generate_report_data
     end
 
     succeed 'Done!'
 
-    if report_data.present? and report_filename.present?
+    if report_data.present? and filename.present?
       download report_data, filename
     end
   end
