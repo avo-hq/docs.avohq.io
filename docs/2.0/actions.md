@@ -206,7 +206,9 @@ end
 
 If you find another way, please let us know 😅.
 
-```ruby{3,18}
+::: code-group
+
+```ruby{3,19} [app/avo/actions/download_file.rb]
 class DownloadFile < Avo::BaseAction
   self.name = "Download file"
   self.may_download_file = true
@@ -214,21 +216,32 @@ class DownloadFile < Avo::BaseAction
   def handle(**args)
     models = args[:models]
 
+    filename = "projects.csv"
+
     models.each do |project|
       project.update active: false
 
       report_data = project.generate_report_data
-      report_filename = project.report_filename
     end
 
     succeed 'Done!'
 
     if report_data.present? and report_filename.present?
-      download report_data, report_filename
+      download report_data, filename
     end
   end
 end
 ```
+
+```ruby{5} [app/avo/resources/project_resource.rb]
+class ProjectResource < Avo::BaseResource
+
+  # fields here
+
+  action DownloadFile
+end
+```
+:::
 
 ### `keep_modal_open`
 
