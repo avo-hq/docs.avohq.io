@@ -214,6 +214,10 @@ end
 
 That will let Avo know which attribute should be used to fill with the user's tags.
 
+:::info Related
+You can set up the tags as a resource using [this guide](./../recipes/act-as-taggable-on-integration).
+:::
+
 ## Array fields
 
 We haven't tested all the scenarios, but the tags field should play nicely with any array fields provided by Rails.
