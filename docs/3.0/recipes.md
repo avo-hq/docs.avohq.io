@@ -1,4 +1,4 @@
-# Recipes & guides
+# Recipes & guides for Avo 3
 
 These guides have been submitted by our community members.
 

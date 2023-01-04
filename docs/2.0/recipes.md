@@ -1,8 +1,10 @@
-# Recipes & guides
+# Recipes & guides for Avo 2
 
 These guides have been submitted by our community members.
 
 ## [Nested records when creating](recipes/nested-records-when-creating)
+
+## [Acts as taggable on integration](recipes/act-as-taggable-on-integration)
 
 ## [REST API integration](recipes/rest-api-integration)
 
