@@ -525,3 +525,10 @@ end
 
 <img :src="('/assets/img/resources/record_selector.jpg')" alt="Hide the record selector." class="border mb-4" />
 
+## Link to child resource (STI)
+
+`self.link_to_child_resource = true|false`
+
+Let's take an example. We have a `Person` model and `Sibling` and `Spouse` models that inherit from it (STI).
+
+Declare this option on the parent resource. When a user is on the <Index /> view of your the `PersonResource` and clicks on the view button of a `Person` they will be redirected to a `Child` or `Spouse` resource instead of a `Person` resource.
