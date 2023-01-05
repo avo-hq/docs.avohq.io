@@ -4,6 +4,8 @@ In your plugins or custom content you might want to add a new stylesheet or java
 
 You can manually add them to the `_head.html.erb` or `_pre_head.html.erb` files or you can use the `AssetManager`.
 
+Next, the asset manager will add them to the `<head>` element of Avo's layout file.
+
 ## Add a stylesheet file
 
 Use `Avo.asset_manager.add_stylesheet PATH`
