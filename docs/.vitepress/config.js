@@ -174,6 +174,7 @@ const config = {
           items: [
             {text: "Testing", link: "/3.0/testing"},
             {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
+            {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
           ],
         },
       ],
