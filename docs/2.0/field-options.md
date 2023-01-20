@@ -156,7 +156,35 @@ class UserResource < Avo::BaseResource
 end
 ```
 
-The block receives the query and the direction in which the sorting should be made.
+The block receives the query and the direction in which the sorting should be made and must return back a `query`.
+
+In the example of a `Post` that `has_many` `Comment`s, you might want to order the posts by which one received a comment the latest.
+
+You can do that using this query.
+
+::: code-group
+
+```ruby{5} [app/avo/resources/post_resource.rb]
+class PostResource < Avo::BaseResource
+  field :last_commented_at,
+    as: :date,
+    sortable: ->(query, direction) {
+      query.includes(:comments).order("comments.created_at #{direction}")
+    }
+end
+```
+
+```ruby{4-6} [app/models/post.rb]
+class Post < ApplicationRecord
+  has_many :comments
+
+  def last_commented_at
+    comments.last&.created_at
+  end
+end
+```
+
+:::
 
 ## Placeholder
 
