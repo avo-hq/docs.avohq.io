@@ -440,7 +440,9 @@ Below is an example of how you could implement a city & country select feature w
 1. If the initial value is present in the returned results, it will be selected.
 1. All of this will happen only on the `New` and `Edit` views because of the condition we added to the `connect` method.
 
-```ruby{11-12,21,31}
+::: code-group
+
+```ruby [app/avo/resources/course_resource.rb]
 # app/avo/resources/course_resource.rb
 class CourseResource < Avo::BaseResource
   self.stimulus_controllers = "course-resource"
@@ -467,8 +469,9 @@ class CourseResource < Avo::BaseResource
     }
   }
 end
+```
 
-# config/routes.rb
+```ruby{4-6} [config/routes.rb]
 Rails.application.routes.draw do
   if defined? ::Avo
     Avo::Engine.routes.draw do
@@ -478,8 +481,9 @@ Rails.application.routes.draw do
     end
   end
 end
+```
 
-# app/controllers/avo/courses_controller.rb
+```ruby{3} [app/controllers/avo/courses_controller.rb]
 class Avo::CoursesController < Avo::ResourcesController
   def cities
     render json: get_cities(params[:country]) # return an array of cities based on the country we received
@@ -493,8 +497,9 @@ class Avo::CoursesController < Avo::ResourcesController
     Course.cities[country.to_sym]
   end
 end
+```
 
-# app/models/course.rb
+```ruby [app/models/course.rb]
 class Course < ApplicationRecord
   def self.countries
     ["USA", "Japan", "Spain", "Thailand"]
@@ -511,8 +516,7 @@ class Course < ApplicationRecord
 end
 ```
 
-```js
-// course_resource_controller.js
+```js [course_resource_controller.js]
 import { Controller } from '@hotwired/stimulus'
 
 const LOADER_CLASSES = 'absolute bg-gray-100 opacity-10 w-full h-full'
@@ -616,6 +620,8 @@ export default class extends Controller {
   }
 }
 ```
+
+:::
 
 This is how the fields behave with this Stimulus JS controller.
 
