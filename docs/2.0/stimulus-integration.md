@@ -468,6 +468,17 @@ class CourseResource < Avo::BaseResource
   }
 end
 
+# config/routes.rb
+Rails.application.routes.draw do
+  if defined? ::Avo
+    Avo::Engine.routes.draw do
+      scope :resources do
+        get "courses/cities", to: "courses#cities"
+      end
+    end
+  end
+end
+
 # app/controllers/avo/courses_controller.rb
 class Avo::CoursesController < Avo::ResourcesController
   def cities
