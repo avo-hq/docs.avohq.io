@@ -29,6 +29,8 @@ no_item_found: No record found // [!code focus]
 no_related_item_found: No related record found // [!code focus]
 ```
 
+To fix that run `bin/rails generate avo:locales` to re-generate the locale files.
+
 ## Upgrade from 2.19 to 2.20
 
 If you have some action declared inside `self.show_controls = -> do` block, you should assure that action it's also declared on the host resource, outside of that block. That happens because we added `arguments` on actions and in order to get the action arguments we search inside resource declared actions. We already noticed that arguments declared inside `self.show_controls = -> do` are not respected and we are improving this whole experience on Avo 3.0.
