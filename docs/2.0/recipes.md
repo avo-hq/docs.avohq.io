@@ -2,30 +2,32 @@
 
 These guides have been submitted by our community members.
 
-## [Nested records when creating](recipes/nested-records-when-creating)
+### [Use own helpers in Resource configuration](recipes/use-own-helpers-in-resource-configuration)
 
-## [Acts as taggable on integration](recipes/act-as-taggable-on-integration)
+### [Nested records when creating](recipes/nested-records-when-creating)
 
-## [REST API integration](recipes/rest-api-integration)
+### [Acts as taggable on integration](recipes/act-as-taggable-on-integration)
 
-## [Export to CSV](recipes/export-to-csv)
+### [REST API integration](recipes/rest-api-integration)
 
-## [Add custom link field](recipes/custom-link-field)
+### [Export to CSV](recipes/export-to-csv)
 
-## [Multilingual content](recipes/multilingual-content)
+### [Add custom link field](recipes/custom-link-field)
 
-## [Use in an API only Rails app](recipes/api-only-app)
+### [Multilingual content](recipes/multilingual-content)
 
-## [Pretty JSON objects to the code field](recipes/format-ruby-object-to-json)
+### [Use in an API only Rails app](recipes/api-only-app)
 
-## [Use route level multitenancy](recipes/multitenancy)
+### [Pretty JSON objects to the code field](recipes/format-ruby-object-to-json)
 
-## [Manage information-heavy resources](recipes/manage-information-heavy-resources)
+### [Use route level multitenancy](recipes/multitenancy)
 
-## [Ruby-on-Rails and Avo Tutorial](https://www.bootrails.com/blog/rails-avohq-tutorial) from [bootrails.com](https://www.bootrails.com).
+### [Manage information-heavy resources](recipes/manage-information-heavy-resources)
 
-## [Add nested fields to CRUD forms](recipes/add-nested-fields-to-forms)
+### [Ruby-on-Rails and Avo Tutorial](https://www.bootrails.com/blog/rails-avohq-tutorial) from [bootrails.com](https://www.bootrails.com).
 
-## [Add count to menu items](recipes/add-count-to-menu-items)
+### [Add nested fields to CRUD forms](recipes/add-nested-fields-to-forms)
 
-## [Use markdown in help attributes](recipes/use-markdown-in-help-attributes.md)
+### [Add count to menu items](recipes/add-count-to-menu-items)
+
+### [Use markdown in help attributes](recipes/use-markdown-in-help-attributes.md)
