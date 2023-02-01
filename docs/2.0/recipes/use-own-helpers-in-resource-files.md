@@ -1,4 +1,10 @@
-# Use own helpers in Resource configuration
+# Use own helpers in Resource files
+
+## TL;DR
+
+Run `rails app:template LOCATION='https://railsbytes.com/script/V2Gsb9'`
+
+## Details
 
 A common pattern is to have some helpers defined in your app to manipulate your data. You might need those helpers in your `Resource` files.
 
