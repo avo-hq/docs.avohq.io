@@ -2,7 +2,7 @@
 
 These guides have been submitted by our community members.
 
-### [Use own helpers in Resource configuration](recipes/use-own-helpers-in-resource-configuration)
+### [Use own helpers in Resource files](recipes/use-own-helpers-in-resource-files)
 
 ### [Nested records when creating](recipes/nested-records-when-creating)
 
