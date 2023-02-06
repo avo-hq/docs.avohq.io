@@ -290,6 +290,18 @@ end
 Check out the [Pundit client](https://github.com/avo-hq/avo/blob/main/lib/avo/services/authorization_clients/pundit_client.rb) for reference.
 :::
 
+### Config
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ... 
+
+  # Class for custom client
+  config.authorization_client = 'Services::AuthorizationClients::CustomClient' 
+end
+```
+
 ### Client methods
 
 Each authorization client must expose a few methods.
