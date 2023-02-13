@@ -245,7 +245,7 @@ field :id, as: :number, readonly: -> { view == :edit } # make the field readonly
 
 ## Disabled
 
-When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on **Create** and **Edit** views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
+When you need to prevent the user from editing a field, the `disabled` option will render it as `disabled` on **Create** and **Edit** views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
 
 ```ruby
 field :name, as: :text, disabled: true
