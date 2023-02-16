@@ -303,6 +303,8 @@ When you create your own client, pass the class name.
 Avo.configure do |config|
   config.authorization_client = 'Services::AuthorizationClients::CustomClient'
 end
+```
+
 ### Client methods
 
 Each authorization client must expose a few methods.
