@@ -311,7 +311,7 @@ Each authorization client must expose a few methods.
 
 ### `authorize`
 
-Receives the `user`, `record`, `action`, and optionally, the `policy_class` and authorizez that action
+Receives the `user`, `record`, `action`, and optionally, the `policy_class` (you may want to use custom policy classes for some resources).
 
 ```ruby
 # Pundit example
