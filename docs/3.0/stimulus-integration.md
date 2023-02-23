@@ -428,6 +428,8 @@ For debugging purposes only, the `resource_edit` Stimulus JS controller provides
 
 ## Custom Stimulus controllers
 
+<DemoVideo demo-video="https://youtu.be/ZMOz22FaAUg?t=1127" />
+
 The bigger purpose of this feature is to create your own Stimulus JS controllers to bring the functionality you need to the CRUD interface.
 
 Below is an example of how you could implement a city & country select feature where the city select will have its options changed when the user selects a country:
