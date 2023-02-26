@@ -189,11 +189,11 @@ field :skills,
 
 #### Possible values
 
-Valid values are  `nil` for array values and `select` for a single value.
+Valid values are `nil` for array values and `select` for a single value.
+
+![](/assets/img/fields/tags-field/mode-select.gif)
 
 :::
-
-<img :src="('/assets/img/fields/tags-field/mode-select.gif')" alt="Mode select" class="border mb-4" />
 
 :::option `fetch_values_from`
 
@@ -211,7 +211,7 @@ field :skills,
 
 When the user searches for a record, the field will perform a request to the server to fetch the records that match that query.
 
-<img :src="('/assets/img/fields/tags-field/mode-select.gif')" alt="Mode select" class="border mb-4" />
+![](/assets/img/fields/tags-field/mode-select.gif)
 
 #### Default
 
