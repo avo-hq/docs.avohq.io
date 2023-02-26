@@ -167,11 +167,12 @@ field :skills,
 `[",", " "]`
 
 Valid values are comma `,` and space ` `.
+
 :::
 
 :::option `mode`
-<VersionReq version="2.27" />
 
+<VersionReq version="2.27" />
 
 By default, the tags field produces an array of items (ex: categories for posts), but in some scenarios you might want it to produce a single value (ex: dynamically search for users and select just one). Use `mode: :select` to make the field produce a single value as opposed to an array of values.
 
@@ -188,11 +189,13 @@ field :skills,
 #### Possible values
 
 Valid values are  `nil` for array values and `select` for a single value.
+
 :::
 
 <img :src="('/assets/img/fields/tags-field/mode-select.gif')" alt="Mode select" class="border mb-4" />
 
 :::option `fetch_values_from`
+
 <VersionReq version="2.27" />
 
 There might be cases where you want to dynamically fetch the values from an API. The `fetch_values_from` option enables you to pass a URL from where the field should suggest values.
@@ -231,6 +234,7 @@ class Avo::UsersController < Avo::ResourcesController
   end
 end
 ```
+
 :::
 
 ## PostgreSQL array fields
