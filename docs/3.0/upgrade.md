@@ -18,6 +18,3 @@ Rename the follwing
 - `Avo::App.params`       -> `Avo::Current.params`
 - `Avo::App.request`      -> `Avo::Current.request`
 - `Avo::App.view_context` -> `Avo::Current.view_context`
-- `Avo::Dashboards` -> `AvoDashboards`
-
-- reverse disabled and readonly
