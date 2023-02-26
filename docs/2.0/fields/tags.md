@@ -173,8 +173,6 @@ Valid values are comma `,` and space ` `.
 
 :::option `mode`
 
-<VersionReq version="2.27" />
-
 By default, the tags field produces an array of items (ex: categories for posts), but in some scenarios you might want it to produce a single value (ex: dynamically search for users and select just one). Use `mode: :select` to make the field produce a single value as opposed to an array of values.
 
 ```ruby{3}
@@ -196,8 +194,6 @@ Valid values are `nil` for array values and `select` for a single value.
 :::
 
 :::option `fetch_values_from`
-
-<VersionReq version="2.27" />
 
 There might be cases where you want to dynamically fetch the values from an API. The `fetch_values_from` option enables you to pass a URL from where the field should suggest values.
 
