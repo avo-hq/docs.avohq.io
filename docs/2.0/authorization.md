@@ -226,6 +226,18 @@ class PostPolicy < ApplicationPolicy
 end
 ```
 
+:::warning
+This scope will be applied only to the <Index /> view of Avo. It will not be applied to the association view.
+
+Example:
+
+A `Post` has_many `Comment`s. The `CommentPolicy::Scope` will not affect the `has_many` field. You need to add the [`scope` option](./associations/has_many.html#add-scopes-to-associations) to the `has_many` field where you can modify the query.
+
+```ruby
+
+```
+:::
+
 ## Using different policy methods
 
 By default Avo will use the generated Pundit methods (`index?`, `show?`, `create?`, `new?`, `update?`, `edit?` and `destroy?`). But maybe, in your app, you're already using these methods and would like to use different ones for Avo. You may want override these methods inside your configuration with a simple map using the `authorization_methods` key.
