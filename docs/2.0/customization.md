@@ -356,7 +356,11 @@ end
 
 ### Custom scope for `Show` and `Edit` pages
 
-Using `resolve_find_scope` you tell Avo how to fetch one record for `Show` and `Edit` views,
+:::warning
+This method is deprecated in favor of `find_record_method` (below).
+:::
+
+Using `resolve_find_scope` you append arguments on `find` queries.
 
 ```ruby
 class UserResource < Avo::BaseResource
@@ -374,6 +378,73 @@ class User < ApplicationRecord
 end
 ```
 :::
+
+### Custom find method for `Show` and `Edit` pages
+
+Using `find_record_method` you tell Avo how to fetch one record for `Show` and `Edit` views and other contexts where a record needs to be fetched from the database.
+
+This is very useful when you use something like `friendly` gem, custom `to_param` methods on your model, and even the wonderful `prefix_id` gem.
+
+#### Custom `to_param` method
+
+The following example shows how you can update the `to_param` (to use the post name) method on the `User` model to use a custom attribute and then update the `UserResource` so it knows how to search for that model.
+
+::: code-group
+```ruby [app/avo/resources/user_resource.rb]
+class PostResource < Avo::BaseResource
+  self.find_record_method = ->(model_class:, id:, params:) do
+    # If the id is an integer use the classic `find` method.
+    # But if it's not an integer, search for that post by the slug.
+    id.to_i == 0 ? model_class.find_by_slug(id) : model_class.find(id)
+  end
+end
+```
+
+```ruby [app/models/post.rb]
+class Post < ApplicationRecord
+  before_save :update_slug
+
+  def to_param
+    slug || id
+  end
+
+  def update_slug
+    self.slug = name.parameterize
+  end
+end
+```
+:::
+
+#### Using the `friendly` gem
+
+::: code-group
+```ruby [app/avo/resources/user_resource.rb]
+class UserResource < Avo::BaseResource
+  self.find_record_method = ->(model_class:, id:, params:) do
+    # We have to add .friendly to the query
+    model_class.friendly.find! id
+  end
+end
+```
+
+```ruby [app/models/user.rb]
+class User < ApplicationRecord
+  extend FriendlyId
+
+  friendly_id :name, use: :slugged
+end
+```
+:::
+
+#### Using `prefixed_ids` gem
+
+You really don't have to do anything on Avo's side for this to work. You only need to add the `has_prefix_id` the model as per the documentation. Avo will know how to search for the record.
+
+```ruby
+class Course < ApplicationRecord
+  has_prefix_id :course
+end
+```
 
 ## Disable features
 
