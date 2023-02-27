@@ -4,11 +4,20 @@ Avo effortlessly empowers you to build an entire customer-facing interface for y
 
 ## Overview
 
-Similar to how you configure your database layer using Rails  `Model` files and their DSL, Avo's CRUD UI is configured using `Resource` files.
+Similar to how you configure your database layer using Rails `Model` files and their DSL, Avo's CRUD UI is configured using `Resource` files.
 
 Each `Resource` maps out one of your models. There can be multiple `Resource`s associated to the same model if you need that.
 
 All resources are located in the `app/avo/resources` directory. Unfortunately, `Resource`s can't be namespaced yet, so they all need to be in the root level of that directory.
+
+:::warning
+All resources from `app/avo/resources` are eager loaded on app boot-time to automatically have them available in your app.
+
+This might might interfere with some setups.
+
+If that happens you can manually register resources using [this guide](#manually-registering-resources).
+:::
+
 
 ## Resources from model generation
 
@@ -532,3 +541,26 @@ end
 Let's take an example. We have a `Person` model and `Sibling` and `Spouse` models that inherit from it (STI).
 
 Declare this option on the parent resource. When a user is on the <Index /> view of your the `PersonResource` and clicks on the view button of a `Person` they will be redirected to a `Child` or `Spouse` resource instead of a `Person` resource.
+
+## Manually registering resources
+
+<VersionReq version="2.27" />
+
+In order to have a more straightforward experience when getting started with Avo, we are eager-loading the `app/avo/resources` directory. That makes all those resources available to your app without you doing anything else.
+
+That might make some Rails apps raise some errors.
+
+In order to mitigate that we added a way of manually declaring resources.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.resources = [
+    "UserResource",
+    "FishResource",
+  ]
+end
+```
+
+This tells Avo which resources you use and stops the eager-loading process on boot-time.
+This means that other resources that are not declared in this array will not show up in your app.
