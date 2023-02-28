@@ -92,6 +92,10 @@ Controls whether the attachment delete button should be visible in the `File` an
 
 Controls whether the user can see the actions button on the <Index /> page.
 
+### reorder?
+
+Controls whether the user can see the [records reordering](./records-reordering) buttons on the <Index /> page.
+
 <img :src="('/assets/img/authorization/actions_button.jpg')" alt="Actions button" class="border mb-4" />
 
 ## Associations
@@ -173,6 +177,10 @@ Controls whether the **delete button is visible** on the associated record row o
 Controls whether the `Actions` dropdown is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
 <img :src="('/assets/img/authorization/actions.jpg')" class="border mb-4" />
+
+### reorder_{association}?
+
+Controls whether the user can see the [records reordering](./records-reordering) buttons on the `has_many` <Index /> page.
 
 ### Removing duplication
 
