@@ -187,7 +187,7 @@ class Dashy < Avo::Dashboards::BaseDashboard
 end
 ```
 
-## Card visibility
+## Cards visibility
 
 <VersionReq version="2.28" />
 
