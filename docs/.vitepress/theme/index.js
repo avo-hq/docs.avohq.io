@@ -6,6 +6,7 @@ import Version from "./components/Version.vue"
 import DemoVideo from "./components/DemoVideo.vue"
 import Demo from "./components/Demo.vue"
 import PageHeader from "./components/PageHeader.vue"
+import AsideOutlineAfter from "./components/AsideOutlineAfter.vue"
 import BetaStatus from "./components/BetaStatus.vue"
 import SponsorGroup from "./components/SponsorGroup.vue"
 import Sponsor from "./components/Sponsor.vue"
@@ -43,6 +44,7 @@ export default {
   Layout() {
     return h(DefaultTheme.Layout, null, {
       "doc-before": () => h(PageHeader),
+      "aside-outline-after": () => h(AsideOutlineAfter),
     })
   },
 }
