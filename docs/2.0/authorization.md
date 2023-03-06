@@ -427,4 +427,17 @@ class AccountResource < Avo::BaseResource
 end
 ```
 
+Example of RoleResource file:
+
+```ruby
+class RoleResource < Avo::BaseResource
+  self.title = :name
+  self.includes = []
+
+  field :name, as: :text
+  field :accounts, as: :has_and_belongs_to_many
+end
+
+```
+
 The roles of an account can now be easily assigned and removed using avo. The currently assigned roles are displayed in the index and show view using the virtual `assigned_roles' field.
