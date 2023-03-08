@@ -217,7 +217,9 @@ When the user searches for a record, the field will perform a request to the ser
 
 Valid values are `nil`, a string, or a block that evaluates to a string. The string should resolve to an enddpoint that returns an array of objects with the keys `value` and `label`.
 
-```ruby
+::: code-group
+
+```ruby{2-10} [app/controllers/avo/users_controller.rb]
 class Avo::UsersController < Avo::ResourcesController
   def get_users
     users = User.all.map do |user|
@@ -226,8 +228,26 @@ class Avo::UsersController < Avo::ResourcesController
         label: user.name
       }
     end
-
     render json: users
+  end
+end
+```
+
+```ruby{13} [config/routes.rb]
+Rails.application.routes.draw do
+  # your routes
+
+  authenticate :user, ->(user) { user.is_admin? } do
+    mount Avo::Engine, at: Avo.configuration.root_path
+  end
+end
+
+if defined? ::Avo
+  Avo::Engine.routes.draw do
+    scope :resources do
+      # Add route for the get_users action
+      get "users/get_users", to: "users#get_users"
+    end
   end
 end
 ```
