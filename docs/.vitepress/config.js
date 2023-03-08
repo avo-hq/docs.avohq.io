@@ -13,8 +13,10 @@ function createContainer(klass, md) {
         const token = tokens[idx]
         const info = token.info.trim().slice(klass.length).trim()
         if (token.nesting === 1) {
-          const title = md.renderInline(info || klass)
-          return `<section class="${klass}"><h3 class="custom-block-title">${title}</h3><div class="pl-8"><p>\n`
+          const fullTitle = md.renderInline(info || klass)
+          const title = fullTitle.match(/<code>(.*)<\/code>/i)[1]
+
+          return `<section class="${klass}"><h2 id="${title}" class="custom-block-title"><code>${title}</code></h2><div class="pl-8"><p>\n`
         } else {
           return `</p></div></section>\n`
         }
