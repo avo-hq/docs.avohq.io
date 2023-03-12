@@ -216,6 +216,24 @@ end
 
 Now, whatever action you take for one comment, it will be available for the `edit_comments?` method in `PostPolicy`.
 
+## Files
+
+When working with files, it may be necessary to establish policies that determine whether users can `upload`, `download` or `delete` files. Fortunately, Avo simplifies this process by providing a straightforward naming schema for these policies.
+
+Both the `record` and the `user` will be available for you to access.
+
+<img :src="('/assets/img/authorization/file_actions.png')" class="border mb-4 rounded" />
+
+### upload_{file_field_id}?
+Controls whether the user can upload the file.
+
+### download_{file_field_id}?
+Controls whether the user can download the file.
+
+### delete_{file_field_id}?
+Controls whether the user can destroy the file.
+
+
 ## Scopes
 
 You may specify a scope for the <Index />, <Show />, and <Edit /> views.
