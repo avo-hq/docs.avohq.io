@@ -254,6 +254,31 @@ end
 
 :::
 
+:::option `fetch_labels`
+The `fetch_labels` option allows you to pass an array of custom strings to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.
+
+To use `fetch_labels`, you need to specify it as an option when defining the field. Here's an example:
+
+```ruby{2-4}
+field :users, as: :tags,
+  fetch_labels: -> {
+    User.where(id: record.array_with_user_ids).pluck(:first_name)
+  }
+```
+
+In the above example, `fetch_labels` is a lambda that retrieves the first names of users associated with the record's `array_with_user_ids` property.
+
+When you use `fetch_labels`, Avo passes the current `resource` and `record` as arguments to the lambda function. This gives you access to the hydrated resource and the current record.
+
+#### Default
+
+Avo's default behavior on tags
+
+#### Possible values
+
+Array of strings
+:::
+
 ## PostgreSQL array fields
 
 You can use the tags field with the PostgreSQL array field.
