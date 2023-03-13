@@ -6,61 +6,6 @@ demoVideo: https://youtu.be/DKKSjNUvuBA
 
 # Tags field
 
-
-<Option name="->fetch_values_from_0">
-
-There might be cases where you want to dynamically fetch the values from an API. The `fetch_values_from` option enables you to pass a URL from where the field should suggest values.
-
-This options works wonderful when used in [Actions](./../actions.md).
-
-```ruby{3}
-field :skills,
-  as: :tags,
-  fetch_values_from: "/avo/resources/users/users_for_post"
-```
-
-When the user searches for a record, the field will perform a request to the server to fetch the records that match that query.
-
-![](/assets/img/fields/tags-field/mode-select.gif)
-
-#### Default
-
-`nil`
-
-#### Possible values
-
-Valid values are `nil`, a string, or a block that evaluates to a string. The string should resolve to an enddpoint that returns an array of objects with the keys `value` and `label`.
-
-```ruby
-class Avo::UsersController < Avo::ResourcesController
-  def get_users
-    users = User.all.map do |user|
-      {
-        value: user.id,
-        label: user.name
-      }
-    end
-
-    render json: users
-  end
-end
-```
-
-</Option>
-
-## `hey`
-
-:::option `hoo`
-hehe
-:::
-yo
-
-:::option `feeetch`
-
-hey
-
-:::
-
 Adding a list of things to a record is something we need to do pretty frequently; that's why having the `tags` field is helpful.
 
 ```ruby
