@@ -449,3 +449,7 @@ rescue Pundit::NotDefinedError => error
 end
 ```
 :::
+
+## Rolify integration
+
+Check out [this guide](recipes/rolify-integration.md) to add rolify role management with Avo.
