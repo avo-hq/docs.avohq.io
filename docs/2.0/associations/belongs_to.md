@@ -60,6 +60,7 @@ Sets the help text for the polymorphic type dropdown. Useful when you need to sp
 Any string.
 :::
 
+<!-- @include: ./../common/associations_use_resource_option_common.md-->
 
 ## Overview
 
