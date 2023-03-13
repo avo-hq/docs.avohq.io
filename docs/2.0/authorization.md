@@ -21,7 +21,7 @@ gem "pundit"
 ```
 :::
 
-## Make sure Avo knows who your current user is
+## Ensure Avo knows who your current user is
 
 Before setting any policies up, please ensure Avo knows your current user. Usually, this 👇 set up should be fine, but follow [the authentication guide](./authentication#customize-the-current-user-method) for more information.
 
@@ -42,7 +42,7 @@ With this new policy, you may control what every type o user can do with Avo. Th
 
 These methods control whether the resource appears on the sidebar, if the view/edit/destroy buttons are visible or if a user has access to those index/show/edit/create pages.
 
-### index?
+<Option name="index?">
 
 `index?` is used to display/hide the resources on the sidebar and restrict access to the resources **Index** view.
 
@@ -52,59 +52,82 @@ These methods control whether the resource appears on the sidebar, if the view/e
   You'll have to use your own logic in the [`visible`](./menu-editor#item-visibility) block for that.
 :::
 
-### show?
+</Option>
+
+:::option `show?`
 
 When setting `show?` to `false`, the user will not see the show icon on the resource row and will not have access to the **Show** view of a resource.
 
-### create?
+:::
+
+:::option `create?`
 
 The `create?` method will prevent the users from creating a resource. That will also apply to the `Create new {model}` button on the <Index />, the `Save` button on the `/new` page, and `Create new {model}` button on the association `Show` page.
 
-### new?
+:::
+
+:::option `new?`
 
 The `new?` method will control whether the users can save the new resource. You can also access the `record` variable with the form values pre-filled.
 
-### edit?
+:::
+
+:::option `edit?`
 
 `edit?` to `false` will hide the edit button on the resource row and prevent the user from seeing the edit view.
 
-### update?
+:::
+
+:::option `update?`
 
 `update?` to `false` will prevent the user from updating a resource. You can also access the `record` variable with the form values pre-filled.
 
-### destroy?
+:::
+
+::::option `destroy?`
 
 `destroy?` to `false` will prevent the user from destroying a resource and hiding the delete button.
 
-### upload_attachments?
+:::info More granular file authorization
+These are per-resource and general settings. If you want to control the authorization per individual file, please see the [granular settings](#files).
+:::
+
+::::
+
+:::option `upload_attachments?`
 
 Controls whether the attachment upload input should be visible in the `File` and `Files` fields.
 
-### download_attachments?
+:::
+
+:::option `download_attachments?`
 
 Controls whether the attachment download button should be visible in the `File` and `Files` fields.
 
-### delete_attachments?
+:::
+
+:::option `delete_attachments?`
 
 Controls whether the attachment delete button should be visible in the `File` and `Files` fields.
 
-### act_on?
+:::
+
+:::option `act_on?`
 
 Controls whether the user can see the actions button on the <Index /> page.
 
-### reorder?
+:::
+
+:::option `reorder?`
 
 Controls whether the user can see the [records reordering](./records-reordering) buttons on the <Index /> page.
 
 <img :src="('/assets/img/authorization/actions_button.jpg')" alt="Actions button" class="border mb-4" />
 
+:::
 ## Associations
 
 When using associations, you would like to set policies for `creating` new records on the association, allowing to `attach`, `detach`, `create` or `destroy` relevant records. Again, Avo makes this easy using a straightforward naming schema.
-
-### Example scenario
-
-We'll have this example of a `Post` resource with many `Comment`s through the `has_many :comments` association.
 
 :::warning
 Make sure you use the same pluralization as the association name.
@@ -112,27 +135,35 @@ Make sure you use the same pluralization as the association name.
 For a `has_many :users` association use the plural version method `view_users?`, `edit_users?`, `detach_users?`, etc., not the singular version `detach_user?`.
 :::
 
+### Example scenario
+
+We'll have this example of a `Post` resource with many `Comment`s through the `has_many :comments` association.
+
+
 :::info The `record` variable in policy methods
 In the `Post` `has_many` `Comments` example, when you want to authorize `show_comments?` in `PostPolicy` you will have a `Comment` instance as the `record` variable, but when you try to authorize the `attach_comments?`, you won't have that `Comment` instance because you want to create one, but we expose the parent `Post` instance so you have more information about that authorization action that you're trying to make.
 :::
 
-### attach_{association}?
+:::option `attach_{association}?`
 
 Controls whether the `Attach comment` button is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
 <img :src="('/assets/img/authorization/attach.jpg')" class="border mb-4" />
 
-### detach_{association}?
+:::
+:::option `detach_{association}?`
 
 Controls whether the **detach button is available** on the associated record row on the <Index /> view. The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
 <img :src="('/assets/img/authorization/detach.jpg')" class="border mb-4" />
 
-### view_{association}?
+:::
+:::option `view_{association}?`
 
 Controls whether the whole association is being displayed on the parent record. The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
-### show_{association}?
+:::
+::::option `show_{association}?`
 
 Controls whether the **view button is visible** on the associated record row on the <Index /> page. The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
@@ -150,7 +181,8 @@ When you use the `view_comments?` policy method you get the `Post` instance as t
 When you use `show_comments?` policy method, the `record` variable is each `Comment` instance and you control whether the view button is displayed on each individual row.
 :::
 
-### edit_{association}?
+::::
+::::option `edit_{association}?`
 
 Controls whether the **edit button is visible** on the associated record row on the <Index /> page.The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
@@ -160,29 +192,34 @@ This **does not** control whether the user has access to that record's edit page
 
 <img :src="('/assets/img/authorization/edit.jpg')" class="border mb-4" />
 
-### create_{association}?
+::::
+:::option `create_{association}?`
 
 Controls whether the `Create comment` button is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
 <img :src="('/assets/img/authorization/create.jpg')" class="border mb-4" />
 
-### destroy_{association}?
+:::
+:::option `destroy_{association}?`
 
 Controls whether the **delete button is visible** on the associated record row on the <Index /> page.The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
 <img :src="('/assets/img/authorization/destroy.jpg')" class="border mb-4" />
 
-### act_on_{association}?
+:::
+:::option `act_on_{association}?`
 
 Controls whether the `Actions` dropdown is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
 <img :src="('/assets/img/authorization/actions.jpg')" class="border mb-4" />
 
-### reorder_{association}?
+:::
+:::option `reorder_{association}?`
 
 Controls whether the user can see the [records reordering](./records-reordering) buttons on the `has_many` <Index /> page.
+:::
 
-### Removing duplication
+## Removing duplication
 
 :::info A note on duplication
 Let's take the following example:
@@ -216,6 +253,28 @@ end
 
 Now, whatever action you take for one comment, it will be available for the `edit_comments?` method in `PostPolicy`.
 
+## Files
+
+<VersionReq version="2.28" />
+
+When working with files, it may be necessary to establish policies that determine whether users can `upload`, `download` or `delete` files. Fortunately, Avo simplifies this process by providing a straightforward naming schema for these policies.
+
+Both the `record` and the `user` will be available for you to access.
+
+<img :src="('/assets/img/authorization/file_actions.png')" class="border mb-4 rounded" />
+
+:::option `upload_{file_field_id}?`
+Controls whether the user can upload the file.
+:::
+
+:::option `download_{file_field_id}?`
+Controls whether the user can download the file.
+:::
+
+:::option `delete_{file_field_id}?`
+Controls whether the user can destroy the file.
+:::
+
 ## Scopes
 
 You may specify a scope for the <Index />, <Show />, and <Edit /> views.
@@ -233,6 +292,18 @@ class PostPolicy < ApplicationPolicy
   end
 end
 ```
+
+:::warning
+This scope will be applied only to the <Index /> view of Avo. It will not be applied to the association view.
+
+Example:
+
+A `Post` has_many `Comment`s. The `CommentPolicy::Scope` will not affect the `has_many` field. You need to add the [`scope` option](./associations/has_many.html#add-scopes-to-associations) to the `has_many` field where you can modify the query.
+
+```ruby
+
+```
+:::
 
 ## Using different policy methods
 
@@ -317,7 +388,7 @@ end
 
 Each authorization client must expose a few methods.
 
-### `authorize`
+:::option `authorize`
 
 Receives the `user`, `record`, `action`, and optionally, the `policy_class` (you may want to use custom policy classes for some resources).
 
@@ -332,7 +403,8 @@ rescue Pundit::NotAuthorizedError => error
 end
 ```
 
-### `policy`
+:::
+:::option `policy`
 
 Receives the `user` and `record` and returns the policy to use.
 
@@ -342,7 +414,8 @@ def policy(user, record)
 end
 ```
 
-### `policy!`
+:::
+:::option `policy!`
 
 Receives the `user` and `record` and returns the policy to use. It will raise an error if no policy is found.
 
@@ -354,7 +427,8 @@ rescue Pundit::NotDefinedError => error
 end
 ```
 
-### `apply_policy`
+:::
+:::option `apply_policy`
 
 Receives the `user`, `record`, and optionally, the policy class to use. It will apply a scope to a query.
 
@@ -374,70 +448,4 @@ rescue Pundit::NotDefinedError => error
   raise NoPolicyError.new error.message
 end
 ```
-
-## Integration with rolify
-
-It is possible to implement the `rolify` gem in conjunction with `pundit` in an Avo admin panel using basic functionality. Following the next steps allows for easy management of roles within the admin panel, which can be used to control access to different parts of the application based on user roles. By assigning specific permissions to each user role, Avo users can ensure that their admin panels remain secure and accessible only to authorised users.
-
-:::warning
-You must manually require `rolify` in your `Gemfile`.
 :::
-
-```ruby
-gem "rolify"
-```
-
-**If this is a new app you need to do some initial steps, create the role model and specify which models should be handled by rolify**
-
-:::info
-Check out the [rolify documentation](https://github.com/RolifyCommunity/rolify) for reference.
-:::
-
-We assume that your model for managing users is called `Account` (default when using `rodauth`) and your role model is called `Role` (default when using `rolify`).
-
-```ruby
-class Account < ApplicationRecord
-  rolify
-
-  # ...
-end
-```
-
-A `Role` connects to an `Account` through `has_and_belongs_to_many` while an `Account` connects to `Role` through `has_many` (not directly used in the model because the `rolify` statement manage this). Although rolify has its own functions for adding and deleting roles, normal rails operations can also be used to manage the roles. To implement this in avo, the appropriate resources need to be created.
-
-*Perhaps the creation of the account resource is not necessary, as it has already been done in previous steps or has been created automatically by the avo generator through a scaffold/model. So we assume this step is already done.*
-
-```zsh
-bin/rails generate avo:resource role
-```
-
-After this step the `roles` should now accessible via the avo interface. The final modification should be done in the corresponding `Account` resource file.
-
-```ruby
-class AccountResource < Avo::BaseResource
-  # ...
-
-  field :assigned_roles, as: :tags, hide_on: :forms do |model, resource, view|
-    model.roles.map {|role|role.name}
-  end
-
-  field :roles, as: :has_many
-
-  # ...
-end
-```
-
-Example of RoleResource file:
-
-```ruby
-class RoleResource < Avo::BaseResource
-  self.title = :name
-  self.includes = []
-
-  field :name, as: :text
-  field :accounts, as: :has_and_belongs_to_many
-end
-
-```
-
-The roles of an account can now be easily assigned and removed using avo. The currently assigned roles are displayed in the index and show view using the virtual `assigned_roles' field.
