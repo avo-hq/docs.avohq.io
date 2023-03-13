@@ -17,4 +17,5 @@ field :admin, as: :has_one
 
 <!-- @include: ./../common/associations_searchable_option_common.md-->
 <!-- @include: ./../common/associations_attach_scope_option_common.md-->
+
 <!-- @include: ./../common/show_on_edit_common.md-->

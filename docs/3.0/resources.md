@@ -4,7 +4,7 @@ Avo effortlessly empowers you to build an entire customer-facing interface for y
 
 ## Overview
 
-Similar to how you configure your database layer using Rails  `Model` files and their DSL, Avo's CRUD UI is configured using `Resource` files.
+Similar to how you configure your database layer using Rails `Model` files and their DSL, Avo's CRUD UI is configured using `Resource` files.
 
 Each `Resource` maps out one of your models. There can be multiple `Resource`s associated to the same model if you need that.
 
