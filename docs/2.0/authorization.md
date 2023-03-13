@@ -42,7 +42,7 @@ With this new policy, you may control what every type o user can do with Avo. Th
 
 These methods control whether the resource appears on the sidebar, if the view/edit/destroy buttons are visible or if a user has access to those index/show/edit/create pages.
 
-::::option `index?`
+<Option name="index?">
 
 `index?` is used to display/hide the resources on the sidebar and restrict access to the resources **Index** view.
 
@@ -52,7 +52,7 @@ These methods control whether the resource appears on the sidebar, if the view/e
   You'll have to use your own logic in the [`visible`](./menu-editor#item-visibility) block for that.
 :::
 
-::::
+</Option>
 
 :::option `show?`
 
