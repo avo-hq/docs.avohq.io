@@ -987,9 +987,9 @@ postcss@^8.4.14:
     source-map-js "^1.0.2"
 
 preact@^10.0.0:
-  version "10.13.0"
-  resolved "https://registry.yarnpkg.com/preact/-/preact-10.13.0.tgz#f8bd3cf257a4dbe41da71a52131b79916d4ca89d"
-  integrity sha512-ERdIdUpR6doqdaSIh80hvzebHB7O6JxycOhyzAeLEchqOq/4yueslQbfnPwXaNhAYacFTyCclhwkEbOumT0tHw==
+  version "10.13.1"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.13.1.tgz#d220bd8771b8fa197680d4917f3cefc5eed88720"
+  integrity sha512-KyoXVDU5OqTpG9LXlB3+y639JAGzl8JSBXLn1J9HTSB3gbKcuInga7bZnXLlxmK94ntTs1EFeZp0lrja2AuBYQ==
 
 queue-microtask@^1.2.2:
   version "1.2.3"
@@ -1030,9 +1030,9 @@ reusify@^1.0.4:
   integrity sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==
 
 rollup@^3.10.0:
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.18.0.tgz#2354ba63ba66d6a09c652c3ea0dbcd9dad72bbde"
-  integrity sha512-J8C6VfEBjkvYPESMQYxKHxNOh4A5a3FlP+0BETGo34HEcE4eTlgCrO2+eWzlu2a/sHs2QUkZco+wscH7jhhgWg==
+  version "3.19.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.19.1.tgz#2b3a31ac1ff9f3afab2e523fa687fef5b0ee20fc"
+  integrity sha512-lAbrdN7neYCg/8WaoWn/ckzCtz+jr70GFfYdlf50OF7387HTg+wiuiqJRFYawwSPpqfqDNYqK7smY/ks2iAudg==
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -1138,10 +1138,10 @@ vite@^4.1.4:
   optionalDependencies:
     fsevents "~2.3.2"
 
-vitepress@^1.0.0-alpha.49:
-  version "1.0.0-alpha.50"
-  resolved "https://registry.yarnpkg.com/vitepress/-/vitepress-1.0.0-alpha.50.tgz#b4d5bde195cd4ebb21520f5868c30ce20f4033f4"
-  integrity sha512-6EdT6JIiHRD7KatKMfxCJ3J7aHlkMp67ZEcfYrMTLKAJ+K+qWs2p427udMHSenCOzVNLIikEC5v/rP3GOGWubQ==
+vitepress@1.0.0-alpha.56:
+  version "1.0.0-alpha.56"
+  resolved "https://registry.yarnpkg.com/vitepress/-/vitepress-1.0.0-alpha.56.tgz#250a4388ddf2407ec81da7823ceab5c6822e7054"
+  integrity sha512-FNoanHwmgWn4xZZcc8D34VKWcEs0F7e39xiVUahI7VzzI4VeiB+R/euYtPIUcTxIC2pRDhclw7/DO0JFYSGIpw==
   dependencies:
     "@docsearch/css" "^3.3.3"
     "@docsearch/js" "^3.3.3"
