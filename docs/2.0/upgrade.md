@@ -4,6 +4,26 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.26 to 2.27
+
+### Replace `resolve_find_scope` with `find_record_method`
+
+In 2.27 we pushd a long awaited feature where we Avo supports much better gems like `friendly` and `prefixed_ids`.
+
+Instead of using `self.resolve_find_scope` (which will be deprecated in the future), please use `find_record_method` which will give you more control on how to find records within Avo.
+
+```ruby
+# Before
+self.resolve_find_scope = ->(model_class:) do
+  model_class.friendly
+end
+
+# After
+self.find_record_method = ->(model_class:, id:, params:) do
+  model_class.friendly.find id
+end
+```
+
 ## Upgrade from 2.20 to 2.21
 
 In version 2.20 we discovered a bug in the [associated policy methods](./authorization#associations) (`create_{association}?`, `attach_{association}?`, etc.).
