@@ -31,3 +31,5 @@ These guides have been submitted by our community members.
 ### [Add count to menu items](recipes/add-count-to-menu-items)
 
 ### [Use markdown in help attributes](recipes/use-markdown-in-help-attributes.md)
+
+### [Rolify integration](recipes/rolify-integration.md)
