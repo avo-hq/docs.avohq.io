@@ -15,10 +15,9 @@ function createContainer(klass, md) {
         if (token.nesting === 1) {
           const fullTitle = md.renderInline(info || klass)
           const title = fullTitle.match(/<code>(.*)<\/code>/i)[1]
-
-          return `<section class="${klass}"><h2 id="${title}" class="custom-block-title"><code>${title}</code></h2><div class="pl-8"><p>\n`
+          return `<h2 id="${title}" tabindex="-1"><code><span class="hidden">-> </span>${title}</code> <a class="header-anchor" href="#${title}" aria-hidden="true">#</a></h2> <div class="pl-8"><p>\n`
         } else {
-          return `</p></div></section>\n`
+          return `</p></div>\n`
         }
       },
     },
@@ -146,10 +145,18 @@ const config = {
             {text: "Grid view", link: "/3.0/grid-view"},
             {text: "Menu editor", link: "/3.0/menu-editor"},
             {text: "Search", link: "/3.0/search"},
-            {text: "Filters", link: "/3.0/filters"},
             {text: "Actions", link: "/3.0/actions"},
             {text: "Localization (I18n)", link: "/3.0/localization"},
             {text: "Branding", link: "/3.0/branding"},
+          ],
+        },
+        {
+          text: "Filters",
+          items: [
+            {text: "Overview", link: "/3.0/filters"},
+            {text: "Basic Filters", link: "/3.0/filters/basic"},
+            {text: "Dynamic filters", link: "/3.0/filters/dynamic-filters"},
+            {text: "Advanced filters", link: "/3.0/filters/advanced-filters"},
           ],
         },
         {
