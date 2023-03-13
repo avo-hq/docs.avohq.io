@@ -75,7 +75,7 @@ field :is_featured, as: :boolean, visible: -> (resource:) { resource.model.publi
 You might be tempted to use the `if` statement to show/hide fields conditionally. However, that's not the best choice because the fields are registered at boot time, and some features are only available at runtime. Let's take the `context` object, for example. You might have the `current_user` assigned to the `context`, which will not be present at the app's boot time. Instead, that's present at request time when you have a `request` present from which you can find the user.
 
 ```ruby{4-7,13-16}
-# Don't do
+# ❌ Don't do
 class CommentResource < Avo::BaseResource
   field :id, as: :id
   if context[:current_user].admin?
@@ -84,7 +84,7 @@ class CommentResource < Avo::BaseResource
   end
 end
 
-# Do instead
+# ✅ Do instead
 class CommentResource < Avo::BaseResource
   field :id, as: :id
   with_options visible: -> (resource:) { context[:current_user].admin?} do

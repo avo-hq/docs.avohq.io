@@ -6,6 +6,7 @@ import Version from "./components/Version.vue"
 import DemoVideo from "./components/DemoVideo.vue"
 import Demo from "./components/Demo.vue"
 import PageHeader from "./components/PageHeader.vue"
+import AsideOutlineAfter from "./components/AsideOutlineAfter.vue"
 import BetaStatus from "./components/BetaStatus.vue"
 import SponsorGroup from "./components/SponsorGroup.vue"
 import Sponsor from "./components/Sponsor.vue"
@@ -13,6 +14,7 @@ import Index from "./components/Index.vue"
 import Show from "./components/Show.vue"
 import Edit from "./components/Edit.vue"
 import New from "./components/New.vue"
+import Option from "./components/Option.vue"
 import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline/index.js"
 import "./styles.css"
 import {h} from "vue"
@@ -34,6 +36,8 @@ export default {
     app.component("Edit", Edit)
     app.component("New", New)
 
+    app.component("Option", Option)
+
     app.component("BeakerIcon", BeakerIcon)
     app.component("PlayIcon", PlayIcon)
     app.component("InformationCircleIcon", InformationCircleIcon)
@@ -43,6 +47,7 @@ export default {
   Layout() {
     return h(DefaultTheme.Layout, null, {
       "doc-before": () => h(PageHeader),
+      "aside-outline-after": () => h(AsideOutlineAfter),
     })
   },
 }
