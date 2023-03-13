@@ -193,7 +193,7 @@ Valid values are `nil` for array values and `select` for a single value.
 
 :::
 
-:::option `fetch_values_from`
+<Option name="`fetch_values_from`">
 
 There might be cases where you want to dynamically fetch the values from an API. The `fetch_values_from` option enables you to pass a URL from where the field should suggest values.
 
@@ -202,7 +202,7 @@ This options works wonderful when used in [Actions](./../actions.md).
 ```ruby{3}
 field :skills,
   as: :tags,
-  fetch_values_from: "/avo/resources/users/users_for_post"
+  fetch_values_from: "/avo/resources/skills/skills_for_user"
 ```
 
 When the user searches for a record, the field will perform a request to the server to fetch the records that match that query.
@@ -219,16 +219,16 @@ Valid values are `nil`, a string, or a block that evaluates to a string. The str
 
 ::: code-group
 
-```ruby{2-10} [app/controllers/avo/users_controller.rb]
-class Avo::UsersController < Avo::ResourcesController
-  def get_users
-    users = User.all.map do |user|
+```ruby{2-10} [app/controllers/avo/skills_controller.rb]
+class Avo::SkillsController < Avo::ResourcesController
+  def skills_for_user
+    skills = Skill.all.map do |skill|
       {
-        value: user.id,
-        label: user.name
+        value: skill.id,
+        label: skill.name
       }
     end
-    render json: users
+    render json: skills
   end
 end
 ```
@@ -245,13 +245,45 @@ end
 if defined? ::Avo
   Avo::Engine.routes.draw do
     scope :resources do
-      # Add route for the get_users action
-      get "users/get_users", to: "users#get_users"
+      # Add route for the skills_for_user action
+      get "skills/skills_for_user", to: "skills#skills_for_user"
     end
   end
 end
 ```
 
+:::info
+When using the `fetch_labels_from` pattern, on the <Show /> and <Index /> views you will see the `id` of those options instead of the label.
+That is expected, because you are storing the `id`s in the database and the field can't know what labels those `id`s have.
+
+To mitigate that use the `fetch_labels` option.
+:::
+
+</Option>
+
+:::option `fetch_labels`
+The `fetch_labels` option allows you to pass an array of custom strings to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.
+
+```ruby{4-6}
+field :skills,
+  as: :tags,
+  fetch_values_from: "/avo/resources/skills/skills_for_user",
+  fetch_labels: -> {
+    Skill.where(id: record.skills).pluck(:name)
+  }
+```
+
+In the above example, `fetch_labels` is a lambda that retrieves the names of the skills stored in the record's `skills` property.
+
+When you use `fetch_labels`, Avo passes the current `resource` and `record` as arguments to the lambda function. This gives you access to the hydrated resource and the current record.
+
+#### Default
+
+Avo's default behavior on tags
+
+#### Possible values
+
+Array of strings
 :::
 
 ## PostgreSQL array fields
