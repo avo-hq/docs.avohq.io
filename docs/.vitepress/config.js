@@ -15,10 +15,9 @@ function createContainer(klass, md) {
         if (token.nesting === 1) {
           const fullTitle = md.renderInline(info || klass)
           const title = fullTitle.match(/<code>(.*)<\/code>/i)[1]
-
-          return `<section class="${klass}"><h2 id="${title}" class="custom-block-title"><code>${title}</code></h2><div class="pl-8"><p>\n`
+          return `<h2 id="${title}" tabindex="-1"><code><span class="hidden">-> </span>${title}</code> <a class="header-anchor" href="#${title}" aria-hidden="true">#</a></h2> <div class="pl-8"><p>\n`
         } else {
-          return `</p></div></section>\n`
+          return `</p></div>\n`
         }
       },
     },
