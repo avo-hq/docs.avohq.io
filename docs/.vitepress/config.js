@@ -16,7 +16,7 @@ function createContainer(klass, md) {
           const fullName = md.renderInline(info || klass)
           const name = fullName.match(/<code>(.*)<\/code>/i)[1]
           const anchor = name.replace(/\?|{|}|!/g, '')
-          return `<h2 id="${anchor}" tabindex="-1"><code><span class="hidden">-> </span>${name}</code> <a class="header-anchor" href="#${anchor}" aria-hidden="true">#</a></h2> <div class="pl-8"><p>\n`
+          return `<h2 id="${anchor}" tabindex="-1"><code><span class="hidden">-> </span>${name}</code> <a class="header-anchor" href="#${anchor}" aria-hidden="true"></a></h2> <div class="pl-8"><p>\n`
         } else {
           return `</p></div>\n`
         }

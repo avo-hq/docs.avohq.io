@@ -30,7 +30,7 @@ export default {
       <span class="hidden">-> </span>
       <span v-html="name" />
     </div>
-    <a class="header-anchor" :href="anchorName" aria-hidden="true">#</a>
+    <a class="header-anchor" :href="anchorName" aria-hidden="true"></a>
   </h2>
   <div class="pl-8">
     <slot></slot>
