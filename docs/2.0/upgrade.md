@@ -5,7 +5,13 @@ We generally push changes behind the scenes, so you don't have to update your co
 Follow these guides to make sure your configuration files are up to date.
 
 ## Upgrade from 2.27 to 2.28
-File field level authorization feature brings more granular control over file policies. In addition to the existing `upload_attachments?`, `download_attachments?`, and `delete_attachments?` policies, there are now `upload_{file_field_id}?`, `download_{file_field_id}?`, and `delete_{file_field_id}?` policies, which allow for more fine-grained control over actions on specific file fields. If you are using resource policies, and you want to allow uploads on a field (for example), it is important to ensure that both `upload_attachments?` and `upload_{file_field_id}?` are set to true if you want to permit uploads on that field. This will allow for more precise control over file policies on a per-field basis`
+
+File field level authorization feature brings more granular control over file policies.
+
+In addition to the existing `upload_attachments?`, `download_attachments?`, and `delete_attachments?` policies, there are now `upload_{file_field_id}?`, `download_{file_field_id}?`, and `delete_{file_field_id}?` policies, which allow for more fine-grained control over actions on specific file fields.
+
+If you are using resource policies, and you want to allow uploads on a field, it is important to ensure that `upload_attachments?` or `upload_{file_field_id}?` are set to `true`.
+This will allow for more precise control over file policies on a per-field basis.
 
 `define_method` can be used to allow action on attachments as bulk, for example, here we want to allow all users to upload, download and delete on `cover_photo` and `audio` field.
 
@@ -30,8 +36,6 @@ File field level authorization feature brings more granular control over file po
     end
   end
 ```
-
-
 
 ## Upgrade from 2.26 to 2.27
 
