@@ -94,6 +94,32 @@ These are per-resource and general settings. If you want to control the authoriz
 
 ::::
 
+:::option `act_on?`
+
+Controls whether the user can see the actions button on the <Index /> page.
+
+:::
+
+:::option `reorder?`
+
+Controls whether the user can see the [records reordering](./records-reordering) buttons on the <Index /> page.
+
+<img :src="('/assets/img/authorization/actions_button.jpg')" alt="Actions button" class="border mb-4" />
+
+:::
+
+## Attachments
+
+:::warning
+Since Avo 2.28 we deprecated the `upload_attachments?`, `download_attachments?`, `delete_attachments?` method in favor of field level file authorization.
+:::
+
+:::info
+On a file level authorization Avo verify if `upload_attachments?`, `download_attachments?`, `delete_attachments?` **OR** `upload_{field_id}?`, `download_{field_id}?`, `delete_{field_id}?` are true, for the respective action.
+
+If **one** of them is **true**, action is **authorized**.
+:::
+
 :::option `upload_attachments?`
 
 Controls whether the attachment upload input should be visible in the `File` and `Files` fields.
@@ -111,20 +137,27 @@ Controls whether the attachment download button should be visible in the `File` 
 Controls whether the attachment delete button should be visible in the `File` and `Files` fields.
 
 :::
+<br />
+<VersionReq version="2.28" />
 
-:::option `act_on?`
+When working with files, it may be necessary to establish policies that determine whether users can `upload`, `download` or `delete` each file. Fortunately, Avo simplifies this process by providing a straightforward naming schema for these policies.
 
-Controls whether the user can see the actions button on the <Index /> page.
+Both the `record` and the `user` will be available for you to access.
 
+<img :src="('/assets/img/authorization/file_actions.png')" class="border mb-4 rounded" />
+
+:::option `upload_{field_id}?`
+Controls whether the attachment upload input should be visible in the `field_id`.
 :::
 
-:::option `reorder?`
-
-Controls whether the user can see the [records reordering](./records-reordering) buttons on the <Index /> page.
-
-<img :src="('/assets/img/authorization/actions_button.jpg')" alt="Actions button" class="border mb-4" />
-
+:::option `download_{field_id}?`
+Controls whether the attachment download button should be visible in the `field_id`.
 :::
+
+:::option `delete_{field_id}?`
+Controls whether the attachment delete button should be visible in the `field_id`.
+:::
+
 ## Associations
 
 When using associations, you would like to set policies for `creating` new records on the association, allowing to `attach`, `detach`, `create` or `destroy` relevant records. Again, Avo makes this easy using a straightforward naming schema.
@@ -252,28 +285,6 @@ end
 ```
 
 Now, whatever action you take for one comment, it will be available for the `edit_comments?` method in `PostPolicy`.
-
-## Files
-
-<VersionReq version="2.28" />
-
-When working with files, it may be necessary to establish policies that determine whether users can `upload`, `download` or `delete` files. Fortunately, Avo simplifies this process by providing a straightforward naming schema for these policies.
-
-Both the `record` and the `user` will be available for you to access.
-
-<img :src="('/assets/img/authorization/file_actions.png')" class="border mb-4 rounded" />
-
-:::option `upload_{file_field_id}?`
-Controls whether the user can upload the file.
-:::
-
-:::option `download_{file_field_id}?`
-Controls whether the user can download the file.
-:::
-
-:::option `delete_{file_field_id}?`
-Controls whether the user can destroy the file.
-:::
 
 ## Scopes
 
