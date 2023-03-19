@@ -120,10 +120,13 @@ Then add them to Avo using the `_pre_head.html.erb` partial (`rails generate avo
 ```erb
 # app/views/avo/partials/_pre_head.html.erb
 
-<%= javascript_include_tag 'avo.custom' %>
+<%= javascript_include_tag 'avo.custom', defer: true %>
 <%= stylesheet_link_tag 'avo.custom', media: 'all' %>
 ```
 
+:::warning
+Please ensure that when using `javascript_include_tag` you add the `defer: true` option so the browser will use the same loading strategy as Avo's and the javascript files are loaded in the right order.
+:::
 
 ### Webpacker
 
@@ -141,6 +144,6 @@ Then add them to Avo using the `_pre_head.html.erb` partial (`rails generate avo
 ```erb
 # app/views/avo/partials/_pre_head.html.erb
 
-<%= javascript_pack_tag 'avo.custom' %>
+<%= javascript_pack_tag 'avo.custom', defer: true %>
 <%= stylesheet_pack_tag 'avo.custom', media: 'all' %>
 ```
