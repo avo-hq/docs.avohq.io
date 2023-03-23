@@ -15,6 +15,7 @@ import Show from "./components/Show.vue"
 import Edit from "./components/Edit.vue"
 import New from "./components/New.vue"
 import Option from "./components/Option.vue"
+import AllContent from "./components/AllContent.vue"
 import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline/index.js"
 import "./styles.css"
 import {h} from "vue"
@@ -36,6 +37,7 @@ export default {
     app.component("Edit", Edit)
     app.component("New", New)
 
+    app.component("AllContent", AllContent)
     app.component("Option", Option)
 
     app.component("BeakerIcon", BeakerIcon)
