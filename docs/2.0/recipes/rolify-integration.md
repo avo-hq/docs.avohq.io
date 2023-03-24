@@ -46,8 +46,9 @@ class AccountResource < Avo::BaseResource
   field :assigned_roles, as: :tags, hide_on: :forms do |model, resource, view|
     model.roles.map {|role|role.name}
   end
-
-  field :roles, as: :has_many
+   
+  # Only show roles that have not already been assigned to the object, because Avo does not use the add_role method, so it is possible to assign a role twice
+  field :roles, as: :has_many, attach_scope: -> { query.where.not(id: parent.roles.pluck(:id)) }
 
   # ...
 end
