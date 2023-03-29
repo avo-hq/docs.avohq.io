@@ -11,7 +11,7 @@ Finding what you're looking for fast is essential. That's why Avo leverages [ran
 While we show you examples using `ransack`, you can use other search engines, so `ransack` is not mandatory.
 :::
 
-First, you need to add `ransack` as a dependency to your app (breaking change from 1.10.0).
+First, you need to add `ransack` as a dependency to your app (breaking change from Avo v1.10).
 
 ```ruby
 # Gemfile
@@ -36,6 +36,10 @@ end
 The `search_query` block passes over the `params` object that holds the `q` param, the actual query string. It also provides the `scope` variable on which you run the query. That ensures that the [authorization scopes](./authorization.html#scopes) have been appropriately applied.
 
 In this block, you may configure the search however strict or loose you need it. Check out [ransack's search matchers](https://github.com/activerecord-hackery/ransack#search-matchers) to compose the query better.
+
+:::warning
+If you're using ransack version 4 and up you must add `ransackable_attributes` and maybe more to your model in order for it to work. Read more about it [here](https://activerecord-hackery.github.io/ransack/going-further/other-notes/#authorization-allowlistingdenylisting).
+:::
 
 ## Authorize search
 
