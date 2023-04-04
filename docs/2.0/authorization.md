@@ -110,14 +110,17 @@ Controls whether the user can see the [records reordering](./records-reordering)
 
 ## Attachments
 
-:::warning
-Since Avo 2.28 we deprecated the `upload_attachments?`, `download_attachments?`, `delete_attachments?` method in favor of field level file authorization.
+On a file level authorization Avo first verify if `upload_attachments?`, `download_attachments?`, `delete_attachments?` are defined. If they are defined and they should return **true** to be able to check second level of authorization, `upload_{field_id}?`, `download_{field_id}?`, `delete_{field_id}?` for the respective action.
+
+If `upload_attachments?`, `download_attachments?`, `delete_attachments?` are not defined only `upload_{field_id}?`, `download_{field_id}?`, `delete_{field_id}?` will be considered.
+
+:::info If **both** of them are **true**, action is **authorized**.
 :::
 
-:::info
-On a file level authorization Avo verify if `upload_attachments?`, `download_attachments?`, `delete_attachments?` **OR** `upload_{field_id}?`, `download_{field_id}?`, `delete_{field_id}?` are true, for the respective action.
+:::info If **`action_attachments?`** is not defined and **`action_{field_id}?`** is **true**, action is **authorized**.
+:::
 
-If **one** of them is **true**, action is **authorized**.
+:::warning If **`action_attachments?`** is **false** even if **`action_{field_id}?`** is **true**, action is **NOT authorized**.
 :::
 
 :::option `upload_attachments?`
