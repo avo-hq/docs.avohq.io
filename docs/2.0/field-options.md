@@ -126,6 +126,14 @@ This example snippet will make the `:is_writer` field generate emojis instead of
 
 <img :src="('/assets/img/fields-reference/fields-formatter.jpg')" alt="Fields formatter" class="border mb-4" />
 
+## Formatting with Rails helpers
+
+You can also format using Rails helpers like `number_to_currency` (note that `view_context` is used to access the helper):
+
+```ruby
+field :price, as: :number, format_using: -> (value) { view_context.number_to_currency(value) }
+```
+
 ## Sortable fields
 
 One of the most common operations with database records is sorting the records by one of your fields. For that, Avo makes it easy using the `sortable` option.

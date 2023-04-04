@@ -4,6 +4,30 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.28 to 2.29
+
+### Add the `search?` method to your policies
+
+Policies are now authorized against the `search?` method in your Policy files. So for each policy file you're using add it and return true if you want the user to see the search box or to be able to execute a search query.
+
+```ruby
+class UserPolicy < ApplicationPolicy
+  def search?
+    true
+  end
+end
+```
+
+You can alias it to some other method in you initializer using the `config.authorization_methods` config. More about that on [the authorization page](./authorization.html#using-different-policy-methods).
+
+```ruby
+Avo.configure do |config|
+  config.authorization_methods = {
+    search: 'avo_search?',
+  }
+  end
+```
+
 ## Upgrade from 2.26 to 2.27
 
 ### Replace `resolve_find_scope` with `find_record_method`

@@ -335,6 +335,7 @@ Avo.configure do |config|
     update: 'avo_update?',
     create: 'avo_create?',
     destroy: 'avo_destroy?',
+    search: 'avo_search?',
   }
 end
 ```
