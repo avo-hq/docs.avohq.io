@@ -4,6 +4,13 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.29 to 2.30
+
+We have discovered that assigning different weights to two methods that police the same thing can be a complex and challenging task. As a result `upload_attachments?`, `download_attachments?`, and `delete_attachments?` become obsolete.
+You can safely delete it from all policies.
+
+Go to [attachments policies methods](./../2.0/authorization.html#attachments) to apply the new methods on your policies.
+
 ## Upgrade from 2.28 to 2.29
 
 ### Add the `search?` method to your policies

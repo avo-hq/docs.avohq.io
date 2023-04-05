@@ -110,38 +110,9 @@ Controls whether the user can see the [records reordering](./records-reordering)
 
 ## Attachments
 
-On a file level authorization Avo first verify if `upload_attachments?`, `download_attachments?`, `delete_attachments?` are defined. If they are defined and they should return **true** to be able to check second level of authorization, `upload_{field_id}?`, `download_{field_id}?`, `delete_{field_id}?` for the respective action.
-
-If `upload_attachments?`, `download_attachments?`, `delete_attachments?` are not defined only `upload_{field_id}?`, `download_{field_id}?`, `delete_{field_id}?` will be considered.
-
-:::info If **both** of them are **true**, action is **authorized**.
+:::warning <VersionReq version="2.30" />
+`upload_attachments?`, `download_attachments?`, and `delete_attachments?` become obsolete.
 :::
-
-:::info If **`action_attachments?`** is not defined and **`action_{field_id}?`** is **true**, action is **authorized**.
-:::
-
-:::warning If **`action_attachments?`** is **false** even if **`action_{field_id}?`** is **true**, action is **NOT authorized**.
-:::
-
-:::option `upload_attachments?`
-
-Controls whether the attachment upload input should be visible in the `File` and `Files` fields.
-
-:::
-
-:::option `download_attachments?`
-
-Controls whether the attachment download button should be visible in the `File` and `Files` fields.
-
-:::
-
-:::option `delete_attachments?`
-
-Controls whether the attachment delete button should be visible in the `File` and `Files` fields.
-
-:::
-<br />
-<VersionReq version="2.28" />
 
 When working with files, it may be necessary to establish policies that determine whether users can `upload`, `download` or `delete` each file. Fortunately, Avo simplifies this process by providing a straightforward naming schema for these policies.
 
@@ -159,6 +130,19 @@ Controls whether the attachment download button should be visible in the `field_
 
 :::option `delete_{field_id}?`
 Controls whether the attachment delete button should be visible in the `field_id`.
+:::
+
+:::info Authorize as bulk
+If a model have many attachments and it's starting to fill the file with attachments authorizations, you can enable actions as bulk
+```ruby
+[:cover_photo, :audio].each do |file|
+  [:upload, :download, :delete].each do |action|
+    define_method "#{action}_#{file}?" do
+      true
+    end
+  end
+end
+```
 :::
 
 ## Associations

@@ -7,9 +7,9 @@ You might want to hide some buttons and not show them to your users. That's pret
 - Show button -> `show?` method
 - Edit button -> `edit?` method
 - Delete button -> `destroy?` method
-- Upload attachments button -> `upload_attachments?` method
-- Download attachments button -> `download_attachments?` method
-- Delete attachments button -> `delete_attachments?` method
+- Upload attachments button -> `upload_#{FIELD_ID}?` (eg: `upload_photo?`) method
+- Download attachments button -> `download_#{FIELD_ID}?` (eg: `download_photo?`) method
+- Delete attachments button -> `delete_#{FIELD_ID}?` (eg: `delete_photo?`) method
 - Attach button -> `attach_#{RESOURCE_PLURL_NAME}?` (eg: `attach_posts?`) method
 - Detach button -> `detach_#{RESOURCE_PLURL_NAME}?` (eg: `detach_posts?`) method
 
