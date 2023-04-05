@@ -100,11 +100,11 @@ Using `full_width_container: true` tells Avo to display all views full-width.
 
 ## Cache resources on the `Index` view
 
-Avo caches each resource row (or Grid item for Grid view) for performance reasons. You can disable that cache using the `cache_resources_on_index_view` configuration option.
+If you are experiencing any performance issues while loading the resources index, Avo provides an option to cache each resource row (or Grid item for Grid view). You can enable this feature using the `cache_resources_on_index_view` configuration option.
 
 ```ruby{2}
 Avo.configure do |config|
-  config.cache_resources_on_index_view = false
+  config.cache_resources_on_index_view = true
 end
 ```
 
