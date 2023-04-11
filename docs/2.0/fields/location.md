@@ -14,6 +14,10 @@ field :coordinates, as: :location
 
 <img :src="('/assets/img/fields/location-field.png')" alt="Location field" class="border mb-4" />
 
+:::warning
+You need to have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
+:::
+
 ## Description
 
 By default, the location field is attached to one database column that has the coordinates in plain text with a comma `,` joining them (`latitude,longitude`).
