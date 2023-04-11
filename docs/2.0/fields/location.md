@@ -15,7 +15,7 @@ field :coordinates, as: :location
 <img :src="('/assets/img/fields/location-field.png')" alt="Location field" class="border mb-4" />
 
 :::warning
-You need to have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
+You need to add the `mapkick` gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
 :::
 
 ## Description
