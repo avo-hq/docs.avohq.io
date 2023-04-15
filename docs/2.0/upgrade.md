@@ -4,7 +4,7 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
-## Upgrade from 2.29 to 2.30
+<!-- ## Upgrade from 2.29 to 2.30
 
 `cache_resources_on_index_view` becomes disabled by default. If you are experiencing any performance issues while loading the resources index and want to enable this feature you can do that on the `avo.rb`configuration file by adding:
 
@@ -12,7 +12,7 @@ Follow these guides to make sure your configuration files are up to date.
 Avo.configure do |config|
   config.cache_resources_on_index_view = true
 end
-```
+``` -->
 
 ## Upgrade from 2.28 to 2.29
 
