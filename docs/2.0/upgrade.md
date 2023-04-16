@@ -11,7 +11,7 @@ You can safely delete it from all policies.
 
 You may now introduce field-level authorization methods such as `upload_avatar?`, `download_avatar?`, and `delete_avatar?` if you have an `avatar` `file` field.
 
-Go to [attachments policies methods](./../2.0/authorization.html#attachments) to apply the new methods on your policies.
+More info on the [attachment authorization page](./../2.0/authorization.html#attachments).
 
 ## Upgrade from 2.28 to 2.29
 
