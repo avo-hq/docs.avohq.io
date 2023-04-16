@@ -9,6 +9,8 @@ Follow these guides to make sure your configuration files are up to date.
 We have discovered that assigning different weights to two methods that police the same thing can be a complex and challenging task. As a result `upload_attachments?`, `download_attachments?`, and `delete_attachments?` become obsolete.
 You can safely delete it from all policies.
 
+You may now introduce field-level authorization methods such as `upload_avatar?`, `download_avatar?`, and `delete_avatar?` if you have an `avatar` `file` field.
+
 Go to [attachments policies methods](./../2.0/authorization.html#attachments) to apply the new methods on your policies.
 
 ## Upgrade from 2.28 to 2.29
