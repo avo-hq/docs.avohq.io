@@ -6,7 +6,7 @@ Follow these guides to make sure your configuration files are up to date.
 
 ## Upgrade from 2.29 to 2.30.1
 
-We deprecated the `upload_attachments?`, `download_attachments?`, and `delete_attachments?` methods that covered all the [`File`](./fields/file) and [`Files`](./fields/files) fields. After we [introduced](#upgrade-from-2-27-to-2-28) the more specific `upload_{FIELD_ID}?`, `download_{FIELD_ID}?`, and `delete_{FIELD_ID}?` methods we quickly figured out that having both general and specific methods introduced complexity on our side and yours too.
+We made obsolete the `upload_attachments?`, `download_attachments?`, and `delete_attachments?` methods that covered all the [`File`](./fields/file) and [`Files`](./fields/files) fields. After we [introduced](#upgrade-from-2-27-to-2-28) the more specific `upload_{FIELD_ID}?`, `download_{FIELD_ID}?`, and `delete_{FIELD_ID}?` methods we quickly figured out that having both general and specific methods introduced complexity on our side and yours too.
 
 So now, you can safely remove the general methods (`upload_attachments?`, `download_attachments?`, and `delete_attachments?`) and add the specific ones.
 
