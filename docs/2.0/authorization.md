@@ -273,8 +273,8 @@ end
 
 ::::option `upload_attachments?`
 
-:::warning DEPRECATED since 2.30
-This option was removed in **Avo 2.30** in favor of `upload_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `upload_photo?` method).
+:::warning DEPRECATED since 2.30.1
+This option was removed in **Avo 2.30.1** in favor of `upload_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `upload_photo?` method).
 :::
 
 Controls whether the attachment upload input should be visible in the `File` and `Files` fields.
@@ -282,8 +282,8 @@ Controls whether the attachment upload input should be visible in the `File` and
 
 ::::option `download_attachments?`
 
-:::warning DEPRECATED since 2.30
-This option was removed in **Avo 2.30** in favor of `download_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `download_photo?` method).
+:::warning DEPRECATED since 2.30.1
+This option was removed in **Avo 2.30.1** in favor of `download_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `download_photo?` method).
 :::
 
 Controls whether the attachment download button should be visible in the `File` and `Files` fields.
@@ -291,8 +291,8 @@ Controls whether the attachment download button should be visible in the `File` 
 
 ::::option `delete_attachments?`
 
-:::warning DEPRECATED since 2.30
-This option was removed in Avo 2.30 in favor of `delete_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `delete_photo?` method).
+:::warning DEPRECATED since 2.30.1
+This option was removed in Avo 2.30.1 in favor of `delete_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `delete_photo?` method).
 :::
 
 Controls whether the attachment delete button should be visible in the `File` and `Files` fields.
