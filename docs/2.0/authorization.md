@@ -89,28 +89,10 @@ The `new?` method will control whether the users can save the new resource. You 
 `destroy?` to `false` will prevent the user from destroying a resource and hiding the delete button.
 
 :::info More granular file authorization
-These are per-resource and general settings. If you want to control the authorization per individual file, please see the [granular settings](#files).
+These are per-resource and general settings. If you want to control the authorization per individual file, please see the [granular settings](#attachments).
 :::
 
 ::::
-
-:::option `upload_attachments?`
-
-Controls whether the attachment upload input should be visible in the `File` and `Files` fields.
-
-:::
-
-:::option `download_attachments?`
-
-Controls whether the attachment download button should be visible in the `File` and `Files` fields.
-
-:::
-
-:::option `delete_attachments?`
-
-Controls whether the attachment delete button should be visible in the `File` and `Files` fields.
-
-:::
 
 :::option `act_on?`
 
@@ -253,7 +235,7 @@ end
 
 Now, whatever action you take for one comment, it will be available for the `edit_comments?` method in `PostPolicy`.
 
-## Files
+## Attachments
 
 <VersionReq version="2.28" />
 
@@ -263,17 +245,58 @@ Both the `record` and the `user` will be available for you to access.
 
 <img :src="('/assets/img/authorization/file_actions.png')" class="border mb-4 rounded" />
 
-:::option `upload_{file_field_id}?`
-Controls whether the user can upload the file.
+:::option `upload_{FIELD_ID}?`
+Controls whether the user can upload the attachment.
 :::
 
-:::option `download_{file_field_id}?`
-Controls whether the user can download the file.
+:::option `download_{FIELD_ID}?`
+Controls whether the user can download the attachment.
 :::
 
-:::option `delete_{file_field_id}?`
-Controls whether the user can destroy the file.
+:::option `delete_{FIELD_ID}?`
+Controls whether the user can destroy the attachment.
 :::
+
+:::info AUTHORIZE IN BULK
+If you want to allow or disallow these methods in bulk you can use a little meta-programming to assign all the same value.
+
+```ruby
+[:cover_photo, :audio].each do |file|
+  [:upload, :download, :delete].each do |action|
+    define_method "#{action}_#{file}?" do
+      true
+    end
+  end
+end
+```
+:::
+
+::::option `upload_attachments?`
+
+:::warning DEPRECATED since 2.30
+This option was removed in **Avo 2.30** in favor of `upload_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `upload_photo?` method).
+:::
+
+Controls whether the attachment upload input should be visible in the `File` and `Files` fields.
+::::
+
+::::option `download_attachments?`
+
+:::warning DEPRECATED since 2.30
+This option was removed in **Avo 2.30** in favor of `download_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `download_photo?` method).
+:::
+
+Controls whether the attachment download button should be visible in the `File` and `Files` fields.
+::::
+
+::::option `delete_attachments?`
+
+:::warning DEPRECATED since 2.30
+This option was removed in Avo 2.30 in favor of `delete_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `delete_photo?` method).
+:::
+
+Controls whether the attachment delete button should be visible in the `File` and `Files` fields.
+::::
 
 ## Scopes
 

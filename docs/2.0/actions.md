@@ -55,9 +55,9 @@ field :message, as: :textarea, default: 'Your account has been marked as inactiv
 ```
 
 :::warning Files authorization
-If you're using the `file` field on an action and attach it to a resource that's using the authorization feature, please ensure you have the `upload_attachments?` policy method returning `true`. Otherwise, the `file` input might be hidden.
+If you're using the `file` field on an action and attach it to a resource that's using the authorization feature, please ensure you have the `upload_{FIELD_ID}?` policy method returning `true`. Otherwise, the `file` input might be hidden.
 
-More about this on the [authorization page](./authorization#upload-attachments).
+More about this on the [authorization page](./authorization#attachments).
 :::
 
 
