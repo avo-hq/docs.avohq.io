@@ -32,8 +32,8 @@ Set the default `view_type`.
 `grid`, `list`
 :::
 
-:::option `hide_view_type_changer`
-Option to hide the view type changer component.
+:::option `hide_view_type_switcher`
+Option to hide the view type switcher component.
 
 #### Default
 
