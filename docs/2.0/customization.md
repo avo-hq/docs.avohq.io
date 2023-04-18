@@ -43,7 +43,7 @@ The `ResourceIndex` component supports two view types `:table` and `:grid`. You 
   </div>
   <div class="w-full">
     <strong>Grid view</strong>
-    <img :src="('/assets/img/customization/grid-view.png')" alt="Grid view" class="border mb-4" />
+    <img :src="('/assets/img/customization/grid-view.jpg')" alt="Grid view" class="border mb-4" />
   </div>
 </div>
 
