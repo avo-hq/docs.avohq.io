@@ -259,11 +259,10 @@ const config = {
         {
           text: "Custom content",
           items: [
-            {text: "Custom views", link: "/2.0/custom-tools"},
+            {text: "Custom pages", link: "/2.0/custom-tools"},
             {text: "Custom fields", link: "/2.0/custom-fields"},
             {text: "Resource tools", link: "/2.0/resource-tools"},
             {text: "Stimulus JS integration", link: "/2.0/stimulus-integration"},
-            {text: "Evaluation hosts", link: "/2.0/evaluation-hosts"},
             {text: "Custom asset pipeline", link: "/2.0/custom-asset-pipeline"},
           ],
         },
@@ -280,6 +279,7 @@ const config = {
           items: [
             {text: "Testing", link: "/2.0/testing"},
             {text: "Avo::ApplicationController", link: "/2.0/avo-application-controller"},
+            {text: "Evaluation hosts", link: "/2.0/evaluation-hosts"},
           ],
         },
       ],

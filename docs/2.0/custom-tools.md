@@ -3,7 +3,7 @@ feedbackId: 836
 license: pro
 ---
 
-# Custom views
+# Custom pages (custom tools)
 
 You may use custom tools to create custom sections or views to add to your app.
 
