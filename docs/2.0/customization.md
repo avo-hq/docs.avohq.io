@@ -34,7 +34,7 @@ For `has_many` associations you can control how many resources are visible in th
 
 ### Default view type
 
-The `ResourceIndex` component supports two view types:table` and `:grid`. You can change that by `config.default_view_type = :table`. Read more on the [grid view configuration page](./grid-view.html).
+The `ResourceIndex` component supports two view types `:table` and `:grid`. You can change that by `config.default_view_type = :table`. Read more on the [grid view configuration page](./grid-view.html).
 
 <div class="grid grid-flow-row sm:grid-flow-col sm:grid-cols-2 gap-2 w-full">
   <div class="w-full">
