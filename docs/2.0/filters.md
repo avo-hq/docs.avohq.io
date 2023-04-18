@@ -636,3 +636,98 @@ class NameFilter < Avo::Filters::TextFilter
 end
 ```
 
+## Manually create encoded URLs
+
+You may want to redirect users to filtered states of the <Index /> view from other places in your app. In order to create those filtered states you may use these helpers functions or Rails helpers.
+
+
+### Rails helpers
+
+:::option `decode_filter_params`
+
+Decodes the `filters` param. This Rails helper can be used anywhere in a view or off the `view_context`.
+
+#### Usage
+
+```ruby
+# in a view
+decode_filter_params params[:filters] # {"NameFilter"=>"Apple"}
+
+# Or somewhere in an Avo configuration file
+
+class DummyAction < Avo::BaseAction
+  self.name = "Dummy action"
+
+  def handle(**args)
+    filters = view_context.decode_filter_params(params[:filters])
+
+    do_something_important_with_the_filters filters
+  end
+end
+```
+:::
+
+:::option `encode_filter_params`
+
+Encodes a `filters` object into a serialized state that Avo understands. This Rails helper can be used anywhere in a view or off the `view_context`.
+
+#### Usage
+
+```ruby
+# in a view
+filters = {"NameFilter"=>"Apple"}
+encode_filter_params filters # eyJOYW1lRmlsdGVyIjoiQXBwbGUifQ==
+
+# Or somewhere in an Avo configuration file
+
+class DummyAction < Avo::BaseAction
+  self.name = "Dummy action"
+
+  def handle(**args)
+    do_something_important
+
+    redirect_to view_context.decode_filter_params({"NameFilter"=>"Apple"})
+  end
+end
+```
+:::
+
+### Standalone helpers
+
+:::option `Avo::Filters::BaseFilter.decode_filters`
+
+Decodes the `filters` param. This standalone method can be used anywhere.
+
+#### Usage
+
+```ruby
+class DummyAction < Avo::BaseAction
+  self.name = "Dummy action"
+
+  def handle(**args)
+    filters = Avo::Filters::BaseFilter.decode_filters(params[:filters])
+
+    do_something_important_with_the_filters filters
+  end
+end
+```
+:::
+
+:::option `Avo::Filters::BaseFilter.encode_filters`
+
+Encodes a `filters` object into a serialized state that Avo understands. This standalone method can be used anywhere.
+
+#### Usage
+
+```ruby
+class DummyAction < Avo::BaseAction
+  self.name = "Dummy action"
+
+  def handle(**args)
+    do_something_important
+
+    redirect_to Avo::Filters::BaseFilter.encode_filters({"NameFilter"=>"Apple"})
+  end
+end
+```
+:::
