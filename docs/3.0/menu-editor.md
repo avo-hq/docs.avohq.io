@@ -89,7 +89,7 @@ end
 
 A few menu item types are supported `link_to`, `section`, `group`, `resource`, and `dashboard`. There are a few helpers too, like `all_resources`, `all_dashboards`, and `all_tools`.
 
-## Link to
+:::option `link_to`
 
 Link to is the menu item that the user will probably interact with the most. It will generate a link on your menu. You can specify the `name`, `path` , and `target`.
 
@@ -100,7 +100,9 @@ link_to "Google", path: "https://google.com", target: :_blank
 
 When you add the `target: :_blank` option, a tiny external link icon will be displayed.
 
-## Resource
+:::
+
+:::option `resource`
 
 To make it a bit easier, you can use `resource` to quickly generate a link to one of your resources. For example, you can pass a short symbol name `:user` or the full name `UserResource`.
 
@@ -117,7 +119,9 @@ You can also change the label for the `resource` items to something else.
 resource :posts, label: "News posts"
 ```
 
-## Dashboard
+:::
+
+:::option `dashboard`
 
 Similar to `resource`, this is a helper to make it easier to reference a dashboard. You pass in the `id` or the `name` of the dashboard.
 
@@ -134,7 +138,9 @@ You can also change the label for the `dashboard` items to something else.
 dashboard :dashy, label: "Dashy Dashboard"
 ```
 
-## Section
+:::
+
+:::option `section`
 
 Sections are the big categories in which you can group your menu items. They take `name` and `icon` options.
 
@@ -147,7 +153,9 @@ end
 
 <img :src="('/assets/img/menu-editor/section.jpg')" alt="Avo menu editor" class="border mb-4" />
 
-## Group
+:::
+
+:::option `group`
 
 Groups are smaller categories where you can bring together your items.
 
@@ -160,6 +168,68 @@ end
 ```
 
 <img :src="('/assets/img/menu-editor/group.jpg')" alt="Avo menu editor" class="border mb-4" />
+:::
+
+:::option `all_resources`
+Renders all resources.
+
+```ruby
+section "App", icon: "heroicons/outline/beaker" do
+  group "Resources", icon: "resources" do
+    all_resources
+  end
+end
+```
+:::
+
+:::option `all_dashboards`
+Renders all dashboards.
+
+```ruby
+section "App", icon: "heroicons/outline/beaker" do
+  group "Dashboards", icon: "dashboards" do
+    all_dashboards
+  end
+end
+```
+:::
+
+:::option `all_tools`
+Renders all tools.
+
+```ruby
+section "App", icon: "heroicons/outline/beaker" do
+  group "All tools", icon: "tools" do
+    all_tools
+  end
+end
+```
+:::
+
+### `all_` helpers
+
+```ruby
+section "App", icon: "heroicons/outline/beaker" do
+  group "Dashboards", icon: "dashboards" do
+    all_dashboards
+  end
+
+  group "Resources", icon: "resources" do
+    all_resources
+  end
+
+  group "All tools", icon: "tools" do
+    all_tools
+  end
+end
+```
+
+:::warning
+The `all_resources` helper is taking into account your [authorization](./authorization) rules, so make sure you have `def index?` enabled in your resource policy.
+:::
+
+<img :src="('/assets/img/menu-editor/all-helpers.jpg')" alt="Avo menu editor" class="border mb-4" />
+
 
 ## Item visibility
 
@@ -212,31 +282,7 @@ Avo.configure do |config|
 end
 ```
 
-## `all_` helpers
-
-We also added some helpers for the scenario where you want to customize part of a menu for convenience. For example, let's say you want to add some custom tools and mix and match the dashboards, but you don't want to disturb the resources. You can use `all_resources` to generate a list containing all of them.
-
-```ruby
-section "App", icon: "heroicons/outline/beaker" do
-  group "Dashboards", icon: "dashboards" do
-    all_dashboards
-  end
-
-  group "Resources", icon: "resources" do
-    all_resources
-  end
-
-  group "All tools", icon: "tools" do
-    all_tools
-  end
-end
-```
-
-:::warning
-The `all_resources` helper is taking into account your [authorization](./authorization) rules, so make sure you have `def index?` enabled in your resource policy.
 :::
-
-<img :src="('/assets/img/menu-editor/all-helpers.jpg')" alt="Avo menu editor" class="border mb-4" />
 
 ## Icons
 

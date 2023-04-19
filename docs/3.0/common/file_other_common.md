@@ -1,11 +1,11 @@
 ## Authorization
 
 :::info
-Please ensure you have the `upload_attachments?`, `delete_attachments?`, and `download_attachments?` methods set on your model's **pundit** policy. Otherwise, the input and download/delete buttons will be hidden.
+Please ensure you have the `upload_{FIELD_ID}?`, `delete_{FIELD_ID}?`, and `download_{FIELD_ID}?` methods set on your model's **Pundit** policy. Otherwise, the input and download/delete buttons will be hidden.
 :::
 
 Related:
- - [Attachment pundit policies](./../authorization.html#upload-attachments)
+ - [Attachment pundit policies](./../authorization.html#attachments)
 
 ## Deprecated options
 

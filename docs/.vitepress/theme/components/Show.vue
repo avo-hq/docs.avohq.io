@@ -1,3 +1,7 @@
+<script setup>
+import {viewPath} from './helpers'
+</script>
+
 <template>
-  <a href="/2.0/resources.html#show"><code>Show</code></a>
+  <a :href="viewPath('show')"><code>Show</code></a>
 </template>

@@ -187,6 +187,39 @@ class Dashy < Avo::Dashboards::BaseDashboard
 end
 ```
 
+## Cards visibility
+
+<VersionReq version="2.28" />
+
+It's common to show the same dashboard to multiple types of users (admins, regular users). In that scenario you might want to hide some cards for the regular users and show them just to the admins.
+
+You can use the `visible` option to do that. It can be a `boolean` or a `block` where you can access the `params`, `current_user`, `context`, `parent`, and `card` object.
+
+```ruby{4-6}
+class UsersCount < Avo::Dashboards::MetricCard
+  self.id = "users_metric"
+  self.label = "Users count"
+  self.visible = -> do
+    # You have access to context, params, parent (the current dashboard), and current card
+    true
+  end
+
+  def query
+    result User.count
+  end
+end
+```
+
+You may also control the visibility from the dashboard class.
+
+```ruby
+class Dashy < Avo::Dashboards::BaseDashboard
+  self.name = "Dashy"
+
+  card UsersCount, visible: -> { true }
+end
+```
+
 ## Card types
 
 You can add three types of cards to your dashboard: `metric`, `chartkick`, and `partial`.
@@ -388,6 +421,24 @@ end
 Dividers can be a simple line between your cards or have some text on them that you control using the `label` option.
 When you don't want to show the line, you can enable the `invisible` option, which adds the divider but does not display a border or label.
 
+
+## Dividers visibility
+
+<VersionReq version="2.28" />
+
+You might want to conditionally show/hide a divider based on a few factors. You can do that using the `visible` option.
+
+```ruby
+class Dashy < Avo::Dashboards::BaseDashboard
+  self.name = "Dashy"
+
+  card UsersCount, visible: -> {
+    # You have access to context, params, parent (the current dashboard)
+    true
+  }
+end
+```
+
 ## Dashboards visibility
 
 You might want to hide specific dashboards from certain users. You can do that using the `visible` option. The option can be a boolean `true`/`false` or a block where you have access to the `params`, `current_user`, `context`, and `dashboard`.
@@ -412,6 +463,8 @@ end
 ```
 
 ## Dashboards authorization
+
+<VersionReq version="2.22" />
 
 You can set authorization rules for dashboards using the `authorize` block.
 

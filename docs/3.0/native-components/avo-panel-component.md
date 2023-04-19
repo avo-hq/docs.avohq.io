@@ -166,3 +166,16 @@ The lowest available area at the end of the component.
 <% end %>
 ```
 :::
+
+:::option `sidebar`
+The sidebar will conveniently show things in a smaller area on the right of the `body`.
+
+```erb{2-4}
+<%= render Avo::PanelComponent.new do |c| %>
+  <% c.Sidebar do %>
+    Something tiny here.
+  <% end %>
+<% end %>
+```
+![](/assets/img/native-components/avo-panel-component/sidebar.png)
+:::

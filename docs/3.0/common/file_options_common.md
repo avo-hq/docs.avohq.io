@@ -25,3 +25,19 @@ field :cover_video, as: :file, direct_upload: true
 
 <!-- @include: ./default_boolean_false.md -->
 :::
+
+:::option `display_filename`
+Option that specify if the file should have the caption present or not.
+
+```ruby
+field :cover_video, as: :file, display_filename: false
+```
+
+#### Default
+
+`true`
+
+#### Possible values
+
+`true`, `false`
+:::
