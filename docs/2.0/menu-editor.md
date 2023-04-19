@@ -168,6 +168,68 @@ end
 ```
 
 <img :src="('/assets/img/menu-editor/group.jpg')" alt="Avo menu editor" class="border mb-4" />
+:::
+
+:::option `all_resources`
+Renders all resources.
+
+```ruby
+section "App", icon: "heroicons/outline/beaker" do
+  group "Resources", icon: "resources" do
+    all_resources
+  end
+end
+```
+:::
+
+:::option `all_dashboards`
+Renders all dashboards.
+
+```ruby
+section "App", icon: "heroicons/outline/beaker" do
+  group "Dashboards", icon: "dashboards" do
+    all_dashboards
+  end
+end
+```
+:::
+
+:::option `all_tools`
+Renders all tools.
+
+```ruby
+section "App", icon: "heroicons/outline/beaker" do
+  group "All tools", icon: "tools" do
+    all_tools
+  end
+end
+```
+:::
+
+### `all_` helpers
+
+```ruby
+section "App", icon: "heroicons/outline/beaker" do
+  group "Dashboards", icon: "dashboards" do
+    all_dashboards
+  end
+
+  group "Resources", icon: "resources" do
+    all_resources
+  end
+
+  group "All tools", icon: "tools" do
+    all_tools
+  end
+end
+```
+
+:::warning
+The `all_resources` helper is taking into account your [authorization](./authorization) rules, so make sure you have `def index?` enabled in your resource policy.
+:::
+
+<img :src="('/assets/img/menu-editor/all-helpers.jpg')" alt="Avo menu editor" class="border mb-4" />
+
 
 ## Item visibility
 
@@ -219,34 +281,6 @@ Avo.configure do |config|
   }
 end
 ```
-
-:::
-
-:::option `all_` helpers
-
-We also added some helpers for the scenario where you want to customize part of a menu for convenience. For example, let's say you want to add some custom tools and mix and match the dashboards, but you don't want to disturb the resources. You can use `all_resources` to generate a list containing all of them.
-
-```ruby
-section "App", icon: "heroicons/outline/beaker" do
-  group "Dashboards", icon: "dashboards" do
-    all_dashboards
-  end
-
-  group "Resources", icon: "resources" do
-    all_resources
-  end
-
-  group "All tools", icon: "tools" do
-    all_tools
-  end
-end
-```
-
-:::warning
-The `all_resources` helper is taking into account your [authorization](./authorization) rules, so make sure you have `def index?` enabled in your resource policy.
-:::
-
-<img :src="('/assets/img/menu-editor/all-helpers.jpg')" alt="Avo menu editor" class="border mb-4" />
 
 :::
 
