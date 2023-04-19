@@ -1,5 +1,6 @@
 import {getFiles} from "./getFiles"
 import container from "markdown-it-container"
+import snakeCase from "lodash/snakeCase"
 
 const fieldsMenuItems2 = getFiles('fields', '2.0')
 const fieldsMenuItems3 = getFiles('fields', '3.0')
@@ -15,8 +16,8 @@ function createContainer(klass, md) {
         if (token.nesting === 1) {
           const fullName = md.renderInline(info || klass)
           const name = fullName.match(/<code>(.*)<\/code>/i)[1]
-          const anchor = name.replace(/\?|{|}|!/g, '')
-          return `<h2 id="${anchor}" tabindex="-1"><code><span class="hidden">-> </span>${name}</code> <a class="header-anchor" href="#${anchor}" aria-hidden="true"></a></h2> <div class="pl-8"><p>\n`
+          const anchor = snakeCase(fullName.replace(/<\/?[^>]+(>|$)/g, "").replace(/\?|{|}|!/g, ''))
+          return `<h2 id="${anchor}" tabindex="-1"><span class="hidden">-> </span>${fullName} <a class="header-anchor" href="#${anchor}" aria-hidden="true"></a></h2> <div class="pl-8"><p>\n`
         } else {
           return `</p></div>\n`
         }
