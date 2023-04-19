@@ -10,6 +10,15 @@ Each `Resource` maps out one of your models. There can be multiple `Resource`s a
 
 All resources are located in the `app/avo/resources` directory. Unfortunately, `Resource`s can't be namespaced yet, so they all need to be in the root level of that directory.
 
+:::warning
+All resources from `app/avo/resources` are eager loaded on app boot-time to automatically have them available in your app.
+
+This might might interfere with some setups.
+
+If that happens you can manually register resources using [this guide](#manually-registering-resources).
+:::
+
+
 ## Resources from model generation
 
 ```bash
@@ -350,27 +359,32 @@ end
 
 Avo generates the admin panel with four main views.
 
-#### Index
+:::option `Index`
 
 The page where you see all your resources listed in a table or a [grid](grid-view.md).
 
-#### Show
+:::
+:::option `Show`
 
 The page where you see one resource in more detail.
 
-#### Edit
+:::
+:::option `Edit`
 
 The page where you can edit one resource.
 
-#### New
+:::
+:::option `New`
 
 The page where you can create a new resource.
 
-#### Preview
+:::
+:::option `Preview`
 
 The fields marked with `show_on :preview`, will be show in the [preview field](./fields/preview) popup.
 
 By default, all fields are hidden in `:preview`.
+:::
 
 ### Grid view
 
@@ -531,3 +545,33 @@ end
 
 <img :src="('/assets/img/resources/record_selector.jpg')" alt="Hide the record selector." class="border mb-4" />
 
+## Link to child resource (STI)
+
+`self.link_to_child_resource = true|false`
+
+Let's take an example. We have a `Person` model and `Sibling` and `Spouse` models that inherit from it (STI).
+
+Declare this option on the parent resource. When a user is on the <Index /> view of your the `PersonResource` and clicks on the view button of a `Person` they will be redirected to a `Child` or `Spouse` resource instead of a `Person` resource.
+
+## Manually registering resources
+
+<VersionReq version="2.27" />
+
+In order to have a more straightforward experience when getting started with Avo, we are eager-loading the `app/avo/resources` directory. That makes all those resources available to your app without you doing anything else.
+
+That might make some Rails apps raise some errors.
+
+In order to mitigate that we added a way of manually declaring resources.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.resources = [
+    "UserResource",
+    "FishResource",
+  ]
+end
+```
+
+This tells Avo which resources you use and stops the eager-loading process on boot-time.
+This means that other resources that are not declared in this array will not show up in your app.

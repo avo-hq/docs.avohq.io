@@ -35,17 +35,22 @@ We use TailwindCSS 3.0 with the JIT engine to style Avo, so on release we only p
 
 But there's an easy way to overcome that limitation. You can add your own TailwindCSS process to watch for your the utility classes you use.
 
-To do that, you need to run the `bin/rails generate avo:tailwindcss:install` command. That will:
+```bash
+bin/rails generate avo:tailwindcss:install
+```
+
+That command will:
 
 - install `tailwindcss-rails` gem if you haven't installed it yet;
 - create a custom `avo.tailwind.css` file where you can further customize your Avo space;
-- generate or enhance your `Procfile.dev` with the required tailwind compile command, as per default `tailwindcss-rails` practices;
-- add the resulting file in your `_pre_head.html.erb` file.
+- generate or enhance your `Procfile.dev` with the required compile `yarn avo:tailwindcss --watch` command, as per default `tailwindcss-rails` practices;
+- add the resulting file in your `_pre_head.html.erb` file;
+- prompt you to add the script your `package.json` file. **This is a manual step you need to do**.
 
 Now, instead of running `bin/rails server`, you can run that Procfile with `bin/dev` or `foreman start -f Procfile.dev`.
 
 :::info
-You mileage may vary when running these tasks depending with your setup. The gist is that you need to run `avo:tailwindcss:build` to compile the css file and `avo:tailwindcss:watch` to watch for changes in development.
+You mileage may vary when running these tasks depending with your setup. The gist is that you need to run `yarn avo:tailwindcss` on deploy0time to compile the css file and `yarn avo:tailwindcss --watch` to watch for changes in development.
 :::
 
 Inside `app/assets/stylesheets` you'll have a new `avo.tailwind.css` file that's waiting for you to customize. The default `tailwind.config.js` file should have the proper paths set up for purging and should be ready to go.
@@ -84,7 +89,11 @@ Importmap has become the default way of dealing with assets in Rails 7. For you 
 
 When you install `js-bundling` with `esbuild` you get this npm script `"build": esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets`. That script will take all your JS entrypoint files under `app/javascript` and bundle them under `assets/builds`.
 
-To take advantage of that you can run `bin/rails generate avo:js:install --bundler esbuild`. That will:
+```bash
+bin/rails generate avo:js:install --bundler esbuild
+```
+
+That command will:
 
 - eject the `_head.html.erb` file;
 - add the `avo.custom.js` asset to it;
@@ -120,10 +129,13 @@ Then add them to Avo using the `_pre_head.html.erb` partial (`rails generate avo
 ```erb
 # app/views/avo/partials/_pre_head.html.erb
 
-<%= javascript_include_tag 'avo.custom' %>
+<%= javascript_include_tag 'avo.custom', defer: true %>
 <%= stylesheet_link_tag 'avo.custom', media: 'all' %>
 ```
 
+:::warning
+Please ensure that when using `javascript_include_tag` you add the `defer: true` option so the browser will use the same loading strategy as Avo's and the javascript files are loaded in the right order.
+:::
 
 ### Webpacker
 
@@ -141,6 +153,6 @@ Then add them to Avo using the `_pre_head.html.erb` partial (`rails generate avo
 ```erb
 # app/views/avo/partials/_pre_head.html.erb
 
-<%= javascript_pack_tag 'avo.custom' %>
+<%= javascript_pack_tag 'avo.custom', defer: true %>
 <%= stylesheet_pack_tag 'avo.custom', media: 'all' %>
 ```

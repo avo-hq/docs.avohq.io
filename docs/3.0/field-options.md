@@ -75,7 +75,7 @@ field :is_featured, as: :boolean, visible: -> (resource:) { resource.model.publi
 You might be tempted to use the `if` statement to show/hide fields conditionally. However, that's not the best choice because the fields are registered at boot time, and some features are only available at runtime. Let's take the `context` object, for example. You might have the `current_user` assigned to the `context`, which will not be present at the app's boot time. Instead, that's present at request time when you have a `request` present from which you can find the user.
 
 ```ruby{4-7,13-16}
-# Don't do
+# ❌ Don't do
 class CommentResource < Avo::BaseResource
   field :id, as: :id
   if context[:current_user].admin?
@@ -84,7 +84,7 @@ class CommentResource < Avo::BaseResource
   end
 end
 
-# Do instead
+# ✅ Do instead
 class CommentResource < Avo::BaseResource
   field :id, as: :id
   with_options visible: -> (resource:) { context[:current_user].admin?} do
@@ -125,6 +125,14 @@ end
 This example snippet will make the `:is_writer` field generate emojis instead of 1/0 values.
 
 <img :src="('/assets/img/fields-reference/fields-formatter.jpg')" alt="Fields formatter" class="border mb-4" />
+
+## Formatting with Rails helpers
+
+You can also format using Rails helpers like `number_to_currency` (note that `view_context` is used to access the helper):
+
+```ruby
+field :price, as: :number, format_using: -> (value) { view_context.number_to_currency(value) }
+```
 
 ## Sortable fields
 
@@ -245,7 +253,7 @@ field :id, as: :number, readonly: -> { view == :edit } # make the field readonly
 
 ## Disabled
 
-When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on **Create** and **Edit** views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
+When you need to prevent the user from editing a field, the `disabled` option will render it as `disabled` on **Create** and **Edit** views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
 
 ```ruby
 field :name, as: :text, disabled: true

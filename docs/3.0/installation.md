@@ -45,7 +45,7 @@ This will mount the app under `/avo` path. Visit that link to see the result.
 
 ## Install from GitHub
 
-You may also install Avo from GitHub. When you do that you must compile the assets yourself. You do that using the `rake avo:build-assets` command.
+You may also install Avo from GitHub but when you do that you must compile the assets yourself. You do that using the `rake avo:build-assets` command.
 When pushing to production, make sure you build the assets on deploy time using this task.
 
 ```ruby

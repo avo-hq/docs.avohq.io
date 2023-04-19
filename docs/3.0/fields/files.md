@@ -17,3 +17,29 @@ field :documents, as: :files
 <!-- @include: ./../common/file_options_common.md-->
 
 <!-- @include: ./../common/file_other_common.md-->
+
+:::option `view_type`
+![](/assets/img/files_view_types.gif)
+
+Set the default `view_type`.
+
+#### Default
+
+`grid`
+
+#### Possible values
+
+`grid`, `list`
+:::
+
+:::option `hide_view_type_switcher`
+Option to hide the view type switcher component.
+
+#### Default
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+:::

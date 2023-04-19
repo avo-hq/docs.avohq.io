@@ -1,3 +1,7 @@
+<script setup>
+import {viewPath} from './helpers'
+</script>
+
 <template>
-  <a href="/2.0/resources.html#new"><code>New</code></a>
+  <a :href="viewPath('new')"><code>New</code></a>
 </template>
