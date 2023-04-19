@@ -164,7 +164,7 @@ end
 
 The available action responses are:
 
-### `reload`
+:::option `reload`
 
 When you use `reload`, a full-page reload will be triggered.
 
@@ -181,7 +181,8 @@ def handle(**args)
 end
 ```
 
-### `redirect_to`
+:::
+:::option `redirect_to`
 
 `redirect_to` will execute a redirect to a new path of your app.
 
@@ -198,7 +199,8 @@ def handle(**args)
 end
 ```
 
-### `download`
+:::
+:::option `download`
 
 `download` will start a file download to your specified `path` and `filename`.
 
@@ -242,7 +244,7 @@ end
 ```
 :::
 
-### `keep_modal_open`
+:::option `keep_modal_open`
 
 There might be situations where you want to run an action and if it fails, respond back to the user with some feedback but still keep it open and the inputs filled in.
 
@@ -278,6 +280,7 @@ class TogglePublished < Avo::BaseAction
   self.cancel_button_label = 'Not yet'
   self.no_confirmation = true
 ```
+:::
 
 ### Customize the message
 
