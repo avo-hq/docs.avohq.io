@@ -3,5 +3,5 @@ import {viewPath} from './helpers'
 </script>
 
 <template>
-  <a :href="viewPath('preview')"><code>Preview</code></a>
+  <a :href="viewPath(window, 'preview')"><code>Preview</code></a>
 </template>
