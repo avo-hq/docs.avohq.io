@@ -95,5 +95,3 @@ field :center_area, as: :area, geometry: :polygon,
 This will render a map like this:
 
 <img :src="('/assets/img/fields/area-field-with-options.png')" alt="Area field with options" class="border mb-4" />
-
-## Geometry
