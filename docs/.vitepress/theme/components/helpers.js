@@ -1,2 +1,2 @@
-export const versionFromUrl = (wnd) => wnd ? wnd?.location?.pathname?.match(/([0-9]\.[0-9])/i)[1] : ""
-export const viewPath = (view) => `/${versionFromUrl()}/resources.html#${view}`
+export const versionFromUrl = (windw) => windw?.location?.pathname?.match(/([0-9]\.[0-9])/i)[1]
+export const viewPath = (windw = null, view) => `/${versionFromUrl(windw)}/resources.html#${view}`
