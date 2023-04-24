@@ -236,12 +236,16 @@ end
 Now, whatever action you take for one comment, it will be available for the `edit_comments?` method in `PostPolicy`.
 
 <VersionReq version="2.31" />
-We also have a concern that remove the duplication for you `Avo::Concerns::PolicyHelpers`.To use this concern, you should include it in one of your policies. Alternatively, you can include it in the `ApplicationPolicy` if you want to access it in all of your policies.
 
-`PolicyHelpers` allow you to use the method `inherit_association_from_policy`. This method takes two arguments:`association_name` and `AssociationPolicy`.
-Here's an example of how to use it:  `inherit_association_from_policy :comments, CommentPolicy`
+From version 2.31 we introduced a concern that removes the duplication and helps you apply the same rules to associations. You should include `Avo::Concerns::PolicyHelpers` in the `ApplicationPolicy` for it to be applied to all policy classes.
 
-With just one line of code, this will define several methods to policy your association:
+`PolicyHelpers` allows you to use the method `inherit_association_from_policy`. This method takes two arguments; `association_name` and the policy file you want to be used as a template.
+
+```ruby
+inherit_association_from_policy :comments, CommentPolicy
+```
+
+With just one line of code, it will define the following methods to policy your association:
 
 ```ruby
 def create_comments?
@@ -277,9 +281,11 @@ def view_comments?
 end
 ```
 
-Although these methods won't be visible in your policy code, you can still override them by declaring them. For instance, if you include the following code in your `CommentPolicy`, it will be executed in place of the one defined by the helper:
+Although these methods won't be visible in your policy code, you can still override them. For instance, if you include the following code in your `CommentPolicy`, it will be executed in place of the one defined by the helper:
 
 ```ruby
+inherit_association_from_policy :comments, CommentPolicy
+
 def destroy_comments?
   false
 end
