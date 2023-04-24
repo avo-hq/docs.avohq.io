@@ -20,7 +20,7 @@ Rename the follwing
 
 ## Rename Avo classes
 
-We are falling more in line with how Rails and zeitwerk autoloads classes. This may introduce some issues like class conflicts and difficult to remember naming schemes.
+We are falling more in line with how Rails and zeitwerk autoloads classes. We do this to avoidsome issues like class conflicts and difficult to remember naming schemes.
 
 ::: code-group
 
