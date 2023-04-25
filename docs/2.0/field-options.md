@@ -96,6 +96,21 @@ end
 
 So now, instead of relying on a request object unavailable at boot time, you can pass it a lambda function that will be executed on request time with all the required information.
 
+:::info Since 2.32
+In order to prevent having the `resource.model` as `nil` when submitting the creation form on a resource we are now passing a new instance of the model class.
+
+Notice that on visible block evaluation when **creating** or **updating**, the `resource.model` will not be filled with the form attributes yet, you have access to params to check what was submitted from the form.
+
+```ruby
+# resource.model is for example:
+# On creation:
+# #<ModelClass:0x00007f7df4d92000 id: nil, name: nil, status: "default">
+# On update:
+# #<ModelClass:0x00007f7df4d92000 id: 3, name: "Name before update", status: "on">
+visible -> (resource: ) { resource.model }
+```
+:::
+
 ## Computed Fields
 
 You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `model` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information, you can compute what to show on the field in the **Index** and **Show** views (computed fields are automatically hidden in **Edit** and **Create**).
@@ -250,6 +265,21 @@ You may use a block as well. It will be executed in the `ViewRecordHost` and you
 ```ruby
 field :id, as: :number, readonly: -> { view == :edit } # make the field readonly only on the new edit view
 ```
+
+:::info Since 2.32
+In order to prevent having the `resource.model` as `nil` when submitting the creation form on a resource we are now passing a new instance of the model class.
+
+Notice that on readonly block evaluation when **creating** or **updating**, the `resource.model` will not be filled with the form attributes yet, you have access to params to check what was submitted from the form.
+
+```ruby
+# resource.model is for example:
+# On creation:
+# #<ModelClass:0x00007f7df4d92000 id: nil, name: nil, status: "default">
+# On update:
+# #<ModelClass:0x00007f7df4d92000 id: 3, name: "Name before update", status: "on">
+readonly -> { resource.model }
+```
+:::
 
 ## Disabled
 
