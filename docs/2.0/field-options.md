@@ -97,15 +97,14 @@ end
 So now, instead of relying on a request object unavailable at boot time, you can pass it a lambda function that will be executed on request time with all the required information.
 
 :::warning  Since 2.30.2
-On form submissions, visible block is evaluating before assigning the attributes to model, for that reason `resource.model` can be `nil` sometimes.
+On form submissions, the `visible` block is evaluated in the `create` and `update` controller actions. That's why you have to check if the `resource.model` object is present before trying to use it.
 
 ```ruby
-# resource.model is nil when submitting form on resource creation
-visible -> (resource: ) { resource.model }
-```
+# `resource.model` is nil when submitting the form on resource creation
+field :name, as: :text, visible -> (resource: ) { resource.model.enabled? }
 
-More information [here.](./upgrade#upgrade-from-2-30-1-to-2-30-2)
-:::
+# Do this instead
+field :name, as: :text, visible -> (resource: ) { resource.model&.enabled? }
 
 ## Computed Fields
 
