@@ -96,6 +96,11 @@ end
 
 So now, instead of relying on a request object unavailable at boot time, you can pass it a lambda function that will be executed on request time with all the required information.
 
+:::warning  Since 2.30.2
+On form submissions, visible block is evaluating before assigning the attributes to model, for that reason `resource.model` can be `nil` sometimes.
+More information [here.](./upgrade#upgrade-from-2-30-1-to-2-30-2)
+:::
+
 ## Computed Fields
 
 You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `model` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information, you can compute what to show on the field in the **Index** and **Show** views (computed fields are automatically hidden in **Edit** and **Create**).
