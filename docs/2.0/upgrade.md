@@ -4,6 +4,15 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.30.1 to 2.30.2
+Following this [security update](https://github.com/avo-hq/avo/pull/1694) the `visible` blocks changed their behavior. The blocks are now evaluated before assigning attributes to the models in order to determine if a specific field is or not `updatable`. Since that evaluation is before assigning the attributes the model is `nil` when submitting a creation form.
+
+```ruby
+# `resource.model` is nil when submitting the form on resource creation
+field :name, as: :text, visible -> (resource: ) { resource.model.enabled? }
+
+# Do this instead
+field :name, as: :text, visible -> (resource: ) { resource.model&.enabled? }
 ## Upgrade from 2.29 to 2.30.1
 
 We made obsolete the `upload_attachments?`, `download_attachments?`, and `delete_attachments?` methods that covered all the [`File`](./fields/file) and [`Files`](./fields/files) fields. After we [introduced](#upgrade-from-2-27-to-2-28) the more specific `upload_{FIELD_ID}?`, `download_{FIELD_ID}?`, and `delete_{FIELD_ID}?` methods we quickly figured out that having both general and specific methods introduced complexity on our side and yours too.
