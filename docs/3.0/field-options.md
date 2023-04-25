@@ -98,6 +98,12 @@ So now, instead of relying on a request object unavailable at boot time, you can
 
 :::warning  Since 2.30.2
 On form submissions, visible block is evaluating before assigning the attributes to model, for that reason `resource.model` can be `nil` sometimes.
+
+```ruby
+# resource.model is nil when submitting form on resource creation
+visible -> (resource: ) { resource.model }
+```
+
 More information [here.](./upgrade#upgrade-from-2-30-1-to-2-30-2)
 :::
 
