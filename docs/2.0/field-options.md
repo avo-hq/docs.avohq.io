@@ -96,6 +96,16 @@ end
 
 So now, instead of relying on a request object unavailable at boot time, you can pass it a lambda function that will be executed on request time with all the required information.
 
+:::warning  Since 2.30.2
+On form submissions, the `visible` block is evaluated in the `create` and `update` controller actions. That's why you have to check if the `resource.model` object is present before trying to use it.
+
+```ruby
+# `resource.model` is nil when submitting the form on resource creation
+field :name, as: :text, visible -> (resource: ) { resource.model.enabled? }
+
+# Do this instead
+field :name, as: :text, visible -> (resource: ) { resource.model&.enabled? }
+
 ## Computed Fields
 
 You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `model` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information, you can compute what to show on the field in the **Index** and **Show** views (computed fields are automatically hidden in **Edit** and **Create**).
