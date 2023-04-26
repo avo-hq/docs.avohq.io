@@ -98,6 +98,7 @@ So now, instead of relying on a request object unavailable at boot time, you can
 
 :::warning
 On form submissions, the `visible` block is evaluated in the `create` and `update` controller actions. That's why you have to check if the `resource.record` object is present before trying to use it.
+:::
 
 ```ruby
 # `resource.record` is nil when submitting the form on resource creation
