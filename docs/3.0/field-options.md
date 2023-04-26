@@ -120,6 +120,10 @@ rescue
 end
 ```
 
+:::info
+Computed fields are displayed only on the <Show /> and `<Index /> views.
+:::
+
 This example will display a boolean field with the value computed from your custom block.
 
 ## Fields Formatter

@@ -96,7 +96,7 @@ end
 
 So now, instead of relying on a request object unavailable at boot time, you can pass it a lambda function that will be executed on request time with all the required information.
 
-:::warning  Since 2.30.2
+:::warning Since 2.30.2
 On form submissions, the `visible` block is evaluated in the `create` and `update` controller actions. That's why you have to check if the `resource.model` object is present before trying to use it.
 :::
 
@@ -119,6 +119,10 @@ rescue
   false
 end
 ```
+
+:::info
+Computed fields are displayed only on the <Show /> and `<Index /> views.
+:::
 
 This example will display a boolean field with the value computed from your custom block.
 
