@@ -106,6 +106,7 @@ field :name, as: :text, visible -> { resource.record.enabled? }
 
 # Do this instead
 field :name, as: :text, visible -> { resource.record&.enabled? }
+```
 
 ## Computed Fields
 
