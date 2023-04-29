@@ -7,6 +7,7 @@ The 2.x to 3.0 Upgrade is a work in progress. We'll add more instructions here a
 ## Upgrade from 2.x to 3.0.pre.1
 
 :::option Moved some globals from `Avo::App` to `Avo::Current`
+
 We'll probably change these in the stable release.
 
 ### Actions to take
