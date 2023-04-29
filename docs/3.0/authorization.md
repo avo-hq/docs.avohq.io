@@ -235,6 +235,62 @@ end
 
 Now, whatever action you take for one comment, it will be available for the `edit_comments?` method in `PostPolicy`.
 
+<VersionReq version="2.31" />
+
+From version 2.31 we introduced a concern that removes the duplication and helps you apply the same rules to associations. You should include `Avo::Concerns::PolicyHelpers` in the `ApplicationPolicy` for it to be applied to all policy classes.
+
+`PolicyHelpers` allows you to use the method `inherit_association_from_policy`. This method takes two arguments; `association_name` and the policy file you want to be used as a template.
+
+```ruby
+inherit_association_from_policy :comments, CommentPolicy
+```
+
+With just one line of code, it will define the following methods to policy your association:
+
+```ruby
+def create_comments?
+  CommentPolicy.new(user, record).create?
+end
+
+def edit_comments?
+  CommentPolicy.new(user, record).edit?
+end
+
+def update_comments?
+  CommentPolicy.new(user, record).update?
+end
+
+def destroy_comments?
+  CommentPolicy.new(user, record).destroy?
+end
+
+def show_comments?
+  CommentPolicy.new(user, record).show?
+end
+
+def reorder_comments?
+  CommentPolicy.new(user, record).reorder?
+end
+
+def act_on_comments?
+  CommentPolicy.new(user, record).act_on?
+end
+
+def view_comments?
+  CommentPolicy.new(user, record).index?
+end
+```
+
+Although these methods won't be visible in your policy code, you can still override them. For instance, if you include the following code in your `CommentPolicy`, it will be executed in place of the one defined by the helper:
+
+```ruby
+inherit_association_from_policy :comments, CommentPolicy
+
+def destroy_comments?
+  false
+end
+```
+
 ## Attachments
 
 <VersionReq version="2.28" />
