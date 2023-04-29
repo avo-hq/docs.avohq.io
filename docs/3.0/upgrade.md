@@ -10,7 +10,6 @@ The 2.x to 3.0 Upgrade is a work in progress. We'll add more instructions here a
 
 We noticed that readonly and disabled concepts was swapped. That's fixed now, you should swap `disabled` and `readonly` options of your fields.
 
-### Moved some globals to Avo::Current
 :::option Moved some globals from `Avo::App` to `Avo::Current`
 
 We'll probably change these in the stable release.
