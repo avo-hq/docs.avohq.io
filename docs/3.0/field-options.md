@@ -234,6 +234,12 @@ field :name, as: :text, required: -> { view == :new } # make the field required 
 
 When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on **Create** and **Edit** views and the value will not be passed to that record in the database. This prevents a bad actor to go into the DOM, enable that field, update it, and then submit it, updating the record.
 
+:::warning Since version <Version version="3.0" />
+DO NOT PREVENT the user from enabling the field in the DOM and send an arbitrary value to the database.
+
+A bad actor can go into the DOM, enable that field, update it, and then submit it, updating the record.
+:::
+
 ```ruby
 field :name, as: :text, readonly: true
 ```
@@ -254,6 +260,10 @@ field :id, as: :number, readonly: -> { view == :edit } # make the field readonly
 ## Disabled
 
 When you need to prevent the user from editing a field, the `disabled` option will render it as `disabled` on **Create** and **Edit** views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
+
+:::warning Since version <Version version="3.0" />
+PREVENT the user from enabling the field in the DOM and send an arbitrary value to the database.
+:::
 
 ```ruby
 field :name, as: :text, disabled: true
