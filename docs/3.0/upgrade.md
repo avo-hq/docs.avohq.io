@@ -6,12 +6,6 @@ The 2.x to 3.0 Upgrade is a work in progress. We'll add more instructions here a
 
 ## Upgrade from 2.x to 3.0.pre.1
 
-### Readonly and disabled swap
-
-We noticed that readonly and disabled concepts was swapped. That's fixed now, you should swap `disabled` and `readonly` options of your fields.
-
-:::option Moved some globals from `Avo::App` to `Avo::Current`
-
 We'll probably change these in the stable release.
 
 ### Actions to take
@@ -186,10 +180,10 @@ field :name, as: :text, default: -> {something}, format_using: -> {}, visible: -
 ```
 :::
 
-<!-- :::option Swap `disabled` and `readonly` field options
+:::option Swap `disabled` and `readonly` field options
 
-We received some feedback in v2.x that the `disabled` field option does not protect against DOM field manipulation when the form is suubmitted, so we introduced the `readonly` option that protects against that.
+We received some feedback in v2.x that the `disabled` field option does not protect against DOM field manipulation when the form is submitted, so we introduced the `readonly` option that protects against that.
 
 After a short [research](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) we soon found out that HTML does it the other way around. `disabled` protects against that and `readonly` doesn't.
 So, we are switching them to better comply with the standards.
-::: -->
+:::
