@@ -6,6 +6,10 @@ The 2.x to 3.0 Upgrade is a work in progress
 
 ## Upgrade from 2.x to 3.0
 
+### Readonly and disabled swap
+
+We noticed that readonly and disabled concepts was swapped. That's fixed now, you should swap `disabled` and `readonly` options of your fields.
+
 ### Moved some globals to Avo::Current
 
 Rename the follwing
