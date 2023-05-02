@@ -140,15 +140,77 @@ end
 :::
 ::::
 
+:::option Use the `def fields` API
+We are introducting a new API for declaring fields. This brings many improvements from easier maintenance, better control, better composition, and more.
+
+```ruby
+# Before
+class Avo::Resources::Team < Avo::BaseResource
+  self.title = :name
+
+  field :id, as: :id, filterable: true
+  field :name, as: :text, sortable: true, show_on: :preview, filterable: true
+  field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded
+  field :created_at, as: :date_time, filterable: true
+end
+
+# After
+class Avo::Resources::Team < Avo::BaseResource
+  self.title = :name
+
+  def fields
+    field :id, as: :id, filterable: true
+    field :name, as: :text, sortable: true, show_on: :preview, filterable: true
+    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do |model|
+      if model.url
+        "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+      end
+    end
+    field :created_at, as: :date_time, filterable: true
+  end
+end
+```
+
+This will enable us to provide request specific data to the field configuration like `current_user` and `params` and will enable you to have better composition.
+
+```ruby
+class Avo::Resources::Team < Avo::BaseResource
+  self.title = :name
+
+  def admin_fields
+    field :created_at, as: :date_time, filterable: true
+  end
+
+  def fields
+    field :id, as: :id, filterable: true
+    field :name, as: :text, sortable: true, show_on: :preview, filterable: true
+    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do |model|
+      if model.url
+        "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+      end
+    end
+
+    # request-time data
+    if current_user.is_admin?
+      # better composition
+      admin_fields
+    end
+  end
+end
+```
+
+### Actions to take
+
+Wrap all field declarations in `resources` and `actions` in a `def fields` method.
+:::
+
 :::option Use the `AvoDashboards` module
 Because we moved some pieces of functionality to their own gems, all the `Avo::Dashboards` classes moved to `AvoDashboards`
 
 ### Actions to take
 
 Rename `Avo::Dashboards` to `AvoDashboards`
-
 :::
-
 
 :::option Remove block (lambda) arguments
 
