@@ -686,7 +686,7 @@ class DummyAction < Avo::BaseAction
   def handle(**args)
     do_something_important
 
-    redirect_to view_context.decode_filter_params({"NameFilter"=>"Apple"})
+    redirect_to avo.resources_users_path(filters: view_context.decode_filter_params({"NameFilter"=>"Apple"}))
   end
 end
 ```
@@ -726,7 +726,7 @@ class DummyAction < Avo::BaseAction
   def handle(**args)
     do_something_important
 
-    redirect_to Avo::Filters::BaseFilter.encode_filters({"NameFilter"=>"Apple"})
+    redirect_to avo.resources_users_path(filters: Avo::Filters::BaseFilter.encode_filters({"NameFilter"=>"Apple"}))
   end
 end
 ```
