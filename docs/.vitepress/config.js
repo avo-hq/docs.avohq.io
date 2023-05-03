@@ -15,7 +15,6 @@ function createContainer(klass, md) {
         const info = token.info.trim().slice(klass.length).trim()
         if (token.nesting === 1) {
           const fullName = md.renderInline(info || klass)
-          const name = fullName.match(/<code>(.*)<\/code>/i)[1]
           const anchor = snakeCase(fullName.replace(/<\/?[^>]+(>|$)/g, "").replace(/\?|{|}|!/g, ''))
           return `<h2 id="${anchor}" tabindex="-1"><span class="hidden">-> </span>${fullName} <a class="header-anchor" href="#${anchor}" aria-hidden="true"></a></h2> <div class="pl-8"><p>\n`
         } else {
