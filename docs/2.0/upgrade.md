@@ -10,6 +10,15 @@ Follow these guides to make sure your configuration files are up to date.
 
 We introduced some changes to our view components to ensur compatibility with the newly released `view_component` 3.0 version.
 
+### Use the new `with_` API in your tools and resource tools
+
+The new `view_component` 3 slot API has a breaking change. Instead of declaring slots like so `c.body`, we now must prepend the `with_` prefix like so `c.with_body`.
+We did the work on our end, but if you have a [custom tool](./custom-tools), or a [resource tool](./resource-tools), and are using the `Avo::PanelComponent` provided by us you should update that API too.
+
+You can run a search and replace in your `app/views/avo` directory (`app/views` too if you use view components), searching for `c.` and replacing with `c.with_`. Please ensure that the change is applied only in `.html.erb` files.
+
+![](/assets/img/upgrade/2_30-2_31/view_compoent_with_upgrade.gif)
+
 ## Upgrade from 2.30.1 to 2.30.2
 
 Following this [security update](https://github.com/avo-hq/avo/pull/1694) the `visible` blocks changed their behavior. The blocks are now evaluated before assigning attributes to the models in order to determine if a specific field is or not `updatable`. Since that evaluation is before assigning the attributes the model is `nil` when submitting a creation form.
