@@ -86,12 +86,19 @@ const config = {
     sidebar: {
       "/3.0/": [
         {
+          text: "Avo 3",
+          items: [
+            {text: "Intro", link: "/3.0/avo-3.html"},
+            {text: "Upgrade guide", link: "/3.0/upgrade.html"},
+          ]
+        },
+        {
           text: "Getting started",
           items: [
             {text: "Intro", link: "/3.0/index.html"},
             {text: "Avo, Rails & Hotwire", link: "/3.0/rails-and-hotwire.html"},
             {text: "Licensing", link: "/3.0/licensing"},
-            {text: "Upgrade guide", link: "/3.0/upgrade"},
+            // {text: "Upgrade guide", link: "/3.0/upgrade"},
           ],
         },
         {
