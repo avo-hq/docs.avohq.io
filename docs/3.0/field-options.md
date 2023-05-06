@@ -246,46 +246,38 @@ You may use a block as well. It will be executed in the `ViewRecordHost` and you
 field :name, as: :text, required: -> { view == :new } # make the field required only on the new view and not on edit
 ```
 
-## Readonly
-
-When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on <New /> and <Edit /> views and the value will not be passed to that record in the database. This prevents a bad actor to go into the DOM, enable that field, update it, and then submit it, updating the record.
-
-:::warning Since version <Version version="3.0" />
-DO NOT PREVENT the user from enabling the field in the DOM and send an arbitrary value to the database.
-
-A bad actor can go into the DOM, enable that field, update it, and then submit it, updating the record.
-:::
-
-```ruby
-field :name, as: :text, readonly: true
-```
-
-<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Readonly option" class="border mb-4" />
-
-
-### Readonly as a block
-
-<VersionReq version="2.14" class="mt-2" />
-
-You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
-
-```ruby
-field :id, as: :number, readonly: -> { view == :edit } # make the field readonly only on the new edit view
-```
-
 ## Disabled
 
-When you need to prevent the user from editing a field, the `disabled` option will render it as `disabled` on <New /> and <Edit /> views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
+When you need to prevent the user from editing a field, the `disabled` option will render it as `disabled` on <New /> and <Edit /> views and the value will not be passed to that record in the database. This prevents a bad actor to go into the DOM, enable that field, update it, and then submit it, updating the record.
 
-:::warning Since version <Version version="3.0" />
-PREVENT the user from enabling the field in the DOM and send an arbitrary value to the database.
-:::
 
 ```ruby
 field :name, as: :text, disabled: true
 ```
 
 <img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Disabled option" class="border mb-4" />
+
+
+### Disabled as a block
+
+<VersionReq version="2.14" class="mt-2" />
+
+You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
+
+```ruby
+field :id, as: :number, disabled: -> { view == :edit } # make the field disabled only on the new edit view
+```
+
+## Readonly
+
+When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on <New /> and <Edit /> views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
+
+
+```ruby
+field :name, as: :text, readonly: true
+```
+
+<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Readonly option" class="border mb-4" />
 
 ## Default Value
 
