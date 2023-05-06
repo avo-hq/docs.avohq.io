@@ -13,9 +13,9 @@ For example, if you want to show the records in a different order, you can do th
 ```ruby
 self.search_query = -> do
   if params[:via_association] == 'has_many'
-    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false).order(name: :asc)
+    query.ransack(id_eq: params[:q], m: "or").result(distinct: false).order(name: :asc)
   else
-    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
 end
 ```
