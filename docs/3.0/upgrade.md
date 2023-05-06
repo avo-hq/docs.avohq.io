@@ -6,6 +6,25 @@ The 2.x to 3.0 Upgrade is a work in progress. We'll add more instructions here a
 
 ## Upgrade from 2.x to 3.0.pre.1
 
+:::option Ensure you meet the requirements
+Avo now requires Ruby 3.0 and Rails 6.1.
+:::
+
+:::option Update your Gemfile
+Add the gems to your `Gemfile`
+
+```ruby
+source "https://#{ENV["AVO_GEM_TOKEN"]}@packager.fly.dev/avo-hq-beta/" do
+  gem "avo", "3.0.0.pre3"
+  gem "avo_pro"
+  gem "avo_advanced"
+  gem "avo_filters"
+  gem "avo_menu"
+  gem "avo_dashboards"
+end
+```
+:::
+
 :::option Moved some globals from `Avo::App` to `Avo::Current`
 
 We'll probably change these in the stable release.
@@ -140,15 +159,134 @@ end
 :::
 ::::
 
+:::option Use the `def fields` API
+We are introducting a new API for declaring fields. This brings many improvements from easier maintenance, better control, better composition, and more.
+
+```ruby
+# Before
+class Avo::Resources::Team < Avo::BaseResource
+  self.title = :name
+
+  field :id, as: :id, filterable: true
+  field :name, as: :text, sortable: true, show_on: :preview, filterable: true
+  field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded
+  field :created_at, as: :date_time, filterable: true
+end
+
+# After
+class Avo::Resources::Team < Avo::BaseResource
+  self.title = :name
+
+  def fields
+    field :id, as: :id, filterable: true
+    field :name, as: :text, sortable: true, show_on: :preview, filterable: true
+    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do |model|
+      if model.url
+        "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+      end
+    end
+    field :created_at, as: :date_time, filterable: true
+  end
+end
+```
+
+This will enable us to provide request specific data to the field configuration like `current_user` and `params` and will enable you to have better composition.
+
+```ruby
+class Avo::Resources::Team < Avo::BaseResource
+  self.title = :name
+
+  def admin_fields
+    field :created_at, as: :date_time, filterable: true
+  end
+
+  def fields
+    field :id, as: :id, filterable: true
+    field :name, as: :text, sortable: true, show_on: :preview, filterable: true
+    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do |model|
+      if model.url
+        "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+      end
+    end
+
+    # request-time data
+    if current_user.is_admin?
+      # better composition
+      admin_fields
+    end
+  end
+end
+```
+
+### Actions to take
+
+Wrap all field declarations in `resources` and `actions` in a `def fields` method.
+:::
+
+:::option `tool` is declared inside the `def fields` method
+In Avo 3 you'll be able to insert resource tools in-between fields, tabs and panels, so now, the `tool`s must be called inside the `fields` method.
+
+### Actions to take
+
+```ruby{8,17}
+# Before
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id, link_to_resource: true, sortable: false
+    field :email, as: :gravatar, link_to_resource: true, as_avatar: :circle, only_on: :index
+  end
+
+  tool Avo::ResourceTools::UserTool
+end
+
+# After
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id, link_to_resource: true, sortable: false
+    field :email, as: :gravatar, link_to_resource: true, as_avatar: :circle, only_on: :index
+
+    tool Avo::ResourceTools::UserTool
+  end
+end
+
+```
+:::
+
 :::option Use the `AvoDashboards` module
 Because we moved some pieces of functionality to their own gems, all the `Avo::Dashboards` classes moved to `AvoDashboards`
 
 ### Actions to take
 
 Rename `Avo::Dashboards` to `AvoDashboards`
-
 :::
 
+:::option Wrap all `card` definitions inside a `def cards`method
+After the `def fields` refactor we did the same in dashboard files. Instead of declaring the cards in the class directly, you should do it in the `def cards` method.
+
+```ruby{6-8,16-20}
+# Before
+class Avo::Dashboards::Dashy < AvoDashboards::BaseDashboard
+  self.id = "dashy"
+  self.name = "Dashy"
+
+  card Avo::Cards::ExampleMetric, visible: -> { true }
+  card Avo::Cards::ExampleAreaChart
+  card Avo::Cards::ExampleScatterChart
+end
+
+# After
+class Avo::Dashboards::Dashy < AvoDashboards::BaseDashboard
+  self.id = "dashy"
+  self.name = "Dashy"
+
+  def cards
+    card Avo::Cards::ExampleMetric, visible: -> { true }
+    card Avo::Cards::ExampleAreaChart
+    card Avo::Cards::ExampleScatterChart
+  end
+end
+```
+:::
 
 :::option Remove block (lambda) arguments
 
