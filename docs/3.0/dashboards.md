@@ -124,12 +124,12 @@ end
 ```
 <img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Dashboard Map card" class="border mb-4" />
 
-### Override card options from the dashboard
+### Override card arguments from the dashboard
 
 We found ourselves in the position to add a few cards that were the same card but with a slight difference. Ex: Have one `Users count` card and another `Active users count` card. They both count users, but the latter has an `active: true` condition applied.
 
 Before, we'd have to duplicate that card and modify the `query` method slightly but end up with duplicated boilerplate code.
-For those scenarios, we created the `options` attribute. It allows you to send arbitrary options to the card from the parent.
+For those scenarios, we created the `arguments` attribute. It allows you to send arbitrary arguments to the card from the parent.
 
 ```ruby{6-8}
 class Dashy < Avo::Dashboards::BaseDashboard
@@ -137,7 +137,7 @@ class Dashy < Avo::Dashboards::BaseDashboard
   self.name = "Dashy"
 
   card UsersCount
-  card UsersCount, options: {
+  card UsersCount, arguments: {
     active_users: true
   }
 end
@@ -154,7 +154,7 @@ class UsersCount < Avo::Dashboards::MetricCard
   def query
     scope = User
 
-    if options[:active_users].present?
+    if arguments[:active_users].present?
       scope = scope.active
     end
 
@@ -167,7 +167,7 @@ That gives you an extra layer of control without code duplication and the best d
 
 #### Control the base settings from the parent
 
-Evidently, you don't want to show the same `label`, `description`, and other details for that second card from the first card;. Therefore, you can control the `label`, `description`, `cols`, `rows`, and `refresh_every` options from the parent declaration.
+Evidently, you don't want to show the same `label`, `description`, and other details for that second card from the first card;. Therefore, you can control the `label`, `description`, `cols`, `rows`, and `refresh_every` arguments from the parent declaration.
 
 ```ruby{7-11}
 class Dashy < Avo::Dashboards::BaseDashboard
@@ -181,7 +181,7 @@ class Dashy < Avo::Dashboards::BaseDashboard
     cols: 2,
     rows: 2,
     refresh_every: 2.minutes,
-    options: {
+    arguments: {
       active_users: true
     }
 end
