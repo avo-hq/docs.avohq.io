@@ -33,3 +33,5 @@ These guides have been submitted by our community members.
 ### [Use markdown in help attributes](recipes/use-markdown-in-help-attributes.md)
 
 ### [Rolify integration](recipes/rolify-integration.md)
+
+### [Hide field labels](recipes/hide-field-labels.md)
