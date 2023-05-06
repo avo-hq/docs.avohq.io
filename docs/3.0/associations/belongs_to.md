@@ -84,8 +84,8 @@ class CommentResource < Avo::BaseResource
 
   field :id, as: :id
   field :body, as: :textarea
-  field :excerpt, as: :text, show_on: :index, as_description: true do |model|
-    ActionView::Base.full_sanitizer.sanitize(model.body).truncate 60
+  field :excerpt, as: :text, show_on: :index, as_description: true do
+    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
   rescue
     ""
   end
@@ -104,8 +104,8 @@ class CommentResource < Avo::BaseResource
 
   field :id, as: :id
   field :body, as: :textarea
-  field :excerpt, as: :text, show_on: :index, as_description: true do |model|
-    ActionView::Base.full_sanitizer.sanitize(model.body).truncate 60
+  field :excerpt, as: :text, show_on: :index, as_description: true do
+    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
   rescue
     ""
   end

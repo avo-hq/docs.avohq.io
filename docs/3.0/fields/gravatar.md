@@ -55,7 +55,7 @@ Any number in pixels. Remember that the size will influence the `Index` table ro
 You may also pass in a computed value.
 
 ```ruby
-field :email, as: :gravatar do |model|
-  "#{model.google_username}@gmail.com"
+field :email, as: :gravatar do
+  "#{record.google_username}@gmail.com"
 end
 ```
