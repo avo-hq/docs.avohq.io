@@ -86,8 +86,8 @@ class PostResource < Avo::BaseResource
 
   field :id, as: :id
   field :name, as: :text, required: true, as_label: true
-  field :complex_name, as: :text, hide_on: :all, as_label: true do |model|
-    "[#{model.id}]#{model.name}"
+  field :complex_name, as: :text, hide_on: :all, as_label: true do
+    "[#{record.id}]#{record.name}"
   end
 end
 ```
@@ -124,11 +124,11 @@ class PostResource < Avo::BaseResource
 
   field :id, as: :id
   field :name, as: :text, required: true, as_label: true
-  field :complex_name, as: :text, hide_on: :all, as_label: true do |model|
-    "[#{model.id}]#{model.name}"
+  field :complex_name, as: :text, hide_on: :all, as_label: true do
+    "[#{record.id}]#{record.name}"
   end
-  field :excerpt, as: :text, as_description: true do |model|
-    ActionView::Base.full_sanitizer.sanitize(model.body).truncate 130
+  field :excerpt, as: :text, as_description: true do
+    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 130
   rescue
     ""
   end
@@ -152,11 +152,11 @@ class PostResource < Avo::BaseResource
 
   field :id, as: :id
   field :name, as: :text, required: true, as_label: true
-  field :complex_name, as: :text, hide_on: :all, as_label: true do |model|
-    "[#{model.id}]#{model.name}"
+  field :complex_name, as: :text, hide_on: :all, as_label: true do
+    "[#{record.id}]#{record.name}"
   end
-  field :excerpt, as: :text, as_description: true do |model|
-    ActionView::Base.full_sanitizer.sanitize(model.body).truncate 130
+  field :excerpt, as: :text, as_description: true do
+    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 130
   rescue
     ""
   end
