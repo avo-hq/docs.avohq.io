@@ -109,18 +109,18 @@ const config = {
         //     {text: "Authorization", link: "/3.0/authorization"},
         //   ],
         // },
-        // {
-        //   text: "CRUD UI",
-        //   items: [
-        //     {text: "Resource configuration", link: "/3.0/resources"},
-        //     {text: "Controller configuration", link: "/3.0/controllers"},
-        //     {text: "Field options", link: "/3.0/field-options"},
-        //     {text: "Records reordering", link: "/3.0/records-reordering"},
-        //     {text: "Tabs and panels", link: "/3.0/tabs"},
-        //     {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
-        //     {text: "Customizable controls", link: "/3.0/customizable-controls"},
-        //   ],
-        // },
+        {
+          text: "CRUD UI",
+          items: [
+            {text: "Resources", link: "/3.0/resources"},
+            // {text: "Controller configuration", link: "/3.0/controllers"},
+            // {text: "Field options", link: "/3.0/field-options"},
+            // {text: "Records reordering", link: "/3.0/records-reordering"},
+            // {text: "Tabs and panels", link: "/3.0/tabs"},
+            // {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
+            // {text: "Customizable controls", link: "/3.0/customizable-controls"},
+          ],
+        },
         // {
         //   text: "Fields",
         //   collapsible: true,
