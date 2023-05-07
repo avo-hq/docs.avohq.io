@@ -163,14 +163,14 @@ Avo uses the [search feature](./../search) behind the scenes, so **make sure the
 # app/avo/resources/post_resource.rb
 class PostResource < Avo::BaseResource
   self.search_query = -> do
-    scope.ransack(id_eq: params[:q], name_cont: params[:q], body_cont: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], name_cont: params[:q], body_cont: params[:q], m: "or").result(distinct: false)
   end
 end
 
 # app/avo/resources/project_resource.rb
 class ProjectResource < Avo::BaseResource
   self.search_query = -> do
-    scope.ransack(id_eq: params[:q], name_cont: params[:q], country_cont: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], name_cont: params[:q], country_cont: params[:q], m: "or").result(distinct: false)
   end
 end
 ```
