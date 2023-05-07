@@ -277,8 +277,9 @@ class Avo::Resources::Post < Avo::BaseResource
   self.title = :name
   self.search = :id
 
-  field :id, as: :id
-  # other fields
+  def fields
+    field :id, as: :id
+  end
 
   filter Avo::Filters::PublishedFilter
 end
@@ -564,11 +565,13 @@ There are scenarios where you wouldn't want to close the filters panel when you 
 class Avo::Resources::Course < Avo::BaseResource
   self.keep_filters_panel_open = true
 
-  field :id, as: :id
-  field :name, as: :text
-  field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h
-  field :city, as: :select, options: Course.cities.values.flatten.map { |country| [country, country] }.to_h
-  field :links, as: :has_many, searchable: true, placeholder: "Click to choose a link"
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+    field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h
+    field :city, as: :select, options: Course.cities.values.flatten.map { |country| [country, country] }.to_h
+    field :links, as: :has_many, searchable: true, placeholder: "Click to choose a link"
+  end
 
   filter Avo::Filters::CourseCountryFilter
   filter Avo::Filters::CourseCityFilter
@@ -605,10 +608,12 @@ Filters can have different behaviors according to their host resource. In order 
 class Avo::Resources::Fish < Avo::BaseResource
   self.title = :name
 
-  field :id, as: :id
-  field :name, as: :text
-  field :user, as: :belongs_to
-  field :type, as: :text, hide_on: :forms
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+    field :user, as: :belongs_to
+    field :type, as: :text, hide_on: :forms
+  end
 
   filter Avo::Filters::NameFilter, arguments: {
     case_insensitive: true
