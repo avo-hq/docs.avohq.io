@@ -26,14 +26,14 @@ To enable search for a resource, you need to add the `search_query` class variab
 class UserResource < Avo::BaseResource
   self.title = :name
   self.search_query = -> do
-    scope.ransack(id_eq: params[:q], first_name_cont: params[:q], last_name_cont: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], first_name_cont: params[:q], last_name_cont: params[:q], m: "or").result(distinct: false)
   end
 
   # fields go here
 end
 ```
 
-The `search_query` block passes over the `params` object that holds the `q` param, the actual query string. It also provides the `scope` variable on which you run the query. That ensures that the [authorization scopes](./authorization.html#scopes) have been appropriately applied.
+The `search_query` block passes over the `params` object that holds the `q` param, the actual query string. It also provides the `query` variable on which you run the query. That ensures that the [authorization scopes](./authorization.html#scopes) have been appropriately applied.
 
 In this block, you may configure the search however strict or loose you need it. Check out [ransack's search matchers](https://github.com/activerecord-hackery/ransack#search-matchers) to compose the query better.
 
@@ -81,13 +81,13 @@ You may configure that to be something more complex using the `as_label` option.
 class PostResource < Avo::BaseResource
   self.title = :name
   self.search_query = -> do
-    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
 
   field :id, as: :id
   field :name, as: :text, required: true, as_label: true
-  field :complex_name, as: :text, hide_on: :all, as_label: true do |model|
-    "[#{model.id}]#{model.name}"
+  field :complex_name, as: :text, hide_on: :all, as_label: true do
+    "[#{record.id}]#{record.name}"
   end
 end
 ```
@@ -119,16 +119,16 @@ You might want to show more than just the title in the search result. Avo provid
 class PostResource < Avo::BaseResource
   self.title = :name
   self.search_query = -> do
-    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
 
   field :id, as: :id
   field :name, as: :text, required: true, as_label: true
-  field :complex_name, as: :text, hide_on: :all, as_label: true do |model|
-    "[#{model.id}]#{model.name}"
+  field :complex_name, as: :text, hide_on: :all, as_label: true do
+    "[#{record.id}]#{record.name}"
   end
-  field :excerpt, as: :text, as_description: true do |model|
-    ActionView::Base.full_sanitizer.sanitize(model.body).truncate 130
+  field :excerpt, as: :text, as_description: true do
+    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 130
   rescue
     ""
   end
@@ -147,16 +147,16 @@ You may improve the results listing by adding an avatar to each search result. Y
 class PostResource < Avo::BaseResource
   self.title = :name
   self.search_query = -> do
-    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
 
   field :id, as: :id
   field :name, as: :text, required: true, as_label: true
-  field :complex_name, as: :text, hide_on: :all, as_label: true do |model|
-    "[#{model.id}]#{model.name}"
+  field :complex_name, as: :text, hide_on: :all, as_label: true do
+    "[#{record.id}]#{record.name}"
   end
-  field :excerpt, as: :text, as_description: true do |model|
-    ActionView::Base.full_sanitizer.sanitize(model.body).truncate 130
+  field :excerpt, as: :text, as_description: true do
+    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 130
   rescue
     ""
   end
@@ -176,7 +176,7 @@ You may improve the results listing header by adding a piece of text highlightin
 class PostResource < Avo::BaseResource
   self.title = :name
   self.search_query = -> do
-    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
   self.search_query_help = "- search by id"
 
@@ -222,7 +222,7 @@ class TeamMembershipResource < Avo::BaseResource
   self.includes = [:user, :team]
   self.visible_on_sidebar = false
   self.search_query = -> do
-    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   end
   self.hide_from_global_search = true
 
@@ -242,10 +242,10 @@ class OrderResource < Avo::BaseResource
   self.search_query = -> do
     if params[:global]
       # Perform global search
-      scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+      query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
     else
       # Perform resource search
-      scope.ransack(id_eq: params[:q], details_cont: params[:q], m: "or").result(distinct: false)
+      query.ransack(id_eq: params[:q], details_cont: params[:q], m: "or").result(distinct: false)
     end
   end
 end

@@ -34,7 +34,7 @@ class CarResource < Avo::BaseResource
   self.title = :id
   self.includes = []
   # self.search_query = -> do
-  #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+  #   query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   # end
 
   field :id, as: :id
@@ -65,7 +65,7 @@ class PostResource < Avo::BaseResource
   self.title = :id
   self.includes = []
   # self.search_query = -> do
-  #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+  #   query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   # end
 
   field :id, as: :id
@@ -116,7 +116,7 @@ class PostResource < Avo::BaseResource
   self.title = :id
   self.includes = []
   # self.search_query = -> do
-  #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+  #   query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   # end
 
   field :id, as: :id
@@ -171,8 +171,8 @@ class PostResource < Avo::BaseResource
   field :cover_photo, as: :file, is_image: true, link_to_resource: true
   field :is_featured, as: :boolean
 
-  field :is_published, as: :boolean do |model|
-    model.published_at.present?
+  field :is_published, as: :boolean do
+    record.published_at.present?
   end
 
   field :user, as: :belongs_to, placeholder: "—"

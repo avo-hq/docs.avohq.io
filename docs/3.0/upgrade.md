@@ -160,7 +160,7 @@ end
 ::::
 
 :::option Use the `def fields` API
-We are introducting a new API for declaring fields. This brings many improvements from easier maintenance, better control, better composition, and more.
+We are introducing a new API for declaring fields. This brings many improvements from easier maintenance, better control, better composition, and more.
 
 ```ruby
 # Before
@@ -180,9 +180,9 @@ class Avo::Resources::Team < Avo::BaseResource
   def fields
     field :id, as: :id, filterable: true
     field :name, as: :text, sortable: true, show_on: :preview, filterable: true
-    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do |model|
-      if model.url
-        "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do
+      if record.url
+        "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
       end
     end
     field :created_at, as: :date_time, filterable: true
@@ -203,9 +203,9 @@ class Avo::Resources::Team < Avo::BaseResource
   def fields
     field :id, as: :id, filterable: true
     field :name, as: :text, sortable: true, show_on: :preview, filterable: true
-    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do |model|
-      if model.url
-        "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do
+      if record.url
+        "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
       end
     end
 
@@ -320,10 +320,29 @@ field :name, as: :text, default: -> {something}, format_using: -> {}, visible: -
 ```
 :::
 
-<!-- :::option Swap `disabled` and `readonly` field options
+:::option Swap `disabled` and `readonly` field options
 
-We received some feedback in v2.x that the `disabled` field option does not protect against DOM field manipulation when the form is suubmitted, so we introduced the `readonly` option that protects against that.
+We received some feedback in v2.x that the `disabled` field option does not protect against DOM field manipulation when the form is submitted, so we introduced the `readonly` option that protects against that.
 
 After a short [research](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) we soon found out that HTML does it the other way around. `disabled` protects against that and `readonly` doesn't.
 So, we are switching them to better comply with the standards.
-::: -->
+
+:::
+
+:::option Removed `index_text_align` option
+
+Same behavior from `index_text_align` can be achieved using `html` option.
+
+### Actions to take
+Replace `index_text_align` with `html` option:
+
+```ruby
+# Before
+field :users_required, as: :number, index_text_align: :right
+
+# After
+field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
+```
+
+:::
+
