@@ -326,4 +326,23 @@ We received some feedback in v2.x that the `disabled` field option does not prot
 
 After a short [research](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) we soon found out that HTML does it the other way around. `disabled` protects against that and `readonly` doesn't.
 So, we are switching them to better comply with the standards.
+
 :::
+
+:::option Removed `index_text_align` option
+
+Same behavior from `index_text_align` can be achieved using `html` option.
+
+### Actions to take
+Replace `index_text_align` with `html` option:
+
+```ruby
+# Before
+field :users_required, as: :number, index_text_align: :right
+
+# After
+field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
+```
+
+:::
+

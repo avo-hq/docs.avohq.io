@@ -352,11 +352,11 @@ Related:
 
 ## Align text on Index view
 
-It's customary on tables to align numbers to the right. You can do that using the `index_text_align` option. Valid values are `:right` or `:center`.
+It's customary on tables to align numbers to the right. You can do that using the `html` option.
 
 ```ruby{2}
 class ProjectResource < Avo::BaseResource
-  field :users_required, as: :number, index_text_align: :right
+  field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
 end
 ```
 
