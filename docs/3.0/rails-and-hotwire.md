@@ -43,7 +43,7 @@ end
 
 # app/avo/resources/products_resource.rb
 class ProductsResource < Avo::BaseResource
-  field :copyright, as: :text do |model|
+  field :copyright, as: :text do
     view_context.controller.render_copyright_info
   end
 end
