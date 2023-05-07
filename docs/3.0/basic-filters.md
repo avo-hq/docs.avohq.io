@@ -8,9 +8,9 @@ Filters allow you to better scope the index queries for records you are looking 
 
 ## Defining filters
 
-Avo has two types of filters available at the moment [Boolean filter](#boolean-filter) and [Select filter](#select-filter).
+Avo has several types of filters available [Boolean filter](#boolean-filter), [Select filter](#select-filter), [Multiple select filter](#multiple-select-filter) and [Text filter](#text-filter).
 
-<img :src="('/assets/img/filters.jpg')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<img :src="('/assets/img/filters.png')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 
 ### Filter values
 
@@ -21,7 +21,7 @@ Because the filters get serialized back and forth, the final `value`/`values` in
 You generate one running `bin/rails generate avo:filter featured_filter`, creating a filter configuration file.
 
 ```ruby
-class FeaturedFilter < Avo::Filters::BooleanFilter
+class Avo::Filters::FeaturedFilter < Avo::Filters::BooleanFilter
   self.name = 'Featured filter'
 
   # `values` comes as a hash with stringified keys
@@ -78,7 +78,7 @@ The `options` method defines the available values of your filter. They should re
 You can set a default value to the filter, so it has a predetermined state on load. To do that, return the state you desire from the `default` method.
 
 ```ruby{23-27}
-class FeaturedFilter < Avo::Filters::BooleanFilter
+class Avo::Filters::FeaturedFilter < Avo::Filters::BooleanFilter
   self.name = 'Featured status'
 
   def apply(request, query, values)
@@ -117,7 +117,7 @@ The most significant difference from the **Boolean filter** is in the `apply` me
 A finished, select filter might look like this.
 
 ```ruby
-class PublishedFilter < Avo::Filters::SelectFilter
+class Avo::Filters::PublishedFilter < Avo::Filters::SelectFilter
   self.name = 'Published status'
 
   # `value` comes as a string
@@ -152,7 +152,7 @@ end
 The select filter supports setting a default too. That should be a string or symbol with the select item. It will be stringified by Avo automatically.
 
 ```ruby{22-24}
-class PublishedFilter < Avo::Filters::SelectFilter
+class Avo::Filters::PublishedFilter < Avo::Filters::SelectFilter
   self.name = 'Published status'
 
   def apply(request, query, value)
@@ -181,10 +181,10 @@ end
 
 ## Multiple select filter
 
-You may also use a multiple select filter.
+You may also use a multiple select filter. To generate one oh this you should run the command `rails generate avo:filter post_status_filter --multiple_select`
 
 ```ruby
-class PostStatusFilter < Avo::Filters::MultipleSelectFilter
+class Avo::Filters::PostStatusFilter < Avo::Filters::MultipleSelectFilter
   self.name = "Status"
 
   # `value` comes as an array of strings
@@ -215,14 +215,14 @@ class PostStatusFilter < Avo::Filters::MultipleSelectFilter
 end
 ```
 
-<img :src="('/assets/img/multiple-select-filter.jpg')" alt="Avo multiple select filter" style="width: 300px;" class="border mb-4" />
+<img :src="('/assets/img/multiple-select-filter.png')" alt="Avo multiple select filter" style="width: 300px;" class="border mb-4" />
 
 ## Dynamic options
 
 The select filter can also take dynamic options:
 
 ```ruby{15-17}
-class AuthorFilter < Avo::Filters::SelectFilter
+class Avo::Filters::AuthorFilter < Avo::Filters::SelectFilter
   self.name = 'Author'
 
   def apply(request, query, value)
@@ -232,7 +232,7 @@ class AuthorFilter < Avo::Filters::SelectFilter
 
   # Example `applied_filters`
   # applied_filters = {
-  #   "CourseCountryFilter" => {
+  #   "Avo::Filters::CourseCountryFilter" => {
   #     "USA" => true,
   #     "Japan" => true,
   #     "Spain" => false,
@@ -251,7 +251,7 @@ end
 You can add complex text filters to Avo by running `rails generate avo:filter name_filter --text`.
 
 ```ruby
-class NameFilter < Avo::Filters::TextFilter
+class Avo::Filters::NameFilter < Avo::Filters::TextFilter
   self.name = "Name filter"
   self.button_label = "Filter by name"
 
@@ -273,14 +273,14 @@ end
 To add a filter to one of your resources, you need to declare it on the resource using the `filter` method to which you pass the filter class.
 
 ```ruby{8}
-class PostResource < Avo::BaseResource
+class Avo::Resources::Post < Avo::BaseResource
   self.title = :name
   self.search = :id
 
   field :id, as: :id
   # other fields
 
-  filter PublishedFilter
+  filter Avo::Filters::PublishedFilter
 end
 ```
 
@@ -290,7 +290,7 @@ end
 
 You might want to compose more advanced filters, like when you have two filters, one for the country and another for cities, and you'd like to have the cities one populated with cities from the selected country.
 
-Let's take the `CourseResource` as an example.
+Let's take the `Avo::Resources::Course` as an example.
 
 ```ruby{3-5,7-14}
 # app/models/course.rb
@@ -313,10 +313,10 @@ end
 We will create two filters—one for choosing countries and another for cities.
 
 ```ruby{3-4}
-# app/avo/resources/course_resource.rb
-class CourseResource < Avo::BaseResource
-  filter CourseCountryFilter
-  filter CourseCityFilter
+# app/avo/resources/course.rb
+class Avo::Resources::Course < Avo::BaseResource
+  filter Avo::Filters::CourseCountryFilter
+  filter Avo::Filters::CourseCityFilter
 end
 ```
 
@@ -324,7 +324,7 @@ The country filter is pretty straightforward. Set the query so the `country` fie
 
 ```ruby{6,10}
 # app/avo/filters/course_country_filter.rb
-class CourseCountryFilter < Avo::Filters::BooleanFilter
+class Avo::Filters::CourseCountryFilter < Avo::Filters::BooleanFilter
   self.name = "Course country filter"
 
   def apply(request, query, values)
@@ -339,11 +339,11 @@ end
 
 The cities filter has a few more methods to manage the data better, but the gist is the same. The `query` makes sure the records have the city value in one of the cities that have been selected.
 
-The `options` method gets the selected countries from the countries filter (`CourseCountryFilter`) and formats them to a `Hash`.
+The `options` method gets the selected countries from the countries filter (`Avo::Filters::CourseCountryFilter`) and formats them to a `Hash`.
 
 ```ruby{6,10}
 # app/avo/filters/course_city_filter.rb
-class CourseCityFilter < Avo::Filters::BooleanFilter
+class Avo::Filters::CourseCityFilter < Avo::Filters::BooleanFilter
   self.name = "Course city filter"
 
   def apply(request, query, values)
@@ -375,7 +375,7 @@ class CourseCityFilter < Avo::Filters::BooleanFilter
   # Get the value of the selected countries
   # Example payload:
   # applied_filters = {
-  #   "CourseCountryFilter" => {
+  #   "Avo::Filters::CourseCountryFilter" => {
   #     "USA" => true,
   #     "Japan" => true,
   #     "Spain" => false,
@@ -383,9 +383,9 @@ class CourseCityFilter < Avo::Filters::BooleanFilter
   #   }
   # }
   def countries
-    if applied_filters["CourseCountryFilter"].present?
+    if applied_filters["Avo::Filters::CourseCountryFilter"].present?
       # Fetch the value of the countries filter
-      applied_filters["CourseCountryFilter"]
+      applied_filters["Avo::Filters::CourseCountryFilter"]
         # Keep only the ones selected
         .select { |country, selected| selected }
         # Pluck the name of the coutnry
@@ -400,7 +400,7 @@ end
 
 <img :src="('/assets/img/filters/dynamic-options.png')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 
-The `countries` method above will check if the `CourseCountryFilter` has anything selected. If so, get the names of the chosen ones. This way, you show only the cities from the selected countries and not all of them.
+The `countries` method above will check if the `Avo::Filters::CourseCountryFilter` has anything selected. If so, get the names of the chosen ones. This way, you show only the cities from the selected countries and not all of them.
 
 ## React to filters
 
@@ -410,7 +410,7 @@ Going further with the example above, a filter can react to other filters. For e
 
 ```ruby{13-28}
 # app/avo/filters/course_city_filter.rb
-class CourseCityFilter < Avo::Filters::BooleanFilter
+class Avo::Filters::CourseCityFilter < Avo::Filters::BooleanFilter
   self.name = "Course city filter"
 
   def apply(request, query, values)
@@ -422,7 +422,7 @@ class CourseCityFilter < Avo::Filters::BooleanFilter
   end
 
   # applied_filters = {
-  #   "CourseCountryFilter" => {
+  #   "Avo::Filters::CourseCountryFilter" => {
   #     "USA" => true,
   #     "Japan" => true,
   #     "Spain" => false,
@@ -431,9 +431,9 @@ class CourseCityFilter < Avo::Filters::BooleanFilter
   # }
   def react
     # Check if the user selected a country
-    if applied_filters["CourseCountryFilter"].present? && applied_filters["CourseCityFilter"].blank?
+    if applied_filters["Avo::Filters::CourseCountryFilter"].present? && applied_filters["Avo::Filters::CourseCityFilter"].blank?
       # Get the selected countries, get their cities, and select the first one.
-      selected_countries = applied_filters["CourseCountryFilter"].select do |name, selected|
+      selected_countries = applied_filters["Avo::Filters::CourseCountryFilter"].select do |name, selected|
         selected
       end
 
@@ -467,7 +467,7 @@ class CourseCityFilter < Avo::Filters::BooleanFilter
   # Get the value of the selected countries
   # Example `applied_filters` payload:
   # applied_filters = {
-  #   "CourseCountryFilter" => {
+  #   "Avo::Filters::CourseCountryFilter" => {
   #     "USA" => true,
   #     "Japan" => true,
   #     "Spain" => false,
@@ -475,9 +475,9 @@ class CourseCityFilter < Avo::Filters::BooleanFilter
   #   }
   # }
   def countries
-    if applied_filters["CourseCountryFilter"].present?
+    if applied_filters["Avo::Filters::CourseCountryFilter"].present?
       # Fetch the value of the countries filter
-      applied_filters["CourseCountryFilter"]
+      applied_filters["Avo::Filters::CourseCountryFilter"]
         # Keep only the ones selected
         .select { |country, selected| selected }
         # Pluck the name of the coutnry
@@ -496,9 +496,9 @@ Using the applied filter payload, you can return the value of the current filter
 ```ruby
 def react
   # Check if the user selected a country
-  if applied_filters["CourseCountryFilter"].present? && applied_filters["CourseCityFilter"].blank?
+  if applied_filters["Avo::Filters::CourseCountryFilter"].present? && applied_filters["Avo::Filters::CourseCityFilter"].blank?
     # Get the selected countries, get their cities, and select the first one.
-    selected_countries = applied_filters["CourseCountryFilter"]
+    selected_countries = applied_filters["Avo::Filters::CourseCountryFilter"]
       .select do |name, selected|
         selected
       end
@@ -513,7 +513,7 @@ def react
 end
 ```
 
-Besides checking if the countries filter is populated (`applied_filters["CourseCountryFilter"].present?`), we also want to allow the user to customize the cities filter further, so we need to check if the user has added a value to that filter (`applied_filters["CourseCityFilter"].blank?`).
+Besides checking if the countries filter is populated (`applied_filters["Avo::Filters::CourseCountryFilter"].present?`), we also want to allow the user to customize the cities filter further, so we need to check if the user has added a value to that filter (`applied_filters["Avo::Filters::CourseCountryFilter"].blank?`).
 If these conditions are true, the country filter has a value, and the user hasn't selected any values from the cities filter, we can react to it and set a value as the default one.
 
 <img :src="('/assets/img/filters/dynamic-options.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
@@ -530,7 +530,7 @@ There might be times when you will want to show a message to the user when you'r
 
 ```ruby{4}
 # app/avo/filters/course_city_filter.rb
-class CourseCityFilter < Avo::Filters::BooleanFilter
+class Avo::Filters::CourseCityFilter < Avo::Filters::BooleanFilter
   self.name = "Course city filter"
   self.empty_message = "Please select a country to view options."
 
@@ -561,7 +561,7 @@ end
 There are scenarios where you wouldn't want to close the filters panel when you change the values. For that, you can use the `keep_filters_panel_open` resource option.
 
 ```ruby{2}
-class CourseResource < Avo::BaseResource
+class Avo::Resources::Course < Avo::BaseResource
   self.keep_filters_panel_open = true
 
   field :id, as: :id
@@ -570,8 +570,8 @@ class CourseResource < Avo::BaseResource
   field :city, as: :select, options: Course.cities.values.flatten.map { |country| [country, country] }.to_h
   field :links, as: :has_many, searchable: true, placeholder: "Click to choose a link"
 
-  filter CourseCountryFilter
-  filter CourseCityFilter
+  filter Avo::Filters::CourseCountryFilter
+  filter Avo::Filters::CourseCityFilter
 end
 ```
 
@@ -602,7 +602,7 @@ Inside the visible block you can acces the following variables:
 Filters can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
 
 ```ruby{9-11}
-class FishResource < Avo::BaseResource
+class Avo::Resources::Fish < Avo::BaseResource
   self.title = :name
 
   field :id, as: :id
@@ -610,16 +610,16 @@ class FishResource < Avo::BaseResource
   field :user, as: :belongs_to
   field :type, as: :text, hide_on: :forms
 
-  filter NameFilter, arguments: {
+  filter Avo::Filters::NameFilter, arguments: {
     case_insensitive: true
   }
 end
 ```
 
-Now, the arguments can be accessed inside `NameFilter` ***`apply` method*** and on the ***`visible` block***!
+Now, the arguments can be accessed inside `Avo::Filters::NameFilter` ***`apply` method*** and on the ***`visible` block***!
 
 ```ruby{4-6,8-14}
-class NameFilter < Avo::Filters::TextFilter
+class Avo::Filters::NameFilter < Avo::Filters::TextFilter
   self.name = "Name filter"
   self.button_label = "Filter by name"
   self.visible = -> do
