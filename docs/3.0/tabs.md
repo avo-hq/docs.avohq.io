@@ -43,8 +43,8 @@ class UserResource < Avo::BaseResource
   # Only these fields will be visible on the `Index` view
   field :id, as: :id, link_to_resource: true
   field :email, as: :text, name: "User Email", required: true
-  field :name, as: :text, only_on: :index do |model|
-    "#{model.first_name} #{model.last_name}"
+  field :name, as: :text, only_on: :index do
+    "#{record.first_name} #{record.last_name}"
   end
 
   # These fields will be hidden on the `Index` view
