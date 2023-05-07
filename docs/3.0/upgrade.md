@@ -10,7 +10,7 @@ The 2.x to 3.0 Upgrade is a work in progress. We'll add more instructions here a
 Avo now requires Ruby 3.0 and Rails 6.1.
 :::
 
-:::option Update your Gemfile
+:::option Update your `Gemfile`
 Add the gems to your `Gemfile`
 
 ```ruby

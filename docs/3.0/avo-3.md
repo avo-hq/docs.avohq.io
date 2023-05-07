@@ -27,7 +27,7 @@ Until we finish up with the setup on all the repos, you'll have access to the [a
 
 ## New features
 
-- Dynamic filters
+- [Dynamic filters](./dynamic-filters)
 - Dynamic fields (unreleased yet)
 - Nested record creation (unreleased yet)
 - Resource tools in fields (unreleased yet)
@@ -55,6 +55,8 @@ We appreciate all types of feedback from the API changes, to design work, and an
 We haven't gone through all the `3.0` documentation pages. Right now all of them are actually the `2.0` pages duplicated in the `3.0` path.
 We'll periodically post here and on the upgrade page when we update them one by one.
 
-#### Pages that are updated for the 3.0 version
+#### Documentation pages that are updated for the 3.0 version
 
  - [installation](./installation)
+ - [filters](./filters)
+ - [dynamic-filters](./dynamic-filters)

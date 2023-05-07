@@ -8,11 +8,13 @@ const props = defineProps({
 const license = computed(() => props.license || "community");
 const links = {
   community: "https://avohq.io/pricing#comparison-heading",
-  pro: "https://avohq.io/subscriptions/new?plan=2",
+  pro: "https://avohq.io/subscriptions/new?plan=pro",
+  advanced: "https://avohq.io/subscriptions/new?plan=advanced",
 };
 const labels = {
   community: "Community",
   pro: "Pro",
+  advanced: "Advanced",
 };
 const href = computed(() => links[license.value]);
 const label = computed(() => labels[license.value]);
@@ -27,6 +29,7 @@ const label = computed(() => labels[license.value]);
     :class="{
       'bg-blue-500 hover:bg-blue-600': license == 'community',
       'bg-green-500 hover:bg-green-600': license == 'pro',
+      'bg-violet-500 hover:bg-violet-600': license == 'advanced',
     }"
   >
     <CheckBadgeIcon class="h-4 inline mr-1" /> License: {{ label }}

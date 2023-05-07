@@ -162,9 +162,9 @@ const config = {
           text: "Filters",
           items: [
             {text: "Overview", link: "/3.0/filters"},
-            {text: "Basic Filters", link: "/3.0/filters/basic"},
-            {text: "Dynamic filters", link: "/3.0/filters/dynamic-filters"},
-            {text: "Advanced filters", link: "/3.0/filters/advanced-filters"},
+            {text: "Basic Filters", link: "/3.0/basic-filters"},
+            {text: "Dynamic filters", link: "/3.0/dynamic-filters"},
+            // {text: "Advanced filters", link: "/3.0/filters/advanced-filters"},
           ],
         },
         {
