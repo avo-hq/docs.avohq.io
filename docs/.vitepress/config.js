@@ -113,7 +113,7 @@ const config = {
           text: "CRUD UI",
           items: [
             {text: "Resources", link: "/3.0/resources"},
-            // {text: "Controller configuration", link: "/3.0/controllers"},
+            {text: "Controller configuration", link: "/3.0/controllers"},
             // {text: "Field options", link: "/3.0/field-options"},
             // {text: "Records reordering", link: "/3.0/records-reordering"},
             // {text: "Tabs and panels", link: "/3.0/tabs"},
