@@ -320,10 +320,10 @@ field :name, as: :text, default: -> {something}, format_using: -> {}, visible: -
 ```
 :::
 
-<!-- :::option Swap `disabled` and `readonly` field options
+:::option Swap `disabled` and `readonly` field options
 
-We received some feedback in v2.x that the `disabled` field option does not protect against DOM field manipulation when the form is suubmitted, so we introduced the `readonly` option that protects against that.
+We received some feedback in v2.x that the `disabled` field option does not protect against DOM field manipulation when the form is submitted, so we introduced the `readonly` option that protects against that.
 
 After a short [research](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) we soon found out that HTML does it the other way around. `disabled` protects against that and `readonly` doesn't.
 So, we are switching them to better comply with the standards.
-::: -->
+:::
