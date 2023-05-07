@@ -356,9 +356,9 @@ Using `resolve_query_scope` you tell Avo how to fetch the records for the `Index
 
 ```ruby
 class UserResource < Avo::BaseResource
-  self.resolve_query_scope = ->(model_class:) do
-    model_class.order(last_name: :asc)
-  end
+  self.resolve_query_scope = -> {
+    query.order(last_name: :asc)
+  }
 end
 ```
 
@@ -372,9 +372,9 @@ Using `resolve_find_scope` you append arguments on `find` queries.
 
 ```ruby
 class UserResource < Avo::BaseResource
-  self.resolve_find_scope = ->(model_class:) do
-    model_class.friendly
-  end
+  self.resolve_find_scope = -> {
+    query.friendly
+  }
 end
 ```
 
@@ -400,11 +400,11 @@ The following example shows how you can update the `to_param` (to use the post n
 ::: code-group
 ```ruby [app/avo/resources/user_resource.rb]
 class PostResource < Avo::BaseResource
-  self.find_record_method = ->(model_class:, id:, params:) do
+  self.find_record_method = -> {
     # If the id is an integer use the classic `find` method.
     # But if it's not an integer, search for that post by the slug.
-    id.to_i == 0 ? model_class.find_by_slug(id) : model_class.find(id)
-  end
+    id.to_i == 0 ? query.find_by_slug(id) : query.find(id)
+  }
 end
 ```
 
@@ -428,10 +428,10 @@ end
 ::: code-group
 ```ruby [app/avo/resources/user_resource.rb]
 class UserResource < Avo::BaseResource
-  self.find_record_method = ->(model_class:, id:, params:) do
+  self.find_record_method = -> {
     # We have to add .friendly to the query
-    model_class.friendly.find! id
-  end
+    query.friendly.find! id
+  }
 end
 ```
 
