@@ -53,8 +53,8 @@ Use any number to set the radius value.
 Another common scenario is to use a value from your database and create a new URL using a computed value.
 
 ```ruby
-field :logo, as: :external_image do |model|
-  "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+field :logo, as: :external_image do
+  "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
 rescue
   nil
 end
@@ -65,8 +65,8 @@ end
 Another common place you could use it is in the grid `:cover` position.
 
 ```ruby
-cover :logo, as: :external_image, link_to_resource: true do |model|
-  "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+cover :logo, as: :external_image, link_to_resource: true do
+  "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
 rescue
   nil
 end
