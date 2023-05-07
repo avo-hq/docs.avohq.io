@@ -13,9 +13,9 @@ But that will be hard to read on one line like that. So we need to format it.
 Luckily we can use `JSON.pretty_generate` for that and a computed field.
 
 ```ruby{3}
-field :meta, as: :code, language: 'javascript' do |model|
-  if model.meta.present?
-    JSON.pretty_generate(model.meta.as_json)
+field :meta, as: :code, language: 'javascript' do
+  if record.meta.present?
+    JSON.pretty_generate(record.meta.as_json)
   end
 end
 ```
@@ -27,9 +27,9 @@ To fix that, we should add another one just for editing.
 
 ```ruby{1}
 field :meta, as: :code, language: 'javascript', only_on: :edit
-field :meta, as: :code, language: 'javascript' do |model|
-  if model.meta.present?
-    JSON.pretty_generate(model.meta.as_json)
+field :meta, as: :code, language: 'javascript' do
+  if record.meta.present?
+    JSON.pretty_generate(record.meta.as_json)
   end
 end
 ```

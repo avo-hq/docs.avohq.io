@@ -160,7 +160,7 @@ end
 ::::
 
 :::option Use the `def fields` API
-We are introducting a new API for declaring fields. This brings many improvements from easier maintenance, better control, better composition, and more.
+We are introducing a new API for declaring fields. This brings many improvements from easier maintenance, better control, better composition, and more.
 
 ```ruby
 # Before
@@ -180,9 +180,9 @@ class Avo::Resources::Team < Avo::BaseResource
   def fields
     field :id, as: :id, filterable: true
     field :name, as: :text, sortable: true, show_on: :preview, filterable: true
-    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do |model|
-      if model.url
-        "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do
+      if record.url
+        "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
       end
     end
     field :created_at, as: :date_time, filterable: true
@@ -203,9 +203,9 @@ class Avo::Resources::Team < Avo::BaseResource
   def fields
     field :id, as: :id, filterable: true
     field :name, as: :text, sortable: true, show_on: :preview, filterable: true
-    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do |model|
-      if model.url
-        "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do
+      if record.url
+        "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
       end
     end
 

@@ -110,11 +110,11 @@ field :name, as: :text, visible -> { resource.record&.enabled? }
 
 ## Computed Fields
 
-You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `model` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information, you can compute what to show on the field in the <Index /> and <Show /> views.
+You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `record` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information, you can compute what to show on the field in the <Index /> and <Show /> views.
 
 ```ruby
-field 'Has posts', as: :boolean do |model, resource, view|
-  model.posts.present?
+field 'Has posts', as: :boolean do
+  record.posts.present?
 rescue
   false
 end
@@ -131,10 +131,10 @@ This example will display a boolean field with the value computed from your cust
 Sometimes you will want to process the database value before showing it to the user. You may do that using `format_using` block that receives the `value` of that field as a parameter.
 
 ```ruby
-field :is_writer, as: :text, format_using: -> (value) { value.present? ? '👍' : '👎' }
+field :is_writer, as: :text, format_using: -> { value.present? ? '👍' : '👎' }
 # or
-field :company_url, as: :text, format_using: -> (url) { link_to(url, url, target: "_blank") } do |model, *args|
-  main_app.companies_url(model)
+field :company_url, as: :text, format_using: -> { link_to(value, value, target: "_blank") } do
+  main_app.companies_url(record)
 end
 ```
 
@@ -147,7 +147,7 @@ This example snippet will make the `:is_writer` field generate emojis instead of
 You can also format using Rails helpers like `number_to_currency` (note that `view_context` is used to access the helper):
 
 ```ruby
-field :price, as: :number, format_using: -> (value) { view_context.number_to_currency(value) }
+field :price, as: :number, format_using: -> { view_context.number_to_currency(value) }
 ```
 
 ## Sortable fields
@@ -174,8 +174,8 @@ class UserResource < Avo::BaseResource
       # Order by something else completely, just to make a test case that clearly and reliably does what we want.
       query.order(id: direction)
     },
-    hide_on: :edit do |model, resource, view, field|
-      model.posts.to_a.size > 0 ? "yes" : "no"
+    hide_on: :edit do
+      record.posts.to_a.size > 0 ? "yes" : "no"
     end
 end
 ```
