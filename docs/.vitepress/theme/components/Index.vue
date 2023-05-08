@@ -1,3 +1,3 @@
 <template>
-  <a href="/2.0/resources.html#index"><code>Index</code></a>
+  <View view="index" />
 </template>

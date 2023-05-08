@@ -16,7 +16,7 @@ field :name, as: :text
 
 The `name` property is the column in the database where Avo looks for information or a property on your model.
 
-That will add a few fields in your admin panel. On the **Index** view, we will get a new text column. On the **Show** view, we will also get a text value of that record's database value. Finally, on the **Edit** and **Create** views, we will get a text input field that will display & update the `name` field on that model.
+That will add a few fields in your admin panel. On the <Index /> view, we will get a new text column. On the <Show /> view, we will also get a text value of that record's database value. Finally, on the <Edit /> and <New /> views, we will get a text input field that will display & update the `name` field on that model.
 
 ## Field conventions
 
@@ -47,11 +47,11 @@ field :is_available, as: :boolean, name: 'Availability'
 
 ## Showing / Hiding fields on different views
 
-There will be cases where you want to show fields on different views conditionally. For example, you may want to display a field in the **Create** and **Edit** views and hide it on the **Index** and **Show** views.
+There will be cases where you want to show fields on different views conditionally. For example, you may want to display a field in the <New /> and <Edit /> views and hide it on the <Index /> and <Show /> views.
 
 For scenarios like that, you may use the visibility helpers `hide_on`, `show_on`, `only_on`, and `except_on` methods. Available options for these methods are: `:create`, `:edit`, `:index`, `:show`, `:forms` (both `:create` and `:edit`) and `:all` (only for `hide_on` and `show_on`).
 
-Be aware that a few fields are designed to override those options (ex: the `id` field is hidden in **Edit** and **Create**).
+Be aware that a few fields are designed to override those options (ex: the `id` field is hidden in <Edit /> and <New />).
 
 ```ruby
 field :body, as: :text, hide_on: [:index, :show]
@@ -75,7 +75,7 @@ field :is_featured, as: :boolean, visible: -> (resource:) { resource.model.publi
 You might be tempted to use the `if` statement to show/hide fields conditionally. However, that's not the best choice because the fields are registered at boot time, and some features are only available at runtime. Let's take the `context` object, for example. You might have the `current_user` assigned to the `context`, which will not be present at the app's boot time. Instead, that's present at request time when you have a `request` present from which you can find the user.
 
 ```ruby{4-7,13-16}
-# Don't do
+# ❌ Don't do
 class CommentResource < Avo::BaseResource
   field :id, as: :id
   if context[:current_user].admin?
@@ -84,7 +84,7 @@ class CommentResource < Avo::BaseResource
   end
 end
 
-# Do instead
+# ✅ Do instead
 class CommentResource < Avo::BaseResource
   field :id, as: :id
   with_options visible: -> (resource:) { context[:current_user].admin?} do
@@ -96,17 +96,33 @@ end
 
 So now, instead of relying on a request object unavailable at boot time, you can pass it a lambda function that will be executed on request time with all the required information.
 
-## Computed Fields
-
-You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `model` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information, you can compute what to show on the field in the **Index** and **Show** views (computed fields are automatically hidden in **Edit** and **Create**).
+:::warning
+On form submissions, the `visible` block is evaluated in the `create` and `update` controller actions. That's why you have to check if the `resource.record` object is present before trying to use it.
+:::
 
 ```ruby
-field 'Has posts', as: :boolean do |model, resource, view|
-  model.posts.present?
+# `resource.record` is nil when submitting the form on resource creation
+field :name, as: :text, visible -> { resource.record.enabled? }
+
+# Do this instead
+field :name, as: :text, visible -> { resource.record&.enabled? }
+```
+
+## Computed Fields
+
+You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `record` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information, you can compute what to show on the field in the <Index /> and <Show /> views.
+
+```ruby
+field 'Has posts', as: :boolean do
+  record.posts.present?
 rescue
   false
 end
 ```
+
+:::info
+Computed fields are displayed only on the <Show /> and <Index /> views.
+:::
 
 This example will display a boolean field with the value computed from your custom block.
 
@@ -115,10 +131,10 @@ This example will display a boolean field with the value computed from your cust
 Sometimes you will want to process the database value before showing it to the user. You may do that using `format_using` block that receives the `value` of that field as a parameter.
 
 ```ruby
-field :is_writer, as: :text, format_using: -> (value) { value.present? ? '👍' : '👎' }
+field :is_writer, as: :text, format_using: -> { value.present? ? '👍' : '👎' }
 # or
-field :company_url, as: :text, format_using: -> (url) { link_to(url, url, target: "_blank") } do |model, *args|
-  main_app.companies_url(model)
+field :company_url, as: :text, format_using: -> { link_to(value, value, target: "_blank") } do
+  main_app.companies_url(record)
 end
 ```
 
@@ -126,11 +142,19 @@ This example snippet will make the `:is_writer` field generate emojis instead of
 
 <img :src="('/assets/img/fields-reference/fields-formatter.jpg')" alt="Fields formatter" class="border mb-4" />
 
+## Formatting with Rails helpers
+
+You can also format using Rails helpers like `number_to_currency` (note that `view_context` is used to access the helper):
+
+```ruby
+field :price, as: :number, format_using: -> { view_context.number_to_currency(value) }
+```
+
 ## Sortable fields
 
 One of the most common operations with database records is sorting the records by one of your fields. For that, Avo makes it easy using the `sortable` option.
 
-Add it to any field to make that column sortable in the **Index** view.
+Add it to any field to make that column sortable in the <Index /> view.
 
 ```ruby
 field :name, as: :text, sortable: true
@@ -150,8 +174,8 @@ class UserResource < Avo::BaseResource
       # Order by something else completely, just to make a test case that clearly and reliably does what we want.
       query.order(id: direction)
     },
-    hide_on: :edit do |model, resource, view, field|
-      model.posts.to_a.size > 0 ? "yes" : "no"
+    hide_on: :edit do
+      record.posts.to_a.size > 0 ? "yes" : "no"
     end
 end
 ```
@@ -188,7 +212,7 @@ end
 
 ## Placeholder
 
-Some fields support the `placeholder` option, which will be passed to the inputs on **Edit** and **New** views when they are empty.
+Some fields support the `placeholder` option, which will be passed to the inputs on <Edit /> and <New /> views when they are empty.
 
 ```ruby
 field :name, as: :text, placeholder: 'John Doe'
@@ -222,30 +246,10 @@ You may use a block as well. It will be executed in the `ViewRecordHost` and you
 field :name, as: :text, required: -> { view == :new } # make the field required only on the new view and not on edit
 ```
 
-## Readonly
-
-When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on **Create** and **Edit** views and the value will not be passed to that record in the database. This prevents a bad actor to go into the DOM, enable that field, update it, and then submit it, updating the record.
-
-```ruby
-field :name, as: :text, readonly: true
-```
-
-<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Readonly option" class="border mb-4" />
-
-
-### Readonly as a block
-
-<VersionReq version="2.14" class="mt-2" />
-
-You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
-
-```ruby
-field :id, as: :number, readonly: -> { view == :edit } # make the field readonly only on the new edit view
-```
-
 ## Disabled
 
-When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on **Create** and **Edit** views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
+When you need to prevent the user from editing a field, the `disabled` option will render it as `disabled` on <New /> and <Edit /> views and the value will not be passed to that record in the database. This prevents a bad actor to go into the DOM, enable that field, update it, and then submit it, updating the record.
+
 
 ```ruby
 field :name, as: :text, disabled: true
@@ -253,9 +257,31 @@ field :name, as: :text, disabled: true
 
 <img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Disabled option" class="border mb-4" />
 
+
+### Disabled as a block
+
+<VersionReq version="2.14" class="mt-2" />
+
+You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
+
+```ruby
+field :id, as: :number, disabled: -> { view == :edit } # make the field disabled only on the new edit view
+```
+
+## Readonly
+
+When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on <New /> and <Edit /> views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
+
+
+```ruby
+field :name, as: :text, readonly: true
+```
+
+<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Readonly option" class="border mb-4" />
+
 ## Default Value
 
-When you need to give a default value to one of your fields on the **Create** view, you may use the `default` block, which takes either a fixed value or a block.
+When you need to give a default value to one of your fields on the <New /> view, you may use the `default` block, which takes either a fixed value or a block.
 
 ```ruby
 # using a value
@@ -300,7 +326,7 @@ field :body, as: :textarea, nullable: true, null_values: ['0', '', 'null', 'nil'
 
 ## Link to resource
 
-Sometimes, on the **Index** view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click on the **Show** icon. You can use `link_to_resource` to change a table cell to be a link to that resource.
+Sometimes, on the <Index /> view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click on the <Show /> icon. You can use `link_to_resource` to change a table cell to be a link to that resource.
 
 ```ruby
 # for id field
@@ -326,11 +352,11 @@ Related:
 
 ## Align text on Index view
 
-It's customary on tables to align numbers to the right. You can do that using the `index_text_align` option. Valid values are `:right` or `:center`.
+It's customary on tables to align numbers to the right. You can do that using the `html` option.
 
 ```ruby{2}
 class ProjectResource < Avo::BaseResource
-  field :users_required, as: :number, index_text_align: :right
+  field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
 end
 ```
 
@@ -362,3 +388,9 @@ end
 ```
 
 Now, all fields will have the stacked layout throughout your app.
+
+## Field options
+
+:::option `use_resource`
+<!-- TODO: this -->
+:::

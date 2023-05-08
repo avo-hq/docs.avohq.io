@@ -124,12 +124,12 @@ end
 ```
 <img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Dashboard Map card" class="border mb-4" />
 
-### Override card options from the dashboard
+### Override card arguments from the dashboard
 
 We found ourselves in the position to add a few cards that were the same card but with a slight difference. Ex: Have one `Users count` card and another `Active users count` card. They both count users, but the latter has an `active: true` condition applied.
 
 Before, we'd have to duplicate that card and modify the `query` method slightly but end up with duplicated boilerplate code.
-For those scenarios, we created the `options` attribute. It allows you to send arbitrary options to the card from the parent.
+For those scenarios, we created the `arguments` attribute. It allows you to send arbitrary arguments to the card from the parent.
 
 ```ruby{6-8}
 class Dashy < Avo::Dashboards::BaseDashboard
@@ -137,7 +137,7 @@ class Dashy < Avo::Dashboards::BaseDashboard
   self.name = "Dashy"
 
   card UsersCount
-  card UsersCount, options: {
+  card UsersCount, arguments: {
     active_users: true
   }
 end
@@ -154,7 +154,7 @@ class UsersCount < Avo::Dashboards::MetricCard
   def query
     scope = User
 
-    if options[:active_users].present?
+    if arguments[:active_users].present?
       scope = scope.active
     end
 
@@ -167,7 +167,7 @@ That gives you an extra layer of control without code duplication and the best d
 
 #### Control the base settings from the parent
 
-Evidently, you don't want to show the same `label`, `description`, and other details for that second card from the first card;. Therefore, you can control the `label`, `description`, `cols`, `rows`, and `refresh_every` options from the parent declaration.
+Evidently, you don't want to show the same `label`, `description`, and other details for that second card from the first card;. Therefore, you can control the `label`, `description`, `cols`, `rows`, and `refresh_every` arguments from the parent declaration.
 
 ```ruby{7-11}
 class Dashy < Avo::Dashboards::BaseDashboard
@@ -181,9 +181,42 @@ class Dashy < Avo::Dashboards::BaseDashboard
     cols: 2,
     rows: 2,
     refresh_every: 2.minutes,
-    options: {
+    arguments: {
       active_users: true
     }
+end
+```
+
+## Cards visibility
+
+<VersionReq version="2.28" />
+
+It's common to show the same dashboard to multiple types of users (admins, regular users). In that scenario you might want to hide some cards for the regular users and show them just to the admins.
+
+You can use the `visible` option to do that. It can be a `boolean` or a `block` where you can access the `params`, `current_user`, `context`, `parent`, and `card` object.
+
+```ruby{4-6}
+class UsersCount < Avo::Dashboards::MetricCard
+  self.id = "users_metric"
+  self.label = "Users count"
+  self.visible = -> do
+    # You have access to context, params, parent (the current dashboard), and current card
+    true
+  end
+
+  def query
+    result User.count
+  end
+end
+```
+
+You may also control the visibility from the dashboard class.
+
+```ruby
+class Dashy < Avo::Dashboards::BaseDashboard
+  self.name = "Dashy"
+
+  card UsersCount, visible: -> { true }
 end
 ```
 
@@ -388,6 +421,24 @@ end
 Dividers can be a simple line between your cards or have some text on them that you control using the `label` option.
 When you don't want to show the line, you can enable the `invisible` option, which adds the divider but does not display a border or label.
 
+
+## Dividers visibility
+
+<VersionReq version="2.28" />
+
+You might want to conditionally show/hide a divider based on a few factors. You can do that using the `visible` option.
+
+```ruby
+class Dashy < Avo::Dashboards::BaseDashboard
+  self.name = "Dashy"
+
+  card UsersCount, visible: -> {
+    # You have access to context, params, parent (the current dashboard)
+    true
+  }
+end
+```
+
 ## Dashboards visibility
 
 You might want to hide specific dashboards from certain users. You can do that using the `visible` option. The option can be a boolean `true`/`false` or a block where you have access to the `params`, `current_user`, `context`, and `dashboard`.
@@ -412,6 +463,8 @@ end
 ```
 
 ## Dashboards authorization
+
+<VersionReq version="2.22" />
 
 You can set authorization rules for dashboards using the `authorize` block.
 

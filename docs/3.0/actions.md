@@ -55,9 +55,9 @@ field :message, as: :textarea, default: 'Your account has been marked as inactiv
 ```
 
 :::warning Files authorization
-If you're using the `file` field on an action and attach it to a resource that's using the authorization feature, please ensure you have the `upload_attachments?` policy method returning `true`. Otherwise, the `file` input might be hidden.
+If you're using the `file` field on an action and attach it to a resource that's using the authorization feature, please ensure you have the `upload_{FIELD_ID}?` policy method returning `true`. Otherwise, the `file` input might be hidden.
 
-More about this on the [authorization page](./authorization#upload-attachments).
+More about this on the [authorization page](./authorization#attachments).
 :::
 
 
@@ -121,10 +121,6 @@ def handle(**args)
 end
 ```
 
-:::warning
-Since Avo 2.20 we deprecated the `fail` method in favor of `error`.
-:::
-
 <img :src="('/assets/img/actions/alert-responses.png')" alt="Avo alert responses" class="border inline-block" />
 
 ### Run actions silently
@@ -164,7 +160,7 @@ end
 
 The available action responses are:
 
-### `reload`
+:::option `reload`
 
 When you use `reload`, a full-page reload will be triggered.
 
@@ -181,7 +177,8 @@ def handle(**args)
 end
 ```
 
-### `redirect_to`
+:::
+:::option `redirect_to`
 
 `redirect_to` will execute a redirect to a new path of your app.
 
@@ -198,7 +195,8 @@ def handle(**args)
 end
 ```
 
-### `download`
+:::
+:::option `download`
 
 `download` will start a file download to your specified `path` and `filename`.
 
@@ -242,7 +240,7 @@ end
 ```
 :::
 
-### `keep_modal_open`
+:::option `keep_modal_open`
 
 There might be situations where you want to run an action and if it fails, respond back to the user with some feedback but still keep it open and the inputs filled in.
 
@@ -278,6 +276,7 @@ class TogglePublished < Avo::BaseAction
   self.cancel_button_label = 'Not yet'
   self.no_confirmation = true
 ```
+:::
 
 ### Customize the message
 

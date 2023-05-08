@@ -7,34 +7,46 @@ prev: /3.0/
 
 ## Requirements
 
-- Ruby on Rails >= 6.0
-- Ruby >= 2.7
+- Ruby on Rails >= 6.1
+- Ruby >= 3
 - `api_only` set to `false`. More [here](./recipes/api-only-app).
 - `propshaft` or `sprockets` gem
 - Have the `secret_key_base` defined in  any of the following `ENV["SECRET_KEY_BASE"]`, `Rails.application.credentials.secret_key_base`, or `Rails.application.secrets.secret_key_base`
 
 :::warning Zeitwerk autoloading is required.
-When adding Avo to a Rails app that was previously a Rails 5 app you must ensure that it uses zeitwerk for autoloading and Rails 6 defaults.
+When adding Avo to a Rails app that was previously a Rails 5 app you must ensure that it uses zeitwerk for autoloading and Rails 6.1 defaults.
+
 ```ruby
 # config/application.rb
 config.autoloader = :zeitwerk
-config.load_defaults 6.0
+config.load_defaults 6.1
 ```
-
-More on this [here](https://github.com/avo-hq/avo/issues/1096).
 :::
 
 ## Installing Avo
-
+<!--
 Use [this](https://railsbytes.com/public/templates/zyvsME) RailsBytes template for a one-liner install process.
 
 `rails app:template LOCATION='https://avohq.io/app-template'`
 
-**OR**
+**OR** -->
 
 Take it step by step.
 
-1. Add `gem 'avo'` to your `Gemfile`
+1. Add the Avo gems to the `Gemfile`
+
+```ruby
+source "https://#{ENV["AVO_GEM_TOKEN"]}@packager.fly.dev/avo-hq-beta/" do
+  gem "avo", "3.0.0.pre3"
+  gem "avo_pro"
+  gem "avo_advanced"
+  gem "avo_filters"
+  gem "avo_menu"
+  gem "avo_dashboards"
+end
+```
+:::
+
 1. Run `bundle install`.
 1. Run `bin/rails generate avo:install` to generate the initializer and add Avo to the `routes.rb` file.
 1. [Generate an Avo Resource](resources)
@@ -45,7 +57,7 @@ This will mount the app under `/avo` path. Visit that link to see the result.
 
 ## Install from GitHub
 
-You may also install Avo from GitHub. When you do that you must compile the assets yourself. You do that using the `rake avo:build-assets` command.
+You may also install Avo from GitHub but when you do that you must compile the assets yourself. You do that using the `rake avo:build-assets` command.
 When pushing to production, make sure you build the assets on deploy time using this task.
 
 ```ruby

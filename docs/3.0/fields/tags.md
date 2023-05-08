@@ -167,6 +167,123 @@ field :skills,
 `[",", " "]`
 
 Valid values are comma `,` and space ` `.
+
+:::
+
+
+:::option `mode`
+
+By default, the tags field produces an array of items (ex: categories for posts), but in some scenarios you might want it to produce a single value (ex: dynamically search for users and select just one). Use `mode: :select` to make the field produce a single value as opposed to an array of values.
+
+```ruby{3}
+field :skills,
+  as: :tags,
+  mode: :select
+```
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+Valid values are `nil` for array values and `select` for a single value.
+
+![](/assets/img/fields/tags-field/mode-select.gif)
+
+:::
+
+<Option name="`fetch_values_from`">
+
+There might be cases where you want to dynamically fetch the values from an API. The `fetch_values_from` option enables you to pass a URL from where the field should suggest values.
+
+This options works wonderful when used in [Actions](./../actions.md).
+
+```ruby{3}
+field :skills,
+  as: :tags,
+  fetch_values_from: "/avo/resources/skills/skills_for_user"
+```
+
+When the user searches for a record, the field will perform a request to the server to fetch the records that match that query.
+
+![](/assets/img/fields/tags-field/mode-select.gif)
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+Valid values are `nil`, a string, or a block that evaluates to a string. The string should resolve to an enddpoint that returns an array of objects with the keys `value` and `label`.
+
+::: code-group
+
+```ruby{2-10} [app/controllers/avo/skills_controller.rb]
+class Avo::SkillsController < Avo::ResourcesController
+  def skills_for_user
+    skills = Skill.all.map do |skill|
+      {
+        value: skill.id,
+        label: skill.name
+      }
+    end
+    render json: skills
+  end
+end
+```
+
+```ruby{13} [config/routes.rb]
+Rails.application.routes.draw do
+  # your routes
+
+  authenticate :user, ->(user) { user.is_admin? } do
+    mount Avo::Engine, at: Avo.configuration.root_path
+  end
+end
+
+if defined? ::Avo
+  Avo::Engine.routes.draw do
+    scope :resources do
+      # Add route for the skills_for_user action
+      get "skills/skills_for_user", to: "skills#skills_for_user"
+    end
+  end
+end
+```
+
+:::info
+When using the `fetch_labels_from` pattern, on the <Show /> and <Index /> views you will see the `id` of those options instead of the label.
+That is expected, because you are storing the `id`s in the database and the field can't know what labels those `id`s have.
+
+To mitigate that use the `fetch_labels` option.
+:::
+
+</Option>
+
+:::option `fetch_labels`
+The `fetch_labels` option allows you to pass an array of custom strings to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.
+
+```ruby{4-6}
+field :skills,
+  as: :tags,
+  fetch_values_from: "/avo/resources/skills/skills_for_user",
+  fetch_labels: -> {
+    Skill.where(id: record.skills).pluck(:name)
+  }
+```
+
+In the above example, `fetch_labels` is a lambda that retrieves the names of the skills stored in the record's `skills` property.
+
+When you use `fetch_labels`, Avo passes the current `resource` and `record` as arguments to the lambda function. This gives you access to the hydrated resource and the current record.
+
+#### Default
+
+Avo's default behavior on tags
+
+#### Possible values
+
+Array of strings
 :::
 
 ## PostgreSQL array fields
@@ -213,6 +330,10 @@ end
 ```
 
 That will let Avo know which attribute should be used to fill with the user's tags.
+
+:::info Related
+You can set up the tags as a resource using [this guide](./../recipes/act-as-taggable-on-integration).
+:::
 
 ## Array fields
 

@@ -26,13 +26,13 @@ The partial is ready for you to customize further.
 ```erb
 <div class="flex flex-col">
   <%= render Avo::PanelComponent.new title: "Post info" do |c| %>
-    <% c.tools do %>
+    <% c.with_tools do %>
       <%= a_link('/avo', icon: 'heroicons/solid/academic-cap', style: :primary) do %>
         Dummy link
       <% end %>
     <% end %>
 
-    <% c.body do %>
+    <% c.with_body do %>
       <div class="flex flex-col p-4 min-h-24">
         <div class="space-y-4">
           <h3>🪧 This partial is waiting to be updated</h3>
@@ -130,13 +130,13 @@ The fields are:
 <!-- _fish_information.html.erb -->
 <div class="flex flex-col">
   <%= render Avo::PanelComponent.new(title: @resource.model.name) do |c| %>
-    <% c.tools do %>
+    <% c.with_tools do %>
       <%= a_link('/admin', icon: 'heroicons/solid/academic-cap', style: :primary) do %>
         Primary
       <% end %>
     <% end %>
 
-    <% c.body do %>
+    <% c.with_body do %>
       <div class="flex flex-col p-4 min-h-24">
         <div class="space-y-4">
           <% if form.present? %>

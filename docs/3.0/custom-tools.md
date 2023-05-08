@@ -3,7 +3,7 @@ feedbackId: 836
 license: pro
 ---
 
-# Custom views
+# Custom pages (custom tools)
 
 You may use custom tools to create custom sections or views to add to your app.
 
@@ -89,11 +89,11 @@ end
 # app/views/avo/tools/dashboard.html.erb
 <div class="flex flex-col">
   <%= render Avo::PanelComponent.new title: 'Dashboard', display_breadcrumbs: true do |c| %>
-    <% c.tools do %>
+    <% c.with_tools do %>
       <div class="text-sm italic">This is the panels tools section.</div>
     <% end %>
 
-    <% c.body do %>
+    <% c.with_body do %>
       <div class="flex flex-col justify-between py-6 min-h-24">
         <div class="px-6 space-y-4">
           <h3>What a nice new tool 👋</h3>
