@@ -121,10 +121,6 @@ def handle(**args)
 end
 ```
 
-:::warning
-Since Avo 2.20 we deprecated the `fail` method in favor of `error`.
-:::
-
 <img :src="('/assets/img/actions/alert-responses.png')" alt="Avo alert responses" class="border inline-block" />
 
 ### Run actions silently

@@ -62,15 +62,15 @@ For example, in the **Grid view**, you might want to truncate the `:body` to a c
 
 ```ruby
 grid do
-  cover :logo, as: :external_image, link_to_resource: true do |model|
-    if model.url.present?
-      "//logo.clearbit.com/#{URI.parse(model.url).host}?size=180"
+  cover :logo, as: :external_image, link_to_resource: true do
+    if record.url.present?
+      "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
     end
   end
   title :name, as: :text, link_to_resource: true
-  body :excerpt, as: :text do |model|
+  body :excerpt, as: :text do
     begin
-      ActionView::Base.full_sanitizer.sanitize(model.body).truncate 130
+      ActionView::Base.full_sanitizer.sanitize(record.body).truncate 130
     rescue => exception
       ''
     end
