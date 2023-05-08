@@ -1,5 +1,6 @@
 ---
 feedbackId: 835
+version: 2.32
 ---
 
 # Map view
