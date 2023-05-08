@@ -145,6 +145,7 @@ const config = {
           items: [
             {text: "Customization options", link: "/3.0/customization"},
             {text: "Grid view", link: "/3.0/grid-view"},
+            {text: "Map view", link: "/3.0/map-view"},
             {text: "Menu editor", link: "/3.0/menu-editor"},
             {text: "Search", link: "/3.0/search"},
             {text: "Actions", link: "/3.0/actions"},
@@ -249,6 +250,7 @@ const config = {
           items: [
             {text: "Customization options", link: "/2.0/customization"},
             {text: "Grid view", link: "/2.0/grid-view"},
+            {text: "Map view", link: "/2.0/map-view"},
             {text: "Menu editor", link: "/2.0/menu-editor"},
             {text: "Search", link: "/2.0/search"},
             {text: "Filters", link: "/2.0/filters"},
