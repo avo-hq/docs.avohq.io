@@ -388,3 +388,9 @@ end
 ```
 
 Now, all fields will have the stacked layout throughout your app.
+
+## Field options
+
+:::option `use_resource`
+<!-- TODO: this -->
+:::
