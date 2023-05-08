@@ -6,46 +6,9 @@ feedbackId: 838
 
 Filters allow you to better scope the index queries for records you are looking for.
 
-## How filters work
+Each filter is configured in a class with a few dedicated [methods and options](#filter-options). To use a filter on a resource you must [register it](#register-filters) and it will be displayed on the <Index /> view.
 
-Once you generate a filter you get a class similar to this one.
-
-```ruby
-class Avo::Filters::Featured < Avo::Filters::BooleanFilter
-  self.name = 'Featured filter'
-
-  # `values` comes as a hash with stringified keys
-  # Eg:
-  # {
-  #   'is_featured': true
-  # }
-  def apply(request, query, values)
-    return query if values['is_featured'] && values['is_unfeatured']
-
-    if values['is_featured']
-      query = query.where(is_featured: true)
-    elsif values['is_unfeatured']
-      query = query.where(is_featured: false)
-    end
-
-    query
-  end
-
-  def options
-    {
-      is_featured: "Featured",
-      is_unfeatured: "Unfeatured"
-    }
-  end
-
-  # Optional method to set the default state.
-  # def default
-  #   {
-  #     is_featured: true
-  #   }
-  # end
-end
-```
+## Filter options
 
 :::option `self.name`
 
