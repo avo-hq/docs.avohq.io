@@ -1,5 +1,5 @@
 ---
-version: "2.31"
+version: 2.32
 license: community
 betaStatus: Open beta
 ---
@@ -85,11 +85,18 @@ Besides the general options related to the map, the area-field also accepts [dat
 ## Options combined
 
 ```ruby
-field :center_area, as: :area, geometry: :polygon,
-                             options: { style: 'mapbox://styles/mapbox/satellite-v9', controls: true },
-                             datapoint_options: { label: 'Paris City Center',
-                                                  tooltip: 'Bonjour mes amis!',
-                                                  color: '#009099' }
+field :center_area,
+  as: :area,
+  geometry: :polygon,
+  options: {
+    style: 'mapbox://styles/mapbox/satellite-v9',
+    controls: true
+  },
+  datapoint_options: {
+    label: 'Paris City Center',
+    tooltip: 'Bonjour mes amis!',
+    color: '#009099'
+  }
 ```
 
 This will render a map like this:
