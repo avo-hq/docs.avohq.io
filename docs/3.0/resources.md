@@ -578,6 +578,29 @@ end
 ```
 :::
 
+:::option `self.keep_filters_panel_open`
+
+<DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=374" />
+
+There are scenarios where you wouldn't want to close the filters panel when you change the values. For that, you can use the `keep_filters_panel_open` resource option.
+
+```ruby{2}
+class Avo::Resources::Course < Avo::BaseResource
+  self.keep_filters_panel_open = true
+
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+  end
+
+  filter Avo::Filters::CourseCountryFilter
+  filter Avo::Filters::CourseCityFilter
+end
+```
+
+<img :src="('/assets/img/filters/keep-filters-panel-open.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+:::
+
 <!-- ## Unscoped queries on `Index`
 
 You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.
