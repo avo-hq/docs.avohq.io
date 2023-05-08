@@ -10,7 +10,7 @@ Filters allow you to better scope the index queries for records you are looking 
 
 Avo has two types of filters available at the moment [Boolean filter](#boolean-filter) and [Select filter](#select-filter).
 
-<img :src="('/assets/img/filters.jpg')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<img :src="('/assets/img/filters.png')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 
 ### Filter values
 
@@ -215,7 +215,7 @@ class PostStatusFilter < Avo::Filters::MultipleSelectFilter
 end
 ```
 
-<img :src="('/assets/img/multiple-select-filter.jpg')" alt="Avo multiple select filter" style="width: 300px;" class="border mb-4" />
+<img :src="('/assets/img/multiple-select-filter.png')" alt="Avo multiple select filter" style="width: 300px;" class="border mb-4" />
 
 ## Dynamic options
 
@@ -686,7 +686,7 @@ class DummyAction < Avo::BaseAction
   def handle(**args)
     do_something_important
 
-    redirect_to view_context.decode_filter_params({"NameFilter"=>"Apple"})
+    redirect_to avo.resources_users_path(filters: view_context.decode_filter_params({"NameFilter"=>"Apple"}))
   end
 end
 ```
@@ -726,7 +726,7 @@ class DummyAction < Avo::BaseAction
   def handle(**args)
     do_something_important
 
-    redirect_to Avo::Filters::BaseFilter.encode_filters({"NameFilter"=>"Apple"})
+    redirect_to avo.resources_users_path(filters: Avo::Filters::BaseFilter.encode_filters({"NameFilter"=>"Apple"}))
   end
 end
 ```

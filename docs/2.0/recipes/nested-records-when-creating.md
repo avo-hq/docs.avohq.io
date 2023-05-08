@@ -80,7 +80,7 @@ This partial will have the fields for one new review which we'll add more on the
 ```erb
 <!-- app/views/avo/partials/_fish_review.html.erb -->
 <%= render Avo::PanelComponent.new do |c| %>
-  <% c.body do %>
+  <% c.with_body do %>
     <div class="nested-form-wrapper divide-y" data-new-record="<%= f.object.new_record? %>">
       <%= avo_edit_field :body, as: :trix, form: f, help: "What should the review say", required: true %>
       <%= avo_edit_field :user, as: :belongs_to, form: f, help: "Who created the review", required: true %>
@@ -99,7 +99,7 @@ In the footer we'll also add the button that will add new reviews on the page.
 <div class="flex flex-col">
   <%= content_tag :div,data: { controller: 'nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper' } do %>
     <%= render Avo::PanelComponent.new(name: "Reviews", description: "Create some reviews for this fish") do |c| %>
-      <% c.bare_content do %>
+      <% c.with_bare_content do %>
         <% if form.present? %>
           <template data-nested-form-target="template">
             <%= form.fields_for :reviews, Review.new, multiple: true, child_index: 'NEW_RECORD' do |todo_fields| %>
@@ -114,7 +114,7 @@ In the footer we'll also add the button that will add new reviews on the page.
           </div>
         <% end %>
       <% end %>
-      <% c.footer_tools do %>
+      <% c.with_footer_tools do %>
         <div class="mt-4">
           <%= a_link 'javascript:void(0);', icon: 'plus', color: :primary, style: :outline, data: {action: "click->nested-form#add"} do %>
             Add another review

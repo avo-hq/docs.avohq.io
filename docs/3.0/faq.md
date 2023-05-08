@@ -7,9 +7,9 @@ You might want to hide some buttons and not show them to your users. That's pret
 - Show button -> `show?` method
 - Edit button -> `edit?` method
 - Delete button -> `destroy?` method
-- Upload attachments button -> `upload_attachments?` method
-- Download attachments button -> `download_attachments?` method
-- Delete attachments button -> `delete_attachments?` method
+- Upload attachments button -> `upload_{FIELD_ID}?` method
+- Download attachments button -> `download_{FIELD_ID}?` method
+- Delete attachments button -> `delete_{FIELD_ID}?` method
 - Attach button -> `attach_#{RESOURCE_PLURL_NAME}?` (eg: `attach_posts?`) method
 - Detach button -> `detach_#{RESOURCE_PLURL_NAME}?` (eg: `detach_posts?`) method
 
@@ -18,16 +18,16 @@ You might want to hide some buttons and not show them to your users. That's pret
 When writing rails code somewhere in the Avo domain you might want to use your regular URL helpers like the below:
 
 ```ruby{2}
-field :partner_home, as: :text, as_html: true do |model, *args|
-  link_to 'Partner', partner_home_url(model)
+field :partner_home, as: :text, as_html: true do
+  link_to 'Partner', partner_home_url(record)
 end
 ```
 
 That will not work because Avo will execute that code inside itself, a Rails engine. So per the [Rails documentation](https://guides.rubyonrails.org/engines.html#routes) you have to prepend the helper with `main_app` for it to work. Rails needs to know which engine it should find a route for. So the query becomes this 👇
 
 ```ruby{2}
-field :partner_home, as: :text, as_html: true do |model, *args|
-  link_to 'Partner', main_app.partner_home_url(model)
+field :partner_home, as: :text, as_html: true do
+  link_to 'Partner', main_app.partner_home_url(record)
 end
 ```
 
@@ -123,10 +123,10 @@ class CommentResource < Avo::BaseResource
   field :id, as: :id
   field :body,
     as: :textarea,
-    format_using: -> (value) do
+    format_using: -> do
       view_context.content_tag(:div, style: 'white-space: pre-line') { value }
     end
-  field :computed_field, as: :text do |model|
+  field :computed_field, as: :text do
     view_context.link_to("Login", main_app.new_user_session_path)
   end
 end
@@ -155,7 +155,7 @@ You can change how you display the information by using the `format_using` optio
 class CommentResource < Avo::BaseResource
   field :body,
     as: :textarea,
-    format_using: -> (value) do
+    format_using: -> do
       simple_format value
     end
 end
@@ -169,7 +169,7 @@ end
 class CommentResource < Avo::BaseResource
   field :body,
     as: :textarea,
-    format_using: -> (value) do
+    format_using: -> do
       content_tag(:div, style: 'white-space: pre-line') { value }
     end
 end
@@ -183,7 +183,7 @@ end
 class CommentResource < Avo::BaseResource
   field :body,
     as: :textarea,
-    format_using: -> (value) do
+    format_using: -> do
       content_tag(:div, class: 'whitespace-pre-line') { value }
     end
 end

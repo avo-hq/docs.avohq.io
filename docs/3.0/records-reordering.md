@@ -78,9 +78,9 @@ Naturally, you'll want to apply the `order(position: :asc)` condition to your qu
 
 ```ruby{2-4}
 class CourseLinkResource < Avo::BaseResource
-  self.resolve_query_scope = ->(model_class:) do
-    model_class.order(position: :asc)
-  end
+  self.resolve_query_scope = -> {
+    query.order(position: :asc)
+  }
 
   self.ordering = {
     display_inline: true,

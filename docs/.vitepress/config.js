@@ -15,7 +15,6 @@ function createContainer(klass, md) {
         const info = token.info.trim().slice(klass.length).trim()
         if (token.nesting === 1) {
           const fullName = md.renderInline(info || klass)
-          const name = fullName.match(/<code>(.*)<\/code>/i)[1]
           const anchor = snakeCase(fullName.replace(/<\/?[^>]+(>|$)/g, "").replace(/\?|{|}|!/g, ''))
           return `<h2 id="${anchor}" tabindex="-1"><span class="hidden">-> </span>${fullName} <a class="header-anchor" href="#${anchor}" aria-hidden="true"></a></h2> <div class="pl-8"><p>\n`
         } else {
@@ -68,6 +67,11 @@ const config = {
     editLink: {
       pattern: 'https://github.com/avo-hq/vitepress-docs/edit/main/docs/:path'
     },
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/avo-hq/avo' },
+      { icon: 'twitter', link: 'https://twitter.com/avo_hq' },
+      { icon: 'discord', link: 'https://avo.cool/chat' },
+    ],
     footer: {
       message: '',
       copyright: 'Copyright © 2020-present Adrian Marin'
@@ -87,107 +91,116 @@ const config = {
     sidebar: {
       "/3.0/": [
         {
-          text: "Getting started",
+          text: "Avo 3",
           items: [
-            {text: "Intro", link: "/3.0/index.html"},
-            {text: "Avo, Rails & Hotwire", link: "/3.0/rails-and-hotwire.html"},
-            {text: "Licensing", link: "/3.0/licensing"},
-            {text: "Upgrade guide", link: "/3.0/upgrade"},
-          ],
+            {text: "Intro", link: "/3.0/avo-3.html"},
+            {text: "Upgrade guide", link: "/3.0/upgrade.html"},
+          ]
         },
-        {
-          text: "Configuration",
-          items: [
-            {text: "Installation", link: "/3.0/installation"},
-            {text: "Authentication", link: "/3.0/authentication"},
-            {text: "Authorization", link: "/3.0/authorization"},
-          ],
-        },
+        // {
+        //   text: "Getting started",
+        //   items: [
+        //     {text: "Intro", link: "/3.0/index.html"},
+        //     {text: "Avo, Rails & Hotwire", link: "/3.0/rails-and-hotwire.html"},
+        //     {text: "Licensing", link: "/3.0/licensing"},
+        //     // {text: "Upgrade guide", link: "/3.0/upgrade"},
+        //   ],
+        // },
+        // {
+        //   text: "Configuration",
+        //   items: [
+        //     {text: "Installation", link: "/3.0/installation"},
+        //     {text: "Authentication", link: "/3.0/authentication"},
+        //     {text: "Authorization", link: "/3.0/authorization"},
+        //   ],
+        // },
         {
           text: "CRUD UI",
           items: [
-            {text: "Resource configuration", link: "/3.0/resources"},
-            {text: "Controller configuration", link: "/3.0/controllers"},
+            {text: "Resources", link: "/3.0/resources"},
+            {text: "Fields", link: "/3.0/fields"},
             {text: "Field options", link: "/3.0/field-options"},
-            {text: "Records reordering", link: "/3.0/records-reordering"},
-            {text: "Tabs and panels", link: "/3.0/tabs"},
-            {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
-            {text: "Customizable controls", link: "/3.0/customizable-controls"},
+            {text: "Controller configuration", link: "/3.0/controllers"},
+            // {text: "Records reordering", link: "/3.0/records-reordering"},
+            // {text: "Tabs and panels", link: "/3.0/tabs"},
+            // {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
+            // {text: "Customizable controls", link: "/3.0/customizable-controls"},
           ],
         },
         {
-          text: "Fields",
+          text: "Field types",
           collapsible: true,
           collapsed: true,
           items: fieldsMenuItems3,
         },
-        {
-          text: "Associations",
-          collapsible: true,
-          collapsed: true,
-          items: [
-            {text: "Customization", link: "/3.0/associations"},
-            {text: 'Belongs to', link: '/3.0/associations/belongs_to.md'},
-            {text: 'Has one', link: '/3.0/associations/has_one.md'},
-            {text: 'Has many', link: '/3.0/associations/has_many.md'},
-            {text: 'Has and belongs to many', link: '/3.0/associations/has_and_belongs_to_many.md'},
-          ],
-        },
-        {
-          text: "Dashboards and cards",
-          items: [
-            {text: "Dashboards", link: "/3.0/dashboards"},
-            {text: "Cards", link: "/3.0/cards"},
-          ],
-        },
+        // {
+        //   text: "Associations",
+        //   collapsible: true,
+        //   collapsed: true,
+        //   items: [
+        //     {text: "Customization", link: "/3.0/associations"},
+        //     {text: 'Belongs to', link: '/3.0/associations/belongs_to.md'},
+        //     {text: 'Has one', link: '/3.0/associations/has_one.md'},
+        //     {text: 'Has many', link: '/3.0/associations/has_many.md'},
+        //     {text: 'Has and belongs to many', link: '/3.0/associations/has_and_belongs_to_many.md'},
+        //   ],
+        // },
+        // {
+        //   text: "Dashboards and cards",
+        //   items: [
+        //     {text: "Dashboards", link: "/3.0/dashboards"},
+        //     {text: "Cards", link: "/3.0/cards"},
+        //   ],
+        // },
         {
           text: "Customize Avo",
           items: [
-            {text: "Customization options", link: "/3.0/customization"},
-            {text: "Grid view", link: "/3.0/grid-view"},
-            {text: "Menu editor", link: "/3.0/menu-editor"},
-            {text: "Search", link: "/3.0/search"},
-            {text: "Actions", link: "/3.0/actions"},
-            {text: "Localization (I18n)", link: "/3.0/localization"},
-            {text: "Branding", link: "/3.0/branding"},
+            // {text: "Customization options", link: "/3.0/customization"},
+            // {text: "Grid view", link: "/3.0/grid-view"},
+            {text: "Map view", link: "/3.0/map-view"},
+            // {text: "Menu editor", link: "/3.0/menu-editor"},
+            // {text: "Search", link: "/3.0/search"},
+            // {text: "Actions", link: "/3.0/actions"},
+            // {text: "Localization (I18n)", link: "/3.0/localization"},
+            // {text: "Branding", link: "/3.0/branding"},
           ],
         },
         {
           text: "Filters",
           items: [
             {text: "Overview", link: "/3.0/filters"},
-            {text: "Basic Filters", link: "/3.0/filters/basic"},
-            {text: "Dynamic filters", link: "/3.0/filters/dynamic-filters"},
-            {text: "Advanced filters", link: "/3.0/filters/advanced-filters"},
+            {text: "Basic Filters", link: "/3.0/basic-filters"},
+            {text: "Dynamic filters", link: "/3.0/dynamic-filters"},
+            // {text: "Advanced filters", link: "/3.0/filters/advanced-filters"},
           ],
         },
-        {
-          text: "Custom content",
-          items: [
-            {text: "Custom views", link: "/3.0/custom-tools"},
-            {text: "Custom fields", link: "/3.0/custom-fields"},
-            {text: "Resource tools", link: "/3.0/resource-tools"},
-            {text: "Stimulus JS integration", link: "/3.0/stimulus-integration"},
-            {text: "Evaluation hosts", link: "/3.0/evaluation-hosts"},
-            {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline"},
-          ],
-        },
-        {
-          text: "Native Avo components",
-          items: [
-            {text: "Avo::PanelComponent", link: "/3.0/native-components/avo-panel-component"},
-            {text: "Native field components", link: "/3.0/native-field-components"},
-            {text: "Field wrappers", link: "/3.0/field-wrappers"},
-          ],
-        },
-        {
-          text: "Internals",
-          items: [
-            {text: "Testing", link: "/3.0/testing"},
-            {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
-            {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
-          ],
-        },
+        // {
+        //   text: "Custom content",
+        //   items: [
+        //     {text: "Custom views", link: "/3.0/custom-tools"},
+        //     {text: "Custom fields", link: "/3.0/custom-fields"},
+        //     {text: "Resource tools", link: "/3.0/resource-tools"},
+        //     {text: "Stimulus JS integration", link: "/3.0/stimulus-integration"},
+        //     {text: "Evaluation hosts", link: "/3.0/evaluation-hosts"},
+        //     {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline"},
+        //   ],
+        // },
+        // {
+        //   text: "Native Avo components",
+        //   items: [
+        //     {text: "Avo::PanelComponent", link: "/3.0/native-components/avo-panel-component"},
+        //     {text: "Native field components", link: "/3.0/native-field-components"},
+        //     {text: "Field wrappers", link: "/3.0/field-wrappers"},
+        //   ],
+        // },
+        // {
+        //   text: "Internals",
+        //   items: [
+        //     {text: "Testing", link: "/3.0/testing"},
+        //     {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
+        //     {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
+        //   ],
+        // },
       ],
       "/2.0/": [
         {
@@ -249,6 +262,7 @@ const config = {
           items: [
             {text: "Customization options", link: "/2.0/customization"},
             {text: "Grid view", link: "/2.0/grid-view"},
+            {text: "Map view", link: "/2.0/map-view"},
             {text: "Menu editor", link: "/2.0/menu-editor"},
             {text: "Search", link: "/2.0/search"},
             {text: "Filters", link: "/2.0/filters"},

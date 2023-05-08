@@ -4,13 +4,13 @@ The panel component is one of the most used components in Avo.
 
 ```erb
 <%= render Avo::PanelComponent.new(title: @product.name, description: @product.description) do |c| %>
-  <% c.tools do %>
+  <% c.with_tools do %>
     <%= a_link(@product.link, icon: 'heroicons/solid/academic-cap', style: :primary, color: :primary) do %>
       View product
     <% end %>
   <% end %>
 
-  <% c.body do %>
+  <% c.with_body do %>
     <div class="flex flex-col p-4 min-h-24">
       <div class="space-y-4">
         <h3>Product information</h3>
@@ -30,7 +30,7 @@ All options are optional. You may render a panel without options.
 
 ```erb
 <%= render Avo::PanelComponent.new do |c| %>
-  <% c.body do %>
+  <% c.with_body do %>
     Something here.
   <% end %>
 <% end %>
@@ -102,7 +102,7 @@ The section is automatically aligned to the right using `justify-end` class.
 
 ```erb
 <%= render Avo::PanelComponent.new(name: "Dashboard") do |c| %>
-  <% c.tools do %>
+  <% c.with_tools do %>
     <%= a_link('/admin', icon: 'heroicons/solid/academic-cap', style: :primary) do %>
       Admin
     <% end %>
@@ -118,7 +118,7 @@ This is one of the main slots of the component where the bulk of the content is 
 
 ```erb{2-4}
 <%= render Avo::PanelComponent.new do |c| %>
-  <% c.body do %>
+  <% c.with_body do %>
     Something here.
   <% end %>
 <% end %>
@@ -132,7 +132,7 @@ Used when displaying the [Grid view](./../grid-view), it displays the data flush
 
 ```erb{2-4}
 <%= render Avo::PanelComponent.new do |c| %>
-  <% c.bare_content do %>
+  <% c.with_bare_content do %>
     Something here.
   <% end %>
 <% end %>
@@ -146,7 +146,7 @@ This is pretty much the same slot as `tools` but rendered under the `body` or `b
 
 ```erb{2-4}
 <%= render Avo::PanelComponent.new do |c| %>
-  <% c.footer_controls do %>
+  <% c.with_footer_controls do %>
     Something here.
   <% end %>
 <% end %>
@@ -160,9 +160,22 @@ The lowest available area at the end of the component.
 
 ```erb{2-4}
 <%= render Avo::PanelComponent.new do |c| %>
-  <% c.footer do %>
+  <% c.with_footer do %>
     Something here.
   <% end %>
 <% end %>
 ```
+:::
+
+:::option `sidebar`
+The sidebar will conveniently show things in a smaller area on the right of the `body`.
+
+```erb{2-4}
+<%= render Avo::PanelComponent.new do |c| %>
+  <% c.with_Sidebar do %>
+    Something tiny here.
+  <% end %>
+<% end %>
+```
+![](/assets/img/native-components/avo-panel-component/sidebar.png)
 :::

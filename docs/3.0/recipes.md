@@ -1,29 +1,37 @@
-# Recipes & guides for Avo 3
+# Recipes & guides for Avo 2
 
 These guides have been submitted by our community members.
 
-## [Nested records when creating](recipes/nested-records-when-creating)
+### [Use own helpers in Resource files](recipes/use-own-helpers-in-resource-files)
 
-## [REST API integration](recipes/rest-api-integration)
+### [Nested records when creating](recipes/nested-records-when-creating)
 
-## [Export to CSV](recipes/export-to-csv)
+### [Acts as taggable on integration](recipes/act-as-taggable-on-integration)
 
-## [Add custom link field](recipes/custom-link-field)
+### [REST API integration](recipes/rest-api-integration)
 
-## [Multilingual content](recipes/multilingual-content)
+### [Export to CSV](recipes/export-to-csv)
 
-## [Use in an API only Rails app](recipes/api-only-app)
+### [Add custom link field](recipes/custom-link-field)
 
-## [Pretty JSON objects to the code field](recipes/format-ruby-object-to-json)
+### [Multilingual content](recipes/multilingual-content)
 
-## [Use route level multitenancy](recipes/multitenancy)
+### [Use in an API only Rails app](recipes/api-only-app)
 
-## [Manage information-heavy resources](recipes/manage-information-heavy-resources)
+### [Pretty JSON objects to the code field](recipes/format-ruby-object-to-json)
 
-## [Ruby-on-Rails and Avo Tutorial](https://www.bootrails.com/blog/rails-avohq-tutorial) from [bootrails.com](https://www.bootrails.com).
+### [Use route level multitenancy](recipes/multitenancy)
 
-## [Add nested fields to CRUD forms](recipes/add-nested-fields-to-forms)
+### [Manage information-heavy resources](recipes/manage-information-heavy-resources)
 
-## [Add count to menu items](recipes/add-count-to-menu-items)
+### [Ruby-on-Rails and Avo Tutorial](https://www.bootrails.com/blog/rails-avohq-tutorial) from [bootrails.com](https://www.bootrails.com).
 
-## [Use markdown in help attributes](recipes/use-markdown-in-help-attributes.md)
+### [Add nested fields to CRUD forms](recipes/add-nested-fields-to-forms)
+
+### [Add count to menu items](recipes/add-count-to-menu-items)
+
+### [Use markdown in help attributes](recipes/use-markdown-in-help-attributes.md)
+
+### [Rolify integration](recipes/rolify-integration.md)
+
+### [Hide field labels](recipes/hide-field-labels.md)

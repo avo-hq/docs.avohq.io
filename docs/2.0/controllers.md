@@ -24,11 +24,18 @@ In order to make your controllers more flexible, there are several overridable m
 ## Create methods
 For the `create` method, you can modify the `after_create_path`, the messages, and the actions both on success or failure.
 
-### `after_create_path`
-Overriding this method, you can tell Avo what path to follow when `create` succeed.
+:::option `after_create_path`
+Overriding this method, you can tell Avo what path to follow after a record was created with success.
 
-### `create_success_action` / `create_fail_action`
-Overriding these methods, you can build a custom response when `create` succeeds or fails.
+```ruby
+def after_create_path
+  "/avo/resources/users"
+end
+```
+:::
+
+:::option `create_success_action`
+Override this method to create a custom response when a record was created with success.
 
 ```ruby
 def create_success_action
@@ -37,24 +44,56 @@ def create_success_action
   end
 end
 ```
+:::
 
-### `create_success_message` / `create_fail_message`
-Overriding these methods, you can tell Avo what message to display when `create` succeeds or fails.
+:::option `create_fail_action`
+Override this method to create a custom response when a record failed to be created.
+
+```ruby
+def create_fail_action
+  respond_to do |format|
+    flash.now[:error] = create_fail_message
+    format.html { render :new, status: :unprocessable_entity }
+  end
+end
+```
+:::
+
+:::option `create_success_message`
+Override this method to change the message the user receives when a record was created with success.
 
 ```ruby
 def create_success_message
   "#{@resource.name} #{t("avo.was_successfully_created")}."
 end
 ```
+:::
+
+:::option `create_fail_message`
+Override this method to change the message the user receives when a record failed to be created.
+
+```ruby
+def create_fail_message
+  t "avo.you_missed_something_check_form"
+end
+```
+:::
 
 ## Update methods
 For the `update` method, you can modify the `after_update_path`, the messages, and the actions both on success or failure.
 
-### `after_update_path`
-Overriding this method, you can tell Avo what path to follow when `update` succeed.
+:::option `after_update_path`
+Overriding this method, you can tell Avo what path to follow after a record was updated with success.
 
-### `update_success_action` / `update_fail_action`
-Overriding these methods, you can build a custom response when `update` succeeds or fails.
+```ruby
+def after_update_path
+  "/avo/resources/users"
+end
+```
+:::
+
+:::option `update_success_action`
+Override this method to create a custom response when a record was updated with success.
 
 ```ruby
 def update_success_action
@@ -63,24 +102,56 @@ def update_success_action
   end
 end
 ```
+:::
 
-### `update_success_message` / `update_fail_message`
-Overriding these methods, you can tell Avo what message to display when `update` succeeds or fails.
+:::option `update_fail_action`
+Override this method to create a custom response when a record failed to be updated.
+
+```ruby
+def update_fail_action
+  respond_to do |format|
+    flash.now[:error] = update_fail_message
+    format.html { render :edit, status: :unprocessable_entity }
+  end
+end
+```
+:::
+
+:::option `update_success_message`
+Override this method to change the message the user receives when a record was updated with success.
 
 ```ruby
 def update_success_message
   "#{@resource.name} #{t("avo.was_successfully_updated")}."
 end
 ```
+:::
+
+:::option `update_fail_message`
+Override this method to change the message the user receives when a record failed to be updated.
+
+```ruby
+def update_fail_message
+  t "avo.you_missed_something_check_form"
+end
+```
+:::
 
 ## Destroy methods
 For the `destroy` method, you can modify the `after_destroy_path`, the messages, and the actions both on success or failure.
 
-### `after_destroy_path`
-Overriding this method, you can tell Avo what path to follow when `destroy` succeeds.
+:::option `after_destroy_path`
+Overriding this method, you can tell Avo what path to follow after a record was destroyed with success.
 
-### `destroy_success_action` / `destroy_fail_action`
-Overriding these methods, you can build a custom response when `destroy` succeeds or fails.
+```ruby
+def after_update_path
+  "/avo/resources/users"
+end
+```
+:::
+
+:::option `destroy_success_action`
+Override this method to create a custom response when a record was destroyed with success.
 
 ```ruby
 def destroy_success_action
@@ -89,14 +160,38 @@ def destroy_success_action
   end
 end
 ```
+:::
 
-### `destroy_success_message` / `destroy_fail_message`
-Overriding these methods, you can tell Avo what message to display when `destroy` succeeds or fails.
+:::option `destroy_fail_action`
+Override this method to create a custom response when a record failed to be destroyed.
+
+```ruby
+def destroy_fail_action
+  respond_to do |format|
+    format.html { redirect_back fallback_location: params[:referrer] || resources_path(resource: @resource, turbo_frame: params[:turbo_frame], view_type: params[:view_type]), error: destroy_fail_message }
+  end
+end
+```
+:::
+
+:::option `destroy_success_message`
+Override this method to change the message the user receives when a record was destroyed with success.
 
 ```ruby
 def destroy_success_message
   t("avo.resource_destroyed", attachment_class: @attachment_class)
 end
 ```
+:::
+
+:::option `destroy_fail_message`
+Override this method to change the message the user receives when a record failed to be destroyed.
+
+```ruby
+def destroy_fail_message
+  @errors.present? ? @errors.join(". ") : t("avo.failed")
+end
+```
+:::
 
 

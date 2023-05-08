@@ -60,6 +60,7 @@ Sets the help text for the polymorphic type dropdown. Useful when you need to sp
 Any string.
 :::
 
+<!-- @include: ./../common/associations_use_resource_option_common.md-->
 
 ## Overview
 
@@ -83,8 +84,8 @@ class CommentResource < Avo::BaseResource
 
   field :id, as: :id
   field :body, as: :textarea
-  field :excerpt, as: :text, show_on: :index, as_description: true do |model|
-    ActionView::Base.full_sanitizer.sanitize(model.body).truncate 60
+  field :excerpt, as: :text, show_on: :index, as_description: true do
+    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
   rescue
     ""
   end
@@ -103,8 +104,8 @@ class CommentResource < Avo::BaseResource
 
   field :id, as: :id
   field :body, as: :textarea
-  field :excerpt, as: :text, show_on: :index, as_description: true do |model|
-    ActionView::Base.full_sanitizer.sanitize(model.body).truncate 60
+  field :excerpt, as: :text, show_on: :index, as_description: true do
+    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
   rescue
     ""
   end
@@ -162,14 +163,14 @@ Avo uses the [search feature](./../search) behind the scenes, so **make sure the
 # app/avo/resources/post_resource.rb
 class PostResource < Avo::BaseResource
   self.search_query = -> do
-    scope.ransack(id_eq: params[:q], name_cont: params[:q], body_cont: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], name_cont: params[:q], body_cont: params[:q], m: "or").result(distinct: false)
   end
 end
 
 # app/avo/resources/project_resource.rb
 class ProjectResource < Avo::BaseResource
   self.search_query = -> do
-    scope.ransack(id_eq: params[:q], name_cont: params[:q], country_cont: params[:q], m: "or").result(distinct: false)
+    query.ransack(id_eq: params[:q], name_cont: params[:q], country_cont: params[:q], m: "or").result(distinct: false)
   end
 end
 ```

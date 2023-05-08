@@ -16,7 +16,7 @@ field :title, as: :text
 Displays the value as HTML on the `Index` and `Show` views. Useful when you need to link to another record.
 
 ```ruby
-field :title, as: :text, as_html: true do |&args|
+field :title, as: :text, as_html: true do
   '<a href="https://avohq.io">Avo</a>'
 end
 ```
@@ -59,5 +59,5 @@ field :title, # The database field ID
   readonly: true, # Display it disabled
   as_html: true # Should the output be parsed as html
   placeholder: 'My shiny new post', # Update the placeholder text
-  format_using: -> (value) { value.truncate 3 } # Format the output
+  format_using: -> { value.truncate 3 } # Format the output
 ```
