@@ -1,31 +1,27 @@
 ---
-version: '2.13'
-license: pro
-betaStatus: Beta
-demoVideo: https://youtu.be/qUvMh7AkrlU
+license: advanced
 ---
 
 # Customizable controls
 
 ![](/assets/img/resources/customizable-controls/index.jpg)
 
-One of the things that we wanted to support from day one is customizable controls on resource pages.
+One of the things that we wanted to support from day one is customizable controls on resource pages, and now, Avo supports customizable controls on <Index />, <Show />, and <Edit /> views and for the table row.
 
-:::warning
-At the moment, only the `Show` view has customizable controls.
-:::
+## Default controls
 
-## Default buttons
+By default, Avo displays a few buttons (controls) for the user to use on the <Index />, <Show />, and <Edit /> views which you can override using the appropriate resource options.
 
-By default, Avo displays a few buttons for the user to use on the <Index />, <Show />, and <Edit /> views which you can override using the appropriate resource options.
-
-## Show page
-
-On the <Show /> view the default configuration is `back_button`, `delete_button`, `detach_button`, `actions_list`, and `edit_button`. You can override them using `show_controls`.
+![](/assets/img/3_0/customizable-controls/default-controls.png)
 
 ## Customize the controls
 
-To start customizing the buttons, add a `show_controls` block and start adding the desired controls.
+You can take over and customize them all using the `index_controls`, `show_controls`, `edit_controls`, and `row_controls` class attributes.
+
+:::option Show page
+On the <Show /> view the default configuration is `back_button`, `delete_button`, `detach_button`, `actions_list`, and `edit_button`.
+
+To start customizing the controls, add a `show_controls` block and start adding the desired controls.
 
 ```ruby
 class FishResource < Avo::BaseResource
@@ -39,12 +35,83 @@ class FishResource < Avo::BaseResource
       }
     delete_button label: "", title: "something"
     detach_button label: "", title: "something"
-    actions_list exclude: [ReleaseFish], style: :primary, color: :slate
+    actions_list label: "Runnables", exclude: [ReleaseFish], style: :primary, color: :slate
     action ReleaseFish, style: :primary, color: :fuchsia, icon: "heroicons/outline/globe"
     edit_button label: ""
   end
 end
 ```
+
+![](/assets/img/3_0/customizable-controls/show-controls.png)
+:::
+
+:::option Edit page
+On the <Edit /> view the default configuration is `back_button`, `delete_button`, `actions_list`, and `save_button`.
+
+To start customizing the controls, add a `editcontrols` block and start adding the desired controls.
+
+```ruby
+class FishResource < Avo::BaseResource
+  self.edit_controls = -> do
+    back_button label: "", title: "Go back now"
+    link_to "Fish.com", "https://fish.com", icon: "heroicons/outline/academic-cap", target: :_blank
+    delete_button label: "", title: "something"
+    detach_button label: "", title: "something"
+    actions_list exclude: [Avo::Actions::ReleaseFish], style: :primary, color: :slate, label: "Runnables"
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, icon: "heroicons/outline/globe" if view != :new
+    save_button label: "Save Fish"
+  end
+end
+```
+
+![](/assets/img/3_0/customizable-controls/show-controls.png)
+:::
+
+:::option Index page
+On the <Index /> view the default configuration contains the `actions_list`, `attach_button`, and `create_button`.
+
+To start customizing the controls, add a `index_controls` block and start adding the desired controls.
+
+```ruby
+class FishResource < Avo::BaseResource
+  self.index_controls = -> do
+    link_to "Fish.com", "https://fish.com", icon: "heroicons/outline/academic-cap", target: :_blank
+    actions_list exclude: [Avo::Actions::DummyAction], style: :primary, color: :slate, label: "Runnables" if Fish.count > 0
+    action Avo::Actions::DummyAction, style: :primary, color: :fuchsia, icon: "heroicons/outline/globe" if Fish.count > 0
+    attach_button label: "Attach one Fish"
+    create_button label: "Create a new and fresh Fish"
+  end
+end
+```
+
+![](/assets/img/3_0/customizable-controls/index-controls.png)
+:::
+
+:::option Row controls
+On the <Index /> view the on the end of each table row the default configuration contains the `order_controls` `show_button`, `edit_button`, `detach_button`, and `delete_button`.
+
+To start customizing the controls, add a `row_controls` block and start adding the desired controls.
+
+The controls you customize here will be displayed on the grid view too.
+
+```ruby
+class FishResource < Avo::BaseResource
+  self.row_controls = -> do
+    action Avo::Actions::ReleaseFish, label: "Release #{record.name}", style: :primary, color: :blue,
+      icon: "heroicons/outline/hand-raised" unless params[:view_type] == "grid"
+    edit_button title: "Edit this Fish now!"
+    show_button title: "Show this Fish now!"
+    delete_button title: "Delete this Fish now!", confirmation_message: "Are you sure you want to delete this Fish?"
+    actions_list style: :primary, color: :slate, label: "Actions" unless params[:view_type] == "grid"
+    action Avo::Actions::ReleaseFish, title: "Release #{record.name}", icon: "heroicons/outline/hand-raised", style: :icon
+    link_to "Information about #{record.name}", "https://en.wikipedia.org/wiki/#{record.name}",
+      icon: "heroicons/outline/information-circle", target: :_blank, style: :icon
+  end
+end
+```
+
+![](/assets/img/3_0/customizable-controls/row-controls.png)
+:::
 
 ## Controls
 
@@ -131,7 +198,9 @@ action PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 :::
 
 :::warning
-The way `show_controls` works is like a shortcut the the actions that you already declared on your resource, so you should also declare it on the resource as you normally would in order to have it here.
+When you use the `action` helper in any customizable block it will act only as a shortcut to display the action button, it will not also register it to the resource.
+
+You must manually register it with the `action` declaration.
 
 ```ruby{6,10}
 class FishResource < Avo::BaseResource
@@ -142,9 +211,10 @@ class FishResource < Avo::BaseResource
     action ReleaseFish, style: :primary, color: :fuchsia
   end
 
-  # Also declare it here
+  # 👇 Also declare it here 👇
   action ReleaseFish, arguments: { both_actions: "Will use them" }
 end
+```
 :::
 
 ## Control Options
@@ -170,7 +240,7 @@ Sets the `color` attribute for the [`Avo::ButtonComponent`](https://github.com/a
 
 #### Possible values
 
-Can be any color of [Tailwind's default color pallete](https://tailwindcss.com/docs/customizing-colors#default-color-palette) as a symbol.
+Can be any color of [Tailwind`s default color pallete](https://tailwindcss.com/docs/customizing-colors#default-color-palette) as a symbol.
 :::
 
 :::option `icon`

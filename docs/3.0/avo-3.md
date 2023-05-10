@@ -31,13 +31,13 @@ Until we finish up with the setup on all the repos, you'll have access to the [a
 - Dynamic fields (unreleased yet)
 - Nested record creation (unreleased yet)
 - Resource tools in fields (unreleased yet)
-- New `def fields` API
-- Plugins API
+- [New `def fields` API](./fields)
+- [Plugins API](./plugins)
 - New status page
-- Custom controls on everywhere (`Index`, `Show`, `Edit`, `Row`)
-- Resource scopes
-- Record preview on Index
-- Testing helpers
+- [Custom controls on everywhere](./customizable-controls) (<Index />, <Show />, <Edit />,and `Row`)
+- [Resource scopes](./scopes)
+- [Record preview on Index](./record-previews)
+- [Testing helpers](./testing#testing-helpers)
 
 ## Feedback
 
@@ -52,11 +52,12 @@ We appreciate all types of feedback from the API changes, to design work, and an
 
 ## Documentation
 
-We haven't gone through all the `3.0` documentation pages. Right now all of them are actually the `2.0` pages duplicated in the `3.0` path.
-We'll periodically post here and on the upgrade page when we update them one by one.
+We started the process to redo and reorganize the 3.0 docs. You might have noticed that some pages have dissappeared from the sidebar. That's because they haven't been updated for version 3.
+We'll periodically enable the old pages as we give them a proper read.
 
-#### Documentation pages that are updated for the 3.0 version
+## What next?
 
- - [installation](./installation)
- - [filters](./filters)
- - [dynamic-filters](./dynamic-filters)
+1. [Install Avo 3](./installation)
+1. [Follow the upgrade guide](./upgrade)
+1. [Experience the new features](#new-features)
+1. [Provide feedback and ask for support](https://github.com/avo-hq/avo-3/issues/new/choose)
