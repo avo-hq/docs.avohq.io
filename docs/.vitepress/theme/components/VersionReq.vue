@@ -10,7 +10,7 @@ const fullVersion = computed(() => {
     return "2.0.0"
   }
 
-  const matchesPatchVersion = props.version.match(/\d*\.\d*\.\d*/g)
+  const matchesPatchVersion = props?.version?.toString()?.match(/\d*\.\d*\.\d*/g)
   if (matchesPatchVersion) {
     return props.version
 
