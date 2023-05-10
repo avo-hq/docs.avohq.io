@@ -330,7 +330,6 @@ So, we are switching them to better comply with the standards.
 :::
 
 :::option Removed `index_text_align` option
-
 Same behavior from `index_text_align` can be achieved using `html` option.
 
 ### Actions to take
@@ -343,6 +342,68 @@ field :users_required, as: :number, index_text_align: :right
 # After
 field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
 ```
-
 :::
+
+:::option Renamed `scope` to `query` in the `search_query` block
+### Actions to take
+Replace `scope.` with `query.` in `search_query` in every resource.
+
+```ruby
+# Before
+self.search_query = -> do
+  scope.order(created_at: :desc).ransack(id_eq: params[:q], m: "or").result(distinct: false)
+end
+
+# After
+self.search_query = -> do
+  query.order(created_at: :desc).ransack(id_eq: params[:q], m: "or").result(distinct: false)
+end
+```
+:::
+
+:::option Renamed `resolve_query_scope` to `index_query` in resources
+The new method name `index_query` speaks more about what it does and the rest of the changes brings it more inline with the other APIs
+
+### Actions to take
+
+- rename `resolve_query_scope` to `index_query`
+- remove the `(model_class:)` block argument
+- rename `model_class` inside the block to `query`
+
+```ruby
+# Before
+self.resolve_query_scope = ->(model_class:) do
+  model_class.order(last_name: :asc)
+end
+
+# After
+self.index_query = -> do
+  query.order(last_name: :asc)
+end
+```
+:::
+
+:::option Removed `resolve_find_scope` in favor of `find_record_method`
+The new `find_record_method` method works better as it enables you to use custom find matchers.
+
+### Actions to take
+
+- rename `resolve_query_scope` to `index_query`
+- remove the `(model_class:, id:, params:)` block arguments
+- rename `model_class` inside the block to `query`
+- add the `.find` matcher
+
+```ruby
+# Before
+self.resolve_find_scope = ->(model_class:) do
+  model_class.friendly
+end
+
+# After
+self.find_record_method = -> do
+  query.friendly.find id
+end
+```
+:::
+
 
