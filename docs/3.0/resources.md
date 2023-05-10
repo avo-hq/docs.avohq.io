@@ -156,7 +156,6 @@ You can see the result in the admin panel using this URL `/avo`. The `Post` reso
 
 Read more about the fields [here](./fields).
 
-
 ```ruby{5-17}
 class Avo::Resources::Post < Avo::BaseResource
   self.title = :id

@@ -4,37 +4,6 @@ feedbackId: 834
 
 # Field options
 
-## Declaring fields
-
-Each Avo resource has a `field` method that registers your `Resource`'s fields. Avo ships with various simple fields like `text`, `textarea`, `number`, `password`, `boolean`, `select`, and more complex ones like `markdown`, `key_value`, `trix`, and `code`.
-
-We can use the `field` method like so:
-
-```ruby
-field :name, as: :text
-```
-
-The `name` property is the column in the database where Avo looks for information or a property on your model.
-
-That will add a few fields in your admin panel. On the <Index /> view, we will get a new text column. On the <Show /> view, we will also get a text value of that record's database value. Finally, on the <Edit /> and <New /> views, we will get a text input field that will display & update the `name` field on that model.
-
-## Field conventions
-
-When we declare a field, we pinpoint the specific database row for that field. Usually, that's a snake case value.
-
-Each field has a label. Avo will convert the snake case name to a humanized version.
-In the following example, the `is_available` field will render the label as *Is available*.
-
-```ruby
-field :is_available, as: :boolean
-```
-
-<img :src="('/assets/img/fields-reference/naming-convention.jpg')" alt="Field naming convention" class="border mb-4" />
-
-:::info
-If having the fields stacked one on top of another is not the right layout, try the [resource-sidebar](./resource-sidebar).
-:::
-
 ## Change field name
 
 To customize the label, you can use the `name` property to pick a different label.

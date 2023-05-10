@@ -93,7 +93,7 @@ const config = {
         {
           text: "Avo 3",
           items: [
-            {text: "Intro", link: "/3.0/avo-3.html"},
+            {text: "👉 Intro 👈", link: "/3.0/avo-3.html"},
             {text: "Upgrade guide", link: "/3.0/upgrade.html"},
           ]
         },
@@ -106,14 +106,14 @@ const config = {
         //     // {text: "Upgrade guide", link: "/3.0/upgrade"},
         //   ],
         // },
-        // {
-        //   text: "Configuration",
-        //   items: [
-        //     {text: "Installation", link: "/3.0/installation"},
-        //     {text: "Authentication", link: "/3.0/authentication"},
-        //     {text: "Authorization", link: "/3.0/authorization"},
-        //   ],
-        // },
+        {
+          text: "Configuration",
+          items: [
+            {text: "Installation", link: "/3.0/installation"},
+            // {text: "Authentication", link: "/3.0/authentication"},
+            // {text: "Authorization", link: "/3.0/authorization"},
+          ],
+        },
         {
           text: "CRUD UI",
           items: [
@@ -121,10 +121,12 @@ const config = {
             {text: "Fields", link: "/3.0/fields"},
             {text: "Field options", link: "/3.0/field-options"},
             {text: "Controller configuration", link: "/3.0/controllers"},
+            {text: "Record previews", link: "/3.0/records-previews"},
+            {text: "Scopes", link: "/3.0/scopes"},
             // {text: "Records reordering", link: "/3.0/records-reordering"},
             // {text: "Tabs and panels", link: "/3.0/tabs"},
             // {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
-            // {text: "Customizable controls", link: "/3.0/customizable-controls"},
+            {text: "Customizable controls", link: "/3.0/customizable-controls"},
           ],
         },
         {
@@ -197,6 +199,14 @@ const config = {
         //   text: "Internals",
         //   items: [
         //     {text: "Testing", link: "/3.0/testing"},
+        //     {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
+        //     {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
+        //   ],
+        // },
+        // {
+        //   text: "Extending",
+        //   items: [
+        //     {text: "Plugins", link: "/3.0/plugins"},
         //     {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
         //     {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
         //   ],
