@@ -77,7 +77,7 @@ Naturally, you'll want to apply the `order(position: :asc)` condition to your qu
 2. Use the [`index_query`](https://docs.avohq.io/3.0/customization.html#custom-query-scopes) to alter the query in Avo.
 
 ```ruby{2-4}
-class Avo::Resources::CourseLinkResource < Avo::BaseResource
+class Avo::Resources::CourseLink < Avo::BaseResource
   self.index_query = -> {
     query.order(position: :asc)
   }
