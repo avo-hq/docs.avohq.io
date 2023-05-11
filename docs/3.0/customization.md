@@ -348,44 +348,19 @@ end
 
 ## Custom query scopes
 You may want to change Avo's queries to add sorting or use gems like [friendly](https://github.com/norman/friendly_id).
-You can do that using `resolve_query_scope` for multiple records and `resolve_find_scope` when fetching one record.
+You can do that using `index_query` for multiple records and `find_record_method` when fetching one record.
 
 ### Custom scope for `Index` page
 
-Using `resolve_query_scope` you tell Avo how to fetch the records for the `Index` view.
+Using `index_query` you tell Avo how to fetch the records for the `Index` view.
 
 ```ruby
-class UserResource < Avo::BaseResource
-  self.resolve_query_scope = -> {
+class Avo::Resources::User < Avo::BaseResource
+  self.index_query = -> {
     query.order(last_name: :asc)
   }
 end
 ```
-
-### Custom scope for `Show` and `Edit` pages
-
-:::warning
-This method is deprecated in favor of `find_record_method` (below).
-:::
-
-Using `resolve_find_scope` you append arguments on `find` queries.
-
-```ruby
-class UserResource < Avo::BaseResource
-  self.resolve_find_scope = -> {
-    query.friendly
-  }
-end
-```
-
-:::details If you're following the `friendly_id` example, you must also add the `friendly_id` configuration to the model definition.
-```ruby
-class User < ApplicationRecord
-  extend FriendlyId
-  friendly_id :name, use: :slugged
-end
-```
-:::
 
 ### Custom find method for `Show` and `Edit` pages
 
@@ -395,15 +370,21 @@ This is very useful when you use something like `friendly` gem, custom `to_param
 
 #### Custom `to_param` method
 
-The following example shows how you can update the `to_param` (to use the post name) method on the `User` model to use a custom attribute and then update the `UserResource` so it knows how to search for that model.
+The following example shows how you can update the `to_param` (to use the post name) method on the `User` model to use a custom attribute and then update the `Avo::Resources::User` so it knows how to search for that model.
 
 ::: code-group
-```ruby [app/avo/resources/user_resource.rb]
-class PostResource < Avo::BaseResource
+```ruby [app/avo/resources/post.rb]
+class Avo::Resource::Post < Avo::BaseResource
   self.find_record_method = -> {
-    # If the id is an integer use the classic `find` method.
-    # But if it's not an integer, search for that post by the slug.
-    id.to_i == 0 ? query.find_by_slug(id) : query.find(id)
+    # When using friendly_id, we need to check if the id is a slug or an id.
+    # If it's a slug, we need to use the find_by_slug method.
+    # If it's an id, we need to use the find method.
+    # If the id is an array, we need to use the where method in order to return a collection.
+    if id.is_a?(Array)
+      id.first.to_i == 0 ? query.where(slug: id) : query.where(id: id)
+    else
+      id.to_i == 0 ? query.find_by_slug(id) : query.find(id)
+    end
   }
 end
 ```

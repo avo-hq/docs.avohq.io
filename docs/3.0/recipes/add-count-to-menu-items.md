@@ -29,7 +29,7 @@ module NavigationLabelWithCount
   end
 
   def resource_count
-    resolve_query_scope.call(model_class: model_class).count
+    index_query.call(model_class: model_class).count
   end
 
   def resource_count_tailwind_classes(c)

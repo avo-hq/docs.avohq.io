@@ -322,7 +322,7 @@ All block arguments are removed from Avo. We did this in order to make blocks mo
 We don't have a complete list of blocks but we'll try to give you a few examples:
 
  - Field options: `visible`, `readonly`, `disabled`, `format_using`, etc.
- - Resource options: `resolve_query_scope`, `search_query`, `find_record_method`, etc.
+ - Resource options: `index_query`, `search_query`, `find_record_method`, etc.
  - Actions, Dashboards, and Cards `self.visible`
  - anything that you are passing as a block should be without arguments
 

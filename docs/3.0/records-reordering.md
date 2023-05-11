@@ -74,11 +74,11 @@ Naturally, you'll want to apply the `order(position: :asc)` condition to your qu
 
 1. Add a `default_scope` to your model. If you're using this ordering scheme only in Avo, then, this is not the recommended way, because it will add that scope to all queries for that model and you probably don't want that.
 
-2. Use the [`resolve_query_scope`](https://docs.avohq.io/3.0/customization.html#custom-query-scopes) to alter the query in Avo.
+2. Use the [`index_query`](https://docs.avohq.io/3.0/customization.html#custom-query-scopes) to alter the query in Avo.
 
 ```ruby{2-4}
-class CourseLinkResource < Avo::BaseResource
-  self.resolve_query_scope = -> {
+class Avo::Resources::CourseLinkResource < Avo::BaseResource
+  self.index_query = -> {
     query.order(position: :asc)
   }
 
