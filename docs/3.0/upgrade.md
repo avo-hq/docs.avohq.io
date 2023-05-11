@@ -10,6 +10,27 @@ The 2.x to 3.0 Upgrade is a work in progress. We'll add more instructions here a
 Avo now requires Ruby 3.0 and Rails 6.1.
 :::
 
+## Use the "automatic" upgrade tool
+
+:::danger The upgrade tool
+
+ - is experimental
+ - doesn't cover all the required paces
+ - might produce unwanted artifacts
+
+**Back-up your code before using the tool.**
+:::
+
+To use the upgrade tool add `gem 'avo_upgrade'` to your `Gemfile` and run `bundle install`.
+
+Next you should run the `bin/rails avo:upgrade:2_to_3` command and go throught the process.
+
+Ideally, you'd run the command with a clean tree and then make the last adjustments manually. The command will tell you what those the last adjustments are that you have to do manually.
+
+## Upgrade steps
+
+Each paragraph will guide you through the upgrade process for each individual change.
+
 :::option Update your `Gemfile`
 Add the gems to your `Gemfile`
 
