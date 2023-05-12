@@ -250,3 +250,17 @@ class OrderResource < Avo::BaseResource
   end
 end
 ```
+
+
+## Search result path
+
+By default, when a user clicks on a search result, they will be redirected to that record, but you can change that using the `search_result_path` option.
+
+```ruby
+class Avo::Resources::City < Avo::BaseResource
+  self.search_result_path = -> {
+    # Return any path here. You have access to the search `record` the user clicked on.
+    avo.resources_city_path record, custom: "yup"
+  }
+end
+```
