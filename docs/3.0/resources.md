@@ -620,24 +620,3 @@ end
 
 <img :src="('/assets/img/filters/keep-filters-panel-open.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 :::
-
-<!-- ## Unscoped queries on `Index`
-
-You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.
-
-```ruby{2}
-class Project < ApplicationRecord
-  default_scope { order(name: :asc) }
-end
-```
-
-You can unscope the query using the `unscoped_queries_on_index` (defaults to `false`) class variable on that resource.
-
-```ruby{3}
-class Avo::Resources::Project < Avo::BaseResource
-  self.title = :name
-  self.unscoped_queries_on_index = true
-
-  # fields go here
-end
-``` -->
