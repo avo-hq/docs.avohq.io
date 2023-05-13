@@ -432,7 +432,7 @@ This is the quick way to set the label, and it will be displayed **on all pages*
 
 ### Set the description as a block
 
-This is the more customizable method where you can access the `record`, `resource`, `view`, `current_user`, and `params` objects.
+This is the more customizable method where you can access the `resource.record`, `resource`, `view`, `current_user`, and `params` objects.
 
 ```ruby{3-13}
 class Avo::Resources::User < Avo::BaseResource
