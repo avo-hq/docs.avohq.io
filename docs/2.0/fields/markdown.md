@@ -7,7 +7,7 @@ license: community
 
 <img :src="('/assets/img/fields/markdown.jpg')" alt="Trix field" class="border mb-4" />
 
-The `Markdown` field renders a [SimpleMDE Markdown Editor](https://simplemde.com/) and is associated with a text or textarea column in the database.
+The `Markdown` field renders a [EasyMDE Markdown Editor](https://github.com/Ionaru/easy-markdown-editor) and is associated with a text or textarea column in the database.
 `Markdown` field converts text within the editor into raw Markdown text and stores it back in the database.
 
 The Markdown field is hidden from the **Index** view.
