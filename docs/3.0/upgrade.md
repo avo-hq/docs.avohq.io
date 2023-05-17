@@ -23,7 +23,7 @@ Avo now requires Ruby 3.0 and Rails 6.1.
 :::danger The upgrade tool
 
  - is experimental
- - doesn't cover all the required paces
+ - doesn't cover all the required steps
  - might produce unwanted artifacts
 
 **Back-up your code before using the tool.**
