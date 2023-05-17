@@ -231,7 +231,7 @@ field :name, as: :text, required: true
 <img :src="('/assets/img/fields-reference/required.jpg')" alt="Required option" class="border mb-4" />
 
 :::warning
-For Avo versions 2.13 and lower, this option is only a cosmetic one. It will not add the validation logic to your model. You must add that yourself (`validates :name, presence: true`).
+This option is only a cosmetic one. It will not add the validation logic to your model. You must add that yourself (`validates :name, presence: true`).
 :::
 
 :::info
