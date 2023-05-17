@@ -265,8 +265,13 @@ class NameFilter < Avo::Filters::TextFilter
   #   'avo'
   # end
 end
-
 ```
+
+## Default value
+
+You may set default values for the `options` you set. For example you may set which option to be selected for the [select filter](#select_filter) and which checkboxes to be set for the [boolean filter](#boolean_filter).
+
+In the `default` method you have access to the `request`, `params`, [`context`](./customization#context), `view_context`, and `current_user` objects.
 
 ## Registering filters
 
@@ -731,3 +736,7 @@ class DummyAction < Avo::BaseAction
 end
 ```
 :::
+
+## Persistent filters
+
+By default, when a user visits an <Index /> view of a resource the filters payload will be empty, so they will be set on their [default values](#default-value).

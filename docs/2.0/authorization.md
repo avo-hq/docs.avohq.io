@@ -100,11 +100,11 @@ Controls whether the user can see the actions button on the <Index /> page.
 
 :::
 
+<img :src="('/assets/img/authorization/actions_button.jpg')" alt="Actions button" class="border mb-4" />
+
 :::option `reorder?`
 
 Controls whether the user can see the [records reordering](./records-reordering) buttons on the <Index /> page.
-
-<img :src="('/assets/img/authorization/actions_button.jpg')" alt="Actions button" class="border mb-4" />
 
 :::
 ## Associations
