@@ -45,13 +45,14 @@ Or Multi-Polygons:
 #### Possible values
 
 `:polygon` or `:multi_polygon`
+
 :::
-:::option `options`
+:::option `mapkick_options`
 
 For example:
 
 ```ruby
-options: { style: 'mapbox://styles/mapbox/satellite-v9', controls: true },
+mapkick_options: { style: 'mapbox://styles/mapbox/satellite-v9', controls: true },
 ```
 
 #### Default
@@ -61,6 +62,7 @@ options: { style: 'mapbox://styles/mapbox/satellite-v9', controls: true },
 #### Possible values
 
 Accepts the options as [specified in the Mapkick-gem](https://github.com/ankane/mapkick#options).
+
 :::
 :::option `datapoint_options`
 
@@ -88,7 +90,7 @@ Besides the general options related to the map, the area-field also accepts [dat
 field :center_area,
   as: :area,
   geometry: :polygon,
-  options: {
+  mapkick_options: {
     style: 'mapbox://styles/mapbox/satellite-v9',
     controls: true
   },
