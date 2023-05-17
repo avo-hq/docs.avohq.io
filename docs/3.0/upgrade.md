@@ -6,10 +6,10 @@ The 2.x to 3.0 Upgrade is a work in progress. We'll add more instructions here a
 
 ## Upgrade Avo packages
 
-I'll leave this snippet here so you can easily find it when you need to update all Avo packages.
+In order to update all Avo packages you should run the following command.
 
 ```bash
-bundle update avo avo_pro avo_advanced avo_dashboards avo_filters avo_menu avo_upgrade
+bin/rails avo:update
 ```
 
 ## Upgrade from 2.x to 3.0.pre.1
