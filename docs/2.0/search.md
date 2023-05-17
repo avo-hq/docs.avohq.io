@@ -11,6 +11,10 @@ Finding what you're looking for fast is essential. That's why Avo leverages [ran
 While we show you examples using `ransack`, you can use other search engines, so `ransack` is not mandatory.
 :::
 
+:::warning
+If you're using the [authorization feature](./authorization), ensure [you authorize the action](#authorize-search).
+:::
+
 First, you need to add `ransack` as a dependency to your app (breaking change from Avo v1.10).
 
 ```ruby
