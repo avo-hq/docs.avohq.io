@@ -8,6 +8,16 @@ feedbackId: 836
 
 On the main navbar next to the logo, Avo generates a link to the homepage of your app. The label for the link is usually computed from your Rails app name. You can customize that however, you want using `config.app_name = 'Avocadelicious'`.
 
+<VersionReq version="2.32.6" />
+
+Since Avo 2.32.6 the `app_name` option is callable using a block. This is useful if you want to reference a `I18n.t` method or something more dynamic.
+
+```ruby
+Avo.configure do |config|
+  config.app_name = -> { I18n.t "app_name" }
+end
+```
+
 ## Timezone and Currency
 
 Your data-rich app might have a few fields where you reference `date`, `datetime`, and `currency` fields. You may customize the global timezone and currency with `config.timezone = 'UTC'` and `config.currency = 'USD'` config options.
