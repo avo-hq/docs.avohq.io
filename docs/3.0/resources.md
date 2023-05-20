@@ -428,7 +428,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-This is the quick way to set the label, and it will be displayed **only on the `Index` page**. If you want to show the message on all views, use the block method.
+This is the quick way to set the label, and it will be displayed **on all pages**. If you want to restrict the message to custom views, use a lambda function.
 
 ### Set the description as a block
 
