@@ -19,7 +19,7 @@ Since version <Version version="2.13" /> you may use the [customizable controls]
 
 ## Overview
 
-You generate one running `bin/rails generate avo:action toggle_active`, creating an action configuration file.
+You generate one running `bin/rails generate avo:action toggle_inactive`, creating an action configuration file.
 
 ```ruby
 class ToggleInactive < Avo::BaseAction
@@ -39,7 +39,7 @@ class ToggleInactive < Avo::BaseAction
       end
 
       # Optionally, you may send a notification with the message to that user from inside the action
-      UserMailer.with(user: model).toggle_active(fields["message"]).deliver_later
+      UserMailer.with(user: model).toggle_inactive(fields["message"]).deliver_later
     end
 
     succeed 'Perfect!'
@@ -77,7 +77,7 @@ def handle(**args)
     end
 
     # Optionally, you may send a notification with the message to that user.
-    UserMailer.with(user: model).toggle_active(fields["message"]).deliver_later
+    UserMailer.with(user: model).toggle_inactive(fields["message"]).deliver_later
   end
 
   succeed 'Perfect!'
