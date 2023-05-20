@@ -139,7 +139,7 @@ When using computed fields or `belongs_to` associations, you can't set `sortable
 class UserResource < Avo::BaseResource
   field :is_writer,
     as: :text,
-    sortable: ->(query, direction) {
+    sortable: -> {
       # Order by something else completely, just to make a test case that clearly and reliably does what we want.
       query.order(id: direction)
     },
@@ -149,7 +149,7 @@ class UserResource < Avo::BaseResource
 end
 ```
 
-The block receives the query and the direction in which the sorting should be made and must return back a `query`.
+The block receives the `query` and the `direction` in which the sorting should be made and must return back a `query`.
 
 In the example of a `Post` that `has_many` `Comment`s, you might want to order the posts by which one received a comment the latest.
 
@@ -161,7 +161,7 @@ You can do that using this query.
 class PostResource < Avo::BaseResource
   field :last_commented_at,
     as: :date,
-    sortable: ->(query, direction) {
+    sortable: -> {
       query.includes(:comments).order("comments.created_at #{direction}")
     }
 end
