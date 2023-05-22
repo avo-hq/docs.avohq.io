@@ -17,7 +17,7 @@ To enable map view for a resource, you need to add the `map_view` class attribtu
 ```ruby
 class CityResource < Avo::BaseResource
   # ...
-  self.map = {
+  self.map_view = {
     mapkick_options: {
       controls: true
     },
