@@ -161,7 +161,7 @@ const config = {
             // {text: "Grid view", link: "/3.0/grid-view"},
             {text: "Map view", link: "/3.0/map-view"},
             // {text: "Menu editor", link: "/3.0/menu-editor"},
-            // {text: "Search", link: "/3.0/search"},
+            {text: "Search", link: "/3.0/search"},
             // {text: "Actions", link: "/3.0/actions"},
             // {text: "Localization (I18n)", link: "/3.0/localization"},
             // {text: "Branding", link: "/3.0/branding"},
