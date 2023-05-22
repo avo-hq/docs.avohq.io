@@ -428,7 +428,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-This is the quick way to set the label, and it will be displayed **only on the `Index` page**. If you want to show the message on all views, use the block method.
+This is the quick way to set the label, and it will be displayed **on all pages**. If you want to restrict the message to custom views, use a lambda function.
 
 ### Set the description as a block
 
@@ -621,23 +621,19 @@ end
 <img :src="('/assets/img/filters/keep-filters-panel-open.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 :::
 
-<!-- ## Unscoped queries on `Index`
-
+## Unscoped queries on `Index`
 You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.
-
 ```ruby{2}
 class Project < ApplicationRecord
   default_scope { order(name: :asc) }
 end
 ```
 
-You can unscope the query using the `unscoped_queries_on_index` (defaults to `false`) class variable on that resource.
+You can unscope the query using the `index_query` method on that resource.
 
 ```ruby{3}
 class Avo::Resources::Project < Avo::BaseResource
   self.title = :name
-  self.unscoped_queries_on_index = true
-
-  # fields go here
+  self.index_query = -> { query.unscoped }
 end
-``` -->
+```
