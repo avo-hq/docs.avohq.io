@@ -78,9 +78,9 @@ You may configure that to be something more complex using the `card -> title` op
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
-    card: {
-      title: -> { "[#{record.id}]#{record.name}" }
-    }
+    card: -> {{
+      title: "[#{record.id}]#{record.name}"
+    }}
   }
 end
 ```
@@ -92,16 +92,14 @@ end
 
 You might want to show more than just the title in the search result. Avo provides the `card -> description` option to add some more information.
 
-```ruby{6-8}
+```ruby{6}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
-    card: {
-      title: -> { "[#{record.id}]#{record.name}" },
-      description: -> {
-        ActionView::Base.full_sanitizer.sanitize(record.body).truncate 130
-      }
-    }
+    card:  -> {{
+      title: "[#{record.id}]#{record.name}",
+      description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130)
+    }}
   }
 end
 ```
@@ -112,22 +110,18 @@ end
 
 You may improve the results listing by adding an image to each search result. You do that by using the `card -> image` attribute. This attribute should be a hash and have 2 configurable attributes `url`, that is an url to a image and `format` that accepts three options `:square`, `:rounded` or `:circle`. That influences the final roundness of the image.
 
-```ruby{9-14}
+```ruby{7-10}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
-    card: {
-      title: -> { "[#{record.id}]#{record.name}" },
-      description: -> {
-        ActionView::Base.full_sanitizer.sanitize(record.body).truncate 130
-      },
+    card: -> {{
+      title: "[#{record.id}]#{record.name}",
+      description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130),
       image: {
-        url: -> {
-          main_app.url_for(record.cover_photo) if record.cover_photo.attached?
-        },
+        url: main_app.url_for(record.cover_photo),
         format: :rounded
       }
-    }
+    }}
   }
 end
 ```
@@ -183,9 +177,9 @@ You might have a resource that you'd like to be able to perform a search on when
 class Avo::Resources::TeamMembership < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) },
-    card: {
-      description: -> { record.level },
-    },
+    card: -> {{
+      description: record.level,
+    }},
     hide_on_global: true
   }
 end
