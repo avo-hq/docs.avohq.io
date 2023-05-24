@@ -78,7 +78,7 @@ You may configure that to be something more complex using the `card -> title` op
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
-    card: -> {{
+    item: -> {{
       title: "[#{record.id}]#{record.name}"
     }}
   }
@@ -96,7 +96,7 @@ You might want to show more than just the title in the search result. Avo provid
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
-    card:  -> {{
+    item:  -> {{
       title: "[#{record.id}]#{record.name}",
       description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130)
     }}
@@ -114,7 +114,7 @@ You may improve the results listing by adding an image to each search result. Yo
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
-    card: -> {{
+    item: -> {{
       title: "[#{record.id}]#{record.name}",
       description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130),
       image: {
@@ -177,7 +177,7 @@ You might have a resource that you'd like to be able to perform a search on when
 class Avo::Resources::TeamMembership < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) },
-    card: -> {{
+    item: -> {{
       description: record.level,
     }},
     hide_on_global: true
