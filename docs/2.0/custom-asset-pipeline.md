@@ -53,6 +53,24 @@ Now, instead of running `bin/rails server`, you can run that Procfile with `bin/
 You mileage may vary when running these tasks depending with your setup. The gist is that you need to run `yarn avo:tailwindcss` on deploy0time to compile the css file and `yarn avo:tailwindcss --watch` to watch for changes in development.
 :::
 
+:::warning Add rake task to compile the assets in production
+This setup works perfectly on your local environment and needs to be run on production too. Add this rake task to have them compiled and ready in production.
+
+```ruby
+# lib/tasks/avo_assets.rake
+namespace :avo do
+  desc "Build Avo tailwind assets"
+  task build_avo_tailwind: [:environment] do
+    puts "Building Avo tailwind assets..."
+    `yarn` # this might be optional if you run it before
+    `yarn avo:tailwindcss`
+  end
+end
+
+Rake::Task["assets:precompile"].enhance(["avo:build_avo_tailwind"])
+```
+:::
+
 Inside `app/assets/stylesheets` you'll have a new `avo.tailwind.css` file that's waiting for you to customize. The default `tailwind.config.js` file should have the proper paths set up for purging and should be ready to go.
 
 ```css
