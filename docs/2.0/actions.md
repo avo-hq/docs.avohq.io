@@ -270,6 +270,9 @@ class KeepModalOpenAction < Avo::BaseAction
     succeed "All good ✌️"
   end
 end
+```
+:::
+
 ## Customization
 
 ```ruby{2-6}
@@ -280,7 +283,6 @@ class TogglePublished < Avo::BaseAction
   self.cancel_button_label = 'Not yet'
   self.no_confirmation = true
 ```
-:::
 
 ### Customize the message
 
