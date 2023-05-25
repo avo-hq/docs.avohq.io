@@ -108,7 +108,7 @@ end
 
 ### Image <LicenseReq license="pro" />
 
-You may improve the results listing by adding an image to each search result. You do that by using the `card -> image` attribute. This attribute should be a hash and have 2 configurable attributes `url`, that is an url to a image and `format` that accepts three options `:square`, `:rounded` or `:circle`. That influences the final roundness of the image.
+You may improve the results listing by adding an image to each search result. You do that by using the `card -> image_url` attribute that is an url to a image and `card -> image_format` attribute that accepts three options `:square`, `:rounded` or `:circle`. That influences the final roundness of the image.
 
 ```ruby{7-10}
 class Avo::Resources::Post < Avo::BaseResource
@@ -117,9 +117,8 @@ class Avo::Resources::Post < Avo::BaseResource
     item: -> {{
       title: "[#{record.id}]#{record.name}",
       description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130),
-      image: {
-        url: main_app.url_for(record.cover_photo),
-        format: :rounded
+      image_url: main_app.url_for(record.cover_photo),
+      image_format: :rounded
       }
     }}
   }
