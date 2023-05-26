@@ -71,6 +71,16 @@ end
 If you don't have the `assets:precompile` step in your deployment process, please adjust that with a different step you might have like `db:migrate`.
 :::
 
+## Mount Avo to a subdomain
+
+You can use the regular `host` constraint in the `routes.rb` file.
+
+```ruby
+constraint host: 'avo' do
+  mount Avo::Engine, at: '/'
+end
+```
+
 ## Next steps
 
 Please follow the next steps to ensure your app is secured and you have access to all the features you need.
