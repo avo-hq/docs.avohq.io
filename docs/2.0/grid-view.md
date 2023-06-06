@@ -20,7 +20,7 @@ class PostResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/view-switcher.jpg')" alt="Avo view switcher" class="border mb-4" />
+<img :src="('/assets/img/view-switcher.png')" alt="Avo view switcher" class="border mb-4" />
 
 ## Make default view
 
