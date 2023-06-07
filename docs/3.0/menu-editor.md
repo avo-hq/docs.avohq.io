@@ -370,3 +370,32 @@ end
 ```
 
 <img :src="('/assets/img/menu-editor/profile-menu.png')" alt="Avo profile menu" class="border mb-4" />
+
+## Forms in profile menu
+
+It's common to have forms that `POST` to a path to do sign ut a user. For this scenario we added the `method` and `params` option to the profile item `link_to`, so if you have a custom sign out path you can do things like this.
+
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.profile_menu = -> {
+    link_to "Sign out", path: main_app.destroy_user_session_path, icon: "user-circle", method: :post, params: {custom_param: :here}
+  }
+end
+```
+
+## Custom content in the profile menu
+
+You might, however, wnat to add a very custom form or more items to the profile menu. For that we prepared the `_profile_menu_extra.html.erb` partial for you.
+
+```bash
+bin/rails generate avo:eject :profile_menu_extra
+```
+
+This will eject the partial and you can add whatever custom content you might need.
+
+```erb
+<%# Example link below %>
+<%#= render Avo::ProfileItemComponent.new label: 'Profile', path: '/profile', icon: 'user-circle' %>
+```
