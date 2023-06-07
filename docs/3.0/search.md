@@ -113,13 +113,34 @@ end
 <img :src="('/assets/img/search/search_description.jpg')" alt="Search description" class="border mb-4" />
 :::
 
-:::option `image`
+:::option `image_url`
 
 <LicenseReq license="pro" />
 
-You may improve the results listing by adding an image to each search result. You do that by using the `card -> image_url` attribute that is an url to a image and `card -> image_format` attribute that accepts three options `:square`, `:rounded` or `:circle`. That influences the final roundness of the image.
+You may improve the results listing by adding an image to each search result. You do that by using the `card -> image_url` attribute that is an url to a image.
 
-```ruby{8-9}
+```ruby{8}
+class Avo::Resources::Post < Avo::BaseResource
+  self.search = {
+    query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
+    item: -> do
+      {
+        title: "[#{record.id}]#{record.name}",
+        description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130),
+        image_url: main_app.url_for(record.cover_photo),
+      }
+    end
+  }
+end
+```
+
+:::option `image_format`
+
+<LicenseReq license="pro" />
+
+The image you add to a search result can have a different format based on what you set on the `card -> image_format` attribute. You may choose between three options: `:square`, `:rounded` or `:circle`.
+
+```ruby{9}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
@@ -167,6 +188,25 @@ end
 ```
 :::
 
+:::option `hide_on_global`
+
+You might have a resource that you'd like to be able to perform a search on when on its `Index` page but not have it present in the global search. You can hide it using `hide_on_global: true`.
+
+```ruby{7}
+class Avo::Resources::TeamMembership < Avo::BaseResource
+  self.search = {
+    query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) },
+    item: -> do
+      {
+        description: record.level,
+      }
+    end,
+    hide_on_global: true
+  }
+end
+```
+:::
+
 ## Resource search
 
 When a resource has the `search` attribute with a valid configuration, a new search input will be displayed on the `Index` view.
@@ -191,24 +231,6 @@ If you, by any chance, want to hide the global search, you can do so using this 
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.disabled_features = [:global_search]
-end
-```
-
-## Hide a resource from the global search
-
-You might have a resource that you'd like to be able to perform a search on when on its `Index` page but not have it present in the global search. You can hide it using `hide_on_global: true`.
-
-```ruby{7}
-class Avo::Resources::TeamMembership < Avo::BaseResource
-  self.search = {
-    query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) },
-    item: -> do
-      {
-        description: record.level,
-      }
-    end,
-    hide_on_global: true
-  }
 end
 ```
 
