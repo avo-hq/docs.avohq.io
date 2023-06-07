@@ -382,7 +382,7 @@ Resources have a few options available for customization.
 
 :::option `self.title`
 
-The resource possesses an intelligent method for retrieving the title. It attempts to invoke a series of record methods in the following order: `name`, `title`, `label`, and `id`.
+Each Avo resource will try to figure out what the title of a record is. It will try the following attributes in order `name`, `title`, `label`, and fallback to the `id`.
 
 You can change it to something more specific, like the model's `first_name` or `slug` attributes.
 
@@ -410,9 +410,9 @@ class Comment < ApplicationRecord
 end
 ```
 
-### Lambda title
+### `title` as a block
 
-If you prefer not to utilize any record methods and instead compute the resource's title directly within the resource itself, you can accomplish this by assigning a lambda function to the `title` class attribute. You'll have access to `resource` and `record`.
+If you prefer not to use any record methods and instead compute the resource's title directly within the resource itself, you can accomplish this by assigning a lambda function to the `title` class attribute. You'll have access to `resource` and `record`.
 
 ```ruby{2}
 # app/avo/resources/comment.rb
