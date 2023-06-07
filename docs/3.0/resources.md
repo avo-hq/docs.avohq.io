@@ -382,11 +382,13 @@ Resources have a few options available for customization.
 
 :::option `self.title`
 
-Initially, the `title` attribute is set to `:id`, so the model's `id` attribute will be used to display the resource in search results and belongs select fields. You usually change it to something more representative, like the model's `title`, `name` or `label` attributes.
+Each Avo resource will try to figure out what the title of a record is. It will try the following attributes in order `name`, `title`, `label`, and fallback to the `id`.
+
+You can change it to something more specific, like the model's `first_name` or `slug` attributes.
 
 ```ruby
 class Avo::Resources::Post < Avo::BaseResource
-  self.title = :name # it will now reference @post.name to show you the title
+  self.title = :slug # it will now reference @post.slug to show the title
 end
 ```
 
@@ -398,8 +400,6 @@ If you don't have a `title`, `name`, or `label` attribute in the database, you c
 # app/avo/resources/comment.rb
 class Avo::Resources::Comment < Avo::BaseResource
   self.title = :tiny_name
-
-  # fieldd go here
 end
 
 # app/models/comment.rb
@@ -409,6 +409,18 @@ class Comment < ApplicationRecord
   end
 end
 ```
+
+### `title` as a block
+
+If you prefer not to use any record methods and instead compute the resource's title directly within the resource itself, you can accomplish this by assigning a lambda function to the `title` class attribute. You'll have access to `resource` and `record`.
+
+```ruby{2}
+# app/avo/resources/comment.rb
+class Avo::Resources::Comment < Avo::BaseResource
+  self.title = -> {
+    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 30
+  }
+end
 :::
 
 :::option `self.description`
