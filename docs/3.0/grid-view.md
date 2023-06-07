@@ -3,77 +3,79 @@
 <br />
 <img :src="('/assets/img/grid-view.jpg')" alt="Avo grid view" class="border mb-4" />
 
-Some resources are best displayed in a grid view. We can do that with Avo using a `cover`, a `title`, and a `body`.
+Some resources are best displayed in a grid view. We can do that with Avo using a `cover_url`, a `title`, and a `body`.
 
 ## Enable grid view
 
-To enable grid view for a resource, you need to add the `grid` block. That will add the view switcher to the **Index** view.
+To enable grid view for a resource, you need to configure the `grid_view` class attribute on the resource. That will add the grid view to the view switcher on the <Index /> view.
 
-```ruby
-class PostResource < Avo::BaseResource
-  # ...
-  grid do
-    cover :cover_photo, as: :file, link_to_resource: true
-    title :name, as: :text, required: true, link_to_resource: true
-    body :excerpt, as: :text
-  end
+```ruby{2-13}
+class Avo::Resources::Post < Avo::BaseResource
+  self.grid_view = {
+    card: -> do
+      {
+        cover_url:
+          if record.cover_photo.attached?
+            main_app.url_for(record.cover_photo.url)
+          end,
+        title: record.name,
+        body: record.truncated_body
+      }
+    end
+  }
 end
 ```
 
-<img :src="('/assets/img/view-switcher.jpg')" alt="Avo view switcher" class="border mb-4" />
+<img :src="('/assets/img/view-switcher.png')" alt="Avo view switcher" class="border mb-4" />
 
 ## Make default view
 
 To make the grid the default way of viewing a resource **Index**, we have to use the `default_view_type` class attribute.
 
-```ruby{7}
-class PostResource < Avo::BaseResource
+```ruby{2}
+class Avo::Resources::Post < Avo::BaseResource
   self.default_view_type = :grid
 end
 ```
 
-## Fields configuration
+## Custom style
 
-Besides the regular `field` methods, you should add a new `grid` block configuring the grid fields. The main difference is that the fields are not declared using the `field` class method but three new ones `cover`, `title`, and `body`
+You may want to customize the card a little bit. That's possible using the `html` option.
 
-
-```ruby{9-13}
-class PostResource < Avo::BaseResource
-  self.default_view_type = :grid
-
-  field :id, as: :id
-  field :name, as: :text, required: true
-  field :body, as: :textarea
-  field :cover_photo, as: :file, is_image: true
-
-  grid do
-    cover :cover_photo, as: :file, is_image: true
-    title :name, as: :text
-    body :body, as: :textarea
-  end
+```ruby{13-30}
+class Avo::Resources::Post < Avo::BaseResource
+  self.grid_view = {
+    card: -> do
+      {
+        cover_url:
+          if record.cover_photo.attached?
+            main_app.url_for(record.cover_photo.url)
+          end,
+        title: record.name,
+        body: record.truncated_body
+      }
+    end,
+    html: -> do
+      {
+        title: {
+          index: {
+            wrapper: {
+              classes: "bg-blue-50 rounded-md p-2"
+            }
+          }
+        },
+        body: {
+          index: {
+            wrapper: {
+              classes: "bg-gray-50 rounded-md p-1"
+            }
+          }
+        }
+      }
+    end
+  }
 end
 ```
 
-That will render the `Post` resource index view as a **Grid view** using the selected fields. Avo will also display a button to toggle between the view types `:grid` and `:table`.
+<img :src="('/assets/img/grid-html-option.png')" alt="Grid html option" class="border mb-4" />
 
-These fields take the same options as those in the `fields` method, so you can configure them however you want.
-
-For example, in the **Grid view**, you might want to truncate the `:body` to a certain length and use an external image for the cover you compute on the fly. And also, render the `:cover` and the `:title` fields as links to that resource with `link_to_resource: true`.
-
-```ruby
-grid do
-  cover :logo, as: :external_image, link_to_resource: true do
-    if record.url.present?
-      "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
-    end
-  end
-  title :name, as: :text, link_to_resource: true
-  body :excerpt, as: :text do
-    begin
-      ActionView::Base.full_sanitizer.sanitize(record.body).truncate 130
-    rescue => exception
-      ''
-    end
-  end
-end
-```
