@@ -613,8 +613,10 @@ class Avo::Resources::Course < Avo::BaseResource
     field :name, as: :text
   end
 
-  filter Avo::Filters::CourseCountryFilter
-  filter Avo::Filters::CourseCityFilter
+  def filters
+    filter Avo::Filters::CourseCountryFilter
+    filter Avo::Filters::CourseCityFilter
+  end
 end
 ```
 
