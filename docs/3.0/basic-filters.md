@@ -72,9 +72,9 @@ More on this in the [React to filters guide](#react-to-filters)
 
 ## Register filters
 
-In order to use a filter you must register it on a `Resource` using the `filter` method.
+In order to use a filter you must register it on a `Resource` using the `filter` method inside the `filters` method.
 
-```ruby{8}
+```ruby{9}
 class Avo::Resources::Post < Avo::BaseResource
   self.title = :name
 
@@ -82,7 +82,9 @@ class Avo::Resources::Post < Avo::BaseResource
     field :id, as: :id
   end
 
-  filter Avo::Filters::PublishedFilter
+  def filters
+    filter Avo::Filters::PublishedFilter
+  end
 end
 ```
 
@@ -399,11 +401,13 @@ end
 
 We will create two filters—one for choosing countries and another for cities.
 
-```ruby{3-4}
+```ruby{4-5}
 # app/avo/resources/course.rb
 class Avo::Resources::Course < Avo::BaseResource
-  filter Avo::Filters::CourseCountryFilter
-  filter Avo::Filters::CourseCityFilter
+  def filters
+    filter Avo::Filters::CourseCountryFilter
+    filter Avo::Filters::CourseCityFilter
+  end
 end
 ```
 
@@ -653,7 +657,7 @@ More on this on the [`keep_filters_panel_open` resource option](./resources#self
 
 Filters can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
 
-```ruby{11-13}
+```ruby{12-14}
 class Avo::Resources::Fish < Avo::BaseResource
   self.title = :name
 
@@ -664,9 +668,11 @@ class Avo::Resources::Fish < Avo::BaseResource
     field :type, as: :text, hide_on: :forms
   end
 
-  filter Avo::Filters::NameFilter, arguments: {
-    case_insensitive: true
-  }
+  def filters
+    filter Avo::Filters::NameFilter, arguments: {
+      case_insensitive: true
+    }
+  end
 end
 ```
 
