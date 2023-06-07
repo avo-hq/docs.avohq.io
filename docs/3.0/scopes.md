@@ -33,15 +33,14 @@ end
 
 ## Registering scopes
 
-Because scopes are re-utilizable, you must manually add that scope to a resource using the `scopes` method.
+Because scopes are re-utilizable, you must manually add that scope to a resource using the `scope` method inside the `scopes` method.
 
-:::warning
-The `scopes` method will be refactored before we launch the stable version.
-:::
 
 ```ruby
 class Avo::Resources::User < Avo::BaseResource
-  scopes Avo::Scopes::Admins
+  def scopes
+    scope Avo::Scopes::Admins
+  end
 end
 ```
 
