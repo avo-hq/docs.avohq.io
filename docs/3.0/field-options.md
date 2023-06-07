@@ -49,7 +49,7 @@ class CommentResource < Avo::BaseResource
   field :id, as: :id
   if context[:current_user].admin?
     field :body, as: :textarea
-    field :tiny_name, as: :text, only_on: :index, as_description: true
+    field :tiny_name, as: :text, only_on: :index
   end
 end
 
@@ -58,7 +58,7 @@ class CommentResource < Avo::BaseResource
   field :id, as: :id
   with_options visible: -> (resource:) { context[:current_user].admin?} do
     field :body, as: :textarea
-    field :tiny_name, as: :text, only_on: :index, as_description: true
+    field :tiny_name, as: :text, only_on: :index
   end
 end
 ```

@@ -25,7 +25,7 @@ Now, you'd like to use that helper inside one of you computed fields.
 
 ```ruby
 class PostResource < Avo::BaseResource
-  field :excerpt, as: :text, hide_on: :all, as_description: true do |model|
+  field :excerpt, as: :text do |model|
     extract_excerpt model.body
   end
 end
