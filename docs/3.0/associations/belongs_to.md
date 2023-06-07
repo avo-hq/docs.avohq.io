@@ -84,7 +84,7 @@ class CommentResource < Avo::BaseResource
 
   field :id, as: :id
   field :body, as: :textarea
-  field :excerpt, as: :text, show_on: :index, as_description: true do
+  field :excerpt, as: :text, show_on: :index do
     ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
   rescue
     ""
@@ -104,7 +104,7 @@ class CommentResource < Avo::BaseResource
 
   field :id, as: :id
   field :body, as: :textarea
-  field :excerpt, as: :text, show_on: :index, as_description: true do
+  field :excerpt, as: :text, show_on: :index do
     ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
   rescue
     ""
