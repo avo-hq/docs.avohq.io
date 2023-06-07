@@ -24,7 +24,7 @@ On the <Show /> view the default configuration is `back_button`, `delete_button`
 To start customizing the controls, add a `show_controls` block and start adding the desired controls.
 
 ```ruby
-class FishResource < Avo::BaseResource
+class Avo::Resources::Fish < Avo::BaseResource
   self.show_controls = -> do
     back_button label: "", title: "Go back now"
     link_to "Fish.com", "https://fish.com", icon: "heroicons/outline/academic-cap", target: :_blank
@@ -36,7 +36,7 @@ class FishResource < Avo::BaseResource
     delete_button label: "", title: "something"
     detach_button label: "", title: "something"
     actions_list label: "Runnables", exclude: [ReleaseFish], style: :primary, color: :slate
-    action ReleaseFish, style: :primary, color: :fuchsia, icon: "heroicons/outline/globe"
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, icon: "heroicons/outline/globe"
     edit_button label: ""
   end
 end
@@ -51,7 +51,7 @@ On the <Edit /> view the default configuration is `back_button`, `delete_button`
 To start customizing the controls, add a `editcontrols` block and start adding the desired controls.
 
 ```ruby
-class FishResource < Avo::BaseResource
+class Avo::Resources::Fish < Avo::BaseResource
   self.edit_controls = -> do
     back_button label: "", title: "Go back now"
     link_to "Fish.com", "https://fish.com", icon: "heroicons/outline/academic-cap", target: :_blank
@@ -73,7 +73,7 @@ On the <Index /> view the default configuration contains the `actions_list`, `at
 To start customizing the controls, add a `index_controls` block and start adding the desired controls.
 
 ```ruby
-class FishResource < Avo::BaseResource
+class Avo::Resources::Fish < Avo::BaseResource
   self.index_controls = -> do
     link_to "Fish.com", "https://fish.com", icon: "heroicons/outline/academic-cap", target: :_blank
     actions_list exclude: [Avo::Actions::DummyAction], style: :primary, color: :slate, label: "Runnables" if Fish.count > 0
@@ -95,7 +95,7 @@ To start customizing the controls, add a `row_controls` block and start adding t
 The controls you customize here will be displayed on the grid view too.
 
 ```ruby
-class FishResource < Avo::BaseResource
+class Avo::Resources::Fish < Avo::BaseResource
   self.row_controls = -> do
     action Avo::Actions::ReleaseFish, label: "Release #{record.name}", style: :primary, color: :blue,
       icon: "heroicons/outline/hand-raised" unless params[:view_type] == "grid"
@@ -191,9 +191,9 @@ Renders a button that triggers an action. You must provide it an [Action](./acti
 #### Example
 
 ```ruby
-action DisableAccount
-action ExportSelection, style: :text
-action PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
+action Avo::Actions::DisableAccount
+action Avo::Actions::ExportSelection, style: :text
+action Avo::Actions::PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 ```
 :::
 
@@ -203,16 +203,18 @@ When you use the `action` helper in any customizable block it will act only as a
 You must manually register it with the `action` declaration.
 
 ```ruby{6,10}
-class FishResource < Avo::BaseResource
+class Avo::Resources::Fish < Avo::BaseResource
   self.title = :name
 
   self.show_controls = -> do
     # In order to use it here
-    action ReleaseFish, style: :primary, color: :fuchsia
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia
   end
 
   # 👇 Also declare it here 👇
-  action ReleaseFish, arguments: { both_actions: "Will use them" }
+  def actions
+    action Avo::Actions::ReleaseFish, arguments: { both_actions: "Will use them" }
+  end
 end
 ```
 :::
@@ -272,13 +274,13 @@ Any string value.
 Actions have the `visible` block where you can control the visibility of an action. In the context of `show_controls` that block is not taken into account, but yiou can use regular `if`/`else` statements because the action declaration is wrapped in a block.
 
 ```ruby{6-8}
-class FishResource < Avo::BaseResource
+class Avo::Resources::Fish < Avo::BaseResource
   self.show_controls = -> do
     back_button label: "", title: "Go back now"
 
     # visibility conditional
     if record.something?
-      action ReleaseFish, style: :primary, color: :fuchsia, icon: "heroicons/outline/globe"
+      action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, icon: "heroicons/outline/globe"
     end
 
     edit_button label: ""
