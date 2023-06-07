@@ -9,7 +9,7 @@ Avo actions allow you to perform specific tasks on one or more of your records.
 
 For example, you might want to mark a user as active/inactive and optionally send a message that may be customized by the person that wants to run the action.
 
-Once you attach an action to a resource using the `action` method, it will appear in the **Actions** dropdown. By default, actions appear on the `Index`, `Show`, and `Edit` views. Versions previous to 2.9 would only display the actions on the `Index` and `Show` views.
+Once you attach an action to a resource using the `action` method inside the `actions` method, it will appear in the **Actions** dropdown. By default, actions appear on the `Index`, `Show`, and `Edit` views. Versions previous to 2.9 would only display the actions on the `Index` and `Show` views.
 
 ![Actions dropdown](/assets/img/actions/actions-dropdown.gif)
 
@@ -22,24 +22,26 @@ Since version <Version version="2.13" /> you may use the [customizable controls]
 You generate one running `bin/rails generate avo:action toggle_active`, creating an action configuration file.
 
 ```ruby
-class ToggleInactive < Avo::BaseAction
+class Avo::Actions::ToggleActive < Avo::BaseAction
   self.name = 'Toggle inactive'
 
-  field :notify_user, as: :boolean, default: true
-  field :message, as: :text, default: 'Your account has been marked as inactive.'
+  def fields
+    field :notify_user, as: :boolean, default: true
+    field :message, as: :text, default: 'Your account has been marked as inactive.'
+  end
 
   def handle(**args)
-    models, fields, current_user, resource = args.values_at(:models, :fields, :current_user, :resource)
+    records, fields, current_user, resource = args.values_at(:records, :fields, :current_user, :resource)
 
-    models.each do |model|
-      if model.active
-        model.update active: false
+    records.each do |record|
+      if record.active
+        record.update active: false
       else
-        model.update active: true
+        record.update active: true
       end
 
       # Optionally, you may send a notification with the message to that user from inside the action
-      UserMailer.with(user: model).toggle_active(fields["message"]).deliver_later
+      UserMailer.with(user: record).toggle_active(fields["message"]).deliver_later
     end
 
     succeed 'Perfect!'
@@ -50,8 +52,10 @@ end
 You may add fields to the action just as you do it in a resource. Adding fields is optional. You may have actions that don't have any fields attached.
 
 ```ruby
-field :notify_user, as: :boolean
-field :message, as: :textarea, default: 'Your account has been marked as inactive.'
+def fields
+  field :notify_user, as: :boolean
+  field :message, as: :textarea, default: 'Your account has been marked as inactive.'
+end
 ```
 
 :::warning Files authorization
@@ -63,21 +67,21 @@ More about this on the [authorization page](./authorization#attachments).
 
 ![Actions](/assets/img/actions/action-fields.jpg)
 
-The `handle` method is where the magic happens. That is where you put your action logic. In this method, you will have access to the selected `models` (if there's only one, it will be automatically wrapped in an array) and the values passed to the `fields`.
+The `handle` method is where the magic happens. That is where you put your action logic. In this method, you will have access to the selected `records` (if there's only one, it will be automatically wrapped in an array) and the values passed to the `fields`.
 
 ```ruby
 def handle(**args)
-  models, fields = args.values_at(:models, :fields)
+  records, fields = args.values_at(:records, :fields)
 
-  models.each do |model|
-    if model.active
-      model.update active: false
+  records.each do |record|
+    if record.active
+      record.update active: false
     else
-      model.update active: true
+      record.update active: true
     end
 
     # Optionally, you may send a notification with the message to that user.
-    UserMailer.with(user: model).toggle_active(fields["message"]).deliver_later
+    UserMailer.with(user: record).toggle_active(fields["message"]).deliver_later
   end
 
   succeed 'Perfect!'
@@ -86,17 +90,19 @@ end
 
 ## Registering actions
 
-To add an action to one of your resources, you need to declare it on the resource using the `action` method.
+To add an action to one of your resources, you need to declare it inside the `actions` method on the resource using the `action` method.
 
-```ruby{8}
-class UserResource < Avo::BaseResource
+```ruby{9}
+class Avo::Resources::User < Avo::BaseResource
   self.title = :name
-  self.search = [:id, :first_name, :last_name]
 
-  field :id, as: :id
-  # other fields
+  def fields
+    field :id, as: :id
+  end
 
-  action ToggleActive
+  def actions
+    action Avo::Actions::ToggleActive
+  end
 end
 ```
 
@@ -142,13 +148,13 @@ After you notify the user about what happened through a message, you may want to
 
 ```ruby{14}
 def handle(**args)
-  models = args[:models]
+  records = args[:records]
 
-  models.each do |model|
-    if model.admin?
+  records.each do |record|
+    if record.admin?
       error "Can't mark inactive! The user is an admin."
     else
-      model.update active: false
+      record.update active: false
 
       succeed "Done! User marked as inactive!"
     end
@@ -166,9 +172,9 @@ When you use `reload`, a full-page reload will be triggered.
 
 ```ruby{9}
 def handle(**args)
-  models = args[:models]
+  records = args[:records]
 
-  models.each do |project|
+  records.each do |project|
     project.update active: false
   end
 
@@ -184,9 +190,9 @@ end
 
 ```ruby{9}
 def handle(**args)
-  models = args[:models]
+  records = args[:records]
 
-  models.each do |project|
+  records.each do |project|
     project.update active: false
   end
 
@@ -206,18 +212,18 @@ If you find another way, please let us know 😅.
 
 ::: code-group
 
-```ruby{3,19} [app/avo/actions/download_file.rb]
-class DownloadFile < Avo::BaseAction
+```ruby{3,18} [app/avo/actions/download_file.rb]
+class Avo::Actions::DownloadFile < Avo::BaseAction
   self.name = "Download file"
   self.may_download_file = true
 
   def handle(**args)
-    models = args[:models]
+    records = args[:records]
 
     filename = "projects.csv"
     report_data = []
 
-    models.each do |project|
+    records.each do |project|
       report_data << project.generate_report_data
     end
 
@@ -231,28 +237,33 @@ end
 ```
 
 ```ruby{5} [app/avo/resources/project_resource.rb]
-class ProjectResource < Avo::BaseResource
+class Avo::Resources::Project < Avo::BaseResource
+  def fields
+    # fields here
+  end
 
-  # fields here
-
-  action DownloadFile
+  def actions
+    action Avo::Actions::DownloadFile
+  end
 end
 ```
 :::
 
 :::option `keep_modal_open`
 
-There might be situations where you want to run an action and if it fails, respond back to the user with some feedback but still keep it open and the inputs filled in.
+There might be situations where you want to run an action and if it fails, respond back to the user with some feedback but still keep it open with the inputs filled in.
 
 `keep_modal_open` will tell Avo to keep the modal open.
 
 ```ruby
-class KeepModalOpenAction < Avo::BaseAction
+class Avo::Actions::KeepModalOpenAction < Avo::BaseAction
   self.name = "Keep Modal Open"
   self.standalone = true
 
-  field :name, as: :text
-  field :birthday, as: :date
+  def fields
+    field :name, as: :text
+    field :birthday, as: :date
+  end
 
   def handle(**args)
     begin
@@ -266,15 +277,18 @@ class KeepModalOpenAction < Avo::BaseAction
     succeed "All good ✌️"
   end
 end
+```
+
 ## Customization
 
 ```ruby{2-6}
-class TogglePublished < Avo::BaseAction
+class Avo::Actions::TogglePublished < Avo::BaseAction
   self.name = 'Mark inactive'
   self.message = 'Are you sure you want to mark this user as inactive?'
   self.confirm_button_label = 'Mark inactive'
   self.cancel_button_label = 'Not yet'
   self.no_confirmation = true
+end
 ```
 :::
 
@@ -286,10 +300,10 @@ You may update the `self.message` class attribute to customize the message if th
 
 <VersionReq version="2.21" />
 
-Since version `2.21` you can pass a block to `self.message` where you have access to a baunch of variables.
+Since version `2.21` you can pass a block to `self.message` where you have access to a bunch of variables.
 
 ```ruby
-class ReleaseFish < Avo::BaseAction
+class Avo::Actions::ReleaseFish < Avo::BaseAction
   self.message = -> {
     # you have access to:
     # - params
@@ -321,7 +335,7 @@ You will be prompted by a confirmation modal when you run an action. If you don'
 You may need to run actions that are not necessarily tied to a model. Standalone actions help you do just that. Add `self.standalone` to an existing action or generate a new one using the `--standalone` option (`bin/rails generate avo:action global_action --standalone`).
 
 ```ruby{3}
-class DummyAction < Avo::BaseAction
+class Avo::Actions::DummyAction < Avo::BaseAction
   self.name = "Dummy action"
   self.standalone = true
 
@@ -340,7 +354,7 @@ end
 You may want to hide specific actions on screens, like a standalone action on the `Show` screen. You can do that using the `self.visible` attribute.
 
 ```ruby{4}
-class DummyAction < Avo::BaseAction
+class Avo::Actions::DummyAction < Avo::BaseAction
   self.name = "Dummy action"
   self.standalone = true
   self.visible = -> { view == :index }
@@ -392,25 +406,29 @@ More info [here](./authorization#act-on)
 
 Actions can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
 
-```ruby{9-11}
-class FishResource < Avo::BaseResource
+```ruby{12-14}
+class Avo::Resources::Fish < Avo::BaseResource
   self.title = :name
 
-  field :id, as: :id
-  field :name, as: :text
-  field :user, as: :belongs_to
-  field :type, as: :text, hide_on: :forms
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+    field :user, as: :belongs_to
+    field :type, as: :text, hide_on: :forms
+  end
 
-  action DummyAction, arguments: {
-    special_message: true
-  }
+  def actions
+    action DummyAction, arguments: {
+      special_message: true
+    }
+  end
 end
 ```
 
-Now, the arguments can be accessed inside `DummyAction` ***`handle` method*** and on the ***`visible` block***!
+Now, the arguments can be accessed inside `Avo::Actions::DummyAction` ***`handle` method*** and on the ***`visible` block***!
 
 ```ruby{4-6,8-14}
-class DummyAction < Avo::BaseAction
+class Avo::Actions::DummyAction < Avo::BaseAction
   self.name = "Dummy action"
   self.standalone = true
   self.visible = -> do
