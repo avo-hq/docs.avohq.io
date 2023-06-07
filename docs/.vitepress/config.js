@@ -160,6 +160,7 @@ const config = {
             // {text: "Customization options", link: "/3.0/customization"},
             {text: "Grid view", link: "/3.0/grid-view"},
             {text: "Map view", link: "/3.0/map-view"},
+            {text: "Custom view types", link: "/3.0/custom-view-types"},
             // {text: "Menu editor", link: "/3.0/menu-editor"},
             {text: "Search", link: "/3.0/search"},
             // {text: "Actions", link: "/3.0/actions"},

@@ -9,12 +9,12 @@ resources to be displayed to the map view they require a `coordinates` field, bu
 
 ## Enable map view
 
-To enable map view for a resource, you need to add the `map_view` class attribtue to a resource. That will add the view switcher to the <Index /> view.
+To enable map view for a resource, you need to add the `map_view` class attribute to a resource. That will add the view switcher to the <Index /> view.
 
 <img :src="('/assets/img/map-view.png')" alt="Avo view switcher" class="border mb-4" />
 
 ```ruby
-class CityResource < Avo::BaseResource
+class Avo::Resources::City < Avo::BaseResource
   # ...
   self.map = {
     mapkick_options: {
@@ -56,7 +56,7 @@ This is the configuration for the adjacent table. You can set the visibility to 
 To make the map view the default way of viewing a resource on <Index />, we have to use the `default_view_type` class attribute.
 
 ```ruby{7}
-class CityResource < Avo::BaseResource
+class Avo::Resources::City < Avo::BaseResource
   self.default_view_type = :map
 end
 ```
