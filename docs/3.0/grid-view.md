@@ -7,7 +7,7 @@ Some resources are best displayed in a grid view. We can do that with Avo using 
 
 ## Enable grid view
 
-To enable grid view for a resource, you need to configure the `grid_view` class attribute on the resource. That will add the grid view to the view switcher on the **Index** view.
+To enable grid view for a resource, you need to configure the `grid_view` class attribute on the resource. That will add the grid view to the view switcher on the <Index /> view.
 
 ```ruby{2-13}
 class Avo::Resources::Post < Avo::BaseResource
@@ -19,7 +19,7 @@ class Avo::Resources::Post < Avo::BaseResource
             main_app.url_for(record.cover_photo.url)
           end,
         title: record.name,
-        body: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(120)
+        body: record.truncated_body
       }
     end
   }
@@ -52,7 +52,7 @@ class Avo::Resources::Post < Avo::BaseResource
             main_app.url_for(record.cover_photo.url)
           end,
         title: record.name,
-        body: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(120)
+        body: record.truncated_body
       }
     end,
     html: -> do
