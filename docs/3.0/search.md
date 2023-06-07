@@ -66,7 +66,7 @@ Avo.configure do |config|
 
 ## Configure the search result
 
-### Title
+:::option `title`
 
 By default, the search results will be displayed as text. By default search title will be the [resource title](./resources.html#self_title).
 
@@ -74,13 +74,13 @@ By default, the search results will be displayed as text. By default search titl
 
 You may configure that to be something more complex using the `card -> title` option. That will display it as the title of the search result.
 
-```ruby{5}
+```ruby{6}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
     item: -> do
       {
-        title: "[#{record.id}]#{record.name}"
+        title: "[#{record.id}]#{record.name}",
       }
     end
   }
@@ -88,22 +88,22 @@ end
 ```
 
 <img :src="('/assets/img/search/search_label.jpg')" alt="Search label" class="border mb-4" />
+:::
 
-
-### Description 
+:::option `description`
 
 <LicenseReq license="pro" />
 
 You might want to show more than just the title in the search result. Avo provides the `card -> description` option to add some more information.
 
-```ruby{6}
+```ruby{7}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
     item:  -> do
       {
         title: "[#{record.id}]#{record.name}",
-        description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130)
+        description: record.truncated_body
       }
     end
   }
@@ -111,12 +111,15 @@ end
 ```
 
 <img :src="('/assets/img/search/search_description.jpg')" alt="Search description" class="border mb-4" />
+:::
 
-### Image <LicenseReq license="pro" />
+:::option `image`
+
+<LicenseReq license="pro" />
 
 You may improve the results listing by adding an image to each search result. You do that by using the `card -> image_url` attribute that is an url to a image and `card -> image_format` attribute that accepts three options `:square`, `:rounded` or `:circle`. That influences the final roundness of the image.
 
-```ruby{7-10}
+```ruby{8-9}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
@@ -134,7 +137,7 @@ end
 
 <img :src="('/assets/img/search/search_avatar.jpg')" alt="Search avatar" class="border mb-4" />
 
-### Header Help Text
+:::option `help`
 
 You may improve the results listing header by adding a piece of text highlighting the fields you are looking for or any other instruction for the user. You do that by using the `help` attribute. This attribute takes a string and appends it to the title of the resource.
 
@@ -148,6 +151,21 @@ class Avo::Resources::Post < Avo::BaseResource
   }
 end
 ```
+:::
+
+:::option `result_path`
+
+By default, when a user clicks on a search result, they will be redirected to that record, but you can change that using the `result_path` option.
+
+```ruby
+class Avo::Resources::City < Avo::BaseResource
+  self.search = {
+    query: -> { query.ransack(name_eq: params[:q]).result(distinct: false) },
+    result_path: -> { avo.resources_city_path record, custom: "yup" }
+  }
+end
+```
+:::
 
 ## Resource search
 
@@ -155,12 +173,13 @@ When a resource has the `search` attribute with a valid configuration, a new sea
 
 ![](/assets/img/search/resource_search.jpg)
 
-## Global search <LicenseReq license="pro" />
+## Global search
 
+<LicenseReq license="pro" />
 
 Avo also has a global search feature. It will search through all the resources that have the `search` attribute with a valid configuration.
 
-You open the global search input by clicking the trigger on the navbar or by using the <kbd>CMD</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on windows).
+You open the global search input by clicking the trigger on the navbar or by using the <kbd>CMD</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on Windows).
 
 <img :src="('/assets/img/search/global_search_trigger.jpg')" alt="Global search trigger" class="border mb-4" />
 
@@ -210,20 +229,6 @@ class Avo::Resources::Order < Avo::BaseResource
         query.ransack(id_eq: params[:q], details_cont: params[:q], m: "or").result(distinct: false)
       end
     }
-  }
-end
-```
-
-
-## Search result path
-
-By default, when a user clicks on a search result, they will be redirected to that record, but you can change that using the `result_path` option.
-
-```ruby
-class Avo::Resources::City < Avo::BaseResource
-  self.search = {
-    query: -> { query.ransack(name_eq: params[:q]).result(distinct: false) },
-    result_path: -> { avo.resources_city_path record, custom: "yup" }
   }
 end
 ```
