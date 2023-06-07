@@ -158,7 +158,7 @@ const config = {
           text: "Customize Avo",
           items: [
             // {text: "Customization options", link: "/3.0/customization"},
-            // {text: "Grid view", link: "/3.0/grid-view"},
+            {text: "Grid view", link: "/3.0/grid-view"},
             {text: "Map view", link: "/3.0/map-view"},
             // {text: "Menu editor", link: "/3.0/menu-editor"},
             // {text: "Search", link: "/3.0/search"},
