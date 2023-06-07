@@ -20,7 +20,7 @@ gem 'ransack'
 
 ## Enable search for a resource
 
-To enable search for a resource, you need to configure the `search` class variable to the resource file.
+To enable search for a resource, you need to configure the `search` class attribute to the resource file.
 
 ```ruby{2-4}
 class Avo::Resources::User < Avo::BaseResource
@@ -78,9 +78,11 @@ You may configure that to be something more complex using the `card -> title` op
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
-    item: -> {{
-      title: "[#{record.id}]#{record.name}"
-    }}
+    item: -> do
+      {
+        title: "[#{record.id}]#{record.name}"
+      }
+    end
   }
 end
 ```
@@ -88,7 +90,9 @@ end
 <img :src="('/assets/img/search/search_label.jpg')" alt="Search label" class="border mb-4" />
 
 
-### Description <LicenseReq license="pro" />
+### Description 
+
+<LicenseReq license="pro" />
 
 You might want to show more than just the title in the search result. Avo provides the `card -> description` option to add some more information.
 
@@ -96,10 +100,12 @@ You might want to show more than just the title in the search result. Avo provid
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
-    item:  -> {{
-      title: "[#{record.id}]#{record.name}",
-      description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130)
-    }}
+    item:  -> do
+      {
+        title: "[#{record.id}]#{record.name}",
+        description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130)
+      }
+    end
   }
 end
 ```
@@ -114,13 +120,14 @@ You may improve the results listing by adding an image to each search result. Yo
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
-    item: -> {{
-      title: "[#{record.id}]#{record.name}",
-      description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130),
-      image_url: main_app.url_for(record.cover_photo),
-      image_format: :rounded
+    item: -> do
+      {
+        title: "[#{record.id}]#{record.name}",
+        description: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(130),
+        image_url: main_app.url_for(record.cover_photo),
+        image_format: :rounded
       }
-    }}
+    end
   }
 end
 ```
@@ -176,9 +183,11 @@ You might have a resource that you'd like to be able to perform a search on when
 class Avo::Resources::TeamMembership < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) },
-    item: -> {{
-      description: record.level,
-    }},
+    item: -> do
+      {
+        description: record.level,
+      }
+    end,
     hide_on_global: true
   }
 end
