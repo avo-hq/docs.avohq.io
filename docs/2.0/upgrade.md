@@ -4,6 +4,14 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.33 to 2.34
+
+### You may remove the locale files Avo generated for you
+
+Following [this PR](https://github.com/avo-hq/avo/pull/1765) we now don't need the locale files in the parent app so you can remove them.
+
+I mean the `avo.en.yml` and other locales (`avo.nn.yml`, `avo.fr.yaml`, etc.).
+
 ## Upgrade from 2.30 to 2.31
 
 ### Ensure that your app works with View Component 2.54
