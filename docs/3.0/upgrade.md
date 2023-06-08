@@ -9,10 +9,151 @@ The 2.x to 3.0 Upgrade is a work in progress. We'll add more instructions here a
 In order to update all Avo packages you should run the following command.
 
 ```bash
-bin/rails avo:update
+bundle update avo avo_pro avo_advanced avo_dashboards avo_filters avo_menu avo_upgrade
 ```
 
-## Upgrade from 2.x to 3.0.pre.1
+## Upgrade from 3.0.0.pre.12 to 3.0.0.pre.13
+
+:::option Refactor the search API
+In Avo 2, the search options were scattered around multiple places. The query was used from the `search_query`, the record description was taken from an arbitrary `as_description: true` field option, and other mis-aligned places.
+
+In Avo 3 we brought all those things in a single `self.search` option.
+
+The `self.search[:item]` block will go through each of the found records where you have to return a hash with the following keys `title`, `description`, `image_url`, `image_format`.
+
+- `self.search_query` moved into `self.search[:query]`. (remove `search_query`)
+- `self.search_query_help` moved into `self.search[:help]`. (remove `search_query_help`)
+- `self.hide_from_global_search` moved into `self.search[:hide_on_global]`. (remove `hide_from_global_search`)
+- `self.search_result_path` moved into `self.search[:result_path]`. (remove `search_result_path`)
+- the search item `title` is going to be the `self.title` by default but you can configure it in `item`.
+- `as_description: true` is `self.search[:item][:description]`. (remove `as_description: true`)
+- `as_avatar: true` is `self.search[:item][:image_url]`. (remove `as_avatar:`)
+- `as_avatar: :rounded` is `self.search[:item][:image_format]`
+
+```ruby
+class Avo::Resources::User < Avo::BaseResource
+  self.search = {
+    query: -> {
+      query.order(created_at: :desc)
+        .ransack(first_name_cont: params[:q], last_name_cont: params[:q], m: "or")
+        .result(distinct: false)
+    },
+    item: -> do
+      {
+        title: record.name,
+        description: "This user has the following roles: #{record.roles.select { |key, value| value }.keys.join(", ")}",
+        image_url: main_app.url_for(record.cover_photo) if record.cover_photo.attached?,
+        image_format: :rounded
+      }
+    end
+    help: -> { "- Search by first name or last name." },
+    hide_on_global: true,
+    result_path: -> { avo.resources_city_path record, custom: "yup" }
+  }
+end
+```
+:::
+
+:::option Refactor the grid view API
+We removed the old `grid do` block to `self.grid_view` to fall more inline with `self.map_view` and others.
+
+The `card` block will cycle through all of your records and you need to return a hash with the following keys `title`, `body`, `cover_url`.
+
+You may also return an `html` option to apply html properties to the card elements.
+
+```ruby
+self.grid_view = {
+  card: -> do
+    {
+      cover_url:
+        if record.cover_photo.attached?
+          main_app.url_for(record.cover_photo.url)
+        end,
+      title: record.name,
+      body: ActionView::Base.full_sanitizer.sanitize(record.body).truncate(120)
+    }
+  end,
+  html: -> do
+    {
+      title: {
+        index: {
+          wrapper: {
+            classes: "bg-blue-50 rounded-md p-2"
+          }
+        }
+      },
+      body: {
+        index: {
+          wrapper: {
+            classes: "bg-gray-50 rounded-md p-1"
+          }
+        }
+      }
+    }
+  end
+}
+```
+:::
+
+:::option Use the `def actions` API
+Similar to how we added the `def fields` wrapper to fields you should now wrap all actions in an `actions` method.
+
+
+```ruby{3,8-10}
+# Before
+class Avo::Resources::User < Avo::BaseResource
+  action Avo::Actions::Dummy
+end
+
+# After
+class Avo::Resources::User < Avo::BaseResource
+  def actions
+    action Avo::Actions::Dummy
+  end
+end
+```
+:::
+
+:::option Use the `def filters` API
+Similar to how we added the `def fields` wrapper to fields you should now wrap all filters in an `filters` method.
+
+
+```ruby{3,8-10}
+# Before
+class Avo::Resources::User < Avo::BaseResource
+  filter Avo::Filters::IsAdmin
+end
+
+# After
+class Avo::Resources::User < Avo::BaseResource
+  def filters
+    filter Avo::Filters::IsAdmin
+  end
+end
+```
+:::
+
+:::option Use the `def scopes` API
+Similar to how we added the `def fields` wrapper to fields you should now wrap all scopes in an `scopes` method.
+
+
+```ruby{3,8-10}
+# Before
+class Avo::Resources::User < Avo::BaseResource
+  scope Avo::Scopes::Active
+end
+
+# After
+class Avo::Resources::User < Avo::BaseResource
+  def scopes
+    scope Avo::Scopes::Active
+  end
+end
+```
+:::
+
+
+## Upgrade from 2.x to 3.0.pre.12
 
 :::option Ensure you meet the requirements
 Avo now requires Ruby 3.0 and Rails 6.1.
