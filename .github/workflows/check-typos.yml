@@ -1,0 +1,13 @@
+name: Check for typos
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  typo_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: typos-action
+        uses: crate-ci/typos@v1.0.4
