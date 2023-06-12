@@ -45,14 +45,17 @@ source "https://#{ENV["AVO_GEM_TOKEN"]}@packager.fly.dev/avo-hq-beta/" do
   gem "avo_dashboards"
 end
 ```
-:::
-
-1. Run `bundle install`.
-1. Run `bin/rails generate avo:install` to generate the initializer and add Avo to the `routes.rb` file.
-1. [Generate an Avo Resource](resources)
 
 :::info
-This will mount the app under `/avo` path. Visit that link to see the result.
+Please use [this guide](./gemfile-environment-variables.html) to find the best authentication strategy for your use-case.
+:::
+
+2. Run `bundle install`.
+3. Run `bin/rails generate avo:install` to generate the initializer and add Avo to the `routes.rb` file.
+4. [Generate an Avo Resource](resources)
+
+:::info
+This will mount the app under `/avo` path. Visit the link to see the result.
 :::
 
 ## Install from GitHub
