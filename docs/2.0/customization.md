@@ -375,18 +375,8 @@ end
 ### Custom scope for `Show` and `Edit` pages
 
 :::warning
-This method is deprecated in favor of `find_record_method` (below).
+The `resolve_find_scope` method is deprecated in favor of `find_record_method` (below).
 :::
-
-Using `resolve_find_scope` you append arguments on `find` queries.
-
-```ruby
-class UserResource < Avo::BaseResource
-  self.resolve_find_scope = ->(model_class:) do
-    model_class.friendly
-  end
-end
-```
 
 :::details If you're following the `friendly_id` example, you must also add the `friendly_id` configuration to the model definition.
 ```ruby
@@ -403,7 +393,7 @@ Using `find_record_method` you tell Avo how to fetch one record for `Show` and `
 
 This is very useful when you use something like `friendly` gem, custom `to_param` methods on your model, and even the wonderful `prefix_id` gem.
 
-#### Custom `to_param` method
+### Custom `to_param` method
 
 The following example shows how you can update the `to_param` (to use the post name) method on the `User` model to use a custom attribute and then update the `UserResource` so it knows how to search for that model.
 
