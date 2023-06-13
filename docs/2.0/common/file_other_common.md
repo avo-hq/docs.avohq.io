@@ -7,6 +7,6 @@ Please ensure you have the `upload_{FIELD_ID}?`, `delete_{FIELD_ID}?`, and `down
 Related:
  - [Attachment pundit policies](./../authorization.html#attachments)
 
-## Deprecated options
+<!-- ## Deprecated options
 
-The `is_image`, `is_audio`, and `is_video` options are deprecated in favor of letting Active Storage figure out the type of the attachment. If Active Storage detects a file as an image, Avo will display it as an image. Same for audio and video files.
+The `is_image`, `is_audio`, and `is_video` options are deprecated in favor of letting Active Storage figure out the type of the attachment. If Active Storage detects a file as an image, Avo will display it as an image. Same for audio and video files. -->
