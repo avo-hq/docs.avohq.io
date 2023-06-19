@@ -119,6 +119,10 @@ That command will:
 
 That will be picked up by the `build` script and create it's own `assets/builds/avo.custom.js` file that will, in turn, be picked up by sprockets or propshaft and loaded into your app.
 
+:::info
+If your project has a `esbuild.config.mjs` file (Jumpstart Pro uses that), please add `avo.custom.js` to the `entryPoints` variable.
+:::
+
 ## Use `js-bundling` with `rollup` or `webpack`
 
 Avo supports the other bundlers too but we just don't have a generator command to configure them for you. If you use the other bundlers and have configured them to use custom assets, then please [open up a PR](https://github.com/avo-hq/avo) and help the community get started faster.
