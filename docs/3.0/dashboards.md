@@ -226,7 +226,7 @@ You can add three types of cards to your dashboard: `metric`, `chartkick`, and `
 
 ### Metric card
 
-The metric card is your friend when you only need to display a simple significant number on your dashboard. Generate one run `bin/rails g avo:card:metric users_metric`.
+The metric card is your friend when you only need to display a simple significant number on your dashboard. Generate one run `bin/rails g avo:card users_metric --type metric`.
 
 <img :src="('/assets/img/dashboards/users_metric.jpg')" alt="Avo Dashboard Metric" class="border mb-4" />
 
@@ -295,7 +295,7 @@ end
 
 A picture is worth a thousand words. So maybe a chart a hundred? Who knows? But creating charts in Avo is very easy with the help of the [chartkick](https://github.com/ankane/chartkick) gem.
 
-You start by running `bin/rails g avo:card:chartkick users_chart`.
+You start by running `bin/rails g avo:card users_chart --type chartkick`.
 
 ```ruby
 class UserSignups < Avo::Dashboards::ChartkickCard
@@ -356,7 +356,7 @@ If you'd like to use [Groupdate](https://github.com/ankane/groupdate), [Hightop]
 
 ### Partial card
 
-You can use a partial card to add custom content to a card. Generate one by running `bin/rails g avo:card:partial custom_card`. That will create the card class and the partial for it.
+You can use a partial card to add custom content to a card. Generate one by running `bin/rails g avo:card custom_card --type partial`. That will create the card class and the partial for it.
 
 ```ruby{5}
 class ExampleCustomPartial < Avo::Dashboards::PartialCard
