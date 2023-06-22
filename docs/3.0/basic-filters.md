@@ -105,7 +105,11 @@ The boolean filter is a filter where the user can filter the records using one o
 To generate one run:
 
 ```bash
-bin/rails generate avo:filter featured --boolean
+bin/rails generate avo:filter featured
+```
+or
+```bash
+bin/rails generate avo:filter featured --type boolean
 ```
 
 Here's a sample filter
@@ -204,7 +208,7 @@ end
 Select filters are similar to Boolean ones but they give the user a dropdown with which to filter the values.
 
 ```bash
-rails generate avo:filter published --select
+rails generate avo:filter published --type select
 ```
 
 The most significant difference from the **Boolean filter** is in the `apply` method. You only get back one `value` attribute, which represents which entry from the `options` method is selected.
@@ -280,7 +284,7 @@ end
 You may also use a multiple select filter.
 
 ```bash
-rails generate avo:filter post_status --multiple_select
+rails generate avo:filter post_status --type multiple_select
 ```
 
 ```ruby
@@ -352,7 +356,7 @@ end
 You can add complex text filters to Avo using the Text filter
 
 ```bash
-rails generate avo:filter name --text
+rails generate avo:filter name --type text
 ```
 
 ```ruby
