@@ -4,7 +4,7 @@ When you want to add a custom link as a field on your resource that points to a 
 
 ```ruby
 # with the format_using option
-field :partner_home, as: :text, format_using: -> (url) { link_to(url, url, target: "_blank") } do |model, *args|
+field :partner_home, as: :text, format_using: -> { link_to(value, value, target: "_blank") } do |model, *args|
   avo.resources_partner_url model.partner.id
 end
 

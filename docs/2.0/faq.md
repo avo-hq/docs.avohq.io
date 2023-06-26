@@ -123,7 +123,7 @@ class CommentResource < Avo::BaseResource
   field :id, as: :id
   field :body,
     as: :textarea,
-    format_using: -> (value) do
+    format_using: -> do
       view_context.content_tag(:div, style: 'white-space: pre-line') { value }
     end
   field :computed_field, as: :text do |model|
@@ -155,7 +155,7 @@ You can change how you display the information by using the `format_using` optio
 class CommentResource < Avo::BaseResource
   field :body,
     as: :textarea,
-    format_using: -> (value) do
+    format_using: -> do
       simple_format value
     end
 end
@@ -169,7 +169,7 @@ end
 class CommentResource < Avo::BaseResource
   field :body,
     as: :textarea,
-    format_using: -> (value) do
+    format_using: -> do
       content_tag(:div, style: 'white-space: pre-line') { value }
     end
 end
@@ -183,7 +183,7 @@ end
 class CommentResource < Avo::BaseResource
   field :body,
     as: :textarea,
-    format_using: -> (value) do
+    format_using: -> do
       content_tag(:div, class: 'whitespace-pre-line') { value }
     end
 end

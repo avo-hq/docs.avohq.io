@@ -59,5 +59,5 @@ field :title, # The database field ID
   readonly: true, # Display it disabled
   as_html: true # Should the output be parsed as html
   placeholder: 'My shiny new post', # Update the placeholder text
-  format_using: -> (value) { value.truncate 3 } # Format the output
+  format_using: -> { value.truncate 3 } # Format the output
 ```
