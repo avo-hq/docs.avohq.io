@@ -4,6 +4,20 @@ We generally push changes behind the scenes, so you don't have to update your co
 
 Follow these guides to make sure your configuration files are up to date.
 
+## Upgrade from 2.35 to 2.36
+
+### `format_using` is dropping the `value` argument
+
+We're bringing the `format_using` block in-line with our other blocks by removing the `value` argument. Please remove it too.
+
+```ruby
+# Before
+field :name, as: :text, format_using: ->(value) { value.upcase }
+
+# After
+field :name, as: :text, format_using: -> { value.upcase }
+```
+
 ## Upgrade from 2.33 to 2.34
 
 ### You may remove the locale files Avo generated for you

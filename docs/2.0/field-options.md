@@ -128,12 +128,27 @@ This example will display a boolean field with the value computed from your cust
 
 ## Fields Formatter
 
-Sometimes you will want to process the database value before showing it to the user. You may do that using `format_using` block that receives the `value` of that field as a parameter.
+Sometimes you will want to process the database value before showing it to the user. You may do that using `format_using` block.
+
+:::warning
+We removed the `value` argument from `format_using` since version `2.36`.
+:::
 
 ```ruby
-field :is_writer, as: :text, format_using: -> (value) { value.present? ? '👍' : '👎' }
+field :is_writer, as: :text, format_using: -> {
+  # You have access to the following variables:
+  # - value
+  # - resource
+  # - record
+  # - view
+  # - view_context
+  # - context
+  # - params
+  # - request
+  value.present? ? '👍' : '👎'
+}
 # or
-field :company_url, as: :text, format_using: -> (url) { link_to(url, url, target: "_blank") } do |model, *args|
+field :company_url, as: :text, format_using: -> { link_to(value, value, target: "_blank") } do |model, *args|
   main_app.companies_url(model)
 end
 ```
@@ -142,12 +157,34 @@ This example snippet will make the `:is_writer` field generate emojis instead of
 
 <img :src="('/assets/img/fields-reference/fields-formatter.jpg')" alt="Fields formatter" class="border mb-4" />
 
-## Formatting with Rails helpers
+### Formatting with Rails helpers
 
 You can also format using Rails helpers like `number_to_currency` (note that `view_context` is used to access the helper):
 
 ```ruby
-field :price, as: :number, format_using: -> (value) { view_context.number_to_currency(value) }
+field :price, as: :number, format_using: -> { view_context.number_to_currency(value) }
+```
+
+## Modify the value before sabing it to the database
+
+<VersionReq version="2.36" class="mt-2" />
+
+Similar to `format_using` we added `update_using` which will process the value sent from the UI before setting it on the model.
+
+```ruby
+# Cast the text version of the field to actual JSOn to save to the database.
+field :metadata, as: :code, update_using: -> {
+  # You have access to the following variables:
+  # - value
+  # - resource
+  # - record
+  # - view
+  # - view_context
+  # - context
+  # - params
+  # - request
+  ActiveSupport::JSON.decode(value)
+}
 ```
 
 ## Sortable fields
