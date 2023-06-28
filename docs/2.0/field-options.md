@@ -165,7 +165,7 @@ You can also format using Rails helpers like `number_to_currency` (note that `vi
 field :price, as: :number, format_using: -> { view_context.number_to_currency(value) }
 ```
 
-## Modify the value before sabing it to the database
+## Modify the value before saving it to the database
 
 <VersionReq version="2.36" class="mt-2" />
 
