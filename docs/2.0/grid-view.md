@@ -77,3 +77,30 @@ grid do
   end
 end
 ```
+
+## Use a computed field for the `cover` field
+
+A common use case is to have the assets stored on a separate model and would like to display an image from that related association.
+
+```ruby
+class Post < ApplicationRecord
+  has_many :post_assets
+end
+
+class PostAssets < ApplicationRecord
+  belongs_to :post
+
+  has_one_attached :image
+end
+```
+
+Luckily, the `grid` display can be a computed field too
+
+```ruby
+ grid do
+  cover :image, as: :file, is_image: true, link_to_resource: true do |model|
+    # we find the first asset association and use it's image attachment
+    model.post_assets.first.image
+  end
+end
+```
