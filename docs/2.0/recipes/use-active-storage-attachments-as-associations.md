@@ -1,6 +1,6 @@
 # Use the `has_many` field for Active Storage attachments
 
-Because [Active Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html) is implemented as an association.
+[Active Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html) is implemented as an association we can take advantage of that and make the users' experience so much better!
 
 ## `has_many`
 
