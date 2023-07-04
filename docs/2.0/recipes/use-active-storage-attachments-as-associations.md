@@ -2,6 +2,8 @@
 
 Because [Active Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html) is implemented as an association.
 
+## `has_many`
+
 For that you should create an `attachment_resource.rb` and configure it like so.
 
 ```ruby
@@ -30,6 +32,24 @@ class ProjectResource < Avo::BaseResource
 end
 ```
 
-![](/assets/img/recipes/use-the-has-many-field-for-active-storage-attachments/preview.png)
+![](/assets/img/recipes/use-active-storage-attachments-as-associations/has_many.png)
 
 We suggest making this resource read-only using Pundit policies so you don't accidentaly update Active Storage keys and settings.
+
+## `has_many`
+
+We can use the same resource on a different `has_one` association.
+
+```ruby
+class Post < ApplicationRecord
+  has_one_attached :cover_photo
+end
+
+class PostResource < Avo::BaseResource
+  # Please make sure you use the _attachment suffix.
+  # So the :cover_photo key from the model file becomes :cover_photo_attachment on the resource file.
+  field :cover_photo_attachment, as: :has_one
+end
+```
+
+![](/assets/img/recipes/use-active-storage-attachments-as-associations/has_one.png)
