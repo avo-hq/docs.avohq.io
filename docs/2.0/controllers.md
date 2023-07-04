@@ -137,6 +137,16 @@ end
 ```
 :::
 
+:::option `save_model_action`
+Override this method to change how a record is being saved.
+
+```ruby
+def save_model_action
+  @model.save!
+end
+```
+:::
+
 ## Destroy methods
 For the `destroy` method, you can modify the `after_destroy_path`, the messages, and the actions both on success or failure.
 
@@ -194,4 +204,12 @@ end
 ```
 :::
 
+:::option `destroy_model_action`
+Override this method to change how a record is being destroyed.
 
+```ruby
+def destroy_model_action
+  @model.destroy!
+end
+```
+:::
