@@ -2,12 +2,20 @@
 
 [Active Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html) is implemented as an association we can take advantage of that and make the users' experience so much better!
 
-## `has_many`
+## Create the resource
 
 For that you should create an `attachment_resource.rb` and configure it like so.
 
+```bash
+bin/rails generate avo:resource active_record_attachment
+```
+
+:::warning
+Please don't use the name `AttachmentResource` because the generated controller will override Avo's internal controller that handles the attachments.
+:::
+
 ```ruby
-class AttachmentResource < Avo::BaseResource
+class ActiveRecordAttachmentResource < Avo::BaseResource
   self.title = :filename
   self.model_class = "ActiveStorage::Attachment"
 
@@ -17,6 +25,8 @@ class AttachmentResource < Avo::BaseResource
   field :created_at, as: :date_time
 end
 ```
+
+## `has_many`
 
 Next, add it to your resource that `has_many_attached`:
 
