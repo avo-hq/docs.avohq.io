@@ -309,7 +309,7 @@ end
 
 You might want to display information about the current resource to your users. Then, using the `description` class attribute, you can add some text to the `Index`, `Show`, `Edit`, and `New` views.
 
-<img :src="('/assets/img/resources/description.jpg')" alt="Avo message" class="border mb-4" />
+<img :src="('/assets/img/resources/description.png')" alt="Avo message" class="border mb-4" />
 
 There are two ways of setting the description. The quick way as a `string` and the more customizable way as a `block`.
 
@@ -502,7 +502,7 @@ Avo.configure do |config|
 end
 ```
 
-<img :src="('/assets/img/resources/buttons_on_footer.jpg')" alt="Buttons on footer" class="border mb-4" />
+<img :src="('/assets/img/resources/buttons_on_footer.png')" alt="Buttons on footer" class="border mb-4" />
 
 ## Customize what happens after a record is created/edited
 
@@ -535,7 +535,7 @@ class CommentResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/resources/record_selector.jpg')" alt="Hide the record selector." class="border mb-4" />
+<img :src="('/assets/img/resources/record_selector.png')" alt="Hide the record selector." class="border mb-4" />
 
 ## Link to child resource (STI)
 
