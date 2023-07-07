@@ -31,39 +31,13 @@ field :body, as: :text, hide_on: [:index, :show]
 You might want to restrict some fields to be accessible only if a specific condition applies. For example, hide fields if the user is not an admin.
 
 You can use the `visible` block to do that. It can be a `boolean` or a lambda.
-Inside the lambda, we have access to the [`context`](./customization.html#context) object and the current `resource`. The `resource` has the current `model` object, too (`resource.model`).
+Inside the lambda, we have access to the [`context`](./customization.html#context) object and the current `resource`. The `resource` has the current `record` object, too (`resource.record`).
 
 ```ruby
-field :is_featured, as: :boolean, visible: -> (resource:) { context[:user].is_admin? }  # show field based on the context object
-field :is_featured, as: :boolean, visible: -> (resource:) { resource.name.include? 'user' } # show field based on the resource name
-field :is_featured, as: :boolean, visible: -> (resource:) { resource.model.published_at.present? } # show field based on a model attribute
+field :is_featured, as: :boolean, visible: -> { context[:user].is_admin? }  # show field based on the context object
+field :is_featured, as: :boolean, visible: -> { resource.name.include? 'user' } # show field based on the resource name
+field :is_featured, as: :boolean, visible: -> { resource.record.published_at.present? } # show field based on a record attribute
 ```
-
-### Using `if` for field visibility
-
-You might be tempted to use the `if` statement to show/hide fields conditionally. However, that's not the best choice because the fields are registered at boot time, and some features are only available at runtime. Let's take the `context` object, for example. You might have the `current_user` assigned to the `context`, which will not be present at the app's boot time. Instead, that's present at request time when you have a `request` present from which you can find the user.
-
-```ruby{4-7,13-16}
-# ❌ Don't do
-class CommentResource < Avo::BaseResource
-  field :id, as: :id
-  if context[:current_user].admin?
-    field :body, as: :textarea
-    field :tiny_name, as: :text, only_on: :index
-  end
-end
-
-# ✅ Do instead
-class CommentResource < Avo::BaseResource
-  field :id, as: :id
-  with_options visible: -> (resource:) { context[:current_user].admin?} do
-    field :body, as: :textarea
-    field :tiny_name, as: :text, only_on: :index
-  end
-end
-```
-
-So now, instead of relying on a request object unavailable at boot time, you can pass it a lambda function that will be executed on request time with all the required information.
 
 :::warning
 On form submissions, the `visible` block is evaluated in the `create` and `update` controller actions. That's why you have to check if the `resource.record` object is present before trying to use it.
@@ -136,7 +110,7 @@ field :name, as: :text, sortable: true
 When using computed fields or `belongs_to` associations, you can't set `sortable: true` to that field because Avo doesn't know what to sort by. However, you can use a block to specify how the records should be sorted in those scenarios.
 
 ```ruby{4-7}
-class UserResource < Avo::BaseResource
+class Avo::Resources::User < Avo::BaseResource
   field :is_writer,
     as: :text,
     sortable: -> {
@@ -158,7 +132,7 @@ You can do that using this query.
 ::: code-group
 
 ```ruby{5} [app/avo/resources/post_resource.rb]
-class PostResource < Avo::BaseResource
+class Avo::Resources::Post < Avo::BaseResource
   field :last_commented_at,
     as: :date,
     sortable: -> {
