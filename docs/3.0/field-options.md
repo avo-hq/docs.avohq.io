@@ -9,10 +9,10 @@ feedbackId: 834
 To customize the label, you can use the `name` property to pick a different label.
 
 ```ruby
-field :is_available, as: :boolean, name: 'Availability'
+field :is_available, as: :boolean, name: "Availability"
 ```
 
-<img :src="('/assets/img/fields-reference/naming-convention-override.jpg')" alt="Field naming convention override" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/naming-convention-override.png')" alt="Field naming convention override" class="border mb-4" />
 
 ## Showing / Hiding fields on different views
 
@@ -83,7 +83,7 @@ end
 
 This example snippet will make the `:is_writer` field generate emojis instead of 1/0 values.
 
-<img :src="('/assets/img/fields-reference/fields-formatter.jpg')" alt="Fields formatter" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/fields-formatter.png')" alt="Fields formatter" class="border mb-4" />
 
 ## Formatting with Rails helpers
 
@@ -103,7 +103,7 @@ Add it to any field to make that column sortable in the <Index /> view.
 field :name, as: :text, sortable: true
 ```
 
-<img :src="('/assets/img/fields-reference/sortable-fields.jpg')" alt="Sortable fields" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/sortable-fields.png')" alt="Sortable fields" class="border mb-4" />
 
 ## Custom sortable block
 
@@ -161,29 +161,23 @@ Some fields support the `placeholder` option, which will be passed to the inputs
 field :name, as: :text, placeholder: 'John Doe'
 ```
 
-<img :src="('/assets/img/fields-reference/placeholder.jpg')" alt="Placeholder option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/placeholder.png')" alt="Placeholder option" class="border mb-4" />
 
 ## Required
+To indicate that a field is mandatory, you can utilize the `required` option, which adds an asterisk to the field as a visual cue.
 
-When you want to mark a field as mandatory, you may use the `required` option to add an asterisk to that field, indicating that it's mandatory.
+Avo automatically examines each field to determine if the associated attribute requires a mandatory presence. If it does, Avo appends the asterisk to signify its mandatory status. It's important to note that this option is purely cosmetic and does not incorporate any validation logic into your model. You will need to manually include the validation logic yourself, such as (`validates :name, presence: true`).
+
 
 ```ruby
 field :name, as: :text, required: true
 ```
 
-<img :src="('/assets/img/fields-reference/required.jpg')" alt="Required option" class="border mb-4" />
-
-:::warning
-For Avo versions 2.13 and lower, this option is only a cosmetic one. It will not add the validation logic to your model. You must add that yourself (`validates :name, presence: true`).
-:::
-
-:::info
-For Avo version 2.14 and higher Avo will automatically detect your validation rules and mark the field as required by default.
-:::
+<img :src="('/assets/img/fields-reference/required.png')" alt="Required option" class="border mb-4" />
 
 <DemoVideo demo-video="https://youtu.be/peKt90XhdOg?t=937" />
 
-You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
+You may use a block as well. It will be executed in the `Avo::ExecutionContext` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
 
 ```ruby
 field :name, as: :text, required: -> { view == :new } # make the field required only on the new view and not on edit
@@ -198,14 +192,14 @@ When you need to prevent the user from editing a field, the `disabled` option wi
 field :name, as: :text, disabled: true
 ```
 
-<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Disabled option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/readonly.png')" alt="Disabled option" class="border mb-4" />
 
 
 ### Disabled as a block
 
 <VersionReq version="2.14" class="mt-2" />
 
-You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
+You may use a block as well. It will be executed in the `Avo::ExecutionContext` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
 
 ```ruby
 field :id, as: :number, disabled: -> { view == :edit } # make the field disabled only on the new edit view
@@ -220,7 +214,7 @@ When you need to prevent the user from editing a field, the `readonly` option wi
 field :name, as: :text, readonly: true
 ```
 
-<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Readonly option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/readonly.png')" alt="Readonly option" class="border mb-4" />
 
 ## Default Value
 
@@ -247,11 +241,7 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css', help: "This ena
 field :password, as: :password, help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
 ```
 
-<img :src="('/assets/img/fields-reference/help-text.jpg')" alt="Help text" class="border mb-4" />
-
-:::info
-Since version `2.19`, the `default` block is being evaluated in the [`ResourceViewRecordHost`](./evaluation-hosts#resourceviewrecordhost).
-:::
+<img :src="('/assets/img/fields-reference/help-text.png')" alt="Help text" class="border mb-4" />
 
 ## Nullable
 
@@ -298,7 +288,7 @@ Related:
 It's customary on tables to align numbers to the right. You can do that using the `html` option.
 
 ```ruby{2}
-class ProjectResource < Avo::BaseResource
+class Avo::Resources::Project < Avo::BaseResource
   field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
 end
 ```
