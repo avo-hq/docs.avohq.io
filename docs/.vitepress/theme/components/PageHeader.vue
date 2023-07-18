@@ -6,7 +6,7 @@ const props = defineProps({
   frontmatter: String,
 })
 
-const { frontmatter } = useData()
+const { frontmatter, page } = useData()
 const feedbackId = computed(() => frontmatter.value.feedbackId)
 const license = computed(() => frontmatter.value.license)
 const version = computed(() => frontmatter.value.version)
@@ -25,5 +25,8 @@ const shouldHide = computed(() => [feedbackId, license, version, demoVideo, demo
     <DemoVideo :demo-video="demoVideo" v-if="demoVideo" />
     <Demo :link="demo" v-if="demo" />
     <BetaStatus :label="betaStatus" v-if="betaStatus" />
+  </div>
+  <div class="hidden">
+    {{ page.title }} - {{ page.relativePath }}
   </div>
 </template>
