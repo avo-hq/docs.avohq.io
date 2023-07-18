@@ -52,3 +52,20 @@ By using this notation, Avo will grab the `latitude` and `longitude` from those 
 This will also render the <Edit /> view with two separate fields to edit the coordinates.
 
 <img :src="('/assets/img/fields/location-edit.png')" alt="Location field" class="border mb-4" />
+
+:::option `zoom`
+
+Changes the zoom level for the map with higher numbers being zoomed in and showing a smaller area on the map.
+
+#### Default value
+
+`15`
+
+#### Possible values
+
+Any number between 0 (the most zoomed out) to 22 (the most zoomed in).
+
+```ruby
+field :coordinates, as: :location, zoom: 5
+```
+
