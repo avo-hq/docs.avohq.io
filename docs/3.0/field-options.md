@@ -9,10 +9,10 @@ feedbackId: 834
 To customize the label, you can use the `name` property to pick a different label.
 
 ```ruby
-field :is_available, as: :boolean, name: 'Availability'
+field :is_available, as: :boolean, name: "Availability"
 ```
 
-<img :src="('/assets/img/fields-reference/naming-convention-override.jpg')" alt="Field naming convention override" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/naming-convention-override.png')" alt="Field naming convention override" class="border mb-4" />
 
 ## Showing / Hiding fields on different views
 
@@ -31,39 +31,13 @@ field :body, as: :text, hide_on: [:index, :show]
 You might want to restrict some fields to be accessible only if a specific condition applies. For example, hide fields if the user is not an admin.
 
 You can use the `visible` block to do that. It can be a `boolean` or a lambda.
-Inside the lambda, we have access to the [`context`](./customization.html#context) object and the current `resource`. The `resource` has the current `model` object, too (`resource.model`).
+Inside the lambda, we have access to the [`context`](./customization.html#context) object and the current `resource`. The `resource` has the current `record` object, too (`resource.record`).
 
 ```ruby
-field :is_featured, as: :boolean, visible: -> (resource:) { context[:user].is_admin? }  # show field based on the context object
-field :is_featured, as: :boolean, visible: -> (resource:) { resource.name.include? 'user' } # show field based on the resource name
-field :is_featured, as: :boolean, visible: -> (resource:) { resource.model.published_at.present? } # show field based on a model attribute
+field :is_featured, as: :boolean, visible: -> { context[:user].is_admin? }  # show field based on the context object
+field :is_featured, as: :boolean, visible: -> { resource.name.include? 'user' } # show field based on the resource name
+field :is_featured, as: :boolean, visible: -> { resource.record.published_at.present? } # show field based on a record attribute
 ```
-
-### Using `if` for field visibility
-
-You might be tempted to use the `if` statement to show/hide fields conditionally. However, that's not the best choice because the fields are registered at boot time, and some features are only available at runtime. Let's take the `context` object, for example. You might have the `current_user` assigned to the `context`, which will not be present at the app's boot time. Instead, that's present at request time when you have a `request` present from which you can find the user.
-
-```ruby{4-7,13-16}
-# ❌ Don't do
-class CommentResource < Avo::BaseResource
-  field :id, as: :id
-  if context[:current_user].admin?
-    field :body, as: :textarea
-    field :tiny_name, as: :text, only_on: :index
-  end
-end
-
-# ✅ Do instead
-class CommentResource < Avo::BaseResource
-  field :id, as: :id
-  with_options visible: -> (resource:) { context[:current_user].admin?} do
-    field :body, as: :textarea
-    field :tiny_name, as: :text, only_on: :index
-  end
-end
-```
-
-So now, instead of relying on a request object unavailable at boot time, you can pass it a lambda function that will be executed on request time with all the required information.
 
 :::warning
 On form submissions, the `visible` block is evaluated in the `create` and `update` controller actions. That's why you have to check if the `resource.record` object is present before trying to use it.
@@ -109,7 +83,7 @@ end
 
 This example snippet will make the `:is_writer` field generate emojis instead of 1/0 values.
 
-<img :src="('/assets/img/fields-reference/fields-formatter.jpg')" alt="Fields formatter" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/fields-formatter.png')" alt="Fields formatter" class="border mb-4" />
 
 ## Formatting with Rails helpers
 
@@ -129,14 +103,14 @@ Add it to any field to make that column sortable in the <Index /> view.
 field :name, as: :text, sortable: true
 ```
 
-<img :src="('/assets/img/fields-reference/sortable-fields.jpg')" alt="Sortable fields" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/sortable-fields.png')" alt="Sortable fields" class="border mb-4" />
 
 ## Custom sortable block
 
 When using computed fields or `belongs_to` associations, you can't set `sortable: true` to that field because Avo doesn't know what to sort by. However, you can use a block to specify how the records should be sorted in those scenarios.
 
 ```ruby{4-7}
-class UserResource < Avo::BaseResource
+class Avo::Resources::User < Avo::BaseResource
   field :is_writer,
     as: :text,
     sortable: -> {
@@ -158,7 +132,7 @@ You can do that using this query.
 ::: code-group
 
 ```ruby{5} [app/avo/resources/post_resource.rb]
-class PostResource < Avo::BaseResource
+class Avo::Resources::Post < Avo::BaseResource
   field :last_commented_at,
     as: :date,
     sortable: -> {
@@ -187,29 +161,23 @@ Some fields support the `placeholder` option, which will be passed to the inputs
 field :name, as: :text, placeholder: 'John Doe'
 ```
 
-<img :src="('/assets/img/fields-reference/placeholder.jpg')" alt="Placeholder option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/placeholder.png')" alt="Placeholder option" class="border mb-4" />
 
 ## Required
+To indicate that a field is mandatory, you can utilize the `required` option, which adds an asterisk to the field as a visual cue.
 
-When you want to mark a field as mandatory, you may use the `required` option to add an asterisk to that field, indicating that it's mandatory.
+Avo automatically examines each field to determine if the associated attribute requires a mandatory presence. If it does, Avo appends the asterisk to signify its mandatory status. It's important to note that this option is purely cosmetic and does not incorporate any validation logic into your model. You will need to manually include the validation logic yourself, such as (`validates :name, presence: true`).
+
 
 ```ruby
 field :name, as: :text, required: true
 ```
 
-<img :src="('/assets/img/fields-reference/required.jpg')" alt="Required option" class="border mb-4" />
-
-:::warning
-For Avo versions 2.13 and lower, this option is only a cosmetic one. It will not add the validation logic to your model. You must add that yourself (`validates :name, presence: true`).
-:::
-
-:::info
-For Avo version 2.14 and higher Avo will automatically detect your validation rules and mark the field as required by default.
-:::
+<img :src="('/assets/img/fields-reference/required.png')" alt="Required option" class="border mb-4" />
 
 <DemoVideo demo-video="https://youtu.be/peKt90XhdOg?t=937" />
 
-You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
+You may use a block as well. It will be executed in the `Avo::ExecutionContext` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
 
 ```ruby
 field :name, as: :text, required: -> { view == :new } # make the field required only on the new view and not on edit
@@ -224,14 +192,14 @@ When you need to prevent the user from editing a field, the `disabled` option wi
 field :name, as: :text, disabled: true
 ```
 
-<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Disabled option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/readonly.png')" alt="Disabled option" class="border mb-4" />
 
 
 ### Disabled as a block
 
 <VersionReq version="2.14" class="mt-2" />
 
-You may use a block as well. It will be executed in the `ViewRecordHost` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
+You may use a block as well. It will be executed in the `Avo::ExecutionContext` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
 
 ```ruby
 field :id, as: :number, disabled: -> { view == :edit } # make the field disabled only on the new edit view
@@ -246,7 +214,7 @@ When you need to prevent the user from editing a field, the `readonly` option wi
 field :name, as: :text, readonly: true
 ```
 
-<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Readonly option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/readonly.png')" alt="Readonly option" class="border mb-4" />
 
 ## Default Value
 
@@ -273,11 +241,7 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css', help: "This ena
 field :password, as: :password, help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
 ```
 
-<img :src="('/assets/img/fields-reference/help-text.jpg')" alt="Help text" class="border mb-4" />
-
-:::info
-Since version `2.19`, the `default` block is being evaluated in the [`ResourceViewRecordHost`](./evaluation-hosts#resourceviewrecordhost).
-:::
+<img :src="('/assets/img/fields-reference/help-text.png')" alt="Help text" class="border mb-4" />
 
 ## Nullable
 
@@ -324,7 +288,7 @@ Related:
 It's customary on tables to align numbers to the right. You can do that using the `html` option.
 
 ```ruby{2}
-class ProjectResource < Avo::BaseResource
+class Avo::Resources::Project < Avo::BaseResource
   field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
 end
 ```

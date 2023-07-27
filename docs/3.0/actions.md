@@ -378,7 +378,7 @@ self.visible = -> { view == :new }
 self.visible = -> { true }
 ```
 
-Inside the visible block you can acces the following variables:
+Inside the visible block you can access the following variables:
 ```ruby
   self.visible = -> do
     #   You have access to:
@@ -386,9 +386,8 @@ Inside the visible block you can acces the following variables:
     #   context
     #   current_user
     #   params
-    #   parent_model
-    #   parent_resource
-    #   resource
+    #   parent_resource (can access the parent_record by parent_resource.record)
+    #   resource (can access the record by resource.record)
     #   view
     #   view_context
   end

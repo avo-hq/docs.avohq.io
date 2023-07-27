@@ -43,7 +43,7 @@ To customize the label, you can use the `name` property to pick a different labe
 field :is_available, as: :boolean, name: 'Availability'
 ```
 
-<img :src="('/assets/img/fields-reference/naming-convention-override.jpg')" alt="Field naming convention override" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/naming-convention-override.png')" alt="Field naming convention override" class="border mb-4" />
 
 ## Showing / Hiding fields on different views
 
@@ -155,7 +155,7 @@ end
 
 This example snippet will make the `:is_writer` field generate emojis instead of 1/0 values.
 
-<img :src="('/assets/img/fields-reference/fields-formatter.jpg')" alt="Fields formatter" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/fields-formatter.png')" alt="Fields formatter" class="border mb-4" />
 
 ### Formatting with Rails helpers
 
@@ -197,7 +197,7 @@ Add it to any field to make that column sortable in the <Index /> view.
 field :name, as: :text, sortable: true
 ```
 
-<img :src="('/assets/img/fields-reference/sortable-fields.jpg')" alt="Sortable fields" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/sortable-fields.png')" alt="Sortable fields" class="border mb-4" />
 
 ## Custom sortable block
 
@@ -255,7 +255,7 @@ Some fields support the `placeholder` option, which will be passed to the inputs
 field :name, as: :text, placeholder: 'John Doe'
 ```
 
-<img :src="('/assets/img/fields-reference/placeholder.jpg')" alt="Placeholder option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/placeholder.png')" alt="Placeholder option" class="border mb-4" />
 
 ## Required
 
@@ -265,7 +265,7 @@ When you want to mark a field as mandatory, you may use the `required` option to
 field :name, as: :text, required: true
 ```
 
-<img :src="('/assets/img/fields-reference/required.jpg')" alt="Required option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/required.png')" alt="Required option" class="border mb-4" />
 
 :::warning
 This option is only a cosmetic one. It will not add the validation logic to your model. You must add that yourself (`validates :name, presence: true`).
@@ -291,7 +291,7 @@ When you need to prevent the user from editing a field, the `readonly` option wi
 field :name, as: :text, readonly: true
 ```
 
-<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Readonly option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/readonly.png')" alt="Readonly option" class="border mb-4" />
 
 
 ### Readonly as a block
@@ -312,7 +312,7 @@ When you need to prevent the user from editing a field, the `disabled` option wi
 field :name, as: :text, disabled: true
 ```
 
-<img :src="('/assets/img/fields-reference/readonly.jpg')" alt="Disabled option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/readonly.png')" alt="Disabled option" class="border mb-4" />
 
 ## Default Value
 
@@ -339,7 +339,7 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css', help: "This ena
 field :password, as: :password, help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
 ```
 
-<img :src="('/assets/img/fields-reference/help-text.jpg')" alt="Help text" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/help-text.png')" alt="Help text" class="border mb-4" />
 
 :::info
 Since version `2.19`, the `default` block is being evaluated in the [`ResourceViewRecordHost`](./evaluation-hosts#resourceviewrecordhost).

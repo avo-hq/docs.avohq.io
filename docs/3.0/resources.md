@@ -16,17 +16,16 @@ All resources are located in the `app/avo/resources` directory.
 bin/rails generate model car make:string mileage:integer
 ```
 
-Running this command will generate the standard Rails files (model, controller, etc.) and `Car` resource and `CarsController` for Avo.
+Running this command will generate the standard Rails files (model, controller, etc.) and `Avo::Resources::Car` & `Avo::CarsController` for Avo.
 
 The auto-generated resource file will look like this:
 
 ```ruby
 class Avo::Resources::Car < Avo::BaseResource
-  self.title = :id
   self.includes = []
-  # self.search_query = -> do
-  #   query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
-  # end
+  # self.search = {
+  #   query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) }
+  # }
 
   def fields
     field :id, as: :id
@@ -36,7 +35,7 @@ class Avo::Resources::Car < Avo::BaseResource
 end
 ```
 
-This behavior can be ommited by using the argument `--skip-avo-resource`. For example if we want to generate a `Car` model but no Avo counterpart we should use the following command:
+This behavior can be omitted by using the argument `--skip-avo-resource`. For example if we want to generate a `Car` model but no Avo counterpart we should use the following command:
 
 ```bash
 bin/rails generate model car make:string kms:integer --skip-avo-resource
@@ -53,11 +52,10 @@ This command will generate the `Post` resource file in `app/avo/resources/post.r
 ```ruby
 # app/avo/resources/post.rb
 class Avo::Resources::Post < Avo::BaseResource
-  self.title = :id
   self.includes = []
-  # self.search_query = -> do
-  #   query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
-  # end
+  # self.search = {
+  #   query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) }
+  # }
 
   def fields
     field :id, as: :id
@@ -105,11 +103,10 @@ end
 
 ```ruby [app/avo/resource/post.rb]
 class Avo::Resources::Post < Avo::BaseResource
-  self.title = :id
   self.includes = []
-  # self.search_query = -> do
-  #   query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
-  # end
+  # self.search = {
+  #   query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) }
+  # }
 
   def fields
     field :id, as: :id
@@ -396,7 +393,7 @@ end
 
 If you don't have a `title`, `name`, or `label` attribute in the database, you can add a getter method to your model where you compose the name.
 
-```ruby{2}
+```ruby{3,8-10}
 # app/avo/resources/comment.rb
 class Avo::Resources::Comment < Avo::BaseResource
   self.title = :tiny_name
@@ -414,7 +411,7 @@ end
 
 If you prefer not to use any record methods and instead compute the resource's title directly within the resource itself, you can accomplish this by assigning a lambda function to the `title` class attribute. You'll have access to `resource` and `record`.
 
-```ruby{2}
+```ruby{3-5}
 # app/avo/resources/comment.rb
 class Avo::Resources::Comment < Avo::BaseResource
   self.title = -> {
@@ -427,7 +424,7 @@ end
 
 You might want to display information about the current resource to your users. Then, using the `description` class attribute, you can add some text to the `Index`, `Show`, `Edit`, and `New` views.
 
-<img :src="('/assets/img/resources/description.jpg')" alt="Avo message" class="border mb-4" />
+<img :src="('/assets/img/resources/description.png')" alt="Avo message" class="border mb-4" />
 
 There are two ways of setting the description. The quick way as a `string` and the more customizable way as a `block`.
 
@@ -529,7 +526,7 @@ end
 When you get started, the sidebar will be auto-generated for you with all the [dashboards](./dashboards), resources, and [custom tools](./custom-tools).
 However, you may have resources that should not appear on the sidebar, which you can hide using the `visible_on_sidebar` option.
 
-```ruby{3}
+```ruby{2}
 class Avo::Resources::TeamMembership < Avo::BaseResource
   self.visible_on_sidebar = false
 end
@@ -555,7 +552,7 @@ Avo.configure do |config|
 end
 ```
 
-<img :src="('/assets/img/resources/buttons_on_footer.jpg')" alt="Buttons on footer" class="border mb-4" />
+<img :src="('/assets/img/resources/buttons_on_footer.png')" alt="Buttons on footer" class="border mb-4" />
 
 :::
 
@@ -594,7 +591,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/resources/record_selector.jpg')" alt="Hide the record selector." class="border mb-4" />
+<img :src="('/assets/img/resources/record_selector.png')" alt="Hide the record selector." class="border mb-4" />
 :::
 
 :::option `self.link_to_child_resource`
