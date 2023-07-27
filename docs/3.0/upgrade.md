@@ -190,7 +190,7 @@ Each paragraph will guide you through the upgrade process for each individual ch
 Add the gems to your `Gemfile`
 
 ```ruby
-source "https://#{ENV["AVO_GEM_TOKEN"]}@packager.fly.dev/avo-hq-beta/" do
+source "https://#{ENV["AVO_GEM_TOKEN"]}@packager.dev/avo-hq-beta/" do
   gem "avo", "3.0.0.pre3"
   gem "avo_pro"
   gem "avo_advanced"
