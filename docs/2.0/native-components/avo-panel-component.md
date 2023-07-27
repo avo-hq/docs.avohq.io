@@ -179,3 +179,15 @@ The sidebar will conveniently show things in a smaller area on the right of the 
 ```
 ![](/assets/img/native-components/avo-panel-component/sidebar.png)
 :::
+
+:::option `bare_sidebar`
+Use this instead of `sidebar` to display content in a sidebar without the white background styling.
+
+```erb{2-4}
+<%= render Avo::PanelComponent.new do |c| %>
+  <% c.with_bare_sidebar do %>
+    Something tiny here.
+  <% end %>
+<% end %>
+```
+:::
