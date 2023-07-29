@@ -178,7 +178,7 @@ group :development do
 end
 ```
 
-Next you should run the `bin/rails avo:upgrade:2_to_3` command and go throught the process.
+Next you should run the `bin/rails avo:upgrade:2_to_3` command and go through the process.
 
 Ideally, you'd run the command with a clean tree and then make the last adjustments manually. The command will tell you what those the last adjustments are that you have to do manually.
 
