@@ -250,7 +250,7 @@ gem "avo_dashboards"
 
 ::::option Rename Avo configuration classes
 
-We are falling more in line with how Rails and zeitwerk autoloads classes. We do this to avoidsome issues like class conflicts and difficult to remember naming schemes.
+We are falling more in line with how Rails and zeitwerk autoloads classes. We do this to avoid some issues like class conflicts and difficult to remember naming schemes.
 
 The old naming scheme: `{NAME}{TYPE}` (`UserResource`)
 The new naming scheme: `Avo::{TYPE}::Name` (`Avo::Resources::User`)
