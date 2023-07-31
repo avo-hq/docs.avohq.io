@@ -3,7 +3,7 @@
 We generally push changes behind the scenes, so you don't have to update your code, but sometimes the public API is updated too.
 
 Follow these guides to make sure your configuration files are up to date.
-## Upgrade from 2.37 to 2.38
+## Upgrade from 2.37 to 2.37.1
 We've implemented a check to control the visibility of the detach button during rendering. This button will only appear if the association permits it. For instance, in the case of a `has_one` / `belongs_to` association, the button will be visible solely if the `belongs_to` side of the association includes the `optional` option set to true.
 
 To perform these checks, we utilize reflection. However, if we are unable to find the reflection needed to perform this check, we raise an error with the following format: `Please configure the 'inverse_of' option for the 'association (ex: has_many: accounts)' association on the 'model (ex: User)' model...`
