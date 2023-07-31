@@ -36,8 +36,8 @@ class Project < ApplicationRecord
   enum type: { 'Large container': 'large', 'Medium container': 'medium', 'Tiny container': 'small' }
 end
 
-# app/avo/resources/project_resource.rb
-class ProjectResource < Avo::BaseResource
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
   field :type,
     as: :select,
     enum: ::Project.types,
@@ -59,8 +59,8 @@ end
 You may want to display the values from the database and not the labels of the options. You may change that by setting `display_value` to `true`.
 
 ```ruby{5}
-# app/avo/resources/project_resource.rb
-class ProjectResource < Avo::BaseResource
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
   field :type,
     as: :select,
     display_with_value: true
@@ -82,8 +82,8 @@ If it's set to `true` and you have a `placeholder` value assigned, it will use t
 If it's a string `include_blank: "No country"`, the `No country` string will appear as the first option in the `<select>` and will set the value empty or `nil` depending on your settings.
 
 ```ruby{5}
-# app/avo/resources/project_resource.rb
-class ProjectResource < Avo::BaseResource
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
   field :type,
     as: :select,
     include_blank: 'No type'
@@ -101,15 +101,15 @@ end
 
 ## Computed options
 
-You may want to compute the values on the fly for your `Select` field. You can use a lambda for that where you have access to the `model`, `resource`, `view`, and `field` properties where you can pull data off.
+You may want to compute the values on the fly for your `Select` field. You can use a lambda for that where you have access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
 
 ```ruby{5-7}
-# app/avo/resources/project_resource.rb
-class ProjectResource < Avo::BaseResource
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
   field :type,
     as: :select,
-    options: ->(model:, resource:, view:, field:) do
-      model.get_types_from_the_database.map { |type| [type.name, type.id] }
+    options: -> do
+      record.get_types_from_the_database.map { |type| [type.name, type.id] }
     end,
     placeholder: 'Choose the type of the container.'
 end
