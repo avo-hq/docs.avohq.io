@@ -357,13 +357,13 @@ rails g avo:controller city --parent-controller Avo::BaseResourcesController
 rails g avo:resource city --parent-controller Avo::BaseResourcesController
 ```
 
-### `parent_controller` configuration option
-You can configure the `parent_controller` option in the `avo.rb` initializer. This option will be used to establish the inherited controller if the `--parent-controller` argument is not passed on the generators. Here's how you can do it:
+### `resource_parent_controller` configuration option
+You can configure the `resource_parent_controller` option in the `avo.rb` initializer. This option will be used to establish the inherited controller if the `--parent-controller` argument is not passed on the generators. Here's how you can do it:
 
 ```ruby
 Avo.configure do |config|
   # ...
-  config.parent_controller = "Avo::BaseResourcesController" # "Avo::ResourcesController" is default value
+  config.resource_parent_controller = "Avo::BaseResourcesController" # "Avo::ResourcesController" is default value
   # ...
 end
 ```
