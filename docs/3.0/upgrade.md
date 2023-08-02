@@ -12,6 +12,22 @@ In order to update all Avo packages you should run the following command.
 bundle update avo avo_pro avo_advanced avo_dashboards avo_filters avo_menu avo_upgrade
 ```
 
+## Upgrade from 3.0.0.pre14 to 3.0.0.pre15
+:::option Avo::Current.current_user deprecation
+`Avo::Current.current_user` has been deprecated in favor of `Avo::Current.user`. Please ensure that you update this change in your project, as it will become obsolete in future versions.
+:::
+
+:::option Package dependencies reorganization
+
+We have made some enhancements to the way we manage package dependencies. Now, each tier should declare only one gem in the gemfile.
+
+For the community version, you only need to include `gem "avo"`.<br>
+For the pro tier, include only `gem "avo-pro"`<br>
+For the advanced tier, only the `gem "avo-advanced"` is required.
+
+ Each gem will ensure that you have access to the dependent packages. This improvement prevents the gemfile from becoming overfilled and organizes each gem to import the necessary packages for each tier.
+:::
+
 ## Upgrade from 3.0.0.pre.12 to 3.0.0.pre.13
 
 :::option Refactor the search API
