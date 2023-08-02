@@ -28,6 +28,25 @@ For the advanced tier, only the `gem "avo-advanced"` is required.
  Each gem will ensure that you have access to the dependent packages. This improvement prevents the gemfile from becoming overfilled and organizes each gem to import the necessary packages for each tier.
 :::
 
+:::option Packages rename
+We noticed this Zeitwerk's [`for_gem_extension`](https://github.com/fxn/zeitwerk#for_gem_extension) feature, which facilitates better organization of package namespaces. Upon realizing that our gem's names were incorrectly configured to utilize this feature, we proceeded with the following changes:
+
+`avo_advanced` -> `avo-advanced`<br>
+`AvoAdvanced` -> `Avo::Advanced`
+
+`avo_pro` -> `avo-pro`<br>
+`AvoPro` -> `Avo::Pro`
+
+`avo_menu` -> `avo-menu`<br>
+`AvoMenu` -> `Avo::Menu`
+
+`avo_filters` -> `avo-dynamic_filters`<br>
+`AvoFilters` -> `Avo::DynamicFilters`
+
+`avo_dashboards` -> `avo-dashboards`<br>
+`AvoDashboards` -> `Avo::Dashboards`
+:::
+
 ## Upgrade from 3.0.0.pre.12 to 3.0.0.pre.13
 
 :::option Refactor the search API
