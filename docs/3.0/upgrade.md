@@ -50,6 +50,16 @@ We noticed this Zeitwerk's [`for_gem_extension`](https://github.com/fxn/zeitwerk
 
 `avo_dashboards` -> `avo-dashboards`<br>
 `AvoDashboards` -> `Avo::Dashboards`
+
+```ruby
+# Before
+class Avo::Dashboards::Dashy < AvoDashboards::BaseDashboard
+class Avo::Cards::PercentDone < AvoDashboards::MetricCard
+
+# After
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
+class Avo::Cards::PercentDone < Avo::Dashboards::MetricCard
+```
 :::
 
 ## Upgrade from 3.0.0.pre.12 to 3.0.0.pre.13
