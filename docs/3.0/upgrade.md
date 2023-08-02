@@ -471,6 +471,7 @@ All block arguments are removed from Avo. We did this in order to make blocks mo
 We don't have a complete list of blocks but we'll try to give you a few examples:
 
  - Field options: `visible`, `readonly`, `disabled`, `format_using`, etc.
+ - Select field `options` option
  - Resource options: `index_query`, `search_query`, `find_record_method`, etc.
  - Actions, Dashboards, and Cards `self.visible`
  - anything that you are passing as a block should be without arguments
@@ -493,6 +494,24 @@ field :name, as: :text, default: ->(resource:) {something}, format_using: ->(val
 
 # After
 field :name, as: :text, default: -> {something}, format_using: -> {}, visible: -> {}
+
+# Before
+field :level, as: :select, options: ->(model:, resource:, field:, view:) do
+    {
+      Beginner: :beginner,
+      Intermediate: :intermediate,
+      Advanced: :advanced,
+    }
+  end
+
+# After
+field :level, as: :select, options: -> do
+    {
+      Beginner: :beginner,
+      Intermediate: :intermediate,
+      Advanced: :advanced,
+    }
+  end
 ```
 :::
 
