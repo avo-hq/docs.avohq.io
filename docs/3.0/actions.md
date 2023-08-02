@@ -186,13 +186,16 @@ end
 :::
 :::option `redirect_to`
 
-`redirect_to` will execute a redirect to a new path of your app.
+`redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host` and `status` arguments.
+
+Example:
+`redirect_to path, allow_other_host: true, status: 303`
 
 ```ruby{9}
 def handle(**args)
-  records = args[:records]
+  models = args[:models]
 
-  records.each do |project|
+  models.each do |project|
     project.update active: false
   end
 
@@ -201,7 +204,28 @@ def handle(**args)
 end
 ```
 
+
+
+:::info
+If action is redirecting to an external link check the `turbo` option.
+
 :::
+
+:::option `turbo`
+There are times when turbo is not desired, such as when the action leads to an external link. In such cases, turbo should be set to false.
+
+```ruby{3,6}
+class Avo::Actions::DummyAction < Avo::BaseAction
+  self.name = "Dummy action"
+  self.turbo = false
+
+  def handle(**args)
+    redirect_to "https://www.google.com/"
+  end
+end
+```
+:::
+
 :::option `download`
 
 `download` will start a file download to your specified `path` and `filename`.
