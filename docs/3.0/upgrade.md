@@ -30,7 +30,7 @@ For the pro tier<br>
 For the advanced tier<br>
 `gem "avo-advanced", source: "https://packager.dev/avo-hq-beta/"`
 
- Each gem will ensure that you have access to the dependent packages. This improvement prevents the gemfile from becoming overfilled and organizes each gem to import the necessary packages for each tier.
+ Each gem will ensure that you have access to the dependent packages.
 :::
 
 :::option Packages rename
