@@ -25,7 +25,7 @@ For the community version, you only need to include `gem "avo"`.<br>
 For the pro tier, include only `gem "avo-pro"`<br>
 For the advanced tier, only the `gem "avo-advanced"` is required.
 
- Each gem will ensure that you have access to the dependent packages. This improvement prevents the gemfile from becoming overfilled and organizes each gem to import the necessary packages for each tier.
+ Each gem will ensure that you have access to the dependent packages.
 :::
 
 :::option Packages rename
