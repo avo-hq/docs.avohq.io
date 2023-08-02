@@ -206,13 +206,12 @@ end
 
 
 
-:::info
-If action is redirecting to an external link check the `turbo` option.
-
+:::warning
+If you're redirecting to an external link you should add the `self.turbo = false` option in order to bypass [Turbo's navigation](https://turbo.hotwired.dev/handbook/drive#disabling-turbo-drive-on-specific-links-or-forms).
 :::
 
 :::option `turbo`
-There are times when turbo is not desired, such as when the action leads to an external link. In such cases, turbo should be set to false.
+There are times when you don't want to perform the actions with Turbo, such as when the action leads to an external link or you might download a file. In such cases, turbo should be set to false.
 
 ```ruby{3,6}
 class Avo::Actions::DummyAction < Avo::BaseAction
