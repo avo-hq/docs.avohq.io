@@ -107,7 +107,7 @@ Avo supports the other bundlers too but we just don't have a generator command t
 
 ## Manually add your CSS and JS assets
 
-In order to manually add your assets you have to eject the `_pre_head.html.erb` partial (`bin/rails generate avo:eject :pre_head`), create the asset files (examples below), and add the asset files from your pipeline to the `_pre_head` partial. Then, your asset pipeline will pick up those assets and use add them to your app.
+In order to manually add your assets you have to eject the `_pre_head.html.erb` partial (`bin/rails generate avo:eject --partial :pre_head`), create the asset files (examples below), and add the asset files from your pipeline to the `_pre_head` partial. Then, your asset pipeline will pick up those assets and use add them to your app.
 
 :::warning
 You should add your custom styles to `_pre_head.html.erb`, versus `_head.html.erb` to avoid overriding Avo's default styles. This
@@ -124,7 +124,7 @@ The order in which Avo loads the partials and asset files is this one:
 ### Sprockets and Propshaft
 
 Create `avo.custom.js` and `avo.custom.css` inside `app/assets/javascripts` and `app/assets/stylesheets` with the desired scripts and styles.
-Then add them to Avo using the `_pre_head.html.erb` partial (`rails generate avo:eject :pre_head`).
+Then add them to Avo using the `_pre_head.html.erb` partial (`rails generate avo:eject --partial :pre_head`).
 
 ```erb
 # app/views/avo/partials/_pre_head.html.erb
@@ -148,7 +148,7 @@ Instructions below are for Webpacker version 6. Version 5 has different paths (`
 :::
 
 Create `avo.custom.js` and `avo.custom.css` inside `app/packs/entrypoints` with the desired scripts and styles.
-Then add them to Avo using the `_pre_head.html.erb` partial (`rails generate avo:eject :pre_head`).
+Then add them to Avo using the `_pre_head.html.erb` partial (`rails generate avo:eject --partial :pre_head`).
 
 ```erb
 # app/views/avo/partials/_pre_head.html.erb

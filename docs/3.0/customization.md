@@ -150,16 +150,20 @@ You can access the context data with `::Avo::App.context` object.
 
 ## Eject views
 
-If you want to change one of Avo's built-in views, you can eject it, update it and use it in your admin.
+If you want to change one of Avo's built-in views, you can eject it, update it and use it in your admin panel.
+
+:::warning
+Once ejected, the views will not receive updates on new Avo releases. You must maintain them yourself.
+:::
 
 ### Prepared templates
 
-We prepared a few templates to make it.
+We prepared a few templates to make it easier for you.
 
-`bin/rails generate avo:eject :logo` will eject the `_logo.html.erb` partial.
+`bin/rails generate avo:eject --partial :logo` will eject the `_logo.html.erb` partial.
 
 ```
-▶ bin/rails generate avo:eject :logo
+▶ bin/rails generate avo:eject --partial :logo
 Running via Spring preloader in process 20947
       create  app/views/avo/logo/_logo.html.erb
 ```
@@ -200,13 +204,26 @@ The `_scripts.html.erb` partial enables you to insert scripts in the footer of y
 You can eject any partial from Avo using the partial path.
 
 ```
-▶ bin/rails generate avo:eject app/views/layouts/avo/application.html.erb
+▶ bin/rails generate avo:eject --partial app/views/layouts/avo/application.html.erb
       create  app/views/layouts/avo/application.html.erb
 ```
 
-:::warning
-Once ejected, the views will not receive updates on new Avo releases. You must maintain them yourself.
-:::
+### Eject view-components
+
+You can eject any view component from Avo using the `--component` option.
+
+```
+$ bin/rails generate avo:eject --component Avo::Index::TableRowComponent
+      create  app/components/avo/index/table_row_component.rb
+      create  app/components/avo/index/table_row_component.html.erb
+```
+or
+
+```
+$ bin/rails generate avo:eject --component avo/index/table_row_component
+      create  app/components/avo/index/table_row_component.rb
+      create  app/components/avo/index/table_row_component.html.erb
+```
 
 ## Breadcrumbs
 
