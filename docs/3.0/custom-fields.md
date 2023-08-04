@@ -34,7 +34,7 @@ Please restart your rails server after adding a new custom field.
 The `ProgressBarField` file is what registers the field in your admin.
 
 ```ruby
-class ProgressBarField < Avo::Fields::BaseField
+class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
   def initialize(name, **args, &block)
     super(name, **args, &block)
   end
@@ -44,8 +44,8 @@ end
 Now you can use your field like so:
 
 ```ruby{6}
-# app/avo/resources/progress_bar_field.rb
-class ProjectResource < Avo::BaseResource
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
   self.title = :name
 
   field :id, as: :id, link_to_resource: true
@@ -78,13 +78,70 @@ The generated view components are basic text fields for now.
 
 You can customize them and add as much or as little content as needed. More on customization [below](#customize-the-views).
 
+:::option Use existent field template
+There is the possibility to choose an template from an already existent avo field. That means that all components will have the exact same code (except the name) as the original chosen field. In order to achieve this behavior use the `--field_template` argument and pass the original field as value.
+
+```bash
+$ bin/rails generate avo:field super_text --field_template text
+      create  app/components/avo/fields/super_text_field
+      create  app/components/avo/fields/super_text_field/edit_component.html.erb
+      create  app/components/avo/fields/super_text_field/edit_component.rb
+      create  app/components/avo/fields/super_text_field/index_component.html.erb
+      create  app/components/avo/fields/super_text_field/index_component.rb
+      create  app/components/avo/fields/super_text_field/show_component.html.erb
+      create  app/components/avo/fields/super_text_field/show_component.rb
+      create  app/avo/fields/super_text_field.rb
+```
+
+We can verify that all components have the text field code. From here there are endless possibilities to extend the original field features.
+
+```ruby
+# app/avo/fields/super_text_field.rb
+module Avo
+  module Fields
+    class SuperTextField < BaseField
+      attr_reader :link_to_resource
+      attr_reader :as_html
+      attr_reader :protocol
+
+      def initialize(id, **args, &block)
+        super(id, **args, &block)
+
+        add_boolean_prop args, :link_to_resource
+        add_boolean_prop args, :as_html
+        add_string_prop args, :protocol
+      end
+    end
+  end
+end
+
+# lib/avo/fields/text_field.rb
+module Avo
+  module Fields
+    class TextField < BaseField
+      attr_reader :link_to_resource
+      attr_reader :as_html
+      attr_reader :protocol
+
+      def initialize(id, **args, &block)
+        super(id, **args, &block)
+
+        add_boolean_prop args, :link_to_resource
+        add_boolean_prop args, :as_html
+        add_string_prop args, :protocol
+      end
+    end
+  end
+end
+```
+:::
 ## Field options
 
 This file is where you may add field-specific options.
 
  ```ruby{3-6,11-14}
 # app/avo/fields/progress_bar_field.rb
-class ProgressBarField < Avo::Fields::BaseField
+class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
   attr_reader :max
   attr_reader :step
   attr_reader :display_value
@@ -105,7 +162,7 @@ The field-specific options can come from the field declaration as well.
 
 ```ruby{11-14,23}
 # app/avo/fields/progress_bar_field.rb
-class ProgressBarField < Avo::Fields::BaseField
+class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
   attr_reader :max
   attr_reader :step
   attr_reader :display_value
@@ -121,8 +178,8 @@ class ProgressBarField < Avo::Fields::BaseField
   end
 end
 
-# app/avo/resources/progress_bar_field.rb
-class ProjectResource < Avo::BaseResource
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
   self.title = :name
 
   field :id, as: :id, link_to_resource: true
@@ -136,7 +193,7 @@ If you need to hide the field in some view, you can use the [visibility helpers]
 
 ```ruby{16}
 # app/avo/fields/progress_bar_field.rb
-class ProgressBarField < Avo::Fields::BaseField
+class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
   attr_reader :max
   attr_reader :step
   attr_reader :display_value
@@ -269,7 +326,7 @@ You should add the `:always_show` `attr_reader` and `@always_show` instance vari
 
 ```ruby{3,8}
 # app/avo/fields/color_picker_field.rb
-class ColorPickerField < Avo::Fields::BaseField
+class Avo::Fields::ColorPickerField < Avo::Fields::BaseField
   attr_reader :always_show
 
   def initialize(id, **args, &block)
