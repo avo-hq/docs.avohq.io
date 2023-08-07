@@ -259,7 +259,7 @@ class Avo::Actions::DownloadFile < Avo::BaseAction
 end
 ```
 
-```ruby{5} [app/avo/resources/project_resource.rb]
+```ruby{7} [app/avo/resources/project.rb]
 class Avo::Resources::Project < Avo::BaseResource
   def fields
     # fields here
