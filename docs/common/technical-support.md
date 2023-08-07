@@ -18,7 +18,7 @@ We use Algolia DocSearch so you can quickly find what you're looking for.
 
 ### Recipes and FAQ page
 
-We compiled a list of helpful [recipes](./recipes.html) from ourselves and the community and a few [FAQ](./faq.html) items for you to check out.
+We compiled a list of helpful [recipes](./../3.0/recipes.html) from ourselves and the community and a few [FAQ](./../3.0/faq.html) items for you to check out.
 
 ## 2. GitHub Issues / GitHub Discussions
 
