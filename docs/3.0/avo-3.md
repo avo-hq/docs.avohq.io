@@ -28,9 +28,9 @@ Until we finish up with the setup on all the repos, you'll have access to the [a
 ## New features
 
 - [Dynamic filters](./dynamic-filters)
-- Dynamic fields (unreleased yet)
-- Nested record creation (unreleased yet)
-- Resource tools in fields (unreleased yet)
+- Dynamic fields (coming soon)
+- Nested record creation (coming soon)
+- Resource tools in fields (coming soon)
 - [New `def fields` API](./fields)
 - [Plugins API](./plugins)
 - New status page
@@ -38,6 +38,9 @@ Until we finish up with the setup on all the repos, you'll have access to the [a
 - [Resource scopes](./scopes)
 - [Record preview on Index](./record-previews)
 - [Testing helpers](./testing#testing-helpers)
+- Custom fields from template
+- Custom resource view components for <Index />, <Show />, and <Edit /> (coming soon)
+- Custom components for fields (coming soon)
 
 ## Feedback
 
