@@ -33,17 +33,19 @@ Use [this](https://railsbytes.com/public/templates/zyvsME) RailsBytes template f
 
 Take it step by step.
 
-1. Add the Avo gems to the `Gemfile`
+1. Add the appropiate Avo gem to the `Gemfile`
 
 ```ruby
-source "https://packager.dev/avo-hq/" do
-  gem "avo", "3.0.0.pre3"
-  gem "avo_pro"
-  gem "avo_advanced"
-  gem "avo_filters"
-  gem "avo_menu"
-  gem "avo_dashboards"
-end
+# In your Gemfile one of the below
+
+# Community
+gem "avo", source: "https://packager.dev/avo-hq/"
+
+# Pro
+gem "avo_pro", source: "https://packager.dev/avo-hq/"
+
+# Advanced
+gem "avo_advanced", source: "https://packager.dev/avo-hq/"
 ```
 
 :::info
