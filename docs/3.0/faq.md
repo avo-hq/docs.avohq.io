@@ -68,7 +68,7 @@ That depends on your setup:
 1. If you have [Rails STI](https://guides.rubyonrails.org/association_basics.html#single-table-inheritance-sti), then it will work. Avo knows how to handle STI models. So you'll have two models and an Avo resource for each one. That will render two resources in your admin panel's sidebar.
 2. You don't have Rails STI but something custom. Then the response is it depends. Because something custom is... custom, we offer a few mechanisms to get over that.
 
-If you have one model, `User`, you'll have one Avo resource, `UserResource`.
+If you have one model, `User`, you'll have one Avo resource, `Avo::Resources::User`.
 Then you can customize different things based on your requirements. Like if for instance, you want to show only some types of users on the `Index` view, you can use [custom query scopes](https://docs.avohq.io/1.0/customization.html#custom-query-scopes) to hide specific types (if that's what you want to do).
 Same if you want to [show/hide fields](https://docs.avohq.io/1.0/field-options.html#field-visibility) based on the resource type or type of user.
 
@@ -118,16 +118,18 @@ For convenience sake, we capture the `view_context` for you and set it to the `A
 
 On the `Resource` and `Field` classes, it's already delegated for you, so you can just use `view_context`.
 
-```ruby{6,9}
-class CommentResource < Avo::BaseResource
-  field :id, as: :id
-  field :body,
-    as: :textarea,
-    format_using: -> do
-      view_context.content_tag(:div, style: 'white-space: pre-line') { value }
+```ruby{7,10}
+class Avo::Resources::Comment < Avo::BaseResource
+  def fields
+    field :id, as: :id
+    field :body,
+      as: :textarea,
+      format_using: -> do
+        view_context.content_tag(:div, style: 'white-space: pre-line') { value }
+      end
+    field :computed_field, as: :text do
+      view_context.link_to("Login", main_app.new_user_session_path)
     end
-  field :computed_field, as: :text do
-    view_context.link_to("Login", main_app.new_user_session_path)
   end
 end
 ```
@@ -138,9 +140,11 @@ end
 
 When adding content using the `textarea` field, you might see that the newlines are not displayed on the `Show` view.
 
-```ruby{2}
-class CommentResource < Avo::BaseResource
-  field :body, as: :textarea
+```ruby{3}
+class Avo::Resources::Comment < Avo::BaseResource
+  def fields
+    field :body, as: :textarea
+  end
 end
 ```
 
@@ -151,13 +155,15 @@ You can change how you display the information by using the `format_using` optio
 
 ### Use `simple_format`
 
-```ruby{5}
-class CommentResource < Avo::BaseResource
-  field :body,
-    as: :textarea,
-    format_using: -> do
-      simple_format value
-    end
+```ruby{6}
+class Avo::Resources::Comment < Avo::BaseResource
+  def fields
+    field :body,
+      as: :textarea,
+      format_using: -> do
+        simple_format value
+      end
+  end
 end
 ```
 
@@ -165,12 +171,14 @@ end
 
 ### Use the `white-space: pre-line` style rule
 
-```ruby{5}
-class CommentResource < Avo::BaseResource
-  field :body,
-    as: :textarea,
-    format_using: -> do
-      content_tag(:div, style: 'white-space: pre-line') { value }
+```ruby{6}
+class Avo::Resources::Comment < Avo::BaseResource
+  def fields
+    field :body,
+      as: :textarea,
+      format_using: -> do
+        content_tag(:div, style: 'white-space: pre-line') { value }
+      end
     end
 end
 ```
@@ -179,13 +187,15 @@ end
 
 ### Use the `whitespace-pre-line` class
 
-```ruby{5}
-class CommentResource < Avo::BaseResource
-  field :body,
-    as: :textarea,
-    format_using: -> do
-      content_tag(:div, class: 'whitespace-pre-line') { value }
-    end
+```ruby{6}
+class Avo::Resources::Comment < Avo::BaseResource
+  def fields
+    field :body,
+      as: :textarea,
+      format_using: -> do
+        content_tag(:div, class: 'whitespace-pre-line') { value }
+      end
+  end
 end
 ```
 
