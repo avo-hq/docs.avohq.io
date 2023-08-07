@@ -418,8 +418,24 @@ class Avo::Resources::Team < Avo::BaseResource
 
   field :id, as: :id, filterable: true
   field :name, as: :text, sortable: true, show_on: :preview, filterable: true
-  field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded
-  field :created_at, as: :date_time, filterable: true
+
+  tabs do
+    tab "Info" do
+      panel do
+        field :created_at, as: :date_time, filterable: true
+      end
+    end
+  end
+
+  sidebar do
+    field :updated_at, as: :date_time, filterable: true
+  end
+
+  panel "Logo" do
+    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded
+  end
+
+  tool Avo::ResourceTools::TeamTool
 end
 
 # After
@@ -429,12 +445,24 @@ class Avo::Resources::Team < Avo::BaseResource
   def fields
     field :id, as: :id, filterable: true
     field :name, as: :text, sortable: true, show_on: :preview, filterable: true
-    field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded do
-      if record.url
-        "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
+
+    tabs do
+      tab "Info" do
+        panel do
+          field :created_at, as: :date_time, filterable: true
+        end
       end
     end
-    field :created_at, as: :date_time, filterable: true
+
+    sidebar do
+      field :updated_at, as: :date_time, filterable: true
+    end
+
+    panel "Logo" do
+      field :logo, as: :external_image, hide_on: :show, as_avatar: :rounded
+    end
+
+    tool Avo::ResourceTools::TeamTool
   end
 end
 ```
@@ -469,7 +497,7 @@ end
 
 ### Actions to take
 
-Wrap all field declarations from Resource and Action files in a `def fields` method.
+Wrap all `field`, `tabs`, `tab`, `panel`, `sidebar`, and `tool` declarations from Resource and Action files into one `def fields` method.
 :::
 
 :::option Use the `def actions` API
@@ -529,7 +557,7 @@ end
 ```
 :::
 
-:::option Wrap all Dashboard `card` definitions inside a `def cards`method
+:::option Wrap all Dashboard `card` and `divider` definitions inside one `def cards` method
 After the `def fields` refactor we did the same in dashboard files. Instead of declaring the cards in the class directly, you should do it in the `def cards` method.
 
 ```ruby{6-8,16-20}
@@ -540,6 +568,7 @@ class Avo::Dashboards::Dashy < AvoDashboards::BaseDashboard
 
   card Avo::Cards::ExampleMetric, visible: -> { true }
   card Avo::Cards::ExampleAreaChart
+  divider
   card Avo::Cards::ExampleScatterChart
 end
 
@@ -551,6 +580,7 @@ class Avo::Dashboards::Dashy < AvoDashboards::BaseDashboard
   def cards
     card Avo::Cards::ExampleMetric, visible: -> { true }
     card Avo::Cards::ExampleAreaChart
+    divider
     card Avo::Cards::ExampleScatterChart
   end
 end
