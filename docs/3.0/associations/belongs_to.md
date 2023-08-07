@@ -78,19 +78,21 @@ On the `Edit` and `New` views, Avo will generate a dropdown element with the ava
 
 To use a polymorphic relation, you must add the `polymorphic_as` and `types` properties.
 
-```ruby{12}
-class CommentResource < Avo::BaseResource
+```ruby{13}
+class Avo::Resources::Comment < Avo::BaseResource
   self.title = :id
 
-  field :id, as: :id
-  field :body, as: :textarea
-  field :excerpt, as: :text, show_on: :index do
-    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
-  rescue
-    ""
-  end
+  def fields
+    field :id, as: :id
+    field :body, as: :textarea
+    field :excerpt, as: :text, show_on: :index do
+      ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
+    rescue
+      ""
+    end
 
-  field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
+    field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
+  end
 end
 ```
 
@@ -98,24 +100,26 @@ end
 
 When displaying a polymorphic association, you will see two dropdowns. One selects the polymorphic type (`Post` or `Project`), and one for choosing the actual record. You may want to give the user explicit information about those dropdowns using the `polymorphic_help` option for the first dropdown and `help` for the second.
 
-```ruby{16-17}
-class CommentResource < Avo::BaseResource
+```ruby{17-18}
+class Avo::Resources::Comment < Avo::BaseResource
   self.title = :id
 
-  field :id, as: :id
-  field :body, as: :textarea
-  field :excerpt, as: :text, show_on: :index do
-    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
-  rescue
-    ""
-  end
+  def fields
+    field :id, as: :id
+    field :body, as: :textarea
+    field :excerpt, as: :text, show_on: :index do
+      ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
+    rescue
+      ""
+    end
 
-  field :reviewable,
-    as: :belongs_to,
-    polymorphic_as: :reviewable,
-    types: [::Post, ::Project, ::Team],
-    polymorphic_help: "Choose the type of record to review",
-    help: "Choose the record you need."
+    field :reviewable,
+      as: :belongs_to,
+      polymorphic_as: :reviewable,
+      types: [::Post, ::Project, ::Team],
+      polymorphic_help: "Choose the type of record to review",
+      help: "Choose the record you need."
+  end
 end
 ```
 
@@ -127,14 +131,16 @@ end
 
 There might be the case that you have a lot of records for the parent resource, and a simple dropdown won't cut it. This is where you can use the `searchable` option to get a better search experience for that resource.
 
-```ruby{7}
-class CommentResource < Avo::BaseResource
+```ruby{8}
+class Avo::Resources::Comment < Avo::BaseResource
   self.title = :id
 
-  field :id, as: :id
-  field :body, as: :textarea
+  def fields
+    field :id, as: :id
+    field :body, as: :textarea
 
-  field :user, as: :belongs_to, searchable: true
+    field :user, as: :belongs_to, searchable: true
+  end
 end
 ```
 
@@ -143,35 +149,41 @@ end
 
 `searchable` works with `polymorphic` `belongs_to` associations too.
 
-```ruby{7}
-class CommentResource < Avo::BaseResource
+```ruby{8}
+class Avo::Resources::Comment < Avo::BaseResource
   self.title = :id
 
-  field :id, as: :id
-  field :body, as: :textarea
+  def fields
+    field :id, as: :id
+    field :body, as: :textarea
 
-  field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project], searchable: true
+    field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project], searchable: true
+  end
 end
 ```
 
 :::info
-Avo uses the [search feature](./../search) behind the scenes, so **make sure the target resource has the `search_query` option configured**.
+Avo uses the [search feature](./../search) behind the scenes, so **make sure the target resource has the `query` option configured inside the `search` block**.
 :::
 
 
 ```ruby
-# app/avo/resources/post_resource.rb
-class PostResource < Avo::BaseResource
-  self.search_query = -> do
-    query.ransack(id_eq: params[:q], name_cont: params[:q], body_cont: params[:q], m: "or").result(distinct: false)
-  end
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.search = {
+    query: -> {
+      query.ransack(id_eq: params[:q], name_cont: params[:q], body_cont: params[:q], m: "or").result(distinct: false)
+    }
+  }
 end
 
-# app/avo/resources/project_resource.rb
-class ProjectResource < Avo::BaseResource
-  self.search_query = -> do
-    query.ransack(id_eq: params[:q], name_cont: params[:q], country_cont: params[:q], m: "or").result(distinct: false)
-  end
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  self.search = {
+    query: -> {
+      query.ransack(id_eq: params[:q], name_cont: params[:q], country_cont: params[:q], m: "or").result(distinct: false)
+    }
+  }
 end
 ```
 
@@ -193,9 +205,11 @@ class User < ApplicationRecord
   scope :non_admins, -> { where "(roles->>'admin')::boolean != true" }
 end
 
-# app/avo/resources/post_resource.rb
-class PostResource < Avo::BaseResource
-  field :user, as: :belongs_to, attach_scope: -> { query.non_admins }
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  def fields
+    field :user, as: :belongs_to, attach_scope: -> { query.non_admins }
+  end
 end
 ```
 
@@ -207,17 +221,19 @@ When you visit a record through an association, that `belongs_to` field is disab
 
 You can instruct Avo to keep that field enabled in this scenario using `allow_via_detaching`.
 
-```ruby{11}
-class CommentResource < Avo::BaseResource
+```ruby{12}
+class Avo::Resources::Comment < Avo::BaseResource
   self.title = :id
 
-  field :id, as: :id
-  field :body, as: :textarea
+  def fields
+    field :id, as: :id
+    field :body, as: :textarea
 
-  field :commentable,
-    as: :belongs_to,
-    polymorphic_as: :commentable,
-    types: [::Post, ::Project],
-    allow_via_detaching: true
+    field :commentable,
+      as: :belongs_to,
+      polymorphic_as: :commentable,
+      types: [::Post, ::Project],
+      allow_via_detaching: true
+  end
 end
 ```
