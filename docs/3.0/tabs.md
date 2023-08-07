@@ -19,14 +19,16 @@ First, we should talk a bit about panels. They are the backbone of Avo's display
 When using the fields DSL for resources, all fields declared in the root will be grouped into a "main" panel, but you can add your panels.
 
 ```ruby
-class UserResource < Avo::BaseResource
-  field :id, as: :id, link_to_resource: true
-  field :email, as: :text, name: "User Email", required: true
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id, link_to_resource: true
+    field :email, as: :text, name: "User Email", required: true
 
-  panel name: "User information", description: "Some information about this user" do
-    field :first_name, as: :text, required: true, placeholder: "John"
-    field :last_name, as: :text, required: true, placeholder: "Doe"
-    field :active, as: :boolean, name: "Is active", show_on: :show
+    panel name: "User information", description: "Some information about this user" do
+      field :first_name, as: :text, required: true, placeholder: "John"
+      field :last_name, as: :text, required: true, placeholder: "Doe"
+      field :active, as: :boolean, name: "Is active", show_on: :show
+    end
   end
 end
 ```
@@ -39,19 +41,21 @@ You can customize the panel `name` and panel `description`.
 By default, only the fields declared in the root will be visible on the `Index` view.
 
 ```ruby{3-7}
-class UserResource < Avo::BaseResource
-  # Only these fields will be visible on the `Index` view
-  field :id, as: :id, link_to_resource: true
-  field :email, as: :text, name: "User Email", required: true
-  field :name, as: :text, only_on: :index do
-    "#{record.first_name} #{record.last_name}"
-  end
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    # Only these fields will be visible on the `Index` view
+    field :id, as: :id, link_to_resource: true
+    field :email, as: :text, name: "User Email", required: true
+    field :name, as: :text, only_on: :index do
+      "#{record.first_name} #{record.last_name}"
+    end
 
-  # These fields will be hidden on the `Index` view
-  panel name: "User information", description: "Some information about this user" do
-    field :first_name, as: :text, required: true, placeholder: "John"
-    field :last_name, as: :text, required: true, placeholder: "Doe"
-    field :active, as: :boolean, name: "Is active", show_on: :show
+    # These fields will be hidden on the `Index` view
+    panel name: "User information", description: "Some information about this user" do
+      field :first_name, as: :text, required: true, placeholder: "John"
+      field :last_name, as: :text, required: true, placeholder: "Doe"
+      field :active, as: :boolean, name: "Is active", show_on: :show
+    end
   end
 end
 ```
@@ -63,23 +67,25 @@ end
 Tabs are a new layer of abstraction over panels. They enable you to group panels and tools together under a single pavilion and toggle between them.
 
 ```ruby
-class UserResource < Avo::BaseResource
-  field :id, as: :id, link_to_resource: true
-  field :email, as: :text, name: "User Email", required: true
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id, link_to_resource: true
+    field :email, as: :text, name: "User Email", required: true
 
-  tabs do
-    tab "User information", description: "Some information about this user" do
-      panel do
-        field :first_name, as: :text, required: true, placeholder: "John"
-        field :last_name, as: :text, required: true, placeholder: "Doe"
-        field :active, as: :boolean, name: "Is active", show_on: :show
+    tabs do
+      tab "User information", description: "Some information about this user" do
+        panel do
+          field :first_name, as: :text, required: true, placeholder: "John"
+          field :last_name, as: :text, required: true, placeholder: "Doe"
+          field :active, as: :boolean, name: "Is active", show_on: :show
+        end
       end
-    end
 
-    field :teams, as: :has_and_belongs_to_many
-    field :people, as: :has_many
-    field :spouses, as: :has_many
-    field :projects, as: :has_and_belongs_to_many
+      field :teams, as: :has_and_belongs_to_many
+      field :people, as: :has_many
+      field :spouses, as: :has_many
+      field :projects, as: :has_and_belongs_to_many
+    end
   end
 end
 ```
