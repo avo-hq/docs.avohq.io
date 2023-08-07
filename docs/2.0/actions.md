@@ -184,7 +184,10 @@ end
 :::
 :::option `redirect_to`
 
-`redirect_to` will execute a redirect to a new path of your app.
+`redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host` and `status` arguments.
+
+Example:
+`redirect_to path, allow_other_host: true, status: 303`
 
 ```ruby{9}
 def handle(**args)
@@ -199,7 +202,27 @@ def handle(**args)
 end
 ```
 
+
+
+:::warning
+If you're redirecting to an external link you should add the `self.turbo = false` option in order to bypass [Turbo's navigation](https://turbo.hotwired.dev/handbook/drive#disabling-turbo-drive-on-specific-links-or-forms).
 :::
+
+:::option `turbo`
+There are times when you don't want to perform the actions with Turbo, such as when the action leads to an external link or you might download a file. In such cases, turbo should be set to false.
+
+```ruby{3,6}
+class DummyAction < Avo::BaseAction
+  self.name = "Dummy action"
+  self.turbo = false
+
+  def handle(**args)
+    redirect_to "https://www.google.com/" # external link
+  end
+end
+```
+:::
+
 :::option `download`
 
 `download` will start a file download to your specified `path` and `filename`.
