@@ -229,14 +229,17 @@ Ideally, you'd run the command with a clean tree and then make the last adjustme
 Each paragraph will guide you through the upgrade process for each individual change.
 
 :::option Update your `Gemfile`
-Add on of the following gems to your `Gemfile` according to your license type.
+Add one of the following gems to your `Gemfile` according to your license type.
 
 ```ruby
-gem "avo", source: "https://#{ENV["AVO_GEM_TOKEN"]}@packager.dev/avo-hq-beta/"
+# Avo Community
+gem "avo", source: "https://packager.dev/avo-hq/"
 
-gem "avo-pro", source: "https://#{ENV["AVO_GEM_TOKEN"]}@packager.dev/avo-hq-beta/"
+# Avo Pro
+gem "avo-pro", source: "https://packager.dev/avo-hq/"
 
-gem "avp-advanced", source: "https://#{ENV["AVO_GEM_TOKEN"]}@packager.dev/avo-hq-beta/"
+# Avo Advanced
+gem "av0-advanced", source: "https://packager.dev/avo-hq/"
 ```
 :::
 
