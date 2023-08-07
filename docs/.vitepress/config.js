@@ -157,15 +157,15 @@ const config = {
         {
           text: "Customize Avo",
           items: [
-            // {text: "Customization options", link: "/3.0/customization"},
+            {text: "Customization options", link: "/3.0/customization"},
             {text: "Grid view", link: "/3.0/grid-view"},
             {text: "Map view", link: "/3.0/map-view"},
             {text: "Custom view types", link: "/3.0/custom-view-types"},
-            // {text: "Menu editor", link: "/3.0/menu-editor"},
+            {text: "Menu editor", link: "/3.0/menu-editor"},
             {text: "Search", link: "/3.0/search"},
-            // {text: "Actions", link: "/3.0/actions"},
-            // {text: "Localization (I18n)", link: "/3.0/localization"},
-            // {text: "Branding", link: "/3.0/branding"},
+            {text: "Actions", link: "/3.0/actions"},
+            {text: "Localization (I18n)", link: "/3.0/localization"},
+            {text: "Branding", link: "/3.0/branding"},
           ],
         },
         {
@@ -177,17 +177,17 @@ const config = {
             // {text: "Advanced filters", link: "/3.0/filters/advanced-filters"},
           ],
         },
-        // {
-        //   text: "Custom content",
-        //   items: [
-        //     {text: "Custom views", link: "/3.0/custom-tools"},
-        //     {text: "Custom fields", link: "/3.0/custom-fields"},
-        //     {text: "Resource tools", link: "/3.0/resource-tools"},
-        //     {text: "Stimulus JS integration", link: "/3.0/stimulus-integration"},
-        //     {text: "Evaluation hosts", link: "/3.0/evaluation-hosts"},
-        //     {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline"},
-        //   ],
-        // },
+        {
+          text: "Custom content",
+          items: [
+            {text: "Custom views", link: "/3.0/custom-tools"},
+            {text: "Custom fields", link: "/3.0/custom-fields"},
+            {text: "Resource tools", link: "/3.0/resource-tools"},
+            {text: "Stimulus JS integration", link: "/3.0/stimulus-integration"},
+            // {text: "Evaluation hosts", link: "/3.0/evaluation-hosts"},
+            {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline"},
+          ],
+        },
         // {
         //   text: "Native Avo components",
         //   items: [
