@@ -614,3 +614,23 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 :::
+
+:::option Remove `tabs_style` from the `tabs` declaration
+We streamlined tabs and kept only the `:pills` style so now we only have one style of tabs.
+
+### Actions to take
+
+Remove `tabs_style` from the `tabs` declaration
+
+```ruby
+# Before
+tabs tabs_style: :pills do
+  # tabs here
+end
+
+# After
+tabs do
+  # tabs here
+end
+```
+:::
