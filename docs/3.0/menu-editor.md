@@ -304,6 +304,14 @@ end
 
 <img :src="('/assets/img/menu-editor/icons.jpg')" alt="Avo menu editor" class="border mb-4" />
 
+### Icons on resource, dashboard, and link_to items
+
+You can add icons to other menu items like `resource`, `dashboard`, and `link_to`.
+
+```ruby
+link_to "Avo", "https://avohq.io", icon: "globe"
+```
+
 ## Collapsable sections and groups
 
 When you have a lot of items they can take up a lot of vertical space. You can choose to make those sidebar sections collapsable by you or your users.
