@@ -42,10 +42,10 @@ Take it step by step.
 gem "avo", source: "https://packager.dev/avo-hq/"
 
 # Pro
-gem "avo_pro", source: "https://packager.dev/avo-hq/"
+gem "avo-pro", source: "https://packager.dev/avo-hq/"
 
 # Advanced
-gem "avo_advanced", source: "https://packager.dev/avo-hq/"
+gem "avo-advanced", source: "https://packager.dev/avo-hq/"
 ```
 
 :::info
