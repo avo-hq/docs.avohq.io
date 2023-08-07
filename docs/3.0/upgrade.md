@@ -4,14 +4,6 @@
 The 2.x to 3.0 Upgrade is a work in progress. We'll add more instructions here after each release.
 :::
 
-## Upgrade Avo packages
-
-In order to update all Avo packages you should run the following command.
-
-```bash
-bundle update avo avo_pro avo_advanced avo_dashboards avo_filters avo_menu avo_upgrade
-```
-
 ## Upgrade from 3.0.0.pre14 to 3.0.0.pre15
 :::option Avo::Current.current_user deprecation
 `Avo::Current.current_user` has been deprecated in favor of `Avo::Current.user`. Please ensure that you update this change in your project, as it will become obsolete in future versions.
@@ -237,17 +229,14 @@ Ideally, you'd run the command with a clean tree and then make the last adjustme
 Each paragraph will guide you through the upgrade process for each individual change.
 
 :::option Update your `Gemfile`
-Add the gems to your `Gemfile`
+Add on of the following gems to your `Gemfile` according to your license type.
 
 ```ruby
-source "https://#{ENV["AVO_GEM_TOKEN"]}@packager.dev/avo-hq-beta/" do
-  gem "avo", "3.0.0.pre3"
-  gem "avo_pro"
-  gem "avo_advanced"
-  gem "avo_filters"
-  gem "avo_menu"
-  gem "avo_dashboards"
-end
+gem "avo", source: "https://#{ENV["AVO_GEM_TOKEN"]}@packager.dev/avo-hq-beta/"
+
+gem "avo-pro", source: "https://#{ENV["AVO_GEM_TOKEN"]}@packager.dev/avo-hq-beta/"
+
+gem "avp-advanced", source: "https://#{ENV["AVO_GEM_TOKEN"]}@packager.dev/avo-hq-beta/"
 ```
 :::
 
@@ -278,25 +267,6 @@ You might have the `model` referenced in other places too. Try to replace it wit
 If you find it in other places, please send them our way so we can have a consistent API. Thank you!
 :::
 
-:::option Install the extra repos
-
-We split Avo into a few repositories to make the base pacakge lighter, open source, and more manageable.
-
-We'll have a better way to do this in stable.
-
-### Actions to take
-
-Add the following gems to your `Gemfile`.
-
-```ruby
-gem "avo"
-gem "avo_pro"
-gem "avo_advanced"
-gem "avo_filters"
-gem "avo_menu"
-gem "avo_dashboards"
-```
-:::
 
 ::::option Rename Avo configuration classes
 
