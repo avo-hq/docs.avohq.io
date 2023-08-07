@@ -178,7 +178,7 @@ group :development do
 end
 ```
 
-Next you should run the `bin/rails avo:upgrade:2_to_3` command and go throught the process.
+Next you should run the `bin/rails avo:upgrade:2_to_3` command and go through the process.
 
 Ideally, you'd run the command with a clean tree and then make the last adjustments manually. The command will tell you what those the last adjustments are that you have to do manually.
 
@@ -210,7 +210,7 @@ We'll probably change these in the stable release.
 Rename the following:
 
 - `Avo::App.context`      -> `Avo::Current.context`
-- `Avo::App.current_user` -> `Avo::Current.current_user`
+- `Avo::App.current_user` -> `Avo::Current.user`
 - `Avo::App.params`       -> `Avo::Current.params`
 - `Avo::App.request`      -> `Avo::Current.request`
 - `Avo::App.view_context` -> `Avo::Current.view_context`
@@ -250,7 +250,7 @@ gem "avo_dashboards"
 
 ::::option Rename Avo configuration classes
 
-We are falling more in line with how Rails and zeitwerk autoloads classes. We do this to avoidsome issues like class conflicts and difficult to remember naming schemes.
+We are falling more in line with how Rails and zeitwerk autoloads classes. We do this to avoid some issues like class conflicts and difficult to remember naming schemes.
 
 The old naming scheme: `{NAME}{TYPE}` (`UserResource`)
 The new naming scheme: `Avo::{TYPE}::Name` (`Avo::Resources::User`)
@@ -471,6 +471,7 @@ All block arguments are removed from Avo. We did this in order to make blocks mo
 We don't have a complete list of blocks but we'll try to give you a few examples:
 
  - Field options: `visible`, `readonly`, `disabled`, `format_using`, etc.
+ - Select field `options` option
  - Resource options: `index_query`, `search_query`, `find_record_method`, etc.
  - Actions, Dashboards, and Cards `self.visible`
  - anything that you are passing as a block should be without arguments
@@ -493,6 +494,24 @@ field :name, as: :text, default: ->(resource:) {something}, format_using: ->(val
 
 # After
 field :name, as: :text, default: -> {something}, format_using: -> {}, visible: -> {}
+
+# Before
+field :level, as: :select, options: ->(model:, resource:, field:, view:) do
+    {
+      Beginner: :beginner,
+      Intermediate: :intermediate,
+      Advanced: :advanced,
+    }
+  end
+
+# After
+field :level, as: :select, options: -> do
+    {
+      Beginner: :beginner,
+      Intermediate: :intermediate,
+      Advanced: :advanced,
+    }
+  end
 ```
 :::
 
