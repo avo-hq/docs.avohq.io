@@ -121,11 +121,11 @@ const config = {
             {text: "Fields", link: "/3.0/fields"},
             {text: "Field options", link: "/3.0/field-options"},
             {text: "Controller configuration", link: "/3.0/controllers"},
-            {text: "Record previews", link: "/3.0/records-previews"},
+            {text: "Record previews", link: "/3.0/record-previews"},
             {text: "Scopes", link: "/3.0/scopes"},
-            // {text: "Records reordering", link: "/3.0/records-reordering"},
-            // {text: "Tabs and panels", link: "/3.0/tabs"},
-            // {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
+            {text: "Records reordering", link: "/3.0/records-reordering"},
+            {text: "Tabs and panels", link: "/3.0/tabs"},
+            {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
             {text: "Customizable controls", link: "/3.0/customizable-controls"},
           ],
         },
@@ -135,25 +135,25 @@ const config = {
           collapsed: true,
           items: fieldsMenuItems3,
         },
-        // {
-        //   text: "Associations",
-        //   collapsible: true,
-        //   collapsed: true,
-        //   items: [
-        //     {text: "Customization", link: "/3.0/associations"},
-        //     {text: 'Belongs to', link: '/3.0/associations/belongs_to.md'},
-        //     {text: 'Has one', link: '/3.0/associations/has_one.md'},
-        //     {text: 'Has many', link: '/3.0/associations/has_many.md'},
-        //     {text: 'Has and belongs to many', link: '/3.0/associations/has_and_belongs_to_many.md'},
-        //   ],
-        // },
-        // {
-        //   text: "Dashboards and cards",
-        //   items: [
-        //     {text: "Dashboards", link: "/3.0/dashboards"},
-        //     {text: "Cards", link: "/3.0/cards"},
-        //   ],
-        // },
+        {
+          text: "Associations",
+          collapsible: true,
+          collapsed: true,
+          items: [
+            {text: "Customization", link: "/3.0/associations"},
+            {text: 'Belongs to', link: '/3.0/associations/belongs_to.md'},
+            {text: 'Has one', link: '/3.0/associations/has_one.md'},
+            {text: 'Has many', link: '/3.0/associations/has_many.md'},
+            {text: 'Has and belongs to many', link: '/3.0/associations/has_and_belongs_to_many.md'},
+          ],
+        },
+        {
+          text: "Dashboards and cards",
+          items: [
+            {text: "Dashboards", link: "/3.0/dashboards"},
+            {text: "Cards", link: "/3.0/cards"},
+          ],
+        },
         {
           text: "Customize Avo",
           items: [

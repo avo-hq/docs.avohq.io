@@ -17,16 +17,11 @@ class User < ApplicationRecord
   has_many :comments
 end
 
-# app/avo/resources/user_resource.rb
-class UserResource < Avo::BaseResource
-  # Before v2.5.0
-  field :comments, as: :has_many, scope: -> { approved }
-end
-
-# app/avo/resources/user_resource.rb
-class UserResource < Avo::BaseResource
-  # After v2.5.0
-  field :comments, as: :has_many, scope: -> { query.approved }
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :comments, as: :has_many, scope: -> { query.approved }
+  end
 end
 ```
 
