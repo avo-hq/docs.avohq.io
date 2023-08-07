@@ -7,11 +7,13 @@
 
 Turns the attach field/modal from a `select` input to a searchable experience
 
-```ruby{4}
-class CourseLink < Avo::BaseResource
-  field :links,
-    as: :has_many,
-    searchable: true
+```ruby{5}
+class Avo::Resources::CourseLink < Avo::BaseResource
+  def fields
+    field :links,
+      as: :has_many,
+      searchable: true
+  end
 end
 ```
 
@@ -19,12 +21,14 @@ end
   Avo uses the **search feature** behind the scenes, so **make sure the target resource has the [`search_query`](./../search) option configured**.
 :::
 
-```ruby{3-5}
-# app/avo/resources/course_link_resource.rb
-class CourseLinkResource < Avo::BaseResource
-  self.search_query = -> do
-    query.ransack(id_eq: params[:q], link_cont: params[:q], m: "or").result(distinct: false)
-  end
+```ruby{3-7}
+# app/avo/resources/course_link.rb
+class Avo::Resources::CourseLink < Avo::BaseResource
+  self.search = {
+    query: -> {
+      query.ransack(id_eq: params[:q], link_cont: params[:q], m: "or").result(distinct: false)
+    }
+  }
 end
 ```
 

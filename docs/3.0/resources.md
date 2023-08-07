@@ -260,7 +260,7 @@ class Avo::Resources::Team < Avo::BaseResource
   def fields
     field :id, as: :id, link_to_resource: true
     field :name, as: :text
-    field :users, as: :has_many, use_resource: TeamUserResource
+    field :users, as: :has_many, use_resource: Avo::Resources::TeamUser
   end
 end
 ```
@@ -276,7 +276,7 @@ To mitigate that, we are going to use the `model_resource_mapping` option to set
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.model_resource_mapping = {
-    'User': 'UserResource'
+    'User': 'Avo::Resources::User'
   }
 end
 ```
@@ -363,8 +363,8 @@ If you want to manually load them use the `config.resources` option.
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.resources = [
-    "UserResource",
-    "FishResource",
+    "Avo::Resources::User",
+    "Avo::Resources::Fish",
   ]
 end
 ```

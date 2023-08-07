@@ -11,8 +11,8 @@ Avo leverages Rails' powerful I18n translations module. When you run `bin/rails 
 Let's say you want to localize a resource. All you need to do is add a `self.translation_key` class attribute in the `Resource` file. That will tell Avo to use that translation key to localize this resource. That will change the labels of that resource everywhere in Avo.
 
 ```ruby{4}
-# app/avo/resources/user_resource.rb
-class UserResource < Avo::BaseResource
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
   self.title = :name
   self.translation_key = 'avo.resource_translations.user'
 end
@@ -36,14 +36,16 @@ es:
 Similarly, you can even localize fields. All you need to do is add a `translation_key:` option on the field declaration.
 
 
-```ruby{7}
-# app/avo/resources/project_resource.rb
-class ProjectResource < Avo::BaseResource
+```ruby{8}
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
   self.title = :name
 
-  field :id, as: :id
-  # ... other fields
-  field :files, as: :files, translation_key: 'avo.field_translations.file'
+  def fields
+    field :id, as: :id
+    # ... other fields
+    field :files, as: :files, translation_key: 'avo.field_translations.file'
+  end
 end
 ```
 
