@@ -14,12 +14,12 @@ prev: /3.0/
 - Have the `secret_key_base` defined in  any of the following `ENV["SECRET_KEY_BASE"]`, `Rails.application.credentials.secret_key_base`, or `Rails.application.secrets.secret_key_base`
 
 :::warning Zeitwerk autoloading is required.
-When adding Avo to a Rails app that was previously a Rails 5 app you must ensure that it uses zeitwerk for autoloading and Rails 6.1 defaults.
+When adding Avo to a Rails app that was previously a Rails 5 app you must ensure that it uses zeitwerk for autoloading and Rails 6.1 or higher defaults.
 
 ```ruby
 # config/application.rb
 config.autoloader = :zeitwerk
-config.load_defaults 6.1
+config.load_defaults 6.1 # 6.1 or higher, depending on your rails version
 ```
 :::
 
