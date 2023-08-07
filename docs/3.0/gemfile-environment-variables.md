@@ -13,12 +13,12 @@ The best way to do it is to register the credentials before hand using the follo
 This way `bundler` is aware of them without having to specify it in the `Gemfile`.
 
 ```bash
-bundle config set --global https://packager.dev/avo-hq-beta/ xxx-xxx
+bundle config set --global https://packager.dev/avo-hq/ xxx-xxx
 ```
 
 ```ruby
 # Gemfile
-source "https://packager.dev/avo-hq-beta/" do
+source "https://packager.dev/avo-hq/" do
   gem "avo"
   gem "avo_pro"
   gem "avo_advanced"
@@ -48,7 +48,7 @@ bundle install
 
 ```ruby
 # Gemfile
-source "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq-beta/" do
+source "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/" do
   gem "avo"
   gem "avo_pro"
   gem "avo_advanced"
@@ -75,7 +75,7 @@ AVO_GEM_TOKEN=xxx bundle install
 
 ```ruby
 # Gemfile
-source "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq-beta/" do
+source "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/" do
   gem "avo"
   gem "avo_pro"
   gem "avo_advanced"
