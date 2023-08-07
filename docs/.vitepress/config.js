@@ -110,8 +110,8 @@ const config = {
           text: "Configuration",
           items: [
             {text: "Installation", link: "/3.0/installation"},
-            // {text: "Authentication", link: "/3.0/authentication"},
-            // {text: "Authorization", link: "/3.0/authorization"},
+            {text: "Authentication", link: "/3.0/authentication"},
+            {text: "Authorization", link: "/3.0/authorization"},
           ],
         },
         {
@@ -188,22 +188,22 @@ const config = {
             {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline"},
           ],
         },
-        // {
-        //   text: "Native Avo components",
-        //   items: [
-        //     {text: "Avo::PanelComponent", link: "/3.0/native-components/avo-panel-component"},
-        //     {text: "Native field components", link: "/3.0/native-field-components"},
-        //     {text: "Field wrappers", link: "/3.0/field-wrappers"},
-        //   ],
-        // },
-        // {
-        //   text: "Internals",
-        //   items: [
-        //     {text: "Testing", link: "/3.0/testing"},
-        //     {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
-        //     {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
-        //   ],
-        // },
+        {
+          text: "Native Avo components",
+          items: [
+            {text: "Avo::PanelComponent", link: "/3.0/native-components/avo-panel-component"},
+            {text: "Native field components", link: "/3.0/native-field-components"},
+            {text: "Field wrappers", link: "/3.0/field-wrappers"},
+          ],
+        },
+        {
+          text: "Internals",
+          items: [
+            {text: "Testing", link: "/3.0/testing"},
+            {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
+            {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
+          ],
+        },
         // {
         //   text: "Extending",
         //   items: [
