@@ -96,6 +96,7 @@ const config = {
             {text: "👉 Intro 👈", link: "/3.0/avo-3.html"},
             {text: "Upgrade guide", link: "/3.0/upgrade.html"},
             {text: "Avo 2 to Avo 3 upgrade", link: "/3.0/avo-2-avo-3-upgrade.html"},
+            {text: "Technical Support", link: "/3.0/technical-support"},
           ]
         },
         // {
@@ -222,6 +223,7 @@ const config = {
             {text: "Avo, Rails & Hotwire", link: "/2.0/rails-and-hotwire.html"},
             {text: "Licensing", link: "/2.0/licensing"},
             {text: "Upgrade guide", link: "/2.0/upgrade"},
+            {text: "Technical Support", link: "/2.0/technical-support"},
           ],
         },
         {
