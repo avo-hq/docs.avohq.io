@@ -121,7 +121,7 @@ const config = {
             {text: "Fields", link: "/3.0/fields"},
             {text: "Field options", link: "/3.0/field-options"},
             {text: "Controller configuration", link: "/3.0/controllers"},
-            {text: "Record previews", link: "/3.0/records-previews"},
+            {text: "Record previews", link: "/3.0/record-previews"},
             {text: "Scopes", link: "/3.0/scopes"},
             {text: "Records reordering", link: "/3.0/records-reordering"},
             {text: "Tabs and panels", link: "/3.0/tabs"},
