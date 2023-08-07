@@ -193,9 +193,9 @@ Example:
 
 ```ruby{9}
 def handle(**args)
-  models = args[:models]
+  records = args[:records]
 
-  models.each do |project|
+  records.each do |project|
     project.update active: false
   end
 
