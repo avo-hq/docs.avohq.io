@@ -124,7 +124,7 @@ const config = {
             {text: "Record previews", link: "/3.0/records-previews"},
             {text: "Scopes", link: "/3.0/scopes"},
             {text: "Records reordering", link: "/3.0/records-reordering"},
-            // {text: "Tabs and panels", link: "/3.0/tabs"},
+            {text: "Tabs and panels", link: "/3.0/tabs"},
             // {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
             {text: "Customizable controls", link: "/3.0/customizable-controls"},
           ],
