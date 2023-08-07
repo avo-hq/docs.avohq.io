@@ -17,15 +17,16 @@ bundle config set --global https://packager.dev/avo-hq/ xxx-xxx
 ```
 
 ```ruby
-# Gemfile
-source "https://packager.dev/avo-hq/" do
-  gem "avo"
-  gem "avo_pro"
-  gem "avo_advanced"
-  gem "avo_filters"
-  gem "avo_menu"
-  gem "avo_dashboards"
-end
+# In your Gemfile one of the below
+
+# Community
+gem "avo", source: "https://packager.dev/avo-hq/"
+
+# Pro
+gem "avo_pro", source: "https://packager.dev/avo-hq/"
+
+# Advanced
+gem "avo_advanced", source: "https://packager.dev/avo-hq/"
 ```
 
 ## 2. Export the variable before running `bundle install`
@@ -47,15 +48,16 @@ bundle install
 ```
 
 ```ruby
-# Gemfile
-source "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/" do
-  gem "avo"
-  gem "avo_pro"
-  gem "avo_advanced"
-  gem "avo_filters"
-  gem "avo_menu"
-  gem "avo_dashboards"
-end
+# In your Gemfile one of the below
+
+# Community
+gem "avo", source: "https://packager.dev/avo-hq/"
+
+# Pro
+gem "avo_pro", source: "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/"
+
+# Advanced
+gem "avo_advanced", source: "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/"
 ```
 
 Now you can run `bundle install` and `bundler` will pick it up and use it to authenticate on the server.
@@ -74,15 +76,16 @@ AVO_GEM_TOKEN=xxx bundle install
 ```
 
 ```ruby
-# Gemfile
-source "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/" do
-  gem "avo"
-  gem "avo_pro"
-  gem "avo_advanced"
-  gem "avo_filters"
-  gem "avo_menu"
-  gem "avo_dashboards"
-end
+# In your Gemfile one of the below
+
+# Community
+gem "avo", source: "https://packager.dev/avo-hq/"
+
+# Pro
+gem "avo_pro", source: "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/"
+
+# Advanced
+gem "avo_advanced", source: "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/"
 ```
 
 `bundler` will use that environment variable to authenticate to the server and it will not be saved to that terminal session.
