@@ -20,7 +20,7 @@ Install and configure the gem as instructed in the [tutorials](https://github.co
 Next, add the order actions like below.
 
 ```ruby
-class CourseLinkResource < Avo::BaseResource
+class Avo::Resources::CourseLink < Avo::BaseResource
   self.ordering = {
     visible_on: :index,
     actions: {
@@ -46,7 +46,7 @@ That configuration will generate a button with a popover containing the ordering
 If the resource you're trying to update requires re-ordering often, you can have the buttons visible at all times using the `display_inline: true` option.
 
 ```ruby
-class CourseLinkResource < Avo::BaseResource
+class Avo::Resources::CourseLink < Avo::BaseResource
   self.ordering = {
     display_inline: true,
     visible_on: :index,
