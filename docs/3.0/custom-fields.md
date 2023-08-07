@@ -34,7 +34,7 @@ Please restart your rails server after adding a new custom field.
 The `ProgressBarField` file is what registers the field in your admin.
 
 ```ruby
-class ProgressBarField < Avo::Fields::BaseField
+class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
   def initialize(name, **args, &block)
     super(name, **args, &block)
   end
@@ -43,13 +43,15 @@ end
 
 Now you can use your field like so:
 
-```ruby{6}
-# app/avo/resources/progress_bar_field.rb
-class ProjectResource < Avo::BaseResource
+```ruby{7}
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
   self.title = :name
 
-  field :id, as: :id, link_to_resource: true
-  field :progress, as: :progress_bar
+  def fields
+    field :id, as: :id, link_to_resource: true
+    field :progress, as: :progress_bar
+  end
 end
 ```
 <img :src="('/assets/img/custom-fields/progress-show.jpg')" alt="Progress custom field" class="border mb-4" />
@@ -84,7 +86,7 @@ This file is where you may add field-specific options.
 
  ```ruby{3-6,11-14}
 # app/avo/fields/progress_bar_field.rb
-class ProgressBarField < Avo::Fields::BaseField
+class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
   attr_reader :max
   attr_reader :step
   attr_reader :display_value
@@ -103,9 +105,9 @@ end
 
 The field-specific options can come from the field declaration as well.
 
-```ruby{11-14,23}
+```ruby{11-14,24}
 # app/avo/fields/progress_bar_field.rb
-class ProgressBarField < Avo::Fields::BaseField
+class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
   attr_reader :max
   attr_reader :step
   attr_reader :display_value
@@ -121,12 +123,14 @@ class ProgressBarField < Avo::Fields::BaseField
   end
 end
 
-# app/avo/resources/progress_bar_field.rb
-class ProjectResource < Avo::BaseResource
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
   self.title = :name
 
-  field :id, as: :id, link_to_resource: true
-  field :progress, as: :progress_bar, step: 10, display_value: true, value_suffix: "%"
+  def fields
+    field :id, as: :id, link_to_resource: true
+    field :progress, as: :progress_bar, step: 10, display_value: true, value_suffix: "%"
+  end
 end
 ```
 
@@ -136,7 +140,7 @@ If you need to hide the field in some view, you can use the [visibility helpers]
 
 ```ruby{16}
 # app/avo/fields/progress_bar_field.rb
-class ProgressBarField < Avo::Fields::BaseField
+class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
   attr_reader :max
   attr_reader :step
   attr_reader :display_value
@@ -269,7 +273,7 @@ You should add the `:always_show` `attr_reader` and `@always_show` instance vari
 
 ```ruby{3,8}
 # app/avo/fields/color_picker_field.rb
-class ColorPickerField < Avo::Fields::BaseField
+class Avo::Fields::ColorPickerField < Avo::Fields::BaseField
   attr_reader :always_show
 
   def initialize(id, **args, &block)
