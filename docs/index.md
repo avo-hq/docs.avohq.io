@@ -104,7 +104,7 @@ hero:
       text: Star on GitHub ⭐️
       link: https://github.com/avo-hq/avo
     - theme: brand
-      text: Avo 3 docs
+      text: Avo 3 docs 🧪
       link: /3.0/
 ---
 
