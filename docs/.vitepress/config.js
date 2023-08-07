@@ -135,25 +135,25 @@ const config = {
           collapsed: true,
           items: fieldsMenuItems3,
         },
-        // {
-        //   text: "Associations",
-        //   collapsible: true,
-        //   collapsed: true,
-        //   items: [
-        //     {text: "Customization", link: "/3.0/associations"},
-        //     {text: 'Belongs to', link: '/3.0/associations/belongs_to.md'},
-        //     {text: 'Has one', link: '/3.0/associations/has_one.md'},
-        //     {text: 'Has many', link: '/3.0/associations/has_many.md'},
-        //     {text: 'Has and belongs to many', link: '/3.0/associations/has_and_belongs_to_many.md'},
-        //   ],
-        // },
-        // {
-        //   text: "Dashboards and cards",
-        //   items: [
-        //     {text: "Dashboards", link: "/3.0/dashboards"},
-        //     {text: "Cards", link: "/3.0/cards"},
-        //   ],
-        // },
+        {
+          text: "Associations",
+          collapsible: true,
+          collapsed: true,
+          items: [
+            {text: "Customization", link: "/3.0/associations"},
+            {text: 'Belongs to', link: '/3.0/associations/belongs_to.md'},
+            {text: 'Has one', link: '/3.0/associations/has_one.md'},
+            {text: 'Has many', link: '/3.0/associations/has_many.md'},
+            {text: 'Has and belongs to many', link: '/3.0/associations/has_and_belongs_to_many.md'},
+          ],
+        },
+        {
+          text: "Dashboards and cards",
+          items: [
+            {text: "Dashboards", link: "/3.0/dashboards"},
+            {text: "Cards", link: "/3.0/cards"},
+          ],
+        },
         {
           text: "Customize Avo",
           items: [
