@@ -131,7 +131,7 @@ You can do that using this query.
 
 ::: code-group
 
-```ruby{5} [app/avo/resources/post_resource.rb]
+```ruby{5} [app/avo/resources/post.rb]
 class Avo::Resources::Post < Avo::BaseResource
   field :last_commented_at,
     as: :date,
