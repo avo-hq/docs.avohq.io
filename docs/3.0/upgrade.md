@@ -12,6 +12,56 @@ In order to update all Avo packages you should run the following command.
 bundle update avo avo_pro avo_advanced avo_dashboards avo_filters avo_menu avo_upgrade
 ```
 
+## Upgrade from 3.0.0.pre14 to 3.0.0.pre15
+:::option Avo::Current.current_user deprecation
+`Avo::Current.current_user` has been deprecated in favor of `Avo::Current.user`. Please ensure that you update this change in your project, as it will become obsolete in future versions.
+:::
+
+:::option Package dependencies reorganization
+
+We have made some enhancements to the way we manage package dependencies. Now, each tier should declare only one gem in the gemfile.
+
+For the community version<br>
+`gem "avo", source: "https://packager.dev/avo-hq-beta/"`
+
+For the pro tier<br>
+`gem "avo-pro", source: "https://packager.dev/avo-hq-beta/"`
+
+For the advanced tier<br>
+`gem "avo-advanced", source: "https://packager.dev/avo-hq-beta/"`
+
+ Each gem will ensure that you have access to the dependent packages.
+:::
+
+:::option Packages rename
+We noticed this Zeitwerk's [`for_gem_extension`](https://github.com/fxn/zeitwerk#for_gem_extension) feature, which facilitates better organization of package namespaces. Upon realizing that our gem's names were incorrectly configured to utilize this feature, we proceeded with the following changes:
+
+`avo_advanced` -> `avo-advanced`<br>
+`AvoAdvanced` -> `Avo::Advanced`
+
+`avo_pro` -> `avo-pro`<br>
+`AvoPro` -> `Avo::Pro`
+
+`avo_menu` -> `avo-menu`<br>
+`AvoMenu` -> `Avo::Menu`
+
+`avo_filters` -> `avo-dynamic_filters`<br>
+`AvoFilters` -> `Avo::DynamicFilters`
+
+`avo_dashboards` -> `avo-dashboards`<br>
+`AvoDashboards` -> `Avo::Dashboards`
+
+```ruby
+# Before
+class Avo::Dashboards::Dashy < AvoDashboards::BaseDashboard
+class Avo::Cards::PercentDone < AvoDashboards::MetricCard
+
+# After
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
+class Avo::Cards::PercentDone < Avo::Dashboards::MetricCard
+```
+:::
+
 ## Upgrade from 3.0.0.pre.12 to 3.0.0.pre.13
 
 :::option Refactor the search API
