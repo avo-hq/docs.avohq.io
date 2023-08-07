@@ -326,6 +326,53 @@ The fields marked with `show_on :preview`, will be show in the [preview field](.
 By default, all fields are hidden in `:preview`.
 :::
 
+## Custom components
+
+By default, for each view we render an component:
+
+`:index` -> `Avo::Views::ResourceIndexComponent`<br>
+`:show` -> `Avo::Views::ResourceShowComponent`<br>
+`:new`, `:edit` -> `Avo::Views::ResourceEditComponent`
+
+It's possible to change this behavior by using the `self.components` resource option.
+
+```ruby
+self.components = {
+  resource_index_component: Avo::Views::Users::ResourceIndexComponent,
+  resource_show_component: "Avo::Views::Users::ResourceShowComponent",
+  resource_edit_component: "Avo::Views::Users::ResourceEditComponent",
+  resource_new_component: Avo::Views::Users::ResourceEditComponent
+}
+```
+
+A resource configured with the example above will start using the declared components instead the default ones.
+
+:::warning Warning
+The custom view components must ensure that their initializers are configured to receive all the arguments passed during the rendering of a component. You can verify this in our codebase through the following files:
+
+`:index` -> `app/views/avo/base/index.html.erb`<br>
+`:show` -> `app/views/avo/base/show.html.erb`<br>
+`:new` -> `app/views/avo/base/new.html.erb`<br>
+`:edit` -> `app/views/avo/base/edit.html.erb`
+:::
+
+One straightforward approach to create a custom component is by extracting an existing component and modifying its namespace. While altering the namespace is not obligatory, we highly recommend doing so unless you intend for all resources to adopt the extracted component.
+
+Example:
+1. Execute the command `bin/rails generate avo:eject --component Avo::Views::ResourceIndexComponent` to eject the specified component.
+2. Navigate to the recently ejected file and modify the namespace. Create a new directory, for instance, "my_dir," and move the component to that directory.
+3. Update the class namespace in the file from `Avo::Views::ResourceIndexComponent` to `Avo::Views::MyDir::ResourceIndexComponent`.
+4. You can now utilize the customized component in a resource.
+
+```ruby
+self.components = {
+  resource_index_component: Avo::Views::MyDir::ResourceIndexComponent
+}
+```
+
+This way you assure that the initializer is accepting the right arguments.
+
+
 ## Extending `Avo::ResourcesController`
 
 You may need to execute additional actions on the `ResourcesController` before loading the Avo pages. You can create an `Avo::BaseResourcesController` and extend your resource controller from it.
