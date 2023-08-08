@@ -28,16 +28,18 @@ end
 # User.all.map(&:class) => [User, SuperUser]
 ```
 
-For example, when you have two models, `User` and `SuperUser` with STI, when you call `User.all`, Rails will return an instance of `User` and an instance of `SuperUser`. That confuses Avo in producing the proper resource of `User`. That's why when you deal with STI, the final resource `SuperUserResource` should receive the underlying `model_class` so Avo knows which model it represents.
+For example, when you have two models, `User` and `SuperUser` with STI, when you call `User.all`, Rails will return an instance of `User` and an instance of `SuperUser`. That confuses Avo in producing the proper resource of `User`. That's why when you deal with STI, the final resource `Avo::Resources::SuperUser` should receive the underlying `model_class` so Avo knows which model it represents.
 
 ```ruby{4}
-class SuperUserResource < Avo::BaseResource
+class Avo::Resources::SuperUser < Avo::BaseResource
   self.title = :name
   self.includes = []
   self.model_class = ::SuperUser
 
-  field :id, as: :id
-  field :name, as: :text
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+  end
 end
 ```
 
@@ -45,12 +47,12 @@ end
 
 Let's take another example. We have a `Person` model and `Sibling` and `Spouse` models that inherit from it.
 
-You may want to use the `PersonResource` to list all the records, but when your user clicks on a person, you want to use the inherited resources (`SiblingResource` and `SpouseResource`) to display the details. The reason is that you may want to display different fields or resource tools for each resource type.
+You may want to use the `Avo::Resources::Person` to list all the records, but when your user clicks on a person, you want to use the inherited resources (`Avo::Resources::Sibiling` and `Avo::Resources::Spouse`) to display the details. The reason is that you may want to display different fields or resource tools for each resource type.
 
 There are two ways you can use this:
 
-1. `self.link_to_child_resource = true` Declare this option on the parent resource. When a user is on the <Index /> view of your the `PersonResource` and clicks on the view button of a `Person` they will be redirected to a `Child` or `Spouse` resource instead of a `Person` resource.
-2. `field :peoples, as: :has_many, link_to_child_resource: false` Use it on a `has_many` field. On the `PersonResource` you may want to show all the related people on the <Show /> page, but when someone click on a record, they are redirected to the inherited `Child` or `Spouse` resource.
+1. `self.link_to_child_resource = true` Declare this option on the parent resource. When a user is on the <Index /> view of your the `Avo::Resources::Person` and clicks on the view button of a `Person` they will be redirected to a `Child` or `Spouse` resource instead of a `Person` resource.
+2. `field :peoples, as: :has_many, link_to_child_resource: false` Use it on a `has_many` field. On the `Avo::Resources::Person` you may want to show all the related people on the <Show /> page, but when someone click on a record, they are redirected to the inherited `Child` or `Spouse` resource.
 
 ## Add custom labels to the associations' pages
 

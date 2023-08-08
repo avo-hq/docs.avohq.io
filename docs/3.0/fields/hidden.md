@@ -21,6 +21,6 @@ field :user_id, as: :hidden, default: -> { current_user.id }
 # 1. Allow them to see and select a user.
 # 2. Remove the user_id field to prevent user_id it from overriding the user selection.
 # Otherwise set the user_id to the current user and hide the field.
-field :user, as: :belongs_to, visible: -> (resource:) { context[:current_user].admin? }
-field :user_id, as: :hidden, default: -> { current_user.id }, visible: -> (resource:) { !context[:current_user].admin? }
+field :user, as: :belongs_to, visible: -> { context[:current_user].admin? }
+field :user_id, as: :hidden, default: -> { current_user.id }, visible: -> { !context[:current_user].admin? }
 ```
