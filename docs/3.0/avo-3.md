@@ -18,7 +18,7 @@ For all the other gems we'll have `0.x` versions until we launch publicly.
 
 ## Repos and packages
 
-Avo 3 has been broken up into multiple repos and packages based on the feature or tier they will be assigned to. You must manually add them all to the `Gemfile`.
+Avo 3 has been divided into various repositories and packages, organized by the specific feature or tier they are intended for. Within this structure, there are three main packages available: `avo`, `avo-pro`, and `avo-advanced`. Depending on your license, you need to manually include one of these packages in your `Gemfile`. Note that both `avo-pro` and `avo-advanced` come with additional packages that serve as their dependencies.
 
 ## New features
 
