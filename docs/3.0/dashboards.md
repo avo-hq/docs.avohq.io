@@ -22,24 +22,26 @@ There comes the point in your app's life when you need to display the data in an
 Run `bin/rails g avo:dashboard my_dashboard` to get a shiny new dashboard.
 
 ```ruby
-class MyDashboard < Avo::Dashboards::BaseDashboard
+class Avo::Dashboards::MyDashboard < Avo::Dashboards::BaseDashboard
   self.id = 'my_dashboard'
   self.name = 'Dashy'
   self.description = 'The first dashbaord'
   self.grid_cols = 3
 
-  card ExampleMetric
-  card ExampleAreaChart
-  card ExampleScatterChart
-  card PercentDone
-  card AmountRaised
-  card ExampleLineChart
-  card ExampleColumnChart
-  card ExamplePieChart
-  card ExampleBarChart
-  divider label: "Custom partials"
-  card ExampleCustomPartial
-  card MapCard
+  def cards
+    card Avo::Cards::ExampleMetric
+    card Avo::Cards::ExampleAreaChart
+    card Avo::Cards::ExampleScatterChart
+    card Avo::Cards::PercentDone
+    card Avo::Cards::AmountRaised
+    card Avo::Cards::ExampleLineChart
+    card Avo::Cards::ExampleColumnChart
+    card Avo::Cards::ExamplePieChart
+    card Avo::Cards::ExampleBarChart
+    divider label: "Custom partials"
+    card Avo::Cards::ExampleCustomPartial
+    card Avo::Cards::MapCard
+  end
 end
 ```
 
@@ -64,7 +66,7 @@ All cards have some standard settings like `id`, which must be unique, `label` a
 Each card has its own `cols` and `rows` settings to control the width and height of the card inside the dashboard grid. They can have values from `1` to `6`.
 
 ```ruby{2-7}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.label = 'Users count'
   self.description = 'Users description'
@@ -83,7 +85,7 @@ You may also want to give the user the ability to query data in different ranges
 You can also set a default range using the `initial_range` attribute.
 
 ```ruby{4,5}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.label = 'Users count'
   self.initial_range = 30
@@ -106,7 +108,7 @@ end
 If this dashboard is something you keep on the big screen, you must keep the data fresh at all times. That's easy using `refresh_every`. You pass the number of seconds you need to be refreshed and forget about it. Avo will do it for you.
 
 ```ruby{3}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.refresh_every = 10.minutes
 end
@@ -117,7 +119,7 @@ end
 In cases where you need to embed some content that should fill the whole card (like a map, for example), you can choose to hide the label and ranges dropdown.
 
 ```ruby{3}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.display_header = false
 end
@@ -131,22 +133,24 @@ We found ourselves in the position to add a few cards that were the same card bu
 Before, we'd have to duplicate that card and modify the `query` method slightly but end up with duplicated boilerplate code.
 For those scenarios, we created the `arguments` attribute. It allows you to send arbitrary arguments to the card from the parent.
 
-```ruby{6-8}
-class Dashy < Avo::Dashboards::BaseDashboard
+```ruby{7-9}
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   self.id = "dashy"
   self.name = "Dashy"
 
-  card UsersCount
-  card UsersCount, arguments: {
-    active_users: true
-  }
+  def cards
+    card Avo::Cards::UsersCount
+    card Avo::Cards::UsersCount, arguments: {
+      active_users: true
+    }
+  end
 end
 ```
 
 Now we can pick up that option in the card and update the query accordingly.
 
 ```ruby{9-11}
-class UsersCount < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersCount < Avo::Dashboards::MetricCard
   self.id = "users_metric"
   self.label = "Users count"
 
@@ -169,21 +173,23 @@ That gives you an extra layer of control without code duplication and the best d
 
 Evidently, you don't want to show the same `label`, `description`, and other details for that second card from the first card;. Therefore, you can control the `label`, `description`, `cols`, `rows`, and `refresh_every` arguments from the parent declaration.
 
-```ruby{7-11}
-class Dashy < Avo::Dashboards::BaseDashboard
+```ruby{8-12}
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   self.id = "dashy"
   self.name = "Dashy"
 
-  card UsersCount
-  card UsersCount,
-    label: "Active users",
-    description: "Active users count",
-    cols: 2,
-    rows: 2,
-    refresh_every: 2.minutes,
-    arguments: {
-      active_users: true
-    }
+  def cards
+    card Avo::Cards::UsersCount
+    card Avo::Cards::UsersCount,
+      label: "Active users",
+      description: "Active users count",
+      cols: 2,
+      rows: 2,
+      refresh_every: 2.minutes,
+      arguments: {
+        active_users: true
+      }
+  end
 end
 ```
 
@@ -196,7 +202,7 @@ It's common to show the same dashboard to multiple types of users (admins, regul
 You can use the `visible` option to do that. It can be a `boolean` or a `block` where you can access the `params`, `current_user`, `context`, `parent`, and `card` object.
 
 ```ruby{4-6}
-class UsersCount < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersCount < Avo::Dashboards::MetricCard
   self.id = "users_metric"
   self.label = "Users count"
   self.visible = -> do
@@ -213,10 +219,12 @@ end
 You may also control the visibility from the dashboard class.
 
 ```ruby
-class Dashy < Avo::Dashboards::BaseDashboard
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   self.name = "Dashy"
 
-  card UsersCount, visible: -> { true }
+  def cards
+    card Avo::Cards::UsersCount, visible: -> { true }
+  end
 end
 ```
 
@@ -237,7 +245,7 @@ To calculate your result, you may use the `query` method. After you run your que
 In the `query` method you have access to a few variables like `context` (the [App context](./customization#context)), `params` (the request params), `range` (the range that was requested), `dashboard` (the current dashboard the card is on), and current `card`.
 
 ```ruby{13-34,36}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.label = 'Users count'
   self.description = 'Some tiny description'
@@ -282,7 +290,7 @@ end
 Some metrics might want to add a `prefix` or a `suffix` to display the data better.
 
 ```ruby{3,4}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.prefix = '$'
   self.suffix = '%'
@@ -298,7 +306,7 @@ A picture is worth a thousand words. So maybe a chart a hundred? Who knows? But 
 You start by running `bin/rails g avo:card users_chart --type chartkick`.
 
 ```ruby
-class UserSignups < Avo::Dashboards::ChartkickCard
+class Avo::Cards::UserSignups < Avo::Dashboards::ChartkickCard
   self.id = 'user_signups'
   self.label = 'User signups'
   self.chart_type = :area_chart
@@ -359,7 +367,7 @@ If you'd like to use [Groupdate](https://github.com/ankane/groupdate), [Hightop]
 You can use a partial card to add custom content to a card. Generate one by running `bin/rails g avo:card custom_card --type partial`. That will create the card class and the partial for it.
 
 ```ruby{5}
-class ExampleCustomPartial < Avo::Dashboards::PartialCard
+class Avo::Cards::ExampleCustomPartial < Avo::Dashboards::PartialCard
   self.id = "users_custom_card"
   self.cols = 1
   self.rows = 4
@@ -373,7 +381,7 @@ You may embed a piece of content from another app using an iframe. You can hide 
 
 ```ruby{5}
 # app/avo/cards/map_card.rb
-class MapCard < Avo::Dashboards::PartialCard
+class Avo::Cards::MapCard < Avo::Dashboards::PartialCard
   self.id = "map_card"
   self.label = "Map card"
   self.partial = "avo/cards/map_card"
@@ -394,25 +402,27 @@ end
 
 You may want to separate the cards. You can use dividers to do that.
 
-```ruby{16}
-class Dashy < Avo::Dashboards::BaseDashboard
+```ruby{17}
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   self.id = 'dashy'
   self.name = 'Dashy'
   self.description = 'The first dashbaord'
   self.grid_cols = 3
 
-  card ExampleMetric
-  card ExampleAreaChart
-  card ExampleScatterChart
-  card PercentDone
-  card AmountRaised
-  card ExampleLineChart
-  card ExampleColumnChart
-  card ExamplePieChart
-  card ExampleBarChart
-  divider label: "Custom partials"
-  card ExampleCustomPartial
-  card MapCard
+  def cards
+    card Avo::Cards::ExampleMetric
+    card Avo::Cards::ExampleAreaChart
+    card Avo::Cards::ExampleScatterChart
+    card Avo::Cards::PercentDone
+    card Avo::Cards::AmountRaised
+    card Avo::Cards::ExampleLineChart
+    card Avo::Cards::ExampleColumnChart
+    card Avo::Cards::ExamplePieChart
+    card Avo::Cards::ExampleBarChart
+    divider label: "Custom partials"
+    card Avo::Cards::ExampleCustomPartial
+    card Avo::Cards::MapCard
+  end
 end
 ```
 
@@ -429,13 +439,15 @@ When you don't want to show the line, you can enable the `invisible` option, whi
 You might want to conditionally show/hide a divider based on a few factors. You can do that using the `visible` option.
 
 ```ruby
-class Dashy < Avo::Dashboards::BaseDashboard
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   self.name = "Dashy"
 
-  card UsersCount, visible: -> {
-    # You have access to context, params, parent (the current dashboard)
-    true
-  }
+  def cards
+    card Avo::Cards::UsersCount, visible: -> {
+      # You have access to context, params, parent (the current dashboard)
+      true
+    }
+  end
 end
 ```
 
@@ -446,7 +458,7 @@ You might want to hide specific dashboards from certain users. You can do that u
 If you don't pass anything to `visible`, the dashboard will be available for anyone.
 
 ```ruby{5-11}
-class ComplexDash < Avo::Dashboards::BaseDashboard
+class Avo::Dashboards::ComplexDash < Avo::Dashboards::BaseDashboard
   self.id = "complex_dash"
   self.name = "Complex dash"
   self.description = "Complex dash description"
@@ -458,7 +470,9 @@ class ComplexDash < Avo::Dashboards::BaseDashboard
     context[:your_param] == params[:something_else]
   end
 
-  card UsersCount
+  def cards
+    card Avo::Cards::UsersCount
+  end
 end
 ```
 
@@ -469,7 +483,7 @@ end
 You can set authorization rules for dashboards using the `authorize` block.
 
 ```ruby{3-6}
-class Dashy < Avo::Dashboards::BaseDashboard
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   self.id = 'dashy'
   self.authorization = -> do
     # You have access to current_user, params, request, context, adn view_context.

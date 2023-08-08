@@ -13,17 +13,19 @@ That's we created the **resource sidebar**.
 
 ## Adding fields to the sidebar
 
-Using the `sidebar` block on a resource you may declare fields the same way you woul don the root level.
+Using the `sidebar` block on a resource you may declare fields the same way you would do on the root level.
 
 ```ruby
-class UserResource < Avo::BaseResource
-  field :id, as: :id, link_to_resource: true
-  field :first_name, as: :text, placeholder: "John"
-  field :last_name, as: :text, placeholder: "Doe"
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id, link_to_resource: true
+    field :first_name, as: :text, placeholder: "John"
+    field :last_name, as: :text, placeholder: "Doe"
 
-  sidebar do
-    field :email, as: :gravatar, link_to_resource: true, as_avatar: :circle, only_on: :show
-    field :active, as: :boolean, name: "Is active", only_on: :show
+    sidebar do
+      field :email, as: :gravatar, link_to_resource: true, as_avatar: :circle, only_on: :show
+      field :active, as: :boolean, name: "Is active", only_on: :show
+    end
   end
 end
 ```

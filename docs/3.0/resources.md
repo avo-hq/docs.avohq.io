@@ -260,7 +260,7 @@ class Avo::Resources::Team < Avo::BaseResource
   def fields
     field :id, as: :id, link_to_resource: true
     field :name, as: :text
-    field :users, as: :has_many, use_resource: TeamUserResource
+    field :users, as: :has_many, use_resource: Avo::Resources::TeamUser
   end
 end
 ```
@@ -276,7 +276,7 @@ To mitigate that, we are going to use the `model_resource_mapping` option to set
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.model_resource_mapping = {
-    'User': 'UserResource'
+    'User': 'Avo::Resources::User'
   }
 end
 ```
@@ -394,6 +394,27 @@ end
 You can't use `Avo::BaseController` and `Avo::ResourcesController` as **your base controller**. They are defined inside Avo.
 :::
 
+When you generate a new resource or controller in Avo, it won't automatically inherit from the `Avo::BaseResourcesController`. However, you have two approaches to ensure that the new generated controllers inherit from a custom controller:
+
+### `--parent-controller` option on the generators
+Both the `avo:controller` and `avo:resource` generators accept the `--parent-controller` option, which allows you to specify the controller from which the new controller should inherit. Here are examples of how to use it:
+
+```bash
+rails g avo:controller city --parent-controller Avo::BaseResourcesController
+rails g avo:resource city --parent-controller Avo::BaseResourcesController
+```
+
+### `resource_parent_controller` configuration option
+You can configure the `resource_parent_controller` option in the `avo.rb` initializer. This option will be used to establish the inherited controller if the `--parent-controller` argument is not passed on the generators. Here's how you can do it:
+
+```ruby
+Avo.configure do |config|
+  # ...
+  config.resource_parent_controller = "Avo::BaseResourcesController" # "Avo::ResourcesController" is default value
+  # ...
+end
+```
+
 ### Attach concerns to `Avo::BaseController`
 
 Alternatively you can use [this guide](https://avohq.io/blog/safely-extend-a-ruby-on-rails-controller) to attach methods, actions, and hooks to the main `Avo::BaseController` or `Avo::ApplicationController`.
@@ -410,8 +431,8 @@ If you want to manually load them use the `config.resources` option.
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.resources = [
-    "UserResource",
-    "FishResource",
+    "Avo::Resources::User",
+    "Avo::Resources::Fish",
   ]
 end
 ```
