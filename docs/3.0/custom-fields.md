@@ -81,7 +81,11 @@ The generated view components are basic text fields for now.
 You can customize them and add as much or as little content as needed. More on customization [below](#customize-the-views).
 
 :::option Use existent field template
-There is the possibility to choose an template from an already existent avo field. That means that all components will have the exact same code (except the name) as the original chosen field. In order to achieve this behavior use the `--field_template` argument and pass the original field as value.
+There may be times when you want to duplicate an existing field and start from there.
+
+To achieve this behavior, use the `--field_template` argument and pass the original field as a value.
+
+Now, all components will have the exact same code (except the name) as the original field.
 
 ```bash
 $ bin/rails generate avo:field super_text --field_template text
