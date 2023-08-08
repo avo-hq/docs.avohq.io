@@ -80,6 +80,67 @@ The generated view components are basic text fields for now.
 
 You can customize them and add as much or as little content as needed. More on customization [below](#customize-the-views).
 
+:::option Use existent field template
+There may be times when you want to duplicate an existing field and start from there.
+
+To achieve this behavior, use the `--field_template` argument and pass the original field as a value.
+
+Now, all components will have the exact same code (except the name) as the original field.
+
+```bash
+$ bin/rails generate avo:field super_text --field_template text
+      create  app/components/avo/fields/super_text_field
+      create  app/components/avo/fields/super_text_field/edit_component.html.erb
+      create  app/components/avo/fields/super_text_field/edit_component.rb
+      create  app/components/avo/fields/super_text_field/index_component.html.erb
+      create  app/components/avo/fields/super_text_field/index_component.rb
+      create  app/components/avo/fields/super_text_field/show_component.html.erb
+      create  app/components/avo/fields/super_text_field/show_component.rb
+      create  app/avo/fields/super_text_field.rb
+```
+
+We can verify that all components have the text field code. From here there are endless possibilities to extend the original field features.
+
+```ruby
+# app/avo/fields/super_text_field.rb
+module Avo
+  module Fields
+    class SuperTextField < BaseField
+      attr_reader :link_to_resource
+      attr_reader :as_html
+      attr_reader :protocol
+
+      def initialize(id, **args, &block)
+        super(id, **args, &block)
+
+        add_boolean_prop args, :link_to_resource
+        add_boolean_prop args, :as_html
+        add_string_prop args, :protocol
+      end
+    end
+  end
+end
+
+# lib/avo/fields/text_field.rb
+module Avo
+  module Fields
+    class TextField < BaseField
+      attr_reader :link_to_resource
+      attr_reader :as_html
+      attr_reader :protocol
+
+      def initialize(id, **args, &block)
+        super(id, **args, &block)
+
+        add_boolean_prop args, :link_to_resource
+        add_boolean_prop args, :as_html
+        add_string_prop args, :protocol
+      end
+    end
+  end
+end
+```
+:::
 ## Field options
 
 This file is where you may add field-specific options.
