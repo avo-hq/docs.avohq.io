@@ -246,8 +246,8 @@ class Avo::Views::Admins::ResourceIndexComponent < Avo::ResourceComponent
 ```
 
 :::info Scopes transformation
-`--scope users_admins` -> `UsersAdmins`<br>
-`--scope users/admins` -> `Users::Admins`
+`--scope users_admins` -> `Avo::Views::UsersAdmins::ResourceIndexComponent`<br>
+`--scope users/admins` -> `Avo::Views::Users::Admins::ResourceIndexComponent`
 
 :::
 
