@@ -560,7 +560,7 @@ end
 :::option Wrap all Dashboard `card` and `divider` definitions inside one `def cards` method
 After the `def fields` refactor we did the same in dashboard files. Instead of declaring the cards in the class directly, you should do it in the `def cards` method.
 
-```ruby{6-8,16-20}
+```ruby{6-9,17-22}
 # Before
 class Avo::Dashboards::Dashy < AvoDashboards::BaseDashboard
   self.id = "dashy"
@@ -573,7 +573,7 @@ class Avo::Dashboards::Dashy < AvoDashboards::BaseDashboard
 end
 
 # After
-class Avo::Dashboards::Dashy < AvoDashboards::BaseDashboard
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   self.id = "dashy"
   self.name = "Dashy"
 
