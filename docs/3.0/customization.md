@@ -217,15 +217,17 @@ You can eject any view component from Avo using the `--component` option.
 
 ```bash
 $ bin/rails generate avo:eject --component Avo::Index::TableRowComponent
-      create  app/components/avo/index/table_row_component.rb
-      create  app/components/avo/index/table_row_component.html.erb
 ```
 or
 
 ```bash
 $ bin/rails generate avo:eject --component avo/index/table_row_component
-      create  app/components/avo/index/table_row_component.rb
-      create  app/components/avo/index/table_row_component.html.erb
+```
+
+Have the same output:
+```bash
+create  app/components/avo/index/table_row_component.rb
+create  app/components/avo/index/table_row_component.html.erb
 ```
 
 :::option `--scope`
