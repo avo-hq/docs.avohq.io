@@ -688,7 +688,7 @@ Alternatively, there is another method which requires two additional manual step
 Example:
 1. Execute the command `bin/rails generate avo:eject --component Avo::Views::ResourceIndexComponent` to eject the specified component.<br><br>
 2. Access the newly ejected file and adjust the namespace. You can create a fresh directory like `my_dir` and transfer the component to that directory.<br><br>
-2.1. You have the flexibility to establish multiple directories, just ensure that the class name corresponds to the path of the directories.<br><br>
+2. You have the flexibility to establish multiple directories, just ensure that the class name corresponds to the path of the directories.<br><br>
 3. Update the class namespace in the file from `Avo::Views::ResourceIndexComponent` to `Avo::MyDir::Views::ResourceIndexComponent`.<br><br>
 4. You can now utilize the customized component in a resource.
 
