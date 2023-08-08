@@ -104,11 +104,11 @@ When you add the `target: :_blank` option, a tiny external link icon will be dis
 
 :::option `resource`
 
-To make it a bit easier, you can use `resource` to quickly generate a link to one of your resources. For example, you can pass a short symbol name `:user` or the full name `UserResource`.
+To make it a bit easier, you can use `resource` to quickly generate a link to one of your resources. For example, you can pass a short symbol name `:user` or the full name `Avo::Resources::User`.
 
 ```ruby
 resource :posts
-resource "CommentsResource"
+resource "Avo::Resources::Comments"
 ```
 
 <img :src="('/assets/img/menu-editor/resource.jpg')" alt="Avo menu editor" class="border mb-4" />
@@ -282,7 +282,6 @@ Avo.configure do |config|
 end
 ```
 
-:::
 
 ## Icons
 
@@ -303,6 +302,14 @@ end
 ```
 
 <img :src="('/assets/img/menu-editor/icons.jpg')" alt="Avo menu editor" class="border mb-4" />
+
+### Icons on resource, dashboard, and link_to items
+
+You can add icons to other menu items like `resource`, `dashboard`, and `link_to`.
+
+```ruby
+link_to "Avo", "https://avohq.io", icon: "globe"
+```
 
 ## Collapsable sections and groups
 

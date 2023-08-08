@@ -14,12 +14,12 @@ prev: /3.0/
 - Have the `secret_key_base` defined in  any of the following `ENV["SECRET_KEY_BASE"]`, `Rails.application.credentials.secret_key_base`, or `Rails.application.secrets.secret_key_base`
 
 :::warning Zeitwerk autoloading is required.
-When adding Avo to a Rails app that was previously a Rails 5 app you must ensure that it uses zeitwerk for autoloading and Rails 6.1 defaults.
+When adding Avo to a Rails app that was previously a Rails 5 app you must ensure that it uses zeitwerk for autoloading and Rails 6.1 or higher defaults.
 
 ```ruby
 # config/application.rb
 config.autoloader = :zeitwerk
-config.load_defaults 6.1
+config.load_defaults 6.1 # 6.1 or higher, depending on your rails version
 ```
 :::
 
@@ -33,17 +33,19 @@ Use [this](https://railsbytes.com/public/templates/zyvsME) RailsBytes template f
 
 Take it step by step.
 
-1. Add the Avo gems to the `Gemfile`
+1. Add the appropiate Avo gem to the `Gemfile`
 
 ```ruby
-source "https://#{ENV["AVO_GEM_TOKEN"]}@packager.dev/avo-hq-beta/" do
-  gem "avo", "3.0.0.pre3"
-  gem "avo_pro"
-  gem "avo_advanced"
-  gem "avo_filters"
-  gem "avo_menu"
-  gem "avo_dashboards"
-end
+# In your Gemfile one of the below
+
+# Community
+gem "avo", source: "https://packager.dev/avo-hq/"
+
+# Pro
+gem "avo-pro", source: "https://packager.dev/avo-hq/"
+
+# Advanced
+gem "avo-advanced", source: "https://packager.dev/avo-hq/"
 ```
 
 :::info

@@ -15,7 +15,7 @@ Run `bin/rails generate avo:resource_tool post_info`. That will create two files
 The configuration file holds the tool's name and the partial path if you want to override it.
 
 ```ruby
-class PostInfo < Avo::BaseResourceTool
+class Avo::ResourceTools::PostInfo < Avo::BaseResourceTool
   self.name = "Post info"
   # self.partial = "avo/resource_tools/post_info"
 end
@@ -76,9 +76,11 @@ That should give you all the necessary data to scope out the partial content.
 The resource tool is default visible on the `Show` view of a resource. You can change that using the [visibility options](field-options.html#showing-hiding-fields-on-different-views) (`show_on`, `only_on`).
 
 ```ruby
-# app/avo/resources/post_resource.rb
-class PostResource < Avo::BaseResource
-  tool PostInfo, show_on: :edit
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  def fields
+    tool Avo::ResourceTools::PostInfo, show_on: :edit
+  end
 end
 ```
 
@@ -108,13 +110,15 @@ You have to follow three steps to enable this functionality:
 2. Tell Avo which `params` it should permit to write to the model
 3. Make sure the model is equipped to receive the params
 
-In the example below, we'll use the `FishResource`, add a few input fields (they will be a bit unstyled because this is not the scope of the exercise), and do some actions with some of them.
+In the example below, we'll use the `Avo::Resources::Fish`, add a few input fields (they will be a bit unstyled because this is not the scope of the exercise), and do some actions with some of them.
 
 We first need to generate the tool with `bin/rails g avo:resource_tool fish_information` and add the tool to the resource file.
 
-```ruby{2}
-class FishResource < Avo::BaseResource
-  tool FishInformation, show_on: :forms
+```ruby{3}
+class Avo::ResourcesFish < Avo::BaseResource
+  def fields
+    tool Avo::ResourceTools::FishInformation, show_on: :forms
+  end
 end
 ```
 
@@ -170,13 +174,15 @@ The fields are:
 </div>
 ```
 
-Next, we need to tell Avo and Rails which params are welcomed in the `create`/`update` request. We do that using the `extra_params` option on the `FishResource`. Avo's internal implementation is to assign the attributes you specify here to the underlying model (`model.assign_attributes params.permit(extra_params)`).
+Next, we need to tell Avo and Rails which params are welcomed in the `create`/`update` request. We do that using the `extra_params` option on the `Avo::Resources::Fish`. Avo's internal implementation is to assign the attributes you specify here to the underlying model (`model.assign_attributes params.permit(extra_params)`).
 
 ```ruby{2}
-class FishResource < Avo::BaseResource
+class Avo::Resources::Fish < Avo::BaseResource
   self.extra_params = [:fish_type, :something_else, properties: [], information: [:name, :history]]
 
-  tool FishInformation, show_on: :forms
+  def fields
+    tool Avo::ResourceTools::FishInformation, show_on: :forms
+  end
 end
 ```
 

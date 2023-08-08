@@ -43,13 +43,15 @@ end
 
 Now you can use your field like so:
 
-```ruby{6}
+```ruby{7}
 # app/avo/resources/project.rb
 class Avo::Resources::Project < Avo::BaseResource
   self.title = :name
 
-  field :id, as: :id, link_to_resource: true
-  field :progress, as: :progress_bar
+  def fields
+    field :id, as: :id, link_to_resource: true
+    field :progress, as: :progress_bar
+  end
 end
 ```
 <img :src="('/assets/img/custom-fields/progress-show.jpg')" alt="Progress custom field" class="border mb-4" />
@@ -160,7 +162,7 @@ end
 
 The field-specific options can come from the field declaration as well.
 
-```ruby{11-14,23}
+```ruby{11-14,24}
 # app/avo/fields/progress_bar_field.rb
 class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
   attr_reader :max
@@ -182,8 +184,10 @@ end
 class Avo::Resources::Project < Avo::BaseResource
   self.title = :name
 
-  field :id, as: :id, link_to_resource: true
-  field :progress, as: :progress_bar, step: 10, display_value: true, value_suffix: "%"
+  def fields
+    field :id, as: :id, link_to_resource: true
+    field :progress, as: :progress_bar, step: 10, display_value: true, value_suffix: "%"
+  end
 end
 ```
 
