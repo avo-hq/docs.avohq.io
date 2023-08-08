@@ -432,8 +432,8 @@ end
 #### Using the `friendly` gem
 
 ::: code-group
-```ruby [app/avo/resources/user_resource.rb]
-class UserResource < Avo::BaseResource
+```ruby [app/avo/resources/user.rb]
+class Avo::Resources::User < Avo::BaseResource
   self.find_record_method = -> {
     # We have to add .friendly to the query
     query.friendly.find! id
