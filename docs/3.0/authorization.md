@@ -237,7 +237,7 @@ Now, whatever action you take for one comment, it will be available for the `edi
 
 <VersionReq version="2.31" />
 
-From version 2.31 we introduced a concern that removes the duplication and helps you apply the same rules to associations. You should include `AvoPro::Concerns::PolicyHelpers` in the `ApplicationPolicy` for it to be applied to all policy classes.
+From version 2.31 we introduced a concern that removes the duplication and helps you apply the same rules to associations. You should include `Avo::Pro::Concerns::PolicyHelpers` in the `ApplicationPolicy` for it to be applied to all policy classes.
 
 `PolicyHelpers` allows you to use the method `inherit_association_from_policy`. This method takes two arguments; `association_name` and the policy file you want to be used as a template.
 
@@ -327,33 +327,6 @@ end
 ```
 :::
 
-::::option `upload_attachments?`
-
-:::warning DEPRECATED since 2.30.1
-This option was removed in **Avo 2.30.1** in favor of `upload_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `upload_photo?` method).
-:::
-
-Controls whether the attachment upload input should be visible in the `File` and `Files` fields.
-::::
-
-::::option `download_attachments?`
-
-:::warning DEPRECATED since 2.30.1
-This option was removed in **Avo 2.30.1** in favor of `download_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `download_photo?` method).
-:::
-
-Controls whether the attachment download button should be visible in the `File` and `Files` fields.
-::::
-
-::::option `delete_attachments?`
-
-:::warning DEPRECATED since 2.30.1
-This option was removed in Avo 2.30.1 in favor of `delete_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `delete_photo?` method).
-:::
-
-Controls whether the attachment delete button should be visible in the `File` and `Files` fields.
-::::
-
 ## Scopes
 
 You may specify a scope for the <Index />, <Show />, and <Edit /> views.
@@ -412,7 +385,7 @@ Now, Avo will use `avo_index?` instead of `index?` to manage the **Index** view 
 
 ## Raise errors when policies are missing
 
-The default behavior of Avo is to allow missing policies for resources silently. So, if you have a `User` model and a `UserResource` but don't have a `UserPolicy`, Avo will not raise errors regarding missing policies and authorize that resource.
+The default behavior of Avo is to allow missing policies for resources silently. So, if you have a `User` model and a `Avo::Resources::User` but don't have a `UserPolicy`, Avo will not raise errors regarding missing policies and authorize that resource.
 
 If, however, you need to be on the safe side of things and raise errors when a Resource is missing a Policy, you can toggle on the `raise_error_on_missing_policy` configuration.
 
@@ -436,7 +409,7 @@ Now, you'll have to provide a policy for each resource you have in your app, thu
 By default, Avo will infer the policy from the model of the resource object. If you wish to use a different policy for a given resource, you can specify it directly in the resource using the `authorization_policy` option.
 
 ```ruby
-class PhotoCommentResource < Avo::BaseResource
+class Avo::Resources::PhotoComment < Avo::BaseResource
   self.model_class = ::Comment
   self.authorization_policy = PhotoCommentPolicy
   # ...

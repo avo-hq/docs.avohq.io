@@ -7,5 +7,5 @@ Sets a different resource to be used when displaying (or redirecting to) the ass
 
 #### Possible values
 
-`PostResource`, `PhotoCommentResource`, or any Avo resource class.
+`Avo::Resources::Post`, `Avo::Resources::PhotoComment`, or any Avo resource class.
 :::

@@ -32,7 +32,7 @@ You'll be able to add your Stimulus controllers to the resource views (`Index`, 
 To enable a stimulus controller to resource view, you can use the `stimulus_controllers` option on the resource file.
 
 ```ruby
-class CourseResource < Avo::BaseResource
+class Avo::Resources::Course < Avo::BaseResource
   self.stimulus_controllers = "course-resource"
 end
 ```
@@ -40,7 +40,7 @@ end
 You can add more and separate them by a space character.
 
 ```ruby
-class CourseResource < Avo::BaseResource
+class Avo::Resources::Course < Avo::BaseResource
   self.stimulus_controllers = "course-resource select-field association-fields"
 end
 ```
@@ -444,32 +444,34 @@ Below is an example of how you could implement a city & country select feature w
 
 ::: code-group
 
-```ruby [app/avo/resources/course_resource.rb]
-# app/avo/resources/course_resource.rb
-class CourseResource < Avo::BaseResource
+```ruby [app/avo/resources/course.rb]
+# app/avo/resources/course.rb
+class Avo::Resources::Course < Avo::BaseResource
   self.stimulus_controllers = "course-resource"
 
-  field :id, as: :id
-  field :name, as: :text
-  field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h, html: {
-    edit: {
-      input: {
-        data: {
-          course_resource_target: "countryFieldInput", # Make the input a target
-          action: "input->course-resource#onCountryChange" # Add an action on change
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+    field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h, html: {
+      edit: {
+        input: {
+          data: {
+            course_resource_target: "countryFieldInput", # Make the input a target
+            action: "input->course-resource#onCountryChange" # Add an action on change
+          }
         }
       }
     }
-  }
-  field :city, as: :select, options: Course.cities.values.flatten.map { |city| [city, city] }.to_h, html: {
-    edit: {
-      input: {
-        data: {
-          course_resource_target: "cityFieldInput" # Make the input a target
+    field :city, as: :select, options: Course.cities.values.flatten.map { |city| [city, city] }.to_h, html: {
+      edit: {
+        input: {
+          data: {
+            course_resource_target: "cityFieldInput" # Make the input a target
+          }
         }
       }
     }
-  }
+  end
 end
 ```
 

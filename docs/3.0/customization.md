@@ -148,18 +148,25 @@ The `_current_user` variable holds what gets resolved from the [`current_user_me
 
 You can access the context data with `::Avo::App.context` object.
 
-## Eject views
+## Eject
 
-If you want to change one of Avo's built-in views, you can eject it, update it and use it in your admin.
+If you want to change one of Avo's built-in views, you can eject it, update it and use it in your admin panel.
+
+:::warning
+Once ejected, the views will not receive updates on new Avo releases. You must maintain them yourself.
+:::
+
+:::option `--partial`
+Utilize the `--partial` option when you intend to extract certain partial
 
 ### Prepared templates
 
-We prepared a few templates to make it.
+We prepared a few templates to make it easier for you.
 
-`bin/rails generate avo:eject :logo` will eject the `_logo.html.erb` partial.
+`bin/rails generate avo:eject --partial :logo` will eject the `_logo.html.erb` partial.
 
 ```
-▶ bin/rails generate avo:eject :logo
+▶ bin/rails generate avo:eject --partial :logo
 Running via Spring preloader in process 20947
       create  app/views/avo/logo/_logo.html.erb
 ```
@@ -200,12 +207,48 @@ The `_scripts.html.erb` partial enables you to insert scripts in the footer of y
 You can eject any partial from Avo using the partial path.
 
 ```
-▶ bin/rails generate avo:eject app/views/layouts/avo/application.html.erb
+▶ bin/rails generate avo:eject --partial app/views/layouts/avo/application.html.erb
       create  app/views/layouts/avo/application.html.erb
 ```
+:::
 
-:::warning
-Once ejected, the views will not receive updates on new Avo releases. You must maintain them yourself.
+:::option `--component`
+You can eject any view component from Avo using the `--component` option.
+
+```bash
+$ bin/rails generate avo:eject --component Avo::Index::TableRowComponent
+```
+or
+
+```bash
+$ bin/rails generate avo:eject --component avo/index/table_row_component
+```
+
+Have the same output:
+```bash
+create  app/components/avo/index/table_row_component.rb
+create  app/components/avo/index/table_row_component.html.erb
+```
+
+:::option `--scope`
+When you opt to eject a view component that exists under `Avo::Views` namespace, for example the `Avo::Views::ResourceIndexComponent` you can employ the `--scope` option to specify the namespace that should be adopted by the ejected component, extending from `Avo::Views`.
+
+```bash
+$ rails g avo:eject --component Avo::Views::ResourceIndexComponent --scope admins
+      create  app/components/avo/views/admins/resource_index_component.rb
+      create  app/components/avo/views/admins/resource_index_component.html.erb
+```
+
+The ejected file have the same code that original `Avo::Views::ResourceIndexComponent` but you can notice that the class name has changed
+
+```ruby
+class Avo::Views::Admins::ResourceIndexComponent < Avo::ResourceComponent
+```
+
+:::info Scopes transformation
+`--scope users_admins` -> `Avo::Views::UsersAdmins::ResourceIndexComponent`<br>
+`--scope users/admins` -> `Avo::Views::Users::Admins::ResourceIndexComponent`
+
 :::
 
 ## Breadcrumbs
@@ -415,8 +458,8 @@ end
 #### Using the `friendly` gem
 
 ::: code-group
-```ruby [app/avo/resources/user_resource.rb]
-class UserResource < Avo::BaseResource
+```ruby [app/avo/resources/user.rb]
+class Avo::Resources::User < Avo::BaseResource
   self.find_record_method = -> {
     # We have to add .friendly to the query
     query.friendly.find! id
