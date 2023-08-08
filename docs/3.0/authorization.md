@@ -412,7 +412,7 @@ Now, Avo will use `avo_index?` instead of `index?` to manage the **Index** view 
 
 ## Raise errors when policies are missing
 
-The default behavior of Avo is to allow missing policies for resources silently. So, if you have a `User` model and a `UserResource` but don't have a `UserPolicy`, Avo will not raise errors regarding missing policies and authorize that resource.
+The default behavior of Avo is to allow missing policies for resources silently. So, if you have a `User` model and a `Avo::Resources::User` but don't have a `UserPolicy`, Avo will not raise errors regarding missing policies and authorize that resource.
 
 If, however, you need to be on the safe side of things and raise errors when a Resource is missing a Policy, you can toggle on the `raise_error_on_missing_policy` configuration.
 
@@ -436,7 +436,7 @@ Now, you'll have to provide a policy for each resource you have in your app, thu
 By default, Avo will infer the policy from the model of the resource object. If you wish to use a different policy for a given resource, you can specify it directly in the resource using the `authorization_policy` option.
 
 ```ruby
-class PhotoCommentResource < Avo::BaseResource
+class Avo::Resources::PhotoComment < Avo::BaseResource
   self.model_class = ::Comment
   self.authorization_policy = PhotoCommentPolicy
   # ...

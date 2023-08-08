@@ -17,7 +17,7 @@ All cards have some standard settings like `id`, which must be unique, `label` a
 Each card has its own `cols` and `rows` settings to control the width and height of the card inside the dashboard grid. They can have values from `1` to `6`.
 
 ```ruby{2-7}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.label = 'Users count'
   self.description = 'Users description'
@@ -38,7 +38,7 @@ You can also set a default range using the `initial_range` attribute.
 The ranges have been changed a bit since **version 2.8**. The parameter you pass to the `range` option will be directly passed to the [`options_for_select`](https://apidock.com/rails/v5.2.3/ActionView/Helpers/FormOptionsHelper/options_for_select) helper, so it behaves more like a regular `select_tag`.
 
 ```ruby{4-15}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.label = 'Users count'
   self.initial_range = 30
@@ -61,7 +61,7 @@ end
 If this dashboard is something that you keep on the big screen, you need to keep the data fresh at all times. That's easy using `refresh_every`. You pass the number of seconds you need to be refreshed and forget about it. Avo will do it for you.
 
 ```ruby{3}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.refresh_every = 10.minutes
 end
@@ -72,7 +72,7 @@ end
 In cases where you need to embed some content that should fill the whole card (like a map, for example), you can choose to hide the label and ranges dropdown.
 
 ```ruby{3}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.display_header = false
 end
@@ -92,7 +92,7 @@ To calculate your result, you may use the `query` method. After you make the que
 In the `query` method you have access to a few variables like `context` (the [App context](./customization#context)), `params` (the request params), `range` (the range that was requested), `dashboard` (the current dashboard the card is on), and current `card`.
 
 ```ruby{23-47,36}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.label = 'Users count'
   self.description = 'Some tiny description'
@@ -147,7 +147,7 @@ end
 Some metrics might want to add a `prefix` or a `suffix` to display the data better.
 
 ```ruby{3,4}
-class UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
   self.id = 'users_metric'
   self.prefix = '$'
   self.suffix = '%'
@@ -163,7 +163,7 @@ A picture is worth a thousand words. So maybe a chart a hundred? Who knows? But 
 You start by running `bin/rails g avo:card users_chart --type chartkick`.
 
 ```ruby
-class UserSignups < Avo::Dashboards::ChartkickCard
+class Avo::Cards::UserSignups < Avo::Dashboards::ChartkickCard
   self.id = 'user_signups'
   self.label = 'User signups'
   self.chart_type = :area_chart
@@ -223,7 +223,7 @@ If you'd like to use [Groupdate](https://github.com/ankane/groupdate), [Hightop]
 You can use a partial card to add custom content to a card. Generate one by running `bin/rails g avo:card custom_card --type partial`. That will create the card class and the partial for it.
 
 ```ruby{5}
-class ExampleCustomPartial < Avo::Dashboards::PartialCard
+class Avo::Cards::ExampleCustomPartial < Avo::Dashboards::PartialCard
   self.id = "users_custom_card"
   self.cols = 1
   self.rows = 4
@@ -237,7 +237,7 @@ You can embed a piece of content from another app using an iframe. You can hide 
 
 ```ruby{5}
 # app/avo/cards/map_card.rb
-class MapCard < Avo::Dashboards::PartialCard
+class Avo::Cards::MapCard < Avo::Dashboards::PartialCard
   self.id = "map_card"
   self.label = "Map card"
   self.partial = "avo/cards/map_card"

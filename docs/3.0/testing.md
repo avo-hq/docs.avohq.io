@@ -18,21 +18,23 @@ You can find them all [here](https://github.com/avo-hq/avo-3/blob/main/lib/avo/t
 
 ## Testing Actions
 
-Given this `ReleaseFish`, this is the `spec` that tests it.
+Given this `Avo::Actions::ReleaseFish`, this is the `spec` that tests it.
 
 ```ruby
-class ReleaseFish < Avo::BaseAction
+class Avo::Actions::ReleaseFish < Avo::BaseAction
   self.name = "Release fish"
   self.message = "Are you sure you want to release this fish?"
 
-  field :message, as: :textarea, help: "Tell the fish something before releasing."
+  def fields
+    field :message, as: :textarea, help: "Tell the fish something before releasing."
+  end
 
   def handle(**args)
-    args[:models].each do |model|
-      model.release
+    args[:records].each do |record|
+      record.release
     end
 
-    succeed "#{args[:models].count} fish released with message '#{args[:fields][:message]}'."
+    succeed "#{args[:records].count} fish released with message '#{args[:fields][:message]}'."
   end
 end
 
@@ -44,7 +46,7 @@ require 'rails_helper'
 RSpec.feature ReleaseFish, type: :feature do
   let(:fish) { create :fish }
   let(:current_user) { create :user }
-  let(:resource) { UserResource.new.hydrate model: fish }
+  let(:resource) { Avo::Resources::User.new.hydrate model: fish }
 
   it "tests the dummy action" do
     args = {

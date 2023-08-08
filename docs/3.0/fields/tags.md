@@ -20,10 +20,12 @@ field :skills, as: :tags
 
 You can give suggestions to your users to pick from which will be displayed to the user as a dropdown under the field.
 
-```ruby{3,8-10}
-# app/avo/resources/course_resource.rb
-class CourseResource < Avo::BaseResource
-  field :skills, as: :tags, suggestions: -> { record.skill_suggestions }
+```ruby{4,10-12}
+# app/avo/resources/course.rb
+class Avo::Resources::Course < Avo::BaseResource
+  def fields
+    field :skills, as: :tags, suggestions: -> { record.skill_suggestions }
+  end
 end
 
 # app/models/course.rb
@@ -290,10 +292,12 @@ Array of strings
 
 You can use the tags field with the PostgreSQL array field.
 
-```ruby{9}
-# app/avo/resources/course_resource.rb
-class CourseResource < Avo::BaseResource
-  field :skills, as: :tags
+```ruby{11}
+# app/avo/resources/course.rb
+class Avo::Resources::Course < Avo::BaseResource
+  def fields
+    field :skills, as: :tags
+  end
 end
 
 # db/migrate/add_skills_to_courses.rb
@@ -310,17 +314,19 @@ One popular gem used for tagging is [`acts-as-taggable-on`](https://github.com/m
 
 You need to add `gem 'acts-as-taggable-on', '~> 9.0'` in your `Gemfile`, add it to your model `acts_as_taggable_on :tags`, and use `acts_as_taggable_on` on the field.
 
-```ruby{5}
-# app/avo/resources/post_resource.rb
-class PostResource < Avo::BaseResource
-  field :tags,
-    as: :tags,
-    acts_as_taggable_on: :tags,
-    close_on_select: false,
-    placeholder: 'add some tags',
-    suggestions: -> { Post.tags_suggestions },
-    enforce_suggestions: true,
-    help: 'The only allowed values here are `one`, `two`, and `three`'
+```ruby{6}
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  def fields
+    field :tags,
+      as: :tags,
+      acts_as_taggable_on: :tags,
+      close_on_select: false,
+      placeholder: 'add some tags',
+      suggestions: -> { Post.tags_suggestions },
+      enforce_suggestions: true,
+      help: 'The only allowed values here are `one`, `two`, and `three`'
+  end
 end
 
 # app/models/post.rb
@@ -339,10 +345,12 @@ You can set up the tags as a resource using [this guide](./../recipes/act-as-tag
 
 We haven't tested all the scenarios, but the tags field should play nicely with any array fields provided by Rails.
 
-```ruby{8-10,12-14}
-# app/avo/resources/post_resource.rb
-class PostResource < Avo::BaseResource
-  field :items, as: :tags
+```ruby{10-12,14-16}
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  def fields
+    field :items, as: :tags
+  end
 end
 
 # app/models/post.rb

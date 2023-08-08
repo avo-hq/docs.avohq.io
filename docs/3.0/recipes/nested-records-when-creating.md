@@ -57,19 +57,21 @@ Use [this guide](./../custom-asset-pipeline.html#add-custom-js-code-and-stimulus
 
 `bin/rails generate avo:resource_tool nested_fish_reviews`
 
-This will generate two files. The `NestedFishReviews` ruby file you'll register on the `FishResource` file and we'll edit the template to contain our fields.
+This will generate two files. The `NestedFishReviews` ruby file you'll register on the `Avo::Resources::Fish` file and we'll edit the template to contain our fields.
 
 ### 4. Register the tool on the resource
 
 We'll display it only on the <New /> view.
 
-```ruby{6}
-class FishResource < Avo::BaseResource
+```ruby{7}
+class Avo::Resources::Fish < Avo::BaseResource
   # other fields actions, filters and more
 
-  field :reviews, as: :has_many
+  def fields
+    field :reviews, as: :has_many
 
-  tool NestedFishReviews, only_on: :new
+    tool Avo::ResourceTools::NestedFishReviews, only_on: :new
+  end
 end
 ```
 
@@ -131,14 +133,15 @@ In the footer we'll also add the button that will add new reviews on the page.
 There's one more step we need to do and that's to whitelist the new `reviews_attributes` params to be passed to the model.
 
 ```ruby{2}
-class FishResource < Avo::BaseResource
+class Avo::Resources::Fish < Avo::BaseResource
   self.extra_params = [reviews_attributes: [:body, :user_id]]
 
   # other fields actions, filters and more
+  def fields
+    field :reviews, as: :has_many
 
-  field :reviews, as: :has_many
-
-  tool NestedFishReviews, only_on: :new
+    tool Avo::ResourceTools::NestedFishReviews, only_on: :new
+  end
 end
 ```
 
