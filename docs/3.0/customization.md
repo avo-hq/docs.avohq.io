@@ -148,13 +148,16 @@ The `_current_user` variable holds what gets resolved from the [`current_user_me
 
 You can access the context data with `::Avo::App.context` object.
 
-## Eject views
+## Eject
 
 If you want to change one of Avo's built-in views, you can eject it, update it and use it in your admin panel.
 
 :::warning
 Once ejected, the views will not receive updates on new Avo releases. You must maintain them yourself.
 :::
+
+:::option `--partial`
+Utilize the `--partial` option when you intend to extract certain partial
 
 ### Prepared templates
 
@@ -207,9 +210,9 @@ You can eject any partial from Avo using the partial path.
 ▶ bin/rails generate avo:eject --partial app/views/layouts/avo/application.html.erb
       create  app/views/layouts/avo/application.html.erb
 ```
+:::
 
-### Eject view-components
-
+:::option `--component`
 You can eject any view component from Avo using the `--component` option.
 
 ```bash
@@ -224,6 +227,27 @@ $ bin/rails generate avo:eject --component avo/index/table_row_component
       create  app/components/avo/index/table_row_component.rb
       create  app/components/avo/index/table_row_component.html.erb
 ```
+
+:::option `--scope`
+When you opt to eject a view component that exists under `Avo::Views` namespace, for example the `Avo::Views::ResourceIndexComponent` you can employ the `--scope` option to specify the namespace that should be adopted by the ejected component, extending from `Avo::Views`.
+
+```bash
+$ rails g avo:eject --component Avo::Views::ResourceIndexComponent --scope admins
+      create  app/components/avo/views/admins/resource_index_component.rb
+      create  app/components/avo/views/admins/resource_index_component.html.erb
+```
+
+The ejected file have the same code that original `Avo::Views::ResourceIndexComponent` but you can notice that the class name has changed
+
+```ruby
+class Avo::Views::Admins::ResourceIndexComponent < Avo::ResourceComponent
+```
+
+:::info Scopes transformation
+`--scope users_admins` -> `UsersAdmins`<br>
+`--scope users/admins` -> `Users::Admins`
+
+:::
 
 ## Breadcrumbs
 
