@@ -326,53 +326,6 @@ The fields marked with `show_on :preview`, will be show in the [preview field](.
 By default, all fields are hidden in `:preview`.
 :::
 
-## Custom components
-
-By default, for each view we render an component:
-
-`:index` -> `Avo::Views::ResourceIndexComponent`<br>
-`:show` -> `Avo::Views::ResourceShowComponent`<br>
-`:new`, `:edit` -> `Avo::Views::ResourceEditComponent`
-
-It's possible to change this behavior by using the `self.components` resource option.
-
-```ruby
-self.components = {
-  resource_index_component: Avo::Views::Users::ResourceIndexComponent,
-  resource_show_component: "Avo::Views::Users::ResourceShowComponent",
-  resource_edit_component: "Avo::Views::Users::ResourceEditComponent",
-  resource_new_component: Avo::Views::Users::ResourceEditComponent
-}
-```
-
-A resource configured with the example above will start using the declared components instead the default ones.
-
-:::warning Warning
-The custom view components must ensure that their initializers are configured to receive all the arguments passed during the rendering of a component. You can verify this in our codebase through the following files:
-
-`:index` -> `app/views/avo/base/index.html.erb`<br>
-`:show` -> `app/views/avo/base/show.html.erb`<br>
-`:new` -> `app/views/avo/base/new.html.erb`<br>
-`:edit` -> `app/views/avo/base/edit.html.erb`
-:::
-
-One straightforward approach to create a custom component is by extracting an existing component and modifying its namespace. While altering the namespace is not obligatory, we highly recommend doing so unless you intend for all resources to adopt the extracted component.
-
-Example:
-1. Execute the command `bin/rails generate avo:eject --component Avo::Views::ResourceIndexComponent` to eject the specified component.
-2. Navigate to the recently ejected file and modify the namespace. Create a new directory, for instance, "my_dir," and move the component to that directory.
-3. Update the class namespace in the file from `Avo::Views::ResourceIndexComponent` to `Avo::Views::MyDir::ResourceIndexComponent`.
-4. You can now utilize the customized component in a resource.
-
-```ruby
-self.components = {
-  resource_index_component: Avo::Views::MyDir::ResourceIndexComponent
-}
-```
-
-This way you assure that the initializer is accepting the right arguments.
-
-
 ## Extending `Avo::ResourcesController`
 
 You may need to execute additional actions on the `ResourcesController` before loading the Avo pages. You can create an `Avo::BaseResourcesController` and extend your resource controller from it.
@@ -666,7 +619,7 @@ end
 
 Let's take an example. We have a `Person` model and `Sibling` and `Spouse` models that inherit from it using Single Table Inheritance (STI).
 
-Wehn you declare this option on the parent resource `Person` it has the follwing effect. When a user is on the <Index /> view of your the `Person` resource and clicks to visit a `Person` record they will be redirected to a `Child` or `Spouse` record instead of a `Person` record.
+When you declare this option on the parent resource `Person` it has the following effect. When a user is on the <Index /> view of your the `Person` resource and clicks to visit a `Person` record they will be redirected to a `Child` or `Spouse` record instead of a `Person` record.
 
 ```ruby
 class Avo::Resources::Person < Avo::BaseResource
@@ -699,6 +652,54 @@ end
 
 <img :src="('/assets/img/filters/keep-filters-panel-open.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 :::
+
+:::option self.components
+By default, for each view we render an component:
+
+`:index` -> `Avo::Views::ResourceIndexComponent`<br>
+`:show` -> `Avo::Views::ResourceShowComponent`<br>
+`:new`, `:edit` -> `Avo::Views::ResourceEditComponent`
+
+It's possible to change this behavior by using the `self.components` resource option.
+
+```ruby
+self.components = {
+  resource_index_component: Avo::Views::Users::ResourceIndexComponent,
+  resource_show_component: "Avo::Views::Users::ResourceShowComponent",
+  resource_edit_component: "Avo::Views::Users::ResourceEditComponent",
+  resource_new_component: Avo::Views::Users::ResourceEditComponent
+}
+```
+
+A resource configured with the example above will start using the declared components instead the default ones.
+
+:::warning Warning
+The custom view components must ensure that their initializers are configured to receive all the arguments passed during the rendering of a component. You can verify this in our codebase through the following files:
+
+`:index` -> `app/views/avo/base/index.html.erb`<br>
+`:show` -> `app/views/avo/base/show.html.erb`<br>
+`:new` -> `app/views/avo/base/new.html.erb`<br>
+`:edit` -> `app/views/avo/base/edit.html.erb`
+:::
+Creating a customized component for a view is most easily achieved by ejecting one of our pre-existing components using the `--scope` parameter. You can find step-by-step instructions in the documentation [here](./customization.html#scope).
+
+Alternatively, there is another method which requires two additional manual steps. This involves crafting a personalized component by extracting an existing one and adjusting its namespace. Although changing the namespace is not mandatory, we strongly recommend it unless you intend for all resources to adopt the extracted component.
+
+Example:
+1. Execute the command `bin/rails generate avo:eject --component Avo::Views::ResourceIndexComponent` to eject the specified component.<br><br>
+2. Access the newly ejected file and adjust the namespace. You can create a fresh directory like `my_dir` and transfer the component to that directory.<br><br>
+2.1. You have the flexibility to establish multiple directories, just ensure that the class name corresponds to the path of the directories.<br><br>
+3. Update the class namespace in the file from `Avo::Views::ResourceIndexComponent` to `Avo::MyDir::Views::ResourceIndexComponent`.<br><br>
+4. You can now utilize the customized component in a resource.
+
+```ruby
+self.components = {
+  resource_index_component: Avo::MyDir::Views::ResourceIndexComponent
+}
+```
+
+This way you can choose the whatever namespace structure you want and you assure that the initializer is accepting the right arguments.
+
 
 ## Unscoped queries on `Index`
 You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.
