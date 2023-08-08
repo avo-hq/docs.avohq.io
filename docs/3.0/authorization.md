@@ -237,7 +237,7 @@ Now, whatever action you take for one comment, it will be available for the `edi
 
 <VersionReq version="2.31" />
 
-From version 2.31 we introduced a concern that removes the duplication and helps you apply the same rules to associations. You should include `AvoPro::Concerns::PolicyHelpers` in the `ApplicationPolicy` for it to be applied to all policy classes.
+From version 2.31 we introduced a concern that removes the duplication and helps you apply the same rules to associations. You should include `Avo::Pro::Concerns::PolicyHelpers` in the `ApplicationPolicy` for it to be applied to all policy classes.
 
 `PolicyHelpers` allows you to use the method `inherit_association_from_policy`. This method takes two arguments; `association_name` and the policy file you want to be used as a template.
 
@@ -326,33 +326,6 @@ If you want to allow or disallow these methods in bulk you can use a little meta
 end
 ```
 :::
-
-::::option `upload_attachments?`
-
-:::warning DEPRECATED since 2.30.1
-This option was removed in **Avo 2.30.1** in favor of `upload_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `upload_photo?` method).
-:::
-
-Controls whether the attachment upload input should be visible in the `File` and `Files` fields.
-::::
-
-::::option `download_attachments?`
-
-:::warning DEPRECATED since 2.30.1
-This option was removed in **Avo 2.30.1** in favor of `download_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `download_photo?` method).
-:::
-
-Controls whether the attachment download button should be visible in the `File` and `Files` fields.
-::::
-
-::::option `delete_attachments?`
-
-:::warning DEPRECATED since 2.30.1
-This option was removed in Avo 2.30.1 in favor of `delete_{FIELD_ID}?` method where `FIELD_ID` is the ID of the attachment field (ex: for `has_one_attached :photo` you need to declare the `delete_photo?` method).
-:::
-
-Controls whether the attachment delete button should be visible in the `File` and `Files` fields.
-::::
 
 ## Scopes
 
