@@ -176,23 +176,6 @@ field :users_required, as: :number, html: {index: {wrapper: {classes: "text-righ
 ```
 :::
 
-:::option Renamed `scope` to `query` in the `search_query` block
-### Actions to take
-Replace `scope.` with `query.` in `search_query` in every resource.
-
-```ruby
-# Before
-self.search_query = -> do
-  scope.order(created_at: :desc).ransack(id_eq: params[:q], m: "or").result(distinct: false)
-end
-
-# After
-self.search_query = -> do
-  query.order(created_at: :desc).ransack(id_eq: params[:q], m: "or").result(distinct: false)
-end
-```
-:::
-
 :::option Renamed `resolve_query_scope` to `index_query` in resources
 The new method name `index_query` speaks more about what it does and the rest of the changes brings it more inline with the other APIs
 
@@ -287,6 +270,7 @@ In Avo 3 we brought all those things in a single `self.search` option.
 The `self.search[:item]` block will go through each of the found records where you have to return a hash with the following keys `title`, `description`, `image_url`, `image_format`.
 
 - `self.search_query` moved to `self.search[:query]`. (remove `self.search_query` from the resource file)
+- `scope` that was accessible inside old `self.search_query` moved to `query` and it's inside `self.search[:query]` (check code example below)
 - `self.search_query_help` moved to `self.search[:help]`. (remove `self.search_query_help` from the resource file)
 - `self.hide_from_global_search` moved to `self.search[:hide_on_global]`. (remove `self.hide_from_global_search` from the resource file)
 - `self.search_result_path` moved to `self.search[:result_path]`. (remove `self.search_result_path` from the resource file)
