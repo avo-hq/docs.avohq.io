@@ -389,6 +389,18 @@ end
 class Avo::ResourceTools::Comments < Avo::BaseResourceTool
 end
 ```
+
+```ruby [Custom fields]
+# Before
+# /app/avo/fields/color_picker_field.rb
+class ColorPickerField < Avo::Fields::BaseField
+end
+
+# After
+# /app/avo/fields/color_picker_field.rb
+class Avo::Fields::ColorPickerField < Avo::Fields::BaseField
+end
+```
 :::
 ::::
 
