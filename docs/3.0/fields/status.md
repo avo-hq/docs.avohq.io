@@ -17,7 +17,7 @@ field :progress,
   neutral_when: ["meh"],
 ```
 
-<img :src="('/assets/img/fields/status.jpg')" alt="Status field" class="border mb-4" />
+<img :src="('/assets/img/fields/status.png')" alt="Status field" class="border mb-4" />
 
 ## Options
 
