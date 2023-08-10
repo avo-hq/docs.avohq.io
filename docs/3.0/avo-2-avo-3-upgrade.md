@@ -399,7 +399,6 @@ end
 # After
 # /app/avo/fields/color_picker_field.rb
 class Avo::Fields::ColorPickerField < Avo::Fields::BaseField
-
 end
 ```
 :::
