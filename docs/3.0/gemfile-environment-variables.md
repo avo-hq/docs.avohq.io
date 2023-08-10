@@ -96,9 +96,16 @@ Using the credentials this way, they might be exposed in the terminal history an
 
 ## Configure heroku
 
-If you're using heroku, you can set the environment variable using the following command.
+If you're using heroku, you can set the environment variable using the following command. This way `bundler` will use it when authenticating to `packager.dev`.
 
 ```bash
 heroku config:set BUNDLE_PACKAGER__DEV=xxx
+```
 
+## Configure Hatchbox
+
+If you're using Hatchbox, you can set the environment variable in your apps "Environment" tab. This way `bundler` will use it when authenticating to `packager.dev`.
+
+```yaml
+BUNDLE_PACKAGER__DEV: xxx
 ```
