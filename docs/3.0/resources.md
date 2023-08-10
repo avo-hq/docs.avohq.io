@@ -347,6 +347,27 @@ end
 You can't use `Avo::BaseController` and `Avo::ResourcesController` as **your base controller**. They are defined inside Avo.
 :::
 
+When you generate a new resource or controller in Avo, it won't automatically inherit from the `Avo::BaseResourcesController`. However, you have two approaches to ensure that the new generated controllers inherit from a custom controller:
+
+### `--parent-controller` option on the generators
+Both the `avo:controller` and `avo:resource` generators accept the `--parent-controller` option, which allows you to specify the controller from which the new controller should inherit. Here are examples of how to use it:
+
+```bash
+rails g avo:controller city --parent-controller Avo::BaseResourcesController
+rails g avo:resource city --parent-controller Avo::BaseResourcesController
+```
+
+### `resource_parent_controller` configuration option
+You can configure the `resource_parent_controller` option in the `avo.rb` initializer. This option will be used to establish the inherited controller if the `--parent-controller` argument is not passed on the generators. Here's how you can do it:
+
+```ruby
+Avo.configure do |config|
+  # ...
+  config.resource_parent_controller = "Avo::BaseResourcesController" # "Avo::ResourcesController" is default value
+  # ...
+end
+```
+
 ### Attach concerns to `Avo::BaseController`
 
 Alternatively you can use [this guide](https://avohq.io/blog/safely-extend-a-ruby-on-rails-controller) to attach methods, actions, and hooks to the main `Avo::BaseController` or `Avo::ApplicationController`.
@@ -598,7 +619,7 @@ end
 
 Let's take an example. We have a `Person` model and `Sibling` and `Spouse` models that inherit from it using Single Table Inheritance (STI).
 
-Wehn you declare this option on the parent resource `Person` it has the follwing effect. When a user is on the <Index /> view of your the `Person` resource and clicks to visit a `Person` record they will be redirected to a `Child` or `Spouse` record instead of a `Person` record.
+When you declare this option on the parent resource `Person` it has the following effect. When a user is on the <Index /> view of your the `Person` resource and clicks to visit a `Person` record they will be redirected to a `Child` or `Spouse` record instead of a `Person` record.
 
 ```ruby
 class Avo::Resources::Person < Avo::BaseResource
@@ -631,6 +652,54 @@ end
 
 <img :src="('/assets/img/filters/keep-filters-panel-open.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 :::
+
+:::option self.components
+By default, for each view we render an component:
+
+`:index` -> `Avo::Views::ResourceIndexComponent`<br>
+`:show` -> `Avo::Views::ResourceShowComponent`<br>
+`:new`, `:edit` -> `Avo::Views::ResourceEditComponent`
+
+It's possible to change this behavior by using the `self.components` resource option.
+
+```ruby
+self.components = {
+  resource_index_component: Avo::Views::Users::ResourceIndexComponent,
+  resource_show_component: "Avo::Views::Users::ResourceShowComponent",
+  resource_edit_component: "Avo::Views::Users::ResourceEditComponent",
+  resource_new_component: Avo::Views::Users::ResourceEditComponent
+}
+```
+
+A resource configured with the example above will start using the declared components instead the default ones.
+
+:::warning Warning
+The custom view components must ensure that their initializers are configured to receive all the arguments passed during the rendering of a component. You can verify this in our codebase through the following files:
+
+`:index` -> `app/views/avo/base/index.html.erb`<br>
+`:show` -> `app/views/avo/base/show.html.erb`<br>
+`:new` -> `app/views/avo/base/new.html.erb`<br>
+`:edit` -> `app/views/avo/base/edit.html.erb`
+:::
+Creating a customized component for a view is most easily achieved by ejecting one of our pre-existing components using the `--scope` parameter. You can find step-by-step instructions in the documentation [here](./customization.html#scope).
+
+Alternatively, there is another method which requires two additional manual steps. This involves crafting a personalized component by extracting an existing one and adjusting its namespace. Although changing the namespace is not mandatory, we strongly recommend it unless you intend for all resources to adopt the extracted component.
+
+Example:
+1. Execute the command `bin/rails generate avo:eject --component Avo::Views::ResourceIndexComponent` to eject the specified component.<br><br>
+2. Access the newly ejected file and adjust the namespace. You can create a fresh directory like `my_dir` and transfer the component to that directory.<br><br>
+2. You have the flexibility to establish multiple directories, just ensure that the class name corresponds to the path of the directories.<br><br>
+3. Update the class namespace in the file from `Avo::Views::ResourceIndexComponent` to `Avo::MyDir::Views::ResourceIndexComponent`.<br><br>
+4. You can now utilize the customized component in a resource.
+
+```ruby
+self.components = {
+  resource_index_component: Avo::MyDir::Views::ResourceIndexComponent
+}
+```
+
+This way you can choose the whatever namespace structure you want and you assure that the initializer is accepting the right arguments.
+
 
 ## Unscoped queries on `Index`
 You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.

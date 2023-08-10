@@ -93,3 +93,12 @@ gem "avo-advanced", source: "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq
 :::warning
 Using the credentials this way, they might be exposed in the terminal history and will be exposed in the `Gemfile.lock` file.
 :::
+
+## Configure heroku
+
+If you're using heroku, you can set the environment variable using the following command.
+
+```bash
+heroku config:set BUNDLE_PACKAGER__DEV=xxx
+
+```
