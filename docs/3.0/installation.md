@@ -39,7 +39,7 @@ Take it step by step.
 # In your Gemfile one of the below
 
 # Community
-gem "avo", source: "https://packager.dev/avo-hq/"
+gem "avo", ">= 3.0.1.beta3", source: "https://packager.dev/avo-hq/"
 
 # Pro
 gem "avo-pro", source: "https://packager.dev/avo-hq/"
