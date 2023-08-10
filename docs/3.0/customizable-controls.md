@@ -48,7 +48,7 @@ end
 :::option Edit page
 On the <Edit /> view the default configuration is `back_button`, `delete_button`, `actions_list`, and `save_button`.
 
-To start customizing the controls, add a `editcontrols` block and start adding the desired controls.
+To start customizing the controls, add a `edit_controls` block and start adding the desired controls.
 
 ```ruby
 class Avo::Resources::Fish < Avo::BaseResource
@@ -163,6 +163,7 @@ actions_list exclude: DisableAccount
 # Or
 actions_list exclude: [ExportSelection, PublishPost]
 ```
+
 :::
 
 :::option `edit_button`
@@ -195,6 +196,7 @@ action Avo::Actions::DisableAccount
 action Avo::Actions::ExportSelection, style: :text
 action Avo::Actions::PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 ```
+
 :::
 
 :::warning
@@ -217,6 +219,7 @@ class Avo::Resources::Fish < Avo::BaseResource
   end
 end
 ```
+
 :::
 
 ## Control Options

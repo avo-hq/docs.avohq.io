@@ -394,10 +394,10 @@ end
 
 ## Custom content in the profile menu
 
-You might, however, wnat to add a very custom form or more items to the profile menu. For that we prepared the `_profile_menu_extra.html.erb` partial for you.
+You might, however, want to add a very custom form or more items to the profile menu. For that we prepared the `_profile_menu_extra.html.erb` partial for you.
 
 ```bash
-bin/rails generate avo:eject :profile_menu_extra
+bin/rails generate avo:eject --partial :profile_menu_extra
 ```
 
 This will eject the partial and you can add whatever custom content you might need.
