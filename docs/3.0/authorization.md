@@ -366,7 +366,6 @@ By default Avo will use the generated Pundit methods (`index?`, `show?`, `create
 Avo.configure do |config|
   config.root_path = '/avo'
   config.app_name = 'Avocadelicious'
-  config.license = 'pro'
   config.license_key = ENV['AVO_LICENSE_KEY']
   config.authorization_methods = {
     index: 'avo_index?',
@@ -394,7 +393,6 @@ If, however, you need to be on the safe side of things and raise errors when a R
 Avo.configure do |config|
   config.root_path = '/avo'
   config.app_name = 'Avocadelicious'
-  config.license = 'pro'
   config.license_key = ENV['AVO_LICENSE_KEY']
   config.raise_error_on_missing_policy = true
 end
