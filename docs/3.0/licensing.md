@@ -24,7 +24,7 @@ You can see your license keys on your [licenses](https://avohq.io/licenses) page
 
 ## Add the license key
 
-After you purchase an Avo license, add it to your `config/initializers/avo.rb` file on the `license_key`.
+After you purchase an Avo license, add it to your `config/initializers/avo.rb` file under `license_key`.
 
 ```ruby{3-4}
 # config/initializers/avo.rb
