@@ -26,12 +26,6 @@ You can see your license keys on your [licenses](https://avohq.io/licenses) page
 
 After you purchase an Avo license, add it to your `config/initializers/avo.rb` file on the `license_key`, and change the license type from `community` to `pro`.
 
-:::warning Advanced license
-If you own an advanced license you can be tempted to use `config.license = 'advanced'`, that can potentially result in certain features, such as authorization, malfunctioning.
-
-Please keep `config.license = 'pro'` for both, `pro` & `advanced` licenses.
-:::
-
 ```ruby{3-4}
 # config/initializers/avo.rb
 Avo.configure do |config|
