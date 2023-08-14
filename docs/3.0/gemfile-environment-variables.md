@@ -20,7 +20,7 @@ bundle config set --global https://packager.dev/avo-hq/ xxx-xxx
 # In your Gemfile one of the below
 
 # Community
-gem "avo", ">= 3.0.0.beta3", source: "https://packager.dev/avo-hq/"
+gem "avo", ">= 3.0.0.beta5", source: "https://packager.dev/avo-hq/"
 
 # Pro
 gem "avo-pro", source: "https://packager.dev/avo-hq/"
@@ -51,7 +51,7 @@ bundle install
 # In your Gemfile one of the below
 
 # Community
-gem "avo", ">= 3.0.0.beta3", source: "https://packager.dev/avo-hq/"
+gem "avo", ">= 3.0.0.beta5", source: "https://packager.dev/avo-hq/"
 
 # Pro
 gem "avo-pro", source: "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/"
@@ -79,7 +79,7 @@ AVO_GEM_TOKEN=xxx bundle install
 # In your Gemfile one of the below
 
 # Community
-gem "avo", ">= 3.0.0.beta3", source: "https://packager.dev/avo-hq/"
+gem "avo", ">= 3.0.0.beta5", source: "https://packager.dev/avo-hq/"
 
 # Pro
 gem "avo-pro", source: "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/"

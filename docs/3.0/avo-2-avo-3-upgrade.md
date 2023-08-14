@@ -46,7 +46,7 @@ Add only one of the ones below.
 
 ```ruby
 # Avo Community
-gem "avo", source: "https://packager.dev/avo-hq/"
+gem "avo", ">= 3.0.0.beta5", source: "https://packager.dev/avo-hq/"
 
 # Avo Pro
 gem "avo-pro", source: "https://packager.dev/avo-hq/"

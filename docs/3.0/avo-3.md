@@ -36,6 +36,7 @@ Avo 3 has been divided into various repositories and packages, organized by the 
 - Custom fields from template
 - Custom resource view components for <Index />, <Show />, and <Edit /> (coming soon)
 - Custom components for fields (coming soon)
+- Intelligent `view` variable and new `display` view option (coming soon)
 
 ## Feedback
 
