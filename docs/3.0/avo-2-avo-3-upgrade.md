@@ -6,8 +6,23 @@ Depending on how you use Avo you might not need to do all the steps.
 
 ## Upgrade from 2.x to 3.x
 
-:::info Ensure you meet the requirements
+:::info Ensure you meet the technical requirements
 Avo now requires Ruby 3.0 and Rails 6.1
+:::
+
+:::info Ensure you have a token for `Pro` and `Advanced` versions.
+Avo 3 requires a new v3 license key. Your v2 license key won't work.
+:::
+
+:::info Upgrade from a v2 license to a v3 license
+Because we switched Stripe accounts, the subscription upgrade process is not an automated one.
+
+It goes like this:
+
+- you write to us at [upgrades@avohq.io](mailto:upgrades@avohq.io?subject=I%20want%20to%20upgrade%20my%20Avo%20v2%20subscription%20to%20a%20v3%20one&body=Hi%2C%0D%0A%0D%0AMy%20name%20is%20...%2C%20with%20the%20license%20key%20...%20and%20I%20would%20like%20to%20upgrade%20my%20subscription%20to%20v3.%0D%0A%0D%0AThank%20you%2C%0D%0A%0D%0AFind%20your%20license%20key%20at%20https%3A%2F%2Favohq.io%2Fsubscriptions.) and tell us you license key and that you want to upgrade
+- we'll cancel the v2 subscription and refund what's left
+- you get a new v3 license
+- at this point you'll still have a 14-day grace period on your v2 license so your app continues to work until you upgrade your code to v3.
 :::
 
 ## Use the automatic upgrade tool
@@ -44,19 +59,31 @@ You should add the one you use in your `Gemfile`. If you use Pro or Advanced you
 
 Add only one of the ones below.
 
-```ruby
-# Avo Community
-gem "avo", ">= 3.0.0.beta5", source: "https://packager.dev/avo-hq/"
-
-# Avo Pro
-gem "avo-pro", source: "https://packager.dev/avo-hq/"
-
-# Avo Advanced
-gem "avo-advanced", source: "https://packager.dev/avo-hq/"
-```
+<!-- @include: ./common/avo_in_gemfile.md-->
 
 :::info
 For the duration of the open beta you should keep the `source` option on all packages. Once we release the stable version we'll publish `avo` to rubygems.org.
+:::
+
+
+:::option The status field changed behavior
+Before, for the status you'd set the `failed` and `loading` states and everything else fell under `success`. That felt unnatural. We needed a `neutral` state.
+Now we changed the field so you'll set the `failed`, `loading`, and `success` values and the rest fall under `neutral`.
+
+```ruby
+# Before
+field :status,
+  as: :status,
+  failed_when: :failed,
+  loading_when: :loading
+
+# After
+field :status,
+  as: :status,
+  failed_when: :failed,
+  loading_when: :loading
+  success_when: :deployed # specify the success state
+```
 :::
 
 :::option Moved some globals from `Avo::App` to `Avo::Current`

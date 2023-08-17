@@ -8,6 +8,10 @@ I'll use the `xxx-xxx-xxx` notiation instead of the actual gem server token whic
 
 ## 1. Add them to your bundler configuration
 
+:::tip Recommendation
+This is the recommended way as you won't expose your gem server token in your version control system (git).
+:::
+
 The best way to do it is to register the credentials before hand using the following command.
 
 This way `bundler` is aware of them without having to specify it in the `Gemfile`.
@@ -16,18 +20,7 @@ This way `bundler` is aware of them without having to specify it in the `Gemfile
 bundle config set --global https://packager.dev/avo-hq/ xxx-xxx
 ```
 
-```ruby
-# In your Gemfile one of the below
-
-# Community
-gem "avo", ">= 3.0.0.beta5", source: "https://packager.dev/avo-hq/"
-
-# Pro
-gem "avo-pro", source: "https://packager.dev/avo-hq/"
-
-# Advanced
-gem "avo-advanced", source: "https://packager.dev/avo-hq/"
-```
+<!-- @include: ./../common/link_to_resource_common.md-->
 
 ## 2. Export the variable before running `bundle install`
 
@@ -51,7 +44,7 @@ bundle install
 # In your Gemfile one of the below
 
 # Community
-gem "avo", ">= 3.0.0.beta5", source: "https://packager.dev/avo-hq/"
+gem "avo", ">= 3.0.1.beta7", source: "https://packager.dev/avo-hq/"
 
 # Pro
 gem "avo-pro", source: "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/"
@@ -79,7 +72,7 @@ AVO_GEM_TOKEN=xxx bundle install
 # In your Gemfile one of the below
 
 # Community
-gem "avo", ">= 3.0.0.beta5", source: "https://packager.dev/avo-hq/"
+gem "avo", ">= 3.0.1.beta7", source: "https://packager.dev/avo-hq/"
 
 # Pro
 gem "avo-pro", source: "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq/"
