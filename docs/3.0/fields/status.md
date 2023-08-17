@@ -14,7 +14,7 @@ field :progress,
   as: :status,
   failed_when: [:closed, :rejected, :failed],
   loading_when: [:loading, :running, :waiting, "in progress"],
-  neutral_when: ["meh"],
+  success_when: [:done],
 ```
 
 <img :src="('/assets/img/fields/status.png')" alt="Status field" class="border mb-4" />
