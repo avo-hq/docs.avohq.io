@@ -35,18 +35,7 @@ Take it step by step.
 
 1. Add the appropiate Avo gem to the `Gemfile`
 
-```ruby
-# In your Gemfile one of the below
-
-# Community
-gem "avo", ">= 3.0.1.beta5", source: "https://packager.dev/avo-hq/"
-
-# Pro
-gem "avo-pro", source: "https://packager.dev/avo-hq/"
-
-# Advanced
-gem "avo-advanced", source: "https://packager.dev/avo-hq/"
-```
+<!-- @include: ./common/avo_in_gemfile.md-->
 
 :::info
 Please use [this guide](./gemfile-environment-variables.html) to find the best authentication strategy for your use-case.
