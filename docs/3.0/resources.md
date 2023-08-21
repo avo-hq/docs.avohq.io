@@ -326,6 +326,20 @@ The fields marked with `show_on :preview`, will be show in the [preview field](.
 By default, all fields are hidden in `:preview`.
 :::
 
+### Checking the current view
+
+The `view` object, available in the code, is an instance of the `Avo::ViewInquirer` class.
+This empowers you to examine the existing `view` status through expressions such as `view.show?` and `view.index?`.
+Essentially, these are equivalent to asserting whether view equals `"show"` or `"index"`.
+
+```ruby
+if view.show?
+  # Code for the "show" view
+elsif view.index?
+  # Code for the "index" view
+end
+```
+
 ## Extending `Avo::ResourcesController`
 
 You may need to execute additional actions on the `ResourcesController` before loading the Avo pages. You can create an `Avo::BaseResourcesController` and extend your resource controller from it.
