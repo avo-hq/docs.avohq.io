@@ -340,6 +340,16 @@ elsif view.index?
 end
 ```
 
+It's also possible to check if the view is on a form (`"new"`, `"edit"`) or a display (`"index"`, `"show"`).
+
+```ruby
+if view.form?
+  # Code for the "new" and "edit" views
+elsif view.display?
+  # Code for the "index" and "show" views
+end
+```
+
 ## Extending `Avo::ResourcesController`
 
 You may need to execute additional actions on the `ResourcesController` before loading the Avo pages. You can create an `Avo::BaseResourcesController` and extend your resource controller from it.
