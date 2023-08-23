@@ -1,6 +1,6 @@
 # Avo 3 open beta
 
-First of all, I would like to thank you for being an awesome community membet and for your help with this launch.
+First of all, I would like to thank you for being an awesome community member and for your help with this launch.
 
 ## Avo 3
 
