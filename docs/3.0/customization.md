@@ -228,20 +228,52 @@ Have the same output:
 create  app/components/avo/index/table_row_component.rb
 create  app/components/avo/index/table_row_component.html.erb
 ```
+:::
+
+:::option `--field-components`
+With `--field-components` option is easy to eject, one or multiple field components.
+
+```bash
+$ rails g avo:eject --field-components trix
+      create  app/components/avo/fields/trix_field
+      create  app/components/avo/fields/trix_field/edit_component.html.erb
+      create  app/components/avo/fields/trix_field/edit_component.rb
+      create  app/components/avo/fields/trix_field/show_component.html.erb
+      create  app/components/avo/fields/trix_field/show_component.rb
+```
+
+Let's say you want to override only the edit component of the `TrixField`, that can be achieved with this simple command.
+
+```bash
+$ rails g avo:eject --field-components trix --view edit
+      create  app/components/avo/fields/trix_field/edit_component.rb
+      create  app/components/avo/fields/trix_field/edit_component.html.erb
+```
+
+:::option `--view`
+While utilizing the `--field-components` option, you can selectively extract a specific view using the `--view` parameter, as demonstrated in the example above. If this option is omitted, all components of the field will be ejected.
+:::
+
 
 :::option `--scope`
-When you opt to eject a view component that exists under `Avo::Views` namespace, for example the `Avo::Views::ResourceIndexComponent` you can employ the `--scope` option to specify the namespace that should be adopted by the ejected component, extending from `Avo::Views`.
+When you opt to eject a view component that exists under `Avo::Views` or a field component under `Avo::Fields` namespace, for example the `Avo::Views::ResourceIndexComponent` or `Avo::Fields::TextField::ShowComponent` you can employ the `--scope` option to specify the namespace that should be adopted by the ejected component, extending from `Avo::Views` / `Avo::Fields`.
 
 ```bash
 $ rails g avo:eject --component Avo::Views::ResourceIndexComponent --scope admins
       create  app/components/avo/views/admins/resource_index_component.rb
       create  app/components/avo/views/admins/resource_index_component.html.erb
+
+$ rails g avo:eject --field-components text --view show --scope admins
+      create  app/components/avo/fields/admins/text_field/show_component.rb
+      create  app/components/avo/fields/admins/text_field/show_component.html.erb
 ```
 
-The ejected file have the same code that original `Avo::Views::ResourceIndexComponent` but you can notice that the class name has changed
+The ejected file have the same code that original `Avo::Views::ResourceIndexComponent` or `Avo::Fields::TextField::ShowComponent` but you can notice that the class name and the directory has changed
 
 ```ruby
 class Avo::Views::Admins::ResourceIndexComponent < Avo::ResourceComponent
+
+class Avo::Fields::Admins::TextField::ShowComponent < Avo::Fields::ShowComponent
 ```
 
 :::info Scopes transformation
