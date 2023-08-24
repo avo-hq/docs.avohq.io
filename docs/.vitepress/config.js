@@ -169,6 +169,7 @@ const config = {
             {text: "Actions", link: "/3.0/actions"},
             {text: "Localization (I18n)", link: "/3.0/localization"},
             {text: "Branding", link: "/3.0/branding"},
+            {text: "Routing", link: "/3.0/routing"},
           ],
         },
         {
