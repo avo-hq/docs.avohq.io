@@ -18,7 +18,7 @@ field :is_available, as: :boolean, name: "Availability"
 
 There will be cases where you want to show fields on different views conditionally. For example, you may want to display a field in the <New /> and <Edit /> views and hide it on the <Index /> and <Show /> views.
 
-For scenarios like that, you may use the visibility helpers `hide_on`, `show_on`, `only_on`, and `except_on` methods. Available options for these methods are: `:create`, `:edit`, `:index`, `:show`, `:forms` (both `:create` and `:edit`) and `:all` (only for `hide_on` and `show_on`).
+For scenarios like that, you may use the visibility helpers `hide_on`, `show_on`, `only_on`, and `except_on` methods. Available options for these methods are: `:new`, `:edit`, `:index`, `:show`, `:forms` (both `:new` and `:edit`) and `:all` (only for `hide_on` and `show_on`).
 
 Be aware that a few fields are designed to override those options (ex: the `id` field is hidden in <Edit /> and <New />).
 
