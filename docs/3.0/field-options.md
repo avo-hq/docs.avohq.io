@@ -327,3 +327,60 @@ Now, all fields will have the stacked layout throughout your app.
 :::option `use_resource`
 <!-- TODO: this -->
 :::
+
+:::option `components`
+The field's `components` option allows you to customize the view components used for rendering the field in all, `index`, `show` and `edit` views. This provides you with a high degree of flexibility.
+
+### Ejecting the field components
+To start customizing the field components, you can eject one or multiple field components using the `avo:eject` command. Ejecting a field component generates the necessary files for customization. Here's how you can use the `avo:eject` command:
+
+#### Ejecting All Components for a Field
+
+`$ rails g avo:eject --field-components <field_type> --scope admin`
+
+Replace `<field_type>` with the desired field type. For instance, to eject components for a Text field, use:
+
+`$ rails g avo:eject --field-components text --scope admin`
+
+This command will generate the files for all the index, edit and show components of the Text field, for each field type the amount of components may vary.
+
+For more advanced usage check the [`--fields-components` documentation](./customization.html#field_components)
+:::warning Scope
+If you don't pass a `--scope` when ejecting a field view component, the ejected component will override the default components all over the project.
+
+Check [ejection documentation](./customization.html#eject) for more details.
+:::
+
+### Customizing field components using `components` option
+
+Here's some examples of how to use the `components` option in a field definition:
+
+::: code-group
+```ruby [Hash]
+field :description,
+  as: :text,
+  components: {
+    show_component: Avo::Fields::Admin::TextField::ShowComponent,
+    edit_component: "Avo::Fields::Admin::TextField::EditComponent"
+  }
+```
+
+```ruby [Block]
+field :description,
+  as: :text,
+  components: -> do
+    {
+      show_component: Avo::Fields::Admin::TextField::ShowComponent,
+      edit_component: "Avo::Fields::Admin::TextField::EditComponent"
+    }
+  end
+```
+:::
+
+The components block it's executed using `Avo::ExecutionContent` and gives access to a bunch of variables as: `resource`, `record`, `view`, `params` and more.
+
+`<view>_component` is the key used to render the field's `<view>`'s component, replace `<view>` with one of the views in order to customize a component per each view.
+
+:::warning Initializer
+It's important to keep the initializer on your custom components as the original field view component initializer.
+:::
