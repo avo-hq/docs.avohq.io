@@ -206,6 +206,7 @@ const config = {
             {text: "Testing", link: "/3.0/testing"},
             {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
             {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
+            {text: "Helpers", link: "/3.0/helpers"},
           ],
         },
         // {
