@@ -332,23 +332,83 @@ The `view` object, available in the code, is an instance of the `Avo::ViewInquir
 This empowers you to examine the existing `view` status through expressions such as `view.show?` and `view.index?`.
 Essentially, these are equivalent to asserting whether view equals `"show"` or `"index"`.
 
+:::info `Avo::ViewInquirer` comparator
+`==` and `in?` methods are overridden on `Avo::ViewInquirer` in order to avoid breaking changes, notice that even if `view` is a string with the value `"edit"`, there is multiple ways to compare it:
 ```ruby
+view == "edit"
+view == :edit
+view.edit?
+view.in? [:edit]
+view.in? ["edit"]
+view.form?
+```
+:::
+
+::: code-group
+```ruby [Avo::ViewInquirer]
 if view.show?
   # Code for the "show" view
 elsif view.index?
   # Code for the "index" view
+elsif view.edit?
+  # Code for the "edit" view
+elsif view.new?
+  # Code for the "new" view
 end
 ```
+
+```ruby [Symbol comparator]
+if view == :show
+  # Code for the "show" view
+elsif view == :index
+  # Code for the "index" view
+elsif view == :edit
+  # Code for the "edit" view
+elsif view == :new
+  # Code for the "new" view
+end
+```
+
+```ruby [String comparator]
+if view == "show"
+  # Code for the "show" view
+elsif view == "index"
+  # Code for the "index" view
+elsif view == "edit"
+  # Code for the "edit" view
+elsif view == "new"
+  # Code for the "new" view
+end
+```
+:::
 
 It's also possible to check if the view is on a form (`"new"`, `"edit"`) or a display (`"index"`, `"show"`).
 
-```ruby
+::: code-group
+```ruby [Avo::ViewInquirer]
 if view.form?
   # Code for the "new" and "edit" views
 elsif view.display?
-  # Code for the "index" and "show" views
+  # Code for the "show" and "index" views
 end
 ```
+
+```ruby [Symbol comparator]
+if view.in? [:new, :edit]
+  # Code for the "new" and "edit" views
+elsif view.in? [:show, :index]
+  # Code for the "show" and "index" views
+end
+```
+
+```ruby [String comparator]
+if view.in? ["new", "edit"]
+  # Code for the "new" and "edit" views
+elsif view.in? ["show", "index"]
+  # Code for the "show" and "index" views
+end
+```
+:::
 
 ## Extending `Avo::ResourcesController`
 
