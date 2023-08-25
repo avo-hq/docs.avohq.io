@@ -67,7 +67,9 @@ end
 
 ```ruby [config/routes.rb]
 Rails.application.routes.draw do
-  mount Avo::Engine, at: Avo.configuration.root_path
+  scope ":locale" do
+    mount Avo::Engine, at: Avo.configuration.root_path
+  end
 
   # other routes
 end
