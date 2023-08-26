@@ -23,7 +23,7 @@ That will add a few fields in your admin panel. On the <Index /> view, we will g
 When we declare a field, we pinpoint the specific database row for that field. Usually, that's a snake case value.
 
 Each field has a label. Avo will convert the snake case name to a humanized version.
-In the following example, the `is_available` field will render the label as *Is available*.
+In the following example, the `is_available` field will render the label as _Is available_.
 
 ```ruby
 field :is_available, as: :boolean
@@ -207,7 +207,7 @@ When using computed fields or `belongs_to` associations, you can't set `sortable
 class UserResource < Avo::BaseResource
   field :is_writer,
     as: :text,
-    sortable: ->(query, direction) {
+    sortable: -> {
       # Order by something else completely, just to make a test case that clearly and reliably does what we want.
       query.order(id: direction)
     },
@@ -229,7 +229,7 @@ You can do that using this query.
 class PostResource < Avo::BaseResource
   field :last_commented_at,
     as: :date,
-    sortable: ->(query, direction) {
+    sortable: -> {
       query.includes(:comments).order("comments.created_at #{direction}")
     }
 end
@@ -292,7 +292,6 @@ field :name, as: :text, readonly: true
 ```
 
 <img :src="('/assets/img/fields-reference/readonly.png')" alt="Readonly option" class="border mb-4" />
-
 
 ### Readonly as a block
 
@@ -382,8 +381,8 @@ Optionally you can enable the global config `id_links_to_resource`. More on that
 
 Related:
 
- - [ID links to resource](./customization#id-links-to-resource)
- - [Resource controls on the left side](./customization#resource-controls-on-the-left-side)
+- [ID links to resource](./customization#id-links-to-resource)
+- [Resource controls on the left side](./customization#resource-controls-on-the-left-side)
 
 ## Align text on Index view
 
@@ -406,6 +405,7 @@ field :meta, as: :key_value, stacked: true
 ```
 
 #### `inline` layout (default)
+
 ![](/assets/img/fields/field_wrapper_layout_inline.jpg)
 
 #### `stacked` layout
