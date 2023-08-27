@@ -13,5 +13,5 @@ field :user,
   attach_scope: -> { query.non_admins }
 ```
 
-Pass in a block where you attach scopes to the `query` object. The block is executed in the [`AssociationScopeHost`](./../evaluation-hosts.html#associationscopehost), so follow the docs to see what variables you have access to.
+Pass in a block where you attach scopes to the `query` object. The block is executed in the [`ExecutionContext`](./../execution-context).
 :::

@@ -46,7 +46,7 @@ end
 
 The `suggestions` option can be an array of strings, an object with the keys `value`, `label`, and (optionally) `avatar`, or a lambda that returns an array of that type of object.
 
-The lambda is run inside a [`RecordHost`](./../evaluation-hosts.html#recordhost), so it has access to the `record` along with other things (check the link).
+The lambda is run inside a [`ExecutionContext`](./../execution-context.html), so it has access to the `record`, `resource`, `request`, `params`, `view`, and `view_context` along with other things.
 
 ```ruby{5-21}
 # app/models/post.rb
