@@ -61,6 +61,9 @@ const config = {
     ['meta', { name:"msapplication-config", content:"/favicons/browserconfig.xml" }],
     ['meta', { name:"theme-color", content:"#ffffff" }],
   ],
+  rewrites: {
+    "/3.0/evaluation-host": "/3.0/execution-context"
+  },
   themeConfig: {
     siteTitle: false,
     logo: "/logo.svg",
@@ -188,7 +191,6 @@ const config = {
             {text: "Custom fields", link: "/3.0/custom-fields"},
             {text: "Resource tools", link: "/3.0/resource-tools"},
             {text: "Stimulus JS integration", link: "/3.0/stimulus-integration"},
-            // {text: "Evaluation hosts", link: "/3.0/evaluation-hosts"},
             {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline"},
           ],
         },
@@ -204,9 +206,11 @@ const config = {
           text: "Internals",
           items: [
             {text: "Testing", link: "/3.0/testing"},
+            {text: "Avo::Current", link: "/3.0/avo-current"},
+            {text: "Avo::ExecutionContext", link: "/3.0/execution-context"},
             {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
+            // {text: "Application Helpers", link: "/3.0/helpers"},
             {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
-            {text: "Helpers", link: "/3.0/helpers"},
           ],
         },
         // {
