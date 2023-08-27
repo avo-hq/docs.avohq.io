@@ -126,6 +126,7 @@ const config = {
             {text: "Controller configuration", link: "/3.0/controllers"},
             {text: "Record previews", link: "/3.0/record-previews"},
             {text: "Scopes", link: "/3.0/scopes"},
+            {text: "Views", link: "/3.0/views"},
             {text: "Records reordering", link: "/3.0/records-reordering"},
             {text: "Tabs and panels", link: "/3.0/tabs"},
             {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
