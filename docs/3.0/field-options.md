@@ -20,11 +20,15 @@ There will be cases where you want to show fields on different views conditional
 
 For scenarios like that, you may use the visibility helpers `hide_on`, `show_on`, `only_on`, and `except_on` methods. Available options for these methods are: `:new`, `:edit`, `:index`, `:show`, `:forms` (both `:new` and `:edit`) and `:all` (only for `hide_on` and `show_on`).
 
+Version 3 introduces the `:display` option that is the opposite of `:forms`, referring to both, `:index` and `:show`
+
 Be aware that a few fields are designed to override those options (ex: the `id` field is hidden in <Edit /> and <New />).
 
 ```ruby
 field :body, as: :text, hide_on: [:index, :show]
 ```
+
+Please read the detailed [views](./views.html) page for more info.
 
 ## Field Visibility
 

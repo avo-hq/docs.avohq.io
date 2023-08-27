@@ -299,34 +299,8 @@ end
 
 ## Views
 
-Avo generates the admin panel with four main views.
+Please read the detailed [views](./views.html) page.
 
-:::option `Index`
-
-The page where you see all your resources listed in a table or a [grid](grid-view.md).
-
-:::
-:::option `Show`
-
-The page where you see one resource in more detail.
-
-:::
-:::option `Edit`
-
-The page where you can edit one resource.
-
-:::
-:::option `New`
-
-The page where you can create a new resource.
-
-:::
-:::option `Preview`
-
-The fields marked with `show_on :preview`, will be show in the [preview field](./fields/preview) popup.
-
-By default, all fields are hidden in `:preview`.
-:::
 
 ## Extending `Avo::ResourcesController`
 
