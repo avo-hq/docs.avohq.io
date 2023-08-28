@@ -16,13 +16,14 @@ field :stage,
     info: [:discovery, :idea],
     success: :done,
     warning: 'on hold',
-    danger: :cancelled
+    danger: :cancelled,
+    secondary: :drafting
   } # The mapping of custom values to badge values.
 ```
 
 ## Description
 
-By default, the badge field supports four value types: `info` (blue), `success` (green), `danger` (red) and `warning` (yellow). We can choose what database values are mapped to which type with the `options` parameter.
+By default, the badge field supports five value types: `info` (blue), `success` (green), `danger` (red), `warning` (yellow) and `secondary` (gray). We can choose what database values are mapped to which type with the `options` parameter.
 
 The `options` parameter is a `Hash` that has the state as the `key` and your configured values as `value`. The `value` param can be a symbol, string, or array of symbols or strings.
 
@@ -33,11 +34,11 @@ The `Badge` field is intended to be displayed only on **Index** and **Show** vie
 
 :::option `options`
 
-The options should be a hash with the keys of one of the four available types (`info`, `success`, `warning`, `danger`) and the values matching your record's database values.
+The options should be a hash with the keys of one of the five available types (`info`, `success`, `warning`, `danger`, `secondary`) and the values matching your record's database values.
 
 #### Default value
 
-`{ info: :info, success: :success, danger: :danger, warning: :warning }`
+`{ info: :info, success: :success, danger: :danger, warning: :warning, secondary: :secondary }`
 
 Below is an example of how you can use two fields in that combination.
 :::
@@ -45,7 +46,7 @@ Below is an example of how you can use two fields in that combination.
 ## Examples
 
 ```ruby
-field :stage, as: :select, hide_on: [:show, :index], options: { 'Discovery': :discovery, 'Idea': :idea, 'Done': :done, 'On hold': 'on hold', 'Cancelled': :cancelled }, placeholder: 'Choose the stage.'
-field :stage, as: :badge, options: { info: [:discovery, :idea], success: :done, warning: 'on hold', danger: :cancelled }
+field :stage, as: :select, hide_on: [:show, :index], options: { 'Discovery': :discovery, 'Idea': :idea, 'Done': :done, 'On hold': 'on hold', 'Cancelled': :cancelled, 'Drafting': :drafting }, placeholder: 'Choose the stage.'
+field :stage, as: :badge, options: { info: [:discovery, :idea], success: :done, warning: 'on hold', danger: :cancelled, secondary: :drafting }
 ```
 
