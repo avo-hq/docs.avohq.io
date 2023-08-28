@@ -21,8 +21,6 @@ Through fields you tell Avo what to fetch from the database and how to display i
 
 Avo ships with various simple fields like `text`, `textarea`, `number`, `password`, `boolean`, `select`, and more complex ones like `markdown`, `key_value`, `trix`, `tags`, and `code`.
 
-[Check how to use your application's helpers within any field context.](./helpers)
-
 ## Declaring fields
 
 You add fields to a resource through the `fields` method using the `field DATABASE_COLUMN, as: FIELD_TYPE, **FIELD_OPTIONS` notation.
