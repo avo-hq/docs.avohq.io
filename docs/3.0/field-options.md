@@ -47,8 +47,6 @@ field :is_featured, as: :boolean, visible: -> { resource.record.published_at.pre
 On form submissions, the `visible` block is evaluated in the `create` and `update` controller actions. That's why you have to check if the `resource.record` object is present before trying to use it.
 :::
 
-[Check how to use your application's helpers within any field context.](./helpers)
-
 
 ```ruby
 # `resource.record` is nil when submitting the form on resource creation
@@ -61,8 +59,6 @@ field :name, as: :text, visible -> { resource.record&.enabled? }
 ## Computed Fields
 
 You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `record` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information, you can compute what to show on the field in the <Index /> and <Show /> views.
-
-[Check how to use your application's helpers within any computed field context.](./helpers)
 
 ```ruby
 field 'Has posts', as: :boolean do
