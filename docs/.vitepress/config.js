@@ -210,7 +210,6 @@ const config = {
             {text: "Avo::Current", link: "/3.0/avo-current"},
             {text: "Avo::ExecutionContext", link: "/3.0/execution-context"},
             {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
-            // {text: "Application Helpers", link: "/3.0/helpers"},
             {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
           ],
         },

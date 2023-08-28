@@ -10,8 +10,6 @@ Each `Resource` maps out one of your models. There can be multiple `Resource`s a
 
 All resources are located in the `app/avo/resources` directory.
 
-[Check how to use your application's helpers within any resource context.](./helpers)
-
 ## Resources from model generation
 
 ```bash
