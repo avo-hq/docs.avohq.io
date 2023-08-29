@@ -28,6 +28,10 @@ The `Heading` field displays a header that acts as a separation layer between di
 
 `Heading` is not assigned to any column in the database and is only visible on the `Show`, `Edit` and `Create` views.
 
+:::warning Computed heading
+The computed fields are not rendered on form views, same with heading field, if computed syntax is used it will not be rendered on the form views. Use `label` in order to render it on **all** views.
+:::
+
 ## Options
 
 :::option `as_html`
@@ -42,3 +46,10 @@ end
 <!-- @include: ./../common/default_boolean_false.md -->
 :::
 
+:::option `label`
+The content of `label` is the content displayed on the heading space.
+
+```ruby
+field :some_id, as: :heading, label: "user information"
+```
+:::
