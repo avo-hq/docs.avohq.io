@@ -262,19 +262,19 @@ field :updated_status, as: :status, failed_when: [:closed, :rejected, :failed], 
 field :body, as: :textarea, nullable: true, null_values: ['0', '', 'null', 'nil', nil]
 ```
 
-## Link to resource
+## Link to record
 
-Sometimes, on the <Index /> view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click on the <Show /> icon. You can use `link_to_resource` to change a table cell to be a link to that resource.
+Sometimes, on the <Index /> view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click on the <Show /> icon. You can use `link_to_record` to change a table cell to be a link to that record.
 
 ```ruby
 # for id field
-field :id, as: :id, link_to_resource: true
+field :id, as: :id, link_to_record: true
 
 # for text field
-field :name, as: :text, link_to_resource: true
+field :name, as: :text, link_to_record: true
 
 # for gravatar field
-field :email, as: :gravatar, link_to_resource: true
+field :email, as: :gravatar, link_to_record: true
 ```
 
 <img :src="('/assets/img/fields-reference/as-link-to-resource.jpg')" alt="As link to resource" class="border mb-4" />

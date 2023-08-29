@@ -21,7 +21,7 @@ When using the fields DSL for resources, all fields declared in the root will be
 ```ruby
 class Avo::Resources::User < Avo::BaseResource
   def fields
-    field :id, as: :id, link_to_resource: true
+    field :id, as: :id, link_to_record: true
     field :email, as: :text, name: "User Email", required: true
 
     panel name: "User information", description: "Some information about this user" do
@@ -44,7 +44,7 @@ By default, only the fields declared in the root will be visible on the `Index` 
 class Avo::Resources::User < Avo::BaseResource
   def fields
     # Only these fields will be visible on the `Index` view
-    field :id, as: :id, link_to_resource: true
+    field :id, as: :id, link_to_record: true
     field :email, as: :text, name: "User Email", required: true
     field :name, as: :text, only_on: :index do
       "#{record.first_name} #{record.last_name}"
@@ -69,7 +69,7 @@ Tabs are a new layer of abstraction over panels. They enable you to group panels
 ```ruby
 class Avo::Resources::User < Avo::BaseResource
   def fields
-    field :id, as: :id, link_to_resource: true
+    field :id, as: :id, link_to_record: true
     field :email, as: :text, name: "User Email", required: true
 
     tabs do
