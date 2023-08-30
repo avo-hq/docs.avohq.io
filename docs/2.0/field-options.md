@@ -128,7 +128,7 @@ This example will display a boolean field with the value computed from your cust
 
 ## Fields Formatter
 
-Sometimes you will want to process the database value before showing it to the user. You may do that using `format_using` block.
+Sometimes you will want to process the database value before showing it to the user. You may do that using `format_using` block. This block will have effect on all views. You have access to a bunch of variables inside this block, like `resource`, `record`, `view`, `value`, `params`, `request`...
 
 :::warning
 We removed the `value` argument from `format_using` since version `2.36`.
@@ -136,16 +136,11 @@ We removed the `value` argument from `format_using` since version `2.36`.
 
 ```ruby
 field :is_writer, as: :text, format_using: -> {
-  # You have access to the following variables:
-  # - value
-  # - resource
-  # - record
-  # - view
-  # - view_context
-  # - context
-  # - params
-  # - request
-  value.present? ? '👍' : '👎'
+  if view == :new || view == :edit
+    value
+  else
+    value.present? ? '👍' : '👎'
+  end
 }
 # or
 field :company_url, as: :text, format_using: -> { link_to(value, value, target: "_blank") } do |model, *args|
