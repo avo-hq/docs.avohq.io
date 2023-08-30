@@ -691,3 +691,16 @@ class Avo::Resources::Project < Avo::BaseResource
   self.index_query = -> { query.unscoped }
 end
 ```
+:::option `self.sort_filterable_fields`
+
+Dynamic filters are fetched from the filtrable fields (fields that have the `filtrable` option configured). By default the dynamic filters are sorted by the `field`'s name. However, you can customize their order. Let's say you want to filter by name but descendent, you can do that by accessing the `self.sort_filterable_fields` resource's block option:
+
+```ruby
+self.sort_filterable_fields = -> {
+  filterable_fields.sort_by { |field| field.name }.reverse
+}
+```
+
+Inside the `sort_filterable_fields` you'll have access to `filterable_fields` and the defaults provided by the [`Avo::ExecutionContext`](./execution-context.html)
+
+The order of the returned `filterable_fields` will directly impact the order of the dynamic filters.
