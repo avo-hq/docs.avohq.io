@@ -76,23 +76,33 @@ This example will display a boolean field with the value computed from your cust
 
 ## Fields Formatter
 
-Sometimes you will want to process the database value before showing it to the user. You may do that using `format_using` block that receives the `value` of that field as a parameter. This block will have effect on all views. You have access to a bunch of variables inside this block, like `resource`, `record`, `view`, `value`, `params`, `request`...
+Sometimes you will want to process the database value before showing it to the user. You may do that using `format_using` block.
+
+Notice that this block will have effect on **all** views.
+
+You have access to a bunch of variables inside this block, all the defaults that [`Avo::ExecutionContext`](./execution-context.html) provides plus `value`, `record`, `resource`, `view` and `field`.
 
 ```ruby
-field :is_writer,
-  as: :text,
-  format_using: -> {
-    if view.form?
-      value
-    else
-      value.present? ? '👍' : '👎'
-    end
-  }
-# or
+field :is_writer, as: :text, format_using: -> {
+  if view.form?
+    value
+  else
+    value.present? ? '👍' : '👎'
+  end
+}
+```
+
+This example snippet will make the `:is_writer` field generate `👍` or `👎` emojis instead of `1` or `0` values on display views and the values `1` or `0` on form views.
+
+<img :src="('/assets/img/fields-reference/fields-formatter.png')" alt="Fields formatter" class="border mb-4" />
+
+Another example:
+
+```ruby
 field :company_url,
   as: :text,
   format_using: -> {
-    if view.form?
+    if view == :new || view == :edit
       value
     else
       link_to(value, value, target: "_blank")
@@ -101,10 +111,6 @@ field :company_url,
   main_app.companies_url(record)
 end
 ```
-
-This example snippet will make the `:is_writer` field generate emojis instead of 1/0 values on display views and the values 1/0 on form views.
-
-<img :src="('/assets/img/fields-reference/fields-formatter.png')" alt="Fields formatter" class="border mb-4" />
 
 ## Formatting with Rails helpers
 
