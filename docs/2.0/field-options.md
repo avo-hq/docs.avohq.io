@@ -148,7 +148,7 @@ field :company_url, as: :text, format_using: -> { link_to(value, value, target: 
 end
 ```
 
-This example snippet will make the `:is_writer` field generate emojis instead of 1/0 values.
+This example snippet will make the `:is_writer` field generate emojis instead of 1/0 values on display views and the values 1/0 on form views.
 
 <img :src="('/assets/img/fields-reference/fields-formatter.png')" alt="Fields formatter" class="border mb-4" />
 
