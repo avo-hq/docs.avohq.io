@@ -30,7 +30,7 @@ You can even create [Custom tools](./custom-tools) where you can add all the con
 
 Most of the places where records are listed like [Has many associations](./associations/has_many), [attach modals](./associations/belongs_to.html#belongs-to-attach-scope), [search](./search), and more are scopable to meet your multi-tenancy scenarios.
 
-Most of the views you see are exportable using the [`eject` command](./customization#eject-views).
+Most of the views you see are exportable using the [`eject` command](./eject).
 
 StimulusJS is deeply baked into the CRUD UI and helps you extend the UI and make a complete experience for your users.
 

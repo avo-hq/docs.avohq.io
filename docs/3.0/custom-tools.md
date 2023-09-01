@@ -56,7 +56,7 @@ The `_dashboard.html.erb` partial will be added to the `app/views/avo/sidebar/it
 
 ### Customize the sidebar
 
-If you want to customize the sidebar partial further, you can [eject](./customization.html#eject-views) and update it to your liking. We're planning on creating a better sidebar customization experience later this year.
+If you want to customize the sidebar partial further, you can [eject](./eject.html#partial) and update it to your liking. We're planning on creating a better sidebar customization experience later this year.
 
 ## Add assets
 

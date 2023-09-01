@@ -165,6 +165,7 @@ const config = {
           text: "Customize Avo",
           items: [
             {text: "Customization options", link: "/3.0/customization"},
+            {text: "Eject", link: "/3.0/eject"},
             {text: "Grid view", link: "/3.0/grid-view"},
             {text: "Map view", link: "/3.0/map-view"},
             {text: "Custom view types", link: "/3.0/custom-view-types"},
