@@ -353,7 +353,7 @@ For more advanced usage check the [`--fields-components` documentation](./custom
 :::warning Scope
 If you don't pass a `--scope` when ejecting a field view component, the ejected component will override the default components all over the project.
 
-Check [ejection documentation](./customization.html#eject) for more details.
+Check [ejection documentation](./eject.html) for more details.
 :::
 
 ### Customizing field components using `components` option
