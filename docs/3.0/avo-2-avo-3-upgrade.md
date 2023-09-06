@@ -619,8 +619,8 @@ In Avo 3 you'll be able to insert resource tools in-between fields, tabs and pan
 # Before
 class Avo::Resources::User < Avo::BaseResource
   def fields
-    field :id, as: :id, link_to_resource: true, sortable: false
-    field :email, as: :gravatar, link_to_resource: true, as_avatar: :circle, only_on: :index
+    field :id, as: :id, link_to_record: true, sortable: false
+    field :email, as: :gravatar, link_to_record: true, as_avatar: :circle, only_on: :index
   end
 
   tool Avo::ResourceTools::UserTool
@@ -629,8 +629,8 @@ end
 # After
 class Avo::Resources::User < Avo::BaseResource
   def fields
-    field :id, as: :id, link_to_resource: true, sortable: false
-    field :email, as: :gravatar, link_to_resource: true, as_avatar: :circle, only_on: :index
+    field :id, as: :id, link_to_record: true, sortable: false
+    field :email, as: :gravatar, link_to_record: true, as_avatar: :circle, only_on: :index
 
     tool Avo::ResourceTools::UserTool
   end
