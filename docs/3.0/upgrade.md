@@ -23,6 +23,35 @@ field :dev, as: :heading, as_html: true, label: '<div class="underline uppercase
 ```
 :::
 
+:::option Badge field `secondary` option renamed to `neutral`
+We believe that the term `neutral` better reflects the intended use.
+::: code-group
+```ruby {8} [Before]
+field :stage,
+  as: :badge,
+  options: {
+    info: [:discovery, :idea],
+    success: :done,
+    warning: "on hold",
+    danger: :cancelled,
+    secondary: :drafting
+  }
+```
+
+```ruby {8} [After]
+field :stage,
+  as: :badge,
+  options: {
+    info: [:discovery, :idea],
+    success: :done,
+    warning: "on hold",
+    danger: :cancelled,
+    neutral: :drafting
+  }
+```
+:::
+
+
 ## Upgrade from 3.0.1.beta5 to 3.0.1.beta6
 
 :::option The status field changed behavior
