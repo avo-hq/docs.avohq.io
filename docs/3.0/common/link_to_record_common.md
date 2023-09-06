@@ -1,3 +1,3 @@
-:::option `link_to_resource`
+:::option `link_to_record`
 Wraps the content into an anchor that links to the resource.
 :::

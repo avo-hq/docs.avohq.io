@@ -130,32 +130,39 @@ This example will display a boolean field with the value computed from your cust
 
 Sometimes you will want to process the database value before showing it to the user. You may do that using `format_using` block.
 
+Notice that this block will have effect on **all** views.
+
+You have access to a bunch of variables inside this block, all the defaults that [`Avo::ExecutionContext`](../3.0/execution-context.html) provides plus `value`, `model`, `key`, `resource`, `view` and `field`.
+
 :::warning
 We removed the `value` argument from `format_using` since version `2.36`.
 :::
 
 ```ruby
 field :is_writer, as: :text, format_using: -> {
-  # You have access to the following variables:
-  # - value
-  # - resource
-  # - record
-  # - view
-  # - view_context
-  # - context
-  # - params
-  # - request
-  value.present? ? '👍' : '👎'
+  if view == :new || view == :edit
+    value
+  else
+    value.present? ? '👍' : '👎'
+  end
 }
-# or
-field :company_url, as: :text, format_using: -> { link_to(value, value, target: "_blank") } do |model, *args|
+```
+
+This example snippet will make the `:is_writer` field generate `👍` or `👎` emojis instead of `1` or `0` values on display views and the values `1` or `0` on form views.
+
+<img :src="('/assets/img/fields-reference/fields-formatter.png')" alt="Fields formatter" class="border mb-4" />
+
+Another example:
+
+```ruby
+field :company_url,
+  as: :text,
+  format_using: -> {
+    link_to(value, value, target: "_blank")
+  } do |model, *args|
   main_app.companies_url(model)
 end
 ```
-
-This example snippet will make the `:is_writer` field generate emojis instead of 1/0 values.
-
-<img :src="('/assets/img/fields-reference/fields-formatter.png')" alt="Fields formatter" class="border mb-4" />
 
 ### Formatting with Rails helpers
 

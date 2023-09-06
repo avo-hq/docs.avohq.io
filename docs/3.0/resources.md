@@ -162,7 +162,7 @@ class Avo::Resources::Post < Avo::BaseResource
     field :id, as: :id
     field :name, as: :text, required: true
     field :body, as: :trix, placeholder: "Add the post body here", always_show: false
-    field :cover_photo, as: :file, is_image: true, link_to_resource: true
+    field :cover_photo, as: :file, is_image: true, link_to_record: true
     field :is_featured, as: :boolean
 
     field :is_published, as: :boolean do
@@ -201,8 +201,8 @@ class Avo::Resources::User < Avo::BaseResource
   self.title = :name
 
   def fields
-    field :id, as: :id, link_to_resource: true
-    field :email, as: :gravatar, link_to_resource: true, as_avatar: :circle
+    field :id, as: :id, link_to_record: true
+    field :email, as: :gravatar, link_to_record: true, as_avatar: :circle
     field :first_name, as: :text, required: true, placeholder: "John"
     field :last_name, as: :text, required: true, placeholder: "Doe"
   end
@@ -225,7 +225,7 @@ class Avo::Resources::Team < Avo::BaseResource
   self.title = :name
 
   def fields
-    field :id, as: :id, link_to_resource: true
+    field :id, as: :id, link_to_record: true
     field :name, as: :text
     field :users, as: :has_many
   end
@@ -243,7 +243,7 @@ class Avo::Resources::TeamUser < Avo::BaseResource
   self.title = :name
 
   def fields
-    field :id, as: :id, link_to_resource: true
+    field :id, as: :id, link_to_record: true
     field :name, as: :text
     field :projects_count, as: :number
   end
@@ -258,7 +258,7 @@ class Avo::Resources::Team < Avo::BaseResource
   self.title = :name
 
   def fields
-    field :id, as: :id, link_to_resource: true
+    field :id, as: :id, link_to_record: true
     field :name, as: :text
     field :users, as: :has_many, use_resource: Avo::Resources::TeamUser
   end
