@@ -20,7 +20,7 @@ This way `bundler` is aware of them without having to specify it in the `Gemfile
 bundle config set --global https://packager.dev/avo-hq/ xxx-xxx
 ```
 
-<!-- @include: ./../common/link_to_resource_common.md-->
+<!-- @include: ./../common/link_to_record_common.md-->
 
 ## 2. Export the variable before running `bundle install`
 

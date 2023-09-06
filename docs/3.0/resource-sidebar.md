@@ -18,12 +18,12 @@ Using the `sidebar` block on a resource you may declare fields the same way you 
 ```ruby
 class Avo::Resources::User < Avo::BaseResource
   def fields
-    field :id, as: :id, link_to_resource: true
+    field :id, as: :id, link_to_record: true
     field :first_name, as: :text, placeholder: "John"
     field :last_name, as: :text, placeholder: "Doe"
 
     sidebar do
-      field :email, as: :gravatar, link_to_resource: true, as_avatar: :circle, only_on: :show
+      field :email, as: :gravatar, link_to_record: true, as_avatar: :circle, only_on: :show
       field :active, as: :boolean, name: "Is active", only_on: :show
     end
   end

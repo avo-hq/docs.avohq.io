@@ -49,7 +49,7 @@ class Avo::Resources::Project < Avo::BaseResource
   self.title = :name
 
   def fields
-    field :id, as: :id, link_to_resource: true
+    field :id, as: :id, link_to_record: true
     field :progress, as: :progress_bar
   end
 end
@@ -106,14 +106,14 @@ We can verify that all components have the text field code. From here there are 
 module Avo
   module Fields
     class SuperTextField < BaseField
-      attr_reader :link_to_resource
+      attr_reader :link_to_record
       attr_reader :as_html
       attr_reader :protocol
 
       def initialize(id, **args, &block)
         super(id, **args, &block)
 
-        add_boolean_prop args, :link_to_resource
+        add_boolean_prop args, :link_to_record
         add_boolean_prop args, :as_html
         add_string_prop args, :protocol
       end
@@ -125,14 +125,14 @@ end
 module Avo
   module Fields
     class TextField < BaseField
-      attr_reader :link_to_resource
+      attr_reader :link_to_record
       attr_reader :as_html
       attr_reader :protocol
 
       def initialize(id, **args, &block)
         super(id, **args, &block)
 
-        add_boolean_prop args, :link_to_resource
+        add_boolean_prop args, :link_to_record
         add_boolean_prop args, :as_html
         add_string_prop args, :protocol
       end
@@ -189,7 +189,7 @@ class Avo::Resources::Project < Avo::BaseResource
   self.title = :name
 
   def fields
-    field :id, as: :id, link_to_resource: true
+    field :id, as: :id, link_to_record: true
     field :progress, as: :progress_bar, step: 10, display_value: true, value_suffix: "%"
   end
 end
