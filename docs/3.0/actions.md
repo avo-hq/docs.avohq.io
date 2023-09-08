@@ -31,9 +31,9 @@ class Avo::Actions::ToggleActive < Avo::BaseAction
   end
 
   def handle(**args)
-    records, fields, current_user, resource = args.values_at(:records, :fields, :current_user, :resource)
+    query, fields, current_user, resource = args.values_at(:query, :fields, :current_user, :resource)
 
-    records.each do |record|
+    query.each do |record|
       if record.active
         record.update active: false
       else
@@ -67,13 +67,13 @@ More about this on the [authorization page](./authorization#attachments).
 
 ![Actions](/assets/img/actions/action-fields.jpg)
 
-The `handle` method is where the magic happens. That is where you put your action logic. In this method, you will have access to the selected `records` (if there's only one, it will be automatically wrapped in an array) and the values passed to the `fields`.
+The `handle` method is where the magic happens. That is where you put your action logic. In this method, you will have access to the `query` (same value as `records` (if there's only one, it will be automatically wrapped in an array)) and the values passed to the `fields`.
 
 ```ruby
 def handle(**args)
-  records, fields = args.values_at(:records, :fields)
+  query, fields = args.values_at(:query, :fields)
 
-  records.each do |record|
+  query.each do |record|
     if record.active
       record.update active: false
     else
