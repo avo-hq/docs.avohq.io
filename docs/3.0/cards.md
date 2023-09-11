@@ -8,16 +8,18 @@ license: pro
 
 Cards are one way of quickly adding custom content for your users.
 
-You can add three types of cards to your dashboard: `partial`, `metric`, and `chartkick`.
+Cards can be used on dashboards or resources, we'll refer to both of them as "parent" since they're hosting the cards.
+
+You can add three types of cards to your parent: `partial`, `metric`, and `chartkick`.
 
 ## Base settings
 
 All cards have some standard settings like `id`, which must be unique, `label` and `description`. The `label` will be the title of your card, and `description` will show a tiny question mark icon on the bottom right with a tooltip with that description.
 
-Each card has its own `cols` and `rows` settings to control the width and height of the card inside the dashboard grid. They can have values from `1` to `6`.
+Each card has its own `cols` and `rows` settings to control the width and height of the card inside the parent's grid. They can have values from `1` to `6`.
 
 ```ruby{2-7}
-class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = 'users_metric'
   self.label = 'Users count'
   self.description = 'Users description'
@@ -27,8 +29,9 @@ class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
 end
 ```
 
-<img :src="('/assets/img/dashboards/users_metric.jpg')" alt="Avo Dashboard Metric" class="border mb-4" />
+<img :src="('/assets/img/dashboards/users_metric.jpg')" alt="Avo Metric Card" class="border mb-4" />
 
+## Ranges
 #### Control the aggregation using ranges
 
 You may also want to give the user the ability to query data in different ranges. You can control what's passed in the dropdown using the' ranges' attribute. The array passed here will be parsed and displayed on the card. All integers are transformed to days, and other string variables will be passed as they are.
@@ -38,7 +41,7 @@ You can also set a default range using the `initial_range` attribute.
 The ranges have been changed a bit since **version 2.8**. The parameter you pass to the `range` option will be directly passed to the [`options_for_select`](https://apidock.com/rails/v5.2.3/ActionView/Helpers/FormOptionsHelper/options_for_select) helper, so it behaves more like a regular `select_tag`.
 
 ```ruby{4-15}
-class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = 'users_metric'
   self.label = 'Users count'
   self.initial_range = 30
@@ -56,43 +59,43 @@ class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
 end
 ```
 
-#### Keep the data fresh
+## Keep the data fresh
 
-If this dashboard is something that you keep on the big screen, you need to keep the data fresh at all times. That's easy using `refresh_every`. You pass the number of seconds you need to be refreshed and forget about it. Avo will do it for you.
+If the parent is something that you keep on the big screen, you need to keep the data fresh at all times. That's easy using `refresh_every`. You pass the number of seconds you need to be refreshed and forget about it. Avo will do it for you.
 
 ```ruby{3}
-class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = 'users_metric'
   self.refresh_every = 10.minutes
 end
 ```
 
-#### Hide the header
+## Hide the header
 
 In cases where you need to embed some content that should fill the whole card (like a map, for example), you can choose to hide the label and ranges dropdown.
 
 ```ruby{3}
-class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = 'users_metric'
   self.display_header = false
 end
 ```
-<img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Dashboard Map card" class="border mb-4" />
+<img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Map card" class="border mb-4" />
 
-### Metric card
+## Metric card
 
-The metric card is your friend when you only need to display a simple big number on your dashboard. To generate one run `bin/rails g avo:card users_metric --type metric`.
+The metric card is your friend when you only need to display a simple big number. To generate one run `bin/rails g avo:card users_metric --type metric`.
 
-<img :src="('/assets/img/dashboards/users_metric.jpg')" alt="Avo Dashboard Metric" class="border mb-4" />
+<img :src="('/assets/img/dashboards/users_metric.jpg')" alt="Avo Metric" class="border mb-4" />
 
 #### Calculate results
 
 To calculate your result, you may use the `query` method. After you make the query, use the `result` method to store the value displayed on the card.
 
-In the `query` method you have access to a few variables like `context` (the [App context](./customization#context)), `params` (the request params), `range` (the range that was requested), `dashboard` (the current dashboard the card is on), and current `card`.
+In the `query` method you have access to a few variables like `context` (the [App context](./customization#context)), `params` (the request params), `range` (the range that was requested), `parent` (the current dashboard or resource the card is on), and current `card`.
 
 ```ruby{23-47,36}
-class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = 'users_metric'
   self.label = 'Users count'
   self.description = 'Some tiny description'
@@ -142,28 +145,28 @@ class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
 end
 ```
 
-#### Decorate the data using `prefix` and `suffix`
+### Decorate the data using `prefix` and `suffix`
 
 Some metrics might want to add a `prefix` or a `suffix` to display the data better.
 
 ```ruby{3,4}
-class Avo::Cards::UsersMetric < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = 'users_metric'
   self.prefix = '$'
   self.suffix = '%'
 end
 ```
 
-<img :src="('/assets/img/dashboards/prefix-suffix.jpg')" alt="Avo Dashboard Prefix & suffix" class="border mb-4" />
+<img :src="('/assets/img/dashboards/prefix-suffix.jpg')" alt="Avo Prefix & suffix" class="border mb-4" />
 
-### Chartkick card
+## Chartkick card
 
 A picture is worth a thousand words. So maybe a chart a hundred? Who knows? But creating charts in Avo is very easy with the help of the [chartkick](https://github.com/ankane/chartkick) gem.
 
 You start by running `bin/rails g avo:card users_chart --type chartkick`.
 
 ```ruby
-class Avo::Cards::UserSignups < Avo::Dashboards::ChartkickCard
+class Avo::Cards::UserSignups < Avo::Cards::ChartkickCard
   self.id = 'user_signups'
   self.label = 'User signups'
   self.chart_type = :area_chart
@@ -202,11 +205,11 @@ end
 
 <img :src="('/assets/img/dashboards/chartkick.jpg')" alt="Chartkick card" class="border mb-4" />
 
-#### Chart types
+### Chart types
 
 Using the `self.chart_type` class attribute you can change the type of the chart. Supported types are `line_chart`, `pie_chart`, `column_chart`, `bar_chart`, `area_chart`, and `scatter_chart`.
 
-#### Customize chart
+### Customize chart
 
 Because the charts are being rendered with padding initially, we offset that before rendering to make the chart look good on the card. To disable that, you can set `self.flush = false`. That will set the chart loose for you to customize further.
 
@@ -218,12 +221,12 @@ If you'd like to use [Groupdate](https://github.com/ankane/groupdate), [Hightop]
 
 `chart.js` is supported for the time being. So if you need support for other types, please reach out or post a PR (🙏 PRs are much appreciated).
 
-### Partial card
+## Partial card
 
 You can use a partial card to add custom content to a card. Generate one by running `bin/rails g avo:card custom_card --type partial`. That will create the card class and the partial for it.
 
 ```ruby{5}
-class Avo::Cards::ExampleCustomPartial < Avo::Dashboards::PartialCard
+class Avo::Cards::ExampleCustomPartial < Avo::Cards::PartialCard
   self.id = "users_custom_card"
   self.cols = 1
   self.rows = 4
@@ -237,7 +240,7 @@ You can embed a piece of content from another app using an iframe. You can hide 
 
 ```ruby{5}
 # app/avo/cards/map_card.rb
-class Avo::Cards::MapCard < Avo::Dashboards::PartialCard
+class Avo::Cards::MapCard < Avo::Cards::PartialCard
   self.id = "map_card"
   self.label = "Map card"
   self.partial = "avo/cards/map_card"
@@ -252,5 +255,101 @@ end
 <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d17991.835132857846!2d-73.98926852562143!3d40.742050491245955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sro!4v1647079626880!5m2!1sen!2sro" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
 ```
 
-<img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Dashboard Map card" class="border mb-4" />
+<img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Map card" class="border mb-4" />
 
+## Cards visibility
+
+<VersionReq version="2.28" />
+
+It's common to show the same card to multiple types of users (admins, regular users). In that scenario you might want to hide some cards for the regular users and show them just to the admins.
+
+You can use the `visible` option to do that. It can be a `boolean` or a `block` where you can access the `params`, `current_user`, `context`, `parent`, and `card` object.
+
+```ruby{4-11}
+class Avo::Cards::UsersCount < Avo::Cards::MetricCard
+  self.id = "users_metric"
+  self.label = "Users count"
+  self.visible = -> do
+    # You have access to:
+    # context
+    # params
+    # parent (the current dashboard or resource)
+    # current card
+    true
+  end
+
+  def query
+    result User.count
+  end
+end
+```
+
+You may also control the visibility from the parent class.
+
+:::code-group
+```ruby [On Dashboards]
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
+  def cards
+    card Avo::Cards::UsersCount, visible: -> { true }
+  end
+end
+```
+
+```ruby [On Resources]
+class Avo::Resources::User < Avo::BaseResource
+  def cards
+    card Avo::Cards::UsersCount, visible: -> { true }
+  end
+end
+```
+:::
+
+## Dividers
+
+You may want to separate the cards. You can use dividers to do that.
+
+:::code-group
+```ruby [On Dashboards]
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
+  def cards
+    card Avo::Cards::ExampleColumnChart
+    card Avo::Cards::ExamplePieChart
+    card Avo::Cards::ExampleBarChart
+    divider label: "Custom partials"
+    card Avo::Cards::ExampleCustomPartial
+    card Avo::Cards::MapCard
+  end
+end
+```
+```ruby [On Resources]
+class Avo::Resources::User < Avo::BaseResource
+  def cards
+    card Avo::Cards::ExampleColumnChart
+    card Avo::Cards::ExamplePieChart
+    card Avo::Cards::ExampleBarChart
+    divider label: "Custom partials"
+    card Avo::Cards::ExampleCustomPartial
+    card Avo::Cards::MapCard
+  end
+end
+```
+:::
+
+<img :src="('/assets/img/dashboards/divider.jpg')" alt="Avo Dashboard Divider" class="border mb-4" />
+
+Dividers can be a simple line between your cards or have some text on them that you control using the `label` option.
+When you don't want to show the line, you can enable the `invisible` option, which adds the divider but does not display a border or label.
+
+
+## Dividers visibility
+
+<VersionReq version="2.28" />
+
+You might want to conditionally show/hide a divider based on a few factors. You can do that using the `visible` option.
+
+```ruby
+divider label: "Custom partials", visible: -> {
+  # You have access to context, params, parent (the current dashboard or resource)
+  true
+}
+```
