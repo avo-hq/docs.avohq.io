@@ -691,3 +691,34 @@ class Avo::Resources::Project < Avo::BaseResource
   self.index_query = -> { query.unscoped }
 end
 ```
+
+## Cards
+
+Use the `def cards` method to add some cards to your resource.
+
+Check [cards documentation](./cards) for more details.
+
+```ruby{9-19}
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+    field :email, as: :text
+    field :roles, as: :boolean_group, options: {admin: "Administrator", manager: "Manager", writer: "Writer"}
+  end
+
+  def cards
+    card Avo::Cards::ExampleAreaChart, cols: 3
+    card Avo::Cards::ExampleMetric, cols: 2
+    return if view.form?
+    card Avo::Cards::ExampleMetric,
+      label: "Active users metric",
+      description: "Count of the active users.",
+      arguments: {
+        active_users: true
+      }
+  end
+end
+```
+
+![Alt text](/assets/img/cards_on_resource.png)
