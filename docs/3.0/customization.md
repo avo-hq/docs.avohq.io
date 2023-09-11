@@ -147,6 +147,9 @@ It's recommended you don't store your current user here but using the [`current_
 
 You can access the context data with `::Avo::App.context` object.
 
+## Eject
+[This section has moved.](./eject-views)
+
 ## Breadcrumbs
 
 By default, Avo ships with breadcrumbs enabled.
