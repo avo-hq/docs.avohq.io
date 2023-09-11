@@ -48,7 +48,7 @@ Set the default image if the email address was not found in Gravatar's database.
 Any number in pixels. Remember that the size will influence the `Index` table row height.
 :::
 
-<!-- @include: ./../common/link_to_resource_common.md-->
+<!-- @include: ./../common/link_to_record_common.md-->
 
 ## Using computed values
 
