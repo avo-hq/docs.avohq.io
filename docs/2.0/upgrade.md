@@ -3,6 +3,35 @@
 We generally push changes behind the scenes, so you don't have to update your code, but sometimes the public API is updated too.
 
 Follow these guides to make sure your configuration files are up to date.
+## Upgrade from 2.40 to 2.41
+
+### Badge field `secondary` option renamed to `neutral`
+We believe that the term `neutral` better reflects the intended use.
+::: code-group
+```ruby {8} [Before]
+field :stage,
+  as: :badge,
+  options: {
+    info: [:discovery, :idea],
+    success: :done,
+    warning: "on hold",
+    danger: :cancelled,
+    secondary: :drafting
+  }
+```
+
+```ruby {8} [After]
+field :stage,
+  as: :badge,
+  options: {
+    info: [:discovery, :idea],
+    success: :done,
+    warning: "on hold",
+    danger: :cancelled,
+    neutral: :drafting
+  }
+```
+:::
 
 ## Upgrade from 2.35 to 2.36
 

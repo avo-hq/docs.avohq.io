@@ -46,7 +46,7 @@ Use any number to size the image.
 Use any number to set the radius value.
 :::
 
-<!-- @include: ./../common/link_to_resource_common.md-->
+<!-- @include: ./../common/link_to_record_common.md-->
 
 ## Use computed values
 
@@ -65,7 +65,7 @@ end
 Another common place you could use it is in the grid `:cover` position.
 
 ```ruby
-cover :logo, as: :external_image, link_to_resource: true do
+cover :logo, as: :external_image, link_to_record: true do
   "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
 rescue
   nil
