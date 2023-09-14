@@ -17,7 +17,7 @@ Avo plays well with most Rails asset pipelines.
 There are two things we need to mention when communicating about assets.
 
 1. Avo's assets
-2. You custom assets
+2. Your custom assets
 
 ## Avo's assets
 
