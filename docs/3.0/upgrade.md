@@ -6,7 +6,7 @@ If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedica
 
 ## Upgrade to 3.0.1.beta20
 :::option Sidebar should be declared inside a panel
-Since we introduced the `main_panel` option and also refactored the way that fields are fetched from the resource, now we allow multiple sidebars per panel but each sidebar should be defined inside a `panel` or `main_panel` block.
+We introduced the `main_panel` option and also refactored the way that fields are fetched from the resource, now we allow multiple sidebars per panel but each sidebar should be defined inside a `panel` or `main_panel` block.
 :::
 
 ## Upgrade from 3.0.1.beta8 to 3.0.1.beta9
