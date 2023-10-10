@@ -7,12 +7,12 @@ license: advanced
 
 The Dynamic filters make it so easy to add multiple, composable, and dynamic filters to the <Index /> view.
 
-The only thing you need to do is add the `filterable: true` attribute to the fields you need to filter through.
+The first thing you need to do is add the `filterable: true` attribute to the fields you need to filter through. We use `ransack` behind the scenes so it's essential to configure the `ransackable_attributes` list to ensure that every filterable field is incorporated within it.
 
-```ruby{6-8}
+
+:::code-group
+```ruby{4-6} [Fields]
 class Avo::Resources::Project < Avo::BaseResource
-  self.title = :name
-
   def fields
     field :name, as: :text
     field :status, as: :status, filterable: true
@@ -21,6 +21,15 @@ class Avo::Resources::Project < Avo::BaseResource
   end
 end
 ```
+
+```ruby{3} [Ransackable attribures]
+class Project < ApplicationRecord
+  def self.ransackable_attributes(auth_object = nil)
+    ["status", "stage", "country"]
+  end
+end
+```
+:::
 
 This will make Avo add this new "Filters" button to the <Index /> view of your resource.
 
