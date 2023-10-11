@@ -194,6 +194,7 @@ const config = {
             {text: "Resource tools", link: "/3.0/resource-tools"},
             {text: "Stimulus JS integration", link: "/3.0/stimulus-integration"},
             {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline"},
+            {text: "TailwindCSS integration", link: "/3.0/tailwindcss-integration"},
           ],
         },
         {
