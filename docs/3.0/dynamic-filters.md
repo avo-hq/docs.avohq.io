@@ -22,7 +22,7 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-```ruby{3} [Ransackable attribures]
+```ruby{3} [Ransackable attributes]
 class Project < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     ["status", "stage", "country"]
