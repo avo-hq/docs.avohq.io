@@ -242,6 +242,7 @@ const config = {
             {text: "Installation", link: "/2.0/installation"},
             {text: "Authentication", link: "/2.0/authentication"},
             {text: "Authorization", link: "/2.0/authorization"},
+            {text: "Cache", link: "/2.0/cache"},
           ],
         },
         {
