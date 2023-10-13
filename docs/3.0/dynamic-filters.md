@@ -121,6 +121,18 @@ This filter will give you options from the database.
  - Is blank
 :::
 
+:::option Array
+
+Used on `tags` fields.
+
+### Conditions
+
+ - Are
+ - Contains
+ - Overlap
+ - Contained in
+:::
+
 ## Options
 
 You can have a few customization options available that you can add in your `avo.rb` initializer file.
