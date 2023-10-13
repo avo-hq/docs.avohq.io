@@ -31,10 +31,9 @@ end
 
 # Or
 
-# https://activerecord-hackery.github.io/ransack/going-further/other-notes/#authorization-allowlistingdenylisting
 class Project < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
-    super
+    authorizable_ransackable_attributes
   end
 end
 ```
