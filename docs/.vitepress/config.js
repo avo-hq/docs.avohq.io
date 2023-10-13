@@ -118,6 +118,7 @@ const config = {
             {text: "Gem server authentication", link: "/3.0/gemfile-environment-variables"},
             {text: "Authentication", link: "/3.0/authentication"},
             {text: "Authorization", link: "/3.0/authorization"},
+            {text: "Cache", link: "/3.0/cache"},
           ],
         },
         {
@@ -241,6 +242,7 @@ const config = {
             {text: "Installation", link: "/2.0/installation"},
             {text: "Authentication", link: "/2.0/authentication"},
             {text: "Authorization", link: "/2.0/authorization"},
+            {text: "Cache", link: "/2.0/cache"},
           ],
         },
         {
