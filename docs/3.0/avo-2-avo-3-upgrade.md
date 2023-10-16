@@ -90,6 +90,10 @@ field :status,
 Before, a heading used the `heading` method with a text string or HTML string as an argument.
 Now, it is a field type with an ID. It supports rendering as text and as HTML.
 
+### Actions to take
+
+Rename `heading` to `field`. Give the field an ID and add the `as: :heading` argument.
+
 ```ruby
 # Before
 heading 'User Information'
