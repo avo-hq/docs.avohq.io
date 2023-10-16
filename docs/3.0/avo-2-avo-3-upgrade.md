@@ -86,7 +86,7 @@ field :status,
 ```
 :::
 
-:::option The heading field changed behavior
+:::option `heading` has become a field type
 Before, a heading used the `heading` method with a text string or HTML string as an argument.
 Now, it is a field type with an ID. It supports rendering as text and as HTML.
 
