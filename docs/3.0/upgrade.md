@@ -4,6 +4,15 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.0.1.beta22 to 3.0.1.beta23
+:::option Caching
+Since there are many available cache stores and we were allowing only few we changed the way of computing the cache store to be used by Avo.
+
+One of our concerns was to maintain the status quo, but if you notice any caching issues there is a new configurable option [`config.cache_store`](cache#custom-selection) that allows you to tell Avo what `cache_store` to use.
+
+Check [cache page](cache) for more details.
+:::
+
 ## Upgrade from 3.0.1.beta8 to 3.0.1.beta9
 :::option Heading as field
 Heading option changed declaration mode, one of the main reasons for this change is to be able to generate a clear `data-field-id` on the DOM
