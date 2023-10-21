@@ -111,6 +111,26 @@ field :skills,
 <!-- @include: ./../common/default_boolean_false.md-->
 :::
 
+:::option `suggestions_max_items`
+Set of suggestions that can be displayed at once. The excessive items will be hidden and the user will have to narrow down the query to see them.
+
+```ruby{4}
+field :skills,
+  as: :tags,
+  suggestions: %w(one two three),
+  suggestions_max_items: 2
+```
+
+<img :src="('/assets/img/fields/tags-field/suggestions_max_items.gif')" alt="Avo tags field - suggestions max items option" class="border mb-4" />
+
+#### Default
+
+`20`
+
+#### Possible values
+
+Integers
+
 :::option `close_on_select`
 Set whether the `suggestions` dropdown should close after the user makes a selection.
 
