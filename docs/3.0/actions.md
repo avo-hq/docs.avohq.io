@@ -186,7 +186,7 @@ end
 :::
 :::option `redirect_to`
 
-`redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host` and `status` arguments.
+`redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host`, `status` and any other arguments.
 
 Example:
 `redirect_to path, allow_other_host: true, status: 303`
@@ -204,27 +204,64 @@ def handle(**args)
 end
 ```
 
+You may want to redirect to another action. Here's an example of how to create a multi-step process, passing arguments from one action to another.
+In this example the initial action prompts the user to select the fields they wish to update, and in the subsequent action, the chosen fields will be accessible for updating.
 
+:::code-group
+```ruby[PreUpdate]
+class Avo::Actions::City::PreUpdate < Avo::BaseAction
+  self.name = "Update"
 
-:::warning
-If you're redirecting to an external link you should add the `self.turbo = false` option in order to bypass [Turbo's navigation](https://turbo.hotwired.dev/handbook/drive#disabling-turbo-drive-on-specific-links-or-forms).
-:::
-
-:::option `turbo`
-There are times when you don't want to perform the actions with Turbo, such as when the action leads to an external link or you might download a file. In such cases, turbo should be set to false.
-
-```ruby{3,6}
-class Avo::Actions::DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-  self.turbo = false
+  def fields
+    field :name, as: :boolean
+    field :population, as: :boolean
+  end
 
   def handle(**args)
-    redirect_to "https://www.google.com/"
+    arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
+      message: {
+        query: Avo::Services::EncryptionService.encrypt(message: args[:query], purpose: :multiple_actions_flux, serializer: Marshal),
+        render_name: args[:fields][:name],
+        render_population: args[:fields][:population]
+      },
+      purpose: :action_arguments
+    )
+
+    redirect_to "/admin/resources/city/actions?action_id=Avo::Actions::City::Update&arguments=#{arguments}", turbo_frame: "actions_show"
   end
 end
 ```
+
+```ruby[Update]
+class Avo::Actions::City::Update < Avo::BaseAction
+  self.name = "Update"
+  self.visible = -> { false }
+
+  def fields
+    field :name, as: :text if arguments[:render_name]
+    field :population, as: :number if arguments[:render_population]
+  end
+
+  def handle(**args)
+    query = Avo::Services::EncryptionService.decrypt(message: arguments[:query], purpose: :multiple_actions_flux, serializer: Marshal)
+
+    query.each do |city|
+      city.update! args[:fields]
+    end
+
+    succeed "City updated!"
+  end
+end
+```
+
+:::info `turbo_frame`
+Notice the `turbo_frame: "actions_show"` present on the redirect of `Avo::Actions::City::PreUpdate` action. That argument is essential to have a flawless redirect between the actions.
 :::
 
+
+:::option `turbo`
+There are times when you don't want to perform the actions with Turbo. In such cases, turbo should be set to false.
+:::
 :::option `download`
 
 `download` will start a file download to your specified `path` and `filename`.
