@@ -53,7 +53,7 @@ Please take your time and read the documentation pages to see how Avo interacts 
 1. [Create a Resource](./resources.html#defining-resources)
 1. [Set up authorization](authorization.html)
 1. [Set up licensing](licensing)
-1. [Explore the live demo app](https://avodemo.herokuapp.com)
+1. [Explore the live demo app](https://main.avodemo.com/)
 1. Explore these docs
 1. Enjoy building your app without ever worrying about the admin layer ever again
 1. Explore the [FAQ](faq) pages for guides on how to set up your Avo instance.
