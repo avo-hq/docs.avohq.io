@@ -372,7 +372,7 @@ class TogglePublished < Avo::BaseAction
 
 You may update the `self.message` class attribute to customize the message if there are no fields present.
 
-#### Callable mes sage
+#### Callable message
 
 <VersionReq version="2.21" />
 
