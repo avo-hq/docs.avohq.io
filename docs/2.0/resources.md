@@ -567,3 +567,14 @@ end
 
 This tells Avo which resources you use and stops the eager-loading process on boot-time.
 This means that other resources that are not declared in this array will not show up in your app.
+
+:::option self.countless
+<VersionReq version="2.44" />
+This feature is designed for managing large tables of data. By setting `self.countless` to `true`, you can disable the pagination count on the resource's index. This is especially beneficial for large datasets, where displaying the total number of items and pages may have some performance impact.
+
+```ruby
+self.countless = -> { true }
+# OR
+self.countless = true
+```
+:::

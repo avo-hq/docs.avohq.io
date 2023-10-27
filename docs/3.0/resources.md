@@ -675,7 +675,8 @@ self.components = {
 This way you can choose the whatever namespace structure you want and you assure that the initializer is accepting the right arguments.
 
 
-## Unscoped queries on `Index`
+:::option self.index_query
+### Unscoped queries on `Index`
 You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.
 ```ruby{2}
 class Project < ApplicationRecord
@@ -691,3 +692,14 @@ class Avo::Resources::Project < Avo::BaseResource
   self.index_query = -> { query.unscoped }
 end
 ```
+:::
+
+:::option self.countless
+This feature is designed for managing large tables of data. By setting `self.countless` to `true`, you can disable the pagination count on the resource's index. This is especially beneficial for large datasets, where displaying the total number of items and pages may have some performance impact.
+
+```ruby
+self.countless = -> { true }
+# OR
+self.countless = true
+```
+:::
