@@ -3,6 +3,11 @@
 We generally push changes behind the scenes, so you don't have to update your code, but sometimes the public API is updated too.
 
 Follow these guides to make sure your configuration files are up to date.
+
+## Upgrade from 2.43 to 2.44
+
+We've internally implemented some changes around actions to resolve certain bugs. No action is needed from your end, but if you happen to notice any anomalies in the actions flow, please get in touch with us so we can address them promptly. Thank you.
+
 ## Upgrade from 2.42.1 to 2.42.2
 Since there are many available cache stores and we were allowing only few we changed the way of computing the cache store to be used by Avo.
 
