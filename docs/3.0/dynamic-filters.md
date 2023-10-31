@@ -121,6 +121,23 @@ This filter will give you options from the database.
  - Is blank
 :::
 
+::::option Array
+
+Used on `tags` fields.
+
+### Conditions
+
+ - Are
+ - Contains
+ - Overlap
+ - Contained in
+
+:::warning
+This will only work with database array columns, not when using the `acts-as-taggable-on` gem.
+:::
+
+::::
+
 ## Options
 
 You can have a few customization options available that you can add in your `avo.rb` initializer file.
