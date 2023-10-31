@@ -121,7 +121,7 @@ This filter will give you options from the database.
  - Is blank
 :::
 
-:::option Array
+::::option Array
 
 Used on `tags` fields.
 
@@ -131,7 +131,12 @@ Used on `tags` fields.
  - Contains
  - Overlap
  - Contained in
+
+:::warning
+This will only work with database array columns, not when using the `acts-as-taggable-on` gem.
 :::
+
+::::
 
 ## Options
 
