@@ -92,7 +92,7 @@ The metric card is your friend when you only need to display a simple big number
 
 To calculate your result, you may use the `query` method. After you make the query, use the `result` method to store the value displayed on the card.
 
-In the `query` method you have access to a few variables like `context` (the [App context](./customization#context)), `params` (the request params), `range` (the range that was requested), `parent` (the current dashboard or resource the card is on), and current `card`.
+In the `query` method you have access to a few variables like `context` (the [App context](./customization#context)), `params` (the request params), `range` (the range that was requested), `dashboard`, `resource` or `parent` (the current dashboard or resource the card is on), and current `card`.
 
 ```ruby{23-47,36}
 class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
@@ -274,6 +274,8 @@ class Avo::Cards::UsersCount < Avo::Cards::MetricCard
     # context
     # params
     # parent (the current dashboard or resource)
+    # dashboard (will be nil when parent is resource)
+    # resource (will be nil when parent is dashboard)
     # current card
     true
   end
@@ -349,7 +351,12 @@ You might want to conditionally show/hide a divider based on a few factors. You 
 
 ```ruby
 divider label: "Custom partials", visible: -> {
-  # You have access to context, params, parent (the current dashboard or resource)
+  # You have access to:
+  # context
+  # params
+  # parent (the current dashboard or resource)
+  # dashboard (will be nil when parent is resource)
+  # resource (will be nil when parent is dashboard)
   true
 }
 ```
