@@ -184,7 +184,7 @@ end
 :::
 :::option `redirect_to`
 
-`redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host` and `status` arguments.
+`redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host`, `status` and any other arguments.
 
 Example:
 `redirect_to path, allow_other_host: true, status: 303`
@@ -204,23 +204,84 @@ end
 
 
 
-:::warning
-If you're redirecting to an external link you should add the `self.turbo = false` option in order to bypass [Turbo's navigation](https://turbo.hotwired.dev/handbook/drive#disabling-turbo-drive-on-specific-links-or-forms).
-:::
+You may want to redirect to another action. Here's an example of how to create a multi-step process, passing arguments from one action to another.
+In this example the initial action prompts the user to select the fields they wish to update, and in the subsequent action, the chosen fields will be accessible for updating.
 
-:::option `turbo`
-There are times when you don't want to perform the actions with Turbo, such as when the action leads to an external link or you might download a file. In such cases, turbo should be set to false.
+:::code-group
+```ruby[PreUpdate]
+class PreUpdate < Avo::BaseAction
+  self.name = "Update"
+  self.message = "Set the fields you want to update."
 
-```ruby{3,6}
-class DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-  self.turbo = false
+  with_options as: :boolean do
+    field :first_name
+    field :last_name
+    field :user_email
+    field :active
+    field :admin
+  end
 
   def handle(**args)
-    redirect_to "https://www.google.com/" # external link
+    arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
+      message: {
+        render_first_name: args[:fields][:first_name],
+        render_last_name: args[:fields][:last_name],
+        render_user_email: args[:fields][:user_email],
+        render_active: args[:fields][:active],
+        render_admin: args[:fields][:admin]
+      },
+      purpose: :action_arguments
+    )
+
+    redirect_to "/admin/resources/users/actions?action_id=Update&arguments=#{arguments}", turbo_frame: "actions_show"
   end
 end
 ```
+
+```ruby[Update]
+class Update < Avo::BaseAction
+  self.name = "Update"
+  self.message = ""
+  self.visible = -> do
+    false
+  end
+
+  {
+    first_name: :text,
+    last_name: :text,
+    user_email: :text,
+    active: :boolean,
+    admin: :boolean
+  }.each do |field_name, field_type|
+    field field_name.to_sym, as: field_type, visible: -> (resource:) {
+      Avo::Services::EncryptionService.decrypt(
+        message: Base64.decode64(resource.params[:arguments]),
+        purpose: :action_arguments
+      ).dig("render_#{field_name}".to_sym)
+    }
+  end
+
+  def handle(models:, fields:, **args)
+    non_roles_fields = fields.slice!(:admin)
+
+    models.each { |model| model.update!(non_roles_fields) }
+
+    fields.each do |field_name, field_value|
+      models.each { |model|  model.update! roles: model.roles.merge!({"#{field_name}": field_value}) }
+    end
+
+    succeed "User(s) updated!"
+  end
+end
+```
+
+:::info `turbo_frame`
+Notice the `turbo_frame: "actions_show"` present on the redirect of `PreUpdate` action. That argument is essential to have a flawless redirect between the actions.
+:::
+
+
+:::option `turbo`
+There are times when you don't want to perform the actions with Turbo. In such cases, turbo should be set to false.
 :::
 
 :::option `download`

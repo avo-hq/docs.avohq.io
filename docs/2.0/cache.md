@@ -8,15 +8,36 @@ The cache system dynamically selects the appropriate cache store based on the ap
 
 ### Production
 
-In production, it uses the existing cache store when it's one of the following: `ActiveSupport::Cache::MemCacheStore`, `ActiveSupport::Cache::RedisCacheStore` or `SolidCache::Store`. Otherwise, it defaults to `:file_store` with a cache path of `tmp/cache`.
+In production, if the existing cache store is one of the following: `ActiveSupport::Cache::MemoryStore` or `ActiveSupport::Cache::NullStore` it will use the default `:file_store` with a cache path of `tmp/cache`. Otherwise, the existing cache store `Rails.cache` will be used.
 
 ### Test
 
-In testing, it directly uses the Rails cache store.
+In testing, it directly uses the `Rails.cache` store.
 
 ### Development and other environments
 
 In all other environments the `:memory_store` is used.
+
+### Custom selection
+
+There is the possibility to force the usage of a custom cache store into Avo.
+
+```ruby
+# config/initializers/avo.rb
+config.cache_store = -> {
+  ActiveSupport::Cache.lookup_store(:solid_cache_store)
+}
+
+# or
+
+config.cache_store = ActiveSupport::Cache.lookup_store(:solid_cache_store)
+```
+
+`cache_store` configuration option is expecting a cache store object, the lambda syntax can be useful if different stores are desired on different environments.
+
+:::warning MemoryStore in production
+Our computed system do not use MemoryStore in production because it will not be shared between multiple processes (when using Puma).
+:::
 
 ## Solid Cache
 
