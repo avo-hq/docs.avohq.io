@@ -6,9 +6,9 @@ There are a few ways to use the secret tokens in the Gemfile
 I'll use the `xxx-xxx-xxx` notiation instead of the actual gem server token which is a UUID
 :::
 
-## 1. Use a bundler environemtn variable
+## 1. Use a bundler environment variable
 
-:::tip Recommendation
+:::info Recommendation
 This is the recommended way for most use cases.
 :::
 
@@ -27,7 +27,7 @@ BUNDLE_PACKAGER__DEV=xxx bundle install
 ## 2. Add them to the default bundler configuration
 
 :::tip Recommendation
-This is the recommended way as you won't expose your gem server token in your version control system (git).
+This is a good to do it way as you won't expose your gem server token in your version control system (git).
 :::
 
 The second-best way to do it is to register the credentials before hand using the following command.
