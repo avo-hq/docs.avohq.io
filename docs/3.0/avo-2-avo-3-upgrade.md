@@ -428,7 +428,7 @@ end
 
 # After
 # /app/avo/cards/users_count.rb
-class Avo::Cards::UsersCount < Avo::Dashboards::MetricCard
+class Avo::Cards::UsersCount < Avo::Cards::MetricCard
 end
 ```
 
