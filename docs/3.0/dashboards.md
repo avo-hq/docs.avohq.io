@@ -55,6 +55,9 @@ The `id` field has to be unique. The `name` is what the user sees in big letters
 
 Using the ' grid_cols ' parameter, you may organize the cards in a grid with `3`, `4`, `5`, or `6` columns using the `grid_cols` parameter. The default is `3`.
 
+## Cards
+[This section has moved.](cards.html)
+
 ### Override card arguments from the dashboard
 
 We found ourselves in the position to add a few cards that were the same card but with a slight difference. Ex: Have one `Users count` card and another `Active users count` card. They both count users, but the latter has an `active: true` condition applied.

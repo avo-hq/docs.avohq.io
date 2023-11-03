@@ -82,6 +82,46 @@ end
 ```
 <img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Map card" class="border mb-4" />
 
+## Format
+
+Option `self.format` is useful when you want to format the data that `result` returns from `query`.
+
+Example without format:
+
+```ruby
+class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
+  self.id = "amount_raised"
+  self.label = "Amount raised"
+  self.prefix = "$"
+
+  def query
+    result 9001
+  end
+end
+```
+
+![ammount raised without format](/assets/img/3_0/cards/amount_raised_without_format.png)
+
+
+Example with format:
+
+```ruby
+class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
+  self.id = "amount_raised"
+  self.label = "Amount raised"
+  self.prefix = "$"
+  self.format = -> {
+    number_to_social value, start_at: 1_000
+  }
+
+  def query
+    result 9001
+  end
+end
+```
+
+![ammount raised with format](/assets/img/3_0/cards/amount_raised_with_format.png)
+
 ## Metric card
 
 The metric card is your friend when you only need to display a simple big number. To generate one run `bin/rails g avo:card users_metric --type metric`.
