@@ -6,10 +6,6 @@ If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedica
 
 ## Upgrade from 3.0.1.beta23 to 3.0.1.beta24
 
-:::option Actions
-We've internally implemented some changes around actions to resolve certain bugs. No action is needed from your end, but if you happen to notice any anomalies in the actions flow, please get in touch with us so we can address them promptly. Thank you.
-:::
-
 :::option Cards
 With the new feature that allow [cards on resources](resources.html#cards)  we've realized that it's no longer logical to retain cards within the `Dashboard` namespace scope. Consequently, each card is now located within the `Avo::Cards` namespace.
 
