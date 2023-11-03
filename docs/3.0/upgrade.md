@@ -86,6 +86,27 @@ field :stage,
 ```
 :::
 
+:::option Rename `link_to_resource` to `link_to_record`
+`link_to_resource` was renamed to `link_to_record`.
+::: code-group
+```ruby {3-4} [Before]
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id, link_to_resource: true
+    field :email, as: :gravatar, link_to_resource: true
+  end
+end
+```
+
+```ruby {3-4} [After]
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id, link_to_record: true
+    field :email, as: :gravatar, link_to_record: true
+  end
+end
+```
+:::
 
 ## Upgrade from 3.0.1.beta5 to 3.0.1.beta6
 

@@ -2,7 +2,7 @@
 # One of these below in your Gemfile
 
 # Avo Community
-gem "avo", ">= 3.0.1.beta7", source: "https://packager.dev/avo-hq/"
+gem "avo", ">= 3.0.1.beta9", source: "https://packager.dev/avo-hq/"
 
 # Avo Pro
 gem "avo-pro", source: "https://packager.dev/avo-hq/"
