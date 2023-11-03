@@ -100,7 +100,7 @@ class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
 end
 ```
 
-![ammount raised without format](/assets/img/3_0/cards/amount_raised_without_format.png)
+![amount raised without format](/assets/img/3_0/cards/amount_raised_without_format.png)
 
 
 Example with format:
@@ -120,7 +120,7 @@ class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
 end
 ```
 
-![ammount raised with format](/assets/img/3_0/cards/amount_raised_with_format.png)
+![amount raised with format](/assets/img/3_0/cards/amount_raised_with_format.png)
 
 ## Metric card
 
