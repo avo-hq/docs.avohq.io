@@ -118,6 +118,7 @@ const config = {
             {text: "Gem server authentication", link: "/3.0/gemfile-environment-variables"},
             {text: "Authentication", link: "/3.0/authentication"},
             {text: "Authorization", link: "/3.0/authorization"},
+            {text: "Cache", link: "/3.0/cache"},
           ],
         },
         {
@@ -194,6 +195,7 @@ const config = {
             {text: "Resource tools", link: "/3.0/resource-tools"},
             {text: "Stimulus JS integration", link: "/3.0/stimulus-integration"},
             {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline"},
+            {text: "TailwindCSS integration", link: "/3.0/tailwindcss-integration"},
           ],
         },
         {
@@ -240,6 +242,7 @@ const config = {
             {text: "Installation", link: "/2.0/installation"},
             {text: "Authentication", link: "/2.0/authentication"},
             {text: "Authorization", link: "/2.0/authorization"},
+            {text: "Cache", link: "/2.0/cache"},
           ],
         },
         {

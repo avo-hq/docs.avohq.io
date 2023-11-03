@@ -31,45 +31,7 @@ Avo makes it easy to use your own styles and javascript through your already set
 
 ## Use TailwindCSS utility classes
 
-We use TailwindCSS 3.0 with the JIT engine to style Avo, so on release we only pack the used Tailwind classes in our final css file. That's why, when you want to style your custom content (tools, resource tools, fields, or ejected partials), you won't have access to all of Tailwind's utility classes. It's a performance optimization.
-
-But there's an easy way to overcome that limitation. You can add your own TailwindCSS process to watch for your the utility classes you use.
-
-```bash
-bin/rails generate avo:tailwindcss:install
-```
-
-That command will:
-
-- install `tailwindcss-rails` gem if you haven't installed it yet;
-- create a custom `avo.tailwind.css` file where you can further customize your Avo space;
-- generate or enhance your `Procfile.dev` with the required compile `yarn avo:tailwindcss --watch` command, as per default `tailwindcss-rails` practices;
-- add the resulting file in your `_pre_head.html.erb` file;
-- prompt you to add the script your `package.json` file. **This is a manual step you need to do**.
-
-Now, instead of running `bin/rails server`, you can run that Procfile with `bin/dev` or `foreman start -f Procfile.dev`.
-
-:::info
-You mileage may vary when running these tasks depending with your setup. The gist is that you need to run `yarn avo:tailwindcss` on deploy0time to compile the css file and `yarn avo:tailwindcss --watch` to watch for changes in development.
-:::
-
-Inside `app/assets/stylesheets` you'll have a new `avo.tailwind.css` file that's waiting for you to customize. The default `tailwind.config.js` file should have the proper paths set up for purging and should be ready to go.
-
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/*
-
-@layer components {
-  .btn-primary {
-    @apply py-2 px-4 bg-blue-200;
-  }
-}
-
-*/
-```
+Please follow the dedicated [TailwindCSS integration guide](./tailwindcss-integration.html).
 
 ## Add custom JS code and Stimulus controllers
 
