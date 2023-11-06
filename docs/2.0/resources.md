@@ -568,13 +568,80 @@ end
 This tells Avo which resources you use and stops the eager-loading process on boot-time.
 This means that other resources that are not declared in this array will not show up in your app.
 
-:::option self.countless
-<VersionReq version="2.44" />
-This feature is designed for managing large tables of data. By setting `self.countless` to `true`, you can disable the pagination count on the resource's index. This is especially beneficial for large datasets, where displaying the total number of items and pages may have some performance impact.
+:::option self.pagination
+<VersionReq version="2.45" />
+This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
+
+By setting `self.pagination[:type]` to `:countless`, you can disable the pagination count on the index page.
+
+This is especially beneficial for large datasets, where displaying the total number of items and pages may have some performance impact.
 
 ```ruby
-self.countless = -> { true }
-# OR
-self.countless = true
+# As block:
+self.pagination = -> do
+  {
+    type: :normal,
+    size: [1, 2, 2, 1],
+  }
+end
+
+# Or as hash:
+self.pagination = {
+  type: :normal,
+  size: [1, 2, 2, 1],
+}
 ```
+
+The exposed pagination setting above have the default value for each key.
+
+### `type`<br><br>
+  #### Possible values
+  `:normal`, `:countless`
+  #### Default
+  `:normal`
+
+
+### `size`<br><br>
+  #### Possible values
+  [Pagy docs - Control the page links](https://ddnexus.github.io/pagy/docs/how-to/#control-the-page-links)
+  #### Default
+  `[1, 2, 2, 1]`
+
+### Examples
+#### Default
+```ruby
+self.pagination = -> do
+  {
+    type: :normal,
+    size: [1, 2, 2, 1],
+  }
+end
+```
+
+![Default pagination](/assets/img/resources/pagination/default.png)
+<br><br>
+
+#### Countless
+
+```ruby
+self.pagination = -> do
+  {
+    type: :countless
+  }
+end
+```
+
+![Countless pagination](/assets/img/resources/pagination/countless.png)
+<br><br>
+
+#### Countless and "pageless"
+```ruby
+self.pagination = -> do
+  {
+    type: :countless,
+    size: []
+  }
+end
+```
+![Countless pagination size empty](/assets/img/resources/pagination/countless_empty_size.png)
 :::
