@@ -4,6 +4,28 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.0.1.beta23 to 3.0.1.beta24
+
+:::option Cards
+With the new feature that allow [cards on resources](resources.html#cards)  we've realized that it's no longer logical to retain cards within the `Dashboard` namespace scope. Consequently, each card is now located within the `Avo::Cards` namespace.
+
+```ruby
+# Before
+class Avo::Cards::AmountRaised < Avo::Dashboards::MetricCard
+class Avo::Cards::ExampleAreaChart < Avo::Dashboards::ChartkickCard
+class Avo::Cards::ExampleBarChart < Avo::Dashboards::ChartkickCard
+# ...
+
+# After
+class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
+class Avo::Cards::ExampleAreaChart < Avo::Cards::ChartkickCard
+class Avo::Cards::ExampleBarChart < Avo::Cards::ChartkickCard
+# ...
+
+```
+:::
+
+
 ## Upgrade from 3.0.1.beta22 to 3.0.1.beta23
 :::option Caching
 Since there are many available cache stores and we were allowing only few we changed the way of computing the cache store to be used by Avo.

@@ -76,7 +76,7 @@ All in all **we're confident you'll have the necessary instruments** you need to
 
 ### STI example
 
-For **STI** you can check out the models and resources in the [demo app](https://avodemo.herokuapp.com/).
+For **STI** you can check out the models and resources in the [demo app](https://main.avodemo.com/).
 
  - [person.rb](https://github.com/avo-hq/avodemo/blob/main/app/models/person.rb)
  - [spouse.rb](https://github.com/avo-hq/avodemo/blob/main/app/models/spouse.rb)
