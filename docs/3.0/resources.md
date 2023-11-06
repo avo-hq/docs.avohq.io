@@ -692,14 +692,32 @@ class Avo::Resources::Project < Avo::BaseResource
   self.index_query = -> { query.unscoped }
 end
 ```
-:::
 
-:::option self.countless
-This feature is designed for managing large tables of data. By setting `self.countless` to `true`, you can disable the pagination count on the resource's index. This is especially beneficial for large datasets, where displaying the total number of items and pages may have some performance impact.
+## Cards
 
-```ruby
-self.countless = -> { true }
-# OR
-self.countless = true
+Use the `def cards` method to add some cards to your resource.
+
+Check [cards documentation](./cards) for more details.
+
+```ruby{9-19}
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+    field :email, as: :text
+    field :roles, as: :boolean_group, options: {admin: "Administrator", manager: "Manager", writer: "Writer"}
+  end
+
+  def cards
+    card Avo::Cards::ExampleAreaChart, cols: 3
+    card Avo::Cards::ExampleMetric, cols: 2
+    card Avo::Cards::ExampleMetric,
+      label: "Active users metric",
+      description: "Count of the active users.",
+      arguments: { active_users: true },
+      visible: -> { !resource.view.form? }
+  end
+end
 ```
-:::
+
+![Alt text](/assets/img/cards_on_resource.png)

@@ -6,13 +6,31 @@ There are a few ways to use the secret tokens in the Gemfile
 I'll use the `xxx-xxx-xxx` notiation instead of the actual gem server token which is a UUID
 :::
 
-## 1. Add them to your bundler configuration
+## 1. Use a bundler environment variable
 
-:::tip Recommendation
-This is the recommended way as you won't expose your gem server token in your version control system (git).
+:::info Recommendation
+This is the recommended way for most use cases.
 :::
 
-The best way to do it is to register the credentials before hand using the following command.
+The best way to do it is to register this environment variable so bundler knows to use it when pulling packages from [`packager.dev`](https://packager.dev).
+
+Each hosting service will have their own way to add environment variables. Check out how to do it on [Heroku](#Configure-Heroku) or [Hatchbox](#Configure-Hatchbox).
+
+```bash
+export BUNDLE_PACKAGER__DEV=xxx
+
+# or
+
+BUNDLE_PACKAGER__DEV=xxx bundle install
+```
+
+## 2. Add them to the default bundler configuration
+
+:::tip Recommendation
+This is a good to do it way as you won't expose your gem server token in your version control system (git).
+:::
+
+The second-best way to do it is to register the credentials before hand using the following command.
 
 This way `bundler` is aware of them without having to specify it in the `Gemfile`.
 
@@ -22,7 +40,7 @@ bundle config set --global https://packager.dev/avo-hq/ xxx-xxx
 
 <!-- @include: ./../common/link_to_record_common.md-->
 
-## 2. Export the variable before running `bundle install`
+## 3. Export the variable before running `bundle install`
 
 The second method is exposing the env variable to `bundler`. You can do that by adding it to your `.bashrc` or `.bash_profile` file or by running the command directly.
 
@@ -59,7 +77,7 @@ Now you can run `bundle install` and `bundler` will pick it up and use it to aut
 Using the credentials this way, they might be exposed in the terminal history and will be exposed in the `Gemfile.lock` file.
 :::
 
-## 3. Export the variable as you run `bundle install`
+## 4. Export the variable as you run `bundle install`
 
 The third way you can do it is to send it to the environment as you run `bundle install`.
 
@@ -87,7 +105,7 @@ gem "avo-advanced", source: "https://#{ENV['AVO_GEM_TOKEN']}@packager.dev/avo-hq
 Using the credentials this way, they might be exposed in the terminal history and will be exposed in the `Gemfile.lock` file.
 :::
 
-## Configure heroku
+## Configure Heroku
 
 If you're using heroku, you can set the environment variable using the following command. This way `bundler` will use it when authenticating to `packager.dev`.
 
