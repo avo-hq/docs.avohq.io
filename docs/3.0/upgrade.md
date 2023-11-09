@@ -4,6 +4,38 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.0.1.beta24 to 3.0.1.beta25
+
+:::option Attachments eager load
+
+Attachments are no longer automatically eager loading. If you want to eager load attachments there are at least two ways:
+
+### Use [`self.includes`](resources.html#self_includes) option
+
+```ruby
+class Avo::Resources::PhotoComment < Avo::BaseResource
+  self.includes = [:user, [photo_attachment: :blob]]
+
+  def fields
+    field :user, as: :belongs_to
+    field :photo, as: :file, is_image: true
+  end
+```
+
+### Use [`self.index_query`](customization.html#custom-scope-for-index-page) option
+```ruby
+class Avo::Resources::Product < Avo::BaseResource
+   self.index_query = -> {
+    query.includes image_attachment: :blob
+  }
+
+  def fields
+    field :image, as: :file, is_image: true
+  end
+```
+
+:::
+
 ## Upgrade from 3.0.1.beta23 to 3.0.1.beta24
 
 :::option Cards
