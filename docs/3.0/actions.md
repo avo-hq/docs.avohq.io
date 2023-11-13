@@ -461,6 +461,20 @@ Using the Pundit policies, you can restrict access to actions using the `act_on?
 More info [here](./authorization#act-on)
 :::
 
+The `self.authorization` attribute in action classes is handy when you need to manage authorization for actions. This attribute accepts either a boolean or a proc, allowing the incorporation of custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `action` object, hydrated with attributes such as `record`, `resource`, and `view`.
+
+If an action is unauthorized, it will remain visible but disabled, even when records are selected. If a bad actor attempts to proceed with the action, the controller will re-evaluate the authorization and block unauthorized requests.
+
+```ruby
+self.authorization = false
+
+# Or
+
+self.authorization = -> {
+  current_user.is_admin?
+}
+```
+
 ## Actions arguments
 
 Actions can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
