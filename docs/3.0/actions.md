@@ -503,3 +503,36 @@ class Avo::Actions::DummyAction < Avo::BaseAction
   end
 end
 ```
+
+## Action link
+
+You may want to dynamically generate an action link. For that you need the action class and a resource instance (with or without record hydrated). Call the action's class method `link_arguments` with the resource instance as argument and it will return the `[path, data]` that are necessary to create a proper link to a resource.
+
+Let's see an example use case:
+
+```ruby{15,16,17,18,20}
+field :name,
+  as: :text,
+  filterable: true,
+  name: "name (click to edit)",
+  only_on: :index do
+
+  arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
+    message: {
+      query: Marshal.dump(Array[resource.record]),
+      render_name: true
+    },
+    purpose: :action_arguments
+  )
+
+  path, data = Avo::Actions::City::Update.link_arguments(
+    resource: resource,
+    arguments: arguments
+  )
+
+  link_to resource.record.name, path, data: data
+
+end
+```
+
+![actions link demo](/assets/img/actions/action_link.gif)
