@@ -218,9 +218,9 @@ class Avo::Actions::City::PreUpdate < Avo::BaseAction
   end
 
   def handle(**args)
-    arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
+   arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
       message: {
-        query: Avo::Services::EncryptionService.encrypt(message: args[:query], purpose: :multiple_actions_flux, serializer: Marshal),
+        cities: args[:query].map(&:id),
         render_name: args[:fields][:name],
         render_population: args[:fields][:population]
       },
@@ -243,9 +243,7 @@ class Avo::Actions::City::Update < Avo::BaseAction
   end
 
   def handle(**args)
-    query = Avo::Services::EncryptionService.decrypt(message: arguments[:query], purpose: :multiple_actions_flux, serializer: Marshal)
-
-    query.each do |city|
+    City.find(arguments[:cities]).each do |city|
       city.update! args[:fields]
     end
 
@@ -517,3 +515,36 @@ class Avo::Actions::DummyAction < Avo::BaseAction
   end
 end
 ```
+
+## Action link
+
+You may want to dynamically generate an action link. For that you need the action class and a resource instance (with or without record hydrated). Call the action's class method `link_arguments` with the resource instance as argument and it will return the `[path, data]` that are necessary to create a proper link to a resource.
+
+Let's see an example use case:
+
+```ruby{15,16,17,18,20}
+field :name,
+  as: :text,
+  filterable: true,
+  name: "name (click to edit)",
+  only_on: :index do
+
+  arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
+    message: {
+      cities: Array[resource.record.id],
+      render_name: true
+    },
+    purpose: :action_arguments
+  )
+
+  path, data = Avo::Actions::City::Update.link_arguments(
+    resource: resource,
+    arguments: arguments
+  )
+
+  link_to resource.record.name, path, data: data
+
+end
+```
+
+![actions link demo](/assets/img/actions/action_link.gif)
