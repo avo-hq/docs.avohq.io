@@ -218,9 +218,9 @@ class Avo::Actions::City::PreUpdate < Avo::BaseAction
   end
 
   def handle(**args)
-    arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
+   arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
       message: {
-        query: Avo::Services::EncryptionService.encrypt(message: args[:query], purpose: :multiple_actions_flux, serializer: Marshal),
+        cities: args[:query].map(&:id),
         render_name: args[:fields][:name],
         render_population: args[:fields][:population]
       },
@@ -243,9 +243,7 @@ class Avo::Actions::City::Update < Avo::BaseAction
   end
 
   def handle(**args)
-    query = Avo::Services::EncryptionService.decrypt(message: arguments[:query], purpose: :multiple_actions_flux, serializer: Marshal)
-
-    query.each do |city|
+    City.find(arguments[:cities]).each do |city|
       city.update! args[:fields]
     end
 
@@ -519,7 +517,7 @@ field :name,
 
   arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
     message: {
-      query: Marshal.dump(Array[resource.record]),
+      cities: Array[resource.record.id],
       render_name: true
     },
     purpose: :action_arguments
