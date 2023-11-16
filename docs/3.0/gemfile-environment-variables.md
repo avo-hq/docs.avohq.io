@@ -3,7 +3,7 @@
 There are a few ways to use the secret tokens in the Gemfile
 
 :::info
-I'll use the `xxx-xxx-xxx` notiation instead of the actual gem server token which is a UUID
+I'll use the `xxx-xxx-xxx` notation instead of the actual gem server token which is a UUID
 :::
 
 ## 1. Use a bundler environment variable
