@@ -61,10 +61,6 @@ const config = {
     ['meta', { name:"msapplication-config", content:"/favicons/browserconfig.xml" }],
     ['meta', { name:"theme-color", content:"#ffffff" }],
   ],
-  rewrites: {
-    "/3.0/evaluation-host": "/3.0/execution-context",
-    "/3.0/gemfile-environment-variables": "/3.0/gem-server-authentication"
-  },
   themeConfig: {
     siteTitle: false,
     logo: "/logo.svg",
