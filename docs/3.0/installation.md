@@ -38,7 +38,7 @@ Take it step by step.
 <!-- @include: ./common/avo_in_gemfile.md-->
 
 :::info
-Please use [this guide](./gemfile-environment-variables.html) to find the best authentication strategy for your use-case.
+Please use [this guide](./gem-server-authentication.html) to find the best authentication strategy for your use-case.
 :::
 
 2. Run `bundle install`.

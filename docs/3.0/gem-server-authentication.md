@@ -18,13 +18,13 @@ This is the recommended way for most use cases.
 
 The best way to do it is to register this environment variable so bundler knows to use it when pulling packages from [`packager.dev`](https://packager.dev).
 
-Each hosting service will have their own way to add environment variables. Check out how to do it on [Heroku](#Configure-Heroku) or [Hatchbox](#Configure-Hatchbox).
-
 ```bash
 export BUNDLE_PACKAGER__DEV=xxx
 # or
 BUNDLE_PACKAGER__DEV=xxx bundle install
 ```
+
+Each hosting service will have their own way to add environment variables. Check out how to do it on [Heroku](#Configure-Heroku) or [Hatchbox](#Configure-Hatchbox).
 
 :::warning Warning about using the `.env` file
 You might be tempted to add the token to your `.env` file, as you might do with your Rails app.
