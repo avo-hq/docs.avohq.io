@@ -580,14 +580,14 @@ This is especially beneficial for large datasets, where displaying the total num
 # As block:
 self.pagination = -> do
   {
-    type: :normal,
+    type: :default,
     size: [1, 2, 2, 1],
   }
 end
 
 # Or as hash:
 self.pagination = {
-  type: :normal,
+  type: :default,
   size: [1, 2, 2, 1],
 }
 ```
@@ -596,9 +596,9 @@ The exposed pagination setting above have the default value for each key.
 
 ### `type`<br><br>
   #### Possible values
-  `:normal`, `:countless`
+  `:default`, `:countless`
   #### Default
-  `:normal`
+  `:default`
 
 
 ### `size`<br><br>
@@ -612,7 +612,7 @@ The exposed pagination setting above have the default value for each key.
 ```ruby
 self.pagination = -> do
   {
-    type: :normal,
+    type: :default,
     size: [1, 2, 2, 1],
   }
 end
