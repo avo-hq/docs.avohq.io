@@ -6,6 +6,12 @@ If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedica
 
 ## Upgrade from 3.0.1.beta24 to 3.0.1.beta25
 
+:::option Dashboards visibility and authorization
+Previously, if the `visible` attribute was set to `false` on dashboards, visiting them was impossible because the controller would trigger a "Not found" error. In cases where `authorize` returned `false`, the controller would block access but still keep the dashboard visible.
+
+This behavior has been enhanced. Now, even if `visible` is set to `false`, the dashboard remains accessible but won't appear in the menu. Additionally, if `authorize` returns `false`, the dashboards are now hidden.
+:::
+
 :::option Actions
 We've internally implemented some changes around actions to resolve certain bugs. No action is needed from your end, but if you happen to notice any anomalies in the actions flow, please get in touch with us so we can address them promptly. Thank you.
 :::
