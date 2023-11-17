@@ -20,23 +20,27 @@ For all the other gems we'll have `0.x` versions until we launch publicly.
 
 Avo 3 has been divided into various repositories and packages, organized by the specific feature or tier they are intended for. Within this structure, there are three main packages available: `avo`, `avo-pro`, and `avo-advanced`. Depending on your license, you need to manually include one of these packages in your `Gemfile`. Note that both `avo-pro` and `avo-advanced` come with additional packages that serve as their dependencies.
 
-## New features
+## New features & big changes
 
 - [Dynamic filters](./dynamic-filters)
+- [Custom controls on everywhere](./customizable-controls) (<Index />, <Show />, <Edit />,and `Row`)
+- [Resource scopes](./scopes)
+- [Custom fields from template](./eject-views.html#field_components)
+- [Custom resource view components](./resources.html#self_components) for <Index />, <Show />, and <Edit />
+- [Custom components for fields](./field-options.html#customizing-field-components-using-components-option)
+- [Intelligent `view` object](./views.html#checking-the-current-view) and new `display` view option
+- [Better TailwindCSS integration](./tailwindcss-integration.html)
+- [Cards on resources](./resources.html#cards)
+- [New `def fields` API](./fields)
+- [Plugins API](./plugins)
+- [Record preview on Index](./record-previews)
+- [Testing helpers](./testing#testing-helpers)
+- [Eject command improvements](./eject-views.html)
+- Intelligent resource title
+- License checking mechanism improvements
 - Dynamic fields (coming soon)
 - Nested record creation (coming soon)
 - Resource tools in fields (coming soon)
-- [New `def fields` API](./fields)
-- [Plugins API](./plugins)
-- New status page
-- [Custom controls on everywhere](./customizable-controls) (<Index />, <Show />, <Edit />,and `Row`)
-- [Resource scopes](./scopes)
-- [Record preview on Index](./record-previews)
-- [Testing helpers](./testing#testing-helpers)
-- Custom fields from template
-- Custom resource view components for <Index />, <Show />, and <Edit /> (coming soon)
-- Custom components for fields (coming soon)
-- Intelligent `view` variable and new `display` view option (coming soon)
 
 ## Feedback
 
