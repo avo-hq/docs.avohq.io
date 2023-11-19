@@ -145,11 +145,10 @@ class CourseResource < Avo::BaseResource
 end
 ```
 
-Unlike with the resource, Avo will not add a specific default controller for each type of the view (`index`, `show`, `edit`) as standalone actions are independent from the view type.
-
 The same way as for the resources, Avo will add stimulus target data attributes to [all field wrappers](#field-wrappers-as-targets) and [all input fields](#field-inputs-as-targets).
 
-The controllers will also, [as in case of resources](#all-controllers-receive-the-view-value), receive the `view` attribute in the DOM, so you can differentiate behavior of the controller based on that value in case you need it.
+Unlike with the resource, Avo will not add a specific default controller for each type of the view (`index`, `show`, `edit`) as standalone actions are independent from the view type.
+Same way, the controllers will not receive the `view` attribute in the DOM, [as in case of resources](#all-controllers-receive-the-view-value).
 
 ## Attach HTML attributes
 
