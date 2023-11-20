@@ -492,6 +492,14 @@ class Avo::Resources::Fish < Avo::BaseResource
     action DummyAction, arguments: {
       special_message: true
     }
+
+    # Or as a proc
+
+    action DummyAction, arguments: -> do
+      {
+        special_message: resource.view.index? && current_user.is_admin?
+      }
+    end
   end
 end
 ```

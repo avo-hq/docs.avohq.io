@@ -10,7 +10,6 @@ The Dynamic filters make it so easy to add multiple, composable, and dynamic fil
 The first thing you need to do is add the `filterable: true` attribute to the fields you need to filter through. We use `ransack` behind the scenes so it's essential to configure the `ransackable_attributes` list to ensure that every filterable field is incorporated within it.
 
 
-:::code-group
 ```ruby{4-6} [Fields]
 class Avo::Resources::Project < Avo::BaseResource
   def fields
@@ -22,14 +21,15 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-```ruby{3,9,12} [Ransackable attributes]
+Authorize ransackable_attributes
+```ruby{3,11}
 class Project < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     ["status", "stage", "country"]
   end
 end
 
-# Or
+# Or authorize ALL attributes at once
 
 class Project < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
@@ -37,7 +37,6 @@ class Project < ApplicationRecord
   end
 end
 ```
-:::
 
 This will make Avo add this new "Filters" button to the <Index /> view of your resource.
 
