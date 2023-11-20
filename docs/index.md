@@ -101,8 +101,11 @@ hero:
       text: Get Started
       link: /3.0/
     - theme: alt
-      text: Star on GitHub ⭐️
+      text: ⭐️ Star on GitHub
       link: https://github.com/avo-hq/avo
+    - theme: alt
+      text: 🚀 Upgrade from Avo 2 to Avo 3
+      link: /3.0/avo-2-avo-3-upgrade.html
     # - theme: brand
     #   text: Avo 3 docs 🧪
     #   link: /3.0/
