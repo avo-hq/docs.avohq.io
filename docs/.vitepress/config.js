@@ -93,7 +93,8 @@ const config = {
         {
           text: "Avo 3",
           items: [
-            {text: "👉 Intro 👈", link: "/3.0/avo-3.html"},
+            {text: "Intro", link: "/3.0/index.html"},
+            {text: "Avo 3", link: "/3.0/avo-3.html"},
             {text: "Upgrade guide", link: "/3.0/upgrade.html"},
             {text: "Avo 2 to Avo 3 upgrade", link: "/3.0/avo-2-avo-3-upgrade.html"},
             {text: "Technical Support", link: "/3.0/technical-support"},
