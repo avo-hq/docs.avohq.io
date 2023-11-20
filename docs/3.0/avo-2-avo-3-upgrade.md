@@ -1,6 +1,6 @@
 # Upgrade guide
 
-The upgrade process from Avo 2 to Avo 3 has quite a few steps, but you'll soon figure out that the API hasn't changed all that much. We moved a few things around and made others more consistend.
+The upgrade process from Avo 2 to Avo 3 has quite a few steps, but you'll soon figure out that the API hasn't changed all that much. We moved a few things around and made others more consistent.
 
 Depending on how you use Avo you might not need to do all the steps.
 
@@ -11,7 +11,7 @@ Avo now requires Ruby 3.0 and Rails 6.1
 :::
 
 :::info Ensure you have a token for `Pro` and `Advanced` versions.
-Avo 3 requires a new v3 license key. Your v2 license key won't work.
+Avo 3 requires a new v3 license key. Your v2 license key won't work. Please purchase and Avo 3 license from [avohq.io/pricing](https://avohq.io/pricing).
 :::
 
 :::info Upgrade from a v2 license to a v3 license
@@ -21,7 +21,7 @@ It goes like this:
 
 - you write to us at [upgrades@avohq.io](mailto:upgrades@avohq.io?subject=I%20want%20to%20upgrade%20my%20Avo%20v2%20subscription%20to%20a%20v3%20one&body=Hi%2C%0D%0A%0D%0AMy%20name%20is%20...%2C%20with%20the%20license%20key%20...%20and%20I%20would%20like%20to%20upgrade%20my%20subscription%20to%20v3.%0D%0A%0D%0AThank%20you%2C%0D%0A%0D%0AFind%20your%20license%20key%20at%20https%3A%2F%2Favohq.io%2Fsubscriptions.) and tell us you license key and that you want to upgrade
 - we'll cancel the v2 subscription and refund what's left
-- you get a new v3 license
+- you purchase a new v3 license from [avohq.io/pricing](https://avohq.io/pricing)
 - at this point you'll still have a 14-day grace period on your v2 license so your app continues to work until you upgrade your code to v3.
 :::
 
@@ -48,9 +48,13 @@ Next you should run the `bin/rails avo:upgrade:2_to_3` command and go through th
 
 Ideally, you'd run the command with a clean tree and then make the last adjustments manually. The command will tell you what those the last adjustments are that you have to do manually.
 
+When that command finished you can safely remove `gem "avo_upgrade"` from your `Gemfile`.
+
 ## Upgrade steps
 
 Each paragraph will guide you through the upgrade process for each individual change.
+
+Most of these steps are breaking changes so you'll need to apply them if you're using the feature.
 
 :::option Update your `Gemfile`
 The Avo gem comes in three flavors now. Community, Pro, or Advanced.
