@@ -1,5 +1,12 @@
 # Technical support
 
+This guide is split into to sections.
+
+1. Free support
+2. Paid support
+
+## • Free support
+
 Avo is designed to be a self-serve product with [comprehensive documentation](https://docs.avohq.io) and [demo apps](#demo-apps) as references.
 
 But, even the best of us get stuck at some point and you might need a nudge in the right direction. There are a few places where you can get help.
@@ -72,6 +79,16 @@ There are other more responsive private channels for our customers that need mor
 
 </div>
 
+## • Paid support
+
+Due to the nature of how time-consuming support is, we can't treat each issue the same or allocate the same amount of time.
+The policy is that if it's something simple that we can figure on the spot we will happily answer. If it's something we can reproduce really quick, we will do it and answer the inquiry.
+
+But there are times when we can't reproduce it quickly and more information is needed. That's when we'll ask you to provide a reproduction repository where we can troubleshoot the issue on our local machines quickly by (preferably) just running the app and going through a few provided steps.
+
+When none of the above can be run and the case requires pair programming sessions, we can offer those as a separate paid service.
+
+If you'd like to know more about that, please fill out [this form](https://forms.reform.app/ahahHs/technical-support-request/tk3fp0) or reach out to us on the [Discord server](https://avo.cool/chat).
 
 ## Demo apps
 
