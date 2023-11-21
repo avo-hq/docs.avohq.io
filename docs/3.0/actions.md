@@ -186,7 +186,7 @@ end
 :::
 :::option `redirect_to`
 
-`redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host` and `status` arguments.
+`redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host`, `status` and any other arguments.
 
 Example:
 `redirect_to path, allow_other_host: true, status: 303`
@@ -204,27 +204,62 @@ def handle(**args)
 end
 ```
 
+You may want to redirect to another action. Here's an example of how to create a multi-step process, passing arguments from one action to another.
+In this example the initial action prompts the user to select the fields they wish to update, and in the subsequent action, the chosen fields will be accessible for updating.
 
+:::code-group
+```ruby[PreUpdate]
+class Avo::Actions::City::PreUpdate < Avo::BaseAction
+  self.name = "Update"
 
-:::warning
-If you're redirecting to an external link you should add the `self.turbo = false` option in order to bypass [Turbo's navigation](https://turbo.hotwired.dev/handbook/drive#disabling-turbo-drive-on-specific-links-or-forms).
-:::
-
-:::option `turbo`
-There are times when you don't want to perform the actions with Turbo, such as when the action leads to an external link or you might download a file. In such cases, turbo should be set to false.
-
-```ruby{3,6}
-class Avo::Actions::DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-  self.turbo = false
+  def fields
+    field :name, as: :boolean
+    field :population, as: :boolean
+  end
 
   def handle(**args)
-    redirect_to "https://www.google.com/"
+   arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
+      message: {
+        cities: args[:query].map(&:id),
+        render_name: args[:fields][:name],
+        render_population: args[:fields][:population]
+      },
+      purpose: :action_arguments
+    )
+
+    redirect_to "/admin/resources/city/actions?action_id=Avo::Actions::City::Update&arguments=#{arguments}", turbo_frame: "actions_show"
   end
 end
 ```
+
+```ruby[Update]
+class Avo::Actions::City::Update < Avo::BaseAction
+  self.name = "Update"
+  self.visible = -> { false }
+
+  def fields
+    field :name, as: :text if arguments[:render_name]
+    field :population, as: :number if arguments[:render_population]
+  end
+
+  def handle(**args)
+    City.find(arguments[:cities]).each do |city|
+      city.update! args[:fields]
+    end
+
+    succeed "City updated!"
+  end
+end
+```
+
+:::info `turbo_frame`
+Notice the `turbo_frame: "actions_show"` present on the redirect of `Avo::Actions::City::PreUpdate` action. That argument is essential to have a flawless redirect between the actions.
 :::
 
+
+:::option `turbo`
+There are times when you don't want to perform the actions with Turbo. In such cases, turbo should be set to false.
+:::
 :::option `download`
 
 `download` will start a file download to your specified `path` and `filename`.
@@ -424,6 +459,20 @@ Using the Pundit policies, you can restrict access to actions using the `act_on?
 More info [here](./authorization#act-on)
 :::
 
+The `self.authorize` attribute in action classes is handy when you need to manage authorization for actions. This attribute accepts either a boolean or a proc, allowing the incorporation of custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `action` object, hydrated with attributes such as `record`, `resource`, and `view`.
+
+If an action is unauthorized, it will be hidden. If a bad actor attempts to proceed with the action, the controller will re-evaluate the authorization and block unauthorized requests.
+
+```ruby
+self.authorize = false
+
+# Or
+
+self.authorize = -> {
+  current_user.is_admin?
+}
+```
+
 ## Actions arguments
 
 Actions can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
@@ -443,6 +492,14 @@ class Avo::Resources::Fish < Avo::BaseResource
     action DummyAction, arguments: {
       special_message: true
     }
+
+    # Or as a proc
+
+    action DummyAction, arguments: -> do
+      {
+        special_message: resource.view.index? && current_user.is_admin?
+      }
+    end
   end
 end
 ```
@@ -466,3 +523,36 @@ class Avo::Actions::DummyAction < Avo::BaseAction
   end
 end
 ```
+
+## Action link
+
+You may want to dynamically generate an action link. For that you need the action class and a resource instance (with or without record hydrated). Call the action's class method `link_arguments` with the resource instance as argument and it will return the `[path, data]` that are necessary to create a proper link to a resource.
+
+Let's see an example use case:
+
+```ruby{15,16,17,18,20}
+field :name,
+  as: :text,
+  filterable: true,
+  name: "name (click to edit)",
+  only_on: :index do
+
+  arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
+    message: {
+      cities: Array[resource.record.id],
+      render_name: true
+    },
+    purpose: :action_arguments
+  )
+
+  path, data = Avo::Actions::City::Update.link_arguments(
+    resource: resource,
+    arguments: arguments
+  )
+
+  link_to resource.record.name, path, data: data
+
+end
+```
+
+![actions link demo](/assets/img/actions/action_link.gif)
