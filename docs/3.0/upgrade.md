@@ -4,9 +4,83 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
-## Upgrade to 3.0.1.beta20
+## Upgrade from 3.0.1.beta24 to 3.0.1.beta25
+
 :::option Sidebar should be declared inside a panel
 We introduced the `main_panel` option and also refactored the way that fields are fetched from the resource, now we allow multiple sidebars per panel but each sidebar should be defined inside a `panel` or `main_panel` block.
+
+We suggest to read [panels](resource-panels) and [sidebars](resource-sidebar) sections for more information and to be aware of the new possibilities.
+:::
+
+:::option Dashboards visibility and authorization
+Previously, if the `visible` attribute was set to `false` on dashboards, visiting them was impossible because the controller would trigger a "Not found" error. In cases where `authorize` returned `false`, the controller would block access but still keep the dashboard visible.
+
+This behavior has been enhanced. Now, even if `visible` is set to `false`, the dashboard remains accessible but won't appear in the menu. Additionally, if `authorize` returns `false`, the dashboards are now hidden.
+:::
+
+:::option Actions
+We've internally implemented some changes around actions to resolve certain bugs. No action is needed from your end, but if you happen to notice any anomalies in the actions flow, please get in touch with us so we can address them promptly. Thank you.
+:::
+
+:::option Attachments eager load
+
+Attachments are no longer automatically eager loading. If you want to eager load attachments there are at least two ways:
+
+### Use [`self.includes`](resources.html#self_includes) option
+
+```ruby
+class Avo::Resources::PhotoComment < Avo::BaseResource
+  self.includes = [:user, [photo_attachment: :blob]]
+
+  def fields
+    field :user, as: :belongs_to
+    field :photo, as: :file, is_image: true
+  end
+```
+
+### Use [`self.index_query`](customization.html#custom-scope-for-index-page) option
+```ruby
+class Avo::Resources::Product < Avo::BaseResource
+   self.index_query = -> {
+    query.includes image_attachment: :blob
+  }
+
+  def fields
+    field :image, as: :file, is_image: true
+  end
+```
+
+:::
+
+## Upgrade from 3.0.1.beta23 to 3.0.1.beta24
+
+:::option Cards
+With the new feature that allow [cards on resources](resources.html#cards)  we've realized that it's no longer logical to retain cards within the `Dashboard` namespace scope. Consequently, each card is now located within the `Avo::Cards` namespace.
+
+```ruby
+# Before
+class Avo::Cards::AmountRaised < Avo::Dashboards::MetricCard
+class Avo::Cards::ExampleAreaChart < Avo::Dashboards::ChartkickCard
+class Avo::Cards::ExampleBarChart < Avo::Dashboards::ChartkickCard
+# ...
+
+# After
+class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
+class Avo::Cards::ExampleAreaChart < Avo::Cards::ChartkickCard
+class Avo::Cards::ExampleBarChart < Avo::Cards::ChartkickCard
+# ...
+
+```
+:::
+
+
+## Upgrade from 3.0.1.beta22 to 3.0.1.beta23
+:::option Caching
+Since there are many available cache stores and we were allowing only few we changed the way of computing the cache store to be used by Avo.
+
+One of our concerns was to maintain the status quo, but if you notice any caching issues there is a new configurable option [`config.cache_store`](cache#custom-selection) that allows you to tell Avo what `cache_store` to use.
+
+Check [cache page](cache) for more details.
 :::
 
 ## Upgrade from 3.0.1.beta8 to 3.0.1.beta9

@@ -7,17 +7,33 @@ license: advanced
 
 The Dynamic filters make it so easy to add multiple, composable, and dynamic filters to the <Index /> view.
 
-The only thing you need to do is add the `filterable: true` attribute to the fields you need to filter through.
+The first thing you need to do is add the `filterable: true` attribute to the fields you need to filter through. We use `ransack` behind the scenes so it's essential to configure the `ransackable_attributes` list to ensure that every filterable field is incorporated within it.
 
-```ruby{6-8}
+
+```ruby{4-6} [Fields]
 class Avo::Resources::Project < Avo::BaseResource
-  self.title = :name
-
   def fields
     field :name, as: :text
     field :status, as: :status, filterable: true
     field :stage, as: :badge, filterable: true
     field :country, as: :country, filterable: true
+  end
+end
+```
+
+Authorize ransackable_attributes
+```ruby{3,11}
+class Project < ApplicationRecord
+  def self.ransackable_attributes(auth_object = nil)
+    ["status", "stage", "country"]
+  end
+end
+
+# Or authorize ALL attributes at once
+
+class Project < ApplicationRecord
+  def self.ransackable_attributes(auth_object = nil)
+    authorizable_ransackable_attributes
   end
 end
 ```
@@ -103,6 +119,23 @@ This filter will give you options from the database.
  - Is present
  - Is blank
 :::
+
+::::option Array
+
+Used on `tags` fields.
+
+### Conditions
+
+ - Are
+ - Contains
+ - Overlap
+ - Contained in
+
+:::warning
+This will only work with database array columns, not when using the `acts-as-taggable-on` gem.
+:::
+
+::::
 
 ## Options
 
