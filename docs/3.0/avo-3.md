@@ -36,7 +36,7 @@ We made
 - Nested record creation (coming soon)
 - Resource tools in fields (coming soon)
 
-## Is Avo a finished product?
+## What are we working on next?
 
 Avo 3 is not finished yet. We will continue to provide the same cadence of one release every two weeks you are used to. Some the things we want to focus on in the near future are:
 
