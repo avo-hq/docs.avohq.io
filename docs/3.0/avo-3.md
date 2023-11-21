@@ -4,19 +4,6 @@ Avo 3 is the version of Avo we always wanted to build. It condenses all the lear
 
 We would like to thank our community for all the support they've given and all the feedback and contributions!
 
-## Is Avo a finished product?
-
-Avo 3 is not finished yet. We will continue to provide the same cadence of one release every two weeks you are used to. Some the things we want to focus on in the near future are:
-
-- Theming
-- Improvements to the dynamic filters
-- Custom resource adapters
-- Dynamic fields
-- Nested records creation
-- Resource tool in fields
-
-Please follow our [Roadmap](https://avohq.io/roadmap) for more information about that.
-
 ## Changes
 
 You'll find all the new changes in the [Avo 2 to Avo 3 upgrade section](./avo-2-avo-3-upgrade.html).
@@ -48,6 +35,19 @@ We made
 - Dynamic fields (coming soon)
 - Nested record creation (coming soon)
 - Resource tools in fields (coming soon)
+
+## Is Avo a finished product?
+
+Avo 3 is not finished yet. We will continue to provide the same cadence of one release every two weeks you are used to. Some the things we want to focus on in the near future are:
+
+- Theming
+- Improvements to the dynamic filters
+- Custom resource adapters
+- Dynamic fields
+- Nested records creation
+- Resource tool in fields
+
+Please follow our [Roadmap](https://avohq.io/roadmap) for more information about that.
 
 ## Repos and packages
 
