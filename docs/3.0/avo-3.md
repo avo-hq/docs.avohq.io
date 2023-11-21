@@ -35,10 +35,14 @@ We made
 - [Better TailwindCSS integration](./tailwindcss-integration.html)
 - [Resource Cards](./resources.html#cards)
 - [New `def fields` API](./fields)
+- [New `def index|show|edit_fields` API](./fields.html#specific-methods-for-each-view)
 - [Plugins API](./plugins)
 - [Record preview on Index](./record-previews)
 - [Testing helpers](./testing#testing-helpers)
 - [Eject command improvements](./eject-views.html)
+- [Panel layout improvements](./resource-panels.html)
+- [Action link generator](./actions.html#action-link)
+- Multiple actions flows
 - Intelligent resource title
 - License checking mechanism improvements
 - Dynamic fields (coming soon)
