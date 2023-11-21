@@ -59,6 +59,12 @@ If nothing is selected, the browser's timezone will be used.
 #### Possible values
 
 [TZInfo identifiers](https://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html).
+
+```ruby{1,3}
+field :started_at, as: :date_time, timezone: "EET"
+# Or
+field :started_at, as: :date_time, timezone: -> { record.timezone }
+```
 :::
 
 :::option `picker_options`
