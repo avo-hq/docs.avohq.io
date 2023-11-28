@@ -443,3 +443,22 @@ end
 
 ![](/assets/img/customization/skip_show_view.gif)
 
+## Logger
+
+You may want to set a different output stream for avo logs, you can do that by returning it on a `config.logger` Proc
+
+```ruby
+## == Logger ==
+config.logger = -> {
+  file_logger = ActiveSupport::Logger.new(Rails.root.join("log", "avo.log"))
+
+  file_logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+  file_logger.formatter = proc do |severity, time, progname, msg|
+    "[Avo] #{time}: #{msg}\n".tap do |i|
+      puts i
+    end
+  end
+
+  file_logger
+}
+```
