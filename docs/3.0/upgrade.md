@@ -4,7 +4,7 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
-## Upgrade from 3.0.1.beta24 to 3.0.1.beta25
+## Upgrade from 3.0.1.beta24 to 3.0.2
 
 :::option Sidebar should be declared inside a panel
 We introduced the `main_panel` option and also refactored the way that fields are fetched from the resource, now we allow multiple sidebars per panel but each sidebar should be defined inside a `panel` or `main_panel` block.
