@@ -62,7 +62,7 @@ Any string.
 
 <!-- @include: ./../common/associations_use_resource_option_common.md-->
 
-:::option `allow_creation`
+:::option `can_create`
 Controls the creation link visibility on forms.
 
 #### Default
