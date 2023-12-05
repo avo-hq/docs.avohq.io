@@ -132,7 +132,7 @@ The possible values are `index`, `show`, `edit`, or `new`
 Similarly as to resource, you can assign stimulus controller to an action. To do that you can use the `stimulus_controllers` option on the action file.
 
 ```ruby
-class ShowCurrentTime < Avo::BaseAction
+class Avo::Actions::ShowCurrentTime < Avo::BaseAction
   self.stimulus_controllers = "city-in-country"
 end
 ```
