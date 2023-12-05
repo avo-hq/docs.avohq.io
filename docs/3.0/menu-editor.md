@@ -2,7 +2,7 @@
 feedbackId: 831
 demoVideo: https://youtu.be/VMvG-j1Vxio
 license: pro
-version: '2.3.0'
+version: "2.3.0"
 ---
 
 # Menu editor
@@ -96,6 +96,7 @@ Link to is the menu item that the user will probably interact with the most. It 
 ```ruby
 link_to "Google", path: "https://google.com", target: :_blank
 ```
+
 <img :src="('/assets/img/menu-editor/external-link.jpg')" alt="Avo menu editor" class="border mb-4" />
 
 When you add the `target: :_blank` option, a tiny external link icon will be displayed.
@@ -117,6 +118,17 @@ You can also change the label for the `resource` items to something else.
 
 ```ruby
 resource :posts, label: "News posts"
+```
+
+Additionally, you can pass the `params` option to the `resource` items to add query params to the link.
+
+```ruby
+resource :posts, params: { status: "published" }
+resource :users, params: -> do
+  decoded_filter = {"IsAdmin"=>["non_admins"]}
+
+  { filters: Avo::Filters::BaseFilter.encode_filters(decoded_filter)}
+end
 ```
 
 :::
@@ -180,6 +192,7 @@ section "App", icon: "heroicons/outline/beaker" do
   end
 end
 ```
+
 :::
 
 :::option `all_dashboards`
@@ -192,6 +205,7 @@ section "App", icon: "heroicons/outline/beaker" do
   end
 end
 ```
+
 :::
 
 :::option `all_tools`
@@ -204,6 +218,7 @@ section "App", icon: "heroicons/outline/beaker" do
   end
 end
 ```
+
 :::
 
 ### `all_` helpers
@@ -230,15 +245,14 @@ The `all_resources` helper is taking into account your [authorization](./authori
 
 <img :src="('/assets/img/menu-editor/all-helpers.jpg')" alt="Avo menu editor" class="border mb-4" />
 
-
 ## Item visibility
 
 The `visible` option is available on all menu items. It can be a boolean or a block that has access to a few things:
 
-  - the `current_user`. Given that you [set a way](authentication.html#customize-the-current-user-method) for Avo to know who the current user is, that will be available in that block call
-  - the [`context`](customization.html#context) object.
-  - the `params` object of that current request
-  - the [`view_context`](https://apidock.com/rails/AbstractController/Rendering/view_context) object. The `view_context` object lets you use the route helpers. eg: `view_context.main_app.posts_path`.
+- the `current_user`. Given that you [set a way](authentication.html#customize-the-current-user-method) for Avo to know who the current user is, that will be available in that block call
+- the [`context`](customization.html#context) object.
+- the `params` object of that current request
+- the [`view_context`](https://apidock.com/rails/AbstractController/Rendering/view_context) object. The `view_context` object lets you use the route helpers. eg: `view_context.main_app.posts_path`.
 
 ```ruby
 # config/initializers/avo.rb
@@ -281,7 +295,6 @@ Avo.configure do |config|
   }
 end
 ```
-
 
 ## Icons
 
@@ -381,7 +394,6 @@ end
 ## Forms in profile menu
 
 It's common to have forms that `POST` to a path to do sign ut a user. For this scenario we added the `method` and `params` option to the profile item `link_to`, so if you have a custom sign out path you can do things like this.
-
 
 ```ruby
 # config/initializers/avo.rb

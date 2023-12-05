@@ -675,7 +675,8 @@ self.components = {
 This way you can choose the whatever namespace structure you want and you assure that the initializer is accepting the right arguments.
 
 
-## Unscoped queries on `Index`
+:::option self.index_query
+### Unscoped queries on `Index`
 You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.
 ```ruby{2}
 class Project < ApplicationRecord
@@ -691,3 +692,110 @@ class Avo::Resources::Project < Avo::BaseResource
   self.index_query = -> { query.unscoped }
 end
 ```
+
+## Cards
+
+Use the `def cards` method to add some cards to your resource.
+
+Check [cards documentation](./cards) for more details.
+
+```ruby{9-19}
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+    field :email, as: :text
+    field :roles, as: :boolean_group, options: {admin: "Administrator", manager: "Manager", writer: "Writer"}
+  end
+
+  def cards
+    card Avo::Cards::ExampleAreaChart, cols: 3
+    card Avo::Cards::ExampleMetric, cols: 2
+    card Avo::Cards::ExampleMetric,
+      label: "Active users metric",
+      description: "Count of the active users.",
+      arguments: { active_users: true },
+      visible: -> { !resource.view.form? }
+  end
+end
+```
+
+![Alt text](/assets/img/cards_on_resource.png)
+
+:::option self.pagination
+<VersionReq version="2.45" />
+This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
+
+By setting `self.pagination[:type]` to `:countless`, you can disable the pagination count on the index page.
+
+This is especially beneficial for large datasets, where displaying the total number of items and pages may have some performance impact.
+
+```ruby
+# As block:
+self.pagination = -> do
+  {
+    type: :default,
+    size: [1, 2, 2, 1],
+  }
+end
+
+# Or as hash:
+self.pagination = {
+  type: :default,
+  size: [1, 2, 2, 1],
+}
+```
+
+The exposed pagination setting above have the default value for each key.
+
+### `type`<br><br>
+  #### Possible values
+  `:default`, `:countless`
+  #### Default
+  `:default`
+
+
+### `size`<br><br>
+  #### Possible values
+  [Pagy docs - Control the page links](https://ddnexus.github.io/pagy/docs/how-to/#control-the-page-links)
+  #### Default
+  `[1, 2, 2, 1]`
+
+### Examples
+#### Default
+```ruby
+self.pagination = -> do
+  {
+    type: :default,
+    size: [1, 2, 2, 1],
+  }
+end
+```
+
+![Default pagination](/assets/img/resources/pagination/default.png)
+<br><br>
+
+#### Countless
+
+```ruby
+self.pagination = -> do
+  {
+    type: :countless
+  }
+end
+```
+
+![Countless pagination](/assets/img/resources/pagination/countless.png)
+<br><br>
+
+#### Countless and "pageless"
+```ruby
+self.pagination = -> do
+  {
+    type: :countless,
+    size: []
+  }
+end
+```
+![Countless pagination size empty](/assets/img/resources/pagination/countless_empty_size.png)
+:::
