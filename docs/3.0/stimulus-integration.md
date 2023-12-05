@@ -682,7 +682,7 @@ export default class extends Controller {
 
 ```js
 // app/javascript/avo.custom.js
-import SampleController from "./controllers/sample_controller";
+import SampleController from 'controllers/sample_controller'
 
 // Hook into the stimulus instance provided by Avo
 const application = window.Stimulus;

@@ -61,9 +61,6 @@ const config = {
     ['meta', { name:"msapplication-config", content:"/favicons/browserconfig.xml" }],
     ['meta', { name:"theme-color", content:"#ffffff" }],
   ],
-  rewrites: {
-    "/3.0/evaluation-host": "/3.0/execution-context"
-  },
   themeConfig: {
     siteTitle: false,
     logo: "/logo.svg",
@@ -81,9 +78,9 @@ const config = {
     },
     nav: [
       {text: "Home", link: "/"},
-      {text: "Docs", link: "/2.0/index.html"},
-      {text: "Recipes", link: "/2.0/recipes"},
-      {text: "FAQ", link: "/2.0/faq"},
+      {text: "Docs", link: "/3.0/index.html"},
+      {text: "Recipes", link: "/3.0/recipes"},
+      {text: "FAQ", link: "/3.0/faq"},
       {text: "Team", link: "/team.html"},
       {text: "Version", items: [
         {text: "3.0", link: "/3.0/index.html"},
@@ -96,7 +93,8 @@ const config = {
         {
           text: "Avo 3",
           items: [
-            {text: "👉 Intro 👈", link: "/3.0/avo-3.html"},
+            {text: "Intro", link: "/3.0/index.html"},
+            {text: "Avo 3", link: "/3.0/avo-3.html"},
             {text: "Upgrade guide", link: "/3.0/upgrade.html"},
             {text: "Avo 2 to Avo 3 upgrade", link: "/3.0/avo-2-avo-3-upgrade.html"},
             {text: "Technical Support", link: "/3.0/technical-support"},
@@ -115,9 +113,10 @@ const config = {
           text: "Configuration",
           items: [
             {text: "Installation", link: "/3.0/installation"},
-            {text: "Gem server authentication", link: "/3.0/gemfile-environment-variables"},
+            {text: "Gem server authentication", link: "/3.0/gem-server-authentication"},
             {text: "Authentication", link: "/3.0/authentication"},
             {text: "Authorization", link: "/3.0/authorization"},
+            {text: "Cache", link: "/3.0/cache"},
           ],
         },
         {
@@ -131,8 +130,9 @@ const config = {
             {text: "Scopes", link: "/3.0/scopes"},
             {text: "Views", link: "/3.0/views"},
             {text: "Records reordering", link: "/3.0/records-reordering"},
-            {text: "Tabs and panels", link: "/3.0/tabs"},
             {text: "Resource sidebar", link: "/3.0/resource-sidebar"},
+            {text: "Resource panels", link: "/3.0/resource-panels"},
+            {text: "Resource tabs", link: "/3.0/tabs"},
             {text: "Customizable controls", link: "/3.0/customizable-controls"},
           ],
         },
@@ -194,6 +194,7 @@ const config = {
             {text: "Resource tools", link: "/3.0/resource-tools"},
             {text: "Stimulus JS integration", link: "/3.0/stimulus-integration"},
             {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline"},
+            {text: "TailwindCSS integration", link: "/3.0/tailwindcss-integration"},
           ],
         },
         {
@@ -240,6 +241,7 @@ const config = {
             {text: "Installation", link: "/2.0/installation"},
             {text: "Authentication", link: "/2.0/authentication"},
             {text: "Authorization", link: "/2.0/authorization"},
+            {text: "Cache", link: "/2.0/cache"},
           ],
         },
         {
