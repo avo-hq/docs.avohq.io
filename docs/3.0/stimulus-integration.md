@@ -127,12 +127,12 @@ export default class extends Controller {
 
 The possible values are `index`, `show`, `edit`, or `new`
 
-## Assign Stimulus controllers to standalone actions
+## Assign Stimulus controllers to actions
 
-Similarly as to resource, you can assign stimulus controller to a standalone action (action that has some embedded form). To do that you can use the `stimulus_controllers` option on the action file.
+Similarly as to resource, you can assign stimulus controller to an action. To do that you can use the `stimulus_controllers` option on the action file.
 
 ```ruby
-class Avo::Actions::ShowCurrentTime < Avo::BaseAction
+class ShowCurrentTime < Avo::BaseAction
   self.stimulus_controllers = "city-in-country"
 end
 ```
@@ -140,14 +140,14 @@ end
 You can add more and separate them by a space character.
 
 ```ruby
-class Avo::Actions::ShowCurrentTime < Avo::BaseAction
-  self.stimulus_controllers = "city-in-country select-field association-fields"
+class ShowCurrentTime < Avo::BaseAction
+  self.stimulus_controllers = "course-resource select-field association-fields"
 end
 ```
 
 The same way as for the resources, Avo will add stimulus target data attributes to [all field wrappers](#field-wrappers-as-targets) and [all input fields](#field-inputs-as-targets).
 
-Unlike with the resource, Avo will not add a specific default controller for each type of the view (`index`, `show`, `edit`) as standalone actions are independent from the view type.
+Unlike with the resource, Avo will not add a specific default controller for each type of the view (`index`, `show`, `edit`).
 Same way, the controllers will not receive the `view` attribute in the DOM, [as in case of resources](#all-controllers-receive-the-view-value).
 
 ## Attach HTML attributes
@@ -682,7 +682,7 @@ export default class extends Controller {
 
 ```js
 // app/javascript/avo.custom.js
-import SampleController from 'controllers/sample_controller'
+import SampleController from "controllers/sample_controller";
 
 // Hook into the stimulus instance provided by Avo
 const application = window.Stimulus;
