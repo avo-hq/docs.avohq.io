@@ -1,6 +1,6 @@
 ---
 feedbackId: 943
-version: '2.8'
+version: "2.8"
 demoVideo: https://www.youtube.com/watch?v=ZMOz22FaAUg
 betaStatus: Beta
 ---
@@ -126,6 +126,29 @@ export default class extends Controller {
 ```
 
 The possible values are `index`, `show`, `edit`, or `new`
+
+## Assign Stimulus controllers to standalone actions
+
+Similarly as to resource, you can assign stimulus controller to a standalone action (action that has some embedded form). To do that you can use the `stimulus_controllers` option on the action file.
+
+```ruby
+class ShowCurrentTime < Avo::BaseAction
+  self.stimulus_controllers = "city-in-country"
+end
+```
+
+You can add more and separate them by a space character.
+
+```ruby
+class CourseResource < Avo::BaseResource
+  self.stimulus_controllers = "course-resource select-field association-fields"
+end
+```
+
+The same way as for the resources, Avo will add stimulus target data attributes to [all field wrappers](#field-wrappers-as-targets) and [all input fields](#field-inputs-as-targets).
+
+Unlike with the resource, Avo will not add a specific default controller for each type of the view (`index`, `show`, `edit`) as standalone actions are independent from the view type.
+Same way, the controllers will not receive the `view` attribute in the DOM, [as in case of resources](#all-controllers-receive-the-view-value).
 
 ## Attach HTML attributes
 
@@ -346,13 +369,13 @@ You can use the attributes together to make your fields more dynamic.
 
 ```js
 // toggle_fields_controller.js
-import { Controller } from '@hotwired/stimulus'
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ['skillsTagsWrapper'] // use the target Avo prepared for you
+  static targets = ["skillsTagsWrapper"]; // use the target Avo prepared for you
 
   toggleSkills() {
-    this.skillsTagsWrapperTarget.classList.toggle('hidden')
+    this.skillsTagsWrapperTarget.classList.toggle("hidden");
   }
 }
 ```
@@ -521,48 +544,50 @@ end
 ```
 
 ```js [course_resource_controller.js]
-import { Controller } from '@hotwired/stimulus'
+import { Controller } from "@hotwired/stimulus";
 
-const LOADER_CLASSES = 'absolute bg-gray-100 opacity-10 w-full h-full'
+const LOADER_CLASSES = "absolute bg-gray-100 opacity-10 w-full h-full";
 
 export default class extends Controller {
-  static targets = ['countryFieldInput', 'cityFieldInput', 'citySelectWrapper'];
+  static targets = ["countryFieldInput", "cityFieldInput", "citySelectWrapper"];
 
   static values = {
     view: String,
-  }
+  };
 
   // Te fields initial value
-  static initialValue
+  static initialValue;
 
   get placeholder() {
-    return this.cityFieldInputTarget.ariaPlaceholder
+    return this.cityFieldInputTarget.ariaPlaceholder;
   }
 
   set loading(isLoading) {
     if (isLoading) {
       // create a loader overlay
-      const loadingDiv = document.createElement('div')
-      loadingDiv.className = LOADER_CLASSES
-      loadingDiv.dataset.target = 'city-loader'
+      const loadingDiv = document.createElement("div");
+      loadingDiv.className = LOADER_CLASSES;
+      loadingDiv.dataset.target = "city-loader";
 
       // add the loader overlay
-      this.citySelectWrapperTarget.prepend(loadingDiv)
-      this.citySelectWrapperTarget.classList.add('opacity-50')
+      this.citySelectWrapperTarget.prepend(loadingDiv);
+      this.citySelectWrapperTarget.classList.add("opacity-50");
     } else {
       // remove the loader overlay
-      this.citySelectWrapperTarget.querySelector('[data-target="city-loader"]').remove()
-      this.citySelectWrapperTarget.classList.remove('opacity-50')
+      this.citySelectWrapperTarget
+        .querySelector('[data-target="city-loader"]')
+        .remove();
+      this.citySelectWrapperTarget.classList.remove("opacity-50");
     }
   }
 
   async connect() {
     // Add the controller functionality only on forms
-    if (['edit', 'new'].includes(this.viewValue)) {
-      this.captureTheInitialValue()
+    if (["edit", "new"].includes(this.viewValue)) {
+      this.captureTheInitialValue();
 
       // Trigger the change on load
-      await this.onCountryChange()
+      await this.onCountryChange();
     }
   }
 
@@ -571,31 +596,34 @@ export default class extends Controller {
   async onCountryChange() {
     if (this.hasCountryFieldInputTarget && this.countryFieldInputTarget) {
       // Get the country
-      const country = this.countryFieldInputTarget.value
+      const country = this.countryFieldInputTarget.value;
       // Dynamically fetch the cities for this country
-      const cities = await this.fetchCitiesForCountry(country)
+      const cities = await this.fetchCitiesForCountry(country);
 
       // Clear the select of options
       Object.keys(this.cityFieldInputTarget.options).forEach(() => {
-        this.cityFieldInputTarget.options.remove(0)
-      })
+        this.cityFieldInputTarget.options.remove(0);
+      });
 
       // Add blank option
-      this.cityFieldInputTarget.add(new Option(this.placeholder))
+      this.cityFieldInputTarget.add(new Option(this.placeholder));
 
       // Add the new cities
       cities.forEach((city) => {
-        this.cityFieldInputTarget.add(new Option(city, city))
-      })
+        this.cityFieldInputTarget.add(new Option(city, city));
+      });
 
       // Check if the initial value is present in the cities array and select it.
       // If not, select the first item
-      const currentOptions = Array.from(this.cityFieldInputTarget.options).map((item) => item.value)
+      const currentOptions = Array.from(this.cityFieldInputTarget.options).map(
+        (item) => item.value
+      );
       if (currentOptions.includes(this.initialValue)) {
-        this.cityFieldInputTarget.value = this.initialValue
+        this.cityFieldInputTarget.value = this.initialValue;
       } else {
         // Select the first item
-        this.cityFieldInputTarget.value = this.cityFieldInputTarget.options[0].value
+        this.cityFieldInputTarget.value =
+          this.cityFieldInputTarget.options[0].value;
       }
     }
   }
@@ -603,24 +631,24 @@ export default class extends Controller {
   // Private
 
   captureTheInitialValue() {
-    this.initialValue = this.cityFieldInputTarget.value
+    this.initialValue = this.cityFieldInputTarget.value;
   }
 
   async fetchCitiesForCountry(country) {
     if (!country) {
-      return []
+      return [];
     }
 
-    this.loading = true
+    this.loading = true;
 
     const response = await fetch(
-      `${window.Avo.configuration.root_path}/resources/courses/cities?country=${country}`,
-    )
-    const data = await response.json()
+      `${window.Avo.configuration.root_path}/resources/courses/cities?country=${country}`
+    );
+    const data = await response.json();
 
-    this.loading = false
+    this.loading = false;
 
-    return data
+    return data;
   }
 }
 ```
@@ -641,11 +669,11 @@ First, you need to have a JS entrypoint (ex: `avo.custom.js`) and have that load
 
 ```js
 // app/javascript/controllers/sample_controller.js
-import { Controller } from '@hotwired/stimulus'
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   connect() {
-    console.log("Hey from sample controller 👋")
+    console.log("Hey from sample controller 👋");
   }
 }
 ```
@@ -657,11 +685,11 @@ export default class extends Controller {
 import SampleController from 'controllers/sample_controller'
 
 // Hook into the stimulus instance provided by Avo
-const application = window.Stimulus
-application.register('course-resource', SampleController)
+const application = window.Stimulus;
+application.register("course-resource", SampleController);
 
 // eslint-disable-next-line no-console
-console.log('Hi from Avo custom JS 👋')
+console.log("Hi from Avo custom JS 👋");
 ```
 
 ### Use the controller in the Avo tool
