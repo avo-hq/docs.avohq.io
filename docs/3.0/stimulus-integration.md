@@ -140,7 +140,7 @@ end
 You can add more and separate them by a space character.
 
 ```ruby
-class ShowCurrentTime < Avo::BaseAction
+class Avo::Actions::ShowCurrentTime < Avo::BaseAction
   self.stimulus_controllers = "course-resource select-field association-fields"
 end
 ```
