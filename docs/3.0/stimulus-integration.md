@@ -132,7 +132,7 @@ The possible values are `index`, `show`, `edit`, or `new`
 Similarly as to resource, you can assign stimulus controller to a standalone action (action that has some embedded form). To do that you can use the `stimulus_controllers` option on the action file.
 
 ```ruby
-class ShowCurrentTime < Avo::BaseAction
+class Avo::Actions::ShowCurrentTime < Avo::BaseAction
   self.stimulus_controllers = "city-in-country"
 end
 ```
@@ -140,8 +140,8 @@ end
 You can add more and separate them by a space character.
 
 ```ruby
-class CourseResource < Avo::BaseResource
-  self.stimulus_controllers = "course-resource select-field association-fields"
+class Avo::Actions::ShowCurrentTime < Avo::BaseAction
+  self.stimulus_controllers = "city-in-country select-field association-fields"
 end
 ```
 
