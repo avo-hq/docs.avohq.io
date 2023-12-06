@@ -62,6 +62,18 @@ Any string.
 
 <!-- @include: ./../common/associations_use_resource_option_common.md-->
 
+:::option `can_create`
+Controls the creation link visibility on forms.
+
+#### Default
+
+`true`
+
+#### Possible values
+
+`true`, `false`
+:::
+
 ## Overview
 
 On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`@title`](./../resources.html#setting-the-title-of-the-resource) value.
