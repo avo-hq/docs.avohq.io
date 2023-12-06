@@ -1,5 +1,5 @@
 ```ruby
-# Aadd one of the following in your Gemfile depending on the tier you are on.
+# Add one of the following in your Gemfile depending on the tier you are on.
 
 # Avo Community
 gem 'avo', '~> 3.0', '>= 3.0.2'
