@@ -46,11 +46,11 @@ The tab `name` is mandatory is what will be displayed on the tab switcher. The t
 
 ## Tabs on Show view
 
-Tabs have more than an aesthetic function. They have a performance function too. On the `Show` page, if you have a lot of `has_many` type of fields or tools, they won't load right away, making it a bit more lightweight for your Rails app. Instead, they will lazy-load only when they are displayed.
+Tabs have more than an aesthetic function. They have a performance function too. On the <Show /> page, if you have a lot of `has_many` type of fields or tools, they won't load right away, making it a bit more lightweight for your Rails app. Instead, they will lazy-load only when they are displayed.
 
 ## Tabs on Edit view
 
-All visibility rules still apply on' Edit', meaning that `has_*` fields will be hidden by default. However, you can enable them by adding `show_on: :edit`. All other fields will be loaded and hidden on page load. This way, when you submit a form, if you have validation rules in place requiring a field that's in a hidden tab, it will be present on the page on submit-time.
+All visibility rules still apply on <Edit />, meaning that `has_*` fields will be hidden by default. However, you can enable them by adding `show_on: :edit`. All other fields will be loaded and hidden on page load. This way, when you submit a form, if you have validation rules in place requiring a field that's in a hidden tab, it will be present on the page on submit-time.
 
 <!-- The panel has a few parts available -->
 
