@@ -29,6 +29,7 @@ We made
 - [Eject command improvements](./eject-views.html)
 - [Panel layout improvements](./resource-panels.html)
 - [Action link generator](./actions.html#action-link)
+- [StimulusJS in actions](./actions.html#stimulusjs)
 - Multiple actions flows
 - Intelligent resource title
 - License checking mechanism improvements
