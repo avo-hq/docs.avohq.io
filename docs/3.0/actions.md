@@ -556,3 +556,7 @@ end
 ```
 
 ![actions link demo](/assets/img/actions/action_link.gif)
+
+## StimulusJS
+
+Please follow our extended [StimulusJS guides](./stimulus-integration.html#use-stimulus-js-in-a-tool) for more information.
