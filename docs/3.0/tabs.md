@@ -52,6 +52,19 @@ Tabs have more than an aesthetic function. They have a performance function too.
 
 All visibility rules still apply on <Edit />, meaning that `has_*` fields will be hidden by default. However, you can enable them by adding `show_on: :edit`. All other fields will be loaded and hidden on page load. This way, when you submit a form, if you have validation rules in place requiring a field that's in a hidden tab, it will be present on the page on submit-time.
 
+## Durable and "Bookmarkable"
+
+Tabs remain durable within views, meaning that when switch between views, each tab group retains the selected tab. This ensures a consistent UX, allowing for seamless navigation without losing context.
+
+Moreover, you have the ability to bookmark a link with a personalized tab selection.
+
+This functionalities relies on the unique tab group ID. To take full advantage of this feature, it's important to assign a unique ID to each tab group defined in your application.
+
+```ruby {1}
+tabs id: :some_random_uniq_id do
+  field :posts, as: :has_many, show_on: :edit
+end
+```
 <!-- The panel has a few parts available -->
 
 
