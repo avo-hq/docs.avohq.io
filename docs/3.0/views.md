@@ -50,7 +50,7 @@ elsif view.edit?
   # Code for the "edit" view
 elsif view.new?
   # Code for the "new" view
-elsif view.forms?
+elsif view.form?
   # Code for the "new" or "edit" views
 elsif view.display?
   # Code for the "index or "show" views
