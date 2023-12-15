@@ -6,7 +6,7 @@ If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedica
 
 ## Upgrade from 3.1.3 to 3.1.4
 
-::: `Avo::Filters::BaseFilter.decode_filters`
+:::option `Avo::Filters::BaseFilter.decode_filters`
 We removed the rescue that would return `{}` on parsing error. This rescue block was occasionally concealing pertinent errors. Ensure that when invoking `Avo::Filters::BaseFilter.decode_filters` the argument is not `nil` and has been encoded using the `Avo::Filters::BaseFilter.encode_filters` method.
 :::
 
