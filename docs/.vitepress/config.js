@@ -213,6 +213,7 @@ const config = {
             {text: "Avo::ExecutionContext", link: "/3.0/execution-context"},
             {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller"},
             {text: "Avo.asset_manager", link: "/3.0/asset-manager"},
+            {text: "Avo::Services::EncryptionService", link: "/3.0/encryption-service"},
           ],
         },
         // {
