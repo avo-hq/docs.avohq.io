@@ -4,6 +4,12 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.1.3 to 3.1.4
+
+::: `Avo::Filters::BaseFilter.decode_filters`
+We removed the rescue that would return `{}` on parsing error. This rescue block was occasionally concealing pertinent errors. Ensure that when invoking `Avo::Filters::BaseFilter.decode_filters` the argument is not `nil` and has been encoded using the `Avo::Filters::BaseFilter.encode_filters` method.
+:::
+
 ## Upgrade from 3.0.1.beta24 to 3.0.2
 
 :::option Sidebar should be declared inside a panel
