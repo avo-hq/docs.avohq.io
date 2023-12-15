@@ -680,7 +680,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-Now, the arguments can be accessed inside `Avo::Filters::NameFilter` ***`apply` method*** and on the ***`visible` block***!
+Now, the arguments can be accessed inside `Avo::Filters::NameFilter` ***`apply` method***, ***`options` method*** and on the ***`visible` block***!
 
 ```ruby{4-6,8-14}
 class Avo::Filters::Name < Avo::Filters::TextFilter
