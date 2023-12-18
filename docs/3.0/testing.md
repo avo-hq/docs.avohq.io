@@ -14,7 +14,7 @@ Testing is an essential aspect of your app. Most Avo DSLs are Ruby classes, so r
 
 We prepared a few testing helpers for you to use in your apps. They will help with opening/closing datepickers, choosing the date, saving the records, add/remove tags, and also select a lot of elements throughout the UI.
 
-You can find them all [here](https://github.com/avo-hq/avo-3/blob/main/lib/avo/test_helpers.rb),
+You can find them all [here](https://github.com/avo-hq/avo/blob/main/lib/avo/test_helpers.rb),
 
 ## Testing Actions
 
