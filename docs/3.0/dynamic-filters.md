@@ -86,12 +86,12 @@ This filter will give you options from the database.
 
 ### Conditions
 
- - = (equals)
- - != (is different)
- - > (greater than)
- - >= (greater than or equal to)
- - < (lower than)
- - <= (lower than or equal to)
+ - `=` (equals)
+ - `!=` (is different)
+ - `>` (greater than)
+ - `>=` (greater than or equal to)
+ - `<` (lower than)
+ - `<=` (lower than or equal to)
  - Is present
  - Is blank
 :::
