@@ -297,6 +297,7 @@ end
 ```
 
 ## Custom query scopes
+
 You may want to change Avo's queries to add sorting or use gems like [friendly](https://github.com/norman/friendly_id).
 You can do that using `index_query` for multiple records and `find_record_method` when fetching one record.
 
