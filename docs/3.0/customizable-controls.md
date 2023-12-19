@@ -187,12 +187,13 @@ Renders a button that triggers an action. You must provide it an [Action](./acti
 
 #### Supported options
 
-`title`, `style`, `color`, and `icon`.
+`title`, `style`, `color`, `arguments` and `icon`.
 
 #### Example
 
 ```ruby
 action Avo::Actions::DisableAccount
+action Avo::Actions::DisableAccount, arguments: { hide_some_fields: true }
 action Avo::Actions::ExportSelection, style: :text
 action Avo::Actions::PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 ```
@@ -204,18 +205,22 @@ When you use the `action` helper in any customizable block it will act only as a
 
 You must manually register it with the `action` declaration.
 
-```ruby{6,10}
+```ruby{6-8,13-15}
 class Avo::Resources::Fish < Avo::BaseResource
   self.title = :name
 
   self.show_controls = -> do
     # In order to use it here
-    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
+      action_on_show_controls: "Will use this arguments"
+    }
   end
 
   # 👇 Also declare it here 👇
   def actions
-    action Avo::Actions::ReleaseFish, arguments: { both_actions: "Will use them" }
+    action Avo::Actions::ReleaseFish, arguments: {
+      action_from_list: "Will use this arguments"
+    }
   end
 end
 ```
