@@ -50,10 +50,18 @@ The scope classes take a few options.
 
 :::option `name`
 This value is going to be displayed on the scopes bar as the name of the scope.
+
+This can be a callable value and it receives the `resource` and `query` objects.
+
+The `query` object can be used to compute and display the record count.
+
+Please see [the recipe](./recipes/display-scope-record-count.html) on how to enable it.
 :::
 
 :::option `description`
 This value is going to be displayed when the user hovers over the scope.
+
+This can be a callable value and it receives the `resource` and `query` objects.
 :::
 
 :::option `scope`
