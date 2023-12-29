@@ -4,6 +4,11 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.2.2 to 3.3.0
+:::option `may_download_file` deprecated
+Actions now fully operate with turbo leading to the deprecation of `may_download_file` option. It can be safelly removed from all actions.
+:::
+
 ## Upgrade from 3.1.3 to 3.1.4
 
 :::option `Avo::Filters::BaseFilter.decode_filters`
