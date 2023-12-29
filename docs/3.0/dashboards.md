@@ -103,7 +103,8 @@ That gives you an extra layer of control without code duplication and the best d
 
 #### Control the base settings from the parent
 
-Evidently, you don't want to show the same `label`, `description`, and other details for that second card from the first card;. Therefore, you can control the `label`, `description`, `cols`, `rows`, and `refresh_every` arguments from the parent declaration.
+Evidently, you don't want to show the same `label`, `description`, and other details for that second card from the first card.
+Therefore, you can control the `label`, `description`, `cols`, `rows`, `visible`, and `refresh_every` arguments from the parent declaration.
 
 ```ruby{8-12}
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
