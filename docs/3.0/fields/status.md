@@ -26,7 +26,7 @@ Set the values for when the status is `failed`.
 
 #### Default value
 
-`[:failed]`
+`[]`
 
 #### Possible values
 
@@ -38,7 +38,7 @@ Set the values for when the status is `loading`.
 
 #### Default value
 
-`[:waiting, :running]`
+`[]`
 
 #### Possible values
 
@@ -55,6 +55,18 @@ Set the values for when the status is `success`.
 #### Possible values
 
 `[:done, :success, :deployed, "ok"]` or an array with strings or symbols that indicate the `success` state.
+:::
+
+:::option `neutral_when`
+Set the values for when the status is `neutral`.
+
+#### Default value
+
+`[]`
+
+#### Possible values
+
+`[:holding, "waiting"]` or an array with strings or symbols that indicate a `neutral` state.
 :::
 
 
