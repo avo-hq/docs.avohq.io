@@ -9,6 +9,19 @@ If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedica
 Actions now fully operate with turbo leading to the deprecation of `may_download_file` option. It can be safelly removed from all actions.
 :::
 
+:::option Status field `failed_when` and `loading_when` default to and empty array
+We found [some issues](https://github.com/avo-hq/avo/pull/2316) with declaring defaults to `failed_when` and `loading_when` field options so we are now defaulting them to empty arrays.
+
+If you need that behavior back, add it to your fields.
+
+```ruby{3,4}
+field :status,
+  as: :status,
+  failed_when: [:failed],
+  loading_when: [:waiting, :running]
+```
+:::
+
 ## Upgrade from 3.1.3 to 3.1.4
 
 :::option `Avo::Filters::BaseFilter.decode_filters`
