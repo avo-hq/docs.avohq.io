@@ -1,21 +1,40 @@
 # Display counter indicator on tabs switcher
 
-When a tab contains an association field you may want to show some counter indicator about how many records are on that particular tab. You can include that information inside tab's name:
+When a tab contains an association field you may want to show some counter indicator about how many records are on that particular tab. You can include that information inside tab's name.
 
-```ruby{6,9}
-def fields
-  main_panel do
+![](/assets/img/recipes/tabs-counter-indicator/tabs_counter.png)
+
+```ruby{7,10,16-23}
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    main_panel do
+    end
+
+    tabs do
+      tab name_with_counter("Teams", record&.teams&.size) do
+        field :teams, as: :has_and_belongs_to_many
+      end
+      tab name_with_counter("People", record&.people&.size) do
+        field :people, as: :has_many
+      end
+    end
   end
 
-  tabs do
-    tab "Teams (#{record&.teams&.size})" do
-      field :teams, as: :has_and_belongs_to_many
-    end
-    tab "People (#{record&.people&.size})" do
-      field :people, as: :has_many
-    end
+  def name_with_counter(name, counter)
+    view_context.sanitize(
+      "#{name} " \
+      "<span class='bg-gray-500 ml-1 px-1 text-white text-xs rounded font-semibold'>" \
+        "#{counter}" \
+      "</span>"
+    )
   end
 end
 ```
 
-![](/assets/img/recipes/tabs-counter-indicator/tabs_counter.png)
+We are also using the `view_context`'s `sanitize` method to return it as HTML.
+
+We're using some known Avo classes in the example above. If you're trying different classes and it's not applying you should consider [tailwind css integration](../tailwindcss-integration).
+
+:::warning
+This may have some performance implications as it will run the `count` query on every page load.
+:::
