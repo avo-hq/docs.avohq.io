@@ -31,7 +31,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-We are also using the `view_context`'s `sanitize` method to return it as HTML.
+We are also using the `sanitize` method to return it as HTML.
 
 We're using some known Avo classes in the example above. If you're trying different classes and it's not applying you should consider [tailwind css integration](../tailwindcss-integration).
 
