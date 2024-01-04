@@ -9,7 +9,7 @@ You my use that to display a counter of how many record are there in that scope.
 
 ### Example
 
-```ruby{2-4}
+```ruby{2-9}
 class Avo::Scopes::Scheduled < Avo::Advanced::Scopes::BaseScope
   self.name = -> {
     sanitize(
