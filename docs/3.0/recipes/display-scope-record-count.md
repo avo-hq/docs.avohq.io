@@ -9,10 +9,17 @@ You my use that to display a counter of how many record are there in that scope.
 
 ### Example
 
-```ruby{2-4}
-class Avo::Scopes::Scheduled < Avo::Pro::Scopes::BaseScope
+![](/assets/img/recipes/display-scope-record-count/scopes.png)
+
+```ruby{2-9}
+class Avo::Scopes::Scheduled < Avo::Advanced::Scopes::BaseScope
   self.name = -> {
-    view_context.sanitize "Scheduled <span class='bg-gray-200 px-1 text-white text-xs rounded font-semibold'>#{scoped_query.count}</span>"
+    sanitize(
+      "Scheduled " \
+      "<span class='bg-gray-500 px-1 text-white text-xs rounded font-semibold'>" \
+        "#{scoped_query.count}" \
+      "</span>"
+    )
   }
   self.description = -> { "All the scheduled jobs." }
   self.scope = -> { query.finished.invert_where }
@@ -23,8 +30,9 @@ end
 In this example we made the `name` option a callable block and are returning the name of the scope and a `span` with the count of the records.
 
 We are also using the `sanitize` method to return it as HTML.
-The `sanitize` method is being called from the `view_context` as it's not directly available in that block.
+
+In order to make the counter stand out, we're using some Tailwind CSS classes that we have available in Avo. If you're trying different classes and they are not applying, you should consider adding the [Tailwind CSS integration](../tailwindcss-integration).
 
 :::warning
-This may have some performance implications as it will run the `count` query on every page load.
+This approach will have some performance implications as it will run the `count` query on every page load.
 :::
