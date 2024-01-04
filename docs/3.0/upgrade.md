@@ -22,6 +22,10 @@ field :status,
 ```
 :::
 
+:::option Scopes
+Scopes changed namespace from `Avo::Pro::Scopes` to `Avo::Advanced::Scopes`.
+:::
+
 ## Upgrade from 3.1.3 to 3.1.4
 
 :::option `Avo::Filters::BaseFilter.decode_filters`
