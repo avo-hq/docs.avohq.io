@@ -12,7 +12,12 @@ You my use that to display a counter of how many record are there in that scope.
 ```ruby{2-4}
 class Avo::Scopes::Scheduled < Avo::Advanced::Scopes::BaseScope
   self.name = -> {
-    sanitize "Scheduled <span class='bg-gray-200 px-1 text-white text-xs rounded font-semibold'>#{scoped_query.count}</span>"
+    sanitize(
+      "Scheduled " \
+      "<span class='bg-gray-200 px-1 text-white text-xs rounded font-semibold'>" \
+        "#{scoped_query.count}" \
+      "</span>"
+    )
   }
   self.description = -> { "All the scheduled jobs." }
   self.scope = -> { query.finished.invert_where }
