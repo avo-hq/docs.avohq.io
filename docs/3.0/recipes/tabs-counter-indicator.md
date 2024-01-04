@@ -33,7 +33,7 @@ end
 
 We are also using the `sanitize` method to return it as HTML.
 
-We're using some known Avo classes in the example above. If you're trying different classes and it's not applying you should consider [tailwind css integration](../tailwindcss-integration).
+In order to make the counter stand out, we're using some Tailwind CSS classes that we have available in Avo. If you're trying different classes and they are not applying, you should consider adding the [Tailwind CSS integration](../tailwindcss-integration).
 
 :::warning
 This may have some performance implications as it will run the `count` query on every page load.
