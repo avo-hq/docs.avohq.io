@@ -34,5 +34,5 @@ We are also using the `sanitize` method to return it as HTML.
 We're using some known Avo classes in the example above. If you're trying different classes and it's not applying you should consider [tailwind css integration](../tailwindcss-integration).
 
 :::warning
-This may have some performance implications as it will run the `count` query on every page load.
+This approach will have some performance implications as it will run the `count` query on every page load.
 :::
