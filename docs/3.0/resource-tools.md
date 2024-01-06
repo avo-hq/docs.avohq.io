@@ -209,3 +209,48 @@ end
 ```
 
 If you run this code, you'll notice that the `information.information_age` param will not reach the `information=` method because we haven't allowed it in the `extra_params` option.
+
+## Where to add logic
+
+It's a good practice not to keep login in view files (partials).
+You can hide that logic inside the tool using instance variables and methods, and access it in the partial using the `tool` variable.
+
+[Here's an example](https://github.com/avo-hq/main.avodemo.com/commit/c8ecb9b53a770103a993df4c2b3acec0a1faf737) on how you could do that.
+
+```ruby{8,10}
+class Avo::ResourceTools::PostInfo < Avo::BaseResourceTool
+  self.name = "Post info"
+  # self.partial = "avo/resource_tools/post_info"
+
+  attr_reader :foo
+
+  def initialize(**kwargs)
+    super **kwargs # It's important to call super with the same keyword arguments
+
+    @foo = :bar # Add your variables
+  end
+
+  def custom_method_call
+    :called
+  end
+end
+```
+
+```erb{7,12}
+<div class="flex flex-col">
+  <%= render Avo::PanelComponent.new title: "Post info" do |c| %>
+
+    <% c.with_body do %>
+      <p>
+        This variable was declared in the initializer:
+        <%= tool.foo %>
+      </p>
+
+      <p>
+        This is a method called on the tool:
+        <%= tool.custom_method_call %>
+      </p>
+    <% end %>
+  <% end %>
+</div>
+```
