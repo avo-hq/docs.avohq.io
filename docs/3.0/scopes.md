@@ -18,7 +18,7 @@ bin/rails generate avo:scope admins
 
 ```ruby
 # app/avo/scopes/admins.rb
-class Avo::Scopes::Admins < Avo::Pro::Scopes::BaseScope
+class Avo::Scopes::Admins < Avo::Advanced::Scopes::BaseScope
   self.name = "Admins" # Name displayed on the scopes bar
   self.description = "Admins only" # This is the tooltip value
   self.scope = :admins # valid scope on the model you're using it
@@ -70,7 +70,7 @@ The scope you return here is going to be applied to the query of records on that
 You can use a symbol which will indicate the scope on that model or a block which will have the `query` available so you can apply any modifications you need.
 
 ```ruby
-class Avo::Scopes::EvenId < Avo::Pro::Scopes::BaseScope
+class Avo::Scopes::EvenId < Avo::Advanced::Scopes::BaseScope
   self.name = "Even"
   self.description = "Only records that have an even ID."
   self.scope = -> { query.where("#{resource.model_key}.id % 2 = ?", "0") }

@@ -72,3 +72,6 @@ end
 <!-- <img :src="('/assets/img/tabs-and-panels/panel-bottom.png')" alt="Avo Panels" class="border mb-4" /> -->
 
 
+## Display counter indicator on tabs switcher
+
+Check [this recipe](recipes/tabs-counter-indicator.md) on how to enhance your tabs switcher with a counter for each association tab.
