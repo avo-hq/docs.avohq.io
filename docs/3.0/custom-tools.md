@@ -1,6 +1,6 @@
 ---
 feedbackId: 836
-license: pro
+license: community
 ---
 
 # Custom pages (custom tools)
