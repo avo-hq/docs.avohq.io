@@ -339,6 +339,8 @@ end
 :::
 
 :::option `close_modal`
+<VersionReq version="3.3.0" />
+
 This type of response becomes useful when you are working with a form and need to execute an action without redirecting, ensuring that the form remains filled as it is.
 
 `close_modal` will flash all the messages gathered by [action responses](#action-responses) and will close the modal using turbo streams keeping the page still.
