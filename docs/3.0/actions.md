@@ -336,6 +336,31 @@ class Avo::Actions::KeepModalOpenAction < Avo::BaseAction
   end
 end
 ```
+:::
+
+:::option `close_modal`
+<VersionReq version="3.3.0" />
+
+This type of response becomes useful when you are working with a form and need to execute an action without redirecting, ensuring that the form remains filled as it is.
+
+`close_modal` will flash all the messages gathered by [action responses](#action-responses) and will close the modal using turbo streams keeping the page still.
+
+```ruby
+class Avo::Actions::CloseModal < Avo::BaseAction
+  self.name = "Close modal"
+  self.standalone = true
+  self.visible = -> {
+    true
+  }
+
+  def handle(**args)
+    # do_something_here
+    succeed "Modal closed!!"
+    close_modal
+  end
+end
+```
+:::
 
 ## Customization
 
@@ -348,7 +373,6 @@ class Avo::Actions::TogglePublished < Avo::BaseAction
   self.no_confirmation = true
 end
 ```
-:::
 
 ### Customize the message
 
