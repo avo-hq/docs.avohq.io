@@ -1,7 +1,7 @@
 ---
 feedbackId: 836
 demoVideo: https://youtu.be/Eex8CiinQZ8?t=196
-license: pro
+license: community
 ---
 
 # Resource tools
