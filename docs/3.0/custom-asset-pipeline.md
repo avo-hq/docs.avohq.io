@@ -25,6 +25,21 @@ We chose to impact your app, and your deploy processes as little as possible. Th
 
 Under the hood Avo uses TailwindCSS 3.0 with the JIT engine and bundles the assets using [`jsbundling`](https://github.com/rails/jsbundling-rails) with `esbuild`.
 
+## Serving assets through a CDN?
+If you utilize a Content Delivery Network (CDN) for serving assets, it might be necessary to exclude Avo paths from the default asset host. The following code snippet demonstrates how to configure your Rails application to work with a CDN while excluding Avo paths.
+
+```ruby
+config.action_controller.asset_host = Proc.new do |source|
+  # Exclude assets under the "/avo" path from CDN
+  next nil if source.start_with?("/avo")
+
+  # Set the general asset host (CDN) using an environment variable
+  ENV.fetch("ASSET_HOST")
+end
+```
+
+This configuration ensures that assets are served through the specified CDN, except for those under the `/avo` path. Adjust the paths and environment variable as needed for your application.
+
 ## Your custom assets
 
 Avo makes it easy to use your own styles and javascript through your already set up asset pipeline. It just hooks on to it to inject the new assets to be used in Avo.
