@@ -4,8 +4,10 @@ import { computed } from "vue";
 const props = defineProps({
   license: String,
   title: String,
+  size: String,
 });
 const license = computed(() => props.license || "community");
+const size = computed(() => props.size || "sm");
 const links = {
   community: "https://avohq.io/pricing#comparison-heading",
   pro: "https://avohq.io/subscriptions/new?plan=pro",
@@ -25,11 +27,13 @@ const label = computed(() => labels[license.value]);
     :href="href"
     target="_blank"
     :title="title"
-    class="text-sm inline-flex items-center rounded !text-white no-underline px-2 py-1 leading-none"
+    class="inline-flex items-center rounded !text-white no-underline leading-none"
     :class="{
       'bg-blue-500 hover:bg-blue-600': license == 'community',
       'bg-green-500 hover:bg-green-600': license == 'pro',
       'bg-violet-500 hover:bg-violet-600': license == 'advanced',
+      'text-xs px-1 py-px': size == 'xs',
+      'text-sm px-2 py-1': size == 'sm',
     }"
   >
     <CheckBadgeIcon class="h-4 inline mr-1" /> License: {{ label }}

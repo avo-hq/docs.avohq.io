@@ -24,14 +24,18 @@ config.load_defaults 6.1 # 6.1 or higher, depending on your rails version
 :::
 
 ## Installing Avo
-<!--
-Use [this](https://railsbytes.com/public/templates/zyvsME) RailsBytes template for a one-liner install process.
 
-`rails app:template LOCATION='https://avohq.io/app-template'`
+### 1. One-command install
 
-**OR** -->
+Use [this](https://railsbytes.com/public/templates/zyvsME) app template for a one-liner install process.
 
-Take it step by step.
+Run this command which will run all the required steps to install Avo in your app.
+
+```
+bin/rails app:template LOCATION='https://avohq.io/app-template'
+```
+
+### 2. Manual, step by step.
 
 1. Add the appropiate Avo gem to the `Gemfile`
 
@@ -48,6 +52,28 @@ Please use [this guide](./gem-server-authentication.html) to find the best authe
 :::info
 This will mount the app under `/avo` path. Visit the link to see the result.
 :::
+
+### 3. In popular Rails starter kits
+
+We have integrations with the most popular starter kits.
+
+#### Bullet Train
+
+Avo comes pre-installed in all new Bullet Train applications.
+
+I you have a Bullet Train app and you'd like to add Avo, please user [this template](https://avohq.io/templates/bullet-train).
+
+```ruby
+bin/rails app:template LOCATION=https://v3.avohq.io/templates/bullet-train.template
+```
+
+#### Jumpstart Pro
+
+To install Avo in a Jumpstart Pro app use [this template](https://avohq.io/templates/jumpstart-pro).
+
+```ruby
+bin/rails app:template LOCATION=https://v3.avohq.io/templates/jumpstart-pro.template
+```
 
 ## Install from GitHub
 

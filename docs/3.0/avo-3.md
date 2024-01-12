@@ -10,21 +10,30 @@ You'll find all the new changes in the [Avo 2 to Avo 3 upgrade section](./avo-2-
 
 ## New features & big changes
 
-We made
+##### Advanced license features
+<LicenseReq license="advanced" size="xs" />
 
 - [Dynamic filters](./dynamic-filters)
 - [Custom controls on everywhere](./customizable-controls) (<Index />, <Show />, <Edit />,and `Row`)
 - [Resource scopes](./scopes)
+
+##### Pro license features
+<LicenseReq license="pro" size="xs" />
+
+- [Resource Cards](./resources.html#cards)
+- [Record preview on Index](./record-previews)
+
+##### Community license features
+<LicenseReq license="community" size="xs" />
+
 - [Custom fields from template](./eject-views.html#field_components)
 - [Custom resource view components](./resources.html#self_components) for <Index />, <Show />, and <Edit />
 - [Custom components for fields](./field-options.html#customizing-field-components-using-components-option)
 - [Intelligent `view` object](./views.html#checking-the-current-view) and new `display` view option
 - [Better TailwindCSS integration](./tailwindcss-integration.html)
-- [Resource Cards](./resources.html#cards)
 - [New `def fields` API](./fields)
 - [New `def index|show|edit_fields` API](./fields.html#specific-methods-for-each-view)
 - [Plugins API](./plugins)
-- [Record preview on Index](./record-previews)
 - [Testing helpers](./testing#testing-helpers)
 - [Eject command improvements](./eject-views.html)
 - [Panel layout improvements](./resource-panels.html)
@@ -33,20 +42,23 @@ We made
 - Multiple actions flows
 - Intelligent resource title
 - License checking mechanism improvements
-- Dynamic fields (coming soon)
-- Nested record creation (coming soon)
-- Resource tools in fields (coming soon)
 
-## What are we working on next?
-
-Avo 3 is not finished yet. We will continue to provide the same cadence of one release every two weeks you are used to. Some the things we want to focus on in the near future are:
+##### Coming soon
 
 - Theming
-- Improvements to the dynamic filters
+- Audit logs (Enterprise feature)
+- Developer experience improvements
+  - linter
+  - VSCode extension
+  - improved error messaging
+- Resource adapters
+- Customizable dynamic filters
 - Custom resource adapters
 - Dynamic fields
-- Nested records creation
-- Resource tool in fields
+- Nested record creation
+- Resource tools in fields
+
+Avo 3 is not finished yet. We will continue to provide the same cadence of one release every ~~two~~ four weeks you are used to. Some the things we want to focus on in the near future are:
 
 Please follow our [Roadmap](https://avohq.io/roadmap) for more information about that.
 
