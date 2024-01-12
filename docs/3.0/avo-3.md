@@ -41,7 +41,6 @@ You'll find all the new changes in the [Avo 2 to Avo 3 upgrade section](./avo-2-
 - [StimulusJS in actions](./actions.html#stimulusjs)
 - Multiple actions flows
 - Intelligent resource title
-- License checking mechanism improvements
 
 ##### Coming soon
 
