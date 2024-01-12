@@ -10,7 +10,7 @@ It's important to set the `inverse_of` as often as possible to your model's asso
  - [Has one](./associations/has_one)
  - [Has many](./associations/has_many)
  - [Has many through](./associations/has_many#has-many-through)
- - [Has and blongs to many](./associations/has_and_belongs_to_many)
+ - [Has and belongs to many](./associations/has_and_belongs_to_many)
 
 ## Single Table Inheritance (STI)
 
