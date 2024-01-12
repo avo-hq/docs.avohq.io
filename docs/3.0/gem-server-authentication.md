@@ -35,7 +35,7 @@ You should add the environment variable through the service dedicated page or by
 
 ## On your local development environment
 
-For your local development environment you should add the toke to the default bundler configuration.
+For your local development environment you should add the token to the default bundler configuration.
 This way `bundler` is aware of it without having to specify it in the `Gemfile`.
 
 ```bash
