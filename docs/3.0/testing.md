@@ -55,10 +55,10 @@ RSpec.feature ReleaseFish, type: :feature do
       },
       current_user: current_user,
       resource: resource,
-      models: [fish]
+      records: [fish]
     }
 
-    action = described_class.new(model: fish, resource: resource, user: current_user, view: :edit)
+    action = described_class.new(resource: resource, user: current_user, view: :edit)
 
     expect(action).to receive(:succeed).with "1 fish released with message 'Bye fishy!'."
     expect(fish).to receive(:release)
