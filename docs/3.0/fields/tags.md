@@ -1,5 +1,5 @@
 ---
-license: pro
+license: community
 version: '2.6.0'
 demoVideo: https://youtu.be/DKKSjNUvuBA
 ---
