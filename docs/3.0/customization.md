@@ -361,8 +361,12 @@ end
 ```ruby [app/avo/resources/user.rb]
 class Avo::Resources::User < Avo::BaseResource
   self.find_record_method = -> {
-    # We have to add .friendly to the query
-    query.friendly.find! id
+    if id.is_a?(Array)
+      query.where(slug: id)
+    else
+      # We have to add .friendly to the query
+      query.friendly.find id
+    end
   }
 end
 ```
