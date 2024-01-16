@@ -120,14 +120,12 @@ This filter will give you options from the database.
  - Is blank
 :::
 
-::::option Array
-
-Used on `tags` fields.
+::::option Tags
 
 ### Conditions
 
  - Are
- - Contains
+ - Contain
  - Overlap
  - Contained in
 
