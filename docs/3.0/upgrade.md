@@ -22,7 +22,7 @@ field :status,
 ```
 :::
 
-:::option Scopes
+:::option Scopes namespace change
 Scopes changed namespace from `Avo::Pro::Scopes` to `Avo::Advanced::Scopes`.
 :::
 
