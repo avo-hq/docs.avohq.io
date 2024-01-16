@@ -61,6 +61,24 @@ Avo 3 is not finished yet. We will continue to provide the same cadence of one r
 
 Please follow our [Roadmap](https://avohq.io/roadmap) for more information about that.
 
+## Features moved from one tier to another
+
+### Features moved from Pro to Advanced
+<LicenseReq license="pro" size="xs" /> -> <LicenseReq license="advanced" size="xs" />
+
+- [`show_controls`](./customizable-controls)
+
+### Features moved from Pro to Community
+<LicenseReq license="pro" size="xs" /> -> <LicenseReq license="community" size="xs" />
+
+- Custom fields
+- Custom tools
+- Resource tools
+- Tags field
+- Localization
+- Stimulus JS integration
+- Branding
+
 ## Repos and packages
 
 Avo 3 has been divided into various repositories and packages, organized by the specific feature or tier they are intended for. Within this structure, there are three main packages available: `avo`, `avo-pro`, and `avo-advanced`. Depending on your license, you need to manually include one of these packages in your `Gemfile`. Note that both `avo-pro` and `avo-advanced` come with additional packages that serve as their dependencies.
