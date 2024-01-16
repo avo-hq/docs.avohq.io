@@ -44,6 +44,19 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
+## Remove `All` scope
+
+If you don't want to have the `All` default scope you can remove it by executing the `remove_scope_all` method inside `scopes` method.
+
+```ruby
+class Avo::Resources::User < Avo::BaseResource
+  def scopes
+    remove_scope_all
+    scope Avo::Scopes::Admins
+  end
+end
+```
+
 ## Options
 
 The scope classes take a few options.
