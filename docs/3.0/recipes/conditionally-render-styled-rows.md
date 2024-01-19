@@ -3,9 +3,9 @@
 We've had [a request](https://discord.com/channels/740892036978442260/1197693313520771113) come in from a customer to style their soft-deleted records differently than the regular ones.
 
 Their first idea was to add a new option to Avo to enable that. They even tried to monkey-patch our code to achieve that.
-It's a "fair" strategy, we're not judging.
+It's a "fair" strategy; we're not judging.
 
-Our impression was to add a new option too, but in the end we found a better solution. Something that doesn't involve monke-patching or us adding new code to the framework.
+Our impression was to add a new option, too, but in the end, we found a better solution. Something that doesn't involve monkey-patching or us adding new code to the framework.
 New code that we should maintain in the future and bring on more and more requests.
 
 ## Solution
@@ -22,7 +22,7 @@ def fields
     index do
       wrapper do
         classes do
-          # We'll mark every record that has an even id
+          # We'll mark every record that has an even `id`
           if record.id % 2 == 0
             "soft-deleted"
           end
@@ -46,6 +46,6 @@ tr[data-component-name="avo/index/table_row_component"][data-resource-name="cour
 }
 ```
 
-Of course I chose a trivial rule like the records that have an even `id` column, but you can tweak that rule as you need it.
+Of course, I chose a trivial rule like the records with an even `id` column, but you can tweak that rule as needed.
 
-I think there's a lesson or two to be learned from this which I wrote about in [this article](https://avohq.io/blog/state-the-problem-not-the-solution).
+I think there's a lesson or two to be learned from this, which I wrote about in [this article](https://avohq.io/blog/state-the-problem-not-the-solution).
