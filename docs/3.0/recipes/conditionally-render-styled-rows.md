@@ -1,5 +1,7 @@
 # Conditionally render styled rows
 
+![](./assets/conditionally-render-styled-rows.png)
+
 We've had [a request](https://discord.com/channels/740892036978442260/1197693313520771113) come in from a customer to style their soft-deleted records differently than the regular ones.
 
 Their first idea was to add a new option to Avo to enable that. They even tried to monkey-patch our code to achieve that.
