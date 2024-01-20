@@ -42,7 +42,7 @@ end
 
 You may want to customize the card a little bit. That's possible using the `html` option.
 
-```ruby{13-30}
+```ruby{13-37}
 class Avo::Resources::Post < Avo::BaseResource
   self.grid_view = {
     card: -> do
@@ -68,6 +68,13 @@ class Avo::Resources::Post < Avo::BaseResource
           index: {
             wrapper: {
               classes: "bg-gray-50 rounded-md p-1"
+            }
+          }
+        },
+        cover: {
+          index: {
+            wrapper: {
+              classes: "blur-sm"
             }
           }
         }
