@@ -10,9 +10,11 @@ class ExportCsv < Avo::BaseAction
   self.name = "Export CSV"
   self.may_download_file = true
 
-  # Add more fields here for custo user-selected columns
-  field :id, as: :boolean
-  field :created_at, as: :boolean
+  def fields
+    # Add more fields here for custom user-selected columns
+    field :id, as: :boolean
+    field :created_at, as: :boolean
+  end
 
   def handle(models:, resource:, fields:, **)
     columns = models.first.class.columns_hash.keys
