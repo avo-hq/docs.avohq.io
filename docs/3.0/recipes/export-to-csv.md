@@ -6,9 +6,9 @@ Below you have an example which you can take and customize to your liking. It ev
 
 ```ruby
 # app/avo/actions/export_csv.rb
-class ExportCsv < Avo::BaseAction
-  self.name = "Export CSV"
-  self.may_download_file = true
+class Avo::Actions::ExportCsv < Avo::BaseAction
+  self.name = "Export csv"
+  self.no_confirmation = false
 
   def fields
     # Add more fields here for custom user-selected columns
@@ -16,18 +16,18 @@ class ExportCsv < Avo::BaseAction
     field :created_at, as: :boolean
   end
 
-  def handle(models:, resource:, fields:, **)
-    columns = models.first.class.columns_hash.keys
-    # Uncomment below to use the user-selected fields
-    # columns = get_columns_from_fields(fields)
+  def handle(**args)
+    records, resource = args.values_at(:records, :resource)
 
-    return error "No record selected" if models.blank?
+    return error "No record selected" if records.blank?
+
+    attributes = get_attributes records.first
 
     file = CSV.generate(headers: true) do |csv|
-      csv << columns
+      csv << attributes
 
-      models.each do |record|
-        csv << columns.map do |attr|
+      records.each do |record|
+        csv << attributes.map do |attr|
           record.send(attr)
         end
       end
@@ -36,10 +36,16 @@ class ExportCsv < Avo::BaseAction
     download file, "#{resource.plural_name}.csv"
   end
 
-  def get_columns_from_fields(fields)
+  def get_attributes(record)
+    # return ["id", "created_at"] # uncomment this and fill in for custom model properties
+
+    # return record.class.columns_hash.keys # uncomment to get all the models' attributes.
+    
+    # get the attributes that the user selected.
     fields.select { |key, value| value }.keys
   end
 end
+
 ```
 
 ![](/assets/img/recipes/export-to-csv/export-to-csv.gif)
