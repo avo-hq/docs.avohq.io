@@ -39,7 +39,10 @@ class Avo::Actions::ExportCsv < Avo::BaseAction
   def get_attributes(record)
     # return ["id", "created_at"] # uncomment this and fill in for custom model properties
 
-    record.class.columns_hash.keys
+    # return record.class.columns_hash.keys # uncomment to get all the models' attributes.
+    
+    # get the attributes that the user selected.
+    fields.select { |key, value| value }.keys
   end
 end
 
