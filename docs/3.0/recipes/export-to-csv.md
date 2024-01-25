@@ -7,8 +7,9 @@ Below you have an example which you can take and customize to your liking. It ev
 ```ruby
 # app/avo/actions/export_csv.rb
 class Avo::Actions::ExportCsv < Avo::BaseAction
-  self.name = "Export csv"
+  self.name = "Export CSV"
   self.no_confirmation = false
+  self.standalone = true
 
   def fields
     # Add more fields here for custom user-selected columns
@@ -17,11 +18,23 @@ class Avo::Actions::ExportCsv < Avo::BaseAction
   end
 
   def handle(**args)
-    records, resource = args.values_at(:records, :resource)
+    records, resource, fields = args.values_at(:records, :resource, :fields)
+
+    # uncomment if you want to download all the records if none was selected
+    # records = resource.model_class.all if records.blank?
 
     return error "No record selected" if records.blank?
 
-    attributes = get_attributes records.first
+    # uncomment to get all the models' attributes.
+    # attributes = get_attributes_from_record records.first
+
+    # uncomment to get some attributes
+    # attributes = get_some_attributes
+
+    attributes = get_attributes_from_fields fields
+
+    # uncomment to get all the models' attributes if none were selected
+    # attributes = get_attributes_from_record records.first if attributes.blank?
 
     file = CSV.generate(headers: true) do |csv|
       csv << attributes
@@ -36,16 +49,18 @@ class Avo::Actions::ExportCsv < Avo::BaseAction
     download file, "#{resource.plural_name}.csv"
   end
 
-  def get_attributes(record)
-    # return ["id", "created_at"] # uncomment this and fill in for custom model properties
+  def get_attributes_from_record(record)
+    record.class.columns_hash.keys
+  end
 
-    # return record.class.columns_hash.keys # uncomment to get all the models' attributes.
-    
-    # get the attributes that the user selected.
+  def get_attributes_from_fields(fields)
     fields.select { |key, value| value }.keys
   end
-end
 
+  def get_some_attributes
+    ["id", "created_at"]
+  end
+end
 ```
 
 ![](/assets/img/recipes/export-to-csv/export-to-csv.gif)
