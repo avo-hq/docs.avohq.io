@@ -10,6 +10,12 @@ class Avo::Actions::ExportCsv < Avo::BaseAction
   self.name = "Export csv"
   self.no_confirmation = false
 
+  def fields
+    # Add more fields here for custom user-selected columns
+    field :id, as: :boolean
+    field :created_at, as: :boolean
+  end
+
   def handle(**args)
     records, resource = args.values_at(:records, :resource)
 
