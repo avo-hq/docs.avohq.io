@@ -91,7 +91,7 @@ A few menu item types are supported `link_to`, `section`, `group`, `resource`, a
 
 :::option `link_to`
 
-Link to is the menu item that the user will probably interact with the most. It will generate a link on your menu. You can specify the `name`, `path` , and `target`.
+`link_to` is the menu item that the user will probably interact with the most. It will generate a link on your menu. You can specify the `name`, `path` , and `target`.
 
 ```ruby
 link_to "Google", path: "https://google.com", target: :_blank
@@ -100,7 +100,19 @@ link_to "Google", path: "https://google.com", target: :_blank
 <img :src="('/assets/img/menu-editor/external-link.jpg')" alt="Avo menu editor" class="border mb-4" />
 
 When you add the `target: :_blank` option, a tiny external link icon will be displayed.
+:::
 
+:::option `render`
+The `render` method will render renderable objects like partials or View Components.
+
+You can even pass `locals` to partials.
+The partials follow the same pattern as the regular `render` method.
+
+```ruby
+render "avo/sidebar/items/custom_tool"
+render "avo/sidebar/items/custom_tool", locals: { something: :here }
+render Super::Dooper::Component.new(something: :here)
+```
 :::
 
 :::option `resource`
