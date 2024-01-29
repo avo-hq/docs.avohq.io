@@ -43,6 +43,8 @@ module Multitenancy
 
   included do
     before_action :multitenancy_detector
+    # or
+    prepend_before_action :multitenancy_detector
   end
 
   def multitenancy_detector
@@ -57,3 +59,7 @@ end
 ```
 
 With this technique, the `multitenancy_detector` method and its `before_action` will be included safely in `Avo::ApplicationController`.
+
+:::info
+If you'd like to add a `before_action` before all of Avo's before actions, use `prepend_before_action` instead. That will run that code first and enable you to set an account or do something early on.
+:::
