@@ -353,7 +353,9 @@ Example:
 A `Post` has_many `Comment`s. The `CommentPolicy::Scope` will not affect the `has_many` field. You need to add the [`scope` option](./associations/has_many.html#add-scopes-to-associations) to the `has_many` field where you can modify the query.
 
 ```ruby
-
+# The `parent` is the Post instance that the user is seeing. ex: Post.find(1)
+# The `query` is the Active Record query being done on the comments. ex: post.comments
+field :comments, as: :has_many, scope: -> { Pundit.policy_scope(parent, query) }
 ```
 :::
 
