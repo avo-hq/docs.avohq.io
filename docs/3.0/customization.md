@@ -221,7 +221,7 @@ You can also use a lambda function to define that path.
 
 ```ruby{2}
 Avo.configure do |config|
-  config.home_path = -> { avo.dashboard_path(:dashy) }
+  config.home_path = -> { avo_dashboards.dashboard_path(:dashy) }
 end
 ```
 
