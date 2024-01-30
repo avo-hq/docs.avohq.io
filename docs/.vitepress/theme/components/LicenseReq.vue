@@ -29,8 +29,8 @@ const label = computed(() => labels[license.value]);
     :title="title"
     class="inline-flex items-center rounded !text-white no-underline leading-none"
     :class="{
-      'bg-blue-500 hover:bg-blue-600': license == 'community',
-      'bg-green-500 hover:bg-green-600': license == 'pro',
+      'bg-green-500 hover:bg-green-600': license == 'community',
+      'bg-blue-500 hover:bg-blue-600': license == 'pro',
       'bg-violet-500 hover:bg-violet-600': license == 'advanced',
       'text-xs px-1 py-px': size == 'xs',
       'text-sm px-2 py-1': size == 'sm',
