@@ -65,3 +65,41 @@ If you're using Hatchbox, you can set the environment variable in your apps "Env
 ```yaml
 BUNDLE_PACKAGER__DEV: xxx
 ```
+
+## Use with docker and docker compose
+
+You can build with docker by passing a build argument from your environment.
+
+```dockerfile{8,10}
+FROM ruby:3.2.2
+RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+WORKDIR /app
+COPY Gemfile /app/Gemfile
+COPY Gemfile.lock /app/Gemfile.lock
+
+# get the build argument
+ARG BUNDLE_PACKAGER__DEV
+# make it available in the docker image
+ENV BUNDLE_PACKAGER__DEV=$BUNDLE_PACKAGER__DEV
+
+RUN bundle install
+COPY . /app
+# do more stuff
+```
+
+```bash
+# Pass the key to the build argument
+docker build --build-arg BUNDLE_PACKAGER__DEV=xxx
+
+# OR
+
+# Set the key as an environment variable on your machine
+# Somewhere in your `.bashrc` or `.bash_profile` file
+export BUNDLE_PACKAGER__DEV=xxx
+# Then pass it to the build argument from there
+docker build --build-arg BUNDLE_PACKAGER__DEV=$BUNDLE_PACKAGER__DEV
+```
+
+```bash
+docker compose build --build-arg BUNDLE_PACKAGER__DEV=xxx
+```
