@@ -4,6 +4,8 @@ license: advanced
 
 # Scopes
 
+![](/assets/img/scopes.png)
+
 :::warning
 This section is a work in progress.
 :::
