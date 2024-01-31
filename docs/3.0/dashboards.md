@@ -161,7 +161,7 @@ You can set authorization rules for dashboards using the `authorize` block.
 ```ruby{3-6}
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   self.id = 'dashy'
-  self.authorization = -> do
+  self.authorize = -> do
     # You have access to current_user, params, request, context, adn view_context.
     current_user.is_admin?
   end
