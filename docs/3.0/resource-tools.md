@@ -227,6 +227,11 @@ class Avo::ResourceTools::PostInfo < Avo::BaseResourceTool
   def initialize(**kwargs)
     super **kwargs # It's important to call super with the same keyword arguments
 
+    # You'll have access to the following objects:
+    # resource - when attached to a resource
+    # parent - which is the object it's attached to (resource if attached to a resource)
+    # view
+
     @foo = :bar # Add your variables
   end
 
