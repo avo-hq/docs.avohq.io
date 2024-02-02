@@ -27,11 +27,11 @@ const label = computed(() => labels[license.value]);
     :href="href"
     target="_blank"
     :title="title"
-    class="inline-flex items-center rounded no-underline leading-none"
+    class="inline-flex items-center rounded no-underline leading-none !text-white"
     :class="{
-      'bg-green-500 hover:bg-green-600 text-black': license == 'community',
-      'bg-blue-500 hover:bg-blue-600 text-white': license == 'pro',
-      'bg-violet-500 hover:bg-violet-600 text-white': license == 'advanced',
+      'bg-green-500 hover:bg-green-600': license == 'community',
+      'bg-blue-500 hover:bg-blue-600': license == 'pro',
+      'bg-violet-500 hover:bg-violet-600': license == 'advanced',
       'text-xs px-1 py-px': size == 'xs',
       'text-sm px-2 py-1': size == 'sm',
     }"
