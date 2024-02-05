@@ -65,10 +65,9 @@ Add only one of the ones below.
 
 <!-- @include: ./common/avo_in_gemfile.md-->
 
-:::info
-For the duration of the open beta you should keep the `source` option on all packages. Once we release the stable version we'll publish `avo` to rubygems.org.
+:::note
+If you want to install `avo-pro` or `avo-advanced` please ensure you have a [valid Avo 3 license](https://avohq.io/pricing) and you [take the required steps to authenticate](https://avohq.io/pricing) with `packager.dev`.
 :::
-
 
 :::option The status field changed behavior
 Before, for the status you'd set the `failed` and `loading` states and everything else fell under `success`. That felt unnatural. We needed a `neutral` state.
