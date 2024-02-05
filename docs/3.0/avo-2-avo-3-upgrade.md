@@ -65,7 +65,7 @@ Add only one of the ones below.
 
 <!-- @include: ./common/avo_in_gemfile.md-->
 
-:::note
+:::warning
 If you want to install `avo-pro` or `avo-advanced` please ensure you have a [valid Avo 3 license](https://avohq.io/pricing) and you [take the required steps to authenticate](https://avohq.io/pricing) with `packager.dev`.
 :::
 
