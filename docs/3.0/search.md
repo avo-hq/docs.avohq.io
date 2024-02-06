@@ -40,7 +40,7 @@ If you're using ransack version 4 and up you must add `ransackable_attributes` a
 
 ## Authorize search
 
-Search is authorized in policy files using the `search?` method.
+Search is authorized in policy files using the [`search?`](./authorization#search) method.
 
 ```ruby
 class UserPolicy < ApplicationPolicy
