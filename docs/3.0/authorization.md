@@ -107,6 +107,12 @@ Controls whether the user can see the [records reordering](./records-reordering)
 <img :src="('/assets/img/authorization/actions_button.jpg')" alt="Actions button" class="border mb-4" />
 
 :::
+
+:::option `search?`
+
+Controls whether the user can see the global search input or the [resource search input](./search) on top of the <Index /> page.
+:::
+
 ## Associations
 
 When using associations, you would like to set policies for `creating` new records on the association, allowing to `attach`, `detach`, `create` or `destroy` relevant records. Again, Avo makes this easy using a straightforward naming schema.
