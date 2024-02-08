@@ -1,6 +1,6 @@
 :::option Reloadable
 
-<VersionReq version="2.28" />
+<VersionReq version="3.3.6" />
 
 The reloadable option adds a reload icon next to the association title so users can easily reload just that turbo-frame instead of doing a full page reload.
 
