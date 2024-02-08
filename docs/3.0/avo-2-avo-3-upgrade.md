@@ -7,7 +7,7 @@ Depending on how you use Avo you might not need to do all the steps.
 ## Upgrade from 2.x to 3.x
 
 :::info Ensure you meet the technical requirements
-Avo now requires Ruby 3.0 and Rails 6.1
+Avo now requires Ruby 3.1 and Rails 6.1
 :::
 
 :::info Ensure you have a token for `Pro` or `Advanced` versions.
