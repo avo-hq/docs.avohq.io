@@ -24,7 +24,7 @@ By default, the content of the `Trix` field is not visible on the `Show` view; i
 <!-- @include: ./../common/default_boolean_false.md-->
 :::
 
-:::option `attchments_disabled`
+:::option `attachments_disabled`
 Hides the attachments button from the Trix toolbar.
 
 <!-- @include: ./../common/default_boolean_false.md-->
