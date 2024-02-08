@@ -5,14 +5,17 @@
 The reloadable option adds a reload icon next to the association title so users can easily reload just that turbo-frame instead of doing a full page reload.
 
 #### Usage
-To enable the `reloadable` feature, provide a block to the reloadable option when defining the field. Within this block, specify conditions under which the reloadable should be displayed.
-The reloadable option supports the following structure:
-- **Default value**: `false`
-- **Possible values**:
-  - `true`: Enables the reloadable feature unconditionally.
-  - `false`: Disables the reloadable feature.
-  - `Proc`: Accepts a block that evaluates conditions for displaying the reloadable feature.
+To enable the reloadable feature, you have two options:
 
+1. Direct Boolean Value:
+
+ Provide a boolean value directly to the reloadable option. This sets a default behavior where the reloadable feature is either enabled or disabled based on this boolean value.
+```ruby
+field :reviews, as: :has_many, reloadable: true
+  ```
+2. Dynamic Conditions with a Block:
+
+For more dynamic behavior, you can provide a block to the reloadable option. Within this block, you can specify conditions under which the reloadable should be displayed.
 ```ruby
 field :reviews, as: :has_many,
   reloadable: -> {
@@ -21,11 +24,7 @@ field :reviews, as: :has_many,
 ```
 In the above example, the reloadable will be visible if the current_user is an admin.
 
-```ruby
-field :reviews, as: :has_many, reloadable: true
-  ```
-
 #### ExecutionContext
-The reloadable block executes within the ExecutionContext, granting access to all default ExecutionContext methods and attributes. This allows for flexible conditions based on the current [`ExecutionContext`](./../execution-context).
+The reloadable block executes within the [`ExecutionContext`](./../execution-context), granting access to all default methods and attributes.
 
 <img :src="('/assets/img/reloadable.png')" alt="Reloadable" class="border mb-4" />
