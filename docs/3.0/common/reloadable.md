@@ -13,6 +13,9 @@ field :reviews, as: :has_many,
     current_user.is_admin?
   }
 ```
+```ruby
+field :reviews, as: :has_many, reloadable: true
+  ```
 In the above example, the reloadable will be visible if the current_user is an admin.
 
 #### ExecutionContext
