@@ -24,7 +24,7 @@ export BUNDLE_PACKAGER__DEV=xxx
 BUNDLE_PACKAGER__DEV=xxx bundle install
 ```
 
-Each hosting service will have their own way to add environment variables. Check out how to do it on [Heroku](#Configure-Heroku) or [Hatchbox](#Configure-Hatchbox).
+Each hosting service will have their own way to add environment variables. Check out how to do it on [Heroku](#Heroku), [Hatchbox](#Hatchbox), [Docker](#docker_and_docker_compose), or [GitHub Actions](#git_hub_actions).
 
 :::warning Warning about using the `.env` file
 You might be tempted to add the token to your `.env` file, as you might do with your Rails app.
@@ -50,23 +50,60 @@ Now you are ready to add Avo to your `Gemfile`.
 
 Now you can run `bundle install` and `bundler` will pick it up and use it to authenticate on the server.
 
-## Configure Heroku
+:::option Heroku
 
 If you're using heroku, you can set the environment variable using the following command. This way `bundler` will use it when authenticating to `packager.dev`.
 
 ```bash
 heroku config:set BUNDLE_PACKAGER__DEV=xxx
 ```
+:::
 
-## Configure Hatchbox
+:::option Hatchbox
 
 If you're using Hatchbox, you can set the environment variable in your apps "Environment" tab. This way `bundler` will use it when authenticating to `packager.dev`.
 
 ```yaml
 BUNDLE_PACKAGER__DEV: xxx
 ```
+:::
 
-## Use with docker and docker compose
+:::option GitHub Actions
+
+You might need to install Avo's paid gems in you GitHub Actions pipeline. There are two steps you need to take in order to enable that.
+
+#### 1. Add `BUNDLE_PACKAGER__DEV` to your repository's secrets
+
+Go in your repo, under Settings -> Secrets and Variables -> Actions -> New repository secret and add your Gem server token there with the name `BUNDLE_PACKAGER__DEV` and the token as the value.
+
+![](/assets/img/3_0/gem-server-authentication/github-actions.png)
+![](/assets/img/3_0/gem-server-authentication/new-secret.png)
+
+#### 2. Expose `BUNDLE_PACKAGER__DEV` as an environment variable
+
+Then, in your `test.yml` (you might have it as a different name), expose that configuration item as an environment variable.
+
+```yml{8-9}
+name: Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  BUNDLE_PACKAGER__DEV: ${{secrets.BUNDLE_PACKAGER__DEV}}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Testing and deployment steps
+```
+:::
+
+:::option Docker and docker compose
 
 You can build with docker by passing a build argument from your environment.
 
@@ -103,3 +140,4 @@ docker build --build-arg BUNDLE_PACKAGER__DEV=$BUNDLE_PACKAGER__DEV
 ```bash
 docker compose build --build-arg BUNDLE_PACKAGER__DEV=xxx
 ```
+:::
