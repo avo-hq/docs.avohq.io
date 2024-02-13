@@ -1,6 +1,7 @@
 ---
 version: '1.0'
 license: community
+field_type: 'has_many'
 ---
 
 # Has Many
