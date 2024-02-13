@@ -9,19 +9,23 @@ To enable the reloadable feature, you have two options:
 
 1. Direct Boolean Value:
 
- Provide a boolean value directly to the reloadable option. This sets a default behavior where the reloadable feature is either enabled or disabled based on this boolean value.
-```ruby
-field :reviews, as: :has_many, reloadable: true
-  ```
+Provide a boolean value directly to the reloadable option. This sets a default behavior where the reloadable feature is either enabled or disabled based on this boolean value.
+
+```ruby-vue
+field :reviews, as: :{{ $frontmatter.field_type }}, reloadable: true
+```
+
 2. Dynamic Conditions with a Block:
 
 For more dynamic behavior, you can provide a block to the reloadable option. Within this block, you can specify conditions under which the reloadable should be displayed.
-```ruby
-field :reviews, as: :has_many,
+
+```ruby-vue
+field :reviews, as: :{{ $frontmatter.field_type }},
   reloadable: -> {
     current_user.is_admin?
   }
 ```
+
 In the above example, the reloadable will be visible if the current_user is an admin.
 
 #### ExecutionContext
