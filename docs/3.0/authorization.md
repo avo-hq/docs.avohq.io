@@ -6,18 +6,23 @@ license: pro
 
 When you share access to Avo with your clients or large teams, you may want to restrict access to a resource or a subset of resources. One example may be that only admin-level users may delete or update records.
 
-By default, Avo leverages Pundit under the hood to manage the authorization.
+By default, Avo's authorization mechanism is disabled. However, Avo provides a Pundit client out of the box for authorization management, which can be easily enabled.
 
 :::info Pundit alternative
-Pundit is just the default choice. You may plug in your own client using the instructions [here](#custom-authorization-clients).
+Pundit is just one choice among many. You may plug in your own client using the instructions [here](#custom-authorization-clients).
 :::
 
 :::warning
-You must manually require `pundit` or your authorization library in your `Gemfile`.
+If you want to use Pundit for authorization, make sure to add it to your `Gemfile`.
 
 ```ruby
 # Minimal authorization through OO design and pure Ruby classes
 gem "pundit"
+```
+And update config/initializers/avo.rb with following configuration:
+```ruby
+# Example of enabling authorization client in Avo configuration
+config.authorization_client = :pundit
 ```
 :::
 
