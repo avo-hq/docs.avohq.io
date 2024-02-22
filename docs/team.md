@@ -15,10 +15,19 @@ const members = [
   {
     avatar: 'https://www.github.com/Paul-Bob.png',
     name: 'Paul Bob',
-    title: 'Dev magician & CGO (Chief GIF Officer)',
+    title: 'Lead Developer & CGO (Chief GIF Officer)',
     links: [
       { icon: 'github', link: 'https://github.com/Paul-Bob' },
       { icon: 'twitter', link: 'https://twitter.com/paul_ionut_bob' },
+    ]
+  },
+  {
+    avatar: 'https://www.github.com/gabrielgiroe1.png',
+    name: 'Gabriel Giroe',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/gabrielgiroe1' },
+      { icon: 'twitter', link: 'https://twitter.com/gabrielgiroe' },
     ]
   },
   // {
