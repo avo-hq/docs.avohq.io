@@ -76,6 +76,8 @@ end
 ```
 :::
 
+Now, whenever you navigate to `https://example.com/lol` the tenant the `tenant_id` will be set to `lol`.
+
 ## Session-based tenancy
 
 Using a session-based tenancy strategy is a bit simpler as we don't meddle with the routing.
