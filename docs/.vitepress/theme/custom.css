@@ -3,10 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --vp-c-brand: #0886DE;
+  --vp-home-hero-name-color: #0886DE;
+  --vp-c-brand-1: #0886DE;
+  --vp-c-brand-2: #089BDE;
   --vp-button-brand-border:#6BB6EB;
   --vp-button-brand-bg: #0886DE;
-  --vp-c-brand-dark: #399EE5;
+  --vp-home-hero-name-color: #399EE5;
 }
 
 p > img {
