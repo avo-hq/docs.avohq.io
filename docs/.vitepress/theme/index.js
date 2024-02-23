@@ -1,25 +1,26 @@
-import DefaultTheme from "vitepress/theme"
-import FeedbackPill from "./components/FeedbackPill.vue"
-import LicenseReq from "./components/LicenseReq.vue"
-import VersionReq from "./components/VersionReq.vue"
-import Version from "./components/Version.vue"
-import DemoVideo from "./components/DemoVideo.vue"
-import Demo from "./components/Demo.vue"
-import PageHeader from "./components/PageHeader.vue"
-import AsideOutlineAfter from "./components/AsideOutlineAfter.vue"
-import BetaStatus from "./components/BetaStatus.vue"
-import SponsorGroup from "./components/SponsorGroup.vue"
-import Sponsor from "./components/Sponsor.vue"
-import Index from "./components/Index.vue"
-import Show from "./components/Show.vue"
-import Edit from "./components/Edit.vue"
-import New from "./components/New.vue"
-import Preview from "./components/Preview.vue"
-import View from "./components/View.vue"
-import Option from "./components/Option.vue"
-import AllContent from "./components/AllContent.vue"
+import DefaultTheme from 'vitepress/theme'
+import FeedbackPill from "../theme/components/FeedbackPill.vue"
+import LicenseReq from "../theme/components/LicenseReq.vue"
+import VersionReq from "../theme/components/VersionReq.vue"
+import Version from "../theme/components/Version.vue"
+import DemoVideo from "../theme/components/DemoVideo.vue"
+import Demo from "../theme/components/Demo.vue"
+import PageHeader from "../theme/components/PageHeader.vue"
+import AsideOutlineAfter from "../theme/components/AsideOutlineAfter.vue"
+import BetaStatus from "../theme/components/BetaStatus.vue"
+import SponsorGroup from "../theme/components/SponsorGroup.vue"
+import Sponsor from "../theme/components/Sponsor.vue"
+import Index from "../theme/components/Index.vue"
+import Show from "../theme/components/Show.vue"
+import Edit from "../theme/components/Edit.vue"
+import New from "../theme/components/New.vue"
+import Preview from "../theme/components/Preview.vue"
+import View from "../theme/components/View.vue"
+import Option from "../theme/components/Option.vue"
+import AllContent from "../theme/components/AllContent.vue"
 import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline/index.js"
-import "./styles.css"
+// import "./styles.css"
+import './custom.css'
 import {h} from "vue"
 
 export default {
@@ -57,3 +58,4 @@ export default {
     })
   },
 }
+
