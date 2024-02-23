@@ -1,5 +1,9 @@
 # Use route-level multitenancy
 
+:::tip
+We published a new [multitenancy guide](./../multitenancy).
+:::
+
 Multitenancy is not a far-fetched concept, and you might need it when you reach a certain level with your app. Avo is ready to handle that.
 
 This guide will show you **one way** of achieving that, but if can be changed if you have different needs.

@@ -32,3 +32,15 @@ view_context.link_to "Avo", "https://avohq.io"
 The `locale` of the app.
 :::
 
+:::option `tenant_id`
+You can set the `tenant_id` for the current request.
+:::
+
+:::option `tenant`
+You can set the `tenant` for the current request.
+:::
+
+**Related:**
+  - [Multitenancy](./multitenancy)
+  - [`extend_controllers_with`](./customization#extend_controllers_with)
+

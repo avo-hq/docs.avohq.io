@@ -11,7 +11,6 @@ The `Password` field renders a `input[type="password"]` element for that field. 
 field :password, as: :password
 ```
 
-Related:
-
+**Related:**
 - [Devise password optional](./../resources#devise-password-optional)
 
