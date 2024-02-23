@@ -19,7 +19,6 @@ import View from "../theme/components/View.vue"
 import Option from "../theme/components/Option.vue"
 import AllContent from "../theme/components/AllContent.vue"
 import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline/index.js"
-// import "./styles.css"
 import './custom.css'
 import {h} from "vue"
 
