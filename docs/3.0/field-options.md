@@ -305,8 +305,7 @@ You can add this property on `Id`, `Text`, and `Gravatar` fields.
 
 Optionally you can enable the global config `id_links_to_resource`. More on that on the [id links to resource docs page](./customization.html#id-links-to-resource).
 
-Related:
-
+**Related:**
  - [ID links to resource](./customization#id-links-to-resource)
  - [Resource controls on the left side](./customization#resource-controls-on-the-left-side)
 

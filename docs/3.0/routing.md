@@ -56,7 +56,7 @@ end
 The fix here is to tell Avo not to mount the engines and have them mounted yourself.
 
 ::: code-group
-```ruby [config/avo.rb]
+```ruby [config/avo.rb]{3}
 Avo.configure do |config|
   # Disable automatic engine mounting
   config.mount_avo_engines = false
@@ -65,7 +65,7 @@ Avo.configure do |config|
 end
 ```
 
-```ruby [config/routes.rb]
+```ruby [config/routes.rb]{2-4,10-14}
 Rails.application.routes.draw do
   scope ":locale" do
     mount Avo::Engine, at: Avo.configuration.root_path
