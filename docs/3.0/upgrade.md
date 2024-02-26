@@ -4,6 +4,30 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.4.1 to 3.5.0
+:::option Basic Filters URL param changed to `encoded_filters`
+When we added the [Dynamic Filters](./dynamic-filters) feature, by mistake we introduced a bug where you couldn't use the [Basic](./basic-filters) and [Dynamic Filters](./dynamic-filters) together because they are both using the `filters` URL param.
+
+This is not what we intended.
+
+To fix this we are changing the URL param of the Basic Filters from `filters` to `encoded_filters` so now you can have a URL with both filters.
+
+```md
+# Before
+https://example.com/avo/resources/users?filters[first_name][contains][]=Jason&page=1&filters=eyJBdm86OkZpbHRlcnM6OklzQWRtaW4iOlsiYWRtaW5zIl19
+
+# After
+https://example.com/avo/resources/users?filters[first_name][contains][]=Jason&page=1&encoded_filters=eyJBdm86OkZpbHRlcnM6OklzQWRtaW4iOlsiYWRtaW5zIl19
+```
+
+### What to do?
+
+If you have hardcoded links where you reference the `filters` param, change that to `encoded_filters`.
+These links might be in Tools, Resource Tools, Menu Items, or regular view partials (yes, basically anywhere you might have added them 🫤).
+
+A quick search through your codebase should reveal them.
+:::
+
 ## Upgrade from 3.2.2 to 3.3.0
 :::option `may_download_file` deprecated
 Actions now fully operate with turbo leading to the deprecation of `may_download_file` option. It can be safely removed from all actions.
