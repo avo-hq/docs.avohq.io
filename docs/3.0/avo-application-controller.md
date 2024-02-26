@@ -1,5 +1,9 @@
 # `Avo::ApplicationController`
 
+:::tip
+To safely extend Avo's `ApplicationController` please use the [`extend_controllers_with`](./customization#extend_controllers_with) configuration option.
+:::
+
 ## On extending the `ApplicationController`
 
 You may sometimes want to add functionality to Avo's `ApplicationController`. That functionality may be setting attributes to `Current` or multi-tenancy scenarios.
@@ -63,3 +67,7 @@ With this technique, the `multitenancy_detector` method and its `before_action` 
 :::info
 If you'd like to add a `before_action` before all of Avo's before actions, use `prepend_before_action` instead. That will run that code first and enable you to set an account or do something early on.
 :::
+
+**Related:**
+  - [Multitenancy](./multitenancy)
+  - [`extend_controllers_with`](./customization#extend_controllers_with)

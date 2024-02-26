@@ -8,7 +8,7 @@ prev: /3.0/
 ## Requirements
 
 - Ruby on Rails >= 6.1
-- Ruby >= 3
+- Ruby >= 3.1
 - `api_only` set to `false`. More [here](./recipes/api-only-app).
 - `propshaft` or `sprockets` gem
 - Have the `secret_key_base` defined in  any of the following `ENV["SECRET_KEY_BASE"]`, `Rails.application.credentials.secret_key_base`, or `Rails.application.secrets.secret_key_base`
