@@ -19,6 +19,15 @@ https://example.com/avo/resources/users?filters[first_name][contains][]=Jason&pa
 # After
 https://example.com/avo/resources/users?filters[first_name][contains][]=Jason&page=1&encoded_filters=eyJBdm86OkZpbHRlcnM6OklzQWRtaW4iOlsiYWRtaW5zIl19
 ```
+:::
+
+:::option Add `active_record_extended` gem to your `Gemfile`
+In order to extend Avo's filtering capabilities for arrays and tags fields, we use the [`active_record_extended`](https://github.com/GeorgeKaraszi/ActiveRecordExtended) gem.
+
+This gem uses postgres and was breaking for those who use any other database like `sqlite`.
+
+If you want to keep `Contained in` option on arrays and tags filters you should include the `active_record_extended` gem to your `Gemfile`.
+:::
 
 ### What to do?
 
