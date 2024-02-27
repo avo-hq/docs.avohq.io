@@ -127,10 +127,10 @@ This filter will give you options from the database.
  - Are
  - Contain
  - Overlap
- - Contained in (gem `active_record_extended` required)
+ - Contained in ([`active_record_extended`](https://github.com/GeorgeKaraszi/ActiveRecordExtended) gem required)
 
 :::warning
-Contained in don't work when using the `acts-as-taggable-on` gem.
+Contained in will not work when using the `acts-as-taggable-on` gem.
 :::
 
 ::::
