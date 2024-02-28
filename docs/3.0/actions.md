@@ -374,29 +374,15 @@ class Avo::Actions::TogglePublished < Avo::BaseAction
 end
 ```
 
-### Customize the message
+### Callable options
 
-You may update the `self.message` class attribute to customize the message if there are no fields present.
-
-#### Callable message
-
-<VersionReq version="2.21" />
-
-Since version `2.21` you can pass a block to `self.message` where you have access to a bunch of variables.
+Both `name` and `message` allow a block. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `record` (if on show view), `resource`, `arguments` and `view`.
+### Customize the name
 
 ```ruby
 class Avo::Actions::ReleaseFish < Avo::BaseAction
-  self.message = -> {
-    # you have access to:
-    # - params
-    # - current_user
-    # - context
-    # - view_context
-    # - request
-    # - resource
-    # - record
-    "Are you sure you want to release the #{record.name}?"
-  }
+  self.name = -> { "Release #{record.name}?" }
+  self.message = -> { "Are you sure you want to release the #{record.name}?" }
 end
 ```
 
