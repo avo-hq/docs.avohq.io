@@ -499,3 +499,26 @@ end
 Related:
   - [Multitenancy](./multitenancy)
   - [`Avo::Current`](./avo-current#tenant_id)
+
+::::option `default_url_options`
+`default_url_options` is a Rails [controller method](https://apidock.com/rails/ActionController/Base/default_url_options) that will append params automatically to the paths you generate through path helpers.
+
+In order to implement some features like route-level Multitenancy we exposed an API to add to Avo's `default_url_options` method.
+
+::: code-group
+```ruby [config/initializers/avo.rb]{2}
+Avo.configure do |config|
+  config.default_url_options = [:account_id]
+end
+```
+```ruby [app/config/routes.rb]{3}
+Rails.application.routes.draw do
+  # Use to test out route-based multitenancy
+  scope "/account/:account_id" do
+    mount Avo::Engine, at: Avo.configuration.root_path
+  end
+end
+```
+
+Now, when you visit `https://example.org/account/adrian/avo`, the `account_id` param is `adrian` and it will be appended to all path helpers.
+::::
