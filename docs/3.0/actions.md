@@ -204,59 +204,6 @@ def handle(**args)
 end
 ```
 
-You may want to redirect to another action. Here's an example of how to create a multi-step process, passing arguments from one action to another.
-In this example the initial action prompts the user to select the fields they wish to update, and in the subsequent action, the chosen fields will be accessible for updating.
-
-:::code-group
-```ruby[PreUpdate]
-class Avo::Actions::City::PreUpdate < Avo::BaseAction
-  self.name = "Update"
-
-  def fields
-    field :name, as: :boolean
-    field :population, as: :boolean
-  end
-
-  def handle(**args)
-   arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
-      message: {
-        cities: args[:query].map(&:id),
-        render_name: args[:fields][:name],
-        render_population: args[:fields][:population]
-      },
-      purpose: :action_arguments
-    )
-
-    redirect_to "/admin/resources/city/actions?action_id=Avo::Actions::City::Update&arguments=#{arguments}", turbo_frame: "actions_show"
-  end
-end
-```
-
-```ruby[Update]
-class Avo::Actions::City::Update < Avo::BaseAction
-  self.name = "Update"
-  self.visible = -> { false }
-
-  def fields
-    field :name, as: :text if arguments[:render_name]
-    field :population, as: :number if arguments[:render_population]
-  end
-
-  def handle(**args)
-    City.find(arguments[:cities]).each do |city|
-      city.update! args[:fields]
-    end
-
-    succeed "City updated!"
-  end
-end
-```
-
-:::info `turbo_frame`
-Notice the `turbo_frame: "actions_show"` present on the redirect of `Avo::Actions::City::PreUpdate` action. That argument is essential to have a flawless redirect between the actions.
-:::
-
-
 :::option `turbo`
 There are times when you don't want to perform the actions with Turbo. In such cases, turbo should be set to false.
 :::
@@ -357,6 +304,54 @@ class Avo::Actions::CloseModal < Avo::BaseAction
     # do_something_here
     succeed "Modal closed!!"
     close_modal
+  end
+end
+```
+:::
+
+:::option `navigate_to_action`
+<VersionReq version="3.4.2" />
+
+You may want to redirect to another action. Here's an example of how to create a multi-step process, passing arguments from one action to another.
+In this example the initial action prompts the user to select the fields they wish to update, and in the subsequent action, the chosen fields will be accessible for updating.
+
+:::code-group
+```ruby[PreUpdate]
+class Avo::Actions::City::PreUpdate < Avo::BaseAction
+  self.name = "Update"
+
+  def fields
+    field :name, as: :boolean
+    field :population, as: :boolean
+  end
+
+  def handle(**args)
+    navigate_to_action Avo::Actions::City::Update,
+      arguments: {
+        cities: args[:query].map(&:id),
+        render_name: args[:fields][:name],
+        render_population: args[:fields][:population]
+      }
+  end
+end
+```
+
+```ruby[Update]
+class Avo::Actions::City::Update < Avo::BaseAction
+  self.name = "Update"
+  self.visible = -> { false }
+
+  def fields
+    field :name, as: :text if arguments[:render_name]
+    field :population, as: :number if arguments[:render_population]
+  end
+
+  def handle(**args)
+    City.find(arguments[:cities]).each do |city|
+      city.update! args[:fields]
+    end
+
+    succeed "City updated!"
   end
 end
 ```
@@ -540,7 +535,27 @@ You may want to dynamically generate an action link. For that you need the actio
 
 Let's see an example use case:
 
-```ruby{15,16,17,18,20}
+::: code-group
+```ruby{7,8,9,10,11,12,13,15} [Current Version]
+field :name,
+  as: :text,
+  filterable: true,
+  name: "name (click to edit)",
+  only_on: :index do
+
+  path, data = Avo::Actions::City::Update.link_arguments(
+    resource: resource,
+    arguments: {
+      cities: Array[resource.record.id],
+      render_name: true
+    }
+  )
+
+  link_to resource.record.name, path, data: data
+end
+```
+
+```ruby{15,16,17,18,20} [< 3.4.2]
 field :name,
   as: :text,
   filterable: true,
@@ -561,9 +576,9 @@ field :name,
   )
 
   link_to resource.record.name, path, data: data
-
 end
 ```
+:::
 
 ![actions link demo](/assets/img/actions/action_link.gif)
 
