@@ -37,6 +37,10 @@ These links might be in Tools, Resource Tools, Menu Items, or regular view parti
 A quick search through your codebase should reveal them.
 :::
 
+## Upgrade from 3.3.0 to 3.4.0
+
+Ruby 3.0 is end-of-life and we pushed some code that only works with Ruby 3.1.
+
 ## Upgrade from 3.2.2 to 3.3.0
 :::option `may_download_file` deprecated
 Actions now fully operate with turbo leading to the deprecation of `may_download_file` option. It can be safely removed from all actions.
