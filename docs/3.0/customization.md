@@ -522,3 +522,19 @@ end
 
 Now, when you visit `https://example.org/account/adrian/avo`, the `account_id` param is `adrian` and it will be appended to all path helpers.
 ::::
+
+:::option `turbo`
+You may want to configure how turbo behave on Avo.
+
+You can configure it using `config.turbo` option on `avo.rb` initializer
+
+Supported options with default values:
+
+```ruby
+  config.turbo = -> do
+    {
+      instantclick: true
+    }
+  end
+```
+:::
