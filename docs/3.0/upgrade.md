@@ -4,7 +4,7 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
-## Upgrade from 3.4.1 to 3.5.0
+## Upgrade from 3.4.1 to 3.4.2
 :::option Basic Filters URL param changed to `encoded_filters`
 When we added the [Dynamic Filters](./dynamic-filters) feature, by mistake we introduced a bug where you couldn't use the [Basic](./basic-filters) and [Dynamic Filters](./dynamic-filters) together because they are both using the `filters` URL param.
 
@@ -19,6 +19,12 @@ https://example.com/avo/resources/users?filters[first_name][contains][]=Jason&pa
 # After
 https://example.com/avo/resources/users?filters[first_name][contains][]=Jason&page=1&encoded_filters=eyJBdm86OkZpbHRlcnM6OklzQWRtaW4iOlsiYWRtaW5zIl19
 ```
+### What to do?
+
+If you have hardcoded links where you reference the `filters` param, change that to `encoded_filters`.
+These links might be in Tools, Resource Tools, Menu Items, or regular view partials (yes, basically anywhere you might have added them 🫤).
+
+A quick search through your codebase should reveal them.
 :::
 
 :::option Add `active_record_extended` gem to your `Gemfile`
@@ -29,12 +35,42 @@ This gem uses postgres and was breaking for those who use any other database lik
 If you want to keep `Contained in` option on arrays and tags filters you should include the `active_record_extended` gem to your `Gemfile`.
 :::
 
-### What to do?
+:::option Multiple action flux
+First iteration of multiple action flux was using `redirect_to` with `turbo_frame: "actions_show"`. With the update to turbo 8 the redirect was giving some troubles and we decided that is time to improve this experience with a proper response type, [`navigate_to_action`](actions.html#navigate_to_action).
 
-If you have hardcoded links where you reference the `filters` param, change that to `encoded_filters`.
-These links might be in Tools, Resource Tools, Menu Items, or regular view partials (yes, basically anywhere you might have added them 🫤).
+If you have a multiple action flux implemented with `redirect_to` you should change it to [`navigate_to_action`](actions.html#navigate_to_action).
+:::
 
-A quick search through your codebase should reveal them.
+:::option Action `link_arguments` method
+Action `link_arguments` method handles the `arguments` encoding and encryption internally now so you only need to pass the `arguments` as a hash and the returned `path` will already include the encoded arguments.
+
+```ruby{20,21,22,23,25}
+field :name,
+  as: :text,
+  filterable: true,
+  name: "name (click to edit)",
+  only_on: :index do
+
+  arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt( # [!code --]
+    message: {                                                          # [!code --]
+      cities: Array[resource.record.id],                                # [!code --]
+      render_name: true                                                 # [!code --]
+    },                                                                  # [!code --]
+    purpose: :action_arguments                                          # [!code --]
+  )                                                                     # [!code --]
+
+  arguments = {                                                         # [!code ++]
+    cities: Array[resource.record.id],                                  # [!code ++]
+    render_name: true                                                   # [!code ++]
+  }                                                                     # [!code ++]
+
+  path, data = Avo::Actions::City::Update.link_arguments(
+    resource: resource,
+    arguments: arguments
+  )
+
+  link_to resource.record.name, path, data: data
+end
 :::
 
 ## Upgrade from 3.3.0 to 3.4.0
