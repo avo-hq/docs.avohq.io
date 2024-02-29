@@ -78,7 +78,7 @@ You may notice that `resource.record == nil` on some visibility blocks. That hap
 
 This is a consequence of a bug fix where `resource.record` was wrongly storing the last record of the index table.
 
-Check [this discussion](https://github.com/avo-hq/avo/issues/2544) for a more details
+Check [this discussion](https://github.com/avo-hq/avo/issues/2544) for more details
 :::
 
 ## Upgrade from 3.3.0 to 3.4.0
