@@ -73,6 +73,14 @@ field :name,
 end
 :::
 
+:::option `resource.record` or `record` as `nil` on visibility blocks
+You may notice that `resource.record == nil` on some visibility blocks. That happens when evaluating the field visibility to render header columns. On index, there is no record.
+
+This is a consequence of a bug fix where `resource.record` was wrongly storing the last record of the index table.
+
+Check [this discussion](https://github.com/avo-hq/avo/issues/2544) for a more details
+:::
+
 ## Upgrade from 3.3.0 to 3.4.0
 
 Ruby 3.0 is end-of-life and we pushed some code that only works with Ruby 3.1.
