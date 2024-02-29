@@ -533,7 +533,7 @@ Supported options with default values:
 ```ruby
   config.turbo = -> do
     {
-      instantclick: true
+      instant_click: true
     }
   end
 ```
