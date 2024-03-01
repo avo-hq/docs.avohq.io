@@ -530,10 +530,18 @@ You can configure it using `config.turbo` option on `avo.rb` initializer
 
 Supported options with default values:
 
-```ruby
+:::code-group
+```ruby [Current version]
   config.turbo = -> do
     {
       instant_click: true
+    }
+  end
+```
+```ruby [3.4.2]
+  config.turbo = -> do
+    {
+      instantclick: true
     }
   end
 ```
