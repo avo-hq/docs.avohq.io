@@ -3,6 +3,17 @@
 We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
+## Upgrade from 3.4.2 to 3.4.3
+:::option `turbo` configuration
+In version `3.4.2` we introduced turbo configuration with `instantclick` option. We decided that `instant_click` is a more appropriate name.
+
+```ruby
+config.turbo = {
+  instantclick: true  # [!code --]
+  instant_click: true # [!code ++]
+}
+```
+:::
 
 ## Upgrade from 3.4.1 to 3.4.2
 :::option Basic Filters URL param changed to `encoded_filters`
