@@ -27,7 +27,7 @@ const label = computed(() => labels[license.value]);
     :href="href"
     target="_blank"
     :title="title"
-    class="inline-flex items-center rounded no-underline leading-none !text-white"
+    class="inline-flex items-center rounded !no-underline leading-none !text-white"
     :class="{
       'bg-green-500 hover:bg-green-600': license == 'community',
       'bg-blue-500 hover:bg-blue-600': license == 'pro',
