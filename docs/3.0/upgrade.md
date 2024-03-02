@@ -3,6 +3,17 @@
 We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
+## Upgrade from 3.4.2 to 3.4.3
+:::option `turbo` configuration
+In version `3.4.2` we introduced turbo configuration with `instantclick` option. We decided that `instant_click` is a more appropriate name.
+
+```ruby
+config.turbo = {
+  instantclick: true  # [!code --]
+  instant_click: true # [!code ++]
+}
+```
+:::
 
 ## Upgrade from 3.4.1 to 3.4.2
 :::option Basic Filters URL param changed to `encoded_filters`
@@ -71,6 +82,14 @@ field :name,
 
   link_to resource.record.name, path, data: data
 end
+:::
+
+:::option `resource.record` or `record` as `nil` on visibility blocks
+You may notice that `resource.record == nil` on some visibility blocks. That happens when evaluating the field visibility to render header columns. On index, there is no record.
+
+This is a consequence of a bug fix where `resource.record` was wrongly storing the last record of the index table.
+
+Check [this discussion](https://github.com/avo-hq/avo/issues/2544) for more details
 :::
 
 ## Upgrade from 3.3.0 to 3.4.0
