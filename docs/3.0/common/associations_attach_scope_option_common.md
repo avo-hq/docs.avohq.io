@@ -13,7 +13,7 @@ field :user,
   attach_scope: -> { query.non_admins }
 ```
 
-Pass in a block where you attach scopes to the `query` object. The block is executed in the [`ExecutionContext`](./../execution-context).
+Pass in a block where you attach scopes to the `query` object and `parent` object, which is the actual record where you want to assign the association. The block is executed in the [`ExecutionContext`](./../execution-context).
 :::
 
 :::warning
