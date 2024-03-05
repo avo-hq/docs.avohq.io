@@ -11,5 +11,5 @@ const label = props.label || "Send feedback about this feature"
 </script>
 
 <template>
-  <a :href="href" target="_blank" class="text-sm inline-flex items-center rounded bg-[#055085] hover:bg-[#033c63] !text-white no-underline px-2 py-1 leading-none"><ChatBubbleBottomCenterIcon class="h-4 inline mr-1" /> {{label}}</a>
+  <a :href="href" target="_blank" class="text-sm inline-flex items-center rounded bg-[#055085] hover:bg-[#033c63] !text-white !no-underline px-2 py-1 leading-none"><ChatBubbleBottomCenterIcon class="h-4 inline mr-1" /> {{label}}</a>
 </template>

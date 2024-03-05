@@ -27,7 +27,7 @@ const title = computed(() => version.value === "unreleased" ? "This feature hasn
   <a :href="href"
     target="_blank"
     :title="title"
-    class="text-sm inline-flex items-center rounded !text-white no-underline px-2 py-1 leading-none bg-gray-500">
+    class="text-sm inline-flex items-center rounded !text-white !no-underline px-2 py-1 leading-none bg-gray-500">
     <InformationCircleIcon class="h-4 inline mr-1" /> {{label}}
   </a>
 </template>
