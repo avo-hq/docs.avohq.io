@@ -4,6 +4,14 @@ The upgrade process from Avo 2 to Avo 3 has quite a few steps, but you'll soon f
 
 Depending on how you use Avo you might not need to do all the steps.
 
+:::warning
+The [`show_controls`](./customizable-controls) feature has been moved from the Pro to the Advanced tier.
+
+The `show_controls` feature was in beta since launch. We introduced options for the <Index />, and <Edit /> views, and for the row controls.
+
+Based on how much it took to build the feature, the maintenance perspective and the value it brings we have decided that it's best suited for the Advanced tier.
+:::
+
 ## Upgrade from 2.x to 3.x
 
 :::info Ensure you meet the technical requirements
