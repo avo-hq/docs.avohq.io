@@ -93,3 +93,46 @@ class Avo::Resources::CourseLink < Avo::BaseResource
     }
   }
 end
+```
+
+## Reorder using drag and drop
+
+Sometimes just picking up a record and dropping it in the position that you'd like it to be. That's exactly what this feature does.
+
+It's disabled by default but you can enable it by adding `drag_and_drop: true` and `insert_at` options to the `self.ordering` hash.
+
+```ruby{5,11}
+self.ordering = {
+  display_inline: true,
+  visible_on: %i[index association], # :index or :association or both
+  # position: -> { record.position },
+  drag_and_drop: true,
+  actions: {
+    higher: -> { record.move_higher }, # has access to record, resource, options, params
+    lower: -> { record.move_lower },
+    to_top: -> { record.move_to_top },
+    to_bottom: -> { record.move_to_bottom },
+    insert_at: -> { record.insert_at position }
+  }
+}
+```
+
+### Custom `position` attribute
+
+Using the `position` option you can specify the record's `position` attribute. The default is `record.position`.
+
+```ruby{4}
+self.ordering = {
+  display_inline: true,
+  visible_on: %i[index association], # :index or :association or both
+  position: -> { record.position_in_list },
+  drag_and_drop: true,
+  actions: {
+    higher: -> { record.move_higher }, # has access to record, resource, options, params
+    lower: -> { record.move_lower },
+    to_top: -> { record.move_to_top },
+    to_bottom: -> { record.move_to_bottom },
+    insert_at: -> { record.insert_at position }
+  }
+}
+```
