@@ -1,9 +1,5 @@
 # `Avo::ApplicationController`
 
-:::tip
-To safely extend Avo's `ApplicationController` please use the [`extend_controllers_with`](./customization#extend_controllers_with) configuration option.
-:::
-
 ## On extending the `ApplicationController`
 
 You may sometimes want to add functionality to Avo's `ApplicationController`. That functionality may be setting attributes to `Current` or multi-tenancy scenarios.
@@ -68,6 +64,41 @@ With this technique, the `multitenancy_detector` method and its `before_action` 
 If you'd like to add a `before_action` before all of Avo's before actions, use `prepend_before_action` instead. That will run that code first and enable you to set an account or do something early on.
 :::
 
+## Override `ApplicationController` methods
+
+Sometimes you don't want to add methods but want to override the current ones.
+
+For example, you might want to take control of the `Avo::ApplicationController.fill_record` method and add your own behavior.
+
+TO do that you should change a few things in the approach we mentioned above. First we want to `prepend` the concern instead of `include` it and next, if we want to run a class method, we used `prepended` instead of `included`.
+
+
+```ruby{5-8,10-12,14-17,23}
+# app/controllers/concerns/application_controller_overrides.rb
+module ApplicationControllerOverrides
+  extend ActiveSupport::Concern
+
+  # we use the `prepended` block instead of `included`
+  prepended do
+    before_action :some_hook
+  end
+
+  def some_hook
+    # your logic here
+  end
+
+  def fill_record
+    # do some logic here
+    super
+  end
+end
+
+# configuration/initializers/avo.rb
+Rails.configuration.to_prepare do
+  # we will prepend instead of include
+  Avo::ApplicationController.prepend ApplicationControllerOverrides
+end
+```
+
 **Related:**
   - [Multitenancy](./multitenancy)
-  - [`extend_controllers_with`](./customization#extend_controllers_with)

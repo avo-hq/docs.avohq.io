@@ -42,5 +42,4 @@ You can set the `tenant` for the current request.
 
 **Related:**
   - [Multitenancy](./multitenancy)
-  - [`extend_controllers_with`](./customization#extend_controllers_with)
 
