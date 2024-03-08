@@ -55,9 +55,13 @@ scope "/:tenant_id" do
 #### 3. Set the tenant for each request
 
 :::code-group
-```ruby [config/initializers/avo.rb]{2}
+```ruby [config/initializers/avo.rb]{6}
 Avo.configure do |config|
-  config.extend_controllers_with = ["Multitenancy"]
+  # configuration values
+end
+
+Rails.configuration.to_prepare do
+  Avo::ApplicationController.include Multitenancy
 end
 ```
 ```ruby [app/controllers/concerns/multitenancy.rb]
@@ -90,9 +94,13 @@ We need to do a few things:
 
 #### 1. Set the tenant for each request
 :::code-group
-```ruby [config/initializers/avo.rb]{2}
+```ruby [config/initializers/avo.rb]{6}
 Avo.configure do |config|
-  config.extend_controllers_with = ["Multitenancy"]
+  # configuration values
+end
+
+Rails.configuration.to_prepare do
+  Avo::ApplicationController.include Multitenancy
 end
 ```
 ```ruby [app/controllers/concerns/multitenancy.rb]

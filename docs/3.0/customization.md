@@ -468,38 +468,6 @@ config.logger = -> {
 }
 ```
 
-::::option `extend_controllers_with`
-The `extend_controllers_with` configuration option enables you to add methods or hooks to Avo's `ApplicationController` in the main `avo` gem and all the other ones (`avo-pro`, `avo-dashboards`, etc.).
-
-All you need to do is to pass an array with the concerns you need to have included. The concerns should be strings as we later constantize them for you.
-
-::: code-group
-```ruby [config/initializers/avo.rb]{2}
-Avo.configure do |config|
-  config.extend_controllers_with = ["Multitenancy"]
-end
-```
-```ruby [app/controllers/concerns/multitenancy.rb]
-module Multitenancy
-  extend ActiveSupport::Concern
-
-  included do
-    prepend_before_action :set_tenant
-  end
-
-  def set_tenant
-    Avo::Current.tenant_id = params[:tenant_id]
-    Avo::Current.tenant = Account.find params[:tenant_id]
-  end
-end
-```
-:::
-::::
-
-Related:
-  - [Multitenancy](./multitenancy)
-  - [`Avo::Current`](./avo-current#tenant_id)
-
 ::::option `default_url_options`
 `default_url_options` is a Rails [controller method](https://apidock.com/rails/ActionController/Base/default_url_options) that will append params automatically to the paths you generate through path helpers.
 
