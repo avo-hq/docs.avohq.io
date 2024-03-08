@@ -40,7 +40,7 @@ There is a right way of approaching this scenario using Ruby modules or concerns
 
 First, you create a concern with your business logic; then you include it in the parent `Avo::ApplicationController` like so:
 
-```ruby{5-7,9-11,15-18}
+```ruby{6-8,11-13,18}
 # app/controllers/concerns/multitenancy.rb
 module Multitenancy
   extend ActiveSupport::Concern
