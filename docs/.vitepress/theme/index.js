@@ -5,6 +5,7 @@ import VersionReq from "../theme/components/VersionReq.vue"
 import Version from "../theme/components/Version.vue"
 import DemoVideo from "../theme/components/DemoVideo.vue"
 import Demo from "../theme/components/Demo.vue"
+import TopBarWrapper from "../theme/components/TopBarWrapper.vue"
 import PageHeader from "../theme/components/PageHeader.vue"
 import AsideOutlineAfter from "../theme/components/AsideOutlineAfter.vue"
 import BetaStatus from "../theme/components/BetaStatus.vue"
@@ -52,6 +53,7 @@ export default {
   },
   Layout() {
     return h(DefaultTheme.Layout, null, {
+      "layout-top": () => h(TopBarWrapper),
       "doc-before": () => h(PageHeader),
       "aside-outline-after": () => h(AsideOutlineAfter),
     })
