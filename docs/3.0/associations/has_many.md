@@ -39,3 +39,4 @@ field :members,
 <!-- @include: ./../common/scopes_common.md-->
 <!-- @include: ./../common/show_hide_buttons_common.md-->
 <!-- @include: ./../common/reloadable.md-->
+<!-- @include: ./../common/association.md-->
