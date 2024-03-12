@@ -120,6 +120,17 @@ You can also format using Rails helpers like `number_to_currency` (note that `vi
 field :price, as: :number, format_using: -> { view_context.number_to_currency(value) }
 ```
 
+## Parse value before update
+When it's necessary to parse information before storing it in the database, the `update_using` option proves to be useful. Inside the block you can access the raw `value` from the form, and the returned value will be saved in the database.
+
+```ruby
+field :metadata,
+  as: :code,
+  update_using: -> do
+    ActiveSupport::JSON.decode(value)
+  end
+```
+
 ## Sortable fields
 
 One of the most common operations with database records is sorting the records by one of your fields. For that, Avo makes it easy using the `sortable` option.
