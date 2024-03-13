@@ -616,3 +616,7 @@ field :name, as: :text, html: {
 <img :src="('/assets/img/stimulus/edit-input-target.jpg')" alt="Index field wrapper" class="border mb-4" />
 
 :::
+
+:::option `summarizable`
+WIP
+:::
