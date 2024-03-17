@@ -13,26 +13,6 @@ The `KeyValue` field makes it easy to edit flat key-value pairs stored in `JSON`
 field :meta, as: :key_value
 ```
 
-:::warning
-The final value in the database column will be overwritten, The options will not be appended.
-
-
-```json
-// this
-{
-  "feature_enabled": true,
-  "another_feature_enabled": false,
-  "something_else": "some_value" // this will disappear
-}
-
-// becomes
-{
-  "feature_enabled": true,
-  "another_feature_enabled": false,
-}
-```
-:::
-
 ## Options
 
 :::option `key_label`
