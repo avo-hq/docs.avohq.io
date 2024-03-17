@@ -62,6 +62,19 @@ es:
         other: 'archivos'
 ```
 
+## Localizing buttons label
+
+The `avo.save` configuration applies to all save buttons. If you wish to customize the localization for a specific resource, such as `Avo::Resources::Product`, you can achieve this by:
+
+```yml
+---
+en:
+  avo:
+    resource_translations:
+      product:
+        save: "Save the product!"
+```
+
 ## Setting the locale
 
 Setting the locale for Avo is simple. Just use the `config.locale = :en` config attribute. Default is `nil` and will fall back to whatever you have configured in `application.rb`.
