@@ -35,7 +35,7 @@ features:
     details: Customize your dashboard with the tools and analytics you need.
     icon: 🧱
     url: https://docs.avohq.io/2.0/dashboards.html
-  - title: Easy install & trully seamless updates
+  - title: Easy install & truly seamless updates
     details: Avo doesn't pollute your current app with it's files. Drop it in your existing app or add it to a new one and you're done 🙌
     icon: ✨
     url: https://docs.avohq.io/2.0/#seamless-upgrades
