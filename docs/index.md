@@ -53,7 +53,7 @@ features:
     icon: 🔎
     image: 'resource-management.png'
     url: https://docs.avohq.io/2.0/search.html
-  - title: Actions & Filters
+  - title: Actions
     details: Run custom actions to one or more of your resources with as little as pressing a button 💪
     icon: ✴️
     image: 'actions.png'
