@@ -216,6 +216,12 @@ const config = {
             {text: "Avo::Services::EncryptionService", link: "/3.0/encryption-service"},
           ],
         },
+        {
+          text: "Custom id's",
+          items: [
+            { text: "Custom ID", link: "/3.0/custom_ID's/custom-id's.md" },
+          ],
+        },
         // {
         //   text: "Extending",
         //   items: [
