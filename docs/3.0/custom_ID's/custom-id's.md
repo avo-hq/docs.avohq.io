@@ -46,6 +46,10 @@ To integrate FriendlyIDs with finders in Avo, follow these steps:
 
 With this setup, you can use `MyModel.find('bar')` to find records by their custom IDs.
 
+View FriendlyID setup in action: [View Demo](https://main.avodemo.com/avo/resources/users)
+
+Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/user.rb)
+
 ---
 ### Example with Prefixed IDs
 
@@ -65,6 +69,11 @@ Add has_prefix_id :my_prefix to your models to autogenerate prefixed IDs:
     has_prefix_id :user
   end
   ```
+
+  View FriendlyID setup in action: [View Demo](https://main.avodemo.com/avo/resources/teams)
+
+Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/team.rb)
+
 ---
 ### Example with Hashids
 
@@ -94,6 +103,11 @@ Hashids is a library that generates short, unique, and cryptographically secure 
   ```ruby
     model.hashid
   ```
+
+  View FriendlyID setup in action: [View Demo](https://main.avodemo.com/avo/resources/spouses)
+
+Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/spouse.rb)
+
 ## Usage of Custom IDs
 
 Custom IDs can be used in various places within Avo:
