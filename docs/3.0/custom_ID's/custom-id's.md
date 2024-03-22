@@ -70,7 +70,7 @@ Add has_prefix_id :my_prefix to your models to autogenerate prefixed IDs:
   end
   ```
 
-  View FriendlyID setup in action: [View Demo](https://main.avodemo.com/avo/resources/teams)
+  View Prefixed IDs setup in action: [View Demo](https://main.avodemo.com/avo/resources/teams)
 
 Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/team.rb)
 
@@ -104,7 +104,7 @@ Hashids is a library that generates short, unique, and cryptographically secure 
     model.hashid
   ```
 
-  View FriendlyID setup in action: [View Demo](https://main.avodemo.com/avo/resources/spouses)
+  View hashid-rails setup in action: [View Demo](https://main.avodemo.com/avo/resources/spouses)
 
 Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/spouse.rb)
 
