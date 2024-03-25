@@ -4,6 +4,20 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.5.4 to 3.5.5
+:::option Record errors
+With version `3.5.5` we introduced a stricter error check. Now when the record have any error included the action will fail. This allow you to do things like:
+
+```ruby
+before_update do
+  if validation_fail?
+    errors.add(:field_id, "Error message")
+  end
+end
+```
+
+:::
+
 ## Upgrade from 3.4.2 to 3.4.3
 :::option `turbo` configuration
 In version `3.4.2` we introduced turbo configuration with `instantclick` option. We decided that `instant_click` is a more appropriate name.
