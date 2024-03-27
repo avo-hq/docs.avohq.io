@@ -52,6 +52,12 @@ end
 
 You may add fields to the action just as you do it in a resource. Adding fields is optional. You may have actions that don't have any fields attached.
 
+:::warning
+The `belongs_to` field will only work on the <Show /> and <Edit /> page of a record. It won't work on the <Index /> page of a resource.
+
+Read more on why [here](https://github.com/avo-hq/avo/issues/1572#issuecomment-1421461084).
+:::
+
 ```ruby
 def fields
   field :notify_user, as: :boolean
