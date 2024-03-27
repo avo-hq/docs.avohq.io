@@ -1,8 +1,8 @@
 ## How to Use Custom IDs with Avo
 
-Custom IDs can be implemented in Avo using various strategies such as FriendlyID, prefixed IDs, or Hashids. Below are examples demonstrating each approach.
+Avo seamlessly integrates custom IDs, including popular solutions like FriendlyID, prefixed IDs, or Hashids. Below, you'll find examples illustrating each approach for effortless customization within your application.
 
-### Example with FriendlyID
+## Example with FriendlyID
 
 FriendlyID is a gem that allows you to generate pretty URLs and unique IDs. To integrate FriendlyID with Avo, follow these steps:
 
@@ -46,12 +46,15 @@ To integrate FriendlyIDs with finders in Avo, follow these steps:
 
 With this setup, you can use `MyModel.find('bar')` to find records by their custom IDs.
 
+  :::info
+  For a version of friendlyid smaller then 5.0 you can use [custom query scopes](/3.0/customization.md#custom-query-scopes)
+  :::
 View FriendlyID setup in action: [View Demo](https://main.avodemo.com/avo/resources/users)
 
 Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/user.rb)
 
 ---
-### Example with Prefixed IDs
+## Example with Prefixed IDs
 
 Prefixed IDs involve adding a custom prefix to your IDs.
 
@@ -75,7 +78,7 @@ Add has_prefix_id :my_prefix to your models to autogenerate prefixed IDs:
 Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/team.rb)
 
 ---
-### Example with Hashids
+## Example with Hashids
 
 Hashids is a library that generates short, unique, and cryptographically secure IDs.
 
@@ -107,12 +110,3 @@ Hashids is a library that generates short, unique, and cryptographically secure 
   View hashid-rails setup in action: [View Demo](https://main.avodemo.com/avo/resources/spouses)
 
 Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/spouse.rb)
-
-## Usage of Custom IDs
-
-Custom IDs can be used in various places within Avo:
-
-- **Index Links:** Replace default link URLs with custom ID URLs.
-- **Show Links:** Adjust link URLs in the show view to reflect custom IDs.
-- **Edit Links:** Modify edit links to incorporate custom IDs.
-- **Preview Links:** Update preview links to use custom IDs.
