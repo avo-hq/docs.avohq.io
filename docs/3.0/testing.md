@@ -21,6 +21,7 @@ You can find them all [here](https://github.com/avo-hq/avo/blob/main/lib/avo/tes
 Given this `Avo::Actions::ReleaseFish`, this is the `spec` that tests it.
 
 ```ruby
+
 class Avo::Actions::ReleaseFish < Avo::BaseAction
   self.name = "Release fish"
   self.message = "Are you sure you want to release this fish?"
@@ -29,12 +30,10 @@ class Avo::Actions::ReleaseFish < Avo::BaseAction
     field :message, as: :textarea, help: "Tell the fish something before releasing."
   end
 
-  def handle(**args)
-    args[:records].each do |record|
-      record.release
-    end
+  def handle(query:, fields:, **_)
+    query.each(&:release)
 
-    succeed "#{args[:records].count} fish released with message '#{args[:fields][:message]}'."
+    succeed "#{query.count} fish released with message '#{fields[:message]}'."
   end
 end
 

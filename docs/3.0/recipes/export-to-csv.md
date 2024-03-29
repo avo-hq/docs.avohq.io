@@ -17,9 +17,7 @@ class Avo::Actions::ExportCsv < Avo::BaseAction
     field :created_at, as: :boolean
   end
 
-  def handle(**args)
-    records, resource, fields = args.values_at(:records, :resource, :fields)
-
+  def handle(records:, fields:, resource:, **args)
     # uncomment if you want to download all the records if none was selected
     # records = resource.model_class.all if records.blank?
 

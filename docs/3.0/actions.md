@@ -18,39 +18,52 @@ Once you attach an action to a resource using the `action` method inside the `ac
 Since version <Version version="2.13" /> you may use the [customizable controls](./customizable-controls) feature to show the actions outside the dropdown.
 :::
 
-## Overview
+## Creating an action
 
-You generate one running `bin/rails generate avo:action toggle_active`, creating an action configuration file.
+To generate an action configuration file, run `bin/rails generate avo:action toggle_active`.
 
 ```ruby
+# app/avo/actions/toggle_active.rb
+
 class Avo::Actions::ToggleActive < Avo::BaseAction
-  self.name = 'Toggle inactive'
+  self.name = "Toggle Active"
+  # self.visible = -> do
+  #   true
+  # end
 
-  def fields
-    field :notify_user, as: :boolean, default: true
-    field :message, as: :text, default: 'Your account has been marked as inactive.'
-  end
+  # def fields
+  #   # Add Action fields here
+  # end
 
-  def handle(**args)
-    query, fields, current_user, resource = args.values_at(:query, :fields, :current_user, :resource)
-
+  def handle(query:, fields:, current_user:, resource:, **args)
     query.each do |record|
-      if record.active
-        record.update active: false
-      else
-        record.update active: true
-      end
-
-      # Optionally, you may send a notification with the message to that user from inside the action
-      UserMailer.with(user: record).toggle_active(fields["message"]).deliver_later
+      # Do something with your records.
     end
-
-    succeed 'Perfect!'
   end
 end
 ```
 
-You may add fields to the action just as you do it in a resource. Adding fields is optional. You may have actions that don't have any fields attached.
+## Registering an action
+
+To add the action to a resource, declare it inside the `actions` method as follows:
+
+```ruby{9}
+class Avo::Resources::User < Avo::BaseResource
+  self.title = :name
+
+  def fields
+    field :id, as: :id
+  end
+
+  def actions
+    action Avo::Actions::ToggleActive
+  end
+end
+```
+
+## The `fields` method (optional)
+
+You may add fields to the action just as you do it in a resource. Adding fields is optional.
 
 :::warning
 The `belongs_to` field will only work on the <Show /> and <Edit /> page of a record. It won't work on the <Index /> page of a resource.
@@ -74,42 +87,19 @@ More about this on the [authorization page](./authorization#attachments).
 
 ![Actions](/assets/img/actions/action-fields.jpg)
 
-The `handle` method is where the magic happens. That is where you put your action logic. In this method, you will have access to the `query` (same value as `records` (if there's only one, it will be automatically wrapped in an array)) and the values passed to the `fields`.
+## The `handle` method
+
+This is where the magic happens. This method contains your action logic.
+
+The handle method receives the following arguments:
+- `query` and `records`: both names can be used interchangeably. Single records are automatically wrapped in an array.
+- `fields`
+- `current_user`
+- `resource`
 
 ```ruby
-def handle(**args)
-  query, fields = args.values_at(:query, :fields)
-
-  query.each do |record|
-    if record.active
-      record.update active: false
-    else
-      record.update active: true
-    end
-
-    # Optionally, you may send a notification with the message to that user.
-    UserMailer.with(user: record).toggle_active(fields["message"]).deliver_later
-  end
-
-  succeed 'Perfect!'
-end
-```
-
-## Registering actions
-
-To add an action to one of your resources, you need to declare it inside the `actions` method on the resource using the `action` method.
-
-```ruby{9}
-class Avo::Resources::User < Avo::BaseResource
-  self.title = :name
-
-  def fields
-    field :id, as: :id
-  end
-
-  def actions
-    action Avo::Actions::ToggleActive
-  end
+def handle(query:, fields:, current_user:, resource:, **args)
+  # Do something
 end
 ```
 
@@ -121,7 +111,7 @@ The default response is to reload the page and show the _Action ran successfully
 
 ### Message responses
 
-You will have four message response methods at your disposal `succeed`, `error`, `warn`, and `inform`. These will render the user green, red, orange, and blue alerts.
+Four message response methods are at your disposal: `succeed`, `error`, `warn`, and `inform`. These render green, red, orange, and blue alerts.
 
 ```ruby{4-7}
 def handle(**args)
@@ -154,10 +144,8 @@ end
 After you notify the user about what happened through a message, you may want to execute an action like `reload` (default action) or `redirect_to`. You may use message and action responses together.
 
 ```ruby{14}
-def handle(**args)
-  records = args[:records]
-
-  records.each do |record|
+def handle(query:, **args)
+  query.each do |record|
     if record.admin?
       error "Can't mark inactive! The user is an admin."
     else
@@ -178,10 +166,8 @@ The available action responses are:
 When you use `reload`, a full-page reload will be triggered.
 
 ```ruby{9}
-def handle(**args)
-  records = args[:records]
-
-  records.each do |project|
+def handle(query:, **args)
+  query.each do |project|
     project.update active: false
   end
 
@@ -199,10 +185,8 @@ Example:
 `redirect_to path, allow_other_host: true, status: 303`
 
 ```ruby{9}
-def handle(**args)
-  records = args[:records]
-
-  records.each do |project|
+def handle(query:, **args)
+  query.each do |project|
     project.update active: false
   end
 
@@ -229,13 +213,11 @@ class Avo::Actions::DownloadFile < Avo::BaseAction
   self.name = "Download file"
   self.may_download_file = true
 
-  def handle(**args)
-    records = args[:records]
-
+def handle(query:, **args)
     filename = "projects.csv"
     report_data = []
 
-    records.each do |project|
+    query.each do |project|
       report_data << project.generate_report_data
     end
 
@@ -277,16 +259,12 @@ class Avo::Actions::KeepModalOpenAction < Avo::BaseAction
     field :birthday, as: :date
   end
 
-  def handle(**args)
-    begin
-    user = User.create args[:fields]
-    rescue => error
-      error "Something happened: #{error.message}"
-      keep_modal_open
-      return
-    end
-
+  def handle(fields:, **args)
+    User.create fields
     succeed "All good ✌️"
+  rescue => error
+    error "Something happened: #{error.message}"
+    keep_modal_open
   end
 end
 ```
@@ -332,12 +310,12 @@ class Avo::Actions::City::PreUpdate < Avo::BaseAction
     field :population, as: :boolean
   end
 
-  def handle(**args)
+  def handle(query:, fields:, **args)
     navigate_to_action Avo::Actions::City::Update,
       arguments: {
-        cities: args[:query].map(&:id),
-        render_name: args[:fields][:name],
-        render_population: args[:fields][:population]
+        cities: query.map(&:id),
+        render_name: fields[:name],
+        render_population: fields[:population]
       }
   end
 end
@@ -353,9 +331,9 @@ class Avo::Actions::City::Update < Avo::BaseAction
     field :population, as: :number if arguments[:render_population]
   end
 
-  def handle(**args)
+  def handle(fields:, **args)
     City.find(arguments[:cities]).each do |city|
-      city.update! args[:fields]
+      city.update! fields
     end
 
     succeed "City updated!"
@@ -409,9 +387,7 @@ class Avo::Actions::DummyAction < Avo::BaseAction
   self.name = "Dummy action"
   self.standalone = true
 
-  def handle(**args)
-    fields, current_user, resource = args.values_at(:fields, :current_user, :resource)
-
+  def handle(query:, fields:, current_user:, resource:, **args)
     # Do something here
 
     succeed 'Yup'
@@ -429,9 +405,7 @@ class Avo::Actions::DummyAction < Avo::BaseAction
   self.standalone = true
   self.visible = -> { view == :index }
 
-  def handle(**args)
-    fields, current_user, resource = args.values_at(:fields, :current_user, :resource)
-
+  def handle(query:, fields:, current_user:, resource:, **args)
     # Do something here
 
     succeed 'Yup'
@@ -485,9 +459,9 @@ self.authorize = -> {
 }
 ```
 
-## Actions arguments
+## Custom action arguments
 
-Actions can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
+Actions can have different behaviors according to their host resource. In order to achieve that, arguments can receive additional arguments as follows:
 
 ```ruby{12-14}
 class Avo::Resources::Fish < Avo::BaseResource
