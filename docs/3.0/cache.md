@@ -39,6 +39,14 @@ config.cache_store = ActiveSupport::Cache.lookup_store(:solid_cache_store)
 Our computed system do not use MemoryStore in production because it will not be shared between multiple processes (when using Puma).
 :::
 
+## Problem: cached rows on table do not update when record's associations suffer changes
+:::warning
+
+Solution 1: touch: true on association
+
+Solution 2: override cache_hash method on resource to take associations in consideration
+:::
+
 ## Solid Cache
 
 Avo seamlessly integrates with [Solid Cache](https://github.com/rails/solid_cache). To setup Solid Cache follow these essential steps
