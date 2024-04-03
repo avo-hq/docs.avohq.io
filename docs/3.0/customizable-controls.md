@@ -164,7 +164,7 @@ actions_list exclude: DisableAccount
 actions_list exclude: [ExportSelection, PublishPost]
 ```
 ::::info
-The actions icon and action divider will defined in def action. Here is an example of [action icon and divider](actions.md#action_icons_and_action_divider)
+The actions icon and dividers are defined in `def actions` method. Here is an example of [action icon and divider](actions.md#action_icons_and_action_divider)
 
 :::
 
