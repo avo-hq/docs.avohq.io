@@ -362,47 +362,6 @@ end
 ```
 :::
 
-:::option `action icons`
-
-Action icons allow you to enhance the visual representation of actions. Action icons provide a quick visual cue for users, helping them identify different actions at a glance.
-
-Here's an example of how you can define actions with icons:
-
-```ruby
-def actions
-    action Avo::Actions::ToggleInactive, icon: "heroicons/outline/globe"
-    action Avo::Actions::ToggleAdmin
-    action Avo::Actions::Sub::DummyAction
-    action Avo::Actions::DownloadFile, icon: "heroicons/outline/arrow-left"
-    action Avo::Actions::Test::NoConfirmationRedirect
-    action Avo::Actions::Test::CloseModal
-  end
-```
-
-
-<img :src="('/assets/img/action_icon.png')" class="border mb-4" />
-:::
-
-:::option `action divider`
-Action dividers allow you to organize and separate actions into logical groups, improving the overall layout and usability.
-
-Here's an example of how you can define actions dividers:
-
-```ruby
-def actions
-    action Avo::Actions::ToggleInactive
-    action Avo::Actions::ToggleAdmin
-    divider
-    action Avo::Actions::Sub::DummyAction
-    action Avo::Actions::DownloadFile
-    divider
-    action Avo::Actions::Test::NoConfirmationRedirect
-    action Avo::Actions::Test::CloseModal
-  end
-```
-  <img :src="('/assets/img/action_divider.png')" class="border mb-4" />
-:::
-
 ## Customization
 
 ```ruby{2-6}
@@ -625,3 +584,41 @@ end
 ## StimulusJS
 
 Please follow our extended [StimulusJS guides](./stimulus-integration.html#use-stimulus-js-in-a-tool) for more information.
+
+## Divider
+Action dividers allow you to organize and separate actions into logical groups, improving the overall layout and usability.
+
+Here's an example of how you can define actions dividers:
+
+```ruby
+def actions
+    action Avo::Actions::ToggleInactive
+    action Avo::Actions::ToggleAdmin
+    divider
+    action Avo::Actions::Sub::DummyAction
+    action Avo::Actions::DownloadFile
+    divider
+    action Avo::Actions::Test::NoConfirmationRedirect
+    action Avo::Actions::Test::CloseModal
+  end
+```
+<img :src="('/assets/img/action_divider.png')" class="border mb-4" />
+
+## Icon
+
+Action icons allow you to enhance the visual representation of actions. Action icons provide a quick visual cue for users, helping them identify different actions at a glance.
+
+Here's an example of how you can define actions with icons:
+
+```ruby
+def actions
+    action Avo::Actions::ToggleInactive, icon: "heroicons/outline/globe"
+    action Avo::Actions::ToggleAdmin
+    action Avo::Actions::Sub::DummyAction
+    action Avo::Actions::DownloadFile, icon: "heroicons/outline/arrow-left"
+    action Avo::Actions::Test::NoConfirmationRedirect
+    action Avo::Actions::Test::CloseModal
+  end
+```
+
+<img :src="('/assets/img/action_icon.png')" class="border mb-4" />
