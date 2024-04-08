@@ -63,7 +63,7 @@ Customize the label for the delete row button tooltip.
 Any string value.
 :::
 
-:::option `disable`
+:::option `disabled`
 Toggle on/off the ability to disable editing keys, editing values, adding rows, and deleting rows for that field.
 
 <!-- @include: ./../common/default_boolean_false.md-->
@@ -118,6 +118,8 @@ field :meta, # The database field ID
   disable_adding_rows: false, # Option to disable the ability to add rows. Defaults to false.
   disable_deleting_rows: false # Option to disable the ability to delete rows. Defaults to false.
 ```
+
+Setting `disabled: true` enforces all restrictions by disabling editing keys, editing values, adding rows, and deleting rows collectively.
 ```ruby
 field :meta, # The database field ID
   as: :key_value, # The field type.
