@@ -13,6 +13,7 @@ The `Money` field is used to a monetary value.
 # Gemfile
 
 gem "avo-money_field"
+gem "money-rails", "~> 1.12"
 ```
 :::
 
