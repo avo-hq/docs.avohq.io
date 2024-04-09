@@ -482,6 +482,18 @@ end
 ```
 
 Find out more on the [grid view documentation page](grid-view).
+
+<VersionReq version="3.5.6" /> `default_view_type` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource` and `view`. Example:
+
+```ruby
+class Avo::Resources::Post < Avo::BaseResource
+  self.default_view_type = -> {
+    mobile_user = request.user_agent =~ /Mobile/
+
+    mobile_user ? :table : :grid
+  }
+end
+```
 :::
 
 :::option `self.model_class`
