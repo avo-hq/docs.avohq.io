@@ -8,6 +8,7 @@ license: community
 Sometimes you just need to link to a field. That's it!
 
 This is what this field does. You give it a record and it will link to it.
+That record can come off an association a method or any kind of property on the record instance.
 
 :::warning
 That record should have [a resource configured](./../resources.html#overview).
@@ -15,7 +16,7 @@ That record should have [a resource configured](./../resources.html#overview).
 
 ```ruby{14,19}
 class Comment < ApplicationRecord
-  # Your model must return an Active Record instance.
+  # Your model must return an instance of a record
   has_one :post
   # or
   belongs_to :post
@@ -63,7 +64,7 @@ field :post, as: :record_link, target: :blank
 
 :::option `use_resource`
 
-Because you only give it an Active Record instance, Avo will try to guess which resource it should use to display the title of the record and how to compute it's link.
+Because you only give it an instance of a record, Avo will try to guess which resource it should use to display the title of the record and how to compute it's link.
 With more advanced configurations (when you have [multiple resources for the same model](./../resources.html#use-multiple-resources-for-the-same-model)) that resource might not be the one that you wish for.
 
 Using the `use_resource` configuration value you can tell Avo which resource it should use.
