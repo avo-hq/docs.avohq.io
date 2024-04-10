@@ -4,6 +4,26 @@ feedbackId: 834
 
 # Field options
 
+Avo fields are dynamic and can be configured using field options.
+
+There are quite a few **common field options** described on this page that will work with most fields (but some might not support them), and some **custom field options** that only some fields respond to that are described on each field page.
+
+
+### Common field option example
+
+```ruby
+# disabled will disable the field on the `Edit` view
+field :name, as: :text, disabled: true
+field :status, as: :select, disabled: true
+```
+
+### Custom field option example
+
+```ruby
+# options will set the dropdown options for a select field
+field :status, as: :select, options: %w[first second third]
+```
+
 ## Change field name
 
 To customize the label, you can use the `name` property to pick a different label.
@@ -618,5 +638,11 @@ field :name, as: :text, html: {
 :::
 
 :::option `summarizable`
-WIP
+
+```ruby
+field :status, as: :select, summarizable: true
+# or
+field :status, as: :badge, summarizable: true
 :::
+
+This section is WIP.
