@@ -32,4 +32,4 @@ field :members,
   searchable: true,
   attach_scope: -> { query.where.not(team_id: parent.id) }
   ```
-This example ensures that when attaching members to a team, only those who are not already members of that team will appear in the list of options.
+In this example, in the `attach_scope`, we ensure that when attaching members to a team, only those who are not already members will appear in the list of options.
