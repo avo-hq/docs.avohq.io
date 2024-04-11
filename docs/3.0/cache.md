@@ -39,7 +39,7 @@ config.cache_store = ActiveSupport::Cache.lookup_store(:solid_cache_store)
 Our computed system do not use MemoryStore in production because it will not be shared between multiple processes (when using Puma).
 :::
 
-## Problem: cached rows on table do not update when record's associations suffer changes
+## Cached rows on the table do not update when the record's associations update
 :::warning
 
 Solution 1: touch: true on association
