@@ -65,5 +65,7 @@ The output value must be a hash as described above.
 
 
 :::info
-The keys not specified in the options will remain unaffected.
+<VersionReq version="3.7.0" class="mt-2" />
+
+The keys not specified in the options will remain unaffected. Previously, it removed all unspecified keys.
 :::
