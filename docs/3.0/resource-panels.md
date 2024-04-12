@@ -134,7 +134,7 @@ By using the `main_panel` and `panel` method, you can manually customize the org
 
 By default, only the fields declared in the root and the fields declared inside `main_panel` will be visible on the `Index` view.
 
-```ruby{3-7}
+```ruby{4-8}
 class Avo::Resources::User < Avo::BaseResource
   def fields
     # Only these fields will be visible on the `Index` view
