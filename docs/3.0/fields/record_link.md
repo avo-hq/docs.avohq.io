@@ -10,6 +10,13 @@ Sometimes you just need to link to a field. That's it!
 This is what this field does. You give it a record and it will link to it.
 That record can come off an association a method or any kind of property on the record instance.
 
+:::info Add this field to the `Gemfile`
+```ruby
+# Gemfile
+gem "avo-record_link_field"
+```
+:::
+
 :::warning
 That record should have [a resource configured](./../resources.html#overview).
 :::
