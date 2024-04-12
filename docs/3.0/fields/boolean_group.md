@@ -64,22 +64,6 @@ The output value must be a hash as described above.
 ```
 
 
-:::warning
-The final value in the database column will be overwritten, The options will not be appended.
-
-
-```json
-// this
-{
-  "feature_enabled": true,
-  "another_feature_enabled": false,
-  "something_else": "some_value" // this will disappear
-}
-
-// becomes
-{
-  "feature_enabled": true,
-  "another_feature_enabled": false,
-}
-```
+:::info
+The keys not specified in the options will remain unaffected.
 :::
