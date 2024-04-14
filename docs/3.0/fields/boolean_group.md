@@ -40,7 +40,7 @@ You may want to compute the values on the fly for your `BooleanGroup` field. You
 class Avo::Resources::Project < Avo::BaseResource
   field :features,
     as: :boolean_group,
-    options: -> do
+    options: -do
       record.features.each_with_object({}) do |feature, hash|
         hash[feature.id] = feature.name.humanize
       end
@@ -63,9 +63,36 @@ The output value must be a hash as described above.
 }
 ```
 
+Before version 3.7.0 Avo would override the whole attribute with only the payload sent from the client.
 
-:::info
-<VersionReq version="3.7.0" class="mt-2" />
+```json
+// Before update.
+{
+  "feature_enabled": true,
+  "another_feature_enabled": false,
+  "something_else": "some_value" // this will disappear
+}
+// After update.
+{
+  "feature_enabled": true,
+  "another_feature_enabled": false,
+}
+```
 
-The keys not specified in the options will remain unaffected. Previously, it removed all unspecified keys.
-:::
+Version 3.7.0 and up will only update the keys that you send from the client.
+
+```json
+// Before update.
+{
+  "feature_enabled": true,
+  "another_feature_enabled": false,
+  "something_else": "some_value" // this will be kept
+}
+
+// After update.
+{
+  "feature_enabled": true,
+  "another_feature_enabled": false,
+  "something_else": "some_value"
+}
+```
