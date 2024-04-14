@@ -261,6 +261,55 @@ If you'd like to use [Groupdate](https://github.com/ankane/groupdate), [Hightop]
 
 `chart.js` is supported for the time being. So if you need support for other types, please reach out or post a PR (🙏 PRs are much appreciated).
 
+<VersionReq version="3.6.1" />
+`self.chartkick_options` accepts callable blocks:
+```ruby
+class Avo::Cards::ExampleAreaChart < Avo::Cards::ChartkickCard
+  self.chart_options: -> do
+    {
+      library: {
+        plugins: {
+          legend: {display: true}
+        }
+      }
+    }
+  end
+end
+```
+
+
+`chartkick_options` can also be declared when registering the card:
+
+```ruby
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
+  def cards
+    card Avo::Cards::ExampleAreaChart,
+      chart_options: {
+        library: {
+          plugins: {
+            legend: {display: true}
+          }
+        }
+      }
+
+    # OR
+
+    card Avo::Cards::ExampleAreaChart,
+      chart_options: -> do
+        {
+          library: {
+            plugins: {
+              legend: {display: true}
+            }
+          }
+        }
+      end
+  end
+end
+```
+
+The blocks are executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent` and `arguments`
+
 ## Partial card
 
 You can use a partial card to add custom content to a card. Generate one by running `bin/rails g avo:card custom_card --type partial`. That will create the card class and the partial for it.

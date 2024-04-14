@@ -97,6 +97,8 @@ end
 
 ## Reorder using drag and drop
 
+<BetaStatus label="Beta" />
+
 Sometimes just picking up a record and dropping it in the position that you'd like it to be. That's exactly what this feature does.
 
 It's disabled by default but you can enable it by adding `drag_and_drop: true` and `insert_at` options to the `self.ordering` hash.

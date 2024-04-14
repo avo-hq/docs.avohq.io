@@ -4,6 +4,26 @@ feedbackId: 834
 
 # Field options
 
+Avo fields are dynamic and can be configured using field options.
+
+There are quite a few **common field options** described on this page that will work with most fields (but some might not support them), and some **custom field options** that only some fields respond to that are described on each field page.
+
+
+### Common field option example
+
+```ruby
+# disabled will disable the field on the `Edit` view
+field :name, as: :text, disabled: true
+field :status, as: :select, disabled: true
+```
+
+### Custom field option example
+
+```ruby
+# options will set the dropdown options for a select field
+field :status, as: :select, options: %w[first second third]
+```
+
 ## Change field name
 
 To customize the label, you can use the `name` property to pick a different label.
@@ -118,6 +138,17 @@ You can also format using Rails helpers like `number_to_currency` (note that `vi
 
 ```ruby
 field :price, as: :number, format_using: -> { view_context.number_to_currency(value) }
+```
+
+## Parse value before update
+When it's necessary to parse information before storing it in the database, the `update_using` option proves to be useful. Inside the block you can access the raw `value` from the form, and the returned value will be saved in the database.
+
+```ruby
+field :metadata,
+  as: :code,
+  update_using: -> do
+    ActiveSupport::JSON.decode(value)
+  end
 ```
 
 ## Sortable fields
@@ -605,3 +636,13 @@ field :name, as: :text, html: {
 <img :src="('/assets/img/stimulus/edit-input-target.jpg')" alt="Index field wrapper" class="border mb-4" />
 
 :::
+
+:::option `summarizable`
+
+```ruby
+field :status, as: :select, summarizable: true
+# or
+field :status, as: :badge, summarizable: true
+:::
+
+This section is WIP.

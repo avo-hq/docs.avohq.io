@@ -130,7 +130,7 @@ In the `Resource` and `Action` classes, you have a global `context` object to wh
 
 You can configure it using the `set_context` method in your initializer. The block you pass in will be instance evaluated in `Avo::ApplicationController`, so it will have access to the `current_user` method or `Current` object.
 
-```ruby{2-8}
+```ruby{3-6}
 Avo.configure do |config|
   config.set_context do
     {

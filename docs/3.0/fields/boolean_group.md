@@ -30,6 +30,26 @@ field :roles, as: :boolean_group, name: 'User roles', options: { admin: 'Adminis
   warning: :warning
 }
 ```
+
+#### Computed options
+
+You may want to compute the values on the fly for your `BooleanGroup` field. You can use a lambda for that where you have access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
+
+```ruby{5-7}
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  field :features,
+    as: :boolean_group,
+    options: -> do
+      record.features.each_with_object({}) do |feature, hash|
+        hash[feature.id] = feature.name.humanize
+      end
+    end
+end
+```
+
+The output value must be a hash as described above.
+
 :::
 
 ## Example DB payload
@@ -42,3 +62,24 @@ field :roles, as: :boolean_group, name: 'User roles', options: { admin: 'Adminis
   "creator": true,
 }
 ```
+
+
+:::warning
+The final value in the database column will be overwritten, The options will not be appended.
+
+
+```json
+// this
+{
+  "feature_enabled": true,
+  "another_feature_enabled": false,
+  "something_else": "some_value" // this will disappear
+}
+
+// becomes
+{
+  "feature_enabled": true,
+  "another_feature_enabled": false,
+}
+```
+:::
