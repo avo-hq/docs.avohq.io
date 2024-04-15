@@ -228,7 +228,7 @@ const config = {
       ],
       "/2.0/": [
         {
-          text: "Getting started",
+          text: "Avo 2",
           items: [
             {text: "Intro", link: "/2.0/index.html"},
             {text: "Avo, Rails & Hotwire", link: "/2.0/rails-and-hotwire.html"},
