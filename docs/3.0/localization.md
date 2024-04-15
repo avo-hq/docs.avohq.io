@@ -64,6 +64,8 @@ es:
 
 ## Localizing buttons label
 
+<BetaStatus label="Beta" />
+
 The `avo.save` configuration applies to all save buttons. If you wish to customize the localization for a specific resource, such as `Avo::Resources::Product`, you can achieve this by:
 
 ```yml
