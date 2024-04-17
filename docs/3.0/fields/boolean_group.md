@@ -40,7 +40,7 @@ You may want to compute the values on the fly for your `BooleanGroup` field. You
 class Avo::Resources::Project < Avo::BaseResource
   field :features,
     as: :boolean_group,
-    options: -do
+    options: -> do
       record.features.each_with_object({}) do |feature, hash|
         hash[feature.id] = feature.name.humanize
       end
