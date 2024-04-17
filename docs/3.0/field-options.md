@@ -332,7 +332,7 @@ field :email, as: :gravatar, link_to_record: true
 
 <img :src="('/assets/img/fields-reference/as-link-to-resource.jpg')" alt="As link to resource" class="border mb-4" />
 
-You can add this property on `Id`, `Text`, and `Gravatar` fields.
+You can add this property on [`id`](./fields/id.html), [`text`](./fields/text.html), and [`gravatar`](./fields/gravatar.html) fields.
 
 Optionally you can enable the global config `id_links_to_resource`. More on that on the [id links to resource docs page](./customization.html#id-links-to-resource).
 
