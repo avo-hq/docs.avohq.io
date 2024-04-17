@@ -137,6 +137,23 @@ const config = {
           ],
         },
         {
+          text: "Customize Avo",
+          items: [
+            {text: "Customization options", link: "/3.0/customization"},
+            {text: "Eject views", link: "/3.0/eject-views"},
+            {text: "Grid view", link: "/3.0/grid-view"},
+            {text: "Map view", link: "/3.0/map-view"},
+            {text: "Custom view types", link: "/3.0/custom-view-types"},
+            {text: "Menu editor", link: "/3.0/menu-editor"},
+            {text: "Search", link: "/3.0/search"},
+            {text: "Actions", link: "/3.0/actions"},
+            {text: "Localization (I18n)", link: "/3.0/localization"},
+            {text: "Branding", link: "/3.0/branding"},
+            {text: "Routing", link: "/3.0/routing"},
+            {text: "Multitenancy", link: "/3.0/multitenancy"},
+          ],
+        },
+        {
           text: "Field types",
           collapsible: true,
           collapsed: true,
@@ -162,29 +179,11 @@ const config = {
           ],
         },
         {
-          text: "Customize Avo",
-          items: [
-            {text: "Customization options", link: "/3.0/customization"},
-            {text: "Eject views", link: "/3.0/eject-views"},
-            {text: "Grid view", link: "/3.0/grid-view"},
-            {text: "Map view", link: "/3.0/map-view"},
-            {text: "Custom view types", link: "/3.0/custom-view-types"},
-            {text: "Menu editor", link: "/3.0/menu-editor"},
-            {text: "Search", link: "/3.0/search"},
-            {text: "Actions", link: "/3.0/actions"},
-            {text: "Localization (I18n)", link: "/3.0/localization"},
-            {text: "Branding", link: "/3.0/branding"},
-            {text: "Routing", link: "/3.0/routing"},
-            {text: "Multitenancy", link: "/3.0/multitenancy"},
-          ],
-        },
-        {
           text: "Filters",
           items: [
             {text: "Overview", link: "/3.0/filters"},
             {text: "Basic Filters", link: "/3.0/basic-filters"},
             {text: "Dynamic filters", link: "/3.0/dynamic-filters"},
-            // {text: "Advanced filters", link: "/3.0/filters/advanced-filters"},
           ],
         },
         {

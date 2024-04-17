@@ -25,7 +25,7 @@ Authorize ransackable_attributes
 ```ruby{3,11}
 class Project < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
-    ["status", "stage", "country"]
+    ["status", "stage", "country"] # the array items should be strings not symbols
   end
 end
 
