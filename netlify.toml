@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/3.0/recipes/*"
-  to = "/3.0/guides/*"
+  to = "/3.0/guides/:splat"
   status = 301
   force = false
 
