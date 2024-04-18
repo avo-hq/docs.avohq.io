@@ -255,7 +255,7 @@ end
 
 ## Searching within associations
 
-In some cases, you might need to search for records based on attributes of associated models. This can be achieved using the `ransack` gem along with ActiveRecord associations. Here's an example of how to perform such a search within associations:
+In some cases, you might need to search for records based on attributes of associated models. This can be achieved by adding a few things to the search query. Here's an example of how to do that:
 
 Assuming you have two models, `Application` and `Client`, with the following associations:
 
@@ -269,22 +269,24 @@ Assuming you have two models, `Application` and `Client`, with the following ass
   end
 ```
 
-You can perform a search on Application records based on attributes of the associated Client. For example, searching by the client's email, name, or phone number:
+You can perform a search on `Application` records based on attributes of the associated `Client`. For example, searching by the client's email, name, or phone number:
 
 ```ruby
   class Application < ApplicationRecord
     self.search = {
       query: lambda {
-        query.joins(:client).ransack(
-          id_eq: params[:q],
-          name_cont: params[:q],
-          workflow_name_cont: params[:q],
-          client_id_eq: params[:q],
-          client_first_name_cont: params[:q],
-          client_last_name_cont: params[:q],
-          client_email_cont: params[:q],
-          client_phone_number_cont: params[:q],
-          m: 'or'
+        query
+        	.joins(:client)
+        	.ransack(
+	          id_eq: params[:q],
+	          name_cont: params[:q],
+	          workflow_name_cont: params[:q],
+	          client_id_eq: params[:q],
+	          client_first_name_cont: params[:q],
+	          client_last_name_cont: params[:q],
+	          client_email_cont: params[:q],
+	          client_phone_number_cont: params[:q],
+	          m: 'or'
         ).result(distinct: false)
       },
       item: lambda {
