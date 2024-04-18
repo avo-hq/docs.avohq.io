@@ -91,7 +91,7 @@ That will change the locale only for Avo requests. The rest of your app will sti
 
 Suppose you wish to change the locale only for one request using the `force_locale=pt-BR` param. That will set the locale for that request and keep the `force_locale` param while you navigate Avo. Remove that param when you want to go back to your configured `default_locale`.
 
-Check out our guide for [multilingual records](recipes/multilingual-content).
+Check out our guide for [multilingual records](guides/multilingual-content).
 
 ## Re-generate the locale
 

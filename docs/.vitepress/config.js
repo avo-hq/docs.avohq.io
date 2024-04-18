@@ -79,7 +79,7 @@ const config = {
     nav: [
       {text: "Home", link: "/"},
       {text: "Docs", link: "/3.0/index.html"},
-      {text: "Recipes", link: "/3.0/recipes"},
+      {text: "Guides", link: "/3.0/guides"},
       {text: "FAQ", link: "/3.0/faq"},
       {text: "Team", link: "/team.html"},
       {text: "Version", items: [

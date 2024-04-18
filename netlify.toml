@@ -1,4 +1,10 @@
 [[redirects]]
+  from = "/3.0/recipes/*"
+  to = "/3.0/guides/*"
+  status = 301
+  force = false
+
+[[redirects]]
   from = "/3.0/gemfile-environment-variables.html"
   to = "/3.0/gem-server-authentication.html"
   status = 301
