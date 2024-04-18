@@ -18,7 +18,7 @@ gem "avo-record_link_field"
 :::
 
 :::warning
-That record should have [a resource configured](./../resources.html#overview).
+That record you're pointing to should have [a resource configured](./../resources.html#overview).
 :::
 
 ```ruby{14,19}
