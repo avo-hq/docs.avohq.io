@@ -37,3 +37,4 @@ Similar to [`belongs_to`](./belongs_to#searchable-belongs-to), the `has_many` as
 <!-- @include: ./../common/scopes_common.md-->
 <!-- @include: ./../common/show_hide_buttons_common.md-->
 <!-- @include: ./../common/reloadable.md-->
+<!-- @include: ./../common/association.md-->
