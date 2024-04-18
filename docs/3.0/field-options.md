@@ -643,6 +643,25 @@ field :name, as: :text, html: {
 field :status, as: :select, summarizable: true
 # or
 field :status, as: :badge, summarizable: true
+```
+This section is WIP.
 :::
 
-This section is WIP.
+:::option `for_attribute`
+<VersionReq version="3.6.2" />
+
+Allows to specify the target attribute on the model for each field. By default the target attribute is the field's id.
+
+Usage example:
+
+```ruby{6}
+    field :name,
+      as: :text
+
+    field :secondary_field_for_name,
+      as: :text,
+      for_attribute: :name,
+      only_on: :edit,
+      help: "Secondary field for name using for_attribute option"
+```
+:::
