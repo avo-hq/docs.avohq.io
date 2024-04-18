@@ -16,7 +16,7 @@ To enable map view for a resource, you need to add the `map_view` class attribut
 ```ruby
 class Avo::Resources::City < Avo::BaseResource
   # ...
-  self.map = {
+  self.map_view = {
     mapkick_options: {
       controls: true
     },
@@ -34,6 +34,10 @@ class Avo::Resources::City < Avo::BaseResource
   }
 end
 ```
+
+:::warning
+You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
+:::
 
 :::option `mapkick_options`
 The options you pass here are forwarded to the [`mapkick` gem](https://github.com/ankane/mapkick).
