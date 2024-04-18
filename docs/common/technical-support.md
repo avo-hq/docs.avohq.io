@@ -27,7 +27,7 @@ We use Algolia DocSearch so you can quickly find what you're looking for.
 
 ### Recipes and FAQ page
 
-We compiled a list of helpful [recipes](./../3.0/recipes.html) from ourselves and the community and a few [FAQ](./../3.0/faq.html) items for you to check out.
+We compiled a list of helpful [recipes](./../3.0/guides.html) from ourselves and the community and a few [FAQ](./../3.0/faq.html) items for you to check out.
 
 </div>
 
@@ -88,7 +88,7 @@ But there are times when we can't reproduce it quickly and more information is n
 
 When none of the above can be run and the case requires pair programming sessions, we can offer those as a separate paid service.
 
-If you'd like to know more about that, please fill out [this form](https://forms.reform.app/ahahHs/technical-support-request/tk3fp0) or reach out to us on the [Discord server](https://avo.cool/chat).
+If you'd like to know more about that, see our standard plans [her](https://avohq.io/support) or reach out to us on the [Discord server](https://avo.cool/chat).
 
 ## Demo apps
 
