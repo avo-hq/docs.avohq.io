@@ -108,7 +108,7 @@ field :meta, # The database field ID
 
 ## Enforce restrictions
 
-You can enforce some restrictions by removing the ability to edit the field's key or value by setting `disable_editing_keys` or `disable_editing_values` to `true` respectively. If both are set to `true`, be aware that this option will also disable adding rows as well. You can separately remove the ability to add a new row by setting `disable_adding_rows` to `true`. Deletion of rows can be enforced by setting `disable_deleting_rows` to `true`.
+You can enforce some restrictions by removing the ability to edit the field's key or value by setting `disable_editing_keys` or `disable_editing_values` to `true` respectively. If `disable_editing_keys` are set to `true`, be aware that this option will also disable adding rows as well. You can separately remove the ability to add a new row by setting `disable_adding_rows` to `true`. Deletion of rows can be enforced by setting `disable_deleting_rows` to `true`.
 
 ```ruby
 field :meta, # The database field ID
