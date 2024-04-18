@@ -6,7 +6,7 @@ It's common to have JSON objects stored in your database. So you might want to d
 field :meta, as: :code, language: 'javascript'
 ```
 
-<img :src="('/assets/img/recipes/format-ruby-object-to-json/before.png')" alt="Avo Admin for Rails" class="border mb-4" />
+<img :src="('/assets/img/3_0/guides/format-ruby-object-to-json/before.png')" alt="Avo Admin for Rails" class="border mb-4" />
 
 But that will be hard to read on one line like that. So we need to format it.
 
@@ -20,7 +20,7 @@ field :meta, as: :code, language: 'javascript' do
 end
 ```
 
-<img :src="('/assets/img/recipes/format-ruby-object-to-json/after.png')" alt="Avo Admin for Rails" class="border mb-4" />
+<img :src="('/assets/img/3_0/guides/format-ruby-object-to-json/after.png')" alt="Avo Admin for Rails" class="border mb-4" />
 
 That's better! You'll notice that the field is missing on the `Edit` view. That's normal for a computed field to be hidden on `Edit`.
 To fix that, we should add another one just for editing.

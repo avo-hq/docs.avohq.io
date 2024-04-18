@@ -9,7 +9,7 @@ You my use that to display a counter of how many record are there in that scope.
 
 ### Example
 
-![](/assets/img/recipes/display-scope-record-count/scopes.png)
+![](/assets/img/3_0/guides/display-scope-record-count/scopes.png)
 
 ```ruby{2-9}
 class Avo::Scopes::Scheduled < Avo::Advanced::Scopes::BaseScope

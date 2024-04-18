@@ -358,7 +358,7 @@ end
 That will let Avo know which attribute should be used to fill with the user's tags.
 
 :::info Related
-You can set up the tags as a resource using [this guide](./../recipes/act-as-taggable-on-integration).
+You can set up the tags as a resource using [this guide](./../guides/act-as-taggable-on-integration).
 :::
 
 ## Array fields

@@ -70,7 +70,7 @@ This can be a callable value and it receives the `resource` and `query` objects.
 
 The `query` object can be used to compute and display the record count.
 
-Please see [the recipe](./recipes/display-scope-record-count.html) on how to enable it.
+Please see [the recipe](./guides/display-scope-record-count.html) on how to enable it.
 :::
 
 :::option `description`

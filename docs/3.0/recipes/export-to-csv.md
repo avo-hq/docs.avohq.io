@@ -61,5 +61,5 @@ class Avo::Actions::ExportCsv < Avo::BaseAction
 end
 ```
 
-![](/assets/img/recipes/export-to-csv/export-to-csv.gif)
+![](/assets/img/3_0/guides/export-to-csv/export-to-csv.gif)
 

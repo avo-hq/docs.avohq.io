@@ -83,4 +83,4 @@ end
     )
 ```
 
-![](/assets/img/recipes/use-markdown-in-help-attributes/result.png)
+![](/assets/img/3_0/guides/use-markdown-in-help-attributes/result.png)
