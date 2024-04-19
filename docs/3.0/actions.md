@@ -340,6 +340,8 @@ class Avo::Actions::City::Update < Avo::BaseAction
   end
 end
 ```
+
+You can see this multi-step process in action by visiting the [avodemo](https://main.avodemo.com/avo/resources/cities). Select one of the records, click on the "Update" action, choose the fields to update, and then proceed to update the selected fields in the subsequent action.
 :::
 
 ## Customization
