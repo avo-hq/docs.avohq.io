@@ -40,11 +40,46 @@ Our computed system do not use MemoryStore in production because it will not be 
 :::
 
 ## Problem: cached rows on table do not update when record's associations suffer changes
-:::warning
+:::info
 
-Solution 1: touch: true on association
+Solution 1: Use `touch: true` on association
 
-Solution 2: override cache_hash method on resource to take associations in consideration
+Example with Parent Model and Association
+```ruby
+  class Post < ApplicationRecord
+    has_many :comments, dependent: :destroy
+  end
+```
+Example with Child Model and Association with `touch: true`
+```ruby
+  class Comment < ApplicationRecord
+    belongs_to :post, touch: true
+  end
+```
+
+Solution 2: override `cache_hash` method on resource to take associations in consideration
+Avo, internally, uses the cache_hash method to compute the hash that will be remembered by the caching driver when displaying the rows.
+
+You can take control and override it on that particular resource to take the association into account.
+```ruby
+  class Avo::Resources::User < Avo::BaseResource
+    def fields
+      # your fields
+    end
+
+    def cache_hash
+      # record.post will now be taken under consideration
+      result = [record, file_hash, record.post]
+
+      if parent_record.present?
+        result << parent_record
+      end
+
+      result
+    end
+  end
+```
+
 :::
 
 ## Solid Cache
