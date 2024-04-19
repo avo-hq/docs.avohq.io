@@ -639,7 +639,7 @@ end
 <img :src="('/assets/img/filters/keep-filters-panel-open.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 :::
 
-:::option self.components
+:::option `self.components`
 By default, for each view we render an component:
 
 `:index` -> `Avo::Views::ResourceIndexComponent`<br>
@@ -687,8 +687,10 @@ self.components = {
 This way you can choose the whatever namespace structure you want and you assure that the initializer is accepting the right arguments.
 
 
-:::option self.index_query
+:::option `self.index_query`
+
 ### Unscoped queries on `Index`
+
 You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.
 ```ruby{2}
 class Project < ApplicationRecord
@@ -704,6 +706,7 @@ class Avo::Resources::Project < Avo::BaseResource
   self.index_query = -> { query.unscoped }
 end
 ```
+:::
 
 ## Cards
 
@@ -734,7 +737,7 @@ end
 
 ![Alt text](/assets/img/cards_on_resource.png)
 
-:::option self.pagination
+:::option `self.pagination`
 <VersionReq version="2.45" />
 This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
 
