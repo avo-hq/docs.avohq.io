@@ -113,7 +113,7 @@ You can enforce some restrictions by removing the ability to edit the field's ke
 ```ruby
 field :meta, # The database field ID
   as: :key_value, # The field type.
- disable_editing_keys: false, # Option to disable the ability to edit keys. Implies disabling to add rows. Defaults to false.
+  disable_editing_keys: false, # Option to disable the ability to edit keys. Implies disabling to add rows. Defaults to false.
   disable_editing_values: false, # Option to disable the ability to edit values. Defaults to false.
   disable_adding_rows: false, # Option to disable the ability to add rows. Defaults to false.
   disable_deleting_rows: false # Option to disable the ability to delete rows. Defaults to false.
