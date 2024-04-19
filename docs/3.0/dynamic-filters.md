@@ -39,7 +39,7 @@ end
 ```
 
 :::warning
-  Ensure array items are strings, not symbols.
+  Ensure the array items are strings, not symbols.
 :::
 
 This will make Avo add this new "Filters" button to the <Index /> view of your resource.
