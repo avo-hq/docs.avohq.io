@@ -738,7 +738,6 @@ end
 ![Alt text](/assets/img/cards_on_resource.png)
 
 :::option `self.pagination`
-<VersionReq version="2.45" />
 This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
 
 By setting `self.pagination[:type]` to `:countless`, you can disable the pagination count on the index page.
