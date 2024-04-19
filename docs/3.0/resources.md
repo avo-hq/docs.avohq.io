@@ -810,4 +810,22 @@ self.pagination = -> do
 end
 ```
 ![Countless pagination size empty](/assets/img/resources/pagination/countless_empty_size.png)
+
+#### Change pagination defaults
+
+If you want for example all resources to be countless, instead of defining it one by one you can override the pagination defaults.
+
+```ruby
+# avo.rb
+
+Avo.configure do |config|
+  # ...
+end
+
+Avo::Concerns::Pagination::PAGINATION_DEFAULTS = {
+  type: :countless,
+  size: [1, 2, 2, 1],
+}
+
+```
 :::
