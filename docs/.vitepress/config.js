@@ -35,6 +35,9 @@ const config = {
     config: (md) => {
       md.use(...createContainer("option", md))
     },
+    image: {
+      lazyLoading: true,
+    },
   },
   head: [
     // <script async="" src="https://www.google-analytics.com/analytics.js"></script>
@@ -98,6 +101,7 @@ const config = {
             {text: "Upgrade guide", link: "/3.0/upgrade.html"},
             {text: "Avo 2 to Avo 3 upgrade", link: "/3.0/avo-2-avo-3-upgrade.html"},
             {text: "Technical Support", link: "/3.0/technical-support"},
+            {text: "Best practices", link: "/3.0/best-practices"},
           ]
         },
         // {
