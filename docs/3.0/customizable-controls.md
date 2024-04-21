@@ -280,7 +280,7 @@ Any string value.
 
 ## Conditionally hiding/showing actions
 
-Actions have the `visible` block where you can control the visibility of an action. In the context of `show_controls` that block is not taken into account, but yiou can use regular `if`/`else` statements because the action declaration is wrapped in a block.
+Actions have the `visible` block where you can control the visibility of an action. In the context of `show_controls` that block is not taken into account, but you can use regular `if`/`else` statements because the action declaration is wrapped in a block.
 
 ```ruby{6-8}
 class Avo::Resources::Fish < Avo::BaseResource

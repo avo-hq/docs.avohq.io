@@ -7,4 +7,6 @@ Some guides have been written by us, and some by our community members.
   import { data } from './../.vitepress/recipes.data.js'
 </script>
 
-<h3 v-for="recipe in data.v3"><a :href="recipe.link">{{recipe.text}}</a></h3>
+<ul>
+  <li v-for="recipe in data.v3"><a :href="recipe.link">{{recipe.text}}</a></li>
+</ul>
