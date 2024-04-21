@@ -2,16 +2,17 @@
 
 This guide is split into to sections.
 
-1. Free support
-2. Paid support
+1. [Free support](#free-support)
+2. [Demo apps](#demo-apps)
+3. [Paid support](#paid-support)
 
-## • Free support
+## Free support
 
 Avo is designed to be a self-serve product with [comprehensive documentation](https://docs.avohq.io) and [demo apps](#demo-apps) as references.
 
 But, even the best of us get stuck at some point and you might need a nudge in the right direction. There are a few places where you can get help.
 
-## 1. These docs
+:::option 1. The docs
 
 We work hard to ensure these documentation pages express everything Avo can do and keep them up to date.
 
@@ -30,8 +31,9 @@ We use Algolia DocSearch so you can quickly find what you're looking for.
 We compiled a list of helpful [recipes](./../3.0/guides.html) from ourselves and the community and a few [FAQ](./../3.0/faq.html) items for you to check out.
 
 </div>
+:::
 
-## 2. GitHub Issues / GitHub Discussions
+::::option 2. GitHub Issues & Discussions
 
 <div class="pl-6">
 
@@ -60,8 +62,9 @@ We prefer GitHub Issues over any other form of communication.
 :::
 
 </div>
+::::
 
-## 3. Discord chat
+:::option 3. Discord chat
 
 Our [Discod Community](https://avo.cool/chat) is fantastic and it's growing everyday. Thank you for being a part of it.
 
@@ -79,16 +82,7 @@ There are other more responsive private channels for our customers that need mor
 
 </div>
 
-## • Paid support
-
-Due to the nature of how time-consuming support is, we can't treat each issue the same or allocate the same amount of time.
-The policy is that if it's something simple that we can figure on the spot we will happily answer. If it's something we can reproduce really quick, we will do it and answer the inquiry.
-
-But there are times when we can't reproduce it quickly and more information is needed. That's when we'll ask you to provide a reproduction repository where we can troubleshoot the issue on our local machines quickly by (preferably) just running the app and going through a few provided steps.
-
-When none of the above can be run and the case requires pair programming sessions, we can offer those as a separate paid service.
-
-If you'd like to know more about that, see our standard plans [her](https://avohq.io/support) or reach out to us on the [Discord server](https://avo.cool/chat).
+:::
 
 ## Demo apps
 
@@ -98,3 +92,15 @@ The [main demo app](https://main.avodemo.com/) is a catch-all all that mimics an
 
 The [ticketing demo app](https://ticketing.avodemo.com/) is an example of how you could build a ticketing support app for your customers completely in Avo.
 It also features websockets integration for live commenting on tickets alongside a custom tool that serves as a "Settings" page.
+
+
+## Paid support
+
+Due to the nature of how time-consuming support is, we can't treat each issue the same or allocate the same amount of time.
+The policy is that if it's something simple that we can figure on the spot we will happily answer. If it's something we can reproduce really quick, we will do it and answer the inquiry.
+
+But there are times when we can't reproduce it quickly and more information is needed. That's when we'll ask you to provide a reproduction repository where we can troubleshoot the issue on our local machines quickly by (preferably) just running the app and going through a few provided steps.
+
+When none of the above can be run and the case requires pair programming sessions, we can offer those as a separate paid service.
+
+If you'd like to know more about that, see our standard plans [here](https://avohq.io/support) or reach out to us on the [Discord server](https://avo.cool/chat).
