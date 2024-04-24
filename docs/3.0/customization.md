@@ -505,3 +505,25 @@ Supported options with default values:
     }
   end
 ```
+:::
+
+:::option `pagination`
+You can configure the default pagination settings key by key.
+
+```ruby
+config.pagination = {
+  type: :countless
+}
+
+# Or
+
+config.pagination = -> do
+  {
+    type: :countless,
+  }
+end
+```
+
+This will make all your application's tables countless keeping the size key / value as the default one.
+
+Verify all possible options [here](resources#self_pagination).
