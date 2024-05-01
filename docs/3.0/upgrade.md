@@ -4,6 +4,13 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.6.1 to 3.6.2
+:::option Cache
+From version `3.6.1` to version `3.6.2` table cache logic suffered some changes. Old cached table may break with this change, we recommend to clear cache on production after upgrade (`Rails.cache.clear`).
+
+Versions `3.6.2` / `3.6.3` have some issues around cache, we recommend to upgrade directly to `3.6.4`.
+:::
+
 ## Upgrade from 3.5.4 to 3.5.5
 :::option Record errors
 With version `3.5.5` we introduced a stricter error check. Now when the record have any error included the save action will fail. This allow you to do things like:
