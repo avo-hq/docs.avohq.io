@@ -68,7 +68,7 @@ You can take control and override it on that particular resource to take the ass
       # your fields
     end
 
-    def cache_hash
+    def cache_hash(parent_record)
       # record.post will now be taken under consideration
       result = [record, file_hash, record.post]
 
