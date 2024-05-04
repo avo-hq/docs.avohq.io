@@ -101,7 +101,7 @@ class Post < ApplicationRecord
 end
 ```
 
-```ruby [app/avo/resource/post.rb]
+```ruby [app/avo/resources/post.rb]
 class Avo::Resources::Post < Avo::BaseResource
   self.includes = []
   # self.search = {
