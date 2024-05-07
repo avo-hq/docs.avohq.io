@@ -77,7 +77,7 @@ Controls the creation link visibility on forms.
 
 ## Overview
 
-On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`self.title`](./../resources.html#setting-the-title-of-the-resource) value.
+On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`self.title`](./../resources.html#setting-the-title-of-the-resource) value of the target resource.
 
 <img :src="('/assets/img/associations/belongs-to-index.jpg')" alt="Belongs to index" class="border mb-4" />
 
