@@ -813,3 +813,56 @@ end
 ```
 ![Countless pagination size empty](/assets/img/resources/pagination/countless_empty_size.png)
 :::
+
+:::option `cache_hash`
+
+The `cache_hash` method is used to compute the cache key for each row. The method looks something like this:
+
+```ruby
+def cache_hash(parent_record)
+  result = [record, file_hash]
+
+  if parent_record.present?
+    result << parent_record
+  end
+
+  result
+end
+
+def file_hash
+  content_to_be_hashed = ""
+
+  file_name = self.class.underscore_name.tr(" ", "_")
+  resource_path = Rails.root.join("app", "avo", "resources", "#{file_name}.rb").to_s
+  if File.file? resource_path
+    content_to_be_hashed += File.read(resource_path)
+  end
+
+  # policy file hash
+  policy_path = Rails.root.join("app", "policies", "#{file_name.gsub("_resource", "")}_policy.rb").to_s
+  if File.file? policy_path
+    content_to_be_hashed += File.read(policy_path)
+  end
+
+  Digest::MD5.hexdigest(content_to_be_hashed)
+end
+```
+
+It's an md5 of the resource file name, the policy file (so the cache gets busted when the rules change). We also add the `parent_record` when it's displayed in as an association, so there's a separate cache record for each association.
+
+This is the default, but if you have special requirements you can add it to your resource file and it will be used to cache your records accordingly.
+
+```ruby
+class Avo::Resources::User < Avo::BaseResource
+  def cache_hash(parent_record)
+    result = [record, file_hash, "SOMETHING_NEW"]
+
+    if parent_record.present?
+      result << parent_record
+    end
+
+    result
+  end
+
+  # fields, cards and more
+end
