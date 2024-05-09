@@ -50,3 +50,16 @@ In the second scenario, the field list will always be `[special_field, regular_f
 Now Avo will know they are both there and set up the request and UI properly.
 
 So, please use the `visibility` option and avoid `if/else` in `def fields` whenever possible.
+
+## Add an index on the `created_at` column
+
+Avo, by default, sorts the the record on the <Index /> view by the `created_at` attribute, so it's a good idea to add an index for that column.
+
+```ruby
+# Example migration
+class AddIndexOnUsersCreatedAt < ActiveRecord::Migration[7.1]
+  def change
+    add_index :users, :created_at
+  end
+end
+```

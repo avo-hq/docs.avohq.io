@@ -163,6 +163,9 @@ field :name, as: :text, sortable: true
 
 <img :src="('/assets/img/fields-reference/sortable-fields.png')" alt="Sortable fields" class="border mb-4" />
 
+**Related:**
+  - [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
+
 ## Custom sortable block
 
 When using computed fields or `belongs_to` associations, you can't set `sortable: true` to that field because Avo doesn't know what to sort by. However, you can use a block to specify how the records should be sorted in those scenarios.
