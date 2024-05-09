@@ -15,7 +15,7 @@ const members = [
   {
     avatar: 'https://www.github.com/Paul-Bob.png',
     name: 'Paul Bob',
-    title: 'Lead Developer & CGO (Chief GIF Officer)',
+    title: 'CTO & CGO (Chief GIF Officer)',
     links: [
       { icon: 'github', link: 'https://github.com/Paul-Bob' },
       { icon: 'twitter', link: 'https://twitter.com/paul_ionut_bob' },
