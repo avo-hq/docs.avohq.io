@@ -97,7 +97,7 @@ You can take control and override it on that particular resource to take the ass
 
 ### `root_path` change won't break the cache keys
 
-When the rows are cached, the links from the controls, [`belongs_to`](./associations/belongs_to) and [`record_link`]('./fields/record_link') fields, and maybe others will be cached along.
+When the rows are cached, the links from the controls, [`belongs_to`](./associations/belongs_to) and [`record_link`](./fields/record_link) fields, and maybe others will be cached along.
 
 The best solution here is to clear the cache with this ruby command `Rails.cache.clear`. If that's not an option then you can try to add the `root_path` to the [`cache_hash`](./resources#cache_hash) method in your particular resource.
 
