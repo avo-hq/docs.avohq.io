@@ -20,7 +20,7 @@ In all other environments the `:memory_store` is used.
 
 ### Custom selection
 
-There is the possibility to force the usage of a custom cache store into Avo.
+You can force Avo to use a particular store.
 
 ```ruby
 # config/initializers/avo.rb
@@ -39,11 +39,24 @@ config.cache_store = ActiveSupport::Cache.lookup_store(:solid_cache_store)
 Our computed system do not use MemoryStore in production because it will not be shared between multiple processes (when using Puma).
 :::
 
-## Improving Performance
+:::regular_option `cache_hash`
 
-Avo caches each record on the index view for improved performance. However, associated records may not be automatically updated when certain associations change. To prevent this:
+The `cache_hash` method is used to compute the cache key for each row.
 
-### Option 1: Use `touch: true` on association
+More about this on the [resource options page](./resources#cache_hash).
+:::
+
+## Caching caveats
+
+Avo caches each record on the <Index /> view for improved performance. However side-effects may occur from this strategy. We'll try to outline some of them below and keep this page up to date as we find them or as they get reported to us.
+
+These are things that may happen to regular Rails apps, not just in the Avo context.
+
+### Rows may not be automatically updated when certain associations change
+
+There are two things you could do to prevent this:
+
+#### Option 1: Use `touch: true` on association
 
 Example with Parent Model and Association
 ```ruby
@@ -58,8 +71,9 @@ Example with Child Model and Association with `touch: true`
   end
 ```
 
-### Option 2: override `cache_hash` method on resource to take associations in consideration
-Avo, internally, uses the cache_hash method to compute the hash that will be remembered by the caching driver when displaying the rows.
+#### Option 2: override `cache_hash` method on resource to take associations in consideration
+
+Avo, internally, uses the [`cache_hash`](./resources#cache_hash) method to compute the hash that will be remembered by the caching driver when displaying the rows.
 
 You can take control and override it on that particular resource to take the association into account.
 ```ruby
@@ -81,6 +95,11 @@ You can take control and override it on that particular resource to take the ass
   end
 ```
 
+### `root_path` change won't break the cache keys
+
+When the rows are cached, the links from the controls, [`belongs_to`](./associations/belongs_to) and [`record_link`]('./fields/record_link') fields, and maybe others will be cached along.
+
+The best solution here is to clear the cache with this ruby command `Rails.cache.clear`. If that's not an option then you can try to add the `root_path` to the [`cache_hash`](./resources#cache_hash) method in your particular resource.
 
 ## Solid Cache
 
