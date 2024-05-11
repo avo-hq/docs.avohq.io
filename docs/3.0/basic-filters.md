@@ -83,7 +83,7 @@ class Avo::Resources::Post < Avo::BaseResource
   end
 
   def filters
-    filter Avo::Filters::PublishedFilter
+    filter Avo::Filters::Published
   end
 end
 ```
