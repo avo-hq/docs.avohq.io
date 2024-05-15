@@ -117,9 +117,11 @@ end
 ```
 Consider the following scenario:
 
-1. Navigate to https://main.avodemo.com/avo/resources/users?hey=ya.
-2. Attempt to run the dummy action.
-You should be able to access the `hey` parameter and retrieve the value `ya`.
+1. Navigate to `https://main.avodemo.com/avo/resources/users`.
+2. Add the parameter `hey=ya` to the URL: `https://main.avodemo.com/avo/resources/users?hey=ya`
+3. Attempt to run the dummy action.
+4. After triggering the action, verify that you can access the `hey` parameter.
+5. Ensure that the retrieved value of the `hey` parameter is `ya`.
 
 #### Implementation
 
