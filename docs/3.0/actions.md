@@ -125,7 +125,7 @@ You should be able to access the `hey` parameter and retrieve the value `ya`.
 
 #### Implementation
 
-To achieve this, we'll utilize the `request.referer` object and extract parameters from the URL. Here is how to do it:
+To achieve this, we'll reference the `request.referer` object and extract parameters from the URL. Here is how to do it:
 
 ```ruby
 class Action
