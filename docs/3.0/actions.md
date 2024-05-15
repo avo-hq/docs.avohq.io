@@ -104,7 +104,7 @@ end
 ```
 
 ## Passing Params to the Action Show Page
-When working with resource index or show views, it's often necessary to pass parameters to an action.
+When navigation to an action from a resource <Index /> or <Show /> views, it's sometimes useful to pass parameters to an action.
 
 One particular example is when you'd like to populate a field in that action with some particular value based on that param.
 
