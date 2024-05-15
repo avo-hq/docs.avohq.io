@@ -106,6 +106,15 @@ end
 ## Passing Params to the Action Show Page
 When working with resource index or show views, it's often necessary to pass parameters to an action.
 
+One particular example is when you'd like to populate a field in that action with some particular value based on that param.
+
+```ruby
+class Action
+  def fields
+    field :some_field, as: :hidden, default: -> { if previous_param == yes ? :yes : :no}
+  end
+end
+```
 Example
 
 Consider the following scenario:
