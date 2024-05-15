@@ -103,6 +103,40 @@ def handle(query:, fields:, current_user:, resource:, **args)
 end
 ```
 
+## Passing Params to the Action Show Page
+When working with resource index or show views, it's often necessary to pass parameters to an action.
+
+Example
+
+Consider the following scenario:
+
+1. Navigate to http://localhost:3030/admin/resources/users?hey=ya.
+2. Attempt to run the dummy action.
+You should be able to access the `hey` parameter and retrieve the value `ya`.
+
+#### Implementation
+
+To achieve this, we'll utilize the `request.referer` object and extract parameters from the URL. Here is how to do it:
+
+```ruby
+class Action
+  def fields
+    field :some_field, as: :hidden, default: -> {
+      parent_params = URI.parse(request.referer).query.split("&").map { |param| param.split("=")}.to_h.with_indifferent_access
+
+      if parent_params[:hey] == 'ya'
+        :yes
+      else
+        :no
+      end
+    }
+  end
+end
+```
+Parse the `request.referer` to extract parameters using `URI.parse`.
+Split the query string into key-value pairs and convert it into a hash.
+Check if the `hey` parameter equals `ya`, and set the default value of `some_field` accordingly.
+
 ## Action responses
 
 After an action runs, you may use several methods to respond to the user. For example, you may respond with just a message or with a message and an action.
