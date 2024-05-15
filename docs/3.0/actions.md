@@ -115,8 +115,6 @@ class Action
   end
 end
 ```
-Example
-
 Consider the following scenario:
 
 1. Navigate to https://main.avodemo.com/avo/resources/users?hey=ya.
