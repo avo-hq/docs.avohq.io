@@ -119,7 +119,7 @@ Example
 
 Consider the following scenario:
 
-1. Navigate to http://localhost:3030/admin/resources/users?hey=ya.
+1. Navigate to https://main.avodemo.com/avo/resources/users?hey=ya.
 2. Attempt to run the dummy action.
 You should be able to access the `hey` parameter and retrieve the value `ya`.
 
@@ -130,9 +130,11 @@ To achieve this, we'll reference the `request.referer` object and extract parame
 ```ruby
 class Action
   def fields
+    # Accessing the parameters passed from the parent view
     field :some_field, as: :hidden, default: -> {
+      # Parsing the request referer to extract parameters
       parent_params = URI.parse(request.referer).query.split("&").map { |param| param.split("=")}.to_h.with_indifferent_access
-
+      # Checking if the `hei` parameter equals `ya`
       if parent_params[:hey] == 'ya'
         :yes
       else
