@@ -103,6 +103,51 @@ def handle(query:, fields:, current_user:, resource:, **args)
 end
 ```
 
+## Passing Params to the Action Show Page
+When navigation to an action from a resource <Index /> or <Show /> views, it's sometimes useful to pass parameters to an action.
+
+One particular example is when you'd like to populate a field in that action with some particular value based on that param.
+
+```ruby
+class Action
+  def fields
+    field :some_field, as: :hidden, default: -> { if previous_param == yes ? :yes : :no}
+  end
+end
+```
+Consider the following scenario:
+
+1. Navigate to `https://main.avodemo.com/avo/resources/users`.
+2. Add the parameter `hey=ya` to the URL: `https://main.avodemo.com/avo/resources/users?hey=ya`
+3. Attempt to run the dummy action.
+4. After triggering the action, verify that you can access the `hey` parameter.
+5. Ensure that the retrieved value of the `hey` parameter is `ya`.
+
+#### Implementation
+
+To achieve this, we'll reference the `request.referer` object and extract parameters from the URL. Here is how to do it:
+
+```ruby
+class Action
+  def fields
+    # Accessing the parameters passed from the parent view
+    field :some_field, as: :hidden, default: -> {
+      # Parsing the request referer to extract parameters
+      parent_params = URI.parse(request.referer).query.split("&").map { |param| param.split("=")}.to_h.with_indifferent_access
+      # Checking if the `hei` parameter equals `ya`
+      if parent_params[:hey] == 'ya'
+        :yes
+      else
+        :no
+      end
+    }
+  end
+end
+```
+Parse the `request.referer` to extract parameters using `URI.parse`.
+Split the query string into key-value pairs and convert it into a hash.
+Check if the `hey` parameter equals `ya`, and set the default value of `some_field` accordingly.
+
 ## Action responses
 
 After an action runs, you may use several methods to respond to the user. For example, you may respond with just a message or with a message and an action.
