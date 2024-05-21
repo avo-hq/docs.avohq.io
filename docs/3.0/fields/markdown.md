@@ -49,4 +49,4 @@ field :description, as: :markdown, spell_checker: true
 <!-- @include: ./../common/default_boolean_false.md-->
 :::
 
-## Enable spell checker
+<!-- ## Enable spell checker -->

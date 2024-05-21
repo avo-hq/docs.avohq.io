@@ -215,6 +215,7 @@ const config = {
         {
           text: "Internals",
           items: [
+            {text: "Overview", link: "/3.0/internals"},
             {text: "Testing", link: "/3.0/testing"},
             {text: "Avo::Current", link: "/3.0/avo-current"},
             {text: "Avo::ExecutionContext", link: "/3.0/execution-context"},
