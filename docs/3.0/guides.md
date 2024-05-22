@@ -8,5 +8,5 @@ Some guides have been written by us, and some by our community members.
 </script>
 
 <ul>
-  <li v-for="recipe in data.v3"><a :href="recipe.link">{{recipe.text}}</a></li>
+  <li v-for="recipe in data.v3"><a :href="recipe.link">{{recipe.text.replace('avo ', 'Avo ')}}</a></li>
 </ul>
