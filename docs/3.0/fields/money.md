@@ -17,9 +17,9 @@ Here is how you can see the money field in the [avodemo](https://main.avodemo.co
 
 ### Example
 
-<img :src="('/assets/img/money-field.png')" alt="Reloadable" class="border mb-4" />
+<img :src="('/assets/img/money-field.png')" class="border mb-4" />
 
-<img :src="('/assets/img/money-field2.png')" alt="Reloadable" class="border mb-4" />
+<img :src="('/assets/img/money-field2.png')" class="border mb-4" />
 
 ## Installation
 
