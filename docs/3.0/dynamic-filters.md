@@ -60,10 +60,10 @@ There are a few types of filters available for you to use out of the box.
  - Is present
  - Is blank
 :::
-
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
 <img :src="('/assets/img/dynamic_filter_boolean.png')" class="border mb-4" />
 <img :src="('/assets/img/dynamic_filter_boolean2.png')" class="border mb-4" />
-
+</div>
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/users)
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/users.rb)
@@ -81,9 +81,15 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - Is blank
 :::
 
-<img :src="('/assets/img/dynamic_filter_date.png')" class="border mb-4" />
-<img :src="('/assets/img/dynamic_filter_date2.png')" class="border mb-4" />
-<img :src="('/assets/img/dynamic_filter_date3.png')" class="border mb-4" />
+<div style="display: flex; justify-content: space-between; align-items: flex-start;">
+  <div>
+    <img src="/assets/img/dynamic_filter_date.png" class="border mb-4" style="display: block; width: 100%;" />
+    <img src="/assets/img/dynamic_filter_date2.png" class="border mb-4" style="display: block; width: 100%;" />
+  </div>
+  <div>
+    <img src="/assets/img/dynamic_filter_date3.png" class="border mb-4" style="display: block; width: 100%;" />
+  </div>
+</div>
 
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
 
@@ -100,10 +106,10 @@ This filter will give you options from the database.
  - Is present
  - Is blank
 :::
-
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
 <img :src="('/assets/img/dynamic_filter_has_many.png')" class="border mb-4" />
 <img :src="('/assets/img/dynamic_filter_has_many2.png')" class="border mb-4" />
-
+</div>
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/teams.rb)
@@ -122,9 +128,10 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - Is blank
 :::
 
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
 <img :src="('/assets/img/dynamic_filter_number.png')" class="border mb-4" />
 <img :src="('/assets/img/dynamic_filter_number2.png')" class="border mb-4" />
-
+</div>
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/teams.rb)
@@ -138,10 +145,10 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - Is present
  - Is blank
 :::
-
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
 <img :src="('/assets/img/dynamic_filter_select.png')" class="border mb-4" />
 <img :src="('/assets/img/dynamic_filter_select2.png')" class="border mb-4" />
-
+</div>
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/courses)
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/courses.rb)
@@ -160,9 +167,10 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - Is blank
 :::
 
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
 <img :src="('/assets/img/dynamic_filter_text.png')" class="border mb-4" />
 <img :src="('/assets/img/dynamic_filter_text2.png')" class="border mb-4" />
-
+</div>
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/teams.rb)
@@ -179,10 +187,9 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
 :::warning
 Contained in will not work when using the `acts-as-taggable-on` gem.
 :::
-
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
 <img :src="('/assets/img/dynamic_filter_tags.png')" class="border mb-4" />
-<img :src="('/assets/img/dynamic_filter_tags2.png')" class="border mb-4" />
-
+</div>
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/courses).
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/courses.rb)
