@@ -1,6 +1,7 @@
 ---
 version: '1.0'
 license: community
+demo: https://trix.avodemo.com/
 ---
 
 # Trix
@@ -92,3 +93,15 @@ field :body, as: :trix, attachments_disabled: true
 ## Remove attachment attributes
 
 By default, Trix will add some meta-data in the editor (filename, filesize, and URL) when adding an attachment. You might not need those to be present in the document. You can hide them using `hide_attachment_filename`, `hide_attachment_filesize`, and `hide_attachment_url`.
+
+## Active Storage
+
+Trix integrates seamlessly with Active Storage. When you use it with a plain database column on a record table (not with Action Text) you have to set the `attachment_key` option (documented above).
+
+## Action Text
+
+Trix integrates seamlessly with Action Text. It will automatically work with Action Text as well and it won't require you to add an `attachment_key`.
+
+## Demo app
+
+We prepared a [demo](https://trix.avodemo.com/) to showcase Trix's abilities to work with Action Text and Active Storage.
