@@ -100,7 +100,7 @@ The order in which Avo loads the partials and asset files is this one:
 
 ### Sprockets and Propshaft
 
-Create `avo.custom.js` and `avo.custom.css` inside `app/assets/javascripts` and `app/assets/stylesheets` with the desired scripts and styles.
+Create `avo.custom.js` to the `app/javascripts` directory and `avo.custom.css` to `app/assets/stylesheets` with the desired scripts and styles.
 Then add them to Avo using the `_pre_head.html.erb` partial (`rails generate avo:eject --partial :pre_head`).
 
 ```erb
