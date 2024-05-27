@@ -64,9 +64,33 @@ end
 
 ## Display the buttons in the `Index` view or association view
 
-A typical scenario is to order the records only in the scope of a parent record, like order the `MenuItems` for a `Menu` or `Slides` for a `Slider`. So you wouldn't need to have the order buttons on the `Index` view but only in the association section.
+A typical scenario is to have the order buttons on the <Index /> view or a resource. That's the default value for the `visible_on` option.
 
-To control that, you can use the `visible_on` option. The possible values are `:index`, `:association` or `[:index, :association]` for both views.
+```ruby{3}
+class Avo::Resources::CourseLink < Avo::BaseResource
+  self.ordering = {
+    visible_on: :index,
+  }
+end
+```
+
+## Display the button on a `has_many` association
+
+Another scenario is to order the records only in the scope of a parent record, like order the `MenuItems` for a `Menu`, or `Slides` for a `Slider`. So you wouldn't need to have the order buttons on the <Index /> view but only in the association section (in a has many association).
+
+To control that, you can use the `visible_on` option and set it to `:association`.
+
+```ruby{3}
+class Avo::Resources::CourseLink < Avo::BaseResource
+  self.ordering = {
+    visible_on: :association,
+  }
+end
+```
+
+### Possible values
+
+The possible values for the `visible_on` option are `:index`, `:association` or `[:index, :association]` for both views.
 
 ## Change the scope on the `Index` view
 
