@@ -20,6 +20,10 @@ We described the process in depth in [this article](https://avohq.io/blog/safely
 1. The concern will prepend the basic auth method
 1. `include` that concern to Avo's `ApplicationController`
 
+:::warning
+Ensure you restart the server after you extend the controller in this way.
+:::
+
 ```ruby{8,20}
 # app/controllers/concerns/basic_auth.rb
 module BasicAuth
