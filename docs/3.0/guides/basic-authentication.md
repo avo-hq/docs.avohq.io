@@ -31,7 +31,7 @@ Ensure you restart the server after you extend the controller in this way.
 module BasicAuth
   extend ActiveSupport::Concern
 
-  # Aiuthentication strategy came from this article
+  # Authentication strategy came from this article:
   # https://dev.to/kevinluo201/setup-a-basic-authentication-in-rails-with-http-authentication-388e
   included do
     http_basic_authenticate_with name: "adrian", password: "password"
@@ -43,7 +43,7 @@ Avo.configure do |config|
   # Avo configuration
 end
 
-# Add this to include it to Avo's ApplicationController
+# Add this to include it in Avo's ApplicationController
 Rails.configuration.to_prepare do
   # Add basic authentication to Avo
   Avo::ApplicationController.include BasicAuth
