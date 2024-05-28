@@ -25,6 +25,10 @@ Here is how you can see the money field in the [avodemo](https://main.avodemo.co
 
 <img :src="('/assets/img/money-field-show.png')" class="border mb-4" />
 
+### Example on index view
+
+<img :src="('/assets/img/money-field-index.png')" class="border mb-4" />
+
 ## Installation
 
 This field is a standalone gem.
