@@ -21,9 +21,13 @@ You can explore the implementation of the money field in [avodemo](https://main.
 
 <img :src="('/assets/img/money-field2.png')" class="border mb-4" />
 
-### Example on show
+### Example on show with currencies USD
 
 <img :src="('/assets/img/money-field-show.png')" class="border mb-4" />
+
+### Example on show with currencies RON
+
+<img :src="('/assets/img/money-field-show-lei.png')" class="border mb-4" />
 
 ### Example on index
 
