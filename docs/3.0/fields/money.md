@@ -13,7 +13,7 @@ field :price, as: :money, currencies: %w[EUR USD RON PEN]
 ```
 ## Money Field Example
 
-Here is how you can see the money field in the [avodemo](https://main.avodemo.com/avo/resources/products/new)
+You can explore the implementation of the money field in [avodemo](https://main.avodemo.com/avo/resources/products/new) and it's corresponding code on GitHub [here](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/product.rb)
 
 ### Example on new
 
@@ -25,7 +25,7 @@ Here is how you can see the money field in the [avodemo](https://main.avodemo.co
 
 <img :src="('/assets/img/money-field-show.png')" class="border mb-4" />
 
-### Example on index view
+### Example on index
 
 <img :src="('/assets/img/money-field-index.png')" class="border mb-4" />
 
