@@ -132,6 +132,7 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
 <img :src="('/assets/img/dynamic_filter_number.png')" class="border mb-4" />
 <img :src="('/assets/img/dynamic_filter_number2.png')" class="border mb-4" />
 </div>
+
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/teams.rb)
