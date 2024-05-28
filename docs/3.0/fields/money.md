@@ -11,6 +11,27 @@ The `Money` field is used to display a monetary value.
 ```ruby
 field :price, as: :money, currencies: %w[EUR USD RON PEN]
 ```
+## Money Field Example
+
+You can explore the implementation of the money field in [avodemo](https://main.avodemo.com/avo/resources/products/new) and it's corresponding code on GitHub [here](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/product.rb)
+
+### Example on new
+
+<img :src="('/assets/img/money-field.png')" class="border mb-4" />
+
+<img :src="('/assets/img/money-field2.png')" class="border mb-4" />
+
+### Example on show with currencies USD
+
+<img :src="('/assets/img/money-field-show.png')" class="border mb-4" />
+
+### Example on show with currencies RON
+
+<img :src="('/assets/img/money-field-show-lei.png')" class="border mb-4" />
+
+### Example on index
+
+<img :src="('/assets/img/money-field-index.png')" class="border mb-4" />
 
 ## Installation
 
