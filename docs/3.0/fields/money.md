@@ -15,11 +15,15 @@ field :price, as: :money, currencies: %w[EUR USD RON PEN]
 
 Here is how you can see the money field in the [avodemo](https://main.avodemo.com/avo/resources/products/new)
 
-### Example
+### Example on new
 
 <img :src="('/assets/img/money-field.png')" class="border mb-4" />
 
 <img :src="('/assets/img/money-field2.png')" class="border mb-4" />
+
+### Example on show
+
+<img :src="('/assets/img/money-field-show.png')" class="border mb-4" />
 
 ## Installation
 
