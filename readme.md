@@ -31,3 +31,13 @@ Some possible values if they are known (`true`, `false`, `" "` `"on"`, `"off"`, 
 After the options, if the field has a lot of options and permutations and you'd like to show more, we can add an `## Examples` block.
 
 Next are all the other things about the field. Maybe it requires some explanation
+
+## Other components
+
+### `Demo`
+
+`label` is optional.
+
+```html
+<Demo link="https://avodemo.com" label="See the demo" />
+```
