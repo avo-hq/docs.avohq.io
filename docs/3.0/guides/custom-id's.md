@@ -1,5 +1,4 @@
-## How to Use Custom IDs with Avo
-
+# How to Use Custom IDs with Avo
 Avo seamlessly integrates custom IDs, including popular solutions like FriendlyID, prefixed IDs, or Hashids. Below, you'll find examples illustrating each approach for effortless customization within your application.
 
 ## Example with FriendlyID
@@ -53,7 +52,6 @@ View FriendlyID setup in action: [View Demo](https://main.avodemo.com/avo/resour
 
 Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/user.rb)
 
----
 ## Example with Prefixed IDs
 
 Prefixed IDs involve adding a custom prefix to your IDs.
@@ -77,7 +75,6 @@ Add has_prefix_id :my_prefix to your models to autogenerate prefixed IDs:
 
 Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/team.rb)
 
----
 ## Example with Hashids
 
 Hashids is a library that generates short, unique, and cryptographically secure IDs.
