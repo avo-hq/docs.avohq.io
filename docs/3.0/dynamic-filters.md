@@ -57,13 +57,14 @@ There are a few types of filters available for you to use out of the box.
 
  - Is true
  - Is false
- - Is present
- - Is blank
+ - Is null
+ - Is not null
 :::
-<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
-<img :src="('/assets/img/dynamic_filter_boolean.png')" class="border mb-4" />
-<img :src="('/assets/img/dynamic_filter_boolean2.png')" class="border mb-4" />
+<div class="flex justify-between items-start flex-wrap">
+    <img src="/assets/img/dynamic_filter_boolean.png" class="border mb-4" />
+    <img src="/assets/img/dynamic_filter_boolean2.png" class="border mb-4" />
 </div>
+
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/users)
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/users.rb)
@@ -77,17 +78,15 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - Is on or before
  - Is on or after
  - Is within
- - Is present
- - Is blank
 :::
 
-<div style="display: flex; justify-content: space-between; align-items: flex-start;">
+<div class="flex justify-between items-start flex-wrap">
   <div>
-    <img src="/assets/img/dynamic_filter_date.png" class="border mb-4" style="display: block; width: 100%;" />
-    <img src="/assets/img/dynamic_filter_date2.png" class="border mb-4" style="display: block; width: 100%;" />
+    <img src="/assets/img/dynamic_filter_date.png" class="border mb-4" />
+    <img src="/assets/img/dynamic_filter_date2.png" class="border mb-4" />
   </div>
   <div>
-    <img src="/assets/img/dynamic_filter_date3.png" class="border mb-4" style="display: block; width: 100%;" />
+    <img src="/assets/img/dynamic_filter_date3.png" class="border mb-4" />
   </div>
 </div>
 
@@ -101,15 +100,22 @@ This filter will give you options from the database.
 
 ### Conditions
 
+ - Contains
+ - Does not contain
  - Is
  - Is not
+ - Starts with
+ - Ends with
+ - Is null
+ - Is not null
  - Is present
  - Is blank
 :::
-<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
-<img :src="('/assets/img/dynamic_filter_has_many.png')" class="border mb-4" />
-<img :src="('/assets/img/dynamic_filter_has_many2.png')" class="border mb-4" />
+<div class="flex justify-between items-start flex-wrap">
+  <img :src="('/assets/img/dynamic_filter_has_many.png')" class="border mb-4" />
+  <img :src="('/assets/img/dynamic_filter_has_many2.png')" class="border mb-4" />
 </div>
+
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/teams.rb)
@@ -124,13 +130,11 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - `>=` (greater than or equal to)
  - `<` (lower than)
  - `<=` (lower than or equal to)
- - Is present
- - Is blank
 :::
 
-<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
-<img :src="('/assets/img/dynamic_filter_number.png')" class="border mb-4" />
-<img :src="('/assets/img/dynamic_filter_number2.png')" class="border mb-4" />
+<div class="flex justify-between items-start flex-wrap">
+  <img :src="('/assets/img/dynamic_filter_number.png')" class="border mb-4" />
+  <img :src="('/assets/img/dynamic_filter_number2.png')" class="border mb-4" />
 </div>
 
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
@@ -143,13 +147,14 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
 
  - Is
  - Is not
- - Is present
- - Is blank
+ - Is null
+ - Is not null
 :::
-<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
-<img :src="('/assets/img/dynamic_filter_select.png')" class="border mb-4" />
-<img :src="('/assets/img/dynamic_filter_select2.png')" class="border mb-4" />
+<div class="flex justify-between items-start flex-wrap">
+  <img :src="('/assets/img/dynamic_filter_select.png')" class="border mb-4" />
+  <img :src="('/assets/img/dynamic_filter_select2.png')" class="border mb-4" />
 </div>
+
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/courses)
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/courses.rb)
@@ -164,14 +169,17 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - Is not
  - Starts with
  - Ends with
+ - Is null
+ - Is not null
  - Is present
  - Is blank
 :::
 
-<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
-<img :src="('/assets/img/dynamic_filter_text.png')" class="border mb-4" />
-<img :src="('/assets/img/dynamic_filter_text2.png')" class="border mb-4" />
+<div class="flex justify-between items-start flex-wrap">
+  <img :src="('/assets/img/dynamic_filter_text.png')" class="border mb-4" />
+  <img :src="('/assets/img/dynamic_filter_text2.png')" class="border mb-4" />
 </div>
+
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/teams.rb)
@@ -188,9 +196,10 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
 :::warning
 Contained in will not work when using the `acts-as-taggable-on` gem.
 :::
-<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
-<img :src="('/assets/img/dynamic_filter_tags.png')" class="border mb-4" />
+<div class="flex justify-between items-start flex-wrap">
+  <img :src="('/assets/img/dynamic_filter_tags.png')" class="border mb-4" />
 </div>
+
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/courses).
 
 Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/courses.rb)
