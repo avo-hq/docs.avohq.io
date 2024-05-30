@@ -19,11 +19,11 @@ The page where you can create a new resource.
 :::
 
 :::option `Display`
-Combines the `Index` and `Show` views to display resources and their details.
+`:display` is an alias for the the `Index` and `Show` views where you can display records and their details.
 :::
 
 :::option `Form`
-Combines the `Edit` and `New` views for creating and editing resources.
+`:form` is an alias for the `Edit` and `New` views for creating and editing records.
 :::
 
 ## Preview
