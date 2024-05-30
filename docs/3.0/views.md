@@ -18,6 +18,14 @@ The page where you can edit one resource.
 The page where you can create a new resource.
 :::
 
+:::option `Display`
+Combines the `Index` and `Show` views to display resources and their details.
+:::
+
+:::option `Form`
+Combines the `Edit` and `New` views for creating and editing resources.
+:::
+
 ## Preview
 
 The fields marked with `show_on :preview`, will be show in the [preview field](./fields/preview) popup.
