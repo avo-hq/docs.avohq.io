@@ -179,3 +179,4 @@ class CourseLinkPolicy < ApplicationPolicy
 
   # other policy methods
 end
+```
