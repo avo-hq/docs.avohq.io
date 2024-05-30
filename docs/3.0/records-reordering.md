@@ -162,3 +162,20 @@ self.ordering = {
   }
 }
 ```
+
+## Authorization
+
+If you're using the [authorization](./authorization) feature please ensure you give the proper permissions using the [`reorder?`](./authorization#reorder) method.
+
+```ruby
+class CourseLinkPolicy < ApplicationPolicy
+  def reorder? = edit?
+
+  # or a custom permission
+
+  def reorder?
+    user.can_reorder_items?
+  end
+
+  # other policy methods
+end
