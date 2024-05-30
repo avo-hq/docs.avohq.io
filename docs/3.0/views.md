@@ -18,6 +18,14 @@ The page where you can edit one resource.
 The page where you can create a new resource.
 :::
 
+:::option `Display`
+`:display` is an alias for the the `Index` and `Show` views where you can display records and their details.
+:::
+
+:::option `Form`
+`:form` is an alias for the `Edit` and `New` views for creating and editing records.
+:::
+
 ## Preview
 
 The fields marked with `show_on :preview`, will be show in the [preview field](./fields/preview) popup.
