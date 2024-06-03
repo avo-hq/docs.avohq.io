@@ -651,6 +651,7 @@ This section is WIP.
 :::
 
 :::option `for_attribute`
+
 <VersionReq version="3.6.2" />
 
 Allows to specify the target attribute on the model for each field. By default the target attribute is the field's id.
@@ -667,5 +668,4 @@ field :secondary_field_for_status,
   except_on: :forms,
   help: "Secondary field for status using the for_attribute option"
 ```
-
 :::
