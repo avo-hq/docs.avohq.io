@@ -657,14 +657,14 @@ Allows to specify the target attribute on the model for each field. By default t
 
 Usage example:
 
-```ruby{6}
-    field :name,
-      as: :text
+```ruby{5}
+field :status, as: :select, options: [:one, :two, :three], only_on: :forms
 
-    field :secondary_field_for_name,
-      as: :text,
-      for_attribute: :name,
-      only_on: :edit,
-      help: "Secondary field for name using for_attribute option"
+field :secondary_field_for_status,
+  as: :badge,
+  for_attribute: :status,
+  options: {info: :one, :success: :two, warning: :three}
+  except_on: :forms,
+  help: "Secondary field for status using the for_attribute option"
 ```
 :::
