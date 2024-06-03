@@ -664,7 +664,7 @@ field :status, as: :select, options: [:one, :two, :three], only_on: :forms
 field :secondary_field_for_status,
   as: :badge,
   for_attribute: :status,
-  options: {info: :one, :success: :two, warning: :three}
+  options: {info: :one, :success: :two, warning: :three},
   except_on: :forms,
   help: "Secondary field for status using the for_attribute option"
 ```
