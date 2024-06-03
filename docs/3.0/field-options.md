@@ -652,7 +652,7 @@ This section is WIP.
 
 :::option `for_attribute`
 
-<VersionReq version="3.6.2" />
+<!-- <VersionReq version="3.6.2" /> -->
 
 Allows to specify the target attribute on the model for each field. By default the target attribute is the field's id.
 
