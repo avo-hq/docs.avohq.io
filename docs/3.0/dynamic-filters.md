@@ -198,6 +198,7 @@ Contained in will not work when using the `acts-as-taggable-on` gem.
 :::
 <div class="flex justify-between items-start flex-wrap">
   <img :src="('/assets/img/dynamic_filter_tags.png')" class="border mb-4" />
+  <img :src="('/assets/img/dynamic_filter_tags2.png')" class="border mb-4" />
 </div>
 
 Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/courses).
