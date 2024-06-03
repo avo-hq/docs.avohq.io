@@ -658,7 +658,7 @@ Allows to specify the target attribute on the model for each field. By default t
 
 Usage example:
 
-```ruby{5}
+```ruby
 field :status, as: :select, options: [:one, :two, :three], only_on: :forms
 
 field :secondary_field_for_status,
@@ -669,5 +669,3 @@ field :secondary_field_for_status,
   help: "Secondary field for status using the for_attribute option"
 ```
 :::
-
-•
