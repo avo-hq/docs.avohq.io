@@ -654,7 +654,7 @@ This section is WIP.
 
 Allows to specify the target attribute on the model for each field. By default the target attribute is the field's id.
 
-<VersionReq version="3.6.2" />
+<!-- <VersionReq version="3.6.2" /> -->
 
 Usage example:
 
