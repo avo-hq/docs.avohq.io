@@ -640,7 +640,9 @@ def actions
 You can pass a `label` option to display that text
 :::
 
-## Icon <VersionReq version="3.5.6" />
+## Icon
+
+<VersionReq version="3.5.6" />
 Action icons allow you to enhance the visual representation of actions. Action icons provide a quick visual cue for users, helping them identify different actions at a glance.
 
 Here's an example of how you can define actions with icons:
