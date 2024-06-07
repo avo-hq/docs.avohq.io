@@ -71,7 +71,6 @@ const config = {
     const canonicalUrl = `https://docs.avohq.io/${pageData.relativePath}`
       .replace(/index\.md$/, '')
       .replace(/\.md$/, '.html')
-      .replace(/2\.0/, '3.0')
 
     pageData.frontmatter.head ??= []
     pageData.frontmatter.head.push([
