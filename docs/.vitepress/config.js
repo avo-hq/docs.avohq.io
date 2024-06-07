@@ -67,6 +67,18 @@ const config = {
     ['meta', { name:"msapplication-config", content:"/favicons/browserconfig.xml" }],
     ['meta', { name:"theme-color", content:"#ffffff" }],
   ],
+  transformPageData(pageData) {
+    const canonicalUrl = `https://docs.avohq.io/${pageData.relativePath}`
+      .replace(/index\.md$/, '')
+      .replace(/\.md$/, '.html')
+      .replace(/2\.0/, '3.0')
+
+    pageData.frontmatter.head ??= []
+    pageData.frontmatter.head.push([
+      'link',
+      { rel: 'canonical', href: canonicalUrl }
+    ])
+  },
   themeConfig: {
     siteTitle: false,
     logo: "/logo.svg",
