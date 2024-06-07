@@ -1,6 +1,6 @@
 # Acts As Tenant Integration
 
-Recipe [contributed] by [SahSantoshh](https://github.com/sahsantoshh).
+Recipe [contributed](https://github.com/avo-hq/docs.avohq.io/pull/218) by [SahSantoshh](https://github.com/sahsantoshh).
 
 There are different ways to achieve multi-tenancy in an application.
 We already have a doc which describes about [Multitenancy](../multitenancy.md) with Avo.
