@@ -4,7 +4,50 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Rails 8 support
+
+<!-- TODO: add ransack custom repo mention here -->
+
+## Upgrade from 3.7.4 to 3.9.1
+
+:::warning Update to Rails 7.2 or greater
+Rails 7.1 has a [bug](https://github.com/rails/rails/issues/51910) which would break path helpers for nested mounted engines.
+:::
+
+### Steps to update
+
+1. Update `avo`, `avo-pro`, or `avo-advanced` to version `3.9.1`
+2. Update `rails` to at least `7.2.0.beta2` (or greater when available)
+3. Run `bundle update rails avo-advanced`
+
+```ruby
+# Gemfile
+
+# Use Rails 7.2 or greater
+gem "rails", ">= 7.2.0.beta2"
+
+# or
+
+# You can also run off `main`
+gem "rails", github: "rails/rails", branch: "main"
+
+# Update Avo
+gem "avo-advanced", ">= 3.9.1"
+```
+
+```bash
+bundle update rails avo-advanced
+```
+
+## Skip versions 3.8.x and 3.9.0
+
+From Avo 3.7.4 you should update straight to `3.9.1`.
+The other intermediary versions introduced a bug when we tried to improve support for Rails 7.1+
+
+More on that on this [issue](https://github.com/avo-hq/avo/issues/2844).
+
 ## Upgrade from 3.6.1 to 3.6.2
+
 :::option Cache
 From version `3.6.1` to version `3.6.2` table cache logic suffered some changes. Old cached table may break with this change, we recommend to clear cache on production after upgrade (`Rails.cache.clear`).
 
