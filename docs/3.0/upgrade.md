@@ -33,6 +33,12 @@ gem "rails", github: "rails/rails", branch: "main"
 
 # Update Avo
 gem "avo-advanced", ">= 3.9.1"
+
+# Use this `ransack` version
+gem "ransack", github: "avo-hq/ransack", branch: "fix/rails-8/delegate-alias-tracker-to-relation"
+
+# This version of acts-as-taggable-on is compatible with
+gem "acts-as-taggable-on", github: "avo-hq/acts-as-taggable-on"
 ```
 
 ```bash
