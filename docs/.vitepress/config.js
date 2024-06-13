@@ -165,7 +165,7 @@ const config = {
             {text: "Menu editor", link: "/3.0/menu-editor"},
             {text: "Search", link: "/3.0/search"},
             {text: "Actions", link: "/3.0/actions"},
-            {text: "Localization (I18n)", link: "/3.0/localization"},
+            {text: "Localization (I18n)", link: "/3.0/i18n"},
             {text: "Branding", link: "/3.0/branding"},
             {text: "Routing", link: "/3.0/routing"},
             {text: "Multitenancy", link: "/3.0/multitenancy"},
