@@ -8,6 +8,11 @@ If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedica
 
 <!-- TODO: add ransack custom repo mention here -->
 
+## Upgrade from 3.9.1 to 3.9.2
+
+We tweaked the way `locales` and i18n work with Avo.
+In theory nothing should change in yout setup, but please read [the guide](./i18n) once more to see how it works.
+
 ## Upgrade from 3.7.4 to 3.9.1
 
 :::warning Update to Rails 7.2 or greater
