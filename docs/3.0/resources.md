@@ -465,8 +465,14 @@ That will help you avoid those nasty `n+1` performance issues.
 ```ruby
 class Avo::Resources::Post < Avo::BaseResource
   self.includes = [:user, :tags]
+
+  # or a very nested scenario
+  self.includes = [files_attachments: :blob, users: [:comments, :teams, post: [comments: :user]]]
 end
 ```
+
+We know, the array notation looks weird, but it works.
+
 :::
 
 :::option `default_view_type`
