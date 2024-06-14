@@ -16,7 +16,7 @@ In theory nothing should change in yout setup, but please read [the guide](./i18
 ## Upgrade from 3.7.4 to 3.9.1
 
 :::warning Update to Rails 7.2 or greater
-Rails 7.1 has a [bug](https://github.com/rails/rails/issues/51910) which would break path helpers for nested mounted engines.
+Rails 7.1 has a [bug](https://github.com/rails/rails/issues/51910) ([explanation](https://github.com/avo-hq/avo/issues/2844)) which would break path helpers for nested mounted engines.
 :::
 
 ### Steps to update

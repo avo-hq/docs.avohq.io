@@ -456,9 +456,9 @@ end
 ```
 :::
 
-:::option `includes`
+:::option `self.includes`
 
-If you regularly need access to a resource's associations, you can tell Avo to eager load those associations on the <Index /> view using `includes`.
+If you regularly need access to a resource's associations, you can tell Avo to eager load those associations on the `Index` view using `includes`.
 
 That will help you avoid those nasty `n+1` performance issues.
 
