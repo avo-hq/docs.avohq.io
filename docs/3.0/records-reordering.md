@@ -13,7 +13,7 @@ The actions are simple lambda functions but coupled with your logic or an orderi
 
 ## Configuration
 
-I'll demonstrate the ordering feature using the `act_as_list` gem.
+I'll demonstrate the ordering feature using the `acts_as_list` gem.
 
 Install and configure the gem as instructed in the [tutorials](https://github.com/brendon/acts_as_list#example). Please ensure you [give all records position attribute values](https://github.com/brendon/acts_as_list#adding-acts_as_list-to-an-existing-model), so the gem works fine.
 
@@ -33,7 +33,7 @@ class Avo::Resources::CourseLink < Avo::BaseResource
 end
 ```
 
-The `record` is the actual instantiated model. The `move_higher`, `move_lower`, `move_to_top`, and `move_to_bottom` methods are provided by `act_as_list`. If you're not using that gem, you can add your logic inside to change the position of the record.
+The `record` is the actual instantiated model. The `move_higher`, `move_lower`, `move_to_top`, and `move_to_bottom` methods are provided by `acts_as_list`. If you're not using that gem, you can add your logic inside to change the position of the record.
 
 The actions have access to `record`, `resource`, `options` (the `ordering` class attribute) and `params` (the `request` params).
 
