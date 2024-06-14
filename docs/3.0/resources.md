@@ -473,7 +473,6 @@ end
 
 We know, the array notation looks weird, but it works.
 
-:::
 
 :::option `default_view_type`
 
