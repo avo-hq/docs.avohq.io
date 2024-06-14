@@ -58,6 +58,6 @@ There are two ways you can use this:
 
 You might want to change the name that appears on the association page. For example, if you're displaying a `team_members` association, your users will default see `Team members` as the title, but you'd like to show them `Members`.
 
-You can customize that using [fields localization](localization.html#localizing-fields).
+You can customize that using [fields localization](i18n.html#localizing-fields).
 
 <img :src="('/assets/img/associations/custom-label.jpg')" alt="Custom label" class="border mb-4" />
