@@ -21,15 +21,15 @@ const members = [
       { icon: 'twitter', link: 'https://twitter.com/paul_ionut_bob' },
     ]
   },
-  {
-    avatar: 'https://www.github.com/gabrielgiroe1.png',
-    name: 'Gabriel Giroe',
-    title: 'Developer',
-    links: [
-      { icon: 'github', link: 'https://github.com/gabrielgiroe1' },
-      { icon: 'twitter', link: 'https://twitter.com/gabrielgiroe' },
-    ]
-  },
+  // {
+  //   avatar: 'https://www.github.com/gabrielgiroe1.png',
+  //   name: 'Gabriel Giroe',
+  //   title: 'Developer',
+  //   links: [
+  //     { icon: 'github', link: 'https://github.com/gabrielgiroe1' },
+  //     { icon: 'twitter', link: 'https://twitter.com/gabrielgiroe' },
+  //   ]
+  // },
   // {
   //   avatar: 'https://media-exp1.licdn.com/dms/image/C4D03AQG4SAPGQZIkHw/profile-displayphoto-shrink_200_200/0/1618998196775?e=1665014400&v=beta&t=vP9Rw73rqVmxDf-Bs0gZmgpV1KUclOgCr7XhMRyKarg',
   //   name: 'Ștefan Stroie',
