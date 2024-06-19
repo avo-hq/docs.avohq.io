@@ -5,7 +5,7 @@ The `name` and `description` scope options can be callable values and receive th
 The `query` object is the actual Active Record query (unscoped) that is made to fetch the records.
 
 There is also possible to access the `scoped_query` method that will return the `query` after applying the `scope`.
-You my use that to display a counter of how many record are there in that scope. Notice that it can impact page loading time when applying on large data tables.
+You may use that to display a counter of how many records are there in that scope. Notice that it can impact page loading time when applying on large data tables.
 
 ### Example
 
