@@ -11,6 +11,12 @@
   force = false
 
 [[redirects]]
+  from = "/3.0/localization"
+  to = "/3.0/i18n"
+  status = 301
+  force = false
+
+[[redirects]]
   from = "/3.0/recipes/*"
   to = "/3.0/guides/:splat"
   status = 301
