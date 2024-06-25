@@ -297,6 +297,8 @@ You can perform a search on `Application` records based on attributes of the ass
       }
     }
   end
+```
+
 In the above example, ransack is used to search for `Application` records based on various attributes of the associated `Client`, such as client_email_cont and client_phone_number_cont. The joins method is used to join the applications table with the clients table to perform the search efficiently.
 
 This approach allows for flexible searching within associations, enabling you to find records based on related model attributes.
