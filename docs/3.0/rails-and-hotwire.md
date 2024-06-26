@@ -57,4 +57,4 @@ Avo's built with Hotwire, so anytime you'd like to use Turbo Frames, that's supp
 
 Avo comes loaded with Stimulus JS and has a quite deep integration with it by providing useful built-in helpers that improve the development experience.
 
-Please follow the [Stimulus JS guide](./stimulus-integration.md ) that takes an in-depth look at all the possible ways of extending the UI.
+Please follow the [Stimulus JS guide](./stimulus-integration.html ) that takes an in-depth look at all the possible ways of extending the UI.
