@@ -301,6 +301,10 @@ end
 You may want to change Avo's queries to add sorting or use gems like [friendly](https://github.com/norman/friendly_id).
 You can do that using `index_query` for multiple records and `find_record_method` when fetching one record.
 
+:::info
+  For a version of friendly greater then 5.0 is not necessary and you can use [`:finders`](custom_ID's/custom-id's.md#example-with-friendlyid)
+:::
+
 ### Custom scope for `Index` page
 
 Using `index_query` you tell Avo how to fetch the records for the `Index` view.
