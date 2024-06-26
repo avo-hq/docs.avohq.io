@@ -1,6 +1,6 @@
 # Licensing
 
-Avo has two types of licenses. The **Community edition**is free to use and works best for personal, hobby, and small commercial projects, and the **Pro edition** for when you need more advanced features.
+Avo has two types of licenses. The **Community edition** is free to use and works best for personal, hobby, and small commercial projects, and the **Pro edition** for when you need more advanced features.
 
 ## Community vs. Pro
 
