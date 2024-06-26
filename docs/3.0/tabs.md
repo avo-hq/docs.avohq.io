@@ -74,4 +74,4 @@ end
 
 ## Display counter indicator on tabs switcher
 
-Check [this recipe](guides/tabs-counter-indicator.md) on how to enhance your tabs switcher with a counter for each association tab.
+Check [this recipe](guides/tabs-counter-indicator.html) on how to enhance your tabs switcher with a counter for each association tab.

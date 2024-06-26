@@ -359,7 +359,7 @@ end
 
 :::option `Index`
 
-The page where you see all your resources listed in a table or a [grid](grid-view.md).
+The page where you see all your resources listed in a table or a [grid](grid-view.html).
 
 :::
 :::option `Show`
