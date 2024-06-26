@@ -17,6 +17,18 @@
   force = false
 
 [[redirects]]
+  from = "/3.0/:dir/:page.md"
+  to = "/3.0/:dir/:page"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/3.0/:page.md"
+  to = "/3.0/:page"
+  status = 301
+  force = false
+
+[[redirects]]
   from = "/3.0/recipes/*"
   to = "/3.0/guides/:splat"
   status = 301
