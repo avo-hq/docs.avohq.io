@@ -17,7 +17,7 @@
   force = false
 
 [[redirects]]
-  from = "/3.0/:dir/:page.md"
+  from = "/3.0/:dir/:page.*"
   to = "/3.0/:dir/:page"
   status = 301
   force = false
@@ -40,11 +40,29 @@
   status = 301
   force = false
 
+# Redirects for 2.0 versions
+# -------------------------
+
+[[redirects]]
+  from = "/2.0/:dir/:page.*"
+  to = "/2.0/:dir/:page"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/2.0/:page.md"
+  to = "/2.0/:page"
+  status = 301
+  force = false
+
 [[redirects]]
   from = "/2.0/stimulus-controllers.html"
   to = "/2.0/custom-fields.html#use-pre-built-stimulus-controllers"
   status = 301
   force = false
+
+# Redirects for old versions
+# -------------------------
 
 [[redirects]]
   from = "/1.0/*"
