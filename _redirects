@@ -1,3 +1,0 @@
-# /2.0/fields/progress_bar.md -> /2.0/fields/progress_bar
-/2.0/:dir/:page.*         /2.0/:dir/:page        301
-/2.0/:page.*              /2.0/:page             301
