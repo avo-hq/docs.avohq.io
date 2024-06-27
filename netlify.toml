@@ -16,15 +16,15 @@
   status = 301
   force = false
 
-[[redirects]]
-  from = "/3.0/:dir/:page.*"
-  to = "/3.0/:dir/:page"
-  status = 301
-  force = false
+# [[redirects]]
+#   from = "/3.0/:dir/:page.*"
+#   to = "/3.0/:dir/:page"
+#   status = 301
+#   force = false
 
 [[redirects]]
-  from = "/3.0/:page.md"
-  to = "/3.0/:page"
+  from = "/3.0/*.md"
+  to = "/3.0/:splat"
   status = 301
   force = false
 
@@ -43,15 +43,15 @@
 # Redirects for 2.0 versions
 # -------------------------
 
-[[redirects]]
-  from = "/2.0/:dir/:page.*"
-  to = "/2.0/:dir/:page"
-  status = 301
-  force = false
+# [[redirects]]
+#   from = "/2.0/:dir/:page.*"
+#   to = "/2.0/:dir/:page"
+#   status = 301
+#   force = false
 
 [[redirects]]
-  from = "/2.0/:page.md"
-  to = "/2.0/:page"
+  from = "/2.0/*.md"
+  to = "/2.0/:splat"
   status = 301
   force = false
 
