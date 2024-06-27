@@ -291,6 +291,16 @@ end
 def view_comments?
   CommentPolicy.new(user, record).index?
 end
+
+# Since Version 3.10.0
+
+def attach_comments?
+  CommentPolicy.new(user, record).attach?
+end
+
+def detach_comments?
+  CommentPolicy.new(user, record).detach?
+end
 ```
 
 Although these methods won't be visible in your policy code, you can still override them. For instance, if you include the following code in your `CommentPolicy`, it will be executed in place of the one defined by the helper:
