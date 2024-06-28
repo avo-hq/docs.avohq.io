@@ -17,8 +17,8 @@ That command will:
 - generate tailwind `base`, `components` and `utilities` under `app/assets/stylesheets/avo/tailwind` directory (workaround to import avo's base css after tailwind's base)
 - create a custom `app/assets/stylesheets/avo/tailwind.css` file where you can further customize your Avo space;
 - generate or enhance your `Procfile.dev` with the required compile `yarn avo:tailwindcss --watch` command, as per default `tailwindcss-rails` practices;
-- enhance your `package.json` file with the build script. **Make sure `package.json` is present, `npm init` will generate one if your project does'n have it**.
-- enhance your `Rake` file with the following code:
+- add the build script to your `package.json`. **Ensure a `package.json` file is present;`yarn init` will generate one if your project doesn't have one**.
+- add the following code to your `Rakefile`:
 ```ruby
 # When running `rake assets:precompile` this is the order of events:
 # 1 - Task `avo:yarn_install`
