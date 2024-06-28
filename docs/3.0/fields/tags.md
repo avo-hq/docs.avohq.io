@@ -284,6 +284,10 @@ To mitigate that use the `fetch_labels` option.
 </Option>
 
 :::option `fetch_labels`
+:::warning
+Deprecated since <Version version="3.10" /> in favor of [`format_using`](tags#format_using)
+:::
+
 The `fetch_labels` option allows you to pass an array of custom strings to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.
 
 ```ruby{4-6}
@@ -305,8 +309,41 @@ Avo's default behavior on tags
 
 #### Possible values
 
-Array of strings
+- Array of strings
+
+:::option `format_using`
+:::info
+Since <Version version="3.10" />
 :::
+
+The `format_using` option allows you to pass an array of custom strings or hashes to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.
+
+```ruby{4-11}
+field :skills,
+  as: :tags,
+  fetch_values_from: "/avo/resources/skills/skills_for_user",
+  format_using: -> {
+    Skill.find(value).map do |skill|
+      {
+        value: skill.id,
+        label: skill.name
+      }
+    end
+  }
+```
+
+In the above example, `format_using` is a lambda that retrieves the names and the ids of the skills stored in the record's `skills` property.
+
+When you use `format_using`, Avo passes the `value`, current `resource` and `record` as arguments to the lambda function. This gives you access to the hydrated resource and the current record.
+
+#### Default
+
+Avo's default behavior on tags
+
+#### Possible values
+
+- Array of strings, notice that this will replace the DB values
+- Array of hashes with `value` and `label` keys. WIll show the `label` and store the `value`
 
 ## PostgreSQL array fields
 
