@@ -71,7 +71,7 @@ Versions `3.6.2` / `3.6.3` have some issues around cache, we recommend to upgrad
 
 ## Upgrade from 3.5.4 to 3.5.5
 :::option Record errors
-With version `3.5.5` we introduced a stricter error check. Now when the record have any error included the save action will fail. This allow you to do things like:
+With version `3.5.5` we introduced a stricter error check. Now when the record has any error attached the save action will fail automatically. This allow you to do things like:
 
 ```ruby
 before_update do
