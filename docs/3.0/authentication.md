@@ -160,6 +160,18 @@ Ex: on record save, you might call an API which by some reason errors out. Inste
 
 <Image  src="/assets/img/3_0/authentication/backtrace.png" alt="Backtrace alert" width="1602" height="780" />
 
+### Customize the methods that check for roles
+
+You may customize the methods that Avo uses to assign roles in the initializer.
+
+```ruby
+# config/avo.rb
+Avo.configure do |config|
+  config.is_admin_method = :is_admin?
+  config.is_developer_method = :is_developer?
+end
+```
+
 ## Authorization
 
 When you share access to Avo with your clients or large teams, you may want to restrict access to a resource or a subset of resources. You should set up your authorization rules (policies) to do that. Check out the [authorization page](authorization) for details on how to set that up.
