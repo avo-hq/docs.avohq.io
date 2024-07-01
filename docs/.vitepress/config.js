@@ -53,10 +53,6 @@ const config = {
       {},
       "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-VWMV2FNBQ1');"
     ],
-    [
-      'script',
-      {defer: true, "data-domain": "docs.avohq.io", src: "https://plausible.io/js/plausible.js"}
-    ],
     ['link', { rel:"apple-touch-icon", sizes:"180x180", href:"/favicons/apple-touch-icon.png" }],
     ['link', { rel:"icon", type:"image/png", sizes:"32x32", href:"/favicons/favicon-32x32.png" }],
     ['link', { rel:"icon", type:"image/png", sizes:"16x16", href:"/favicons/favicon-16x16.png" }],
@@ -152,6 +148,7 @@ const config = {
             {text: "Resource panels", link: "/3.0/resource-panels.html"},
             {text: "Resource tabs", link: "/3.0/tabs.html"},
             {text: "Customizable controls", link: "/3.0/customizable-controls.html"},
+            {text: "Cover and Profile Photos", link: "/3.0/cover-and-profile-photos.html"},
           ],
         },
         {
