@@ -302,3 +302,13 @@ You can perform a search on `Application` records based on attributes of the ass
 In the above example, ransack is used to search for `Application` records based on various attributes of the associated `Client`, such as client_email_cont and client_phone_number_cont. The joins method is used to join the applications table with the clients table to perform the search efficiently.
 
 This approach allows for flexible searching within associations, enabling you to find records based on related model attributes.
+
+## Results count
+:::info Since version <Version version="3.10" />
+:::
+By default, Avo displays 8 search results whenever you search. You can change the number of results displayed by configuring the `search_results_count` option:
+
+```ruby
+Avo.configure do |config|
+  config.search_results_count = 16
+end
