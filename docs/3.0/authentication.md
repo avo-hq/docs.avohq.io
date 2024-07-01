@@ -5,6 +5,13 @@ license: community
 
 # Authentication
 
+With Avo, you have the flexibility to build apps either with or without authentication. While Avo has minimal assumptions about its users, a few guidelines still apply:
+
+1. Users can be either authenticated or not. Avo apps can be developed without requiring user authentication.
+2. If you choose to implement authentication, you need to [define the current_user](#customize-the-current-user-method).
+3. You can assign [lightweight roles](#user-roles) to your users.
+4. Any authentication strategy or gem of your choice can be utilized.
+
 ## Customize the `current_user` method
 
 Avo will not assume your authentication provider (the `current_user` method returns `nil`). That means that you have to tell Avo who the `current_user` is.
