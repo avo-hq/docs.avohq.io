@@ -123,6 +123,43 @@ Avo.configure do |config|
 end
 ```
 
+## User roles
+
+There might be cases where you want to signal to Avo that the current user has a role.
+
+Avo roles are very lightweight and that's for a reason. Building with roles in mind requires a bit more integration with the parent app. This is something that you can definitely take upon yourself to build if you need it.
+
+There are two extra roles that you can give to a user, besides the regular user. These roles can be assigned with a check on the `current_user` object.
+
+### 1. Admin user
+
+The check that Avo will do to figure that out is to run the `is_admin?` method on the [`current_user`](#customize-the-current-user-method) object.
+
+#### Check if a user is an admin
+
+You can do that check yourself using the `Avo::Current.user_is_admin?`.
+
+#### When does Avo check if the use is an admin (`is_admin?`)
+
+Avo doesn't use this setting momentarily but might in the future.
+
+### 2. Developer user
+
+There might be cases where you want to signal that a user is a developer. The developer will be able to see extra things like long backtrace messages in errors.
+
+The check that Avo will do to figure that out is to run the `is_developer?` method on the [`current_user`](#customize-the-current-user-method) object.
+
+### Check if a user is an developer
+
+You can do that check yourself using the `Avo::Current.user_is_developer?`.
+
+### When does Avo check if the use is an developer (`is_developer?`)
+
+Avo uses this role to display long backtraces on non-validation errors.
+Ex: on record save, you might call an API which by some reason errors out. Instead of just getting a generic "Something went wrong" error, the developer user will see the error message and backtrace
+
+<Image  src="/assets/img/3_0/authentication/backtrace.png" alt="Backtrace alert" width="1602" height="780" />
+
 ## Authorization
 
 When you share access to Avo with your clients or large teams, you may want to restrict access to a resource or a subset of resources. You should set up your authorization rules (policies) to do that. Check out the [authorization page](authorization) for details on how to set that up.

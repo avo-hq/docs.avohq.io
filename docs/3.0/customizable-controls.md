@@ -239,7 +239,7 @@ self.show_controls = -> do
 end
 ```
 
-![](/assets/img/3_0/customizable-controls/default_controls.png){style="height: 140px"}
+<Image src="/assets/img/3_0/customizable-controls/default_controls.png" alt="Default controls" width="884" height="140" />
 :::
 
 ## Control Options

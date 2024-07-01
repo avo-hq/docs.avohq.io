@@ -19,6 +19,7 @@ import Preview from "../theme/components/Preview.vue"
 import View from "../theme/components/View.vue"
 import Option from "../theme/components/Option.vue"
 import AllContent from "../theme/components/AllContent.vue"
+import Image from "../theme/components/Image.vue"
 import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline/index.js"
 import './custom.css'
 import {h} from "vue"
@@ -44,6 +45,7 @@ export default {
 
     app.component("AllContent", AllContent)
     app.component("Option", Option)
+    app.component("Image", Image)
 
     app.component("BeakerIcon", BeakerIcon)
     app.component("PlayIcon", PlayIcon)
