@@ -7,11 +7,13 @@ If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedica
 <!-- ## Rails 8 support -->
 
 <!-- TODO: add ransack custom repo mention here -->
+## Upgrade from 3.9.2 to 3.10
+Deprecated [`fetch_labels`](fields/tags#fetch_labels) option in favor of [`format_using`](fields/tags#format_using) on tags field.
 
 ## Upgrade from 3.9.1 to 3.9.2
 
 We tweaked the way `locales` and i18n work with Avo.
-In theory nothing should change in yout setup, but please read [the guide](./i18n) once more to see how it works.
+In theory nothing should change in your setup, but please read [the guide](./i18n) once more to see how it works.
 
 ## Upgrade from 3.7.4 to 3.9.1
 
@@ -71,7 +73,7 @@ Versions `3.6.2` / `3.6.3` have some issues around cache, we recommend to upgrad
 
 ## Upgrade from 3.5.4 to 3.5.5
 :::option Record errors
-With version `3.5.5` we introduced a stricter error check. Now when the record have any error included the save action will fail. This allow you to do things like:
+With version `3.5.5` we introduced a stricter error check. Now when the record has any error attached the save action will fail automatically. This allow you to do things like:
 
 ```ruby
 before_update do

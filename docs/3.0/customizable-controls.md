@@ -225,10 +225,27 @@ class Avo::Resources::Fish < Avo::BaseResource
   end
 end
 ```
+:::
 
+:::option `default_controls`
+There are times when you just want to add a link before or after the default controls and don't want to re-add them all.
+Avo's got you covered! `default_controls` to the rescue.
+
+```ruby
+self.show_controls = -> do
+  # This link will be added before all other controls.
+  link_to "View on site", post_path(record), target: :_blank
+  default_controls
+end
+```
+
+![](/assets/img/3_0/customizable-controls/default_controls.png){style="height: 140px"}
 :::
 
 ## Control Options
+
+Some controls take options. Not all controls take all options.
+Example: The `link_to` control is the only one that will take the `target` option, but most other controls use the `class` option.
 
 :::option `title`
 Sets the tooltip for that control.
@@ -277,6 +294,38 @@ Sets the classes for that control.
 
 Any string value.
 :::
+
+## Default values
+
+If you're curious what are the default controls Avo adds for each block, here they are:
+
+```ruby
+# show controls
+back_button
+delete_button
+detach_button
+actions_list
+edit_button
+
+# form (edit & new) controls
+
+back_button
+delete_button
+actions_list
+save_button
+
+# index controls
+attach_button
+actions_list
+create_button
+
+# row controls
+order_controls
+show_button
+edit_button
+detach_button
+delete_button
+```
 
 ## Conditionally hiding/showing actions
 
