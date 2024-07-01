@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   width: String,
@@ -9,8 +9,8 @@ const props = defineProps({
 })
 
 
-const width = computed(() => props.width || '0')
-const height = computed(() => props.height || '0')
+const width = computed(() => parseInt(props.width) || 0)
+const height = computed(() => parseInt(props.height) || 0)
 const alt = computed(() => props.alt || 'Avo')
 const src = computed(() => props.src || '')
 const style = computed(() => `padding-bottom: calc(${height.value}/${width.value} * 100%);`)
