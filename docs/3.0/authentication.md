@@ -51,7 +51,7 @@ end
 
 ## Customize the sign-out link
 
-If your app responds to `destroy_user_session_path`, a sign-out menu item will be added on the bottom sidebar (when you click the three dots). If your app does not respond to this method, the link will be hidden unless you provide a custom sign-out path. There are two ways to customize the sign-out path. 
+If your app responds to `destroy_user_session_path`, a sign-out menu item will be added on the bottom sidebar (when you click the three dots). If your app does not respond to this method, the link will be hidden unless you provide a custom sign-out path. There are two ways to customize the sign-out path.
 
 ### Customize the current user resource name
 
