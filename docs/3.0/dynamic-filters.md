@@ -59,15 +59,13 @@ There are a few types of filters available for you to use out of the box.
  - Is false
  - Is null
  - Is not null
-:::
 <div class="flex justify-between items-start flex-wrap">
     <img src="/assets/img/dynamic_filter_boolean.png" class="border mb-4" />
     <img src="/assets/img/dynamic_filter_boolean2.png" class="border mb-4" />
 </div>
 
-Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/users)
-
-Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/users.rb)
+Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_admin?][is_true][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L38)
+:::
 
 :::option Date
 
@@ -78,7 +76,8 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - Is on or before
  - Is on or after
  - Is within
-:::
+- Is null
+ - Is not null
 
 <div class="flex justify-between items-start flex-wrap">
   <div>
@@ -90,9 +89,8 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
   </div>
 </div>
 
-Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
-
-Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/teams.rb)
+Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[created_at][lte][]=2024-07-02%2012%3A00), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L50)
+:::
 
 :::option Has many
 
@@ -110,15 +108,13 @@ This filter will give you options from the database.
  - Is not null
  - Is present
  - Is blank
-:::
 <div class="flex justify-between items-start flex-wrap">
   <img :src="('/assets/img/dynamic_filter_has_many.png')" class="border mb-4" />
   <img :src="('/assets/img/dynamic_filter_has_many2.png')" class="border mb-4" />
 </div>
 
-Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
-
-Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/teams.rb)
+Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[memberships][contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L75)
+:::
 
 :::option Number
 
@@ -130,16 +126,14 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - `>=` (greater than or equal to)
  - `<` (lower than)
  - `<=` (lower than or equal to)
-:::
 
 <div class="flex justify-between items-start flex-wrap">
   <img :src="('/assets/img/dynamic_filter_number.png')" class="border mb-4" />
   <img :src="('/assets/img/dynamic_filter_number2.png')" class="border mb-4" />
 </div>
 
-Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
-
-Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/teams.rb)
+Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gte][]=2), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L27)
+:::
 
 :::option Select
 
@@ -149,15 +143,13 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - Is not
  - Is null
  - Is not null
-:::
 <div class="flex justify-between items-start flex-wrap">
   <img :src="('/assets/img/dynamic_filter_select.png')" class="border mb-4" />
   <img :src="('/assets/img/dynamic_filter_select2.png')" class="border mb-4" />
 </div>
 
-Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/courses)
-
-Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/courses.rb)
+Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[country][is][]=USA), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L55)
+:::
 
 :::option Text
 
@@ -173,17 +165,14 @@ Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/
  - Is not null
  - Is present
  - Is blank
-:::
 
 <div class="flex justify-between items-start flex-wrap">
   <img :src="('/assets/img/dynamic_filter_text.png')" class="border mb-4" />
   <img :src="('/assets/img/dynamic_filter_text2.png')" class="border mb-4" />
 </div>
 
-Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/teams)
-
-Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/teams.rb)
-
+Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_name][contains][]=Avo), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L33)
+:::
 ::::option Tags
 
 ### Conditions
@@ -201,11 +190,7 @@ Contained in will not work when using the `acts-as-taggable-on` gem.
   <img :src="('/assets/img/dynamic_filter_tags2.png')" class="border mb-4" />
 </div>
 
-Here is how you can see it on [avodemo](https://main.avodemo.com/avo/resources/courses).
-
-Here is the corresponding code on GitHub: [main.avodemo.com](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/courses.rb)
-
-
+Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[skills][array_contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L42)
 
 ::::
 
