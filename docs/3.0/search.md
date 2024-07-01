@@ -303,12 +303,13 @@ In the above example, ransack is used to search for `Application` records based 
 
 This approach allows for flexible searching within associations, enabling you to find records based on related model attributes.
 
-## Specifying search results count
-
-By default, Avo displays 8 search results whenever you search. You can configure the number of results displayed by adding:
+## Results count
+:::info Since version <Version version="3.10" />
+:::
+By default, Avo displays 8 search results whenever you search. You can change the number of results displayed by configuring the `search_results_count` option:
 
 ```ruby
 Avo.configure do |config|
-  config.search_results_count = <number>
+  config.search_results_count = 16
 end
 ```
