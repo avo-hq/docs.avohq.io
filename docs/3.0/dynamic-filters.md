@@ -251,5 +251,6 @@ At some point we'll integrate the [Basic filters](./basic-filters) into the dyna
 To mitigate that you can toggle the `always_expanded` option to true.
 
 ## Custom Dynamic Filters
-
-WIP
+:::warning
+This section is a work in progress.
+:::
