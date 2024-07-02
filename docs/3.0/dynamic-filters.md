@@ -249,3 +249,7 @@ end
 At some point we'll integrate the [Basic filters](./basic-filters) into the dynamic filters bar. Until then, if you have both basic and dynamic filters on your resource you'll have two `Filters` buttons on your <Index /> view.
 
 To mitigate that you can toggle the `always_expanded` option to true.
+
+## Custom Dynamic Filters
+
+WIP
