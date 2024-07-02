@@ -530,7 +530,8 @@ Verify all possible options [here](resources#self_pagination).
 :::
 
 ::::option `click_row_to_view_record`
-<BetaStatus status="beta" />
+
+<!-- <BetaStatus status="beta" /> -->
 
 This setting allows your users to click on a record to navigate to its <Show /> view.
 
