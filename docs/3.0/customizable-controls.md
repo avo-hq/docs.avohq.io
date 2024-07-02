@@ -308,7 +308,6 @@ actions_list
 edit_button
 
 # form (edit & new) controls
-
 back_button
 delete_button
 actions_list
