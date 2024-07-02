@@ -284,7 +284,7 @@ Each option specified below can be used as a key in the hash definition or as a 
 :::info Filters order
 The filter order is computed. Dynamic filters defined by the `dynamic_filter` method will respect the definition order and will be rendered first in the filter list. Filters declared using the field's `filterable` option will be sorted by label.
 :::
-:::option label
+:::option `label`
 
 Customize filter's label
 
