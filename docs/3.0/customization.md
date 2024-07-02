@@ -532,15 +532,15 @@ Verify all possible options [here](resources#self_pagination).
 ::::option `click_row_to_view_record`
 <BetaStatus status="beta" />
 
-This setting will enable your users to click a record to go to the <Show /> view of that record.
+This setting allows your users to click on a record to navigate to its <Show /> view.
 
 :::warning
-This type of interaction (clicking a `tr` element and have it behave as a link) is not possible natively with HTML.
+This interaction (clicking a `tr` element to behave as a link) is not natively supported in HTML.
 
-Avo is augmenting it with JavaScript so side effects can happen. Please reach out and file an issue if you see somethin wrong with it.
+Avo enhances this functionality with JavaScript, which may lead to side effects. Please report any issues you encounter on our [issue queue](https://avo.cool/new-issue).
 :::
 
-Turn this setting on using the `click_row_to_view_record` config option.
+Enable this setting by using the `click_row_to_view_record` configuration option.
 
 ```ruby
 # config/initializers/avo.rb
