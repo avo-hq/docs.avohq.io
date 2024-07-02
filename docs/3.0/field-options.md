@@ -674,7 +674,7 @@ field :secondary_field_for_status,
 
 This handy option enables you to send arbitrary information to the field. It's especially useful when you're building your own [custom fields](./custom-fields) or you are using [custom components](#components) for the built-in fields.
 
-<VersionReq version="3.10" />
+<!-- <VersionReq version="3.10" /> -->
 
 Usage example:
 
