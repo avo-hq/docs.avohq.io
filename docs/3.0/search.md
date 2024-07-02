@@ -312,3 +312,26 @@ By default, Avo displays 8 search results whenever you search. You can change th
 Avo.configure do |config|
   config.search_results_count = 16
 end
+```
+
+You can also change the number of results displayed on individual resources:
+
+```ruby
+# resources/user.rb
+
+self.search: {
+  results_count = 5
+}
+```
+
+You can also assign a lambda:
+
+```ruby
+# resources/user.rb
+
+self.search: {
+  results_count = -> { user.admin? ? 30 : 10 }
+}
+```
+
+If you configure results_count by specifying it in the resource file then that number takes precedence over the global search_results_count for that resource.
