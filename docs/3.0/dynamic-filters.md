@@ -251,6 +251,221 @@ At some point we'll integrate the [Basic filters](./basic-filters) into the dyna
 To mitigate that you can toggle the `always_expanded` option to true.
 
 ## Custom Dynamic Filters
-:::warning
-This section is a work in progress.
+
+Dynamic filters are great but strict, as each field creates a specific filter type, each with its own icon and query. The query remains static, targeting only that particular field. Since version <Version version="3.10" />, dynamic filters have become customizable and, even better, can be declared without being bound to a field.
+
+There are two ways to define custom dynamic filters: the field's `filterable` option and the `dynamic_filter` method.
+
+### Defining custom dynamic filters
+
+To start customizing a dynamic filter from the `filterable` option, change its value to a hash:
+
+```ruby
+field :first_name,
+  as: :text,
+  filterable: true # [!code --]
+  filterable: { } # [!code ++]
+```
+
+From this hash, you can configure several options specified below.
+
+Alternatively, you can define a custom dynamic filter using the `dynamic_filter` method, which should be called inside the `filters` method:
+
+```ruby
+def filters
+  # ...
+  dynamic_filter :first_name
+  # ...
+end
+```
+
+Each option specified below can be used as a key in the hash definition or as a keyword argument in the method definition.
+
+:::info Filters order
+The filter order is computed. Dynamic filters defined by the `dynamic_filter` method will respect the definition order and will be rendered first in the filter list. Filters declared using the field's `filterable` option will be sorted by label.
+:::
+:::option label
+
+Customize filter's label
+
+##### Default value
+
+Field's / filter's ID humanized.
+
+#### Possible values
+
+Any string
+:::
+
+
+:::option `icon`
+
+Customize filter's icon
+
+##### Default value
+
+Array filter - `heroicons/outline/circle-stack`<br>
+Boolean filter - `heroicons/outline/check-circle`<br>
+Calendar filter - `heroicons/outline/calendar-days`<br>
+Has many filter - `avo/arrow-up-right`<br>
+Number filter - `heroicons/outline/hashtag`<br>
+Select filter - `heroicons/outline/arrow-down-circle`<br>
+Tags filter - `heroicons/outline/tag`<br>
+Text filter - `avo/font`<br>
+
+#### Possible values
+
+Any icon from [heroicons](https://heroicons.com/).
+:::
+
+:::option `type`
+
+Customize filter's type
+
+##### Default value
+
+Computed from field.
+
+#### Possible values
+
+- `:array`<br>
+- `:boolean`<br>
+- `:calendar`<br>
+- `:has_many`<br>
+- `:number`<br>
+- `:select`<br>
+- `:tags`<br>
+- `:text`<br>
+:::
+
+:::option `query`
+
+Customize filter's query
+
+##### Default value
+
+Applies the condition to the field's attribute. For example, if the field is `first_name`, the condition is `contains`, and the value is `Bill`, the query will restrict to all records where the first name contains `Bill`.
+
+#### Possible values
+
+Any lambda function.
+
+Within the function, you have access to `query` and `filter_param` as well as all attributes of [`Avo::ExecutionContext`](execution-context).
+
+`filter_param` is an Avo object that stores the filter's `id`, the applied `condition` and the `value`.
+
+Usage example:
+
+```ruby {6-13,19-26}
+# Using field's filterable option
+field :first_name,
+  as: :text,
+  filterable: {
+    # ...
+    query: -> {
+      case filter_param.condition.to_sym
+      when :case_sensitive
+        query.where("name = ?", filter_param.value)
+      when :not_case_sensitive
+        query.where("LOWER(name) = ?", filter_param.value.downcase)
+      end
+    }
+    # ...
+  }
+
+# Using dynamic_filter method
+dynamic_filter :first_name,
+  query: -> {
+    case filter_param.condition.to_sym
+    when :case_sensitive
+      query.where("name = ?", filter_param.value)
+    when :not_case_sensitive
+      query.where("LOWER(name) = ?", filter_param.value.downcase)
+    end
+  }
+```
+:::
+
+:::option `conditions`
+
+Customize filter's conditions
+
+##### Default value
+
+Check default conditions for each filter type above on this page.
+
+#### Possible values
+
+A hash with the desired key-values.
+
+Usage example:
+```ruby {6-9,15-18}
+# Using field's filterable option
+field :first_name,
+  as: :text,
+  filterable: {
+    # ...
+    conditions: -> {
+      case_sensitive: "Case sensitive",
+      not_case_sensitive: "Not case sensitive"
+    }.invert
+    # ...
+  }
+
+# Using dynamic_filter method
+dynamic_filter :first_name,
+  conditions: -> {
+    case_sensitive: "Case sensitive",
+    not_case_sensitive: "Not case sensitive"
+  }.invert
+```
+:::
+
+:::option `query_attributes`
+
+Customize filter's query attributes
+
+##### Default value
+
+Field's / filter's id
+
+#### Possible values
+
+Any model DB column(s). Use an array of symbols for multiple columns or a single symbol for a single column. If your model has DB columns like `first_name` and `last_name`, you can combine both on a single filter:
+
+```ruby {6,13}
+# Using field's filterable option
+field :name,
+  as: :text,
+  filterable: {
+    # ...
+    query_attributes: [:first_name, :last_name]
+    # ...
+  }
+
+# Using dynamic_filter method
+dynamic_filter :name,
+  type: :text,
+  query_attributes: [:first_name, :last_name]
+```
+
+You can also add query attributes for a `belongs_to` association. For example, with a model that belongs to `User`:
+
+```ruby {7,13}
+# Using field's filterable option
+field :user,
+  as: :belongs_to,
+  filterable: {
+    label: "User (email & first_name)",
+    icon: "heroicons/solid/users",
+    query_attributes: [:user_email, :user_first_name]
+  }
+
+# Using dynamic_filter method
+dynamic_filter label: "User (email & first_name)",
+  icon: "heroicons/solid/users",
+  query_attributes: [:user_email, :user_first_name]
+```
+
+This is possible due to a Ransack feature. To use it, you need to add the association name before the attribute.
 :::
