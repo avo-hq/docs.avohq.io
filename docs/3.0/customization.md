@@ -527,3 +527,24 @@ end
 This will make all your application's tables countless keeping the size key / value as the default one.
 
 Verify all possible options [here](resources#self_pagination).
+:::
+
+::::option `click_row_to_view_record`
+<BetaStatus status="beta" />
+
+This setting will enable your users to click a record to go to the <Show /> view of that record.
+
+:::warning
+This type of interaction (clicking a `tr` element and have it behave as a link) is not possible natively with HTML.
+
+Avo is augmenting it with JavaScript so side effects can happen. Please reach out and file an issue if you see somethin wrong with it.
+:::
+
+Turn this setting on using the `click_row_to_view_record` config option.
+
+```ruby
+config.click_row_to_view_record = true
+```
+
+<Image src="/assets/img/3_0/customization/click-row-to-view-record.gif" size="800 x 640" alt="Click to view record in Avo" />
+::::

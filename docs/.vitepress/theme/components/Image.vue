@@ -2,15 +2,23 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  width: String,
-  height: String,
+  width: Number,
+  height: Number,
   alt: String,
   src: String,
+  size: String, // WIDTHxHEIGHT as a string
 })
 
+let widthSize, heightSize
 
-const width = computed(() => parseInt(props.width) || 0)
-const height = computed(() => parseInt(props.height) || 0)
+if (props.size) {
+  const sizes = props.size.toString().split('x')
+  widthSize = sizes[0]
+  heightSize = sizes[1]
+}
+const width = computed(() => parseInt(widthSize) || props.width || 0)
+const height = computed(() => parseInt(heightSize) || props.height || 0)
+
 const alt = computed(() => props.alt || 'Avo')
 const src = computed(() => props.src || '')
 const style = computed(() => `padding-bottom: calc(${height.value}/${width.value} * 100%);`)
