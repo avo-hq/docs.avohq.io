@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps({
-  feedbackId: String,
+  feedbackId: Number,
   href: String,
   label: String
 })
