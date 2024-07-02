@@ -4,6 +4,11 @@ The Avo CRUD feature generates with four main views for each resource.
 
 :::option `Index`
 The page where you see all your resources listed in a table or a [grid](grid-view.html).
+
+<RelatedList>
+  <RelatedItem href="./customization.html#click_row_to_view_record">Click row to view record</RelatedItem>
+</RelatedList>
+
 :::
 
 :::option `Show`
