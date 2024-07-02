@@ -669,3 +669,38 @@ field :secondary_field_for_status,
   help: "Secondary field for status using the for_attribute option"
 ```
 :::
+
+:::option `meta`
+
+This handy option enables you to send arbitrary information to the field. It's especially useful when you're building your own [custom fields](./custom-fields) or you are using [custom components](#components) for the built-in fields.
+
+<VersionReq version="3.10" />
+
+Usage example:
+
+```ruby{4,9-11}
+# meta as a hash
+field :status,
+  as: :custom_status,
+  meta: {foo: :bar}
+
+# meta as a block
+field :status,
+  as: :badge,
+  meta: -> do
+    record.statuses.map(&:id)
+  end
+```
+
+Within your field template you can now access the `@field.meta` attribute.
+
+```erb{2}
+<%= field_wrapper **field_wrapper_args do %>
+  <% if @field.meta[:foo] %>
+    <%= @resource.record.foo_value %>
+  <% else %>
+    <%= @field.value %>
+  <% end %>
+<% end %>
+```
+:::
