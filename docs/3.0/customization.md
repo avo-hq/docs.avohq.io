@@ -543,7 +543,10 @@ Avo is augmenting it with JavaScript so side effects can happen. Please reach ou
 Turn this setting on using the `click_row_to_view_record` config option.
 
 ```ruby
-config.click_row_to_view_record = true
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.click_row_to_view_record = true
+end
 ```
 
 <Image src="/assets/img/3_0/customization/click-row-to-view-record.gif" size="800 x 640" alt="Click to view record in Avo" />
