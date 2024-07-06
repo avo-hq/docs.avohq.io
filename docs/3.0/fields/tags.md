@@ -12,7 +12,7 @@ Adding a list of things to a record is something we need to do pretty frequently
 field :skills, as: :tags
 ```
 
-<img :src="('/assets/img/fields/tags-field/basic.gif')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/basic.gif" width="786" height="436" alt="Avo tags field" />
 
 ## Options
 
@@ -36,7 +36,7 @@ class Course < ApplicationRecord
 end
 ```
 
-<img :src="('/assets/img/fields/tags-field/suggestions.gif')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/suggestions.gif" width="786" height="436" alt="Avo tags field" />
 
 #### Default
 
@@ -85,7 +85,7 @@ field :skills,
   disallowed: ["not", "that"]
 ```
 
-<img :src="('/assets/img/fields/tags-field/disallowed.gif')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/disallowed.gif" width="786" height="436" alt="Avo tags field" />
 
 #### Default
 
@@ -106,7 +106,7 @@ field :skills,
   enforce_suggestions: true
 ```
 
-<img :src="('/assets/img/fields/tags-field/enforce_suggestions.gif')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/enforce_suggestions.gif" width="786" height="436" alt="Avo tags field" />
 
 <!-- @include: ./../common/default_boolean_false.md-->
 :::
@@ -121,7 +121,7 @@ field :skills,
   suggestions_max_items: 2
 ```
 
-<img :src="('/assets/img/fields/tags-field/suggestions_max_items.gif')" alt="Avo tags field - suggestions max items option" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/suggestions_max_items.gif" width="600" height="302" alt="Avo tags field - suggestions max items option" />
 
 #### Default
 
@@ -141,7 +141,7 @@ field :items,
   close_on_select: true
 ```
 
-<img :src="('/assets/img/fields/tags-field/close_on_select.gif')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/close_on_select.gif" width="786" height="436" alt="Avo tags field" />
 
 <!-- @include: ./../common/default_boolean_false.md-->
 :::
@@ -178,7 +178,7 @@ field :skills,
   delimiters: [",", " "]
 ```
 
-<img :src="('/assets/img/fields/tags-field/delimiters.gif')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/delimiters.gif" width="786" height="436" alt="Avo tags field" />
 
 #### Default
 
@@ -211,7 +211,7 @@ field :skills,
 
 Valid values are `nil` for array values and `select` for a single value.
 
-![](/assets/img/fields/tags-field/mode-select.gif)
+<Image src="/assets/img/fields/tags-field/mode-select.gif" width="800" height="666" alt="" />
 
 :::
 
@@ -229,7 +229,9 @@ field :skills,
 
 When the user searches for a record, the field will perform a request to the server to fetch the records that match that query.
 
-![](/assets/img/fields/tags-field/mode-select.gif)
+<Image src="/assets/img/fields/tags-field/mode-select.gif" width="800" height="666" alt="" />
+
+<br>
 
 #### Default
 
@@ -285,7 +287,7 @@ To mitigate that use the `fetch_labels` option.
 
 :::option `fetch_labels`
 :::warning
-Deprecated since <Version version="3.10" /> in favor of [`format_using`](tags#format_using)
+Deprecated since <Version version="3.10"/> in favor of [`format_using`](tags#format_using)
 :::
 
 The `fetch_labels` option allows you to pass an array of custom strings to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.

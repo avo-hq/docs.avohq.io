@@ -4,4 +4,4 @@ You will want to control the visibility of the attach/detach/create/destroy/acti
 
 Find out more on the [authorization](./../authorization#associations) page.
 
-<img :src="('/assets/img/associations/authorization.jpg')" alt="Associations authorization" class="border mb-4" />
+<Image src="/assets/img/associations/authorization.jpg" width="1662" height="800" alt="Associations authorization" />

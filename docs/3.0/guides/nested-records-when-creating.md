@@ -4,7 +4,7 @@ demo: https://main.avodemo.com/avo/resources/fish/new
 
 # Nested records when creating
 
-![](/assets/img/3_0/guides/nested-records-when-creating/nested-records-demo.gif)
+<Image src="/assets/img/3_0/guides/nested-records-when-creating/nested-records-demo.gif" width="1024" height="640" alt="" />
 
 A lot of you asked for the ability to create nested `has_many` records on the <New /> view. Although it's fairly "easy" to implement using `accepts_nested_attributes_for` for simple cases, it's a different story to extract it, make it available, and cover most edge cases for everyone.
 That's why Avo and no other similar gems dont't offer this feature as a first-party feature.
@@ -151,4 +151,4 @@ There you have it!
 
 Apart from the resource tool and the `extra_params` attribute, we wrote regular Rails code that we would have to write to get this functionality in our app.
 
-![](/assets/img/3_0/guides/nested-records-when-creating/nested-records-demo.gif)
+<Image src="/assets/img/3_0/guides/nested-records-when-creating/nested-records-demo.gif" width="1024" height="640" alt="" />

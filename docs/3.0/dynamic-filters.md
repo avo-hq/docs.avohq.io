@@ -60,8 +60,8 @@ There are a few types of filters available for you to use out of the box.
  - Is null
  - Is not null
 <div class="flex justify-between items-start flex-wrap">
-    <img src="/assets/img/dynamic_filter_boolean.png" class="border mb-4" />
-    <img src="/assets/img/dynamic_filter_boolean2.png" class="border mb-4" />
+    <Image src="/assets/img/dynamic_filter_boolean.png" width="241" height="176" alt="" />
+    <Image src="/assets/img/dynamic_filter_boolean2.png" width="241" height="192" alt="" />
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_admin?][is_true][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L38)
@@ -81,11 +81,11 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_adm
 
 <div class="flex justify-between items-start flex-wrap">
   <div>
-    <img src="/assets/img/dynamic_filter_date.png" class="border mb-4" />
-    <img src="/assets/img/dynamic_filter_date2.png" class="border mb-4" />
+    <Image src="/assets/img/dynamic_filter_date.png" width="244" height="213" alt="" />
+    <Image src="/assets/img/dynamic_filter_date2.png" width="244" height="213" alt="" />
   </div>
   <div>
-    <img src="/assets/img/dynamic_filter_date3.png" class="border mb-4" />
+    <Image src="/assets/img/dynamic_filter_date3.png" width="340" height="500" alt="" />
   </div>
 </div>
 
@@ -109,8 +109,8 @@ This filter will give you options from the database.
  - Is present
  - Is blank
 <div class="flex justify-between items-start flex-wrap">
-  <img :src="('/assets/img/dynamic_filter_has_many.png')" class="border mb-4" />
-  <img :src="('/assets/img/dynamic_filter_has_many2.png')" class="border mb-4" />
+  <Image src="/assets/img/dynamic_filter_has_many.png" width="244" height="204" alt="" />
+  <Image src="/assets/img/dynamic_filter_has_many2.png" width="244" height="330" alt="" />
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[memberships][contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L75)
@@ -128,8 +128,8 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[member
  - `<=` (lower than or equal to)
 
 <div class="flex justify-between items-start flex-wrap">
-  <img :src="('/assets/img/dynamic_filter_number.png')" class="border mb-4" />
-  <img :src="('/assets/img/dynamic_filter_number2.png')" class="border mb-4" />
+  <Image src="/assets/img/dynamic_filter_number.png" width="244" height="205" alt="" />
+  <Image src="/assets/img/dynamic_filter_number2.png" width="244" height="234" alt="" />
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gte][]=2), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L27)
@@ -144,8 +144,8 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gt
  - Is null
  - Is not null
 <div class="flex justify-between items-start flex-wrap">
-  <img :src="('/assets/img/dynamic_filter_select.png')" class="border mb-4" />
-  <img :src="('/assets/img/dynamic_filter_select2.png')" class="border mb-4" />
+  <Image src="/assets/img/dynamic_filter_select.png" width="244" height="204" alt="" />
+  <Image src="/assets/img/dynamic_filter_select2.png" width="244" height="204" alt="" />
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[country][is][]=USA), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L55)
@@ -167,8 +167,8 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[coun
  - Is blank
 
 <div class="flex justify-between items-start flex-wrap">
-  <img :src="('/assets/img/dynamic_filter_text.png')" class="border mb-4" />
-  <img :src="('/assets/img/dynamic_filter_text2.png')" class="border mb-4" />
+  <Image src="/assets/img/dynamic_filter_text.png" width="244" height="203" alt="" />
+  <Image src="/assets/img/dynamic_filter_text2.png" width="244" height="327" alt="" />
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_name][contains][]=Avo), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L33)
@@ -186,8 +186,8 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_
 Contained in will not work when using the `acts-as-taggable-on` gem.
 :::
 <div class="flex justify-between items-start flex-wrap">
-  <img :src="('/assets/img/dynamic_filter_tags.png')" class="border mb-4" />
-  <img :src="('/assets/img/dynamic_filter_tags2.png')" class="border mb-4" />
+  <Image src="/assets/img/dynamic_filter_tags.png" width="244" height="204" alt="" />
+  <Image src="/assets/img/dynamic_filter_tags2.png" width="244" height="204" alt="" />
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[skills][array_contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L42)

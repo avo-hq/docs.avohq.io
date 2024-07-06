@@ -60,4 +60,4 @@ You might want to change the name that appears on the association page. For exam
 
 You can customize that using [fields localization](i18n.html#localizing-fields).
 
-<img :src="('/assets/img/associations/custom-label.jpg')" alt="Custom label" class="border mb-4" />
+<Image src="/assets/img/associations/custom-label.jpg" width="1224" height="692" alt="Custom label" />

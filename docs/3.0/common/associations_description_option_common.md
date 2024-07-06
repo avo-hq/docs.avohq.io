@@ -1,7 +1,7 @@
 :::option `description`
 Changes the text displayed under the association name.
 
-![](/assets/img/associations/description-option.jpg)
+<Image src="/assets/img/associations/description-option.jpg" width="702" height="198" alt="" />
 
 #### Default
 

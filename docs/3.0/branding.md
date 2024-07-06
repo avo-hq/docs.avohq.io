@@ -47,11 +47,11 @@ end
 
 You may also customize the color of Avo's background using the `background` key.
 
-![](/assets/img/branding/green.jpg)
+<Image src="/assets/img/branding/green.jpg" width="2560" height="1280" alt="" />
 
-![](/assets/img/branding/red.jpg)
+<Image src="/assets/img/branding/red.jpg" width="2560" height="1280" alt="" />
 
-![](/assets/img/branding/orange.jpg)
+<Image src="/assets/img/branding/orange.jpg" width="2560" height="1280" alt="" />
 
 :::info
 The color format can be hex (starting with `#`) or rgb (three groups split by a space, not a comma).
@@ -105,7 +105,7 @@ Avo.configure do |config|
 end
 ```
 
-![](/assets/img/branding/chart-colors.jpg)
+<Image src="/assets/img/branding/chart-colors.jpg" width="2236" height="1588" alt="" />
 
 :::warning
 The chart colors should be hex colors. They are forwarded to chart.js
@@ -117,7 +117,7 @@ We want to make it easy to change the logo for your app, so we added the `logo` 
 
 The `logo` should be the "big" logo you want to display on the desktop version of your app, and `logomark` should be a squared-aspect image that Avo displays on the mobile version.
 
-![](/assets/img/branding/logomark.gif)
+<Image src="/assets/img/branding/logomark.gif" width="800" height="572" alt="" />
 
 ## Customize the missing image placeholder
 

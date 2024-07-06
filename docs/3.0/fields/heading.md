@@ -22,7 +22,7 @@ end
 :::
 
 
-<img :src="('/assets/img/fields/heading.png')" alt="Heading field" class="border mb-4" />
+<Image src="/assets/img/fields/heading.png" width="821" height="230" alt="Heading field" />
 
 The `Heading` field displays a header that acts as a separation layer between different sections.
 

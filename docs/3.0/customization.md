@@ -28,13 +28,13 @@ There are a few customization options to change how resources are displayed in t
 
 You may customize how many resources you can view per page with `config.per_page = 24`.
 
-<img :src="('/assets/img/resource-index/per-page-config.jpg')" alt="Per page config" class="border mb-4" />
+<Image src="/assets/img/resource-index/per-page-config.jpg" width="648" height="438" alt="Per page config" />
 
 ### Per page steps
 
 Similarly customize the per-page steps in the per-page picker with `config.per_page_steps = [12, 24, 48, 72]`.
 
-<img :src="('/assets/img/resource-index/per-page-steps.jpg')" alt="Per page config" class="border mb-4" />
+<Image src="/assets/img/resource-index/per-page-steps.jpg" width="628" height="422" alt="Per page config" />
 
 ### Resources via per page
 
@@ -47,11 +47,11 @@ The `ResourceIndex` component supports two view types `:table` and `:grid`. You 
 <div class="grid grid-flow-row sm:grid-flow-col sm:grid-cols-2 gap-2 w-full">
   <div class="w-full">
     <strong>Table view</strong>
-    <img :src="('/assets/img/customization/table-view.png')" alt="Table view" class="border mb-4" />
+    <Image src="/assets/img/customization/table-view.png" width="2400" height="1500" alt="Table view" />
   </div>
   <div class="w-full">
     <strong>Grid view</strong>
-    <img :src="('/assets/img/customization/grid-view.jpg')" alt="Grid view" class="border mb-4" />
+    <Image src="/assets/img/customization/grid-view.jpg" width="1312" height="1096" alt="Grid view" />
   </div>
 </div>
 
@@ -71,7 +71,7 @@ end
 
 That will render all `id` fields in the **Index** view as a link to that resource.
 
-<img :src="('/assets/img/fields-reference/as-link-to-resource.jpg')" alt="As link to resource" class="border mb-4" />
+<Image src="/assets/img/fields-reference/as-link-to-resource.jpg" width="694" height="166" alt="As link to resource" />
 
 ## Resource controls on the left side
 <DemoVideo demo-video="https://youtu.be/MfryUtcXqvU?t=706" />
@@ -85,7 +85,7 @@ end
 ```
 
 
-<img :src="('/assets/img/customization/resource-controls-left.jpg')" alt="Resource controls on the left side" class="border mb-4" />
+<Image src="/assets/img/customization/resource-controls-left.jpg" width="1206" height="920" alt="Resource controls on the left side" />
 
 ## Container width
 
@@ -154,7 +154,7 @@ You can access the context data with `::Avo::App.context` object.
 
 By default, Avo ships with breadcrumbs enabled.
 
-<img :src="('/assets/img/customization/breadcrumbs.jpg')" alt="Avo breadcrumbs" class="border mb-4" />
+<Image src="/assets/img/customization/breadcrumbs.jpg" width="618" height="297" alt="Avo breadcrumbs" />
 
 You may disable them using the `display_breadcrumbs` configuration option.
 
@@ -431,7 +431,7 @@ Please follow [this](authentication.html#customise-the-sign-out-link) guide in [
 
 <div class="space-x-2">
   <VersionReq version="2.16" />
-  <BetaStatus label="Public beta" />
+  <BetaStatus label="Public beta"></BetaStatus>
 </div>
 
 In the CRUD interface Avo adds the <Show /> view by default. This means that when your users will see the view icon to go to that detail page and they will be redirected to the <Show /> page when doing certain tasks (update a record, run an action, etc.).
@@ -446,7 +446,7 @@ Avo.configure do |config|
 end
 ```
 
-![](/assets/img/customization/skip_show_view.gif)
+<Image src="/assets/img/customization/skip_show_view.gif" width="1870" height="880" alt="" />
 
 ## Logger
 
@@ -550,5 +550,5 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/3_0/customization/click-row-to-view-record.gif" size="800 x 640" alt="Click to view record in Avo" />
+<Image src="/assets/img/3_0/customization/click-row-to-view-record.gif" width="" height="" alt="Click to view record in Avo" />
 ::::

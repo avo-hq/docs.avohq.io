@@ -1,6 +1,6 @@
 # Resource panels
 <br>
-<img :src="('/assets/img/tabs-and-panels/panel.png')" alt="Panel" class="border mb-4" />
+<Image src="/assets/img/tabs-and-panels/panel.png" width="1024" height="640" alt="Panel" />
 
 Panels are the backbone of Avo's display infrastructure. Most of the information that's on display is wrapped inside a panel. They help maintain a consistent design throughout Avo's pages. They are also available as a view component `Avo::PanelComponent` for custom tools, and you can make your own pages using it.
 
@@ -20,7 +20,7 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
-<img :src="('/assets/img/tabs-and-panels/root-and-panel.png')" alt="Root fields and panel fields" class="border mb-4" />
+<Image src="/assets/img/tabs-and-panels/root-and-panel.png" width="1024" height="724" alt="Root fields and panel fields" />
 
 You can customize the panel `name` and panel `description`.
 
@@ -66,7 +66,7 @@ end
 
 On this example Avo figured out that a main panel was not declared and it computes one with all standalone fields.
 
-![](/assets/img/resource-panels/1.png)
+<Image src="/assets/img/resource-panels/1.png" width="1942" height="455" alt="" />
 
 <br>
 
@@ -104,7 +104,7 @@ end
 
 Since the field that has it owns panel was inserted between a bunch of standalone fields Avo will compute a main panel for the first batch of standalone fields (`id` and `name`) and will compute a simple panel for the remaining groups of standalone fields (`user` and `type`)
 
-![](/assets/img/resource-panels/2.png)
+<Image src="/assets/img/resource-panels/2.png" width="1956" height="885" alt="" />
 
 <br>
 
@@ -126,7 +126,7 @@ def fields
 end
 ```
 
-![](/assets/img/resource-panels/3.png)
+<Image src="/assets/img/resource-panels/3.png" width="1917" height="875" alt="" />
 
 By using the `main_panel` and `panel` method, you can manually customize the organization of fields within your resource, allowing for greater flexibility and control.
 
@@ -154,4 +154,4 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/tabs-and-panels/index-view.png')" alt="Index view" class="border mb-4" />
+<Image src="/assets/img/tabs-and-panels/index-view.png" width="1024" height="724" alt="Index view" />

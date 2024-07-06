@@ -32,7 +32,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-![](/assets/img/resource-sidebar/sidebar.jpg)
+<Image src="/assets/img/resource-sidebar/sidebar.jpg" width="1024" height="640" alt="" />
 
 
 The fields will be stacked in a similar way in a narrower area on the side of the main panel. You may notice that inside each field, the tabel and value zones are also stacked one on top of the other to allow for a larger area to display the field value.

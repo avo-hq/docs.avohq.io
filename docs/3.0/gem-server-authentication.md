@@ -76,8 +76,8 @@ You might need to install Avo's paid gems in you GitHub Actions pipeline. There 
 
 Go in your repo, under Settings -> Secrets and Variables -> Actions -> New repository secret and add your Gem server token there with the name `BUNDLE_PACKAGER__DEV` and the token as the value.
 
-![](/assets/img/3_0/gem-server-authentication/github-actions.png)
-![](/assets/img/3_0/gem-server-authentication/new-secret.png)
+<Image src="/assets/img/3_0/gem-server-authentication/github-actions.png" width="2462" height="1816" alt="" />
+<Image src="/assets/img/3_0/gem-server-authentication/new-secret.png" width="2462" height="1816" alt="" />
 
 #### 2. Expose `BUNDLE_PACKAGER__DEV` as an environment variable
 

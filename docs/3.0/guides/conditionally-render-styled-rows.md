@@ -1,6 +1,6 @@
 # Conditionally render styled rows
 
-![](./assets/conditionally-render-styled-rows.png)
+<Image src="./assets/conditionally-render-styled-rows.png" width="2588" height="1068" alt="" />
 
 We've had [a request](https://discord.com/channels/740892036978442260/1197693313520771113) come in from a customer to style their soft-deleted records differently than the regular ones.
 

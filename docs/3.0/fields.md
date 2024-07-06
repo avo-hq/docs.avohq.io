@@ -147,7 +147,7 @@ In the following example, the `is_available` field will render the label as *Is 
 field :is_available, as: :boolean
 ```
 
-<img :src="('/assets/img/fields-reference/naming-convention.jpg')" alt="Field naming convention" class="border mb-4" />
+<Image src="/assets/img/fields-reference/naming-convention.jpg" width="490" height="78" alt="Field naming convention" />
 
 :::info
 If having the fields stacked one on top of another is not the right layout, try the [resource-sidebar](./resource-sidebar).

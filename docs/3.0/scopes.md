@@ -4,7 +4,7 @@ license: advanced
 
 # Scopes
 
-![](/assets/img/scopes.png)
+<Image src="/assets/img/scopes.png" width="862" height="636" alt="" />
 
 :::warning
 This section is a work in progress.

@@ -13,7 +13,7 @@ field :body, as: :trix
 The `Trix` field renders a [WYSIWYG Editor](https://trix-editor.org/) and can be associated with a `string` or `text` column in the database. The value stored in the database will be the editor's resulting `HTML` content.
 
 
-<img :src="('/assets/img/fields/trix.jpg')" alt="Trix field" class="border mb-4" />
+<Image src="/assets/img/fields/trix.jpg" width="877" height="193" alt="Trix field" />
 
 Trix field is hidden from the `Index` view.
 

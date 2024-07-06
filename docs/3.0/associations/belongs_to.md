@@ -79,13 +79,13 @@ Controls the creation link visibility on forms.
 
 On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`self.title`](./../resources.html#setting-the-title-of-the-resource) value of the target resource.
 
-<img :src="('/assets/img/associations/belongs-to-index.jpg')" alt="Belongs to index" class="border mb-4" />
+<Image src="/assets/img/associations/belongs-to-index.jpg" width="188" height="115" alt="Belongs to index" />
 
-<img :src="('/assets/img/associations/belongs-to-show.jpg')" alt="Belongs to show" class="border mb-4" />
+<Image src="/assets/img/associations/belongs-to-show.jpg" width="531" height="81" alt="Belongs to show" />
 
 On the `Edit` and `New` views, Avo will generate a dropdown element with the available records where the user can change the associated model.
 
-<img :src="('/assets/img/associations/belongs-to-edit.jpg')" alt="Belongs to edit" class="border mb-4" />
+<Image src="/assets/img/associations/belongs-to-edit.jpg" width="555" height="123" alt="Belongs to edit" />
 
 ## Polymorphic `belongs_to`
 
@@ -136,7 +136,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/associations/polymorphic_help.jpg')" alt="Belongs to ploymorphic help" class="border mb-4" />
+<Image src="/assets/img/associations/polymorphic_help.jpg" width="1616" height="370" alt="Belongs to ploymorphic help" />
 
 ## Searchable `belongs_to`
 
@@ -157,8 +157,8 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/associations/searchable-closed.jpg')" alt="Belongs to searchable" class="border mb-4" />
-<img :src="('/assets/img/associations/searchable-open.jpg')" alt="Belongs to searchable" class="border mb-4" />
+<Image src="/assets/img/associations/searchable-closed.jpg" width="1232" height="184" alt="Belongs to searchable" />
+<Image src="/assets/img/associations/searchable-open.jpg" width="1556" height="1272" alt="Belongs to searchable" />
 
 `searchable` works with `polymorphic` `belongs_to` associations too.
 

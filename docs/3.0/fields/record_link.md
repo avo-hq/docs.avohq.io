@@ -35,7 +35,7 @@ class Comment < ApplicationRecord
 end
 
 # Calling the method like so will give us an instance of a Post
-Comment.first.post => #<Post:0x00000001685bb558 ...>
+Comment.first.post => #<post:0x00000001685bb558 ...>
 
 class Avo::Resources::Comment < Avo::BaseResource
   def fields
@@ -45,7 +45,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/fields/record_link/record-link.png')" alt="Record link field" title="Record link field on the Show view" class="border mb-4" />
+<Image src="/assets/img/fields/record_link/record-link.png" width="876" height="160" alt="Record link field" />
 
 ## Options
 
@@ -158,3 +158,4 @@ field :creator, as: :record_link, use_resource: "AdminUser", add_via_params: fal
   User.find user_id
 end
 ```
+</post:0x00000001685bb558>

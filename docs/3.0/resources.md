@@ -209,7 +209,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-![](/assets/img/resources/model-resource-mapping-1.jpg)
+<Image src="/assets/img/resources/model-resource-mapping-1.jpg" width="2048" height="1280" alt="" />
 
 So when you click on the Users sidebar menu item, you get to the `Index` page where all the users will be displayed. The information displayed will be the gravatar image, the first and the last name.
 
@@ -265,7 +265,7 @@ class Avo::Resources::Team < Avo::BaseResource
 end
 ```
 
-![](/assets/img/resources/model-resource-mapping-2.jpg)
+<Image src="/assets/img/resources/model-resource-mapping-2.jpg" width="1524" height="714" alt="" />
 
 But now, if we visit the `Users` page, we will see the fields for the `TeamUser` resource instead of `User` resource, and that's because Avo fetches the resources in an alphabetical order, and `TeamUser` resource is before `User` resource. That's definitely not what we want.
 The same might happen if you reference the `User` in other associations throughout your resource files.
@@ -413,13 +413,14 @@ class Avo::Resources::Comment < Avo::BaseResource
     ActionView::Base.full_sanitizer.sanitize(record.body).truncate 30
   }
 end
+```
 :::
 
 :::option `self.description`
 
 You might want to display information about the current resource to your users. Then, using the `description` class attribute, you can add some text to the `Index`, `Show`, `Edit`, and `New` views.
 
-<img :src="('/assets/img/resources/description.png')" alt="Avo message" class="border mb-4" />
+<Image src="/assets/img/resources/description.png" width="1272" height="216" alt="Avo message" />
 
 There are two ways of setting the description. The quick way as a `string` and the more customizable way as a `block`.
 
@@ -479,7 +480,7 @@ We know, the array notation looks weird, but it works.
 
 On <Index />, the most common view type is `:table`, but you might have some data that you want to display in a `:grid` or `:map`. You can change that by setting `default_view_type` to `:grid` and by adding the `grid` block.
 
-<img :src="('/assets/img/grid-view.jpg')" alt="Avo grid view" class="border mb-4" />
+<Image src="/assets/img/grid-view.jpg" width="1312" height="1096" alt="Avo grid view" />
 
 ```ruby{2}
 class Avo::Resources::Post < Avo::BaseResource
@@ -566,7 +567,7 @@ Avo.configure do |config|
 end
 ```
 
-<img :src="('/assets/img/resources/buttons_on_footer.png')" alt="Buttons on footer" class="border mb-4" />
+<Image src="/assets/img/resources/buttons_on_footer.png" width="1276" height="594" alt="Buttons on footer" />
 
 :::
 
@@ -605,7 +606,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/resources/record_selector.png')" alt="Hide the record selector." class="border mb-4" />
+<Image src="/assets/img/resources/record_selector.png" width="688" height="361" alt="Hide the record selector." />
 :::
 
 :::option `self.link_to_child_resource`
@@ -643,7 +644,7 @@ class Avo::Resources::Course < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/filters/keep-filters-panel-open.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters/keep-filters-panel-open.gif" width="449" height="800" alt="Avo filters" />
 :::
 
 :::option `self.components`
@@ -742,7 +743,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-![Alt text](/assets/img/cards_on_resource.png)
+<Image src="/assets/img/cards_on_resource.png" width="2520" height="1258" alt="Alt text" />
 
 :::option `self.pagination`
 This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
@@ -793,7 +794,7 @@ self.pagination = -> do
 end
 ```
 
-![Default pagination](/assets/img/resources/pagination/default.png)
+<Image src="/assets/img/resources/pagination/default.png" width="1025" height="65" alt="Default pagination" />
 <br><br>
 
 #### Countless
@@ -806,7 +807,7 @@ self.pagination = -> do
 end
 ```
 
-![Countless pagination](/assets/img/resources/pagination/countless.png)
+<Image src="/assets/img/resources/pagination/countless.png" width="1030" height="67" alt="Countless pagination" />
 <br><br>
 
 #### Countless and "pageless"
@@ -818,7 +819,7 @@ self.pagination = -> do
   }
 end
 ```
-![Countless pagination size empty](/assets/img/resources/pagination/countless_empty_size.png)
+<Image src="/assets/img/resources/pagination/countless_empty_size.png" width="1029" height="62" alt="Countless pagination size empty" />
 :::
 
 :::option `cache_hash`

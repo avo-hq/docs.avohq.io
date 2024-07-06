@@ -31,4 +31,4 @@ In the above example, the reloadable will be visible if the current_user is an a
 #### ExecutionContext
 The reloadable block executes within the [`ExecutionContext`](./../execution-context), granting access to all default methods and attributes.
 
-<img :src="('/assets/img/reloadable.png')" alt="Reloadable" class="border mb-4" />
+<Image src="/assets/img/reloadable.png" width="680" height="94" alt="Reloadable" />

@@ -1,4 +1,4 @@
-## Internals
+# Internals
 
 This section documents on how we think about the internals of Avo and hwo much you could/should hook into them to extend it.
 

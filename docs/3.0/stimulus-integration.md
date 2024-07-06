@@ -14,13 +14,13 @@ This is not the **dependable fields** feature but a placeholder so we can observ
 
 _What we'll be able to do at the end of reading these docs_
 
-<img :src="('/assets/img/stimulus/country-city-select.gif')" alt="Debug on input stimulus method" class="border mb-4" />
+<Image src="/assets/img/stimulus/country-city-select.gif" width="800" height="344" alt="Debug on input stimulus method" />
 
 :::info
 **Please note** that in order to have the JS code from your controllers loaded in Avo you'll need to add your asset pipeline using [these instructions](custom-asset-pipeline.html). It's really easier than it sounds. It's like you'd add a new JS file to your regular Rails app.
 :::
 
-<hr/>
+<hr>
 
 One of the most requested features is the ability to make the forms more dynamic. We want to bring the first iteration of this feature through Stimulus JS integration.
 This light layer will allow you to hook into the views and inject your functionality with Stimulus JS.
@@ -65,14 +65,7 @@ field :has_skills, as: :tags
 For example for the following stimulus controllers `self.stimulus_controllers = "course-resource select-field association-fields"` Avo will generate the following markup for the `has_skills` field above on the `edit` view.
 
 ```html{4-7}
-<div class="relative flex flex-col md:flex-row md:items-center pb-2 md:pb-0 leading-tight min-h-14"
-  data-field-id="has_skills"
-  data-field-type="boolean"
-  data-resource-edit-target="hasSkillsBooleanWrapper"
-  data-course-resource-target="hasSkillsBooleanWrapper"
-  data-select-field-target="hasSkillsBooleanWrapper"
-  data-association-fields-target="hasSkillsBooleanWrapper"
->
+<div class="relative flex flex-col md:flex-row md:items-center pb-2 md:pb-0 leading-tight min-h-14" data-field-id="has_skills" data-field-type="boolean" data-resource-edit-target="hasSkillsBooleanWrapper" data-course-resource-target="hasSkillsBooleanWrapper" data-select-field-target="hasSkillsBooleanWrapper" data-association-fields-target="hasSkillsBooleanWrapper">
   <!-- Rest of the field content -->
 </div>
 ```
@@ -99,12 +92,7 @@ field :has_skills, as: :tags
 All stimulus controllers receive the `view` attribute in the DOM.
 
 ```html{4-5}
-<div class="space-y-12"
-  data-model-id="280"
-  data-controller="resource-edit course-resource"
-  data-resource-edit-view-value="edit"
-  data-course-resource-view-value="edit"
->
+<div class="space-y-12" data-model-id="280" data-controller="resource-edit course-resource" data-resource-edit-view-value="edit" data-course-resource-view-value="edit">
   <!-- The fields and panels -->
 </div>
 ```
@@ -215,7 +203,7 @@ field :has_country, as: :boolean, html: {
 field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h
 ```
 
-<img :src="('/assets/img/stimulus/toggle-method.gif')" alt="Toggle method" class="border mb-4" />
+<Image src="/assets/img/stimulus/toggle-method.gif" width="800" height="421" alt="Toggle method" />
 
 ### `resource-edit#disable`
 
@@ -236,7 +224,7 @@ field :has_skills, as: :boolean, html: {
 field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h
 ```
 
-<img :src="('/assets/img/stimulus/disable-method.gif')" alt="Disable method" class="border mb-4" />
+<Image src="/assets/img/stimulus/disable-method.gif" width="800" height="421" alt="Disable method" />
 
 You may also target the `wrapper` element for that field if the target field has more than one input like the searchable polymorphic `belongs_to` field.
 
@@ -259,7 +247,7 @@ field :country, as: :select, options: Course.countries.map { |country| [country,
 
 For debugging purposes only, the `resource_edit` Stimulus JS controller provides the `debugOnInput` method that outputs the event and value for an action to the console. Use this just to make sure you targeted your fields correctly. It doesn't have any real use.
 
-<img :src="('/assets/img/stimulus/debug-on-input.gif')" alt="Debug on input stimulus method" class="border mb-4" />
+<Image src="/assets/img/stimulus/debug-on-input.gif" width="800" height="261" alt="Debug on input stimulus method" />
 
 ## Custom Stimulus controllers
 
@@ -469,7 +457,7 @@ export default class extends Controller {
 
 This is how the fields behave with this Stimulus JS controller.
 
-<img :src="('/assets/img/stimulus/country-city-select.gif')" alt="Debug on input stimulus method" class="border mb-4" />
+<Image src="/assets/img/stimulus/country-city-select.gif" width="800" height="344" alt="Debug on input stimulus method" />
 
 ## Use Stimulus JS in a tool
 
