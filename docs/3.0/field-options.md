@@ -32,7 +32,7 @@ To customize the label, you can use the `name` property to pick a different labe
 field :is_available, as: :boolean, name: "Availability"
 ```
 
-<img :src="('/assets/img/fields-reference/naming-convention-override.png')" alt="Field naming convention override" class="border mb-4" />
+<Image src="/assets/img/fields-reference/naming-convention-override.png" width="938" height="158" alt="Field naming convention override" />
 
 ## Showing / Hiding fields on different views
 
@@ -114,7 +114,7 @@ field :is_writer, as: :text, format_using: -> {
 
 This example snippet will make the `:is_writer` field generate `👍` or `👎` emojis instead of `1` or `0` values on display views and the values `1` or `0` on form views.
 
-<img :src="('/assets/img/fields-reference/fields-formatter.png')" alt="Fields formatter" class="border mb-4" />
+<Image src="/assets/img/fields-reference/fields-formatter.png" width="943" height="156" alt="Fields formatter" />
 
 Another example:
 
@@ -161,7 +161,7 @@ Add it to any field to make that column sortable in the <Index /> view.
 field :name, as: :text, sortable: true
 ```
 
-<img :src="('/assets/img/fields-reference/sortable-fields.png')" alt="Sortable fields" class="border mb-4" />
+<Image src="/assets/img/fields-reference/sortable-fields.png" width="406" height="363" alt="Sortable fields" />
 
 **Related:**
   - [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
@@ -222,7 +222,7 @@ Some fields support the `placeholder` option, which will be passed to the inputs
 field :name, as: :text, placeholder: 'John Doe'
 ```
 
-<img :src="('/assets/img/fields-reference/placeholder.png')" alt="Placeholder option" class="border mb-4" />
+<Image src="/assets/img/fields-reference/placeholder.png" width="946" height="160" alt="Placeholder option" />
 
 ## Required
 To indicate that a field is mandatory, you can utilize the `required` option, which adds an asterisk to the field as a visual cue.
@@ -234,7 +234,7 @@ Avo automatically examines each field to determine if the associated attribute r
 field :name, as: :text, required: true
 ```
 
-<img :src="('/assets/img/fields-reference/required.png')" alt="Required option" class="border mb-4" />
+<Image src="/assets/img/fields-reference/required.png" width="949" height="156" alt="Required option" />
 
 <DemoVideo demo-video="https://youtu.be/peKt90XhdOg?t=937" />
 
@@ -253,7 +253,7 @@ When you need to prevent the user from editing a field, the `disabled` option wi
 field :name, as: :text, disabled: true
 ```
 
-<img :src="('/assets/img/fields-reference/readonly.png')" alt="Disabled option" class="border mb-4" />
+<Image src="/assets/img/fields-reference/readonly.png" width="953" height="164" alt="Disabled option" />
 
 
 ### Disabled as a block
@@ -275,7 +275,7 @@ When you need to prevent the user from editing a field, the `readonly` option wi
 field :name, as: :text, readonly: true
 ```
 
-<img :src="('/assets/img/fields-reference/readonly.png')" alt="Readonly option" class="border mb-4" />
+<Image src="/assets/img/fields-reference/readonly.png" width="953" height="164" alt="Readonly option" />
 
 ## Default Value
 
@@ -302,7 +302,7 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css', help: "This ena
 field :password, as: :password, help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
 ```
 
-<img :src="('/assets/img/fields-reference/help-text.png')" alt="Help text" class="border mb-4" />
+<Image src="/assets/img/fields-reference/help-text.png" width="954" height="271" alt="Help text" />
 
 ## Nullable
 
@@ -333,7 +333,7 @@ field :name, as: :text, link_to_record: true
 field :email, as: :gravatar, link_to_record: true
 ```
 
-<img :src="('/assets/img/fields-reference/as-link-to-resource.jpg')" alt="As link to resource" class="border mb-4" />
+<Image src="/assets/img/fields-reference/as-link-to-resource.jpg" width="694" height="166" alt="As link to resource" />
 
 You can add this property on [`id`](./fields/id.html), [`text`](./fields/text.html), and [`gravatar`](./fields/gravatar.html) fields.
 
@@ -353,7 +353,7 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/fields/index_text_align.jpg')" alt="Index text align" class="border mb-4" />
+<Image src="/assets/img/fields/index_text_align.jpg" width="632" height="476" alt="Index text align" />
 
 ## Stacked layout
 
@@ -364,11 +364,11 @@ field :meta, as: :key_value, stacked: true
 ```
 
 #### `inline` layout (default)
-![](/assets/img/fields/field_wrapper_layout_inline.jpg)
+<Image src="/assets/img/fields/field_wrapper_layout_inline.jpg" width="808" height="117" alt="" />
 
 #### `stacked` layout
 
-![](/assets/img/fields/field_wrapper_layout_stacked.jpg)
+<Image src="/assets/img/fields/field_wrapper_layout_stacked.jpg" width="815" height="179" alt="" />
 
 ## Global `stacked` layout
 
@@ -396,9 +396,9 @@ To start customizing the field components, you can eject one or multiple field c
 
 #### Ejecting All Components for a Field
 
-`$ rails g avo:eject --field-components <field_type> --scope admin`
+`$ rails g avo:eject --field-components FIELD_TYPE --scope admin`
 
-Replace `<field_type>` with the desired field type. For instance, to eject components for a Text field, use:
+Replace `FIELD_TYPE` with the desired field type. For instance, to eject components for a Text field, use:
 
 `$ rails g avo:eject --field-components text --scope admin`
 
@@ -552,7 +552,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/index-field-wrapper.jpg')" alt="Index field wrapper" class="border mb-4" />
+<Image src="/assets/img/stimulus/index-field-wrapper.jpg" width="1642" height="864" alt="Index field wrapper" />
 
 ### Show field wrapper
 
@@ -564,7 +564,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/show-field-wrapper.jpg')" alt="Show field wrapper" class="border mb-4" />
+<Image src="/assets/img/stimulus/show-field-wrapper.jpg" width="763" height="331" alt="Show field wrapper" />
 
 ### Show label target
 
@@ -576,7 +576,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/show-label-target.jpg')" alt="Show label target" class="border mb-4" />
+<Image src="/assets/img/stimulus/show-label-target.jpg" width="763" height="331" alt="Show label target" />
 
 ### Show content target
 
@@ -588,7 +588,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/show-content-target.jpg')" alt="Show content target" class="border mb-4" />
+<Image src="/assets/img/stimulus/show-content-target.jpg" width="763" height="331" alt="Show content target" />
 
 ### Edit field wrapper
 
@@ -600,7 +600,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/edit-field-wrapper.jpg')" alt="Edit field wrapper" class="border mb-4" />
+<Image src="/assets/img/stimulus/edit-field-wrapper.jpg" width="1634" height="766" alt="Edit field wrapper" />
 
 ### Edit label target
 
@@ -612,7 +612,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/edit-label-target.jpg')" alt="Edit label target" class="border mb-4" />
+<Image src="/assets/img/stimulus/edit-label-target.jpg" width="763" height="331" alt="Edit label target" />
 
 ### Edit content target
 
@@ -624,7 +624,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/edit-content-target.jpg')" alt="Edit content target" class="border mb-4" />
+<Image src="/assets/img/stimulus/edit-content-target.jpg" width="763" height="331" alt="Edit content target" />
 
 ### Edit input target
 
@@ -636,7 +636,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/edit-input-target.jpg')" alt="Index field wrapper" class="border mb-4" />
+<Image src="/assets/img/stimulus/edit-input-target.jpg" width="1646" height="784" alt="Index field wrapper" />
 
 :::
 

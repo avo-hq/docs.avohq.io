@@ -16,7 +16,7 @@ The `HasOne` association shows the unfolded view of your `has_one` association. 
 field :admin, as: :has_one
 ```
 
-<img :src="('/assets/img/associations/has-one.jpg')" alt="Has one" class="border mb-4" />
+<Image src="/assets/img/associations/has-one.jpg" width="919" height="824" alt="Has one" />
 
 ## Options
 

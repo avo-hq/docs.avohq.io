@@ -1,7 +1,7 @@
 ---
 version: '3.6'
 license: community
-betaStatus: Beta
+BetaStatus: Beta
 ---
 
 # Money
@@ -17,21 +17,21 @@ You can explore the implementation of the money field in [avodemo](https://main.
 
 ### Example on new
 
-<img :src="('/assets/img/money-field.png')" class="border mb-4" />
+<Image src="/assets/img/money-field.png" width="1005" height="59" alt="" />
 
-<img :src="('/assets/img/money-field2.png')" class="border mb-4" />
+<Image src="/assets/img/money-field2.png" width="1005" height="123" alt="" />
 
 ### Example on show with currencies USD
 
-<img :src="('/assets/img/money-field-show.png')" class="border mb-4" />
+<Image src="/assets/img/money-field-show.png" width="689" height="54" alt="" />
 
 ### Example on show with currencies RON
 
-<img :src="('/assets/img/money-field-show-lei.png')" class="border mb-4" />
+<Image src="/assets/img/money-field-show-lei.png" width="689" height="55" alt="" />
 
 ### Example on index
 
-<img :src="('/assets/img/money-field-index.png')" class="border mb-4" />
+<Image src="/assets/img/money-field-index.png" width="208" height="299" alt="" />
 
 ## Installation
 

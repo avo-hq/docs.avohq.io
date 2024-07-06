@@ -13,7 +13,7 @@ You'll probably never have to use these components and helpers by themselves, bu
 
 # Index field wrapper
 
-![](/assets/img/field-wrappers/index_field_wrapper.jpg)
+<Image src="/assets/img/field-wrappers/index_field_wrapper.jpg" width="1024" height="639" alt="" />
 
 Each field displayed on the <Index /> view is wrapped in this component that regulates the way content is displayed and makes it easy to control some options.
 
@@ -84,8 +84,8 @@ The instance of the resource. It's usually passed in with the `field_wrapper_arg
 
 # Show & Edit field wrapper
 
-![](/assets/img/field-wrappers/show_field_wrapper.jpg)
-![](/assets/img/field-wrappers/edit_field_wrapper.jpg)
+<Image src="/assets/img/field-wrappers/show_field_wrapper.jpg" width="1024" height="639" alt="" />
+<Image src="/assets/img/field-wrappers/edit_field_wrapper.jpg" width="1024" height="639" alt="" />
 
 The <Show /> and <Edit /> field wrappers are actually the same component.
 
@@ -93,7 +93,7 @@ You may use the component `Avo::Index::FieldWrapperComponent` or the helper `fie
 
 ## Field wrapper areas
 
-![](/assets/img/field-wrappers/field_wrapper_areas.jpg)
+<Image src="/assets/img/field-wrappers/field_wrapper_areas.jpg" width="1024" height="639" alt="" />
 
 Each field wrapper is divided in three areas.
 
@@ -230,7 +230,7 @@ Display the field in a column layout with the label on top of the value
 ```
 :::
 
-![](/assets/img/field-wrappers/stacked_field.jpg)
+<Image src="/assets/img/field-wrappers/stacked_field.jpg" width="1024" height="639" alt="" />
 
 
 :::option `style`

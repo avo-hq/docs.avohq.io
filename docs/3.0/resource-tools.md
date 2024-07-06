@@ -38,11 +38,11 @@ The partial is ready for you to customize further.
           <h3>🪧 This partial is waiting to be updated</h3>
 
           <p>
-            You can edit this file here <code class='p-1 rounded bg-gray-500 text-white text-sm'>app/views/avo/resource_tools/post_info.html.erb</code>.
+            You can edit this file here <code class="p-1 rounded bg-gray-500 text-white text-sm">app/views/avo/resource_tools/post_info.html.erb</code>.
           </p>
 
           <p>
-            The resource tool configuration file should be here <code class='p-1 rounded bg-gray-500 text-white text-sm'>app/avo/resource_tools/post_info.rb</code>.
+            The resource tool configuration file should be here <code class="p-1 rounded bg-gray-500 text-white text-sm">app/avo/resource_tools/post_info.rb</code>.
           </p>
 
           <%
@@ -62,7 +62,7 @@ The partial is ready for you to customize further.
 </div>
 ```
 
-<img :src="('/assets/img/resource-tools/resource-tool-partial.png')" alt="Avo resource tool partial" class="border mb-4" />
+<Image src="/assets/img/resource-tools/resource-tool-partial.png" width="2034" height="470" alt="Avo resource tool partial" />
 
 ## Partial context
 

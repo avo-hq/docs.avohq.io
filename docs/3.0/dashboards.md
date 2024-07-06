@@ -45,7 +45,7 @@ class Avo::Dashboards::MyDashboard < Avo::Dashboards::BaseDashboard
 end
 ```
 
-<img :src="('/assets/img/dashboards/dashboard.jpg')" alt="Avo Dashboard" class="border mb-4" />
+<Image src="/assets/img/dashboards/dashboard.jpg" width="1262" height="1094" alt="Avo Dashboard" />
 
 ## Settings
 

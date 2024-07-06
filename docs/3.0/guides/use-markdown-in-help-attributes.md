@@ -83,4 +83,4 @@ end
     )
 ```
 
-![](/assets/img/3_0/guides/use-markdown-in-help-attributes/result.png)
+<Image src="/assets/img/3_0/guides/use-markdown-in-help-attributes/result.png" width="1264" height="1790" alt="" />

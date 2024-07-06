@@ -5,7 +5,7 @@ license: community
 
 # KeyValue
 
-<img :src="('/assets/img/fields/key-value.jpg')" alt="KeyValue field" class="border mb-4" />
+<Image src="/assets/img/fields/key-value.jpg" width="1564" height="400" alt="KeyValue field" />
 
 The `KeyValue` field makes it easy to edit flat key-value pairs stored in `JSON` format in the database.
 

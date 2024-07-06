@@ -2,7 +2,7 @@
 
 Because in Rails we commonly do that using a static function on the controller we need to [safely extend the controller](https://avohq.io/blog/safely-extend-a-ruby-on-rails-controller) to contain that function.
 
-<img src="/assets/img/guides/basic-auth/basic-auth.gif" alt="Add Avo behind Basic Authentication" height="648" />
+<Image src="/assets/img/guides/basic-auth/basic-auth.gif" width="800" height="753" alt="Add Avo behind Basic Authentication" />
 
 In actuality we will end up with something that behaves like this:
 

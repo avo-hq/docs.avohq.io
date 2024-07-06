@@ -92,7 +92,7 @@ end
 
 Avo has several types of filters available [Boolean filter](#boolean_filter), [Select filter](#select_filter), [Multiple select filter](#multiple_select_filter) and [Text filter](#text_filter).
 
-<img :src="('/assets/img/filters.png')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters.png" width="404" height="727" alt="Avo filters" />
 
 ### Filter values
 
@@ -319,7 +319,7 @@ class Avo::Filters::PostStatus < Avo::Filters::MultipleSelectFilter
 end
 ```
 
-<img :src="('/assets/img/multiple-select-filter.png')" alt="Avo multiple select filter" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/multiple-select-filter.png" width="404" height="310" alt="Avo multiple select filter" />
 
 ### Dynamic options
 
@@ -493,7 +493,7 @@ class Avo::Filters::CourseCity < Avo::Filters::BooleanFilter
 end
 ```
 
-<img :src="('/assets/img/filters/dynamic-options.png')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters/dynamic-options.png" width="688" height="1042" alt="Avo filters" />
 
 The `countries` method above will check if the `Avo::Filters::CourseCountryFilter` has anything selected. If so, get the names of the chosen ones. This way, you show only the cities from the selected countries and not all of them.
 
@@ -611,7 +611,7 @@ end
 Besides checking if the countries filter is populated (`applied_filters["Avo::Filters::CourseCountryFilter"].present?`), we also want to allow the user to customize the cities filter further, so we need to check if the user has added a value to that filter (`applied_filters["Avo::Filters::CourseCountryFilter"].blank?`).
 If these conditions are true, the country filter has a value, and the user hasn't selected any values from the cities filter, we can react to it and set a value as the default one.
 
-<img :src="('/assets/img/filters/dynamic-options.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters/dynamic-options.gif" width="528" height="800" alt="Avo filters" />
 
 Of course, you can modify the logic and return all kinds of values based on your needs.
 
@@ -621,7 +621,7 @@ Of course, you can modify the logic and return all kinds of values based on your
 
 There might be times when you will want to show a message to the user when you're not returning any options. You may customize that message using the `empty_message` option.
 
-<img :src="('/assets/img/filters/empty-message.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters/empty-message.gif" width="528" height="800" alt="Avo filters" />
 
 ```ruby{4}
 # app/avo/filters/course_city.rb

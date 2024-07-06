@@ -29,7 +29,7 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
 end
 ```
 
-<img :src="('/assets/img/dashboards/users_metric.jpg')" alt="Avo Metric Card" class="border mb-4" />
+<Image src="/assets/img/dashboards/users_metric.jpg" width="331" height="170" alt="Avo Metric Card" />
 
 ## Ranges
 #### Control the aggregation using ranges
@@ -80,7 +80,7 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.display_header = false
 end
 ```
-<img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Map card" class="border mb-4" />
+<Image src="/assets/img/dashboards/map_card.jpg" width="653" height="602" alt="Avo Map card" />
 
 ## Format
 
@@ -100,7 +100,7 @@ class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
 end
 ```
 
-![amount raised without format](/assets/img/3_0/cards/amount_raised_without_format.png)
+<Image src="/assets/img/3_0/cards/amount_raised_without_format.png" width="296" height="196" alt="amount raised without format" />
 
 
 Example with format:
@@ -120,13 +120,13 @@ class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
 end
 ```
 
-![amount raised with format](/assets/img/3_0/cards/amount_raised_with_format.png)
+<Image src="/assets/img/3_0/cards/amount_raised_with_format.png" width="300" height="204" alt="amount raised with format" />
 
 ## Metric card
 
 The metric card is your friend when you only need to display a simple big number. To generate one run `bin/rails g avo:card users_metric --type metric`.
 
-<img :src="('/assets/img/dashboards/users_metric.jpg')" alt="Avo Metric" class="border mb-4" />
+<Image src="/assets/img/dashboards/users_metric.jpg" width="331" height="170" alt="Avo Metric" />
 
 #### Calculate results
 
@@ -197,7 +197,7 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
 end
 ```
 
-<img :src="('/assets/img/dashboards/prefix-suffix.jpg')" alt="Avo Prefix & suffix" class="border mb-4" />
+<Image src="/assets/img/dashboards/prefix-suffix.jpg" width="651" height="168" alt="Avo Prefix & suffix" />
 
 ## Chartkick card
 
@@ -243,7 +243,7 @@ class Avo::Cards::UserSignups < Avo::Cards::ChartkickCard
 end
 ```
 
-<img :src="('/assets/img/dashboards/chartkick.jpg')" alt="Chartkick card" class="border mb-4" />
+<Image src="/assets/img/dashboards/chartkick.jpg" width="650" height="169" alt="Chartkick card" />
 
 ### Chart types
 
@@ -323,7 +323,7 @@ class Avo::Cards::ExampleCustomPartial < Avo::Cards::PartialCard
   # self.display_header = true
 end
 ```
-<img :src="('/assets/img/dashboards/custom_partial_card.jpg')" alt="Custom partial card" class="border mb-4" />
+<Image src="/assets/img/dashboards/custom_partial_card.jpg" width="330" height="598" alt="Custom partial card" />
 
 You can embed a piece of content from another app using an iframe. You can hide the header using the `self.display_header = false` option. That will render the embedded content flush to the container.
 
@@ -344,7 +344,7 @@ end
 <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d17991.835132857846!2d-73.98926852562143!3d40.742050491245955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sro!4v1647079626880!5m2!1sen!2sro" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
 ```
 
-<img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Map card" class="border mb-4" />
+<Image src="/assets/img/dashboards/map_card.jpg" width="653" height="602" alt="Avo Map card" />
 
 ## Cards visibility
 
@@ -426,7 +426,7 @@ end
 ```
 :::
 
-<img :src="('/assets/img/dashboards/divider.jpg')" alt="Avo Dashboard Divider" class="border mb-4" />
+<Image src="/assets/img/dashboards/divider.jpg" width="980" height="379" alt="Avo Dashboard Divider" />
 
 Dividers can be a simple line between your cards or have some text on them that you control using the `label` option.
 When you don't want to show the line, you can enable the `invisible` option, which adds the divider but does not display a border or label.

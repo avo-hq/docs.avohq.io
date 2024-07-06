@@ -22,7 +22,7 @@ The panel component is one of the most used components in Avo.
 <% end %>
 ```
 
-![](/assets/img/native-components/avo-panel-component/index.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/index.jpg" width="773" height="276" alt="" />
 
 ## Options
 
@@ -42,7 +42,7 @@ The name of the panel. It's displayed on the top under the breadcrumbs.
 #### Type
 `String`
 
-![](/assets/img/native-components/avo-panel-component/name.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/name.jpg" width="773" height="411" alt="" />
 :::
 
 :::option `description`
@@ -51,7 +51,7 @@ Small text under the name that speaks a bit about what the panel does.
 #### Type
 `String`
 
-![](/assets/img/native-components/avo-panel-component/description.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/description.jpg" width="773" height="533" alt="" />
 :::
 
 :::option `classes`
@@ -60,7 +60,7 @@ A list of classes that should be applied to the panel container.
 #### Type
 `String`
 
-![](/assets/img/native-components/avo-panel-component/classes.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/classes.jpg" width="773" height="533" alt="" />
 :::
 
 :::option `body_classes`
@@ -69,7 +69,7 @@ A list of classes that should be applied to the body of panel.
 #### Type
 `String`
 
-![](/assets/img/native-components/avo-panel-component/body_classes.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/body_classes.jpg" width="773" height="533" alt="" />
 :::
 
 :::option `data`
@@ -78,7 +78,7 @@ A hash of data attributes to be forwarded to the panel container.
 #### Type
 `Hash`
 
-![](/assets/img/native-components/avo-panel-component/classes.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/classes.jpg" width="773" height="533" alt="" />
 :::
 
 :::option `display_breadcrumbs`
@@ -87,7 +87,7 @@ Toggles the breadcrumbs visibility. You can't customize the breadcrumbs yet.
 #### Type
 `Boolean`
 
-![](/assets/img/native-components/avo-panel-component/display_breadcrumbs.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/display_breadcrumbs.jpg" width="773" height="720" alt="" />
 :::
 
 ## Slots
@@ -110,7 +110,7 @@ The section is automatically aligned to the right using `justify-end` class.
 <% end %>
 ```
 
-![](/assets/img/native-components/avo-panel-component/tools-slot.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/tools-slot.jpg" width="1014" height="226" alt="" />
 :::
 
 :::option `body`
@@ -124,7 +124,7 @@ This is one of the main slots of the component where the bulk of the content is 
 <% end %>
 ```
 
-![](/assets/img/native-components/avo-panel-component/body-slot.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/body-slot.jpg" width="773" height="720" alt="" />
 :::
 
 :::option `bare_content`
@@ -138,7 +138,7 @@ Used when displaying the [Grid view](./../grid-view), it displays the data flush
 <% end %>
 ```
 
-![](/assets/img/native-components/avo-panel-component/grid-view.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/grid-view.jpg" width="1312" height="1096" alt="" />
 :::
 
 :::option `footer_tools`
@@ -152,7 +152,7 @@ This is pretty much the same slot as `tools` but rendered under the `body` or `b
 <% end %>
 ```
 
-![](/assets/img/native-components/avo-panel-component/footer-controls.jpg)
+<Image src="/assets/img/native-components/avo-panel-component/footer-controls.jpg" width="1013" height="295" alt="" />
 :::
 
 :::option `footer`
@@ -177,5 +177,5 @@ The sidebar will conveniently show things in a smaller area on the right of the 
   <% end %>
 <% end %>
 ```
-![](/assets/img/native-components/avo-panel-component/sidebar.png)
+<Image src="/assets/img/native-components/avo-panel-component/sidebar.png" width="2032" height="1294" alt="" />
 :::

@@ -7,7 +7,7 @@ license: community
 
 The `Badge` field is used to display an easily recognizable status of a record.
 
-<img :src="('/assets/img/fields/badge.jpg')" alt="Badge field" class="border mb-4" />
+<Image src="/assets/img/fields/badge.jpg" width="244" height="476" alt="Badge field" />
 
 ```ruby
 field :stage,

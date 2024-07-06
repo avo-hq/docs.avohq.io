@@ -1,7 +1,7 @@
 # Grid view
 
-<br />
-<img :src="('/assets/img/grid-view.jpg')" alt="Avo grid view" class="border mb-4" />
+<br>
+<Image src="/assets/img/grid-view.jpg" width="1312" height="1096" alt="Avo grid view" />
 
 Some resources are best displayed in a grid view. We can do that with Avo using a `cover_url`, a `title`, and a `body`.
 
@@ -26,7 +26,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/view-switcher.png')" alt="Avo view switcher" class="border mb-4" />
+<Image src="/assets/img/view-switcher.png" width="822" height="153" alt="Avo view switcher" />
 
 ## Make default view
 
@@ -84,5 +84,5 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/grid-html-option.png')" alt="Grid html option" class="border mb-4" />
+<Image src="/assets/img/grid-html-option.png" width="1014" height="637" alt="Grid html option" />
 

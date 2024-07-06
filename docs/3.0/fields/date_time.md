@@ -5,7 +5,7 @@ license: community
 
 # DateTime
 
-<img :src="('/assets/img/fields/date-time.jpg')" alt="DateTime field" class="border mb-4" />
+<Image src="/assets/img/fields/date-time.jpg" width="712" height="416" alt="DateTime field" />
 
 The `DateTime` field is similar to the Date field with two new attributes. `time_24hr` tells flatpickr to use 24 hours format and `timezone` to tell it in what timezone to display the time. By default, it uses your browser's timezone.
 

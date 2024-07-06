@@ -13,7 +13,7 @@ For example, you might want to mark a user as active/inactive and optionally sen
 
 Once you attach an action to a resource using the `action` method inside the `actions` method, it will appear in the **Actions** dropdown. By default, actions appear on the `Index`, `Show`, and `Edit` views. Versions previous to 2.9 would only display the actions on the `Index` and `Show` views.
 
-![Actions dropdown](/assets/img/actions/actions-dropdown.gif)
+<Image src="/assets/img/actions/actions-dropdown.gif" width="710" height="462" alt="Actions dropdown" />
 :::info
 Since version <Version version="2.13" /> you may use the [customizable controls](./customizable-controls) feature to show the actions outside the dropdown.
 :::
@@ -85,7 +85,7 @@ More about this on the [authorization page](./authorization#attachments).
 :::
 
 
-![Actions](/assets/img/actions/action-fields.jpg)
+<Image src="/assets/img/actions/action-fields.jpg" width="711" height="332" alt="Actions" />
 
 ## The `handle` method
 
@@ -169,7 +169,7 @@ def handle(**args)
 end
 ```
 
-<img :src="('/assets/img/actions/alert-responses.png')" alt="Avo alert responses" class="border inline-block" />
+<Image src="/assets/img/actions/alert-responses.png" width="1074" height="558" alt="Avo alert responses" />
 
 ### Run actions silently
 
@@ -419,7 +419,7 @@ end
 
 You may customize the labels for the action buttons using `confirm_button_label` and `cancel_button_label`.
 
-<img :src="('/assets/img/actions/actions-button-labels.jpg')" alt="Avo button labels" class="border mb-4" />
+<Image src="/assets/img/actions/actions-button-labels.jpg" width="699" height="325" alt="Avo button labels" />
 
 ### No confirmation actions
 
@@ -608,7 +608,7 @@ end
 ```
 :::
 
-![actions link demo](/assets/img/actions/action_link.gif)
+<Image src="/assets/img/actions/action_link.gif" width="684" height="391" alt="actions link demo" />
 
 ## StimulusJS
 
@@ -634,7 +634,7 @@ def actions
     action Avo::Actions::Test::CloseModal
   end
 ```
-<img :src="('/assets/img/action_divider.png')" class="border mb-4" />
+<Image src="/assets/img/action_divider.png" width="306" height="325" alt="" />
 
 :::option `label`
 You can pass a `label` option to display that text
@@ -658,4 +658,4 @@ def actions
   end
 ```
 
-<img :src="('/assets/img/action_icon.png')" class="border mb-4" />
+<Image src="/assets/img/action_icon.png" width="306" height="325" alt="" />

@@ -4,7 +4,7 @@ license: advanced
 
 # Customizable controls
 
-![](/assets/img/resources/customizable-controls/index.jpg)
+<Image src="/assets/img/resources/customizable-controls/index.jpg" width="1020" height="469" alt="" />
 
 One of the things that we wanted to support from day one is customizable controls on resource pages, and now, Avo supports customizable controls on <Index />, <Show />, and <Edit /> views and for the table row.
 
@@ -12,7 +12,7 @@ One of the things that we wanted to support from day one is customizable control
 
 By default, Avo displays a few buttons (controls) for the user to use on the <Index />, <Show />, and <Edit /> views which you can override using the appropriate resource options.
 
-![](/assets/img/3_0/customizable-controls/default-controls.png)
+<Image src="/assets/img/3_0/customizable-controls/default-controls.png" width="654" height="164" alt="" />
 
 ## Customize the controls
 
@@ -42,7 +42,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-![](/assets/img/3_0/customizable-controls/show-controls.png)
+<Image src="/assets/img/3_0/customizable-controls/show-controls.png" width="1344" height="164" alt="" />
 :::
 
 :::option Edit page
@@ -64,7 +64,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-![](/assets/img/3_0/customizable-controls/show-controls.png)
+<Image src="/assets/img/3_0/customizable-controls/show-controls.png" width="1344" height="164" alt="" />
 :::
 
 :::option Index page
@@ -84,7 +84,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-![](/assets/img/3_0/customizable-controls/index-controls.png)
+<Image src="/assets/img/3_0/customizable-controls/index-controls.png" width="1300" height="164" alt="" />
 :::
 
 :::option Row controls
@@ -110,7 +110,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-![](/assets/img/3_0/customizable-controls/row-controls.png)
+<Image src="/assets/img/3_0/customizable-controls/row-controls.png" width="834" height="120" alt="" />
 :::
 
 ## Controls

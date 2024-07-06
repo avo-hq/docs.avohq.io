@@ -147,8 +147,8 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/faq/newline/edit.png')" alt="Render new lines" class="border mb-4" />
-<img :src="('/assets/img/faq/newline/default.png')" alt="Render new lines" class="border mb-4" />
+<Image src="/assets/img/faq/newline/edit.png" width="1560" height="1160" alt="Render new lines" />
+<Image src="/assets/img/faq/newline/default.png" width="1560" height="1160" alt="Render new lines" />
 
 You can change how you display the information by using the `format_using` option.
 
@@ -166,7 +166,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/faq/newline/simple_format.png')" alt="Render new lines" class="border mb-4" />
+<Image src="/assets/img/faq/newline/simple_format.png" width="1560" height="1160" alt="Render new lines" />
 
 ### Use the `white-space: pre-line` style rule
 
@@ -182,7 +182,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/faq/newline/whitespace.png')" alt="Render new lines" class="border mb-4" />
+<Image src="/assets/img/faq/newline/whitespace.png" width="1560" height="1160" alt="Render new lines" />
 
 ### Use the `whitespace-pre-line` class
 
@@ -198,4 +198,4 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/faq/newline/whitespace.png')" alt="Render new lines" class="border mb-4" />
+<Image src="/assets/img/faq/newline/whitespace.png" width="1560" height="1160" alt="Render new lines" />

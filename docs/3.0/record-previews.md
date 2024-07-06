@@ -29,4 +29,4 @@ class Avo::Resources::Team < Avo::BaseResource
   end
 end
 ```
-![](/assets/img/3_0/record-previews/preview-field.png)
+<Image src="/assets/img/3_0/record-previews/preview-field.png" width="1328" height="1000" alt="" />

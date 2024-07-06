@@ -96,7 +96,7 @@ The order in which Avo loads the partials and asset files is this one:
 3. `_head.html.erb`
 :::
 
-![Avo and the asset pipeline](/assets/img/asset-pipeline.jpg)
+<Image src="/assets/img/asset-pipeline.jpg" width="2258" height="1874" alt="Avo and the asset pipeline" />
 
 ### Sprockets and Propshaft
 

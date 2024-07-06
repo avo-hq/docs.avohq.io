@@ -7,7 +7,7 @@ license: community
 
 The `Preview` field adds a tiny icon to each row on the <Index /> view that, when hovered, it will display a preview popup with more information regarding that record.
 
-![](/assets/img/fields/preview/preview.gif)
+<Image src="/assets/img/fields/preview/preview.gif" width="1200" height="750" alt="" />
 
 ```ruby
 field :preview, as: :preview
