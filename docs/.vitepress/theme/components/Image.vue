@@ -46,7 +46,7 @@ const checkParentWidth = () => {
 </script>
 
 <template>
-  <div class="aspect-ratio-box" :width="width" :style="style" ref="parent">
+  <div class="aspect-ratio-box" :width="width" :height="height" :style="style" ref="parent">
     <img :src="src" :alt="alt" loading="lazy" class="aspect-ratio-box-inside">
   </div>
 </template>
