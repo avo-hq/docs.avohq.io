@@ -386,6 +386,7 @@ Now, all fields will have the stacked layout throughout your app.
 
 :::option `use_resource`
 <!-- TODO: this -->
+WIP
 :::
 
 :::option `components`
