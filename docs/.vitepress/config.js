@@ -73,6 +73,24 @@ const config = {
       'link',
       { rel: 'canonical', href: canonicalUrl }
     ])
+    pageData.frontmatter.head.push(
+      ['meta', { property: 'og:title', content: pageData.frontmatter.title }],
+      ['meta', { property: 'og:url', content: "/img/docs-cover.jpeg" }],
+      ['meta', { name: "description", content: "Ruby on Rails Admin Panel Framework" }],
+      ['meta', { name: "keywords", content: "rails admin, ruby on rails admin, rails admin gem, rails admin package, crud, dashboard, rails dashboard, rails cms, rails crm, ruby on rails, admin, make it easy" }],
+      ['meta', { name: "twitter:title", content: "Avo" }],
+      ['meta', { name: "twitter:description", content: "Ruby on Rails Admin Panel Framework" }],
+      ['meta', { name: "twitter:card", content: "summary_large_image" }],
+      ['meta', { name: "twitter:site", content: "@avo_hq" }],
+      ['meta', { name: "twitter:image", content: "/img/docs-cover.jpeg" }],
+      ['meta', { property: "og:title", content: "Avo" }],
+      ['meta', { property: "og:description", content: "Ruby on Rails Admin Panel Framework" }],
+      ['meta', { property: "og:type", content: "website" }],
+      ['meta', { property: "og:url", content: canonicalUrl }],
+      ['meta', { property: "og:image", content: "/img/cover-code-optim.jpeg" }],
+      ['meta', { property: "og:image:width", content: "3840" }],
+      ['meta', { property: "og:image:height", content: "1920" }],
+    )
   },
   themeConfig: {
     siteTitle: false,
