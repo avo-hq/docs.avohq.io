@@ -315,12 +315,14 @@ end
 ```
 :::
 
-:::option `close_modal`
+:::option `close_modal`, `do_nothing`
 <VersionReq version="3.3.0" />
 
 This type of response becomes useful when you are working with a form and need to execute an action without redirecting, ensuring that the form remains filled as it is.
 
-`close_modal` will flash all the messages gathered by [action responses](#action-responses) and will close the modal using turbo streams keeping the page still.
+`do_nothing` is an alias for `close_modal`.
+
+`close_modal` or `do_nothing` will flash all the messages gathered by [action responses](#action-responses) and will close the modal using turbo streams keeping the page still.
 
 ```ruby
 class Avo::Actions::CloseModal < Avo::BaseAction
@@ -333,7 +335,7 @@ class Avo::Actions::CloseModal < Avo::BaseAction
   def handle(**args)
     # do_something_here
     succeed "Modal closed!!"
-    close_modal
+    close_modal # or do_nothing
   end
 end
 ```
