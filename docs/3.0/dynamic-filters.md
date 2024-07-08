@@ -143,6 +143,7 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gt
  - Is not
  - Is null
  - Is not null
+
 <div class="flex justify-between items-start flex-wrap">
   <Image src="/assets/img/dynamic_filter_select.png" width="244" height="204" alt="" />
   <Image src="/assets/img/dynamic_filter_select2.png" width="244" height="204" alt="" />
