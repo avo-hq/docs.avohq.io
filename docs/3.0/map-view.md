@@ -55,6 +55,33 @@ This block has to return a hash compatible with the [`PointMap` items](https://g
 This is the configuration for the adjacent table. You can set the visibility to `true` or `false`, and set the position of the table `:top`, `:right`, `:bottom`, or `:left`.
 :::
 
+:::option `extra_markers`
+Available since version <Version version="3.10.3" />
+
+Allow to define extra markers. The `extra_markers` block is executed in the [`ExecutionContext`](./../execution-context) and should return an array of hashes.
+
+For each extra marker, you can specify a label, tooltip, and color.
+
+```ruby
+self.map_view = {
+  # ...
+  extra_markers: -> do
+    [
+      {
+        latitude: 37.780411,
+        longitude: -25.497047,
+        label: "Açores",
+        tooltip: "São Miguel",
+        color: "#0F0"
+      }
+    ]
+  end,
+  # ...
+}
+```
+<Image src="/assets/img/extra-markers.png" width="3240" height="1970" alt="Map extra markers" />
+:::
+
 ## Make it the default view
 
 To make the map view the default way of viewing a resource on <Index />, we have to use the `default_view_type` class attribute.
