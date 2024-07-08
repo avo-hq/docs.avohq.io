@@ -322,18 +322,32 @@ This type of response becomes useful when you are working with a form and need t
 
 `close_modal` will flash all the messages gathered by [action responses](#action-responses) and will close the modal using turbo streams keeping the page still.
 
-```ruby
+```ruby{7}
 class Avo::Actions::CloseModal < Avo::BaseAction
   self.name = "Close modal"
-  self.standalone = true
-  self.visible = -> {
-    true
-  }
 
   def handle(**args)
     # do_something_here
     succeed "Modal closed!!"
     close_modal
+    # or
+    do_nothing
+  end
+end
+```
+:::
+
+:::option `do_nothing`
+`do_nothing` is an alias for `close_modal`.
+
+```ruby{7}
+class Avo::Actions::CloseModal < Avo::BaseAction
+  self.name = "Close modal"
+
+  def handle(**args)
+    # do_something_here
+    succeed "Modal closed!!"
+    do_nothing
   end
 end
 ```
