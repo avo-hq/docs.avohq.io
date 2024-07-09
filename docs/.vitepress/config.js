@@ -248,6 +248,7 @@ const config = {
             {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller.html"},
             {text: "Avo.asset_manager", link: "/3.0/asset-manager.html"},
             {text: "Avo::Services::EncryptionService", link: "/3.0/encryption-service.html"},
+            {text: "Icons", link: "/3.0/icons.html"},
           ],
         },
         // {
