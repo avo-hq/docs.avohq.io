@@ -155,3 +155,9 @@ The paid support chat comes in different flavours.
 If you'd like to know more about that, see our standard plans [here](https://avohq.io/support) or reach out to us on [email](mailto:adrian@avohq.io?subject=I'd%20like%20to%20know%20more%20about%20your%20Tech%20Support%20plans&body=Hi%2C%0D%0A%0D%0AMy%20name%20is%20...%2C%20I%20represent%20...%2C%20and%20I'd%20like%20to%20know%20...).
 
 :::
+
+## Reproduction repository
+
+The easiest way for us to troubleshoot and check on an issue is to send us a reproduction repository which we can install and run in our local environments.
+
+<iframe width="100%" height="344" src="https://www.youtube.com/embed/_zC5Ci7t7Lo" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
