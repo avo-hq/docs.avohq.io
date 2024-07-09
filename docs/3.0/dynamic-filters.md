@@ -49,7 +49,17 @@ The user can add multiple filters for the same attribute if they desire so.
 
 ## Filter types
 
-There are a few types of filters available for you to use out of the box.
+The filter type determines the kind of input provided by the filter.
+
+For instance, a [text](#text) type filter will render a text input field, while a [select](#select) type filter will render a dropdown menu with predefined options fetched from the field.
+
+#### Conditions
+Each filter type also offers a different set of conditions. Conditions specify how the input value should be applied to filter the data. For example, [text](#text) filters have conditions such as `Contains` or `Starts with`, while number filters include `=` (equals) or `>` (greater than).
+
+#### Query
+Avo uses the input value and the specified condition to build a Ransack query. The filter conditions and input values are translated into Ransack predicates, which are then used to fetch the filtered data.
+
+For instance, in the text filter example above, the `Contains` condition and the input value `John` are translated into a Ransack query resulting into the SQL `LIKE` operator to find all records where the name contains `John`.
 
 :::option Boolean
 
@@ -80,13 +90,8 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_adm
  - Is not null
 
 <div class="flex justify-between items-start flex-wrap">
-  <div>
-    <Image src="/assets/img/dynamic_filter_date.png" width="244" height="213" alt="" />
-    <Image src="/assets/img/dynamic_filter_date2.png" width="244" height="213" alt="" />
-  </div>
-  <div>
     <Image src="/assets/img/dynamic_filter_date3.png" width="340" height="500" alt="" />
-  </div>
+    <Image src="/assets/img/dynamic_filter_date2.png" width="244" height="213" alt="" />
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[created_at][lte][]=2024-07-02%2012%3A00), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L50)
@@ -191,7 +196,13 @@ Contained in will not work when using the `acts-as-taggable-on` gem.
   <Image src="/assets/img/dynamic_filter_tags2.png" width="244" height="204" alt="" />
 </div>
 
-Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[skills][array_contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L42)
+Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[skills][array_contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L46)
+
+:::info
+The source code uses custom dynamic filters DSL available <VersionReq version="3.10.0" />
+
+Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
+:::
 
 ::::
 
@@ -221,10 +232,9 @@ You may opt-in to have them always expanded and have the button hidden.
 :::
 
 ## Field to filter matching
+On versions **lower** than <Version version="3.10.0" /> the filters are not configurable so each field will have a dedicated filter type. Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
 
-At the moment the filters are not configurable so each field will have a dedicated filter type. We will have a more advanced configuration in the future.
-
-The current field-to-filter matching is done like so:
+Field-to-filter matching in versions **lower** than <Version version="3.10.0" />:
 
 ```ruby
 def field_to_filter(type)
@@ -252,6 +262,7 @@ At some point we'll integrate the [Basic filters](./basic-filters) into the dyna
 To mitigate that you can toggle the `always_expanded` option to true.
 
 ## Custom Dynamic Filters
+<VersionReq version="3.10.0" />
 
 Dynamic filters are great but strict, as each field creates a specific filter type, each with its own icon and query. The query remains static, targeting only that particular field. Since version <Version version="3.10" />, dynamic filters have become customizable and, even better, can be declared without being bound to a field.
 
@@ -301,7 +312,7 @@ Any string
 
 :::option `icon`
 
-Customize filter's icon
+Customize filter's icon. Check [icons documentation](./icons)
 
 ##### Default value
 
@@ -316,7 +327,7 @@ Text filter - `avo/font`<br>
 
 #### Possible values
 
-Any icon from [heroicons](https://heroicons.com/).
+Any icon from [avo](https://github.com/avo-hq/avo/tree/feature/allow_actions_to_render_turbo_streams/app/assets/svgs/avo) or [heroicons](https://heroicons.com/).
 :::
 
 :::option `type`
@@ -325,18 +336,18 @@ Customize filter's type
 
 ##### Default value
 
-Computed from field.
+Computed from field using [`field_to_filter` method](#field-to-filter-matching).
 
 #### Possible values
 
+- [`:boolean`](#boolean)<br>
+- [`:date`](#date)<br>
+- [`:has_many`](#has_many)<br>
+- [`:number`](#number)<br>
+- [`:select`](#select)<br>
+- [`:text`](#text)<br>
+- [`:tags`](#tags)<br>
 - `:array`<br>
-- `:boolean`<br>
-- `:calendar`<br>
-- `:has_many`<br>
-- `:number`<br>
-- `:select`<br>
-- `:tags`<br>
-- `:text`<br>
 :::
 
 :::option `query`
@@ -469,4 +480,46 @@ dynamic_filter label: "User (email & first_name)",
 ```
 
 This is possible due to a Ransack feature. To use it, you need to add the association name before the attribute.
+:::
+
+:::option `suggestions`
+Suggestions work on filters that provide text input, enhancing the user experience by offering relevant options. This functionality is especially useful in scenarios where users might need guidance or where the filter values are numerous or complex.
+
+##### Default value
+
+`nil`
+
+#### Possible values
+
+- Array of strings
+```ruby {6,12}
+# Using field's filterable option
+field :first_name,
+  as: :text,
+  filterable: {
+    # ...
+    suggestions: ["Avo", "Cado"]
+    # ...
+  }
+
+# Using dynamic_filter method
+dynamic_filter :first_name,
+  suggestions: ["Avo", "Cado"]
+```
+
+- Proc that returns an array of strings
+```ruby {6,12}
+# Using field's filterable option
+field :first_name,
+  as: :text,
+  filterable: {
+    # ...
+    suggestions: -> { ["Avo", "Cado", params[:extra_suggestion]] }
+    # ...
+  }
+
+# Using dynamic_filter method
+dynamic_filter :first_name,
+  suggestions: -> { ["Avo", "Cado", params[:extra_suggestion]] }
+```
 :::
