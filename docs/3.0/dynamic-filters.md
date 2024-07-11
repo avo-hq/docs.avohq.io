@@ -417,7 +417,7 @@ field :first_name,
   as: :text,
   filterable: {
     # ...
-    conditions: -> {
+    conditions: {
       case_sensitive: "Case sensitive",
       not_case_sensitive: "Not case sensitive"
     }.invert
@@ -426,7 +426,7 @@ field :first_name,
 
 # Using dynamic_filter method
 dynamic_filter :first_name,
-  conditions: -> {
+  conditions: {
     case_sensitive: "Case sensitive",
     not_case_sensitive: "Not case sensitive"
   }.invert
