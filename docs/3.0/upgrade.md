@@ -386,3 +386,45 @@ field :status,
   success_when: :deployed # specify the success state
 ```
 :::
+
+:::option Actions inside customizable blocks no longer need to be declared in the `actions` method.
+
+```ruby
+# Before
+
+class Avo::Resources::Fish < Avo::BaseResource
+  self.title = :name
+
+  self.show_controls = -> do
+    # In order to use it here
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
+      action_on_show_controls: "Will use this arguments"
+    }
+  end
+
+  # 👇 Also declare it here 👇
+  def actions
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
+      action_on_show_controls: "Will use this arguments"
+    }
+  end
+end
+
+# After
+
+class Avo::Resources::Fish < Avo::BaseResource
+  self.title = :name
+
+  self.show_controls = -> do
+    # In order to use it here
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
+      action_on_show_controls: "Will use this arguments"
+    }
+  end
+
+  # 👇 No need to declare it here 👇
+  def actions
+  end
+end
+```
+:::
