@@ -160,4 +160,9 @@ If you'd like to know more about that, see our standard plans [here](https://avo
 
 The easiest way for us to troubleshoot and check on an issue is to send us a reproduction repository which we can install and run in our local environments.
 
+```bash
+# run this command to get a new Rails app with Avo installed
+rails new -m https://avo.cool/new.rb AVO_APP
+```
+
 <iframe width="100%" height="344" src="https://www.youtube.com/embed/_zC5Ci7t7Lo" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
