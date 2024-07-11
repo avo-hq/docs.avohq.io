@@ -106,6 +106,9 @@ hero:
     - theme: alt
       text: 🔧 Technical support
       link: /3.0/technical-support.html
+    - theme: alt
+      text: 📤 Upgrade guide
+      link: /3.0/upgrade
     # - theme: alt
     #   text: 🚀 Upgrade from Avo 2 to Avo 3
     #   link: /3.0/avo-2-avo-3-upgrade.html
