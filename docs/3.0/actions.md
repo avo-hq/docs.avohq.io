@@ -403,7 +403,7 @@ end
 You can see this multi-step process in action by visiting the [avodemo](https://main.avodemo.com/avo/resources/cities). Select one of the records, click on the "Update" action, choose the fields to update, and then proceed to update the selected fields in the subsequent action.
 :::
 
-:::option `append_to_response`
+::::option `append_to_response`
 <VersionReq version="3.10.3" />
 
 Avo action responses are in the `turbo_stream` format. You can use the `append_to_response` method to append additional turbo stream responses to the default response.
@@ -421,8 +421,25 @@ def handle(**args)
 
 The `append_to_response` method accepts a Proc or lambda function. This function is executed within the context of the action's controller response.
 
-The function should return either a single `turbo_stream` response or an array of multiple `turbo_stream` responses.
+The block should return either a single `turbo_stream` response or an array of multiple `turbo_stream` responses.
+
+::: code-group
+```ruby[Array]{2-5}
+append_to_response -> {
+  [
+    turbo_stream.set_title("Cool title"),
+    turbo_stream.set_title("Cool title 2")
+  ]
+}
+```
+
+```ruby[Single]{2}
+append_to_response -> {
+  turbo_stream.set_title("Cool title")
+}
+```
 :::
+::::
 
 ## Customization
 
