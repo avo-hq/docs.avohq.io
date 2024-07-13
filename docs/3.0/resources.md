@@ -478,7 +478,7 @@ We know, the array notation looks weird, but it works.
 
 :::option `self.confirm_on_save`
 
-If you would like to ask for confirmation on saving a resource you can do so by setting `confirm_on_save` to `true`.
+If you would like to ask for confirmation when saving a resource you can do so by setting `confirm_on_save` to `true`.
 
 That will help add friction to the saving process, avoiding human error.
 
