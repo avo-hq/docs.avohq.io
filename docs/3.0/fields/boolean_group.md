@@ -5,37 +5,53 @@ license: community
 
 # Boolean Group
 
-<Image src="/assets/img/fields/boolean-group.jpg" width="916" height="244" alt="Boolean group field" />
+<Image src="/assets/img/fields/boolean-group.jpg" width="645" height="275" alt="Boolean group field" />
 
 The `BooleanGroup` is used to update a `Hash` with `string` keys and `boolean` values in the database.
 
 It's useful when you have something like a roles hash in your database.
 
+### DB payload example
+Example of a boolean group object stored in the database.
 ```ruby
-field :roles, as: :boolean_group, name: 'User roles', options: { admin: 'Administrator', manager: 'Manager', writer: 'Writer' }
+{
+  "admin": true,
+  "manager": true,
+  "writer": true,
+}
 ```
 
-## Options
+### Field declaration example
+Roles field matching the DB value from above example.
+```ruby
+field :roles,
+  as: :boolean_group,
+  name: "User roles",
+  options: {
+    admin: "Administrator",
+    manager: "Manager",
+    writer: "Writer"
+  }
+```
+
+
 
 :::option `options`
-`options` should be a `Hash` with the keys to one of the four available types (`info`, `success`, `warning`, `danger`) and the values matching your record's database values.
+`options` should be a `Hash` where the keys matches the DB keys and the values are the visible labels.
 
 #### Default value
 
+Empty hash.
+
 ```ruby
-{
-  info: :info,
-  success: :success,
-  danger: :danger,
-  warning: :warning
-}
+{}
 ```
 
 #### Computed options
 
-You may want to compute the values on the fly for your `BooleanGroup` field. You can use a lambda for that where you have access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
+You may want to compute the options on the fly for your `BooleanGroup` field. You can use a lambda for that where you have access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
 
-```ruby{5-7}
+```ruby{5-9}
 # app/avo/resources/project.rb
 class Avo::Resources::Project < Avo::BaseResource
   field :features,
@@ -52,18 +68,10 @@ The output value must be a hash as described above.
 
 :::
 
-## Example DB payload
 
-```ruby
-# Example boolean group object stored in the database
-{
-  "admin": true,
-  "manager": true,
-  "creator": true,
-}
-```
+## Updates
 
-Before version 3.7.0 Avo would override the whole attribute with only the payload sent from the client.
+Before version <Version version="3.7.0" /> Avo would override the whole attribute with only the payload sent from the client.
 
 ```json
 // Before update.
@@ -72,6 +80,7 @@ Before version 3.7.0 Avo would override the whole attribute with only the payloa
   "another_feature_enabled": false,
   "something_else": "some_value" // this will disappear
 }
+
 // After update.
 {
   "feature_enabled": true,
@@ -79,7 +88,7 @@ Before version 3.7.0 Avo would override the whole attribute with only the payloa
 }
 ```
 
-Version 3.7.0 and up will only update the keys that you send from the client.
+<VersionReq version="3.7.0" /> will only update the keys that you send from the client.
 
 ```json
 // Before update.
