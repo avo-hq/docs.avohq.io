@@ -12,7 +12,8 @@ The `BooleanGroup` is used to update a `Hash` with `string` keys and `boolean` v
 It's useful when you have something like a roles hash in your database.
 
 ### DB payload example
-Example of a boolean group object stored in the database.
+An example of a boolean group object stored in the database:
+
 ```ruby
 {
   "admin": true,
@@ -22,7 +23,8 @@ Example of a boolean group object stored in the database.
 ```
 
 ### Field declaration example
-Roles field matching the DB value from above example.
+Below is an example of declaring a `boolean_group` field for roles that matches the DB value from the example above:
+
 ```ruby
 field :roles,
   as: :boolean_group,
@@ -37,11 +39,11 @@ field :roles,
 
 
 :::option `options`
-`options` should be a `Hash` where the keys matches the DB keys and the values are the visible labels.
+The `options` attribute should be a `Hash` where the keys match the DB keys and the values are the visible labels.
 
 #### Default value
 
-Empty hash.
+Empty `Hash`.
 
 ```ruby
 {}
@@ -49,7 +51,7 @@ Empty hash.
 
 #### Computed options
 
-You may want to compute the options on the fly for your `BooleanGroup` field. You can use a lambda for that where you have access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
+You may need to compute the options dynamically for your `BooleanGroup` field. You can use a lambda for this, which provides access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
 
 ```ruby{5-9}
 # app/avo/resources/project.rb
