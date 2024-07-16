@@ -85,8 +85,7 @@ Avo 3 has been divided into various repositories and packages, organized by the 
 
 ## Feedback
 
-I'd love it if we could have an open forum with the open beta program. I created an `#avo-3` channel on Discord where I invite you all to provide feedback and ask for support.
-We appreciate all types of feedback from the API changes, to design work, and any idea you might have.
+I'd love it if we could have an open forum with the open beta program. Please use the [GitHub Discussions](https://avo.cool/chat) forum for that
 
 ## Documentation
 
