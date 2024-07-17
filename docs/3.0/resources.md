@@ -367,6 +367,50 @@ end
 This tells Avo which resources you use and stops the eager-loading process on boot-time.
 This means that other resources that are not declared in this array will not show up in your app.
 
+## Extending `Avo::BaseResource`
+
+We have restructured the `Avo::BaseResource` to enhance user customization capabilities. The existing functionality has been moved to a new base class `Avo::Resources::Base`, and `Avo::BaseResource` is now left empty for user overrides. This allows users to easily add custom methods that all of their resources will inherit, without having to modify the internal base class.
+
+### How to Customize `Avo::BaseResource`
+
+You can customize `Avo::BaseResource` by creating your own version in your application. This custom resource can include methods and logic that you want all your resources to inherit. Here's an example to illustrate how you can do this:
+
+```ruby
+# app/avo/base_resource.rb
+module Avo
+  class BaseResource < Avo::Resources::Base
+    # Example custom method: make all number fields cast their values to float
+    def field(id, **args, &block)
+      if args[:as] == :number
+        args[:format_using] = -> { value.to_f }
+      end
+
+      super(id, **args, &block)
+    end
+  end
+end
+```
+
+## Using Your Custom `Avo::BaseResource`
+
+All your resources will automatically inherit from your custom `Avo::BaseResource`, allowing you to add common functionality across your admin interface. For instance, the above example ensures that all number fields in your resources will have their values cast to floats. You can add any other shared methods or customizations here, making it easier to maintain consistent behavior across all resources.
+
+## Example Resource
+
+Here's how an individual resource would look like:
+
+```ruby
+# app/avo/resources/post_resource.rb
+module Avo
+  module Resources
+    class Post < Avo::BaseResource
+      # Your existing configuration for the Post resource
+    end
+  end
+end
+```
+
+By following this approach, you can leverage the full power of `Avo::BaseResource` keeping it  maintainable, while also providing flexibility for future customizations.
 
 ## Resource Options
 
