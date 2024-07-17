@@ -391,26 +391,18 @@ module Avo
 end
 ```
 
-## Using Your Custom `Avo::BaseResource`
 
-All your resources will automatically inherit from your custom `Avo::BaseResource`, allowing you to add common functionality across your admin interface. For instance, the above example ensures that all number fields in your resources will have their values cast to floats. You can add any other shared methods or customizations here, making it easier to maintain consistent behavior across all resources.
+All your resources will now inherit from your custom `Avo::BaseResource`, allowing you to add common functionality across your admin interface. For instance, the above example ensures that all number fields in your resources will have their values cast to floats. You can add any other shared methods or customizations here, making it easier to maintain consistent behavior across all resources.
 
-## Example Resource
+### Your resource files
 
-Here's how an individual resource would look like:
+Your resource file will still look the same as it did before.
 
 ```ruby
 # app/avo/resources/post_resource.rb
-module Avo
-  module Resources
-    class Post < Avo::BaseResource
-      # Your existing configuration for the Post resource
-    end
-  end
+module Avo::Resources::Post < Avo::BaseResource
+  # Your existing configuration for the Post resource
 end
-```
-
-By following this approach, you can leverage the full power of `Avo::BaseResource` keeping it  maintainable, while also providing flexibility for future customizations.
 
 ## Resource Options
 
