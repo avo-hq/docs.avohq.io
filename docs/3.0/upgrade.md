@@ -4,6 +4,12 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.10.6 to 3.10.7
+:::option Boolean field
+
+In versions lower than <Version version="3.10.6" />, boolean fields with a `nil` value were represented by a red X, which could be misleading. <VersionReq version="3.10.7" /> when a boolean field has a `nil` value, it is displayed with a dash (`—`) instead of a red X.
+:::
+
 <!-- ## Rails 8 support -->
 
 <!-- TODO: add ransack custom repo mention here -->
