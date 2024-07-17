@@ -155,3 +155,18 @@ end
 ```
 
 <Image src="/assets/img/tabs-and-panels/index-view.png" width="1024" height="724" alt="Index view" />
+
+:::option `visible`
+
+The `visible` option allows you to dynamically control the visibility of a panel and all its children based on certain conditions.
+
+This option is particularly useful when you need to show or hide entire sections of your resource at once without having to do it for each field.
+
+Example:
+```ruby
+panel name: "User information", visible: -> { resource.record.enabled? } do
+  field :first_name, as: :text
+  field :last_name, as: :text
+end
+```
+:::
