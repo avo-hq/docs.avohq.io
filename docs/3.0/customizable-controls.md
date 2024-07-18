@@ -202,7 +202,6 @@ action Avo::Actions::PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 :::
 
 :::warning
-Note: This warning is not applicable for versions greater than 3.10.7
 
 When you use the `action` helper in any customizable block it will act only as a shortcut to display the action button, it will not also register it to the resource.
 
