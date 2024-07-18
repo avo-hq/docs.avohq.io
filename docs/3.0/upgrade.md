@@ -12,7 +12,6 @@ In versions lower than <Version version="3.10.6" />, boolean fields with a `nil`
 
 <!-- ## Rails 8 support -->
 
-<!-- TODO: add ransack custom repo mention here -->
 ## Upgrade from 3.9.2 to 3.10
 Deprecated [`fetch_labels`](fields/tags#fetch_labels) option in favor of [`format_using`](fields/tags#format_using) on tags field.
 
