@@ -47,10 +47,8 @@ gem "rails", github: "rails/rails", branch: "main"
 # Update Avo
 gem "avo-advanced", ">= 3.9.1"
 
-# Use this `ransack` version
-# Follow this issue to get the fix in the library
-# https://github.com/activerecord-hackery/ransack/issues/1491
-gem "ransack", github: "avo-hq/ransack", branch: "fix/rails-8/delegate-alias-tracker-to-relation"
+# Use `ransack` for searching
+gem "ransack"
 
 # This version of acts-as-taggable-on is compatible with
 # Follow this PR to get the fix in the library
