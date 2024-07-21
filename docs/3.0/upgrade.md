@@ -4,9 +4,60 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.10.6 to 3.10.7
+:::option Boolean field
+
+In versions lower than <Version version="3.10.6" />, boolean fields with a `nil` value were represented by a red X, which could be misleading. <VersionReq version="3.10.7" /> when a boolean field has a `nil` value, it is displayed with a dash (`—`) instead of a red X.
+:::
+
 <!-- ## Rails 8 support -->
 
 <!-- TODO: add ransack custom repo mention here -->
+
+## Upgrade from 3.10 to 3.11
+
+### Actions no longer need to be registered inside actions method
+
+Actions inside customizable blocks no longer need to be declared in the `actions` method.
+
+```ruby
+# Before
+
+class Avo::Resources::Fish < Avo::BaseResource
+  self.title = :name
+
+  self.show_controls = -> do
+    # In order to use it here
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
+      action_on_show_controls: "Will use this arguments"
+    }
+  end
+
+  # 👇 Also declare it here 👇
+  def actions
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
+      action_on_show_controls: "Will use this arguments"
+    }
+  end
+end
+
+# After
+
+class Avo::Resources::Fish < Avo::BaseResource
+  self.title = :name
+
+  self.show_controls = -> do
+    # In order to use it here
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
+      action_on_show_controls: "Will use this arguments"
+    }
+  end
+
+  # 👇 No need to declare it here 👇
+  def actions
+  end
+end
+```
 ## Upgrade from 3.9.2 to 3.10
 Deprecated [`fetch_labels`](fields/tags#fetch_labels) option in favor of [`format_using`](fields/tags#format_using) on tags field.
 
