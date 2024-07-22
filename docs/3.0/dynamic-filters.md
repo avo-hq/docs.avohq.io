@@ -262,6 +262,8 @@ At some point we'll integrate the [Basic filters](./basic-filters) into the dyna
 To mitigate that you can toggle the `always_expanded` option to true.
 
 ## Custom Dynamic Filters
+
+<BetaStatus label="Beta" />
 <VersionReq version="3.10.0" />
 
 Dynamic filters are great but strict, as each field creates a specific filter type, each with its own icon and query. The query remains static, targeting only that particular field. Since version <Version version="3.10" />, dynamic filters have become customizable and, even better, can be declared without being bound to a field.
