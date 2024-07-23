@@ -12,6 +12,51 @@ In versions lower than <Version version="3.10.6" />, boolean fields with a `nil`
 
 <!-- ## Rails 8 support -->
 
+## Upgrade from 3.10 to 3.11
+
+### Actions no longer need to be registered inside actions method
+
+Actions inside customizable blocks no longer need to be declared in the `actions` method.
+
+```ruby
+# Before
+
+class Avo::Resources::Fish < Avo::BaseResource
+  self.title = :name
+
+  self.show_controls = -> do
+    # In order to use it here
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
+      action_on_show_controls: "Will use this arguments"
+    }
+  end
+
+  # 👇 Also declare it here 👇
+  def actions
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
+      action_on_show_controls: "Will use this arguments"
+    }
+  end
+end
+
+# After
+
+class Avo::Resources::Fish < Avo::BaseResource
+  self.title = :name
+
+  self.show_controls = -> do
+    # In order to use it here
+    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
+      action_on_show_controls: "Will use this arguments"
+    }
+  end
+
+  # 👇 No need to declare it here 👇
+  def actions
+  end
+end
+```
+
 ## Upgrade from 3.9.2 to 3.10
 Deprecated [`fetch_labels`](fields/tags#fetch_labels) option in favor of [`format_using`](fields/tags#format_using) on tags field.
 

@@ -38,6 +38,44 @@ In this block, you may configure the search however strict or loose you need it.
 If you're using ransack version 4 and up you must add `ransackable_attributes` and maybe more to your model in order for it to work. Read more about it [here](https://activerecord-hackery.github.io/ransack/going-further/other-notes/#authorization-allowlistingdenylisting).
 :::
 
+### Custom search provider
+
+<VersionReq version="3.10.8" />
+
+You can use custom search providers like Elasticsearch.
+In such cases, or when you want to have full control over the search results, the `query` block should return an array of hashes. Each hash should follow the structure below:
+
+```ruby
+{
+  _id: 1,
+  _label: "The label",
+  _url: "The URL",
+  _description: "Some description about the record", # only with Avo Pro and above
+  _avatar: "URL to an image that represents the record", # only with Avo Pro and above
+  _avatar_type: :rounded # or :circle or :square; only with Avo Pro and above
+}
+```
+
+Example:
+
+```ruby{2-10}
+class Avo::Resources::Project < Avo::BaseResource
+  self.search = {
+    query: -> do
+      [
+        { _id: 1, _label: "Record One", _url: "https://example.com/1" },
+        { _id: 2, _label: "Record Two", _url: "https://example.com/2" },
+        { _id: 3, _label: "Record Three", _url: "https://example.com/3" }
+      ]
+    end
+  }
+end
+```
+
+:::warning
+Results count will not be available with custom search providers.
+:::
+
 ## Authorize search
 
 Search is authorized in policy files using the [`search?`](./authorization#search) method.
@@ -190,7 +228,7 @@ end
 
 You might have a resource that you'd like to be able to perform a search on when on its `Index` page but not have it present in the global search. You can hide it using `hide_on_global: true`.
 
-```ruby{7}
+```ruby{9}
 class Avo::Resources::TeamMembership < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) },
