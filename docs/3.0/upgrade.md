@@ -47,7 +47,7 @@ gem "rails", github: "rails/rails", branch: "main"
 gem "avo-advanced", ">= 3.9.1"
 
 # Use `ransack` for searching
-gem "ransack"
+gem "ransack", ">= 4.2.0"
 
 # This version of acts-as-taggable-on is compatible with
 # Follow this PR to get the fix in the library
