@@ -43,6 +43,14 @@ field :members,
   as: :has_many,
   through: :memberships
 ```
+:::option `extra`
+If you have extra fields defined in the through table. You can display these fields using the extra option.
+
+```ruby{3}
+extra: -> {
+  field :review, as: :text
+}
+```
 
 <!-- @include: ./../common/show_on_edit_common.md-->
 <!-- @include: ./../common/scopes_common.md-->
