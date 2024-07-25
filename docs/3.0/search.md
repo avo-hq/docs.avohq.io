@@ -127,8 +127,7 @@ end
 :::
 
 :::option `description`
-
-<licensereq license="pro"></licensereq>
+<LicenseReq license="pro" />
 
 You might want to show more than just the title in the search result. Avo provides the `card -> description` option to add some more information.
 
@@ -151,7 +150,7 @@ end
 
 :::option `image_url`
 
-<licensereq license="pro"></licensereq>
+<LicenseReq license="pro" />
 
 You may improve the results listing by adding an image to each search result. You do that by using the `card -> image_url` attribute that is an url to a image.
 
@@ -172,7 +171,7 @@ end
 
 :::option `image_format`
 
-<licensereq license="pro"></licensereq>
+<LicenseReq license="pro" />
 
 The image you add to a search result can have a different format based on what you set on the `card -> image_format` attribute. You may choose between three options: `:square`, `:rounded` or `:circle`.
 
