@@ -97,30 +97,6 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_adm
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[created_at][lte][]=2024-07-02%2012%3A00), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L50)
 :::
 
-:::option Has many
-
-This filter will give you options from the database.
-
-### Conditions
-
- - Contains
- - Does not contain
- - Is
- - Is not
- - Starts with
- - Ends with
- - Is null
- - Is not null
- - Is present
- - Is blank
-<div class="flex justify-between items-start flex-wrap">
-  <Image src="/assets/img/dynamic_filter_has_many.png" width="244" height="204" alt="" />
-  <Image src="/assets/img/dynamic_filter_has_many2.png" width="244" height="330" alt="" />
-</div>
-
-Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[memberships][contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L75)
-:::
-
 :::option Number
 
 ### Conditions
@@ -318,10 +294,8 @@ Customize filter's icon. Check [icons documentation](./icons)
 
 ##### Default value
 
-Array filter - `heroicons/outline/circle-stack`<br>
 Boolean filter - `heroicons/outline/check-circle`<br>
 Calendar filter - `heroicons/outline/calendar-days`<br>
-Has many filter - `avo/arrow-up-right`<br>
 Number filter - `heroicons/outline/hashtag`<br>
 Select filter - `heroicons/outline/arrow-down-circle`<br>
 Tags filter - `heroicons/outline/tag`<br>
@@ -344,12 +318,10 @@ Computed from field using [`field_to_filter` method](#field-to-filter-matching).
 
 - [`:boolean`](#boolean)<br>
 - [`:date`](#date)<br>
-- [`:has_many`](#has_many)<br>
 - [`:number`](#number)<br>
 - [`:select`](#select)<br>
 - [`:text`](#text)<br>
 - [`:tags`](#tags)<br>
-- `:array`<br>
 :::
 
 :::option `query`
