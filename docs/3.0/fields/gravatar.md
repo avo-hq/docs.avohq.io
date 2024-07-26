@@ -16,15 +16,15 @@ field :email,
 ```
 
 ## Options
-:::option `rounded`
+<Option name="`rounded`">
 Choose whether the rendered avatar should be rounded or not on the `Index` view.
 
 On `Show`, the image is always a `square,` and the size is `responsive`.
 
 <!-- @include: ./../common/default_boolean_true.md -->
-:::
+</Option>
 
-:::option `size`
+<Option name="`size`">
 Set the size of the avatar.
 
 #### Default
@@ -34,9 +34,9 @@ Set the size of the avatar.
 #### Possible values
 
 Any number in pixels. Remember that the size will influence the `Index` table row height.
-:::
+</Option>
 
-:::option `default`
+<Option name="`default`">
 Set the default image if the email address was not found in Gravatar's database.
 
 #### Default
@@ -46,7 +46,7 @@ Set the default image if the email address was not found in Gravatar's database.
 #### Possible values
 
 Any number in pixels. Remember that the size will influence the `Index` table row height.
-:::
+</Option>
 
 <!-- @include: ./../common/link_to_record_common.md-->
 

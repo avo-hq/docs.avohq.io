@@ -1,4 +1,4 @@
-:::option `attach_scope`
+<Option name="`attach_scope`">
 Scope out the records the user sees on the Attach modal.
 
 #### Default
@@ -14,7 +14,7 @@ field :user,
 ```
 
 Pass in a block where you attach scopes to the `query` object and `parent` object, which is the actual record where you want to assign the association. The block is executed in the [`ExecutionContext`](./../execution-context).
-:::
+</Option>
 
 :::warning
 The `attach_scope` will not filter the records in the listing from `has_many` or `has_and_belongs_to_many` associations.

@@ -29,7 +29,7 @@ On the <Show /> view you'll get in interactive map and on the edit you'll get on
 
 ## Options
 
-:::option `stored_as`
+<Option name="`stored_as`">
 
 It's customary to have the coordinates in two distinct database columns, one named `latitude` and another `longitude`.
 
@@ -52,8 +52,9 @@ By using this notation, Avo will grab the `latitude` and `longitude` from those 
 This will also render the <Edit /> view with two separate fields to edit the coordinates.
 
 <img :src="('/assets/img/fields/location-edit.png')" alt="Location field" class="border mb-4" />
+</Option>
 
-:::option `zoom`
+<Option name="`zoom`">
 
 Changes the zoom level for the map with higher numbers being zoomed in and showing a smaller area on the map.
 
@@ -69,3 +70,4 @@ Any number between 0 (the most zoomed out) to 22 (the most zoomed in).
 field :coordinates, as: :location, zoom: 5
 ```
 
+</Option>

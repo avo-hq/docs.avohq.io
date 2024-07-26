@@ -468,7 +468,7 @@ config.logger = -> {
 }
 ```
 
-::::option `default_url_options`
+<Option name="`default_url_options`">
 `default_url_options` is a Rails [controller method](https://apidock.com/rails/ActionController/Base/default_url_options) that will append params automatically to the paths you generate through path helpers.
 
 In order to implement some features like route-level Multitenancy we exposed an API to add to Avo's `default_url_options` method.
@@ -489,14 +489,14 @@ end
 ```
 
 Now, when you visit `https://example.org/account/adrian/avo`, the `account_id` param is `adrian` and it will be appended to all path helpers.
-::::
+</Option>
 
-:::option `turbo`
+<Option name="`turbo`">
 You may want to configure how turbo behave on Avo.
 
 You can configure it using `config.turbo` option on `avo.rb` initializer
 
-Supported options with default values:
+</Option>
 
 ```ruby
   config.turbo = -> do
@@ -507,7 +507,7 @@ Supported options with default values:
 ```
 :::
 
-:::option `pagination`
+<Option name="`pagination`">
 You can configure the default pagination settings key by key.
 
 ```ruby
@@ -527,9 +527,9 @@ end
 This will make all your application's tables countless keeping the size key / value as the default one.
 
 Verify all possible options [here](resources#self_pagination).
-:::
+</Option>
 
-::::option `click_row_to_view_record`
+<Option name="`click_row_to_view_record`">
 
 <!-- <BetaStatus status="beta" /> -->
 
@@ -539,7 +539,7 @@ This setting allows your users to click on a record to navigate to its <Show /> 
 This interaction (clicking a `tr` element to behave as a link) is not natively supported in HTML.
 
 Avo enhances this functionality with JavaScript, which may lead to side effects. Please report any issues you encounter on our [issue queue](https://avo.cool/new-issue).
-:::
+</Option>
 
 Enable this setting by using the `click_row_to_view_record` configuration option.
 
@@ -551,4 +551,4 @@ end
 ```
 
 <Image src="/assets/img/3_0/customization/click-row-to-view-record.gif" width="" height="" alt="Click to view record in Avo" />
-::::
+:::

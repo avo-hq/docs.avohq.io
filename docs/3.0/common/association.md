@@ -1,4 +1,4 @@
-:::option `association`
+<Option name="`association`">
 
 <VersionReq version="3.6.2" />
 
@@ -14,3 +14,4 @@ field :special_reviews,
   for_attribute: :reviews,
   scope: -> { query.special_reviews }
 ```
+</Option>

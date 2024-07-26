@@ -19,7 +19,7 @@ Each field displayed on the <Index /> view is wrapped in this component that reg
 
 You may use the component `Avo::Index::FieldWrapperComponent` or the helper `index_field_wrapper`.
 
-:::option `dash_if_blank`
+<Option name="`dash_if_blank`">
 This option renders a dash `—` if the content inside responds to true on the `blank?` method.
 In the example below, we'd like to show the field as a red checkmark even if the content is `nil`.
 
@@ -32,9 +32,9 @@ In the example below, we'd like to show the field as a red checkmark even if the
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `center_content`
+<Option name="`center_content`">
 Wraps the content in a container with `flex items-center justify-center` classes making everything centered horizontally and vertically.
 
 #### Default
@@ -46,9 +46,9 @@ Wraps the content in a container with `flex items-center justify-center` classes
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `flush`
+<Option name="`flush`">
 Removes the padding around the field allowing it to flow from edge to edge.
 
 #### Default
@@ -60,9 +60,9 @@ Removes the padding around the field allowing it to flow from edge to edge.
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `field`
+<Option name="`field`">
 The instance of the field. It's usually passed in with the `field_wrapper_args`.
 
 ```erb
@@ -70,9 +70,9 @@ The instance of the field. It's usually passed in with the `field_wrapper_args`.
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `resource`
+<Option name="`resource`">
 The instance of the resource. It's usually passed in with the `field_wrapper_args`.
 
 ```erb
@@ -80,7 +80,7 @@ The instance of the resource. It's usually passed in with the `field_wrapper_arg
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
 # Show & Edit field wrapper
 
@@ -113,7 +113,7 @@ This space is rarely used and it's there just to fill some horizontal space so t
 
 ## Options
 
-:::option `dash_if_blank`
+<Option name="`dash_if_blank`">
 This option renders a dash `—` if the content inside responds to true on the `blank?` method.
 In the example below, we'd like to show the field as a red checkmark even if the content is `nil`.
 
@@ -126,9 +126,9 @@ In the example below, we'd like to show the field as a red checkmark even if the
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `compact`
+<Option name="`compact`">
 This renders the field in a more compact way by removing the **Extra** area and decresing the width of the **Label** and **Content** areas.
 
 This is enabled on the fields displayed in actions.
@@ -142,9 +142,9 @@ This is enabled on the fields displayed in actions.
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `data`
+<Option name="`data`">
 Pass in some data attributes. Perhaps you would like to attach a StimulusJS controller to this field.
 
 ```erb
@@ -152,9 +152,9 @@ Pass in some data attributes. Perhaps you would like to attach a StimulusJS cont
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `full_width`
+<Option name="`full_width`">
 This removes the **Extra** area and renders the **Value** area full width.
 
 This is used on fields that require a larger area to be displayed like [WYSIWYG editors](./fields/trix), [`KeyValue`](./fields/key_value), or [file fields](./fields/files).
@@ -168,9 +168,9 @@ This is used on fields that require a larger area to be displayed like [WYSIWYG 
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `form`
+<Option name="`form`">
 The instance of the form that is going to be populated. It's usually passed in with the `field_wrapper_args` on the <Edit /> view.
 
 ```erb
@@ -178,9 +178,9 @@ The instance of the form that is going to be populated. It's usually passed in w
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `field`
+<Option name="`field`">
 The instance of the field. It's usually passed in with the `field_wrapper_args`.
 
 ```erb
@@ -188,9 +188,9 @@ The instance of the field. It's usually passed in with the `field_wrapper_args`.
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `help`
+<Option name="`help`">
 The text that is going to be displayed below the actual field on the <Edit /> view.
 
 ```erb
@@ -198,9 +198,9 @@ The text that is going to be displayed below the actual field on the <Edit /> vi
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `label`
+<Option name="`label`">
 The text that is going to be displayed in the **Label** area. You might want to override it.
 
 ```erb
@@ -208,9 +208,9 @@ The text that is going to be displayed in the **Label** area. You might want to 
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `resource`
+<Option name="`resource`">
 The instance of the resource. It's usually passed in with the `field_wrapper_args`.
 
 ```erb
@@ -218,9 +218,9 @@ The instance of the resource. It's usually passed in with the `field_wrapper_arg
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `stacked`
+<Option name="`stacked`">
 Display the field in a column layout with the label on top of the value
 
 ```erb
@@ -228,12 +228,12 @@ Display the field in a column layout with the label on top of the value
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
 <Image src="/assets/img/field-wrappers/stacked_field.jpg" width="1024" height="639" alt="" />
 
 
-:::option `style`
+<Option name="`style`">
 The you might want to pass some styles to the wrapper to change it's looks.
 
 ```erb
@@ -241,9 +241,9 @@ The you might want to pass some styles to the wrapper to change it's looks.
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `view`
+<Option name="`view`">
 The view where the field is diplayed so it knows if it's a <Show /> or <Edit /> view. It's usually passed in with the `field_wrapper_args`.
 
 ```erb
@@ -251,5 +251,5 @@ The view where the field is diplayed so it knows if it's a <Show /> or <Edit /> 
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
-:::
+</Option>
 

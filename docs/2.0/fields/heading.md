@@ -17,7 +17,7 @@ The `Heading` field displays a header that acts as a separation layer between di
 
 ## Options
 
-:::option `as_html`
+<Option name="`as_html`">
 The `as_html` option will render it as HTML.
 
 ```ruby
@@ -25,5 +25,5 @@ heading '<div class="underline text-gray-800 uppercase">Address fields</,div>', 
 ```
 
 <!-- @include: ./../common/default_boolean_false.md -->
-:::
+</Option>
 

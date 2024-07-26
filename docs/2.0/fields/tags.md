@@ -16,7 +16,7 @@ field :skills, as: :tags
 
 ## Options
 
-:::option `suggestions`
+<Option name="`suggestions`">
 
 You can give suggestions to your users to pick from which will be displayed to the user as a dropdown under the field.
 
@@ -72,9 +72,9 @@ class Post < ApplicationRecord
 end
 ```
 
-:::
+</Option>
 
-:::option `dissallowed`
+<Option name="`dissallowed`">
 The `disallowed` param works similarly to `suggestions`. Use it to prevent the user from adding specific values.
 
 ```ruby{3}
@@ -92,9 +92,9 @@ field :skills,
 #### Possible values
 
 An array of strings representing the value that can't be stored in the database.
-:::
+</Option>
 
-:::option `enforce_suggestions`
+<Option name="`enforce_suggestions`">
 Set whether the field should accept other values outside the suggested ones. If set to `true` the user won't be able to add anything else than what you posted in the `suggestions` option.
 
 ```ruby{4}
@@ -107,9 +107,9 @@ field :skills,
 <img :src="('/assets/img/fields/tags-field/enforce_suggestions.gif')" alt="Avo tags field" class="border mb-4" />
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `suggestions_max_items`
+<Option name="`suggestions_max_items`">
 Set of suggestions that can be displayed at once. The excessive items will be hidden and the user will have to narrow down the query to see them.
 
 ```ruby{4}
@@ -128,9 +128,9 @@ field :skills,
 #### Possible values
 
 Integers
-:::
+</Option>
 
-:::option `close_on_select`
+<Option name="`close_on_select`">
 Set whether the `suggestions` dropdown should close after the user makes a selection.
 
 ```ruby{4}
@@ -143,9 +143,9 @@ field :items,
 <img :src="('/assets/img/fields/tags-field/close_on_select.gif')" alt="Avo tags field" class="border mb-4" />
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `acts_as_taggable_on`
+<Option name="`acts_as_taggable_on`">
 Set the field the `acts_as_taggable_on` is set.
 
 #### Default
@@ -155,9 +155,9 @@ Set the field the `acts_as_taggable_on` is set.
 #### Possible values
 
 Any string or symbol you have configured on your corresponding model.
-:::
+</Option>
 
-:::option `disallowed`
+<Option name="`disallowed`">
 #### Default
 
 `false`
@@ -165,9 +165,9 @@ Any string or symbol you have configured on your corresponding model.
 #### Possible values
 
 `true`, `false`
-:::
+</Option>
 
-:::option `delimiters`
+<Option name="`delimiters`">
 
 Set the characters that will cut off the content into tags when the user inputs the tags.
 
@@ -189,10 +189,10 @@ field :skills,
 
 Valid values are comma `,` and space ` `.
 
-:::
+</Option>
 
 
-:::option `mode`
+<Option name="`mode`">
 
 By default, the tags field produces an array of items (ex: categories for posts), but in some scenarios you might want it to produce a single value (ex: dynamically search for users and select just one). Use `mode: :select` to make the field produce a single value as opposed to an array of values.
 
@@ -212,7 +212,7 @@ Valid values are `nil` for array values and `select` for a single value.
 
 ![](/assets/img/fields/tags-field/mode-select.gif)
 
-:::
+</Option>
 
 <Option name="`fetch_values_from`">
 
@@ -282,7 +282,7 @@ To mitigate that use the `fetch_labels` option.
 
 </Option>
 
-:::option `fetch_labels`
+<Option name="`fetch_labels`">
 The `fetch_labels` option allows you to pass an array of custom strings to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.
 
 ```ruby{4-6}
@@ -305,7 +305,7 @@ Avo's default behavior on tags
 #### Possible values
 
 Array of strings
-:::
+</Option>
 
 ## PostgreSQL array fields
 

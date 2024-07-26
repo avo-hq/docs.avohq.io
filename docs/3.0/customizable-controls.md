@@ -18,7 +18,7 @@ By default, Avo displays a few buttons (controls) for the user to use on the <In
 
 You can take over and customize them all using the `index_controls`, `show_controls`, `edit_controls`, and `row_controls` class attributes.
 
-:::option Show page
+<Option name="Show page">
 On the <Show /> view the default configuration is `back_button`, `delete_button`, `detach_button`, `actions_list`, and `edit_button`.
 
 To start customizing the controls, add a `show_controls` block and start adding the desired controls.
@@ -43,9 +43,9 @@ end
 ```
 
 <Image src="/assets/img/3_0/customizable-controls/show-controls.png" width="1344" height="164" alt="" />
-:::
+</Option>
 
-:::option Edit page
+<Option name="Edit page">
 On the <Edit /> view the default configuration is `back_button`, `delete_button`, `actions_list`, and `save_button`.
 
 To start customizing the controls, add a `edit_controls` block and start adding the desired controls.
@@ -65,9 +65,9 @@ end
 ```
 
 <Image src="/assets/img/3_0/customizable-controls/show-controls.png" width="1344" height="164" alt="" />
-:::
+</Option>
 
-:::option Index page
+<Option name="Index page">
 On the <Index /> view the default configuration contains the `actions_list`, `attach_button`, and `create_button`.
 
 To start customizing the controls, add a `index_controls` block and start adding the desired controls.
@@ -85,9 +85,9 @@ end
 ```
 
 <Image src="/assets/img/3_0/customizable-controls/index-controls.png" width="1300" height="164" alt="" />
-:::
+</Option>
 
-:::option Row controls
+<Option name="Row controls">
 On the <Index /> view the on the end of each table row the default configuration contains the `order_controls` `show_button`, `edit_button`, `detach_button`, and `delete_button`.
 
 To start customizing the controls, add a `row_controls` block and start adding the desired controls.
@@ -111,7 +111,7 @@ end
 ```
 
 <Image src="/assets/img/3_0/customizable-controls/row-controls.png" width="834" height="120" alt="" />
-:::
+</Option>
 
 ## Controls
 
@@ -119,31 +119,31 @@ A control is an item that you can place in a designated area. They can be one of
 
 You may use the following controls:
 
-:::option `back_button`
+<Option name="`back_button`">
 Links to a previous page. The link is not a `history.back()` action. It's computed based on the parameters sent by Avo. That ensures the user has consistent hierarchical progress through the app.
 
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
-:::
+</Option>
 
-:::option `delete_button`
+<Option name="`delete_button`">
 Adds the appropriate destroy form. It will take into account your authorization policy rules.
 
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
-:::
+</Option>
 
-:::option `detach_button`
+<Option name="`detach_button`">
 Adds the appropriate detach form. It's visible only on the association (`has_one`) page. It will take into account your authorization policy rules.
 
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
-:::
+</Option>
 
-:::option `actions_list`
+<Option name="`actions_list`">
 A dropdown where the user can see and run all the actions assigned to that resource.
 
 #### Supported options
@@ -165,25 +165,25 @@ actions_list exclude: [ExportSelection, PublishPost]
 ```
 :::info
 The list action's [icon](actions.md#icon) and the [dividers](actions.md#divider) are defined in `def actions` method.
-:::
+</Option>
 
-:::option `edit_button`
+<Option name="`edit_button`">
 Links to the record edit page.
 
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
-:::
+</Option>
 
-:::option `link_to`
+<Option name="`link_to`">
 Renders a link to a path set by you.
 
 #### Supported options
 
 `title`, `style`, `color`, `icon`, `target`, `data`, and `class`.
-:::
+</Option>
 
-:::option `action`
+<Option name="`action`">
 Renders a button that triggers an action. You must provide it an [Action](./actions) class.
 
 #### Supported options
@@ -199,7 +199,7 @@ action Avo::Actions::ExportSelection, style: :text
 action Avo::Actions::PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 ```
 
-:::
+</Option>
 
 :::warning WARNING (**NOT** applicable for versions greater than <Version version="3.10.7" />)
 
@@ -228,7 +228,7 @@ end
 ```
 :::
 
-:::option `default_controls`
+<Option name="`default_controls`">
 There are times when you just want to add a link before or after the default controls and don't want to re-add them all.
 Avo's got you covered! `default_controls` to the rescue.
 
@@ -241,60 +241,60 @@ end
 ```
 
 <Image src="/assets/img/3_0/customizable-controls/default_controls.png" alt="Default controls" width="884" height="140" />
-:::
+</Option>
 
 ## Control Options
 
 Some controls take options. Not all controls take all options.
 Example: The `link_to` control is the only one that will take the `target` option, but most other controls use the `class` option.
 
-:::option `title`
+<Option name="`title`">
 Sets the tooltip for that control.
 
 #### Possible values
 
 Any string value.
-:::
+</Option>
 
-:::option `style`
+<Option name="`style`">
 Sets the `style` attribute for the [`Avo::ButtonComponent`](https://github.com/avo-hq/avo/blob/main/app/components/avo/button_component.rb).
 
 #### Possible values
 
 `:primary`, `:outline`, `:text`
-:::
+</Option>
 
-:::option `color`
+<Option name="`color`">
 Sets the `color` attribute for the [`Avo::ButtonComponent`](https://github.com/avo-hq/avo/blob/main/app/components/avo/button_component.rb)
 
 #### Possible values
 
 Can be any color of [Tailwind`s default color pallete](https://tailwindcss.com/docs/customizing-colors#default-color-palette) as a symbol.
-:::
+</Option>
 
-:::option `icon`
+<Option name="`icon`">
 Sets the icon for that button.
 
 #### Possible values
 
 Any [Heroicon](https://heroicons.com) you want. You must specify the style of the heroicon like so `heoricons/outline/academic-cap` or `heroicons/solid/adjustments`.
-:::
+</Option>
 
-:::option `target`
+<Option name="`target`">
 Sets the target for that control. So whatever you pass here will be passed to the control.
 
 #### Possible values
 
 `:_blank`, `:_top`, `:_self`
-:::
+</Option>
 
-:::option `class`
+<Option name="`class`">
 Sets the classes for that control.
 
 #### Possible values
 
 Any string value.
-:::
+</Option>
 
 ## Default values
 

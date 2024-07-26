@@ -15,7 +15,7 @@ field :logo, as: :external_image
 
 ## Options
 
-:::option `width`
+<Option name="`width`">
 
 #### Default value
 
@@ -24,9 +24,9 @@ field :logo, as: :external_image
 #### Possible values
 
 Use any number to size the image.
-:::
+</Option>
 
-:::option `height`
+<Option name="`height`">
 #### Default value
 
 `40`
@@ -34,9 +34,9 @@ Use any number to size the image.
 #### Possible values
 
 Use any number to size the image.
-:::
+</Option>
 
-:::option `radius`
+<Option name="`radius`">
 #### Default value
 
 `0`
@@ -44,7 +44,7 @@ Use any number to size the image.
 #### Possible values
 
 Use any number to set the radius value.
-:::
+</Option>
 
 <!-- @include: ./../common/link_to_resource_common.md-->
 

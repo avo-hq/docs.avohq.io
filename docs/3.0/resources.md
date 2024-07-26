@@ -127,7 +127,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-:::
+</Option>
 
 It's also possible to specify the resource model class. For example, if we want to create a new resource named `MiniPost` resource using the `Post` model we can do that using the following command:
 
@@ -408,7 +408,7 @@ end
 
 Resources have a few options available for customization.
 
-:::option `self.title`
+<Option name="`self.title`">
 
 Each Avo resource will try to figure out what the title of a record is. It will try the following attributes in order `name`, `title`, `label`, and fallback to the `id`.
 
@@ -450,9 +450,9 @@ class Avo::Resources::Comment < Avo::BaseResource
   }
 end
 ```
-:::
+</Option>
 
-:::option `self.description`
+<Option name="`self.description`">
 
 You might want to display information about the current resource to your users. Then, using the `description` class attribute, you can add some text to the `Index`, `Show`, `Edit`, and `New` views.
 
@@ -491,9 +491,9 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
-:::
+</Option>
 
-:::option `self.includes`
+<Option name="`self.includes`">
 
 If you regularly need access to a resource's associations, you can tell Avo to eager load those associations on the `Index` view using `includes`.
 
@@ -510,9 +510,9 @@ end
 
 We know, the array notation looks weird, but it works.
 
-:::
+</Option>
 
-:::option `default_view_type`
+<Option name="`default_view_type`">
 
 On <Index />, the most common view type is `:table`, but you might have some data that you want to display in a `:grid` or `:map`. You can change that by setting `default_view_type` to `:grid` and by adding the `grid` block.
 
@@ -538,9 +538,9 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-:::
+</Option>
 
-:::option `self.model_class`
+<Option name="`self.model_class`">
 
 For some resources you might have a model that is namespaced, or you might have a secondary resource for a model. For that scenario, you can use the `self.model_class` option to tell Avo which model to reference in that resource.
 
@@ -554,9 +554,9 @@ class Avo::Resources::DelayedJob < Avo::BaseResource
 end
 ```
 
-:::
+</Option>
 
-:::option `self.devise_password_optional`
+<Option name="`self.devise_password_optional`">
 
 If you use `devise` and update your user models (usually `User`) without passing a password, you will get a validation error. You can use `devise_password_optional` to stop receiving that error. It will [strip out](https://stackoverflow.com/questions/5113248/devise-update-user-without-password/11676957#11676957) the `password` key from `params`.
 
@@ -570,9 +570,8 @@ end
 
 - [Password field](./fields/password)
 
-:::
 
-::::option `self.visible_on_sidebar`
+<Option name="`self.visible_on_sidebar`">
 
 When you get started, the sidebar will be auto-generated for you with all the [dashboards](./dashboards), resources, and [custom tools](./custom-tools).
 However, you may have resources that should not appear on the sidebar, which you can hide using the `visible_on_sidebar` option.
@@ -587,10 +586,10 @@ end
 This option is used in the **auto-generated menu**, not in the [menu editor](./menu-editor).
 
 You'll have to use your own logic in the [`visible`](./menu-editor#item-visibility) block for that.
-:::
-::::
+</Option>
+</Option>
 
-:::option `config.buttons_on_form_footers`
+<Option name="`config.buttons_on_form_footers`">
 
 If you have a lot of fields on a resource, that form might get pretty tall. So it would be useful to have the `Save` button in the footer of that form.
 
@@ -605,9 +604,9 @@ end
 
 <Image src="/assets/img/resources/buttons_on_footer.png" width="1276" height="594" alt="Buttons on footer" />
 
-:::
+</Option>
 
-:::option `after_create_path`/`after_update_path`
+<Option name="`after_create_path`/`after_update_path`">
 
 For some resources, it might make sense to redirect to something other than the `Show` view. With `after_create_path` and `after_update_path` you can control that.
 
@@ -627,10 +626,10 @@ You can go more granular and customize these paths or response more using contro
  - [`after_create_path`](./controllers#after_create_path)
  - [`after_update_path`](./controllers#after_update_path)
  - [`after_destroy_path`](./controllers#after_destroy_path)
-:::
+</Option>
 
 
-:::option `self.record_selector`
+<Option name="`self.record_selector`">
 
 You might have resources that will never be selected, and you do not need that checkbox to waste your horizontal space.
 
@@ -643,9 +642,9 @@ end
 ```
 
 <Image src="/assets/img/resources/record_selector.png" width="688" height="361" alt="Hide the record selector." />
-:::
+</Option>
 
-:::option `self.link_to_child_resource`
+<Option name="`self.link_to_child_resource`">
 
 Let's take an example. We have a `Person` model and `Sibling` and `Spouse` models that inherit from it using Single Table Inheritance (STI).
 
@@ -656,9 +655,9 @@ class Avo::Resources::Person < Avo::BaseResource
   self.link_to_child_resource = true
 end
 ```
-:::
+</Option>
 
-:::option `self.keep_filters_panel_open`
+<Option name="`self.keep_filters_panel_open`">
 
 <DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=374" />
 
@@ -681,9 +680,9 @@ end
 ```
 
 <Image src="/assets/img/filters/keep-filters-panel-open.gif" width="449" height="800" alt="Avo filters" />
-:::
+</Option>
 
-:::option `self.components`
+<Option name="`self.components`">
 By default, for each view we render an component:
 
 `:index` -> `Avo::Views::ResourceIndexComponent`<br>
@@ -710,7 +709,7 @@ The custom view components must ensure that their initializers are configured to
 `:show` -> `app/views/avo/base/show.html.erb`<br>
 `:new` -> `app/views/avo/base/new.html.erb`<br>
 `:edit` -> `app/views/avo/base/edit.html.erb`
-:::
+</Option>
 Creating a customized component for a view is most easily achieved by ejecting one of our pre-existing components using the `--scope` parameter. You can find step-by-step instructions in the documentation [here](./customization.html#scope).
 
 Alternatively, there is another method which requires two additional manual steps. This involves crafting a personalized component by extracting an existing one and adjusting its namespace. Although changing the namespace is not mandatory, we strongly recommend it unless you intend for all resources to adopt the extracted component.
@@ -731,7 +730,7 @@ self.components = {
 This way you can choose the whatever namespace structure you want and you assure that the initializer is accepting the right arguments.
 
 
-:::option `self.index_query`
+<Option name="`self.index_query`">
 
 ### Unscoped queries on `Index`
 
@@ -750,7 +749,7 @@ class Avo::Resources::Project < Avo::BaseResource
   self.index_query = -> { query.unscoped }
 end
 ```
-:::
+</Option>
 
 ## Cards
 
@@ -781,7 +780,7 @@ end
 
 <Image src="/assets/img/cards_on_resource.png" width="2520" height="1258" alt="Alt text" />
 
-:::option `self.pagination`
+<Option name="`self.pagination`">
 This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
 
 By setting `self.pagination[:type]` to `:countless`, you can disable the pagination count on the index page.
@@ -856,9 +855,9 @@ self.pagination = -> do
 end
 ```
 <Image src="/assets/img/resources/pagination/countless_empty_size.png" width="1029" height="62" alt="Countless pagination size empty" />
-:::
+</Option>
 
-:::option `cache_hash`
+<Option name="`cache_hash`">
 
 The `cache_hash` method is used to compute the cache key for each row. The method looks something like this:
 

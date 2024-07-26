@@ -14,7 +14,7 @@ field :body, as: :textarea
 ## Options
 
 
-:::option `rows`
+<Option name="`rows`">
 Set the number of rows visible in the `Edit` and `New` views.
 
 ```ruby
@@ -28,4 +28,4 @@ field :body, as: :textarea, rows: 5
 #### Possible values
 
 Any integer.
-:::
+</Option>

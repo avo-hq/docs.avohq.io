@@ -50,25 +50,25 @@ Now you are ready to add Avo to your `Gemfile`.
 
 Now you can run `bundle install` and `bundler` will pick it up and use it to authenticate on the server.
 
-:::option Heroku
+<Option name="Heroku">
 
 If you're using heroku, you can set the environment variable using the following command. This way `bundler` will use it when authenticating to `packager.dev`.
 
 ```bash
 heroku config:set BUNDLE_PACKAGER__DEV=xxx
 ```
-:::
+</Option>
 
-:::option Hatchbox
+<Option name="Hatchbox">
 
 If you're using Hatchbox, you can set the environment variable in your apps "Environment" tab. This way `bundler` will use it when authenticating to `packager.dev`.
 
 ```yaml
 BUNDLE_PACKAGER__DEV: xxx
 ```
-:::
+</Option>
 
-:::option GitHub Actions
+<Option name="GitHub Actions">
 
 You might need to install Avo's paid gems in you GitHub Actions pipeline. There are two steps you need to take in order to enable that.
 
@@ -86,7 +86,7 @@ Then, in your `test.yml` (you might have it as a different name), expose that co
 ```yml{8-9}
 name: Tests
 
-on:
+</Option>
   pull_request:
     branches:
       - main
@@ -103,7 +103,7 @@ jobs:
 ```
 :::
 
-:::option Docker and docker compose
+<Option name="Docker and docker compose">
 
 You can build with docker by passing a build argument from your environment.
 
@@ -140,14 +140,14 @@ docker build --build-arg BUNDLE_PACKAGER__DEV=$BUNDLE_PACKAGER__DEV
 ```bash
 docker compose build --build-arg BUNDLE_PACKAGER__DEV=xxx
 ```
-:::
+</Option>
 
 ## FAQ
 
 Frequently asked questions:
 
-:::option `Forbidden 403`
+<Option name="`Forbidden 403`">
 If you're seeing this error `Retrying download gem from https://packager.dev/avo-hq/ due to error (1/4): Gem::RemoteFetcher::FetchError bad response Forbidden 403`, this probably means that bundler does not have access to the `BUNDLE_PACKAGER__DEV` environment variable.
 
 Please read the guides above on how to set that on your development machine and in deployment scenarios.
-:::
+</Option>

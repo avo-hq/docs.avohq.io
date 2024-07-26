@@ -89,7 +89,7 @@ end
 
 A few menu item types are supported `link_to`, `section`, `group`, `resource`, and `dashboard`. There are a few helpers too, like `all_resources`, `all_dashboards`, and `all_tools`.
 
-:::option `link_to`
+<Option name="`link_to`">
 
 Link to is the menu item that the user will probably interact with the most. It will generate a link on your menu. You can specify the `name`, `path` , and `target`.
 
@@ -101,9 +101,9 @@ link_to "Google", path: "https://google.com", target: :_blank
 
 When you add the `target: :_blank` option, a tiny external link icon will be displayed.
 
-:::
+</Option>
 
-:::option `resource`
+<Option name="`resource`">
 
 To make it a bit easier, you can use `resource` to quickly generate a link to one of your resources. For example, you can pass a short symbol name `:user` or the full name `UserResource`.
 
@@ -131,9 +131,9 @@ resource :users, params: -> do
 end
 ```
 
-:::
+</Option>
 
-:::option `dashboard`
+<Option name="`dashboard`">
 
 Similar to `resource`, this is a helper to make it easier to reference a dashboard. You pass in the `id` or the `name` of the dashboard.
 
@@ -150,9 +150,9 @@ You can also change the label for the `dashboard` items to something else.
 dashboard :dashy, label: "Dashy Dashboard"
 ```
 
-:::
+</Option>
 
-:::option `section`
+<Option name="`section`">
 
 Sections are the big categories in which you can group your menu items. They take `name` and `icon` options.
 
@@ -165,9 +165,9 @@ end
 
 <img :src="('/assets/img/menu-editor/section.jpg')" alt="Avo menu editor" class="border mb-4" />
 
-:::
+</Option>
 
-:::option `group`
+<Option name="`group`">
 
 Groups are smaller categories where you can bring together your items.
 
@@ -180,9 +180,9 @@ end
 ```
 
 <img :src="('/assets/img/menu-editor/group.jpg')" alt="Avo menu editor" class="border mb-4" />
-:::
+</Option>
 
-:::option `all_resources`
+<Option name="`all_resources`">
 Renders all resources.
 
 ```ruby
@@ -193,9 +193,9 @@ section "App", icon: "heroicons/outline/beaker" do
 end
 ```
 
-:::
+</Option>
 
-:::option `all_dashboards`
+<Option name="`all_dashboards`">
 Renders all dashboards.
 
 ```ruby
@@ -206,9 +206,9 @@ section "App", icon: "heroicons/outline/beaker" do
 end
 ```
 
-:::
+</Option>
 
-:::option `all_tools`
+<Option name="`all_tools`">
 Renders all tools.
 
 ```ruby
@@ -219,7 +219,7 @@ section "App", icon: "heroicons/outline/beaker" do
 end
 ```
 
-:::
+</Option>
 
 ### `all_` helpers
 

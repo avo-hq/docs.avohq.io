@@ -16,7 +16,7 @@ field :coordinates, as: :location
 
 :::warning
 You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
-:::
+</Option>
 
 ## Description
 
@@ -29,7 +29,7 @@ On the <Show /> view you'll get in interactive map and on the edit you'll get on
 
 ## Options
 
-:::option `stored_as`
+<Option name="`stored_as`">
 
 It's customary to have the coordinates in two distinct database columns, one named `latitude` and another `longitude`.
 

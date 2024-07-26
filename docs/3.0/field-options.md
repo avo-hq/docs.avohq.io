@@ -384,16 +384,16 @@ Now, all fields will have the stacked layout throughout your app.
 
 ## Field options
 
-:::option `use_resource`
+<Option name="`use_resource`">
 <!-- TODO: this -->
 WIP
-:::
+</Option>
 
-:::option `components`
+<Option name="`components`">
 The field's `components` option allows you to customize the view components used for rendering the field in all, `index`, `show` and `edit` views. This provides you with a high degree of flexibility.
 
 ### Ejecting the field components
-To start customizing the field components, you can eject one or multiple field components using the `avo:eject` command. Ejecting a field component generates the necessary files for customization. Here's how you can use the `avo:eject` command:
+</Option>
 
 #### Ejecting All Components for a Field
 
@@ -446,7 +446,7 @@ The components block it's executed using `Avo::ExecutionContent` and gives acces
 It's important to keep the initializer on your custom components as the original field view component initializer.
 :::
 
-:::option `html`
+<Option name="`html`">
 ### Attach HTML attributes
 
 Using the `html` option you can attach `style`, `classes`, and `data` attributes. The `style` attribute adds the `style` tag to your element, `classes` adds the `class` tag, and the `data` attribute the `data` tag to the element you choose.
@@ -639,9 +639,9 @@ field :name, as: :text, html: {
 
 <Image src="/assets/img/stimulus/edit-input-target.jpg" width="1646" height="784" alt="Index field wrapper" />
 
-:::
+</Option>
 
-:::option `summarizable`
+<Option name="`summarizable`">
 
 ```ruby
 field :status, as: :select, summarizable: true
@@ -649,15 +649,15 @@ field :status, as: :select, summarizable: true
 field :status, as: :badge, summarizable: true
 ```
 This section is WIP.
-:::
+</Option>
 
-:::option `for_attribute`
+<Option name="`for_attribute`">
 
 Allows to specify the target attribute on the model for each field. By default the target attribute is the field's id.
 
 <!-- <VersionReq version="3.6.2" /> -->
 
-Usage example:
+</Option>
 
 ```ruby
 field :status, as: :select, options: [:one, :two, :three], only_on: :forms
@@ -671,13 +671,13 @@ field :secondary_field_for_status,
 ```
 :::
 
-:::option `meta`
+<Option name="`meta`">
 
 This handy option enables you to send arbitrary information to the field. It's especially useful when you're building your own [custom fields](./custom-fields) or you are using [custom components](#components) for the built-in fields.
 
 <!-- <VersionReq version="3.10" /> -->
 
-Usage example:
+</Option>
 
 ```ruby{4,9-11}
 # meta as a hash

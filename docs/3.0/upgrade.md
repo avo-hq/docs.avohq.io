@@ -5,10 +5,10 @@ We'll update this page when we release new Avo 3 versions.
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
 ## Upgrade from 3.10.6 to 3.10.7
-:::option Boolean field
+<Option name="Boolean field">
 
 In versions lower than <Version version="3.10.6" />, boolean fields with a `nil` value were represented by a red X, which could be misleading. <VersionReq version="3.10.7" /> when a boolean field has a `nil` value, it is displayed with a dash (`—`) instead of a red X.
-:::
+</Option>
 
 <!-- ## Rails 8 support -->
 
@@ -113,14 +113,14 @@ More on that on this [issue](https://github.com/avo-hq/avo/issues/2844).
 
 ## Upgrade from 3.6.1 to 3.6.2
 
-:::option Cache
+<Option name="Option">
 From version `3.6.1` to version `3.6.2` table cache logic suffered some changes. Old cached table may break with this change, we recommend to clear cache on production after upgrade (`Rails.cache.clear`).
 
 Versions `3.6.2` / `3.6.3` have some issues around cache, we recommend to upgrade directly to `3.6.4`.
-:::
+</Option>
 
 ## Upgrade from 3.5.4 to 3.5.5
-:::option Record errors
+<Option name="Record errors">
 With version `3.5.5` we introduced a stricter error check. Now when the record has any error attached the save action will fail automatically. This allow you to do things like:
 
 ```ruby
@@ -131,10 +131,10 @@ before_update do
 end
 ```
 
-:::
+</Option>
 
 ## Upgrade from 3.4.2 to 3.4.3
-:::option `turbo` configuration
+<Option name="`turbo` configuration">
 In version `3.4.2` we introduced turbo configuration with `instantclick` option. We decided that `instant_click` is a more appropriate name.
 
 ```ruby
@@ -143,10 +143,10 @@ config.turbo = {
   instant_click: true # [!code ++]
 }
 ```
-:::
+</Option>
 
 ## Upgrade from 3.4.1 to 3.4.2
-:::option Basic Filters URL param changed to `encoded_filters`
+<Option name="Basic Filters URL param changed to `encoded_filters`">
 When we added the [Dynamic Filters](./dynamic-filters) feature, by mistake we introduced a bug where you couldn't use the [Basic](./basic-filters) and [Dynamic Filters](./dynamic-filters) together because they are both using the `filters` URL param.
 
 This is not what we intended.
@@ -166,23 +166,23 @@ If you have hardcoded links where you reference the `filters` param, change that
 These links might be in Tools, Resource Tools, Menu Items, or regular view partials (yes, basically anywhere you might have added them 🫤).
 
 A quick search through your codebase should reveal them.
-:::
+</Option>
 
-:::option Add `active_record_extended` gem to your `Gemfile`
+<Option name="Add `active_record_extended` gem to your `Gemfile`">
 In order to extend Avo's filtering capabilities for arrays and tags fields, we use the [`active_record_extended`](https://github.com/GeorgeKaraszi/ActiveRecordExtended) gem.
 
 This gem uses postgres and was breaking for those who use any other database like `sqlite`.
 
 If you want to keep `Contained in` option on arrays and tags filters you should include the `active_record_extended` gem to your `Gemfile`.
-:::
+</Option>
 
-:::option Multiple action flux
+<Option name="Multiple action flux">
 First iteration of multiple action flux was using `redirect_to` with `turbo_frame: "actions_show"`. With the update to turbo 8 the redirect was giving some troubles and we decided that is time to improve this experience with a proper response type, [`navigate_to_action`](actions.html#navigate_to_action).
 
 If you have a multiple action flux implemented with `redirect_to` you should change it to [`navigate_to_action`](actions.html#navigate_to_action).
-:::
+</Option>
 
-:::option Action `link_arguments` method
+<Option name="Action `link_arguments` method">
 Action `link_arguments` method handles the `arguments` encoding and encryption internally now so you only need to pass the `arguments` as a hash and the returned `path` will already include the encoded arguments.
 
 ```ruby{20,21,22,23,25}
@@ -212,26 +212,26 @@ field :name,
 
   link_to resource.record.name, path, data: data
 end
-:::
+</Option>
 
-:::option `resource.record` or `record` as `nil` on visibility blocks
+<Option name="`resource.record` or `record` as `nil` on visibility blocks">
 You may notice that `resource.record == nil` on some visibility blocks. That happens when evaluating the field visibility to render header columns. On index, there is no record.
 
 This is a consequence of a bug fix where `resource.record` was wrongly storing the last record of the index table.
 
 Check [this discussion](https://github.com/avo-hq/avo/issues/2544) for more details
-:::
+</Option>
 
 ## Upgrade from 3.3.0 to 3.4.0
 
 Ruby 3.0 is end-of-life and we pushed some code that only works with Ruby 3.1.
 
 ## Upgrade from 3.2.2 to 3.3.0
-:::option `may_download_file` deprecated
+<Option name="`may_download_file` deprecated">
 Actions now fully operate with turbo leading to the deprecation of `may_download_file` option. It can be safely removed from all actions.
-:::
+</Option>
 
-:::option Status field `failed_when` and `loading_when` default to and empty array
+<Option name="Status field `failed_when` and `loading_when` default to and empty array">
 We found [some issues](https://github.com/avo-hq/avo/pull/2316) with declaring defaults to `failed_when` and `loading_when` field options so we are now defaulting them to empty arrays.
 
 If you need that behavior back, add it to your fields.
@@ -242,13 +242,13 @@ field :status,
   failed_when: [:failed],
   loading_when: [:waiting, :running]
 ```
-:::
+</Option>
 
-:::option Scopes namespace change
+<Option name="Scopes namespace change">
 Scopes changed namespace from `Avo::Pro::Scopes` to `Avo::Advanced::Scopes`.
-:::
+</Option>
 
-:::option TailwindCSS integration
+<Option name="TailwindCSS integration">
 The symlink generated by `avo:sym_link` task was renamed from `tmp/avo/base.css` to `tmp/avo/avo.base.css`. If your application has the TailwindCSS integration generated before Avo `3.3.0` you should replace `@import '../../../../tmp/avo/base.css';` with `'../../../../tmp/avo/avo.base.css';` in `app/assets/stylesheets/avo/avo.tailwind.css`.
 
 ```css
@@ -257,35 +257,35 @@ The symlink generated by `avo:sym_link` task was renamed from `tmp/avo/base.css`
 @import '../../../../tmp/avo/base.css'; // [!code --]
 @import '../../../../tmp/avo/avo.base.css'; // [!code ++]
 ```
-:::
+</Option>
 
 ## Upgrade from 3.1.3 to 3.1.4
 
-:::option `Avo::Filters::BaseFilter.decode_filters`
+<Option name="`Avo::Filters::BaseFilter.decode_filters`">
 We removed the rescue that would return `{}` on parsing error. This rescue block was occasionally concealing pertinent errors. Ensure that when invoking `Avo::Filters::BaseFilter.decode_filters` the argument is not `nil` and has been encoded using the `Avo::Filters::BaseFilter.encode_filters` method.
-:::
+</Option>
 
 ## Upgrade from 3.0.1.beta24 to 3.0.2
 
-:::option Sidebar should be declared inside a panel
+<Option name="Sidebar should be declared inside a panel">
 We introduced the `main_panel` option and also refactored the way that fields are fetched from the resource, now we allow multiple sidebars per panel but each sidebar should be defined inside a `panel` or `main_panel` block.
 
 We suggest to read [panels](resource-panels) and [sidebars](resource-sidebar) sections for more information and to be aware of the new possibilities.
-:::
+</Option>
 
-:::option Dashboards visibility and authorization
+<Option name="Dashboards visibility and authorization">
 Previously, if the `visible` attribute was set to `false` on dashboards, visiting them was impossible because the controller would trigger a "Not found" error. In cases where `authorize` returned `false`, the controller would block access but still keep the dashboard visible.
 
 This behavior has been enhanced. Now, even if `visible` is set to `false`, the dashboard remains accessible but won't appear in the menu. Additionally, if `authorize` returns `false`, the dashboards are now hidden.
-:::
+</Option>
 
-:::option Actions
+<Option name="Actions">
 We've internally implemented some changes around actions to resolve certain bugs. No action is needed from your end, but if you happen to notice any anomalies in the actions flow, please get in touch with us so we can address them promptly. Thank you.
-:::
+</Option>
 
-:::option Attachments eager load
+<Option name="Attachments eager load">
 
-Attachments are no longer automatically eager loading. If you want to eager load attachments there are at least two ways:
+</Option>
 
 ### Use [`self.includes`](resources.html#self_includes) option
 
@@ -315,7 +315,7 @@ class Avo::Resources::Product < Avo::BaseResource
 
 ## Upgrade from 3.0.1.beta23 to 3.0.1.beta24
 
-:::option Cards
+<Option name="Cards">
 With the new feature that allow [cards on resources](resources.html#cards)  we've realized that it's no longer logical to retain cards within the `Dashboard` namespace scope. Consequently, each card is now located within the `Avo::Cards` namespace.
 
 ```ruby
@@ -332,20 +332,20 @@ class Avo::Cards::ExampleBarChart < Avo::Cards::ChartkickCard
 # ...
 
 ```
-:::
+</Option>
 
 
 ## Upgrade from 3.0.1.beta22 to 3.0.1.beta23
-:::option Caching
+<Option name="Caching">
 Since there are many available cache stores and we were allowing only few we changed the way of computing the cache store to be used by Avo.
 
 One of our concerns was to maintain the status quo, but if you notice any caching issues there is a new configurable option [`config.cache_store`](cache#custom-selection) that allows you to tell Avo what `cache_store` to use.
 
 Check [cache page](cache) for more details.
-:::
+</Option>
 
 ## Upgrade from 3.0.1.beta8 to 3.0.1.beta9
-:::option Heading as field
+<Option name="Heading as field">
 Heading option changed declaration mode, one of the main reasons for this change is to be able to generate a clear `data-field-id` on the DOM
 
 For more information about `heading` field syntax check [`heading` field's documentation](./fields/heading).
@@ -361,9 +361,9 @@ field :personal_information, as: :heading       # data-field-id == "personal_inf
 field :heading, as: :heading, label: "Contact"  # data-field-id == "heading"
 field :dev, as: :heading, as_html: true, label: '<div class="underline uppercase font-bold">DEV</div>'
 ```
-:::
+</Option>
 
-:::option Badge field `secondary` option renamed to `neutral`
+<Option name="Badge field `secondary` option renamed to `neutral`">
 We believe that the term `neutral` better reflects the intended use.
 ::: code-group
 ```ruby {8} [Before]
@@ -389,9 +389,9 @@ field :stage,
     neutral: :drafting
   }
 ```
-:::
+</Option>
 
-:::option Rename `link_to_resource` to `link_to_record`
+<Option name="Rename `link_to_resource` to `link_to_record`">
 `link_to_resource` was renamed to `link_to_record`.
 ::: code-group
 ```ruby {3-4} [Before]
@@ -411,11 +411,11 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
-:::
+</Option>
 
 ## Upgrade from 3.0.1.beta5 to 3.0.1.beta6
 
-:::option The status field changed behavior
+<Option name="The status field changed behavior">
 Before, for the status you'd set the `failed` and `loading` states and everything else fell under `success`. That felt unnatural. We needed a `neutral` state.
 Now we changed the field so you'll set the `failed`, `loading`, and `success` values and the rest fall under `neutral`.
 
@@ -433,4 +433,4 @@ field :status,
   loading_when: :loading
   success_when: :deployed # specify the success state
 ```
-:::
+</Option>

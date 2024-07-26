@@ -16,7 +16,7 @@ field :skills, as: :tags
 
 ## Options
 
-:::option `suggestions`
+<Option name="`suggestions`">
 
 You can give suggestions to your users to pick from which will be displayed to the user as a dropdown under the field.
 
@@ -74,7 +74,7 @@ class Post < ApplicationRecord
 end
 ```
 
-:::
+</Option>
 
 <Option name="`disallowed`">
 
@@ -135,7 +135,7 @@ field :skills,
 
 Integers
 
-:::option `close_on_select`
+<Option name="`close_on_select`">
 Set whether the `suggestions` dropdown should close after the user makes a selection.
 
 ```ruby{4}
@@ -148,9 +148,9 @@ field :items,
 <Image src="/assets/img/fields/tags-field/close_on_select.gif" width="786" height="436" alt="Avo tags field" />
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `acts_as_taggable_on`
+<Option name="`acts_as_taggable_on`">
 Set the field the `acts_as_taggable_on` is set.
 
 #### Default
@@ -160,9 +160,9 @@ Set the field the `acts_as_taggable_on` is set.
 #### Possible values
 
 Any string or symbol you have configured on your corresponding model.
-:::
+</Option>
 
-:::option `delimiters`
+<Option name="`delimiters`">
 
 Set the characters that will cut off the content into tags when the user inputs the tags.
 
@@ -184,10 +184,10 @@ field :skills,
 
 Valid values are comma `,` and space ` `.
 
-:::
+</Option>
 
 
-:::option `mode`
+<Option name="`mode`">
 
 By default, the tags field produces an array of items (ex: categories for posts), but in some scenarios you might want it to produce a single value (ex: dynamically search for users and select just one). Use `mode: :select` to make the field produce a single value as opposed to an array of values.
 
@@ -207,7 +207,7 @@ Valid values are `nil` for array values and `select` for a single value.
 
 <Image src="/assets/img/fields/tags-field/mode-select.gif" width="800" height="666" alt="" />
 
-:::
+</Option>
 
 <Option name="`fetch_values_from`">
 
