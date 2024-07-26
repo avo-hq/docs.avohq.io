@@ -14,6 +14,7 @@ For example, you might want to mark a user as active/inactive and optionally sen
 Once you attach an action to a resource using the `action` method inside the `actions` method, it will appear in the **Actions** dropdown. By default, actions appear on the `Index`, `Show`, and `Edit` views. Versions previous to 2.9 would only display the actions on the `Index` and `Show` views.
 
 <Image src="/assets/img/actions/actions-dropdown.gif" width="710" height="462" alt="Actions dropdown" />
+
 :::info
 Since version <Version version="2.13" /> you may use the [customizable controls](./customizable-controls) feature to show the actions outside the dropdown.
 :::
