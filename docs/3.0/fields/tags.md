@@ -16,7 +16,7 @@ field :skills, as: :tags
 
 ## Options
 
-:::option `suggestions`
+<Option name="`suggestions`">
 
 You can give suggestions to your users to pick from which will be displayed to the user as a dropdown under the field.
 
@@ -74,7 +74,7 @@ class Post < ApplicationRecord
 end
 ```
 
-:::
+</Option>
 
 <Option name="`disallowed`">
 
@@ -115,7 +115,7 @@ field :skills,
 
 </Option>
 
-:::option `suggestions_max_items`
+<Option name="`suggestions_max_items`">
 Set of suggestions that can be displayed at once. The excessive items will be hidden and the user will have to narrow down the query to see them.
 
 ```ruby{4}
@@ -134,8 +134,9 @@ field :skills,
 #### Possible values
 
 Integers
+</Option>
 
-:::option `close_on_select`
+<Option name="`close_on_select`">
 Set whether the `suggestions` dropdown should close after the user makes a selection.
 
 ```ruby{4}
@@ -148,9 +149,9 @@ field :items,
 <Image src="/assets/img/fields/tags-field/close_on_select.gif" width="786" height="436" alt="Avo tags field" />
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `acts_as_taggable_on`
+<Option name="`acts_as_taggable_on`">
 Set the field the `acts_as_taggable_on` is set.
 
 #### Default
@@ -160,9 +161,9 @@ Set the field the `acts_as_taggable_on` is set.
 #### Possible values
 
 Any string or symbol you have configured on your corresponding model.
-:::
+</Option>
 
-:::option `delimiters`
+<Option name="`delimiters`">
 
 Set the characters that will cut off the content into tags when the user inputs the tags.
 
@@ -184,10 +185,10 @@ field :skills,
 
 Valid values are comma `,` and space ` `.
 
-:::
+</Option>
 
 
-:::option `mode`
+<Option name="`mode`">
 
 By default, the tags field produces an array of items (ex: categories for posts), but in some scenarios you might want it to produce a single value (ex: dynamically search for users and select just one). Use `mode: :select` to make the field produce a single value as opposed to an array of values.
 
@@ -207,7 +208,7 @@ Valid values are `nil` for array values and `select` for a single value.
 
 <Image src="/assets/img/fields/tags-field/mode-select.gif" width="800" height="666" alt="" />
 
-:::
+</Option>
 
 <Option name="`fetch_values_from`">
 
@@ -269,6 +270,7 @@ if defined? ::Avo
   end
 end
 ```
+:::
 
 :::info
 When using the `fetch_labels_from` pattern, on the <Show /> and <Index /> views you will see the `id` of those options instead of the label.
@@ -279,9 +281,10 @@ To mitigate that use the `fetch_labels` option.
 
 </Option>
 
-:::option `fetch_labels`
+<Option name="`fetch_labels`">
+
 :::warning
-Deprecated since <Version version="3.10"/> in favor of [`format_using`](tags#format_using)
+Deprecated since <Version version="3.10" /> in favor of [`format_using`](tags#format_using)
 :::
 
 The `fetch_labels` option allows you to pass an array of custom strings to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.
@@ -306,8 +309,9 @@ Avo's default behavior on tags
 #### Possible values
 
 - Array of strings
+</Option>
 
-:::option `format_using`
+<Option name="`format_using`">
 :::info
 Since <Version version="3.10" />
 :::
@@ -340,6 +344,7 @@ Avo's default behavior on tags
 
 - Array of strings, notice that this will replace the DB values
 - Array of hashes with `value` and `label` keys. WIll show the `label` and store the `value`
+</Option>
 
 ## PostgreSQL array fields
 

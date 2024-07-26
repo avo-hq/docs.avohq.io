@@ -49,7 +49,7 @@ gem "money-rails", "~> 1.12"
 
 ## Options
 
-:::option `currencies`
+<Option name="`currencies`">
 
 The `currencies` option controls which currencies will be visible on the dropdown.
 
@@ -69,4 +69,4 @@ By default it's going to be an empty array.
 Add an array of currencies by the ISO code.
 
 `%w[EUR USD RON PEN]`
-:::
+</Option>

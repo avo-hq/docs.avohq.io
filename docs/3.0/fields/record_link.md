@@ -51,7 +51,7 @@ end
 
 Besides some of the [default options](./../field-options.html), there are a few custom ones.
 
-:::option `target`
+<Option name="`target`">
 In case you want to set the target to `_blank`.
 
 #### Default value
@@ -67,9 +67,9 @@ In case you want to set the target to `_blank`.
 ```ruby
 field :post, as: :record_link, target: :blank
 ```
-:::
+</Option>
 
-:::option `use_resource`
+<Option name="`use_resource`">
 
 Because you only give it an instance of a record, Avo will try to guess which resource it should use to display the title of the record and how to compute it's link.
 With more advanced configurations (when you have [multiple resources for the same model](./../resources.html#use-multiple-resources-for-the-same-model)) that resource might not be the one that you wish for.
@@ -93,9 +93,9 @@ field :admin, as: :record_link, use_resource: "AdminUser"
 
 field :thumbnail, as: :record_link, use_resource: "Avo::Resources::TinyPhoto"
 ```
-:::
+</Option>
 
-:::option `add_via_params`
+<Option name="`add_via_params`">
 
 In other places where Avo generates a link to a record like in the [`belongs_to` field](./../associations/belongs_to.html), Avo adds `via` params to the URL so it knows how to generate the back button link.
 That URL can also be passed on to other team mates and everyone can have the same navigation experience.
@@ -121,7 +121,7 @@ field :post, as: :record_link, add_via_params: true
 # https://example.com/avo/resources/projects/40
 field :post, as: :record_link, add_via_params: false
 ```
-:::
+</Option>
 
 ## Using computed values
 

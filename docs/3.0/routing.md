@@ -24,7 +24,7 @@ Avo::Engine.routes.draw do
 end
 ```
 
-:::option `Avo.mount_engines` helper
+<Option name="`Avo.mount_engines` helper">
 
 In order to make mounting the engines easier we added the `Avo.mount_engines` helper which returns a block that can be run in any routing context.
 
@@ -36,7 +36,7 @@ Avo::Engine.routes.draw do
   # other routes
 end
 ```
-:::
+</Option>
 
 Sometimes you might have more exotic use-cases so you'd like to customize those paths accordingly.
 

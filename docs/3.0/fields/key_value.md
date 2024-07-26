@@ -15,7 +15,7 @@ field :meta, as: :key_value
 
 ## Options
 
-:::option `key_label`
+<Option name="`key_label`">
 Customize the label for the key header.
 
 #### Default
@@ -25,9 +25,9 @@ Customize the label for the key header.
 #### Possible values
 
 Any string value.
-:::
+</Option>
 
-:::option `value_label`
+<Option name="`value_label`">
 Customize the label for the value header.
 
 #### Default
@@ -37,9 +37,9 @@ Customize the label for the value header.
 #### Possible values
 
 Any string value.
-:::
+</Option>
 
-:::option `action_text`
+<Option name="`action_text`">
 Customize the label for the add row button tooltip.
 
 #### Default
@@ -49,9 +49,9 @@ Customize the label for the add row button tooltip.
 #### Possible values
 
 Any string value.
-:::
+</Option>
 
-:::option `delete_text`
+<Option name="`delete_text`">
 Customize the label for the delete row button tooltip.
 
 #### Default
@@ -61,37 +61,37 @@ Customize the label for the delete row button tooltip.
 #### Possible values
 
 Any string value.
-:::
+</Option>
 
-:::option `disabled`
+<Option name="`disabled`">
 Toggle on/off the ability to disable editing keys, editing values, adding rows, and deleting rows for that field.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `disable_editing_keys`
+<Option name="`disable_editing_keys`">
 Toggle on/off the ability to edit the keys for that field. Turning this off will allow the user to customize only the value fields.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `disable_editing_values`
+<Option name="`disable_editing_values`">
 Toggle on/off the ability to edit the values for that field. Turning this off will allow the user to customize only the key fields.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `disable_adding_rows`
+<Option name="`disable_adding_rows`">
 Toggle on/off the ability to add new rows.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `disable_deleting_rows`
+<Option name="`disable_deleting_rows`">
 Toggle on/off the ability to delete rows from that field. Turning this on will prevent the user from deleting existing rows.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
 ## Customizing the labels
 

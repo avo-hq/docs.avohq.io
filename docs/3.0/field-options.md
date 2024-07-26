@@ -384,12 +384,12 @@ Now, all fields will have the stacked layout throughout your app.
 
 ## Field options
 
-:::option `use_resource`
+<Option name="`use_resource`">
 <!-- TODO: this -->
 WIP
-:::
+</Option>
 
-:::option `components`
+<Option name="`components`">
 The field's `components` option allows you to customize the view components used for rendering the field in all, `index`, `show` and `edit` views. This provides you with a high degree of flexibility.
 
 ### Ejecting the field components
@@ -446,7 +446,7 @@ The components block it's executed using `Avo::ExecutionContent` and gives acces
 It's important to keep the initializer on your custom components as the original field view component initializer.
 :::
 
-:::option `html`
+<Option name="`html`">
 ### Attach HTML attributes
 
 Using the `html` option you can attach `style`, `classes`, and `data` attributes. The `style` attribute adds the `style` tag to your element, `classes` adds the `class` tag, and the `data` attribute the `data` tag to the element you choose.
@@ -467,6 +467,7 @@ field :name, as: :text, html: {
   }
 }
 ```
+</Option>
 
 #### Declare the fields from the outside in
 
@@ -639,9 +640,9 @@ field :name, as: :text, html: {
 
 <Image src="/assets/img/stimulus/edit-input-target.jpg" width="1646" height="784" alt="Index field wrapper" />
 
-:::
+</Option>
 
-:::option `summarizable`
+<Option name="`summarizable`">
 
 ```ruby
 field :status, as: :select, summarizable: true
@@ -649,9 +650,9 @@ field :status, as: :select, summarizable: true
 field :status, as: :badge, summarizable: true
 ```
 This section is WIP.
-:::
+</Option>
 
-:::option `for_attribute`
+<Option name="`for_attribute`">
 
 Allows to specify the target attribute on the model for each field. By default the target attribute is the field's id.
 
@@ -669,9 +670,9 @@ field :secondary_field_for_status,
   except_on: :forms,
   help: "Secondary field for status using the for_attribute option"
 ```
-:::
+</Option>
 
-:::option `meta`
+<Option name="`meta`">
 
 This handy option enables you to send arbitrary information to the field. It's especially useful when you're building your own [custom fields](./custom-fields) or you are using [custom components](#components) for the built-in fields.
 
@@ -704,4 +705,4 @@ Within your field template you can now access the `@field.meta` attribute.
   <% end %>
 <% end %>
 ```
-:::
+</Option>

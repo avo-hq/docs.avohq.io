@@ -63,7 +63,7 @@ end
 
 The scope classes take a few options.
 
-:::option `name`
+<Option name="`name`">
 This value is going to be displayed on the scopes bar as the name of the scope.
 
 This can be a callable value and it receives the `resource` and `query` objects.
@@ -71,15 +71,15 @@ This can be a callable value and it receives the `resource` and `query` objects.
 The `query` object can be used to compute and display the record count.
 
 Please see [the recipe](./guides/display-scope-record-count.html) on how to enable it.
-:::
+</Option>
 
-:::option `description`
+<Option name="`description`">
 This value is going to be displayed when the user hovers over the scope.
 
 This can be a callable value and it receives the `resource` and `query` objects.
-:::
+</Option>
 
-:::option `scope`
+<Option name="`scope`">
 The scope you return here is going to be applied to the query of records on that page.
 
 You can use a symbol which will indicate the scope on that model or a block which will have the `query` available so you can apply any modifications you need.
@@ -92,8 +92,8 @@ class Avo::Scopes::EvenId < Avo::Advanced::Scopes::BaseScope
   self.visible = -> { true }
 end
 ```
-:::
+</Option>
 
-:::option `visible`
+<Option name="`visible`">
 From this block you can show, hide, and authorize the scope on the resource.
-:::
+</Option>
