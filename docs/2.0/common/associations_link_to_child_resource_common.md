@@ -1,4 +1,4 @@
-:::option `link_to_child_resource`
+<Option name="`link_to_child_resource`">
 
 Sets which resource should be used in an STI scenario.
 
@@ -11,4 +11,4 @@ See more on this in the [STI section](./../associations#link-to-child-resource-w
 #### Possible values
 
 `true`, `false`.
-:::
+</Option>

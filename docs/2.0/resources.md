@@ -357,26 +357,26 @@ end
 
 ## Views
 
-:::option `Index`
+<Option name="`Index`">
 
 The page where you see all your resources listed in a table or a [grid](grid-view.html).
 
-:::
-:::option `Show`
+</Option>
+<Option name="`Show`">
 
 The page where you see one resource in more detail.
 
-:::
-:::option `Edit`
+</Option>
+<Option name="`Edit`">
 
 The page where you can edit one resource.
 
-:::
-:::option `New`
+</Option>
+<Option name="`New`">
 
 The page where you can create a new resource.
 
-:::
+</Option>
 
 ### Grid view
 
@@ -568,7 +568,7 @@ end
 This tells Avo which resources you use and stops the eager-loading process on boot-time.
 This means that other resources that are not declared in this array will not show up in your app.
 
-:::option self.pagination
+<Option name="self.pagination">
 <VersionReq version="2.45" />
 This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
 
@@ -644,4 +644,4 @@ self.pagination = -> do
 end
 ```
 ![Countless pagination size empty](/assets/img/resources/pagination/countless_empty_size.png)
-:::
+</Option>

@@ -108,10 +108,6 @@ Using `full_width_container: true` tells Avo to display all views full-width.
 
 ## Cache resources on the `Index` view
 
-<!-- :::info
-  Since version <Version version="2.30" /> `cache_resources_on_index_view` is disabled by default.
-::: -->
-
 Avo caches each resource row (or Grid item for Grid view) for performance reasons. You can disable that cache using the `cache_resources_on_index_view` configuration option. The cache key is using the record's `id` and `created_at` attributes and the resource file `md5`.
 
 :::info
@@ -468,7 +464,7 @@ config.logger = -> {
 }
 ```
 
-::::option `default_url_options`
+<Option name="`default_url_options`">
 `default_url_options` is a Rails [controller method](https://apidock.com/rails/ActionController/Base/default_url_options) that will append params automatically to the paths you generate through path helpers.
 
 In order to implement some features like route-level Multitenancy we exposed an API to add to Avo's `default_url_options` method.
@@ -487,11 +483,12 @@ Rails.application.routes.draw do
   end
 end
 ```
+:::
 
 Now, when you visit `https://example.org/account/adrian/avo`, the `account_id` param is `adrian` and it will be appended to all path helpers.
-::::
+</Option>
 
-:::option `turbo`
+<Option name="`turbo`">
 You may want to configure how turbo behave on Avo.
 
 You can configure it using `config.turbo` option on `avo.rb` initializer
@@ -505,9 +502,9 @@ Supported options with default values:
     }
   end
 ```
-:::
+</Option>
 
-:::option `pagination`
+<Option name="`pagination`">
 You can configure the default pagination settings key by key.
 
 ```ruby
@@ -527,9 +524,9 @@ end
 This will make all your application's tables countless keeping the size key / value as the default one.
 
 Verify all possible options [here](resources#self_pagination).
-:::
+</Option>
 
-::::option `click_row_to_view_record`
+<Option name="`click_row_to_view_record`">
 
 <!-- <BetaStatus status="beta" /> -->
 
@@ -551,4 +548,4 @@ end
 ```
 
 <Image src="/assets/img/3_0/customization/click-row-to-view-record.gif" width="" height="" alt="Click to view record in Avo" />
-::::
+</Option>

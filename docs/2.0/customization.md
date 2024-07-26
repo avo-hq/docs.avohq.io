@@ -110,10 +110,6 @@ Using `full_width_container: true` tells Avo to display all views full-width.
 
 ## Cache resources on the `Index` view
 
-<!-- :::info
-  Since version <Version version="2.30" /> `cache_resources_on_index_view` is disabled by default.
-::: -->
-
 Avo caches each resource row (or Grid item for Grid view) for performance reasons. You can disable that cache using the `cache_resources_on_index_view` configuration option. The cache key is using the record's `id` and `created_at` attributes and the resource file `md5`.
 
 :::info

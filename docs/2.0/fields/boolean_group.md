@@ -17,7 +17,7 @@ field :roles, as: :boolean_group, name: 'User roles', options: { admin: 'Adminis
 
 ## Options
 
-:::option `options`
+<Option name="`options`">
 `options` should be a `Hash` with the keys to one of the four available types (`info`, `success`, `warning`, `danger`) and the values matching your record's database values.
 
 #### Default value
@@ -30,7 +30,7 @@ field :roles, as: :boolean_group, name: 'User roles', options: { admin: 'Adminis
   warning: :warning
 }
 ```
-:::
+</Option>
 
 ## Example DB payload
 

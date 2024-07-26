@@ -15,7 +15,7 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css'
 
 ## Options
 
-:::option `theme`
+<Option name="`theme`">
 
 Customize the color theme.
 
@@ -28,9 +28,9 @@ Customize the color theme.
 `material-darker`, `eclipse`, or `dracula`
 
 Preview the themes here: [codemirror-themes](https://codemirror.net/demo/theme.html).
-:::
+</Option>
 
-:::option `language`
+<Option name="`language`">
 Customize the syntax highlighting using the language method.
 
 #### Default value
@@ -40,9 +40,9 @@ Customize the syntax highlighting using the language method.
 #### Possible values
 
 `css`, `dockerfile`, `htmlmixed`, `javascript`, `markdown`, `nginx`, `php`, `ruby`, `sass`, `shell`, `sql`, `vue` or `xml`.
-:::
+</Option>
 
-:::option `height`
+<Option name="`height`">
 Customize the height of the editor.
 
 #### Default value
@@ -52,9 +52,9 @@ Customize the height of the editor.
 #### Possible values
 
 `auto`, or any value in pixels (eg `height: 250px`).
-:::
+</Option>
 
-:::option `tab_size`
+<Option name="`tab_size`">
 Customize the tab_size of the editor.
 
 #### Default value
@@ -64,9 +64,9 @@ Customize the tab_size of the editor.
 #### Possible values
 
 Any integer value.
-:::
+</Option>
 
-:::option `indent_with_tabs`
+<Option name="`indent_with_tabs`">
 Customize the type of indentation.
 
 #### Default value
@@ -76,9 +76,9 @@ Customize the type of indentation.
 #### Possible values
 
 `true` or `false`
-:::
+</Option>
 
-:::option `line_wrapping`
+<Option name="`line_wrapping`">
 Customize whether the editor should apply line wrapping.
 
 #### Default value
@@ -88,4 +88,4 @@ Customize whether the editor should apply line wrapping.
 #### Possible values
 
 `true` or `false`
-:::
+</Option>

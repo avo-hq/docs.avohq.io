@@ -12,7 +12,7 @@ field :title, as: :text
 ```
 ## Options
 
-:::option `as_html`
+<Option name="`as_html`">
 Displays the value as HTML on the `Index` and `Show` views. Useful when you need to link to another record.
 
 ```ruby
@@ -22,10 +22,10 @@ end
 ```
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
 
-:::option `protocol`
+<Option name="`protocol`">
 Render the value with a protocol prefix on the `Index` and `Show` views. So, for example, you can make a text field a `mailto` link very quickly.
 
 ```ruby{3}
@@ -43,7 +43,7 @@ field :email,
 #### Possible values
 
 `mailto`, `tel`, or any other string value you need to pass to it.
-:::
+</Option>
 
 <!-- @include: ./../common/link_to_record_common.md-->
 

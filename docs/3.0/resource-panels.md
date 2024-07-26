@@ -156,7 +156,7 @@ end
 
 <Image src="/assets/img/tabs-and-panels/index-view.png" width="1024" height="724" alt="Index view" />
 
-:::option `visible`
+<Option name="`visible`">
 <VersionReq version="3.10.7" />
 The `visible` option allows you to dynamically control the visibility of a panel and all its children based on certain conditions.
 
@@ -169,4 +169,4 @@ panel name: "User information", visible: -> { resource.record.enabled? } do
   field :last_name, as: :text
 end
 ```
-:::
+</Option>

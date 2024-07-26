@@ -4,41 +4,41 @@
 
 On each request Avo will set some values on it.
 
-:::option `user`
+<Option name="`user`">
 This is what will be returned by the [`current_user_method`](./authentication.html#customize-the-current-user-method) that you've set in your initializer.
-:::
+</Option>
 
-:::option `params`
+<Option name="`params`">
 Equivalent of `request.params`.
-:::
+</Option>
 
-:::option `request`
+<Option name="`request`">
 The Rails `request`.
-:::
+</Option>
 
-:::option `context`
+<Option name="`context`">
 The [`context`](./customization.html#context) that you configured in your initializer evaluated in `Avo::ApplicationController`.
-:::
+</Option>
 
-:::option `view_context`
+<Option name="`view_context`">
 An instance of [`ActionView::Rendering`](https://api.rubyonrails.org/classes/ActionView/Rendering.html#method-i-view_context) off of which you can run any methods or variables that are available in your partials.
 
 ```ruby
 view_context.link_to "Avo", "https://avohq.io"
 ```
-:::
+</Option>
 
-:::option `locale`
+<Option name="`locale`">
 The `locale` of the app.
-:::
+</Option>
 
-:::option `tenant_id`
+<Option name="`tenant_id`">
 You can set the `tenant_id` for the current request.
-:::
+</Option>
 
-:::option `tenant`
+<Option name="`tenant`">
 You can set the `tenant` for the current request.
-:::
+</Option>
 
 **Related:**
   - [Multitenancy](./multitenancy)

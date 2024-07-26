@@ -20,7 +20,7 @@ field :progress,
 
 ## Options
 
-:::option `failed_when`
+<Option name="`failed_when`">
 Set the values for when the status is `failed`.
 
 #### Default value
@@ -30,9 +30,9 @@ Set the values for when the status is `failed`.
 #### Possible values
 
 `[:closed, :rejected, :failed]` or an array with strings or symbols that indicate the `failed` state.
-:::
+</Option>
 
-:::option `loading_when`
+<Option name="`loading_when`">
 Set the values for when the status is `loading`.
 
 #### Default value
@@ -42,6 +42,6 @@ Set the values for when the status is `loading`.
 #### Possible values
 
 `[:loading, :running, :waiting, "in progress"]` or an array with strings or symbols that indicate the `loading` state.
-:::
+</Option>
 
 

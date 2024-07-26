@@ -9,7 +9,7 @@ The second section is the `Options` section marked by an `h2` (`##`) paragraph.
 We should pass each option following this pattern:
 
 ```markdown
-:::option `OPTION_NAME_IN_CODE_BLOCK`
+<Option name="`OPTION_NAME_IN_CODE_BLOCK`">
 
 Short description of the feature.
 
@@ -25,7 +25,7 @@ Images here.
 
 Some possible values if they are known (`true`, `false`, `" "` `"on"`, `"off"`, etc.) or a text description about them.
 
-:::option
+</Option>
 ```
 
 After the options, if the field has a lot of options and permutations and you'd like to show more, we can add an `## Examples` block.

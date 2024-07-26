@@ -38,7 +38,7 @@ field :roles,
 
 
 
-:::option `options`
+<Option name="`options`">
 The `options` attribute should be a `Hash` where the keys match the DB keys and the values are the visible labels.
 
 #### Default value
@@ -68,7 +68,7 @@ end
 
 The output value must be a hash as described above.
 
-:::
+</Option>
 
 
 ## Updates

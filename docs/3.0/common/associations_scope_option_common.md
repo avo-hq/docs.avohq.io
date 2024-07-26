@@ -1,4 +1,4 @@
-:::option `scope`
+<Option name="`scope`">
 Scope out the records displayed in the table.
 
 #### Default
@@ -14,4 +14,4 @@ field :user,
 ```
 
 Pass in a block where you attach scopes to the `query` object. The block gets executed in the [`ExecutionContext`](./../execution-context).
-:::
+</Option>

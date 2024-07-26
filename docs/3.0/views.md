@@ -2,34 +2,34 @@
 
 The Avo CRUD feature generates with four main views for each resource.
 
-:::option `Index`
+<Option name="`Index`">
 The page where you see all your resources listed in a table or a [grid](grid-view.html).
 
 <RelatedList>
   <RelatedItem href="./customization.html#click_row_to_view_record">Click row to view record</RelatedItem>
 </RelatedList>
 
-:::
+</Option>
 
-:::option `Show`
+<Option name="`Show`">
 The page where you see one resource in more detail.
-:::
+</Option>
 
-:::option `Edit`
+<Option name="`Edit`">
 The page where you can edit one resource.
-:::
+</Option>
 
-:::option `New`
+<Option name="`New`">
 The page where you can create a new resource.
-:::
+</Option>
 
-:::option `Display`
+<Option name="`Display`">
 `:display` is an alias for the the `Index` and `Show` views where you can display records and their details.
-:::
+</Option>
 
-:::option `Form`
+<Option name="`Form`">
 `:form` is an alias for the `Edit` and `New` views for creating and editing records.
-:::
+</Option>
 
 ## Preview
 

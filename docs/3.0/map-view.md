@@ -39,23 +39,23 @@ end
 You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
 :::
 
-:::option `mapkick_options`
+<Option name="`mapkick_options`">
 The options you pass here are forwarded to the [`mapkick` gem](https://github.com/ankane/mapkick).
-:::
+</Option>
 
-:::option `record_marker`
+<Option name="`record_marker`">
 This block is being applied to all the records present in the current query to fetch the coordinates of off the record.
 
 You may use this block to fetch the coordinates from other places (API calls, cache queries, etc.) rather than the database.
 
 This block has to return a hash compatible with the [`PointMap` items](https://github.com/ankane/mapkick#point-map). Has to have `latitude` and `longitude` and optionally `tooltip`, `label`, or `color`.
-:::
+</Option>
 
-:::option `table`
+<Option name="`table`">
 This is the configuration for the adjacent table. You can set the visibility to `true` or `false`, and set the position of the table `:top`, `:right`, `:bottom`, or `:left`.
-:::
+</Option>
 
-:::option `extra_markers`
+<Option name="`extra_markers`">
 Available since version <Version version="3.10.3" />
 
 Allow to define extra markers. The `extra_markers` block is executed in the [`ExecutionContext`](./execution-context) and should return an array of hashes.
@@ -80,7 +80,7 @@ self.map_view = {
 }
 ```
 <Image src="/assets/img/extra-markers.png" width="3240" height="1970" alt="Map extra markers" />
-:::
+</Option>
 
 ## Make it the default view
 

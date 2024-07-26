@@ -1,4 +1,4 @@
-:::option Reloadable
+<Option name="Reloadable">
 
 <VersionReq version="3.3.6" />
 
@@ -32,3 +32,4 @@ In the above example, the reloadable will be visible if the current_user is an a
 The reloadable block executes within the [`ExecutionContext`](./../execution-context), granting access to all default methods and attributes.
 
 <Image src="/assets/img/reloadable.png" width="680" height="94" alt="Reloadable" />
+</Option>

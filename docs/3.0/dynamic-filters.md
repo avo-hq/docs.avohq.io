@@ -61,7 +61,7 @@ Avo uses the input value and the specified condition to build a Ransack query. T
 
 For instance, in the text filter example above, the `Contains` condition and the input value `John` are translated into a Ransack query resulting into the SQL `LIKE` operator to find all records where the name contains `John`.
 
-:::option Boolean
+<Option name="Boolean">
 
 ### Conditions
 
@@ -75,9 +75,9 @@ For instance, in the text filter example above, the `Contains` condition and the
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_admin?][is_true][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L38)
-:::
+</Option>
 
-:::option Date
+<Option name="Date">
 
 ### Conditions
 
@@ -95,9 +95,9 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_adm
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[created_at][lte][]=2024-07-02%2012%3A00), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L50)
-:::
+</Option>
 
-:::option Has many
+<Option name="Has many">
 
 This filter will give you options from the database.
 
@@ -119,9 +119,9 @@ This filter will give you options from the database.
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[memberships][contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L75)
-:::
+</Option>
 
-:::option Number
+<Option name="Number">
 
 ### Conditions
 
@@ -138,9 +138,9 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[member
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gte][]=2), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L27)
-:::
+</Option>
 
-:::option Select
+<Option name="Select">
 
 ### Conditions
 
@@ -155,9 +155,9 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gt
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[country][is][]=USA), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L55)
-:::
+</Option>
 
-:::option Text
+<Option name="Text">
 
 ### Conditions
 
@@ -178,8 +178,8 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[coun
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_name][contains][]=Avo), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L33)
-:::
-::::option Tags
+</Option>
+<Option name="Tags">
 
 ### Conditions
 
@@ -204,7 +204,7 @@ The source code uses custom dynamic filters DSL available <VersionReq version="3
 Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
 :::
 
-::::
+</Option>
 
 ## Options
 
@@ -223,13 +223,13 @@ if defined?(Avo::DynamicFilters)
 end
 ```
 
-:::option `button_label`
+<Option name="`button_label`">
 This will change the label on the expand label.
-:::
+</Option>
 
-:::option `always_expanded`
+<Option name="`always_expanded`">
 You may opt-in to have them always expanded and have the button hidden.
-:::
+</Option>
 
 ## Field to filter matching
 On versions **lower** than <Version version="3.10.0" /> the filters are not configurable so each field will have a dedicated filter type. Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
@@ -298,7 +298,7 @@ Each option specified below can be used as a key in the hash definition or as a 
 :::info Filters order
 The filter order is computed. Dynamic filters defined by the `dynamic_filter` method will respect the definition order and will be rendered first in the filter list. Filters declared using the field's `filterable` option will be sorted by label.
 :::
-:::option `label`
+<Option name="`label`">
 
 Customize filter's label
 
@@ -309,10 +309,10 @@ Field's / filter's ID humanized.
 #### Possible values
 
 Any string
-:::
+</Option>
 
 
-:::option `icon`
+<Option name="`icon`">
 
 Customize filter's icon. Check [icons documentation](./icons)
 
@@ -330,9 +330,9 @@ Text filter - `avo/font`<br>
 #### Possible values
 
 Any icon from [avo](https://github.com/avo-hq/avo/tree/feature/allow_actions_to_render_turbo_streams/app/assets/svgs/avo) or [heroicons](https://heroicons.com/).
-:::
+</Option>
 
-:::option `type`
+<Option name="`type`">
 
 Customize filter's type
 
@@ -350,9 +350,9 @@ Computed from field using [`field_to_filter` method](#field-to-filter-matching).
 - [`:text`](#text)<br>
 - [`:tags`](#tags)<br>
 - `:array`<br>
-:::
+</Option>
 
-:::option `query`
+<Option name="`query`">
 
 Customize filter's query
 
@@ -398,9 +398,9 @@ dynamic_filter :first_name,
     end
   }
 ```
-:::
+</Option>
 
-:::option `conditions`
+<Option name="`conditions`">
 
 Customize filter's conditions
 
@@ -433,9 +433,9 @@ dynamic_filter :first_name,
     not_case_sensitive: "Not case sensitive"
   }.invert
 ```
-:::
+</Option>
 
-:::option `query_attributes`
+<Option name="`query_attributes`">
 
 Customize filter's query attributes
 
@@ -482,9 +482,9 @@ dynamic_filter label: "User (email & first_name)",
 ```
 
 This is possible due to a Ransack feature. To use it, you need to add the association name before the attribute.
-:::
+</Option>
 
-:::option `suggestions`
+<Option name="`suggestions`">
 Suggestions work on filters that provide text input, enhancing the user experience by offering relevant options. This functionality is especially useful in scenarios where users might need guidance or where the filter values are numerous or complex.
 
 ##### Default value
@@ -524,4 +524,4 @@ field :first_name,
 dynamic_filter :first_name,
   suggestions: -> { ["Avo", "Cado", params[:extra_suggestion]] }
 ```
-:::
+</Option>
