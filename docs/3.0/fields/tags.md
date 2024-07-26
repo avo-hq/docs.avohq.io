@@ -158,16 +158,6 @@ Set the field the `acts_as_taggable_on` is set.
 Any string or symbol you have configured on your corresponding model.
 :::
 
-:::option `disallowed`
-#### Default
-
-`false`
-
-#### Possible values
-
-`true`, `false`
-:::
-
 :::option `delimiters`
 
 Set the characters that will cut off the content into tags when the user inputs the tags.
