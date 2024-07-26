@@ -311,7 +311,8 @@ Avo's default behavior on tags
 - Array of strings
 </Option>
 
-<Option name="`format_using`">
+<Option name="`format_using`" since="3.10">
+
 :::info
 Since <Version version="3.10" />
 :::
