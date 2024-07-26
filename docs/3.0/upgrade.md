@@ -12,8 +12,6 @@ In versions lower than <Version version="3.10.6" />, boolean fields with a `nil`
 
 <!-- ## Rails 8 support -->
 
-<!-- TODO: add ransack custom repo mention here -->
-
 ## Upgrade from 3.10 to 3.11
 
 ### Actions no longer need to be registered inside actions method
@@ -58,6 +56,7 @@ class Avo::Resources::Fish < Avo::BaseResource
   end
 end
 ```
+
 ## Upgrade from 3.9.2 to 3.10
 Deprecated [`fetch_labels`](fields/tags#fetch_labels) option in favor of [`format_using`](fields/tags#format_using) on tags field.
 
@@ -92,10 +91,8 @@ gem "rails", github: "rails/rails", branch: "main"
 # Update Avo
 gem "avo-advanced", ">= 3.9.1"
 
-# Use this `ransack` version
-# Follow this issue to get the fix in the library
-# https://github.com/activerecord-hackery/ransack/issues/1491
-gem "ransack", github: "avo-hq/ransack", branch: "fix/rails-8/delegate-alias-tracker-to-relation"
+# Use `ransack` version `4.2.0` for searching
+gem "ransack", ">= 4.2.0"
 
 # This version of acts-as-taggable-on is compatible with
 # Follow this PR to get the fix in the library
