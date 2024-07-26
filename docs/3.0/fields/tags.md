@@ -76,7 +76,8 @@ end
 
 :::
 
-:::option `dissallowed`
+<Option name="`disallowed`">
+
 The `disallowed` param works similarly to `suggestions`. Use it to prevent the user from adding specific values.
 
 ```ruby{3}
@@ -94,9 +95,11 @@ field :skills,
 #### Possible values
 
 An array of strings representing the value that can't be stored in the database.
-:::
 
-:::option `enforce_suggestions`
+</Option>
+
+<Option name="`enforce_suggestions`">
+
 Set whether the field should accept other values outside the suggested ones. If set to `true` the user won't be able to add anything else than what you posted in the `suggestions` option.
 
 ```ruby{4}
@@ -109,7 +112,8 @@ field :skills,
 <Image src="/assets/img/fields/tags-field/enforce_suggestions.gif" width="786" height="436" alt="Avo tags field" />
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+
+</Option>
 
 :::option `suggestions_max_items`
 Set of suggestions that can be displayed at once. The excessive items will be hidden and the user will have to narrow down the query to see them.
