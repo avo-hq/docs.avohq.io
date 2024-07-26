@@ -1,4 +1,4 @@
-:::option `use_resource`
+<Option name="`use_resource`">
 Sets a different resource to be used when displaying (or redirecting to) the association table.
 
 #### Default
@@ -18,4 +18,4 @@ Avo::Resources::Post
 # the stirng representation of the class
 "Avo::Resources::Post"
 ```
-:::
+</Option>

@@ -648,7 +648,7 @@ You may want to redirect users to filtered states of the <Index /> view from oth
 
 ### Rails helpers
 
-:::option `decode_filter_params`
+<Option name="`decode_filter_params`">
 
 Decodes the `filters` param. This Rails helper can be used anywhere in a view or off the `view_context`.
 
@@ -670,9 +670,9 @@ class DummyAction < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
-:::option `encode_filter_params`
+<Option name="`encode_filter_params`">
 
 Encodes a `filters` object into a serialized state that Avo understands. This Rails helper can be used anywhere in a view or off the `view_context`.
 
@@ -695,11 +695,11 @@ class DummyAction < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
 ### Standalone helpers
 
-:::option `Avo::Filters::BaseFilter.decode_filters`
+<Option name="`Avo::Filters::BaseFilter.decode_filters`">
 
 Decodes the `filters` param. This standalone method can be used anywhere.
 
@@ -716,9 +716,9 @@ class DummyAction < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
-:::option `Avo::Filters::BaseFilter.encode_filters`
+<Option name="`Avo::Filters::BaseFilter.encode_filters`">
 
 Encodes a `filters` object into a serialized state that Avo understands. This standalone method can be used anywhere.
 
@@ -735,7 +735,7 @@ class DummyAction < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
 ## Persistent filters
 

@@ -102,7 +102,7 @@ Avo.configure do |config|
 
 ## Configure the search result
 
-:::option `title`
+<Option name="`title`">
 
 By default, the search results will be displayed as text. By default search title will be the [resource title](./resources.html#self_title).
 
@@ -124,9 +124,9 @@ end
 ```
 
 <Image src="/assets/img/search/search_label.jpg" width="1406" height="674" alt="Search label" />
-:::
+</Option>
 
-:::option `description`
+<Option name="`description`">
 <LicenseReq license="pro" />
 
 You might want to show more than just the title in the search result. Avo provides the `card -> description` option to add some more information.
@@ -146,9 +146,9 @@ end
 ```
 
 <Image src="/assets/img/search/search_description.jpg" width="1396" height="754" alt="Search description" />
-:::
+</Option>
 
-:::option `image_url`
+<Option name="`image_url`">
 
 <LicenseReq license="pro" />
 
@@ -169,7 +169,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-:::option `image_format`
+</Option>option `image_format`
 
 <LicenseReq license="pro" />
 
@@ -193,7 +193,7 @@ end
 
 <Image src="/assets/img/search/search_avatar.jpg" width="1400" height="794" alt="Search avatar" />
 
-:::option `help`
+<Option name="`help`">
 
 You may improve the results listing header by adding a piece of text highlighting the fields you are looking for or any other instruction for the user. You do that by using the `help` attribute. This attribute takes a string and appends it to the title of the resource.
 
@@ -207,9 +207,9 @@ class Avo::Resources::Post < Avo::BaseResource
   }
 end
 ```
-:::
+</Option>
 
-:::option `result_path`
+<Option name="`result_path`">
 
 By default, when a user clicks on a search result, they will be redirected to that record, but you can change that using the `result_path` option.
 
@@ -221,9 +221,9 @@ class Avo::Resources::City < Avo::BaseResource
   }
 end
 ```
-:::
+</Option>
 
-:::option `hide_on_global`
+<Option name="`hide_on_global`">
 
 You might have a resource that you'd like to be able to perform a search on when on its `Index` page but not have it present in the global search. You can hide it using `hide_on_global: true`.
 
@@ -240,7 +240,7 @@ class Avo::Resources::TeamMembership < Avo::BaseResource
   }
 end
 ```
-:::
+</Option>
 
 ## Resource search
 

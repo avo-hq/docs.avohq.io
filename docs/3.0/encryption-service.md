@@ -10,25 +10,25 @@ The `EncryptionService` is an service that can be called anywhere on the app.
 
 ### Public methods
 
-:::option `encrypt`
+<Option name="`encrypt`">
 Used to encrypt data
-:::
+</Option>
 
-:::option `decrypt`
+<Option name="`decrypt`">
 Used to decrypt data
-:::
+</Option>
 
 <br><br>
 
 ### Mandatory arguments:
 
-:::option `message`
+<Option name="`message`">
 Object to be encrypted
-:::
+</Option>
 
-:::option `purpose`
+<Option name="`purpose`">
 A symbol with the purpose of encryption, can be anything, it just ***need to match when decrypting***.
-:::
+</Option>
 
 <br><br>
 

@@ -16,15 +16,15 @@ You will see three field types when you add a `BelongsTo` association to a model
 
 <!-- @include: ./../common/associations_searchable_option_common.md-->
 
-:::option `allow_via_detaching`
+<Option name="`allow_via_detaching`">
 Keeps the field enabled when visiting from the parent record.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
 <!-- @include: ./../common/associations_attach_scope_option_common.md-->
 
-:::option `polymorphic_as`
+<Option name="`polymorphic_as`">
 Sets the field as polymorphic with the key set on the model.
 
 #### Default
@@ -34,9 +34,9 @@ Sets the field as polymorphic with the key set on the model.
 #### Possible values
 
 A symbol, used on the `belongs_to` association with `polymorphic: true`.
-:::
+</Option>
 
-:::option `types`
+<Option name="`types`">
 Sets the types the field can morph to.
 
 #### Default
@@ -46,9 +46,9 @@ Sets the types the field can morph to.
 #### Possible values
 
 `[Post, Project, Team]`. Any array of model names.
-:::
+</Option>
 
-:::option `polymorphic_help`
+<Option name="`polymorphic_help`">
 Sets the help text for the polymorphic type dropdown. Useful when you need to specify to the user why and what they need to choose as polymorphic.
 
 #### Default
@@ -58,7 +58,7 @@ Sets the help text for the polymorphic type dropdown. Useful when you need to sp
 #### Possible values
 
 Any string.
-:::
+</Option>
 
 <!-- @include: ./../common/associations_use_resource_option_common.md-->
 

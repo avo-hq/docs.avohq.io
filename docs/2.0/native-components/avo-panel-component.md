@@ -36,65 +36,65 @@ All options are optional. You may render a panel without options.
 <% end %>
 ```
 
-:::option `name`
+<Option name="`name`">
 The name of the panel. It's displayed on the top under the breadcrumbs.
 
 #### Type
 `String`
 
 ![](/assets/img/native-components/avo-panel-component/name.jpg)
-:::
+</Option>
 
-:::option `description`
+<Option name="`description`">
 Small text under the name that speaks a bit about what the panel does.
 
 #### Type
 `String`
 
 ![](/assets/img/native-components/avo-panel-component/description.jpg)
-:::
+</Option>
 
-:::option `classes`
+<Option name="`classes`">
 A list of classes that should be applied to the panel container.
 
 #### Type
 `String`
 
 ![](/assets/img/native-components/avo-panel-component/classes.jpg)
-:::
+</Option>
 
-:::option `body_classes`
+<Option name="`body_classes`">
 A list of classes that should be applied to the body of panel.
 
 #### Type
 `String`
 
 ![](/assets/img/native-components/avo-panel-component/body_classes.jpg)
-:::
+</Option>
 
-:::option `data`
+<Option name="`data`">
 A hash of data attributes to be forwarded to the panel container.
 
 #### Type
 `Hash`
 
 ![](/assets/img/native-components/avo-panel-component/classes.jpg)
-:::
+</Option>
 
-:::option `display_breadcrumbs`
+<Option name="`display_breadcrumbs`">
 Toggles the breadcrumbs visibility. You can't customize the breadcrumbs yet.
 
 #### Type
 `Boolean`
 
 ![](/assets/img/native-components/avo-panel-component/display_breadcrumbs.jpg)
-:::
+</Option>
 
 ## Slots
 
 The component has a few slots where you customize the content in certain areas.
 
-:::option `tools`
+<Option name="`tools`">
 We created this slot as a place to put resource controls like the back, edit, delete, and detach buttons.
 This slot will collapse under the title and description when the screen resolution falls under `1024px`.
 
@@ -111,9 +111,9 @@ The section is automatically aligned to the right using `justify-end` class.
 ```
 
 ![](/assets/img/native-components/avo-panel-component/tools-slot.jpg)
-:::
+</Option>
 
-:::option `body`
+<Option name="`body`">
 This is one of the main slots of the component where the bulk of the content is displayed.
 
 ```erb{2-4}
@@ -125,9 +125,9 @@ This is one of the main slots of the component where the bulk of the content is 
 ```
 
 ![](/assets/img/native-components/avo-panel-component/body-slot.jpg)
-:::
+</Option>
 
-:::option `bare_content`
+<Option name="`bare_content`">
 Used when displaying the [Grid view](./../grid-view), it displays the data flush in the container and with no background.
 
 ```erb{2-4}
@@ -139,9 +139,9 @@ Used when displaying the [Grid view](./../grid-view), it displays the data flush
 ```
 
 ![](/assets/img/native-components/avo-panel-component/grid-view.jpg)
-:::
+</Option>
 
-:::option `footer_tools`
+<Option name="`footer_tools`">
 This is pretty much the same slot as `tools` but rendered under the `body` or `bare_content` slots.
 
 ```erb{2-4}
@@ -153,9 +153,9 @@ This is pretty much the same slot as `tools` but rendered under the `body` or `b
 ```
 
 ![](/assets/img/native-components/avo-panel-component/footer-controls.jpg)
-:::
+</Option>
 
-:::option `footer`
+<Option name="`footer`">
 The lowest available area at the end of the component.
 
 ```erb{2-4}
@@ -165,9 +165,9 @@ The lowest available area at the end of the component.
   <% end %>
 <% end %>
 ```
-:::
+</Option>
 
-:::option `sidebar`
+<Option name="`sidebar`">
 The sidebar will conveniently show things in a smaller area on the right of the `body`.
 
 ```erb{2-4}
@@ -178,9 +178,9 @@ The sidebar will conveniently show things in a smaller area on the right of the 
 <% end %>
 ```
 ![](/assets/img/native-components/avo-panel-component/sidebar.png)
-:::
+</Option>
 
-:::option `bare_sidebar`
+<Option name="`bare_sidebar`">
 Use this instead of `sidebar` to display content in a sidebar without the white background styling.
 
 ```erb{2-4}
@@ -190,4 +190,4 @@ Use this instead of `sidebar` to display content in a sidebar without the white 
   <% end %>
 <% end %>
 ```
-:::
+</Option>

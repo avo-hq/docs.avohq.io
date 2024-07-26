@@ -1,4 +1,4 @@
-:::option `discreet_pagination`
+<Option name="`discreet_pagination`">
 Hides the pagination details when only there's only one page for that association.
 
 #### Default
@@ -8,4 +8,4 @@ Hides the pagination details when only there's only one page for that associatio
 #### Possible values
 
 `true`, `false`
-:::
+</Option>

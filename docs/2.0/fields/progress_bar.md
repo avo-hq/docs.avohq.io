@@ -14,7 +14,7 @@ field :progress, as: :progress_bar
 
 ## Options
 
-:::option `max`
+<Option name="`max`">
 Sets the maximum value of the progress bar.
 
 #### Default
@@ -24,9 +24,9 @@ Sets the maximum value of the progress bar.
 #### Possible values
 
 Any number.
-:::
+</Option>
 
-:::option `step`
+<Option name="`step`">
 Sets the step in which the user can move the slider on the `Edit` and `New` views.
 
 #### Default
@@ -36,15 +36,15 @@ Sets the step in which the user can move the slider on the `Edit` and `New` view
 #### Possible values
 
 Any number.
-:::
+</Option>
 
-:::option `display_value`
+<Option name="`display_value`">
 Choose if the value is displayed on the `Edit` and `New` views above the slider.
 
 <!-- @include: ./../common/default_boolean_true.md-->
-:::
+</Option>
 
-:::option `value_suffix`
+<Option name="`value_suffix`">
 Set a string value to be displayed after the value above the progress bar.
 
 #### Default
@@ -54,7 +54,7 @@ Set a string value to be displayed after the value above the progress bar.
 #### Possible values
 
 `%` or any other string.
-:::
+</Option>
 
 ## Examples
 

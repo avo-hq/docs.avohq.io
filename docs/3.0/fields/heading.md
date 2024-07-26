@@ -34,7 +34,7 @@ The computed fields are not rendered on form views, same with heading field, if 
 
 ## Options
 
-:::option `as_html`
+<Option name="`as_html`">
 The `as_html` option will render it as HTML.
 
 ```ruby
@@ -44,12 +44,12 @@ end
 ```
 
 <!-- @include: ./../common/default_boolean_false.md -->
-:::
+</Option>
 
-:::option `label`
+<Option name="`label`">
 The content of `label` is the content displayed on the heading space.
 
 ```ruby
 field :some_id, as: :heading, label: "user information"
 ```
-:::
+</Option>

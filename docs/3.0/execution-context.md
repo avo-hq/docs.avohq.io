@@ -60,40 +60,40 @@ Avo::ExecutionContext.new(target: &SOME_BLOCK, record: User.first).handle
 
 This means you could throw any type of object at it and it it responds to a `call` method wil will be called with all those objects.
 
-:::option `target`
+<Option name="`target`">
 The block you'll pass to be evaluated. It may be anything but will only be evaluated if it responds to a `call` method.
-:::
+</Option>
 
-:::option `context`
+<Option name="`context`">
 Aliased to [`Avo::Current.context`](./avo-current#context).
-:::
+</Option>
 
-:::option `current_user`
+<Option name="`current_user`">
 Aliased to [`Avo::Current.user`](./avo-current#user).
-:::
+</Option>
 
-:::option `view_context`
+<Option name="`view_context`">
 Aliased to [`Avo::Current.view_context`](./avo-current#view_context).
-:::
+</Option>
 
-:::option `request`
+<Option name="`request`">
 Aliased to [`Avo::Current.request`](./avo-current#request).
-:::
+</Option>
 
-:::option `params`
+<Option name="`params`">
 Aliased to [`Avo::Current.params`](./avo-current#params).
-:::
+</Option>
 
-:::option Custom variables
+<Option name="Custom variables">
 You can pass any variable to the `ExecutionContext` and it will be available in that block.
 This is how we can expose `view`, `record`, and `resource` in the computed field example.
 
 ```ruby
 Avo::ExecutionContext.new(target: &SOME_BLOCK, record: User.first, view: :index, resource: resource).handle
 ```
-:::
+</Option>
 
-:::option `helpers`
+<Option name="`helpers`">
 Within the `ExecutionContext` you might want to use some of your already defined helpers. You can do that using the `helpers` object.
 
 ```ruby
@@ -106,4 +106,5 @@ class ProductsHelper
 end
 
 field :name, as: :text, format_using: -> { helpers.simple_name(value) }
-:::
+```
+</Option>

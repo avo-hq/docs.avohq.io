@@ -164,7 +164,7 @@ end
 
 The available action responses are:
 
-:::option `reload`
+<Option name="`reload`">
 
 When you use `reload`, a full-page reload will be triggered.
 
@@ -181,8 +181,8 @@ def handle(**args)
 end
 ```
 
-:::
-:::option `redirect_to`
+</Option>
+<Option name="`redirect_to`">
 
 `redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host`, `status` and any other arguments.
 
@@ -274,17 +274,18 @@ class Update < Avo::BaseAction
   end
 end
 ```
+:::
 
 :::info `turbo_frame`
 Notice the `turbo_frame: "actions_show"` present on the redirect of `PreUpdate` action. That argument is essential to have a flawless redirect between the actions.
 :::
+</Option>
 
-
-:::option `turbo`
+<Option name="`turbo`">
 There are times when you don't want to perform the actions with Turbo. In such cases, turbo should be set to false.
-:::
+</Option>
 
-:::option `download`
+<Option name="`download`">
 
 `download` will start a file download to your specified `path` and `filename`.
 
@@ -292,7 +293,7 @@ There are times when you don't want to perform the actions with Turbo. In such c
 
 If you find another way, please let us know 😅.
 
-::: code-group
+:::code-group
 
 ```ruby{3,19} [app/avo/actions/download_file.rb]
 class DownloadFile < Avo::BaseAction
@@ -327,8 +328,9 @@ class ProjectResource < Avo::BaseResource
 end
 ```
 :::
+</Option>
 
-:::option `keep_modal_open`
+<Option name="`keep_modal_open`">
 
 There might be situations where you want to run an action and if it fails, respond back to the user with some feedback but still keep it open and the inputs filled in.
 
@@ -355,7 +357,7 @@ class KeepModalOpenAction < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
 ## Customization
 
