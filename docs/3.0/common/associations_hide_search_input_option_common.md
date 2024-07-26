@@ -1,4 +1,4 @@
-:::option `hide_search_input`
+<Option name="`hide_search_input`">
 Hides the search input displayed on the association table.
 
 #### Default
@@ -8,4 +8,4 @@ Hides the search input displayed on the association table.
 #### Possible values
 
 `true`, `false`.
-:::
+</Option>

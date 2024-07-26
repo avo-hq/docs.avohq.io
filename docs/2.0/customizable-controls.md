@@ -52,31 +52,31 @@ A control is an item that you can place in a designated area. They can be one of
 
 You may use the following controls:
 
-:::option `back_button`
+<Option name="`back_button`">
 Links to a previous page. The link is not a `history.back()` action. It's computed based on the parameters sent by Avo. That ensures the user has consistent hierarchical progress through the app.
 
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
-:::
+</Option>
 
-:::option `delete_button`
+<Option name="`delete_button`">
 Adds the appropriate destroy form. It will take into account your authorization policy rules.
 
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
-:::
+</Option>
 
-:::option `detach_button`
+<Option name="`detach_button`">
 Adds the appropriate detach form. It's visible only on the association (`has_one`) page. It will take into account your authorization policy rules.
 
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
-:::
+</Option>
 
-:::option `actions_list`
+<Option name="`actions_list`">
 A dropdown where the user can see and run all the actions assigned to that resource.
 
 #### Supported options
@@ -96,25 +96,25 @@ actions_list exclude: DisableAccount
 # Or
 actions_list exclude: [ExportSelection, PublishPost]
 ```
-:::
+</Option>
 
-:::option `edit_button`
+<Option name="`edit_button`">
 Links to the record edit page.
 
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
-:::
+</Option>
 
-:::option `link_to`
+<Option name="`link_to`">
 Renders a link to a path set by you.
 
 #### Supported options
 
 `title`, `style`, `color`, `icon`, `target`, `data`, and `class`.
-:::
+</Option>
 
-:::option `action`
+<Option name="`action`">
 Renders a button that triggers an action. You must provide it an [Action](./actions) class.
 
 #### Supported options
@@ -128,7 +128,7 @@ action DisableAccount
 action ExportSelection, style: :text
 action PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 ```
-:::
+</Option>
 
 :::warning
 The way `show_controls` works is like a shortcut the the actions that you already declared on your resource, so you should also declare it on the resource as you normally would in order to have it here.
@@ -149,53 +149,53 @@ end
 
 ## Control Options
 
-:::option `title`
+<Option name="`title`">
 Sets the tooltip for that control.
 
 #### Possible values
 
 Any string value.
-:::
+</Option>
 
-:::option `style`
+<Option name="`style`">
 Sets the `style` attribute for the [`Avo::ButtonComponent`](https://github.com/avo-hq/avo/blob/main/app/components/avo/button_component.rb).
 
 #### Possible values
 
 `:primary`, `:outline`, `:text`
-:::
+</Option>
 
-:::option `color`
+<Option name="`color`">
 Sets the `color` attribute for the [`Avo::ButtonComponent`](https://github.com/avo-hq/avo/blob/main/app/components/avo/button_component.rb)
 
 #### Possible values
 
 Can be any color of [Tailwind's default color pallete](https://tailwindcss.com/docs/customizing-colors#default-color-palette) as a symbol.
-:::
+</Option>
 
-:::option `icon`
+<Option name="`icon`">
 Sets the icon for that button.
 
 #### Possible values
 
 Any [Heroicon](https://heroicons.com) you want. You must specify the style of the heroicon like so `heoricons/outline/academic-cap` or `heroicons/solid/adjustments`.
-:::
+</Option>
 
-:::option `target`
+<Option name="`target`">
 Sets the target for that control. So whatever you pass here will be passed to the control.
 
 #### Possible values
 
 `:_blank`, `:_top`, `:_self`
-:::
+</Option>
 
-:::option `class`
+<Option name="`class`">
 Sets the classes for that control.
 
 #### Possible values
 
 Any string value.
-:::
+</Option>
 
 ## Conditionally hiding/showing actions
 

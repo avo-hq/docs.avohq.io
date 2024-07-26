@@ -22,7 +22,7 @@ field :country, as: :country, display_code: true
 
 ## Options
 
-:::option `display_code`
+<Option name="`display_code`">
 
 You can easily choose to display the `code` of the country on **Index** and **Show** views by declaring `display_code` to `true`.
 
@@ -33,4 +33,4 @@ You can easily choose to display the `code` of the country on **Index** and **Sh
 ### Possible values
 
 `true`, `false`
-:::
+</Option>

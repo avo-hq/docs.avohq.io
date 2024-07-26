@@ -22,7 +22,7 @@ field :starting_at,
 ```
 
 
-:::option `format`
+<Option name="`format`">
 
 Format the date shown to the user on the `Index` and `Show` views.
 
@@ -33,9 +33,9 @@ Format the date shown to the user on the `Index` and `Show` views.
 #### Possible values
 
 Use [`luxon`](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) formatting tokens.
-:::
+</Option>
 
-:::option `picker_format`
+<Option name="`picker_format`">
 Format the date shown to the user on the `Edit` and `New` views.
 
 #### Default
@@ -45,9 +45,9 @@ Format the date shown to the user on the `Edit` and `New` views.
 #### Possible values
 
 Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
-:::
+</Option>
 
-:::option `picker_options`;
+<Option name="`picker_options`;">
 Passes the options here to [flatpickr](https://flatpickr.js.org/).
 
 #### Default
@@ -62,4 +62,4 @@ Use [`flatpickr`](https://flatpickr.js.org/options) options.
 These options may override other options like `picker_options`.
 :::
 
-::::
+</Option>

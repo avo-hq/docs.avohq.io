@@ -13,7 +13,7 @@ field :age, as: :number
 
 ## Options
 
-:::option `min`
+<Option name="`min`">
 Set the `min` attribute.
 
 #### Default
@@ -23,9 +23,9 @@ Set the `min` attribute.
 #### Possible values
 
 Any number.
-:::
+</Option>
 
-:::option `max`
+<Option name="`max`">
 Set the `max` attribute.
 
 #### Default
@@ -35,9 +35,9 @@ Set the `max` attribute.
 #### Possible values
 
 Any number.
-:::
+</Option>
 
-:::option `step`
+<Option name="`step`">
 Set the `step` attribute.
 
 #### Default
@@ -47,7 +47,7 @@ Set the `step` attribute.
 #### Possible values
 
 Any number.
-:::
+</Option>
 
 ## Examples
 

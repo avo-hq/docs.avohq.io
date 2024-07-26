@@ -21,7 +21,7 @@ field :joined_at,
 
 ## Options
 
-:::option `format`
+<Option name="`format`">
 
 Format the date shown to the user on the `Index` and `Show` views.
 
@@ -32,8 +32,8 @@ Format the date shown to the user on the `Index` and `Show` views.
 #### Possible values
 
 Use [`luxon`](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) formatting tokens.
-:::
-:::option `picker_format`
+</Option>
+<Option name="`picker_format`">
 Format the date shown to the user on the `Edit` and `New` views.
 
 #### Default
@@ -43,13 +43,13 @@ Format the date shown to the user on the `Edit` and `New` views.
 #### Possible values
 
 Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
-:::
-:::option `time_24hr`
+</Option>
+<Option name="`time_24hr`">
 Displays time picker in 24-hour mode or AM/PM selection.
 
 <!-- @include: ./../common/default_boolean_false.md -->
-:::
-:::option `timezone`
+</Option>
+<Option name="`timezone`">
 Select in which timezone the values should be cast.
 
 #### Default
@@ -65,9 +65,9 @@ field :started_at, as: :date_time, timezone: "EET"
 # Or
 field :started_at, as: :date_time, timezone: -> { record.timezone }
 ```
-:::
+</Option>
 
-:::option `picker_options`
+<Option name="`picker_options`">
 Passes the options here to [flatpickr](https://flatpickr.js.org/).
 
 #### Default
@@ -77,7 +77,7 @@ Passes the options here to [flatpickr](https://flatpickr.js.org/).
 #### Possible values
 
 Use [`flatpickr`](https://flatpickr.js.org/options) options.
-:::
+</Option>
 
 :::warning
 These options may override other options like `time_24hr`.

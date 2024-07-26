@@ -13,7 +13,7 @@ field :type, as: :select, options: { 'Large container': :large, 'Medium containe
 
 ## Options
 
-:::option `options`
+<Option name="`options`">
 A `Hash` representing the options that should be displayed in the select. The keys represent the labels, and the values represent the value stored in the database.
 
 The options get cast as `ActiveSupport::HashWithIndifferentAccess` objects if they are a `Hash`.
@@ -25,9 +25,9 @@ The options get cast as `ActiveSupport::HashWithIndifferentAccess` objects if th
 #### Possible values
 
 `{ 'Large container': :large, 'Medium container': :medium, 'Tiny container': :tiny }` or any other `Hash`.
-:::
+</Option>
 
-:::option `enum`
+<Option name="`enum`">
 Set the select options as an Active Record [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html). You may use `options` or `enum`, not both.
 
 ```ruby{3,10}
@@ -53,9 +53,9 @@ end
 #### Possible values
 
 `Post::statuses` or any other `enum` stored on a model.
-:::
+</Option>
 
-:::option `display_value`
+<Option name="`display_value`">
 You may want to display the values from the database and not the labels of the options. You may change that by setting `display_value` to `true`.
 
 ```ruby{5}
@@ -68,9 +68,9 @@ end
 ```
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `include_blank`
+<Option name="`include_blank`">
 ## Include blank
 
 The `Select` field also has the `include_blank` option. That can have three values.
@@ -97,7 +97,7 @@ end
 #### Possible values
 
 `nil`, `true`, `false`, or a string to be used as the first option.
-:::
+</Option>
 
 ## Computed options
 

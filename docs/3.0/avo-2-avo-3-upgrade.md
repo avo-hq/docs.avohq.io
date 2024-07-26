@@ -64,7 +64,7 @@ Each paragraph will guide you through the upgrade process for each individual ch
 
 Most of these steps are breaking changes so you'll need to apply them if you're using the feature.
 
-:::option Update your `Gemfile`
+<Option name="Update your `Gemfile`">
 The Avo gem comes in three flavors now. Community, Pro, or Advanced.
 
 You should add the one you use in your `Gemfile`. If you use Pro or Advanced you don't have to add `avo` too. Each gem adds their own dependencies.
@@ -76,8 +76,9 @@ Add only one of the ones below.
 :::warning
 If you want to install `avo-pro` or `avo-advanced` please ensure you have a [valid Avo 3 license](https://avohq.io/pricing) and you [take the required steps to authenticate](./gem-server-authentication) with `packager.dev`.
 :::
+</Option>
 
-:::option The status field changed behavior
+<Option name="The status field changed behavior">
 Before, for the status you'd set the `failed` and `loading` states and everything else fell under `success`. That felt unnatural. We needed a `neutral` state.
 Now we changed the field so you'll set the `failed`, `loading`, and `success` values and the rest fall under `neutral`.
 
@@ -95,9 +96,9 @@ field :status,
   loading_when: :loading
   success_when: :deployed # specify the success state
 ```
-:::
+</Option>
 
-:::option `heading` has become a field type
+<Option name="`heading` has become a field type">
 Before, a heading used the `heading` method with a text string or HTML string as an argument.
 Now, it is a field type with an ID. It supports rendering as text and as HTML.
 
@@ -122,9 +123,9 @@ field :some_id, as: :heading, as_html: true do
   '<div class="underline uppercase font-bold">User Information</div>'
 end
 ```
-:::
+</Option>
 
-:::option Moved some globals from `Avo::App` to `Avo::Current`
+<Option name="Moved some globals from `Avo::App` to `Avo::Current`">
 
 ### Actions to take
 
@@ -137,9 +138,9 @@ Rename the following:
 - `Avo::App.current_user` -> `Avo::Current.user`
 
 Make note of the `current_user` to `user` rename.
-:::
+</Option>
 
-:::option Renamed `model` to `record` across all configuration files
+<Option name="Renamed `model` to `record` across all configuration files">
 
 The `model` naming is a bit off. You never know if you're mentioning the model class or the instantiated database record, so we changed it to `record` (Pundit calls it a record too). One of the places you'll see it the most is when you reference it off of the `resource` (`resource.model`).
 
@@ -149,9 +150,9 @@ Rename `resource.model` to `resource.record`.
 
 You might have the `model` referenced in other places too. Try to replace it with `record`.
 If you find it in other places, please send them our way so we can update this doc for a more consistent API. Thank you!
-:::
+</Option>
 
-:::option Remove block (lambda) arguments
+<Option name="Remove block (lambda) arguments">
 
 All block arguments are removed from Avo. We did this in order to make blocks more consistent and to improve future compatibility. All the arguments that were previously available as arguments, are present inside the block.
 
@@ -200,9 +201,9 @@ field :level, as: :select, options: -> do
     }
   end
 ```
-:::
+</Option>
 
-:::option Swap `disabled` and `readonly` field options
+<Option name="Swap `disabled` and `readonly` field options">
 
 We received some feedback in v2.x that the `disabled` field option does not protect against DOM field manipulation when the form is submitted, so we introduced the `readonly` option that protects against that.
 
@@ -224,9 +225,9 @@ field :hidden_info,
   readonly: -> { !Avo::Current.user.is_admin? } // [!code --]
   disabled: -> { !Avo::Current.user.is_admin? } // [!code ++]
 ```
-:::
+</Option>
 
-:::option Removed `index_text_align` option
+<Option name="Removed `index_text_align` option">
 Same behavior from `index_text_align` can be achieved using `html` and `class` options.
 
 ### Actions to take
@@ -239,9 +240,9 @@ field :users_required, as: :number, index_text_align: :right
 # After
 field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
 ```
-:::
+</Option>
 
-:::option Renamed `resolve_query_scope` to `index_query` in resources
+<Option name="Renamed `resolve_query_scope` to `index_query` in resources">
 The new method name `index_query` speaks more about what it does and the rest of the changes brings it more inline with the other APIs
 
 ### Actions to take
@@ -261,9 +262,9 @@ self.index_query = -> do
   query.order(last_name: :asc)
 end
 ```
-:::
+</Option>
 
-:::option Removed `resolve_find_scope` in favor of `find_record_method`
+<Option name="Removed `resolve_find_scope` in favor of `find_record_method`">
 The new `find_record_method` method works better as it enables you to use custom find matchers.
 
 ### Actions to take
@@ -284,9 +285,9 @@ self.find_record_method = -> do
   query.friendly.find id
 end
 ```
-:::
+</Option>
 
-:::option Refactor the grid view API
+<Option name="Refactor the grid view API">
 We removed the old `grid do` block to `self.grid_view` to fall more inline with `self.map_view` and others.
 
 The `card` block will cycle through all of your records and you need to return a hash with the following keys `title`, `body`, `cover_url`.
@@ -325,9 +326,9 @@ self.grid_view = {
   end
 }
 ```
-:::
+</Option>
 
-:::option Refactored the search API
+<Option name="Refactored the search API">
 In Avo 2, the search options were scattered around multiple places. The query was used from the `search_query`, the record description was taken from an arbitrary `as_description: true` field option, and other mis-aligned places.
 
 In Avo 3 we brought all those things in a single `self.search` option.
@@ -366,9 +367,9 @@ class Avo::Resources::User < Avo::BaseResource
   }
 end
 ```
-:::
+</Option>
 
-::::option Rename Avo configuration classes
+<Option name="Rename Avo configuration classes">
 
 We are falling more in line with how Rails and zeitwerk autoloads classes. We do this to avoid some issues like class conflicts and difficult to remember naming schemes.
 
@@ -467,9 +468,9 @@ class Avo::Fields::ColorPickerField < Avo::Fields::BaseField
 end
 ```
 :::
-::::
+</Option>
 
-:::option Use the `def fields` API
+<Option name="Use the `def fields` API">
 We are introducing a new API for declaring fields. This brings many improvements from easier maintenance, better control, better composition, and more.
 
 ```ruby
@@ -559,9 +560,9 @@ end
 ### Actions to take
 
 Wrap all `field`, `tabs`, `tab`, `panel`, `sidebar`, and `tool` declarations from Resource and Action files into one `def fields` method.
-:::
+</Option>
 
-:::option Use the `def actions` API
+<Option name="Use the `def actions` API">
 Similar to how we added the `def fields` wrapper to fields you should now wrap all actions in an `actions` method.
 
 
@@ -578,9 +579,9 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
-:::
+</Option>
 
-:::option Use the `def filters` API
+<Option name="Use the `def filters` API">
 Similar to how we added the `def fields` wrapper to fields you should now wrap all filters in an `filters` method.
 
 
@@ -597,9 +598,9 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
-:::
+</Option>
 
-:::option Use the `def scopes` API
+<Option name="Use the `def scopes` API">
 Similar to how we added the `def fields` wrapper to fields you should now wrap all scopes in an `scopes` method.
 
 
@@ -616,9 +617,9 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
-:::
+</Option>
 
-:::option Wrap all Dashboard `card` and `divider` definitions inside one `def cards` method
+<Option name="Wrap all Dashboard `card` and `divider` definitions inside one `def cards` method">
 After the `def fields` refactor we did the same in dashboard files. Instead of declaring the cards in the class directly, you should do it in the `def cards` method.
 
 ```ruby{6-9,17-22}
@@ -646,9 +647,9 @@ class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   end
 end
 ```
-:::
+</Option>
 
-:::option `tool` is declared inside the `def fields` method
+<Option name="`tool` is declared inside the `def fields` method">
 In Avo 3 you'll be able to insert resource tools in-between fields, tabs and panels, so now, the `tool`s must be called inside the `fields` method. This feature is unreleased yet, but you should make the change now so it'll be seamless when we add it.
 
 ### Actions to take
@@ -674,9 +675,9 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
-:::
+</Option>
 
-:::option Remove `tabs_style` from the `tabs` declaration
+<Option name="Remove `tabs_style` from the `tabs` declaration">
 We streamlined tabs and kept only the `:pills` style so now we only have one style of tabs.
 
 ### Actions to take
@@ -694,4 +695,4 @@ tabs do
   # tabs here
 end
 ```
-:::
+</Option>
