@@ -169,8 +169,9 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-</Option>option `image_format`
+</Option>
 
+<Option name="`image_format`">
 <LicenseReq license="pro" />
 
 The image you add to a search result can have a different format based on what you set on the `card -> image_format` attribute. You may choose between three options: `:square`, `:rounded` or `:circle`.
@@ -192,6 +193,7 @@ end
 ```
 
 <Image src="/assets/img/search/search_avatar.jpg" width="1400" height="794" alt="Search avatar" />
+</Option>
 
 <Option name="`help`">
 
