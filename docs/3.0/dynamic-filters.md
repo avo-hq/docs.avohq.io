@@ -500,7 +500,7 @@ dynamic_filter :first_name,
 
 <Option name="`options`">
 
-Customize the options for select type filters. This is available only for select type filters and determines the options visible in the select dropdown.
+Customize the options **for select type filters**. **This is available only for select type filters** and determines the options visible in the select dropdown.
 
 ##### Default value
 
