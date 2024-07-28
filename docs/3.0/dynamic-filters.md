@@ -497,3 +497,34 @@ dynamic_filter :first_name,
   suggestions: -> { ["Avo", "Cado", params[:extra_suggestion]] }
 ```
 </Option>
+
+<Option name="`options`">
+
+Customize the options for select type filters. This is available only for select type filters and determines the options visible in the select dropdown.
+
+##### Default value
+
+Fetched from field if bond to a field or `[]`
+
+#### Possible values
+
+An array or hash where the key-value pairs represent the options.
+
+- If a hash is provided, the key is the option value and the value is the option label.
+- If an array is provided, the array elements are used as both the option value and the option label.
+
+Usage examples:
+
+```ruby{3-6,10}
+dynamic_filter :version,
+  type: :select,
+  options: {
+    value_1: "Label 1",
+    value_2: "Label 2"
+  }
+
+dynamic_filter :version,
+  type: :select,
+  options: ["Label 1", "Label 2"]
+```
+</Option>
