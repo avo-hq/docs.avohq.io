@@ -30,7 +30,7 @@ self.profile_photo = {
 }
 ```
 
-:::option `visible_on`
+<Option name="`visible_on`">
 This controls where the cover photo should be displayed.
 
 It defaults to the <Show />, <Edit />, and <New /> views, but you can change that to be displayed to the <Index /> view or a combination of views.
@@ -48,9 +48,9 @@ It defaults to the <Show />, <Edit />, and <New /> views, but you can change tha
 You may choose one view or a combination of them using an array.
 
 `:show`, `:edit`, `:new`, `:index`, `:forms`, `:display`, `[:show, :edit]`;
-:::
+</Option>
 
-:::option `source`
+<Option name="`source`">
 This controls what should be displayed as the image.
 
 You can call a field on the record using a `Symbol`, or you can open a block where you have access to the `record` and add your own value.
@@ -84,7 +84,7 @@ self.profile_photo = {
   }
 }
 ```
-:::
+</Option>
 
 ## Cover photo
 
@@ -106,7 +106,7 @@ self.cover_photo = {
 }
 ```
 
-:::option `size`
+<Option name="`size`">
 This represents the height of the cover photo. It can be small, medium or large.
 
 ##### Optional
@@ -120,9 +120,9 @@ This represents the height of the cover photo. It can be small, medium or large.
 #### Possible values
 
 `:sm`, `:md`, or `:lg`
-:::
+</Option>
 
-:::option `visible_on`
+<Option name="`visible_on`">
 This controls where the cover photo should be displayed.
 
 It defaults to the <Show />, <Edit />, and <New /> views, but you can change that to be displayed to the <Index /> view or a combination of views.
@@ -140,9 +140,9 @@ It defaults to the <Show />, <Edit />, and <New /> views, but you can change tha
 You may choose one view or a combination of them using an array.
 
 `:show`, `:edit`, `:new`, `:index`, `:forms`, `:display`, `[:show, :edit]`;
-:::
+</Option>
 
-:::option `source`
+<Option name="`source`">
 This controls what should be displayed as the image.
 
 You can call a field on the record using a `Symbol`, or you can open a block where you have access to the `record` and add your own value.
@@ -176,4 +176,4 @@ self.cover_photo = {
   }
 }
 ```
-:::
+</Option>

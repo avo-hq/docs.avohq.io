@@ -10,12 +10,12 @@ Each filter is configured in a class with a few dedicated [methods and options](
 
 ## Filter options
 
-:::option `self.name`
+<Option name="`self.name`">
 
 `self.name` is what is going to be displayed to the user in the filters panel.
-:::
+</Option>
 
-:::option `self.visible`
+<Option name="`self.visible`">
 
 You may want to show/hide the filter in some scenarios. You can do that using the `self.visible` attribute.
 
@@ -36,39 +36,39 @@ Inside the visible block you can acces the following variables and you should re
     true
   end
 ```
-:::
+</Option>
 
-:::option `self.empty_message`
+<Option name="`self.empty_message`">
 There might be times when you will want to show a message to the user when you're not returning any options.
 
 More on this in the [Empty message guide](#empty-message-text).
-:::
-:::option `options`
+</Option>
+<Option name="`options`">
 Some filters allow you to pass options to the user. For example on the [select filter](#select_filter) you can set the options in the dropdown, and on the [boolean filter](#boolean_filter) you may set the checkbox values.
 Each filter type has their own `options` configuration explained below.
 
 In the `options` method you have access to the `request`, `params`, [`context`](./customization#context), `view_context`, and `current_user` objects.
-:::
+</Option>
 
-:::option `apply`
+<Option name="`apply`">
 The `apply` method is what is going to be run when Avo fetches the records on the <Index /> view.
 
 It recieves the `request` form which you can get all the `params` if you need them, it gets the `query` which is the query Avo made to fetch the records. It's a regular [Active Record](https://guides.rubyonrails.org/active_record_querying.html) which you can manipulate.
 
 It also receives the `values` variable which holds the actual choices the user made on the front-end for the [options](#options) you set.
-:::
+</Option>
 
-:::option `default`
+<Option name="`default`">
 You may set default values for the `options` you set. For example you may set which option to be selected for the [select filter](#select_filter) and which checkboxes to be set for the [boolean filter](#boolean_filter).
 
 In the `default` method you have access to the `request`, `params`, [`context`](./customization#context), `view_context`, and `current_user` objects.
-:::
+</Option>
 
-:::option `react`
+<Option name="`react`">
 This is a hook in which you can change the value of the filter based on what other filters have for values.
 
 More on this in the [React to filters guide](#react-to-filters)
-:::
+</Option>
 
 ## Register filters
 
@@ -98,7 +98,7 @@ Avo has several types of filters available [Boolean filter](#boolean_filter), [S
 
 Because the filters get serialized back and forth, the final `value`/`values` in the `apply` method will be stringified or have the stringified keys if they are hashes. You can declare them as regular hashes in the `options` method, but they will get stringified.
 
-:::option Boolean Filter
+<Option name="Boolean Filter">
 
 The boolean filter is a filter where the user can filter the records using one or more checkboxes.
 
@@ -201,9 +201,9 @@ class Avo::Filters::Featured < Avo::Filters::BooleanFilter
   end
 end
 ```
-:::
+</Option>
 
-:::option Select Filter
+<Option name="Select Filter">
 
 Select filters are similar to Boolean ones but they give the user a dropdown with which to filter the values.
 
@@ -277,9 +277,9 @@ class Avo::Filters::Published < Avo::Filters::SelectFilter
   end
 end
 ```
-:::
+</Option>
 
-:::option Multiple select filter
+<Option name="Multiple select filter">
 
 You may also use a multiple select filter.
 
@@ -349,9 +349,9 @@ class Avo::Filters::Author < Avo::Filters::SelectFilter
   end
 end
 ```
-:::
+</Option>
 
-:::option Text Filter
+<Option name="Text Filter">
 
 You can add complex text filters to Avo using the Text filter
 
@@ -375,7 +375,7 @@ class Avo::Filters::Name < Avo::Filters::TextFilter
   # end
 end
 ```
-:::
+</Option>
 
 ## Dynamic filter options
 
@@ -707,7 +707,7 @@ You may want to redirect users to filtered states of the <Index /> view from oth
 
 ### Rails helpers
 
-:::option `decode_filter_params`
+<Option name="`decode_filter_params`">
 
 Decodes the `filters` param. This Rails helper can be used anywhere in a view or off the `view_context`.
 
@@ -729,9 +729,9 @@ class Avo::Actions::DummyAction < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
-:::option `encode_filter_params`
+<Option name="`encode_filter_params`">
 
 Encodes a `filters` object into a serialized state that Avo understands. This Rails helper can be used anywhere in a view or off the `view_context`.
 
@@ -754,11 +754,11 @@ class Avo::Actions::DummyAction < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
 ### Standalone helpers
 
-:::option `Avo::Filters::BaseFilter.decode_filters`
+<Option name="`Avo::Filters::BaseFilter.decode_filters`">
 
 Decodes the `filters` param. This standalone method can be used anywhere.
 
@@ -775,9 +775,9 @@ class Avo::Actions::DummyAction < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
-:::option `Avo::Filters::BaseFilter.encode_filters`
+<Option name="`Avo::Filters::BaseFilter.encode_filters`">
 
 Encodes a `filters` object into a serialized state that Avo understands. This standalone method can be used anywhere.
 
@@ -794,4 +794,4 @@ class Avo::Actions::DummyAction < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>

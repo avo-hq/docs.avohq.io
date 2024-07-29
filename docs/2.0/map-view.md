@@ -36,21 +36,21 @@ class CityResource < Avo::BaseResource
 end
 ```
 
-:::option `mapkick_options`
+<Option name="`mapkick_options`">
 The options you pass here are forwarded to the [`mapkick` gem](https://github.com/ankane/mapkick).
-:::
+</Option>
 
-:::option `record_marker`
+<Option name="`record_marker`">
 This block is being applied to all the records present in the current query to fetch the coordinates of off the record.
 
 You may use this block to fetch the coordinates from other places (API calls, cache queries, etc.) rather than the database.
 
 This block has to return a hash compatible with the [`PointMap` items](https://github.com/ankane/mapkick#point-map). Has to have `latitude` and `longitude` and optionally `tooltip`, `label`, or `color`.
-:::
+</Option>
 
-:::option `table`
+<Option name="`table`">
 This is the configuration for the adjacent table. You can set the visibility to `true` or `false`, and set the position of the table `:top`, `:right`, `:bottom`, or `:left`.
-:::
+</Option>
 
 ## Make it the default view
 

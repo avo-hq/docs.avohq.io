@@ -14,6 +14,7 @@ For example, you might want to mark a user as active/inactive and optionally sen
 Once you attach an action to a resource using the `action` method inside the `actions` method, it will appear in the **Actions** dropdown. By default, actions appear on the `Index`, `Show`, and `Edit` views. Versions previous to 2.9 would only display the actions on the `Index` and `Show` views.
 
 <Image src="/assets/img/actions/actions-dropdown.gif" width="710" height="462" alt="Actions dropdown" />
+
 :::info
 Since version <Version version="2.13" /> you may use the [customizable controls](./customizable-controls) feature to show the actions outside the dropdown.
 :::
@@ -206,7 +207,7 @@ end
 
 The available action responses are:
 
-:::option `reload`
+<Option name="`reload`">
 
 When you use `reload`, a full-page reload will be triggered.
 
@@ -221,8 +222,8 @@ def handle(query:, **args)
 end
 ```
 
-:::
-:::option `redirect_to`
+</Option>
+<Option name="`redirect_to`">
 
 `redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host`, `status` and any other arguments.
 
@@ -239,11 +240,13 @@ def handle(query:, **args)
   redirect_to avo.resources_users_path
 end
 ```
+</Option>
 
-:::option `turbo`
+<Option name="`turbo`">
 There are times when you don't want to perform the actions with Turbo. In such cases, turbo should be set to false.
-:::
-:::option `download`
+</Option>
+
+<Option name="`download`">
 
 `download` will start a file download to your specified `path` and `filename`.
 
@@ -251,7 +254,7 @@ There are times when you don't want to perform the actions with Turbo. In such c
 
 If you find another way, please let us know 😅.
 
-::: code-group
+:::code-group
 
 ```ruby{3,18} [app/avo/actions/download_file.rb]
 class Avo::Actions::DownloadFile < Avo::BaseAction
@@ -287,8 +290,9 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 :::
+</Option>
 
-:::option `keep_modal_open`
+<Option name="`keep_modal_open`">
 
 There might be situations where you want to run an action and if it fails, respond back to the user with some feedback but still keep it open with the inputs filled in.
 
@@ -313,9 +317,9 @@ class Avo::Actions::KeepModalOpenAction < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
-:::option `close_modal`
+<Option name="`close_modal`">
 <VersionReq version="3.3.0" />
 
 This type of response becomes useful when you are working with a form and need to execute an action without redirecting, ensuring that the form remains filled as it is.
@@ -335,9 +339,9 @@ class Avo::Actions::CloseModal < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
-:::option `do_nothing`
+<Option name="`do_nothing`">
 `do_nothing` is an alias for `close_modal`.
 
 ```ruby{7}
@@ -351,9 +355,9 @@ class Avo::Actions::CloseModal < Avo::BaseAction
   end
 end
 ```
-:::
+</Option>
 
-:::option `navigate_to_action`
+<Option name="`navigate_to_action`">
 <VersionReq version="3.4.2" />
 
 You may want to redirect to another action. Here's an example of how to create a multi-step process, passing arguments from one action to another.
@@ -399,9 +403,48 @@ class Avo::Actions::City::Update < Avo::BaseAction
   end
 end
 ```
+:::
 
 You can see this multi-step process in action by visiting the [avodemo](https://main.avodemo.com/avo/resources/cities). Select one of the records, click on the "Update" action, choose the fields to update, and then proceed to update the selected fields in the subsequent action.
+</Option>
+
+<Option name="`append_to_response`">
+<VersionReq version="3.10.3" />
+
+Avo action responses are in the `turbo_stream` format. You can use the `append_to_response` method to append additional turbo stream responses to the default response.
+
+```ruby{5-7}
+def handle(**args)
+    succeed "Modal closed!!"
+    close_modal
+
+    append_to_response -> {
+      turbo_stream.set_title("Cool title ;)")
+    }
+  end
+```
+
+The `append_to_response` method accepts a Proc or lambda function. This function is executed within the context of the action's controller response.
+
+The block should return either a single `turbo_stream` response or an array of multiple `turbo_stream` responses.
+
+:::code-group
+```ruby[Array]{2-5}
+append_to_response -> {
+  [
+    turbo_stream.set_title("Cool title"),
+    turbo_stream.set_title("Cool title 2")
+  ]
+}
+```
+
+```ruby[Single]{2}
+append_to_response -> {
+  turbo_stream.set_title("Cool title")
+}
+```
 :::
+</Option>
 
 ## Customization
 
@@ -577,7 +620,7 @@ You may want to dynamically generate an action link. For that you need the actio
 
 Let's see an example use case:
 
-::: code-group
+:::code-group
 ```ruby{7,8,9,10,11,12,13,15} [Current Version]
 field :name,
   as: :text,
@@ -650,9 +693,9 @@ def actions
 ```
 <Image src="/assets/img/action_divider.png" width="306" height="325" alt="" />
 
-:::option `label`
+<Option name="`label`">
 You can pass a `label` option to display that text
-:::
+</Option>
 
 ## Icon
 

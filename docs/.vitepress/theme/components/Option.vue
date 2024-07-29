@@ -1,8 +1,9 @@
 <script>
 export default {
-  props: ['name'],
+  props: ['name', 'since'],
   setup(props, { slots }) {
     let name = (props.name || "")
+    // let since = (props.since || "")
     const isCode = name.includes('`')
     name = name.replace(/`/g, '');
     // const prettyName =
@@ -12,6 +13,7 @@ export default {
     // expose to template and other options API hooks
     return {
       name,
+      // since,
       isCode,
       anchor,
       anchorName
@@ -31,6 +33,7 @@ export default {
       <span v-html="name" />
     </div>
     <a class="header-anchor" :href="anchorName" aria-hidden="true"></a>
+    <!-- <span v-if="since" class="text-sm text-gray-500 ml-2 on-outline:hidden">Since <Version version="3.10" /></span> -->
   </h2>
   <div class="pl-8">
     <slot></slot>

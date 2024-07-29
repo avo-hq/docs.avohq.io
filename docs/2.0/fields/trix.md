@@ -18,37 +18,37 @@ Trix field is hidden from the `Index` view.
 
 ## Options
 
-:::option `always_show`
+<Option name="`always_show`">
 By default, the content of the `Trix` field is not visible on the `Show` view; instead, it's hidden under a `Show Content` link that, when clicked, displays the content. You can set Markdown to display the content by setting `always_show` to `true`.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `attachments_disabled`
+<Option name="`attachments_disabled`">
 Hides the attachments button from the Trix toolbar.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `hide_attachment_filename`
+<Option name="`hide_attachment_filename`">
 Hides the attachment's name from the upload output in the field value.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `hide_attachment_filesize`
+<Option name="`hide_attachment_filesize`">
 Hides the attachment size from the upload output in the field value.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `hide_attachment_url`
+<Option name="`hide_attachment_url`">
 Hides the attachment URL from the upload output in the field value.
 
 <!-- @include: ./../common/default_boolean_false.md-->
-:::
+</Option>
 
-:::option `attachment_key`
+<Option name="`attachment_key`">
 Enables file attachments.
 
 #### Default
@@ -58,7 +58,7 @@ Enables file attachments.
 #### Possible values
 
 `nil`, or a symbol representing the `has_many_attachments` key on the model.
-:::
+</Option>
 
 
 ## File attachments

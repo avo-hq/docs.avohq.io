@@ -36,7 +36,7 @@ Or Multi-Polygons:
 
 ## Options
 
-:::option `geometry`
+<Option name="`geometry`">
 
 #### Default
 
@@ -46,8 +46,8 @@ Or Multi-Polygons:
 
 `:polygon` or `:multi_polygon`
 
-:::
-:::option `mapkick_options`
+</Option>
+<Option name="`mapkick_options`">
 
 For example:
 
@@ -63,8 +63,8 @@ mapkick_options: { style: 'mapbox://styles/mapbox/satellite-v9', controls: true 
 
 Accepts the options as [specified in the Mapkick-gem](https://github.com/ankane/mapkick#options).
 
-:::
-:::option `datapoint_options`
+</Option>
+<Option name="`datapoint_options`">
 
 Fore example:
 
@@ -82,7 +82,7 @@ datapoint_options: { label: 'Paris City Center',
 
 Besides the general options related to the map, the area-field also accepts [datapoint-options](https://github.com/ankane/mapkick#area-map).
 
-:::
+</Option>
 
 ## Options combined
 

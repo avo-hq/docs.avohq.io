@@ -1,4 +1,4 @@
-::::option `searchable`
+<Option name="`searchable`">
 
 <div class="space-x-2">
   <LicenseReq license="pro" />
@@ -39,4 +39,4 @@ end
 #### Possible values
 
 `true`, `false`
-::::
+</Option>

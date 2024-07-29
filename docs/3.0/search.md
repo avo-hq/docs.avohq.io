@@ -38,6 +38,44 @@ In this block, you may configure the search however strict or loose you need it.
 If you're using ransack version 4 and up you must add `ransackable_attributes` and maybe more to your model in order for it to work. Read more about it [here](https://activerecord-hackery.github.io/ransack/going-further/other-notes/#authorization-allowlistingdenylisting).
 :::
 
+### Custom search provider
+
+<VersionReq version="3.10.8" />
+
+You can use custom search providers like Elasticsearch.
+In such cases, or when you want to have full control over the search results, the `query` block should return an array of hashes. Each hash should follow the structure below:
+
+```ruby
+{
+  _id: 1,
+  _label: "The label",
+  _url: "The URL",
+  _description: "Some description about the record", # only with Avo Pro and above
+  _avatar: "URL to an image that represents the record", # only with Avo Pro and above
+  _avatar_type: :rounded # or :circle or :square; only with Avo Pro and above
+}
+```
+
+Example:
+
+```ruby{2-10}
+class Avo::Resources::Project < Avo::BaseResource
+  self.search = {
+    query: -> do
+      [
+        { _id: 1, _label: "Record One", _url: "https://example.com/1" },
+        { _id: 2, _label: "Record Two", _url: "https://example.com/2" },
+        { _id: 3, _label: "Record Three", _url: "https://example.com/3" }
+      ]
+    end
+  }
+end
+```
+
+:::warning
+Results count will not be available with custom search providers.
+:::
+
 ## Authorize search
 
 Search is authorized in policy files using the [`search?`](./authorization#search) method.
@@ -64,13 +102,13 @@ Avo.configure do |config|
 
 ## Configure the search result
 
-:::option `title`
+<Option name="`title`">
 
 By default, the search results will be displayed as text. By default search title will be the [resource title](./resources.html#self_title).
 
 <Image src="/assets/img/search/search_blank.jpg" width="1412" height="686" alt="Blank search" />
 
-You may configure that to be something more complex using the `card -> title` option. That will display it as the title of the search result.
+You may configure that to be something more complex using the `item -> title` option. That will display it as the title of the search result.
 
 ```ruby{6}
 class Avo::Resources::Post < Avo::BaseResource
@@ -86,13 +124,12 @@ end
 ```
 
 <Image src="/assets/img/search/search_label.jpg" width="1406" height="674" alt="Search label" />
-:::
+</Option>
 
-:::option `description`
+<Option name="`description`">
+<LicenseReq license="pro" />
 
-<licensereq license="pro"></licensereq>
-
-You might want to show more than just the title in the search result. Avo provides the `card -> description` option to add some more information.
+You might want to show more than just the title in the search result. Avo provides the `item -> description` option to add some more information.
 
 ```ruby{7}
 class Avo::Resources::Post < Avo::BaseResource
@@ -109,13 +146,13 @@ end
 ```
 
 <Image src="/assets/img/search/search_description.jpg" width="1396" height="754" alt="Search description" />
-:::
+</Option>
 
-:::option `image_url`
+<Option name="`image_url`">
 
-<licensereq license="pro"></licensereq>
+<LicenseReq license="pro" />
 
-You may improve the results listing by adding an image to each search result. You do that by using the `card -> image_url` attribute that is an url to a image.
+You may improve the results listing by adding an image to each search result. You do that by using the `item -> image_url` attribute that is an url to a image.
 
 ```ruby{8}
 class Avo::Resources::Post < Avo::BaseResource
@@ -132,11 +169,12 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-:::option `image_format`
+</Option>
 
-<licensereq license="pro"></licensereq>
+<Option name="`image_format`">
+<LicenseReq license="pro" />
 
-The image you add to a search result can have a different format based on what you set on the `card -> image_format` attribute. You may choose between three options: `:square`, `:rounded` or `:circle`.
+The image you add to a search result can have a different format based on what you set on the `item -> image_format` attribute. You may choose between three options: `:square`, `:rounded` or `:circle`.
 
 ```ruby{9}
 class Avo::Resources::Post < Avo::BaseResource
@@ -155,8 +193,9 @@ end
 ```
 
 <Image src="/assets/img/search/search_avatar.jpg" width="1400" height="794" alt="Search avatar" />
+</Option>
 
-:::option `help`
+<Option name="`help`">
 
 You may improve the results listing header by adding a piece of text highlighting the fields you are looking for or any other instruction for the user. You do that by using the `help` attribute. This attribute takes a string and appends it to the title of the resource.
 
@@ -170,9 +209,9 @@ class Avo::Resources::Post < Avo::BaseResource
   }
 end
 ```
-:::
+</Option>
 
-:::option `result_path`
+<Option name="`result_path`">
 
 By default, when a user clicks on a search result, they will be redirected to that record, but you can change that using the `result_path` option.
 
@@ -184,13 +223,13 @@ class Avo::Resources::City < Avo::BaseResource
   }
 end
 ```
-:::
+</Option>
 
-:::option `hide_on_global`
+<Option name="`hide_on_global`">
 
 You might have a resource that you'd like to be able to perform a search on when on its `Index` page but not have it present in the global search. You can hide it using `hide_on_global: true`.
 
-```ruby{7}
+```ruby{9}
 class Avo::Resources::TeamMembership < Avo::BaseResource
   self.search = {
     query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) },
@@ -203,13 +242,13 @@ class Avo::Resources::TeamMembership < Avo::BaseResource
   }
 end
 ```
-:::
+</Option>
 
 ## Resource search
 
 When a resource has the `search` attribute with a valid configuration, a new search input will be displayed on the `Index` view.
 
-<Image src="/assets/img/search/resource_search.jpg" width="1200" height="746" alt="" />
+<Image src="/assets/img/search/resource_search.jpg" width="808" height="395" alt="" />
 
 ## Global search
 
@@ -219,7 +258,7 @@ Avo also has a global search feature. It will search through all the resources t
 
 You open the global search input by clicking the trigger on the navbar or by using the <kbd>CMD</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on Windows).
 
-<Image src="/assets/img/search/global_search_trigger.jpg" width="728" height="344" alt="Global search trigger" />
+<Image src="/assets/img/search/global_search_trigger.jpg" width="960" height="76" alt="Global search trigger" />
 
 ### Hide the global search
 

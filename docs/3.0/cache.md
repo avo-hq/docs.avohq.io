@@ -35,16 +35,16 @@ config.cache_store = ActiveSupport::Cache.lookup_store(:solid_cache_store)
 
 `cache_store` configuration option is expecting a cache store object, the lambda syntax can be useful if different stores are desired on different environments.
 
-:::warning MemoryStore in production
+:::warning `MemoryStore` in production
 Our computed system do not use MemoryStore in production because it will not be shared between multiple processes (when using Puma).
 :::
 
-:::regular_option `cache_hash`
+<Option name="`cache_hash`">
 
 The `cache_hash` method is used to compute the cache key for each row.
 
 More about this on the [resource options page](./resources#cache_hash).
-:::
+</Option>
 
 ## Caching caveats
 

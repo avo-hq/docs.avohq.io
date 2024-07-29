@@ -1,31 +1,7 @@
 import {getFiles} from "./getFiles"
-import container from "markdown-it-container"
-import snakeCase from "lodash/snakeCase"
 
 const fieldsMenuItems2 = getFiles('fields', '2.0')
 const fieldsMenuItems3 = getFiles('fields', '3.0')
-
-function createContainer(klass, md) {
-  const isIndented = klass == "option"
-
-  return [
-    container,
-    klass,
-    {
-      render(tokens, idx) {
-        const token = tokens[idx]
-        const info = token.info.trim().slice(klass.length).trim()
-        if (token.nesting === 1) {
-          const fullName = md.renderInline(info || klass)
-          const anchor = snakeCase(fullName.replace(/<\/?[^>]+(>|$)/g, "").replace(/\?|{|}|!/g, ''))
-          return `<h2 id="${anchor}" tabindex="-1"><span class="hidden">-> </span>${fullName} <a class="header-anchor" href="#${anchor}" aria-hidden="true"></a></h2> <div class="${isIndented ? "pl-8" : ""}"><p>\n`
-        } else {
-          return `</p></div>\n`
-        }
-      },
-    },
-  ]
-}
 
 /**
  * @type {import('vitepress').UserConfig}
@@ -34,10 +10,6 @@ const config = {
   title: "Avo docs",
   description: "Avo Admin for Rails docs.",
   markdown: {
-    config: (md) => {
-      md.use(...createContainer("option", md))
-      md.use(...createContainer("regular_option", md))
-    },
     image: {
       lazyLoading: true,
     },
