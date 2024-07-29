@@ -514,7 +514,7 @@ We know, the array notation looks weird, but it works.
 </Option>
 
 <Option name="`self.confirm_on_save`">
-  
+
 <VersionReq version="3.10.10" />
 If you would like to ask for confirmation when saving a resource you can do so by setting `confirm_on_save` to `true`.
 
@@ -527,6 +527,8 @@ end
 ```
 
 This option defaults to false
+
+<Image src="/assets/img/customization/confirm-on-save.png" width="2494" height="845" alt="Confirm on save" />
 
 </Option>
 
