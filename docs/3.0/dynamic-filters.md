@@ -510,21 +510,34 @@ Fetched from field if bond to a field or `[]`
 
 An array or hash where the key-value pairs represent the options.
 
-- If a hash is provided, the key is the option value and the value is the option label.
+- If a hash is provided, the key is the option label and the value is the option value.
 - If an array is provided, the array elements are used as both the option value and the option label.
 
-Usage examples:
+##### Usage examples
+###### Array
+```ruby{3}
+dynamic_filter :version,
+  type: :select,
+  options: ["Label 1", "Label 2"]
+```
 
-```ruby{3-6,10}
+###### Hash (with invert)
+```ruby{3-6}
 dynamic_filter :version,
   type: :select,
   options: {
     value_1: "Label 1",
     value_2: "Label 2"
-  }
+  }.invert
+```
 
+###### Hash (without invert)
+```ruby{3-6}
 dynamic_filter :version,
   type: :select,
-  options: ["Label 1", "Label 2"]
+  options: {
+    "Label 1" => :value_1,
+    "Label 2" => :value_2
+  }
 ```
 </Option>
