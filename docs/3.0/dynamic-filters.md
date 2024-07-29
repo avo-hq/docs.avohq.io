@@ -499,6 +499,7 @@ dynamic_filter :first_name,
 </Option>
 
 <Option name="`options`">
+<VersionReq version="3.10.10" />
 
 Customize the options **for select type filters**. **This is available only for select type filters** and determines the options visible in the select dropdown.
 
