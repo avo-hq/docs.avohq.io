@@ -188,7 +188,7 @@ const config = {
           items: [
             {text: "Overview", link: "/3.0/filters.html"},
             {text: "Basic Filters", link: "/3.0/basic-filters.html"},
-            {text: "Dynamic filters", link: "/3.0/dynamic-filters.html"},
+            {text: "Dynamic Filters", link: "/3.0/dynamic-filters.html"},
           ],
         },
         {
