@@ -4,6 +4,19 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.10.9 to 3.10.10
+<Option name="Array filter">
+
+Custom dynamic filter type `array` was duplicated and is now obsolete in favor of `tags`.
+
+```ruby
+def filters
+  dynamic_filter :the_filter,
+    type: :array # [!code --]
+    type: :tags # [!code ++]
+```
+</Option>
+
 ## Upgrade from 3.10.6 to 3.10.7
 <Option name="Boolean field">
 

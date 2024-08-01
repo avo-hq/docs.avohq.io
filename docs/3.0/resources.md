@@ -513,6 +513,25 @@ We know, the array notation looks weird, but it works.
 
 </Option>
 
+<Option name="`self.confirm_on_save`">
+
+<VersionReq version="3.10.10" />
+If you would like to ask for confirmation when saving a resource you can do so by setting `confirm_on_save` to `true`.
+
+That will help add friction to the saving process, avoiding human error.
+
+```ruby
+class Avo::Resources::Post < Avo::BaseResource
+  self.confirm_on_save = true
+end
+```
+
+This option defaults to false
+
+<Image src="/assets/img/customization/confirm-on-save.png" width="2494" height="845" alt="Confirm on save" />
+
+</Option>
+
 <Option name="`default_view_type`">
 
 On <Index />, the most common view type is `:table`, but you might have some data that you want to display in a `:grid` or `:map`. You can change that by setting `default_view_type` to `:grid` and by adding the `grid` block.

@@ -141,6 +141,7 @@ module Avo
 end
 ```
 </Option>
+
 ## Field options
 
 This file is where you may add field-specific options.
