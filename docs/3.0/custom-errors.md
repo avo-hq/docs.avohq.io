@@ -24,6 +24,9 @@ class User < ApplicationRecord
     end
   end
 end
+```
+
+In this example, the `age_must_be_over_18` method checks if the user's age is less than 18. If so, it adds an error to the `age` attribute with a custom message. This error prevents any further Avo action on the record and notifies the user of the issue.
 
 ## In a Join Table
 
@@ -45,3 +48,6 @@ class TeamMembership < ApplicationRecord
     end
   end
 end
+```
+
+In this example, the `custom_validation` method is called whenever a `TeamMembership` record is validated. If the conditions in this method are not met, an error is added to the `user` attribute with a custom message. This error prevents any further Avo action on the record and notifies the user of the issue.
