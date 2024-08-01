@@ -4,31 +4,7 @@ Actions such as create, update, attach, etc... will not be completed if the reco
 
 ## Adding Custom Errors
 
-To add custom errors, you can define a validation method in your model. If the validation fails, add an error to the record. These errors will prevent the Avo action from completing and will be displayed as notifications to the user.
-
-## In a Join Table
-
-Consider a join table `TeamMembership` which links `Team` and `User` models. You might want to add a custom validation to ensure some business logic is enforced.
-
-```ruby
-# app/models/team_membership.rb
-class TeamMembership < ApplicationRecord
-  belongs_to :team
-  belongs_to :user
-
-  validate :custom_validation
-
-  private
-
-  def custom_validation
-    if user.banned?
-      errors.add(:user, "is banned.")
-    end
-  end
-end
-```
-
-In this example, the `custom_validation` method is called whenever a `TeamMembership` record is validated. If the conditions in this method are not met, an error is added to the `user` attribute with a custom message. This error prevents any further Avo action on the record and notifies the user of the issue.
+To add custom errors, you can define a validation method in your model. If the validation fails it adds an error to the record. These errors will prevent the action from completing and will be displayed as notifications to the user.
 
 ## In a Simple Record
 
@@ -48,6 +24,3 @@ class User < ApplicationRecord
     end
   end
 end
-```
-
-In this example, the `age_must_be_over_18` method checks if the user's age is less than 18. If so, it adds an error to the `age` attribute with a custom message. This error prevents any further Avo action on the record and notifies the user of the issue.
