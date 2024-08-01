@@ -24,3 +24,24 @@ class User < ApplicationRecord
     end
   end
 end
+
+## In a Join Table
+
+Consider a join table `TeamMembership` which links `Team` and `User` models. You might want to add a custom validation to ensure some business logic is enforced.
+
+```ruby
+# app/models/team_membership.rb
+class TeamMembership < ApplicationRecord
+  belongs_to :team
+  belongs_to :user
+
+  validate :custom_validation
+
+  private
+
+  def custom_validation
+    if user.banned?
+      errors.add(:user, "is banned.")
+    end
+  end
+end
