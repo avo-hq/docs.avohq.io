@@ -43,11 +43,11 @@ field :members,
   as: :has_many,
   through: :memberships
 ```
-:::option `extra`
-If you have extra fields defined in the through table. You can display these fields using the extra option.
+:::option `attach_fields`
+If you have extra fields defined in the through table and would like to display them when attaching use the `attach_fields` option.
 
 ```ruby{3}
-extra: -> {
+attach_fields: -> {
   field :review, as: :text
 }
 ```
