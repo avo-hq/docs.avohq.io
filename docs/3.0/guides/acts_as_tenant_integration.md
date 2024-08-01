@@ -2,6 +2,13 @@
 
 Recipe [contributed](https://github.com/avo-hq/docs.avohq.io/pull/218) by [SahSantoshh](https://github.com/sahsantoshh).
 
+:::warning
+The guide expressed here shows how you we can add subdomain-level multitenancy (sah.example.org, adrian.example.org, etc).
+
+This makes for more than one URL per application which in turn requires a special license.
+To get more information please [reach out](mailto:avo@avohq.io?subject=Multi-URL%20tenancy%20with%20Avo&body=Hi%2C%0D%0A%0D%0AI%20would%20like%20to%20develop%20a%20multi-URL%20application%20using%20Avo.%0D%0A%0D%0A...) to us.
+:::
+
 There are different ways to achieve multi-tenancy in an application.
 We already have a doc which describes about [Multitenancy](../multitenancy.md) with Avo.
 Here we will deep dive in integrating [Acts As Tenant](https://github.com/ErwinM/acts_as_tenant) which supports row-level multitenancy with Avo.
@@ -16,16 +23,13 @@ ___
 
 To use it, add it to your Gemfile:
 
-:::code-group
-```ruby [Gemfile]{3}
+```ruby
 gem 'acts_as_tenant'
-```
-:::
 
 ## Tenant
 ___
 
-Let's create model for tenant. We are using _Account_ as our tenant.
+Let's create model for tenant. We are using `Account` as our tenant.
 
 **Account Migration and Model class**
 
@@ -62,7 +66,7 @@ end
 ## Scope models
 ___
 
-Now let's add users to Account. Here I am assuming to have an existing user model which is used for _Authentication_.
+Now let's add users to `Account`. Here I am assuming to have an existing user model which is used for `Authentication`.
 Similarly we can scope other models.
 
 :::code-group
@@ -86,7 +90,7 @@ end
 ___
 
 There are three ways to set the current tenant but we be using the subdomain to lookup the current tenant.
-Since Avo has it's own _Application Controller_ so there is no point in setting the tenant in Rails default _Application Controller_ but we will set it there as well just to be safe site and also we might have some other pages other than Admin Dashboard supported by Avo.
+Since Avo has it's own `Application Controller` so there is no point in setting the tenant in Rails default `Application Controller` but we will set it there as well just to be safe site and also we might have some other pages other than Admin Dashboard supported by Avo.
 
 :::code-group
 ```ruby [app/controllers/concerns/multitenancy.rb]{3}
@@ -134,7 +138,7 @@ Now, whenever we navigate to https://sahsantoshh.example.com/ the tenant & the t
 
 ## Move existing data to model
 
-We might have to many users and other records which needs to be associated with Account.
+We might have to many users and other records which needs to be associated with `Account`.
 For example, we will only move users record to the account
 
 :::code-group
