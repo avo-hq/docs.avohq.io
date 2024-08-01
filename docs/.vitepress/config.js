@@ -196,6 +196,7 @@ const config = {
           items: [
             {text: "Custom views", link: "/3.0/custom-tools.html"},
             {text: "Custom fields", link: "/3.0/custom-fields.html"},
+            {text: "Custom errors", link: "/3.0/custom-errors.html"},
             {text: "Resource tools", link: "/3.0/resource-tools.html"},
             {text: "Stimulus JS integration", link: "/3.0/stimulus-integration.html"},
             {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline.html"},
