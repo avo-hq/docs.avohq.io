@@ -19,15 +19,14 @@ Check out the [acts_as_tenant](https://github.com/ErwinM/acts_as_tenant) documen
 :::
 
 ## Installation
-___
 
 To use it, add it to your Gemfile:
 
 ```ruby
 gem 'acts_as_tenant'
+```
 
 ## Tenant
-___
 
 Let's create model for tenant. We are using `Account` as our tenant.
 
@@ -87,7 +86,6 @@ end
 :::
 
 ## Setting the current tenant
-___
 
 There are three ways to set the current tenant but we be using the subdomain to lookup the current tenant.
 Since Avo has it's own `Application Controller` so there is no point in setting the tenant in Rails default `Application Controller` but we will set it there as well just to be safe site and also we might have some other pages other than Admin Dashboard supported by Avo.
@@ -134,7 +132,6 @@ end
 :::
 
 Now, whenever we navigate to https://sahsantoshh.example.com/ the tenant & the tenant_id will be set to **sahsantoshh**.
-
 
 ## Move existing data to model
 
