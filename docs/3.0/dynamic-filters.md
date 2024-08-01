@@ -107,6 +107,9 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[create
  - `>=` (greater than or equal to)
  - `<` (lower than)
  - `<=` (lower than or equal to)
+ - Is within <VersionReq version="3.10.11"/>
+ - Is null
+ - Is not null
 
 <div class="flex justify-between items-start flex-wrap">
   <Image src="/assets/img/dynamic_filter_number.png" width="244" height="205" alt="" />
