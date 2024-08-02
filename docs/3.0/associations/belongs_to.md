@@ -35,6 +35,16 @@ Sets the field as polymorphic with the key set on the model.
 #### Possible values
 
 A symbol, used on the `belongs_to` association with `polymorphic: true`.
+
+:::warning
+You must use this option with the `types` option.
+:::
+
+#### Example
+
+```ruby
+field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
+```
 </Option>
 
 <Option name="`types`">
@@ -47,6 +57,16 @@ Sets the types the field can morph to.
 #### Possible values
 
 `[Post, Project, Team]`. Any array of model names.
+
+:::warning
+You must use this option with the `polymorphic_as` option.
+:::
+
+#### Example
+
+```ruby
+field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
+```
 </Option>
 
 <Option name="`polymorphic_help`">
