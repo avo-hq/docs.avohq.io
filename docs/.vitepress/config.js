@@ -218,20 +218,20 @@ const config = {
             {text: "Testing", link: "/3.0/testing.html"},
             {text: "Avo::Current", link: "/3.0/avo-current.html"},
             {text: "Avo::ExecutionContext", link: "/3.0/execution-context.html"},
-            {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller.html"},
-            {text: "Avo.asset_manager", link: "/3.0/asset-manager.html"},
             {text: "Avo::Services::EncryptionService", link: "/3.0/encryption-service.html"},
             {text: "Icons", link: "/3.0/icons.html"},
           ],
         },
-        // {
-        //   text: "Extending",
-        //   items: [
-        //     {text: "Plugins", link: "/3.0/plugins.html"},
+        {
+          text: "Extending",
+          items: [
+            {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller.html"},
+            {text: "Avo.asset_manager", link: "/3.0/asset-manager.html"},
+            {text: "Plugins", link: "/3.0/plugins.html"},
         //     {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller.html"},
         //     {text: "Avo.asset_manager", link: "/3.0/asset-manager.html"},
-        //   ],
-        // },
+          ],
+        },
       ],
       "/2.0/": [
         {
