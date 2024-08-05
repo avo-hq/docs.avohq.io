@@ -99,6 +99,7 @@ From this block you can show, hide, and authorize the scope on the resource.
 </Option>
 
 <Option name="`default`">
+<VersionReq version="3.11" />
 
 The `default` option lets you select a default scope that is applied when you
 navigate to the resources page.
