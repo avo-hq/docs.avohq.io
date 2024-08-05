@@ -49,7 +49,7 @@ end
 
 ## Register the plugin
 
-The way we do it is throught an initializer. We mostly use the `engine.rb` file to register the plugin.
+The way we do it is through an initializer. We mostly use the `engine.rb` file to register the plugin.
 
 ```ruby{8}
 module Avo
@@ -145,7 +145,7 @@ end
 ```
 
 :::info
-Avo doesn't compile the assets in any way, but just adds them to the layout file. This means that the assets should be compiled and rady for the browser to use them.
+Avo doesn't compile the assets in any way, but just adds them to the layout file. This means that the assets should be compiled and ready for the browser to use them.
 
 We use [`jsbundling-rails`](https://github.com/rails/jsbundling-rails)  with `esbuild` to compile the assets before packaging them in the `gem` file.
 
@@ -154,7 +154,7 @@ Please check out [the scripts](https://github.com/avo-hq/avo/blob/main/package.j
 
 ## Create your own plugin
 
-We don't yeat have a generator for that but what we do is to create a new Rails Engine and add the plugin to it.
+We don't yet have a generator for that but what we do is to create a new Rails Engine and add the plugin to it.
 
 1. Run `rails plugin new feed-view`
 1. Add the plugin to the `engine.rb` file
