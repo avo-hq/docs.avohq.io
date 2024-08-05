@@ -97,3 +97,27 @@ end
 <Option name="`visible`">
 From this block you can show, hide, and authorize the scope on the resource.
 </Option>
+
+<Option name="`default`">
+<VersionReq version="3.11" />
+
+The `default` option lets you select a default scope that is applied when you
+navigate to the resources page.
+
+```ruby{4}
+def scopes
+  scope Avo::Scopes::OddId
+  # EvenId scope is applied as default
+  scope Avo::Scopes::EvenId, default: true
+end
+```
+
+You can also use it as a block, the `default` block executes within the [`ExecutionContext`](execution-context), granting access to all default methods and attributes.:
+
+```ruby{3}
+def scopes
+  scope Avo::Scopes::OddId
+  scope Avo::Scopes::EvenId, default: -> { current_user.admin? }
+end
+```
+</Option>
