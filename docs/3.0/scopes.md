@@ -111,11 +111,11 @@ def scopes
 end
 ```
 
-You can also pass in a block to default:
-```ruby{4}
+You can also use it as a block, the `default` block executes within the [`ExecutionContext`](./../execution-context), granting access to all default methods and attributes.:
+
+```ruby{3}
 def scopes
   scope Avo::Scopes::OddId
-  scope Avo::Scopes::EvenId, default: -> { true if admin? }
+  scope Avo::Scopes::EvenId, default: -> { current_user.admin? }
 end
-```
 </Option>
