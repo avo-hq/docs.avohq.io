@@ -47,9 +47,9 @@ field :members,
 
 If you have extra fields defined in the through table and would like to display them when attaching use the `attach_fields` option.
 
-```ruby{3}
-field :patrons, 
-  as: :has_many, 
+```ruby{4,5,6}
+field :patrons,
+  as: :has_many,
   through: :patronships,
   attach_fields: -> {
     field :review, as: :text
