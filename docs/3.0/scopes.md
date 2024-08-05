@@ -119,5 +119,5 @@ def scopes
   scope Avo::Scopes::OddId
   scope Avo::Scopes::EvenId, default: -> { current_user.admin? }
 end
-``
+```
 </Option>
