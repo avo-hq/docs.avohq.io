@@ -112,7 +112,7 @@ def scopes
 end
 ```
 
-You can also use it as a block, the `default` block executes within the [`ExecutionContext`](./../execution-context), granting access to all default methods and attributes.:
+You can also use it as a block, the `default` block executes within the [`ExecutionContext`](execution-context), granting access to all default methods and attributes.:
 
 ```ruby{3}
 def scopes
