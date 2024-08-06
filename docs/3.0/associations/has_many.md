@@ -43,6 +43,23 @@ field :members,
   as: :has_many,
   through: :memberships
 ```
+<Option name="`attach_fields`">
+
+<VersionReq version="3.11" />
+
+If you have extra fields defined in the through table and would like to display them when attaching use the `attach_fields` option.
+
+```ruby{4,5,6}
+field :patrons,
+  as: :has_many,
+  through: :patronships,
+  attach_fields: -> {
+    field :review, as: :text
+  }
+```
+
+<Image src="/assets/img/3_0/has_many/attach-fields.gif" width="600" height="338" alt="" />
+</Option>
 
 <!-- @include: ./../common/show_on_edit_common.md-->
 <!-- @include: ./../common/scopes_common.md-->
