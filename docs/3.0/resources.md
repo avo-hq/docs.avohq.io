@@ -513,6 +513,39 @@ We know, the array notation looks weird, but it works.
 
 </Option>
 
+<Option name="`self.single_includes`">
+
+`single_includes` works the same as `includes` but it's going to eager load the associtations on the <Show /> and <Edit /> views only.
+</Option>
+
+<Option name="`self.attachments`">
+
+Similar to how `includes` works, you can use `attachments` to eager load attachments on the `Index` view.
+
+:::code-group
+```ruby{2-4} [app/models/post.rb]
+class Post < ApplicationRecord
+  has_one_attached :cover_photo
+  has_one_attached :audio
+  has_many_attached :attachments
+end
+```
+
+```ruby{5-7} [app/avo/resources/post.rb]
+class Avo::Resources::Post < Avo::BaseResource
+  self.attachments = [:cover_photo, :audio, :attachments]
+end
+```
+:::
+
+</Option>
+
+<Option name="`self.single_attachments`">
+
+`single_attachments` works the same as `attachments` but it's going to eager load the attachments on the <Show /> and <Edit /> views only.
+
+</Option>
+
 <Option name="`self.confirm_on_save`">
 
 <VersionReq version="3.10.10" />
