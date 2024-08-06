@@ -403,6 +403,7 @@ Your resource file will still look the same as it did before.
 module Avo::Resources::Post < Avo::BaseResource
   # Your existing configuration for the Post resource
 end
+```
 
 ## Resource Options
 
