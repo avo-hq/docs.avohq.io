@@ -44,7 +44,9 @@ field :members,
   through: :memberships
 ```
 <Option name="`attach_fields`">
+
 <VersionReq version="3.11" />
+
 If you have extra fields defined in the through table and would like to display them when attaching use the `attach_fields` option.
 
 ```ruby{4,5,6}
@@ -56,7 +58,7 @@ field :patrons,
   }
 ```
 
-<Image src="/assets/img/3_0/has_many/attach-fields.gif" width="540" height="304" alt="" />
+<Image src="/assets/img/3_0/has_many/attach-fields.gif" width="600" height="338" alt="" />
 </Option>
 
 <!-- @include: ./../common/show_on_edit_common.md-->
