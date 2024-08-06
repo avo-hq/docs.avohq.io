@@ -408,7 +408,6 @@ end
 ## Resource Options
 
 Resources have a few options available for customization.
-```
 
 <Option name="`self.title`">
 
