@@ -44,7 +44,7 @@ field :members,
   through: :memberships
 ```
 <Option name="`attach_fields`">
-
+<VersionReq version="3.11" />
 If you have extra fields defined in the through table and would like to display them when attaching use the `attach_fields` option.
 
 ```ruby{4,5,6}
