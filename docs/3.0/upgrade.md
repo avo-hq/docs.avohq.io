@@ -3,6 +3,12 @@
 We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
+## Upgrade from 3.10.10 to 3.11.3
+<Option name="Unexpected behavior">
+Between versions <Version version="3.10.10" /> and <Version version="3.11.2" /> you might encounter some unexpected behavior, such as issues with applying dynamic filters or duplicated flash messages. This occurs specifically when the cookie that stores the sidebar status (open/close) is missing.
+
+However, if the browser already has this cookie from a previous interaction, the issue does not occur.This issue is resolved <VersionReq version="3.11.3" />, so we recommend updating directly to that version.
+</Option>
 
 ## Upgrade from 3.10.9 to 3.10.10
 <Option name="Array filter">
