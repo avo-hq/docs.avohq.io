@@ -1,7 +1,7 @@
 ---
 license: kanban
 betaStatus: Alpha 🧪 (experimental)
-outline: deep
+outline: [2,3]
 ---
 
 # Kanban boards
@@ -93,11 +93,53 @@ The models should have the `to_combobox_display` method configured so we know wh
 
 Next in our board we should select these resources as allowed from the board settings.
 
+### Add items to the board
+
 At the bottom of the `No status` column we can search for an `Issue`. When we select that issue, an `Avo::Kanban::Item` record will be created for it with references to the board, column, and record (that issue).
 This automatically triggers the issue to change the status to an empty string because we added it to the `No status` column which has the `value` set to an empty string.
 
 If we were to add it to the `Backlog` column, it would change the status to `backlog`.
 
+### Move items between columns
+
 Now, if we move the item to the `In progress` column, it will change the status to `in_progress`.
 
+### Items without that property
 
+Some models might belong on the same board but have different properties to show the status.
+Some omodels might use a timestamp like `published_at` to show the status.
+Or some models might belong to a a status but that isn't dictated by a single property but a collection of properties.
+
+In order to mititgate that we can create virtual properties on the model.
+
+Let's imagine that a new baord that displays the posts in columns based on their "published" status. the board uses the `status` property to but the `Post` model doesn't have the `status` property as a column in the database.
+We can create a virtual property on the model.
+
+```ruby
+class Post < ApplicationRecord
+  def status
+    if published_at.present?
+      "published"
+    elsif published_status == "draft"
+      "draft"
+    else
+      "private"
+    end
+  end
+
+  def status=(value)
+    if value == "published"
+      published_at = Time.now
+      published_status = "draft"
+    elsif value == "draft"
+      published_at = nil
+      published_status = "draft"
+    elsif value == "draft"
+      published_at = nil
+      published_status = nil
+    end
+
+    save!
+  end
+end
+```
