@@ -56,14 +56,14 @@ end
 </Option>
 
 <Option name="`display_value`">
-You may want to display the values from the database and not the labels of the options. You may change that by setting `display_value` to `true`.
+You may want to display the values from the database and not the labels of the options. You may configure this behaviour by setting `display_value` to `true`. Note that this setting has no effect if an array of options is provided.
 
 ```ruby{5}
 # app/avo/resources/project.rb
 class Avo::Resources::Project < Avo::BaseResource
   field :type,
     as: :select,
-    display_with_value: true
+    display_value: true
 end
 ```
 
