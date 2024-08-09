@@ -41,3 +41,12 @@ Next are all the other things about the field. Maybe it requires some explanatio
 ```html
 <Demo link="https://avodemo.com" label="See the demo" />
 ```
+
+## Show deeper links to the "On this page" section
+
+On top of the page.
+
+```
+outline: [2,3] # shows the h2's and h3's
+outline: deep # shows the h2's all the way to h6
+```
