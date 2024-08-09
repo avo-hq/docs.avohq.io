@@ -12,11 +12,15 @@ const links = {
   community: "https://avohq.io/pricing#comparison-heading",
   pro: "https://avohq.io/subscriptions/new?plan=pro",
   advanced: "https://avohq.io/subscriptions/new?plan=advanced",
+  kanban: "mailto:avo@avohq.io?subject=I'd%20like%20to%20learn%20more%20about%20the%20Kanban%20license&body=Hi%2C%0D%0A%0D%0AI'm%20....",
+  custom: "mailto:avo@avohq.io?subject=I'd%20like%20to%20learn%20more%20about%20the%20Custom%20license&body=Hi%2C%0D%0A%0D%0AI'm%20....",
 };
 const labels = {
   community: "Community",
   pro: "Pro",
   advanced: "Advanced",
+  kanban: "Kanban",
+  custom: "Custom",
 };
 const href = computed(() => links[license.value]);
 const label = computed(() => labels[license.value]);
@@ -32,6 +36,8 @@ const label = computed(() => labels[license.value]);
       'bg-green-500 hover:bg-green-600': license == 'community',
       'bg-blue-500 hover:bg-blue-600': license == 'pro',
       'bg-violet-500 hover:bg-violet-600': license == 'advanced',
+      'bg-fuchsia-500 hover:bg-fuchsia-600': license == 'kanban',
+      'bg-rose-500 hover:bg-rose-600': license == 'custom',
       'text-xs px-1 py-px': size == 'xs',
       'text-sm px-2 py-1': size == 'sm',
     }"
