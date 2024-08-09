@@ -75,3 +75,40 @@ end
 ## Display counter indicator on tabs switcher
 
 Check [this recipe](guides/tabs-counter-indicator.html) on how to enhance your tabs switcher with a counter for each association tab.
+
+## Visibility control
+
+<VersionReq version="3.10.10" />
+
+Both `tabs` and individual `tab` components support a `visible` option that allows you to dynamically control their visibility based on certain conditions. For example, you might want to hide a tab if the user doesn't have the necessary permissions to view its content.
+
+<Option name="`visible`">
+
+The `visible` option allows you to control the visibility of either a group of tabs or an individual tab. It can be a `boolean` or a lambda.
+
+#### Example
+
+```ruby
+tabs visible: -> { resource.record.enabled? } do
+  tab name: "General Information" do
+    panel do
+      field :name, as: :text
+      field :email, as: :text
+    end
+  end
+  tab "Admin Information", visible: -> { current_user.is_admin? } do
+    panel do
+      field :role, as: :text
+      field :permissions, as: :text
+    end
+  end
+end
+```
+
+In this example:
+- The entire group of tabs is only visible if the record is enabled (`resource.record.enabled?`).
+- Within this group, the "General Information" tab is always visible when the tabs are shown.
+- The "Admin Information" tab is only visible for admin records (`resource.record.admin?`).
+
+</Option>
+
