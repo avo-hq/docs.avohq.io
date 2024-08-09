@@ -143,3 +143,17 @@ class Post < ApplicationRecord
   end
 end
 ```
+
+## Customize the card
+
+:::warning
+This might change in the future.
+:::
+
+In order to customize the card, you can add this partial to your `app/views/avo/kanban/items/_item.html.erb` file.
+
+```erb
+<%= item.record.name %>
+```
+
+The `item` is the `Avo::Kanban::Item` and the `record` is the actual record from the database.
