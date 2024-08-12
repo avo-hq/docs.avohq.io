@@ -848,6 +848,30 @@ end
   - [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
 </Option>
 
+<Option name="`self.default_sort_direction`">
+<VersionReq version="3.11.5" />
+
+By default, Avo sorts records in descending order of the [default sort column](./resources#self.default_sort_column). However, you can customize this using the `self.default_sort_direction` option in your resource file.
+
+#### Default
+
+`:desc`
+
+#### Possible values
+
+Either `:desc` (descending) or `:asc` (ascending).
+
+```ruby
+class Avo::Resources::Task < Avo::BaseResource
+  self.default_sort_column = :position
+  self.default_sort_direction = :asc
+
+  # ...
+end
+```
+
+</Option>
+
 ## Cards
 
 Use the `def cards` method to add some cards to your resource.
