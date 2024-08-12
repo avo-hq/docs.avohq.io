@@ -805,6 +805,49 @@ end
 ```
 </Option>
 
+<Option name="`self.default_sort_column`">
+<VersionReq version="3.10.7" />
+
+By default, Avo sorts records on the <Index /> view by the `created_at` attribute. However, you can customize this behavior using the `default_sort_column` option in your resource file.
+
+#### Default
+
+`:created_at`
+
+#### Possible values
+
+Any symbol representing a sortable column in your model. If the specified column doesn't exist in the model, Avo will fall back to the default sort column (`created_at`).
+
+```ruby
+class Avo::Resources::User < Avo::BaseResource
+  self.default_sort_column = :last_name
+
+  def fields
+    field :id, as: :id
+    field :last_name, as: :text
+  end
+
+  # other resource configurations...
+end
+```
+
+:::info
+When changing the default sort column, it's recommended to add an index to that column in your database for better query performance.
+
+```ruby
+# Example migration
+class AddIndexOnUsersCreatedAt < ActiveRecord::Migration[7.1]
+  def change
+    add_index :users, :last_name
+  end
+end
+```
+:::
+
+**Related:**
+  - [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
+</Option>
+
 ## Cards
 
 Use the `def cards` method to add some cards to your resource.
