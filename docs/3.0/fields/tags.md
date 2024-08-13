@@ -18,6 +18,12 @@ field :skills, as: :tags
 
 <Option name="`suggestions`">
 
+:::warning
+If you're using this field as `filterable`, dynamic filters are not yet picking these suggestions.
+
+Please use the custom dynamic filters [suggestions](../dynamic-filters#suggestions) option to specify filter suggestions.
+:::
+
 You can give suggestions to your users to pick from which will be displayed to the user as a dropdown under the field.
 
 ```ruby{4,10-12}
