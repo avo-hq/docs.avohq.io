@@ -380,6 +380,10 @@ end
 <Option name="Date time Filter">
 The ideal filter for date selection. This filter allows you to generate a date input, with options to include time selection and even a range selection mode. Customizable to suit your specific needs.
 
+:::warning Timezone Handling
+This filter sends the selected value exactly as selected, without any timezone adjustments. If you need to apply timezone conversion or adjustments, please ensure to handle it during the [`apply`](#apply) method.
+:::
+
 Generate one by using:
 ```bash
 rails generate avo:filter created_at --type date_time
