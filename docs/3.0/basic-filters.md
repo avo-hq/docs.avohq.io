@@ -90,7 +90,7 @@ end
 
 ## Filter types
 
-Avo has several types of filters available [Boolean filter](#boolean_filter), [Select filter](#select_filter), [Multiple select filter](#multiple_select_filter) and [Text filter](#text_filter).
+Avo has several types of filters available [Boolean filter](#boolean_filter), [Select filter](#select_filter), [Multiple select filter](#multiple_select_filter), [Text filter](#text_filter) and since version <Version version="3.11.7" /> [Date time filter](#date_time_filter).
 
 <Image src="/assets/img/filters.png" width="404" height="727" alt="Avo filters" />
 
@@ -375,6 +375,99 @@ class Avo::Filters::Name < Avo::Filters::TextFilter
   # end
 end
 ```
+</Option>
+
+<Option name="Date time Filter">
+The ideal filter for date selection. This filter allows you to generate a date input, with options to include time selection and even a range selection mode. Customizable to suit your specific needs.
+
+Generate one by using:
+```bash
+rails generate avo:filter created_at --type date_time
+```
+
+The generated file should be following a similar format:
+```ruby
+# frozen_string_literal: true
+
+class Avo::Filters::CreatedAt < Avo::Filters::DateTimeFilter
+  self.name = "Created at"
+  # self.type = :date_time
+  # self.mode = :range
+  # self.visible = -> do
+  #   true
+  # end
+
+  def apply(request, query, value)
+    query
+  end
+
+  # def format
+  #   case type
+  #   when :date_time
+  #     'yyyy-LL-dd TT'
+  #   when :date
+  #     'yyyy-LL-dd'
+  #   end
+  # end
+
+  # def picker_format
+  #   case type
+  #   when :date_time
+  #     'Y-m-d H:i:S'
+  #   when :time
+  #     'Y-m-d'
+  #   end
+  # end
+end
+
+```
+
+### Type
+Determines the format of the input field.
+
+##### Default value
+
+`:date_time`
+
+By default, the input allows users to select both a date and a time.
+
+##### Possible values
+
+- `:date`
+  - This option restricts the input to date selection only, ideal for scenarios where time input is unnecessary.
+  <Image src="/assets/img/date_type.png" class="mt-2" width="385" height="377" alt="Avo date time filter date type" />
+
+- `:time`
+  - This option limits the input to time selection only, suitable to apply where only the time is relevant.
+  <Image src="/assets/img/time_type.png" class="mt-2" width="385" height="50" alt="Avo date time filter time type" />
+
+- `:date_time`
+  - This combined option enables both date and time selection, providing a comprehensive input for more detailed needs.
+  <Image src="/assets/img/date_time_type.png" class="mt-2" width="385" height="427" alt="Avo date time filter date_time type" />
+
+### Mode
+Defines whether the input allows selection of a single date or a range of dates.
+
+##### Default value
+
+`:range`
+
+By default, the input permits users to select a range of dates, ideal for scenarios such as booking periods or event durations.
+
+##### Possible values
+- `:range`
+  - Allows users to choose a start and end date, making it suitable for applications that require a time span, such as reservations or scheduling.
+  <Image src="/assets/img/range_mode.png" class="mt-2" width="385" height="377" alt="Avo date time filter range mode" />
+  :::info
+  In `:range` mode the `value` will be formatted as `"2024-08-13 to 2024-08-16"`.
+
+  To separate the start and end dates, use `date_1, date_2 = value.split(" to ")`, which will split the value into `["2024-08-13", "2024-08-16"]`
+  :::
+
+- `:single`
+  - Limits the selection to a single date, perfect for use cases where only one specific day needs to be selected, such as an appointment or event date.
+  <Image src="/assets/img/single_mode.png" class="mt-2" width="385" height="370" alt="Avo date time filter single mode" />
+
 </Option>
 
 ## Dynamic filter options
