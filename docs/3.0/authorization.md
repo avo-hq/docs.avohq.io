@@ -438,6 +438,7 @@ web     | record: User(id: integer, first_name: string, last_name: string, roles
 In production each log entry provides details about the policy class and the attempted action:
 ```bash
 web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
+```
 
 ## Custom policies
 
