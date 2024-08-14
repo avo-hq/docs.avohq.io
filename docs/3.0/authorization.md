@@ -435,7 +435,7 @@ web     | user: #<User id: 20, first_name: "Avo", last_name: "Cado", roles: {"ad
 web     | record: User(id: integer, first_name: string, last_name: string, roles: json, team_id: integer, slug: string, active: boolean, email: string, encrypted_password: string, reset_password_token: string, reset_password_sent_at: datetime, remember_created_at: datetime, created_at: datetime, updated_at: datetime)
 ```
 
-In production:
+In production each log entry provides details about the policy class and the attempted action:
 ```bash
 web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
 
