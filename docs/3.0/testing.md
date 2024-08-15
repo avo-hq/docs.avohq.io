@@ -54,7 +54,7 @@ RSpec.feature ReleaseFish, type: :feature do
       },
       current_user: current_user,
       resource: resource,
-      records: [fish]
+      query: [fish]
     }
 
     action = described_class.new(resource: resource, user: current_user, view: :edit)
