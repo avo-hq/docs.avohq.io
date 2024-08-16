@@ -937,9 +937,9 @@ The exposed pagination setting above have the default value for each key.
   #### Possible values
   [Pagy docs - Control the page links](https://ddnexus.github.io/pagy/docs/how-to/#control-the-page-links)
   #### Default
-  `[1, 2, 2, 1]` - before <Version version="3.11.4" />
+  `[1, 2, 2, 1]` - before <Version version="3.11.5" />
 
-  `9` - <VersionReq version="3.11.4" />
+  `9` - <VersionReq version="3.11.5" />
 
 ### Examples
 #### Default
