@@ -425,7 +425,7 @@ end
 Now, you'll have to provide a policy for each resource you have in your app, thus making it a more secure app.
 
 ## Logs
-<VersionReq version="3.11.5" />
+<VersionReq version="3.11.7" />
 [Developers](authentication.html#_2-developer-user) have the ability to monitor any unauthorized actions. When a [developer user](authentication.html#_2-developer-user) makes a request that triggers an unauthorized action, a log entry similar to the following will be generated:
 
 In development each log entry provides details about the policy class, the action attempted, the user who made the request, and the record involved:
