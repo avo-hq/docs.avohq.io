@@ -424,6 +424,22 @@ end
 
 Now, you'll have to provide a policy for each resource you have in your app, thus making it a more secure app.
 
+## Logs
+<VersionReq version="3.11.7" />
+[Developers](authentication.html#_2-developer-user) have the ability to monitor any unauthorized actions. When a [developer user](authentication.html#_2-developer-user) makes a request that triggers an unauthorized action, a log entry similar to the following will be generated:
+
+In development each log entry provides details about the policy class, the action attempted, the user who made the request, and the record involved:
+```bash
+web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
+web     | user: #<User id: 20, first_name: "Avo", last_name: "Cado", roles: {"admin"=>true, "manager"=>false, "writer"=>false}, team_id: nil, slug: "avo-cado", active: true, email: "avo@avohq.io", created_at: "2023-05-20 18:32:32.857042000 +0000", updated_at: "2024-01-03 14:20:00.352895000 +0000">
+web     | record: User(id: integer, first_name: string, last_name: string, roles: json, team_id: integer, slug: string, active: boolean, email: string, encrypted_password: string, reset_password_token: string, reset_password_sent_at: datetime, remember_created_at: datetime, created_at: datetime, updated_at: datetime)
+```
+
+In production each log entry provides details about the policy class and the attempted action:
+```bash
+web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
+```
+
 ## Custom policies
 
 <VersionReq version="2.17" />
