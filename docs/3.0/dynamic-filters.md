@@ -277,6 +277,17 @@ Each option specified below can be used as a key in the hash definition or as a 
 :::info Filters order
 The filter order is computed. Dynamic filters defined by the `dynamic_filter` method will respect the definition order and will be rendered first in the filter list. Filters declared using the field's `filterable` option will be sorted by label.
 :::
+
+:::warning Custom Dynamic Filter IDs
+When using a custom dynamic filter, the generated filter ID may not directly correspond to a database column. In such cases, you should use the [`query_attributes`](#query_attributes) option to specify which database columns the filter should apply to.
+
+For example, consider a `City` model with a `population` column in the database:
+```ruby
+# The filter ID is custom_population
+# However, the filter should apply the query to the population attribute.
+dynamic_filter :custom_population, query_attributes: :population
+```
+:::
 <Option name="`label`">
 
 Customize filter's label
