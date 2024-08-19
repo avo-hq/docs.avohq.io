@@ -474,7 +474,7 @@ By default, the input permits users to select a range of dates, ideal for scenar
 
 ### `picker_options`
 
-This filter uses [flatpickr](https://flatpickr.js.org) as the date and time picker. If you wish to customize the picker’s options, you can do so by overriding the [`picker_options(value)`](https://github.com/avo-hq/avo/blob/menu/lib/avo/filters/date_time_filter.rb#L21) method. You can merge your custom options with those provided by [flatpickr](https://flatpickr.js.org), which are detailed [here](https://flatpickr.js.org/options/).
+This filter uses [flatpickr](https://flatpickr.js.org) as the date and time picker. If you wish to customize the picker’s options, you can do so by overriding the [`picker_options(value)`](https://github.com/avo-hq/avo/blob/menu/lib/avo/filters/date_time_filter.rb#L22) method. You can merge your custom options with those provided by [flatpickr](https://flatpickr.js.org), which are detailed [here](https://flatpickr.js.org/options/).
 
 ```ruby{10-14}
 # frozen_string_literal: true
