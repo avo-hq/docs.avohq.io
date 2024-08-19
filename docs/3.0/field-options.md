@@ -405,11 +405,12 @@ Replace `FIELD_TYPE` with the desired field type. For instance, to eject compone
 
 This command will generate the files for all the index, edit and show components of the Text field, for each field type the amount of components may vary.
 
-For more advanced usage check the [`--fields-components` documentation](./customization.html#field_components)
+For more advanced usage check the [eject documentation](./eject-views.html).
+
 :::warning Scope
 If you don't pass a `--scope` when ejecting a field view component, the ejected component will override the default components all over the project.
 
-Check [ejection documentation](./eject-views.html) for more details.
+Check [eject documentation](./eject-views.html) for more details.
 :::
 
 ### Customizing field components using `components` option
