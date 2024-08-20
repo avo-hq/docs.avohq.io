@@ -514,6 +514,77 @@ field :first_name,
 dynamic_filter :first_name,
   suggestions: -> { ["Avo", "Cado", params[:extra_suggestion]] }
 ```
+
+
+- Array of hashes with the keys `value`, `label` and optionally an `avatar`
+<VersionReq version="3.11.8" />
+:::warning Applicable only to filters with type tags.
+:::
+
+:::code-group
+```ruby {6-13,19-26} [Direct assign]
+# Using field's filterable option
+field :tags,
+  as: :tags,
+  filterable: {
+    # ...
+    suggestions: [
+      {
+        value: 1,
+        label: 'one',
+        avatar: 'https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
+      },
+      # ...
+    ]
+    # ...
+  }
+
+# Using dynamic_filter method
+dynamic_filter :tags,
+  suggestions: [
+    {
+      value: 1,
+      label: 'one',
+      avatar: 'https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
+    },
+    # ...
+  ]
+```
+
+```ruby {6-15,21-30} [Proc]
+# Using field's filterable option
+field :tags,
+  as: :tags,
+  filterable: {
+    # ...
+    suggestions: -> {
+      [
+        {
+          value: 1,
+          label: 'one', # or params[:something]
+          avatar: 'https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
+        },
+        # ...
+      ]
+    }
+    # ...
+  }
+
+# Using dynamic_filter method
+dynamic_filter :tags,
+  suggestions: -> {
+    [
+      {
+        value: 1,
+        label: 'one', # or params[:something]
+        avatar: 'https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
+      },
+      # ...
+    ]
+  }
+```
+:::
+
 </Option>
 
 <Option name="`options`">
