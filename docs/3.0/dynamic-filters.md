@@ -477,6 +477,10 @@ Suggestions work on filters that provide text input, enhancing the user experien
 
 `nil`
 
+:::info
+<VersionReq version="3.11.8" /> on `tags` fields the `suggestions` are fetched from the field.
+:::
+
 #### Possible values
 
 - Array of strings
