@@ -379,6 +379,7 @@ end
 
 <Option name="Date time Filter">
 <VersionReq version="3.11.8" />
+
 The ideal filter for date selection. This filter allows you to generate a date input, with options to include time selection and even a range selection mode. Customizable to suit your specific needs.
 
 :::warning Timezone Handling
