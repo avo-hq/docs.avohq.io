@@ -42,7 +42,7 @@ end
 ```ruby
 require 'rails_helper'
 
-RSpec.feature ReleaseFish, type: :feature do
+RSpec.feature Avo::Actions::ReleaseFish, type: :feature do
   let(:fish) { create :fish }
   let(:current_user) { create :user }
   let(:resource) { Avo::Resources::User.new.hydrate model: fish }
@@ -54,7 +54,7 @@ RSpec.feature ReleaseFish, type: :feature do
       },
       current_user: current_user,
       resource: resource,
-      records: [fish]
+      query: [fish]
     }
 
     action = described_class.new(resource: resource, user: current_user, view: :edit)
