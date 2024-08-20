@@ -90,7 +90,7 @@ end
 
 ## Filter types
 
-Avo has several types of filters available [Boolean filter](#boolean_filter), [Select filter](#select_filter), [Multiple select filter](#multiple_select_filter), [Text filter](#text_filter) and since version <Version version="3.11.8" /> [Date time filter](#Date time Filter).
+Avo has several types of filters available [Boolean filter](#Boolean%20Filter), [Select filter](#Select%20Filter), [Multiple select filter](#Multiple%20select%20filter), [Text filter](#Text%20Filter) and since version <Version version="3.11.8" /> [Date time filter](#Date%20time%20Filter).
 
 <Image src="/assets/img/filters.png" width="404" height="727" alt="Avo filters" />
 
