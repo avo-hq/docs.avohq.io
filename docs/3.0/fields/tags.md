@@ -19,6 +19,8 @@ field :skills, as: :tags
 <Option name="`suggestions`">
 
 :::warning
+**This warning no longer applies** <VersionReq version="3.11.8" />
+
 If you're using this field as `filterable`, dynamic filters are not yet picking these suggestions.
 
 Please use the custom dynamic filters [suggestions](../dynamic-filters#suggestions) option to specify filter suggestions.
