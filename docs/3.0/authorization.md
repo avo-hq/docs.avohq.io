@@ -448,7 +448,7 @@ By default, Avo will infer the policy from the model of the resource object. If 
 
 ```ruby
 class Avo::Resources::PhotoComment < Avo::BaseResource
-  self.model_class = ::Comment
+  self.model_class = "Comment"
   self.authorization_policy = PhotoCommentPolicy
   # ...
 end

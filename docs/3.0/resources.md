@@ -139,7 +139,7 @@ That command will create a new resource with the same attributes as the post res
 
 ```ruby
 class Avo::Resources::MiniPost < Avo::BaseResource
-  self.model_class = ::Post
+  self.model_class = "Post"
 end
 ```
 
@@ -599,7 +599,7 @@ For some resources you might have a model that is namespaced, or you might have 
 
 ```ruby{2}
 class Avo::Resources::DelayedJob < Avo::BaseResource
-  self.model_class = ::Delayed::Job
+  self.model_class = "Delayed::Job"
 
   def fields
     field :id, as: :id
@@ -739,9 +739,9 @@ end
 <Option name="`self.components`">
 By default, for each view we render an component:
 
-`:index` -> `Avo::Views::ResourceIndexComponent`<br>
-`:show` -> `Avo::Views::ResourceShowComponent`<br>
-`:new`, `:edit` -> `Avo::Views::ResourceEditComponent`
+[Index](views.html#Index) -> `Avo::Views::ResourceIndexComponent`<br>
+[Show](views.html#Show) -> `Avo::Views::ResourceShowComponent`<br>
+[New](views.html#New), [Edit](views.html#Edit) -> `Avo::Views::ResourceEditComponent`
 
 It's possible to change this behavior by using the `self.components` resource option.
 
@@ -759,10 +759,10 @@ A resource configured with the example above will start using the declared compo
 :::warning
 The custom view components must ensure that their initializers are configured to receive all the arguments passed during the rendering of a component. You can verify this in our codebase through the following files:
 
-`:index` -> `app/views/avo/base/index.html.erb`<br>
-`:show` -> `app/views/avo/base/show.html.erb`<br>
-`:new` -> `app/views/avo/base/new.html.erb`<br>
-`:edit` -> `app/views/avo/base/edit.html.erb`
+[Index](views.html#Index) -> `app/views/avo/base/index.html.erb`<br>
+[Show](views.html#Show) -> `app/views/avo/base/show.html.erb`<br>
+[New](views.html#New) -> `app/views/avo/base/new.html.erb`<br>
+[Edit](views.html#Edit) -> `app/views/avo/base/edit.html.erb`
 :::
 Creating a customized component for a view is most easily achieved by ejecting one of our pre-existing components using the `--scope` parameter. You can find step-by-step instructions in the documentation [here](./customization.html#scope).
 
