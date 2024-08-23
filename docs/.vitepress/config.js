@@ -120,7 +120,6 @@ const config = {
             {text: "Gem server authentication", link: "/3.0/gem-server-authentication.html"},
             {text: "Authentication", link: "/3.0/authentication.html"},
             {text: "Authorization", link: "/3.0/authorization.html"},
-            {text: "Cache", link: "/3.0/cache.html"},
           ],
         },
         {
@@ -209,6 +208,13 @@ const config = {
             {text: "Avo::PanelComponent", link: "/3.0/native-components/avo-panel-component.html"},
             {text: "Native field components", link: "/3.0/native-field-components.html"},
             {text: "Field wrappers", link: "/3.0/field-wrappers.html"},
+          ],
+        },
+        {
+          text: "Performance",
+          items: [
+            {text: "Cache", link: "/3.0/cache.html"},
+            {text: "Views", link: "/3.0/views-performance.html"},
           ],
         },
         {
