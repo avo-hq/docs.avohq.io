@@ -15,7 +15,7 @@ config.view_component.instrumentation_enabled = true
 
 #### 2. Add Logging
 
-Next, set up logging to capture the performance data. Create or update the config/initializers/view_component.rb file with the following code:
+Next, set up logging to capture the performance data. Create or update the `config/initializers/view_component.rb` file with the following code:
 
 ```ruby
 # config/initializers/view_component.rb
