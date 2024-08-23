@@ -34,6 +34,8 @@ end
 ViewComponent::LogSubscriber.attach_to :view_component
 ```
 
+<Image src="/assets/img/3_0/performance/views-performance/view-component-logs.png" size="2236x 462" alt="View Component logging" />
+
 :::warning
 Enabling this logging can negatively impact your application’s performance. We recommend using it in the development environment or disabling it in production once you have completed debugging.
 :::
