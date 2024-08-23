@@ -1,4 +1,4 @@
-# View Performance Monitoring
+# Views performance
 
 ## Logging ViewComponent Loading Times and Memory Allocations
 
