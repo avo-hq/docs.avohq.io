@@ -754,6 +754,23 @@ self.components = {
 }
 ```
 
+<VersionReq version="3.11.8" /> more components can be replaced. From this version, keys must be strings that match the original component with the exception of those from the snippet above.
+
+Here is a list of all the supported customizable components:
+
+```ruby
+self.components = {
+  "Avo::Views::ResourceIndexComponent": Avo::Custom::ResourceIndexComponent,
+  "Avo::Views::ResourceShowComponent": "Avo::Custom::ResourceShowComponent",
+  "Avo::Views::ResourceEditComponent": "Avo::Custom::ResourceEditComponent",
+  "Avo::Index::GridItemComponent": "Avo::Custom::GridItemComponent",
+  "Avo::Index::ResourceMapComponent": "Avo::Custom::ResourceMapComponent",
+  "Avo::Index::ResourceTableComponent": "Avo::Custom::ResourceTableComponent",
+  "Avo::Index::TableRowComponent": "Avo::Custom::TableRowComponent"
+}
+```
+
+
 A resource configured with the example above will start using the declared components instead the default ones.
 
 :::warning
