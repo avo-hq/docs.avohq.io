@@ -1,6 +1,6 @@
 # Views performance
 
-## Logging ViewComponent Loading Times and Memory Allocations
+## Log ViewComponent loading times and allocations
 
 Sometimes, you may want to track the loading times and memory allocations of ViewComponents, similar to how you do with partials. Follow these two steps to enable this functionality.
 
