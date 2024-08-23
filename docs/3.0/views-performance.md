@@ -4,7 +4,7 @@
 
 Sometimes, you may want to track the loading times and memory allocations of ViewComponents, similar to how you do with partials. Follow these two steps to enable this functionality.
 
-### 1. Enable ViewComponent Instrumentation
+#### 1. Enable ViewComponent Instrumentation
 
 First, you need to enable instrumentation for ViewComponents. Add the following configuration to your `application.rb` or `development.rb` file:
 
@@ -13,7 +13,7 @@ First, you need to enable instrumentation for ViewComponents. Add the following 
 config.view_component.instrumentation_enabled = true
 ```
 
-2. Add Logging
+#### 2. Add Logging
 
 Next, set up logging to capture the performance data. Create or update the config/initializers/view_component.rb file with the following code:
 
