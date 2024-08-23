@@ -3,6 +3,14 @@
 We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
+
+## Upgrade from 3.11.7 to 3.11.8
+<Option name="Dynamic filters query">
+
+<VersionReq version="3.11.8" /> the default filtering system is no longer applied when a `query` is specified on a dynamic filter.
+
+</Option>
+
 ## Upgrade from 3.10.10 to 3.11.3
 <Option name="Unexpected behavior">
 Between versions <Version version="3.10.10" /> and <Version version="3.11.2" /> you might encounter some unexpected behavior, such as issues with applying dynamic filters or duplicated flash messages. This occurs specifically when the cookie that stores the sidebar status (open/close) is missing.

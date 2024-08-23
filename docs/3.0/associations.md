@@ -34,7 +34,7 @@ For example, when you have two models, `User` and `SuperUser` with STI, when you
 class Avo::Resources::SuperUser < Avo::BaseResource
   self.title = :name
   self.includes = []
-  self.model_class = ::SuperUser
+  self.model_class = "SuperUser"
 
   def fields
     field :id, as: :id
