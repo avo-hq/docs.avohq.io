@@ -225,6 +225,7 @@ const config = {
             {text: "Avo::Current", link: "/3.0/avo-current.html"},
             {text: "Avo::ExecutionContext", link: "/3.0/execution-context.html"},
             {text: "Avo::Services::EncryptionService", link: "/3.0/encryption-service.html"},
+            {text: "Select All", link: "/3.0/select-all.html"},
             {text: "Icons", link: "/3.0/icons.html"},
           ],
         },
