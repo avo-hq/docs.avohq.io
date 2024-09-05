@@ -137,7 +137,7 @@ Additionally, you can pass the `params` option to the `resource` items to add qu
 ```ruby
 resource :posts, params: { status: "published" }
 resource :users, params: -> do
-  decoded_filter = {"IsAdmin"=>["non_admins"]}
+  decoded_filter = {"Avo::Filters::IsAdmin"=>["non_admins"]}
 
   { filters: Avo::Filters::BaseFilter.encode_filters(decoded_filter)}
 end
