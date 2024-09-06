@@ -58,6 +58,20 @@ field :patrons,
   }
 ```
 
+:::warning
+If the through model uses **polymorphism**, the type must be included as a hidden field:
+
+```ruby{6}
+field :patrons,
+  as: :has_many,
+  through: :patronships,
+  attach_fields: -> {
+    field :review, as: :text
+    field :patronship_type, as: :hidden, default: "TheType"
+  }
+```
+:::
+
 <Image src="/assets/img/3_0/has_many/attach-fields.gif" width="600" height="338" alt="" />
 </Option>
 
