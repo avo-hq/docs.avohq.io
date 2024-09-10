@@ -16,9 +16,9 @@ const config = {
   properties: {
     chatButtonType: "PILL",
     baseSettings: {
-      apiKey: import.meta.env.VITE_INKEEP_API_KEY, // required
-      integrationId: import.meta.env.VITE_INKEEP_INTEGRATION_ID, // required
-      organizationId: import.meta.env.VITE_INKEEP_ORGANIZATION_ID, // required
+      apiKey: "389a67786d65d3ed8f59715c9e61d4a782c33269e7a89919", // required
+      integrationId: "cm0wbyzba009blzci5h1bxbg8", // required
+      organizationId: "org_IqSqx2i7H6DlDzGS", // required
       primaryBrandColor: "#1398FE", // your brand color, widget color scheme is derived from this
       organizationDisplayName: "Avo",
       // ...optional settings
