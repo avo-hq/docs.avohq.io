@@ -1,3 +1,6 @@
+
+console.log('import.meta.env', import.meta.env)
+console.log('ENV', ENV)
 // Embed the widget using the `Inkeep.embed()` function.
 const config = {
   componentType: "ChatButton",
