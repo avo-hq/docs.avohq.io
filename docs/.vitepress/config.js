@@ -23,7 +23,7 @@ const config = {
         defer: true,
       },
     ],
-    ["script", { src: "static/addInkeep.js", type: "module", defer: true }],
+    ["script", { src: "/static/addInkeep.js", type: "module", defer: true }],
 //     [;
 //       'script',
 //       {},
