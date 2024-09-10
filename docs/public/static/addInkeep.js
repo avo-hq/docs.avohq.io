@@ -1,5 +1,6 @@
 
 console.log('import.meta.env', import.meta.env)
+console.log('process.env.NODE_ENV', process.env.NODE_ENV)
 console.log('ENV', ENV)
 // Embed the widget using the `Inkeep.embed()` function.
 const config = {
