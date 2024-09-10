@@ -15,6 +15,15 @@ const config = {
     },
   },
   head: [
+    [
+      "script",
+      {
+        src: "https://unpkg.com/@inkeep/uikit-js@0.3.8/dist/embed.js",
+        type: "module",
+        defer: true,
+      },
+    ],
+    ["script", { src: "static/addInkeep.js", type: "module", defer: true }],
     // <script async="" src="https://www.google-analytics.com/analytics.js"></script>
     [
       'script',
