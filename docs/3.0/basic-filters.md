@@ -914,7 +914,7 @@ class Avo::Actions::DummyAction < Avo::BaseAction
   def handle(**args)
     do_something_important
 
-    redirect_to avo.resources_users_path(filters: Avo::Filters::BaseFilter.encode_filters({"NameFilter"=>"Apple"}))
+    redirect_to avo.resources_users_path(encoded_filters: Avo::Filters::BaseFilter.encode_filters({"Avo::Filters::NameFilter"=>"Apple"}))
   end
 end
 ```
