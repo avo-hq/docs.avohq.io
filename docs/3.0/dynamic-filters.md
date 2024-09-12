@@ -624,10 +624,52 @@ field :tags, as: :tags,
 fetch_values_from: "/avo-filters/resources/cities/tags"
 ```
 
-- Proc
+- Proc that evaluates to a string.
 ```ruby
 fetch_values_from: -> { "/avo-filters/resources/cities/tags" }
 ```
+
+The string should resolve to an endpoint that returns an array of objects with the keys `value`, `label` and optionally `avatar`.
+
+::: code-group
+```ruby{3-19} [app/controllers/avo/skills_controller.rb]
+class Avo::CitiesController < Avo::ResourcesController
+  def tags
+    render json: [
+      {
+        value: 1,
+        label: "one",
+        avatar: "https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
+      },
+      {
+        value: 2,
+        label: "two",
+        avatar: "https://images.unsplash.com/photo-1567254790685-6b6d6abe4689?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
+      },
+      {
+        value: 3,
+        label: "three",
+        avatar: "https://images.unsplash.com/photo-1560765447-da05a55e72f8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
+      }
+    ]
+  end
+end
+```
+
+```ruby{5-11} [config/routes.rb]
+Rails.application.routes.draw do
+  # your routes...
+end
+
+if defined? ::Avo
+  Avo::Engine.routes.draw do
+    scope :resources do
+      get "cities/tags", to: "cities#tags"
+    end
+  end
+end
+```
+:::
 
 </Option>
 
