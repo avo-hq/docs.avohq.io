@@ -591,6 +591,46 @@ dynamic_filter :tags,
 
 </Option>
 
+<Option name="`fetch_values_from`">
+
+<VersionReq version="3.12.1" />
+
+:::warning
+This option is compatible **only** with `tags` filters.
+:::
+
+In some cases, you may need to retrieve values dynamically from an API. The `fetch_values_from` option allows you to provide a URL from which the filter will suggest values, functioning similarly to the `fetch_values_from` option in the tags field.
+
+When a user searches for a record, the filter's input will send a request to the server to fetch records that match the query.
+
+##### Default value
+
+`nil`
+
+:::info
+If you're using a `filterable` field the `fetch_values_from` are fetched from the field.
+
+```ruby
+field :tags, as: :tags,
+  fetch_values_from: -> { "/avo-filters/resources/cities/tags" }
+  filterable: true
+```
+:::
+
+#### Possible values
+
+- String
+```ruby
+fetch_values_from: "/avo-filters/resources/cities/tags"
+```
+
+- Proc
+```ruby
+fetch_values_from: -> { "/avo-filters/resources/cities/tags" }
+```
+
+</Option>
+
 <Option name="`options`">
 <VersionReq version="3.10.10" />
 
