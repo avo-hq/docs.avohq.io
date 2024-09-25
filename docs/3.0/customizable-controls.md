@@ -169,6 +169,9 @@ The list action's [icon](actions.md#icon) and the [dividers](actions.md#divider)
 </Option>
 
 <Option name="`list`">
+
+<VersionReq version="3.13" />
+
 A dropdown that displays all the specified actions and links.
 
 #### Supported options
