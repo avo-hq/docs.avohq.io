@@ -20,33 +20,6 @@ We are in the early days of the plugin system and we're still figuring out the b
 
 This means we provide two hooks that you can use to extend the functionality of the Rails app, and a few Avo APIs to add scrips and stylesheets.
 
-```ruby
-module Avo
-  module FeedView # 👈 This is the name of the plugin
-    class Plugin < Avo::Plugin
-      class << self
-        def boot
-          # Add some concerns
-          Avo::Resources::Base.include Avo::FeedView::Concerns::FeedViewConcern
-
-          # Remove some concerns
-          Avo::Resources::Base.included_modules.delete(Avo::Concerns::SOME_CONCERN)
-
-          # Add asset files to be loaded by Avo
-          Avo.asset_manager.add_javascript "/avo-advanced-assets/avo_advanced"
-          Avo.asset_manager.add_stylesheet "/avo-kanban-assets/avo_kanban"
-        end
-
-        def init
-          # Run some code on each request
-          Avo::FeedView::Current.something = VALUE
-        end
-      end
-    end
-  end
-end
-```
-
 ## Register the plugin
 
 The way we do it is through an initializer. We mostly use the `engine.rb` file to register the plugin.
@@ -58,8 +31,13 @@ module Avo
       isolate_namespace Avo::FeedView
 
       initializer "avo-feed-view.init" do
-        if defined?(Avo)
-          Avo.plugin_manager.register Avo::FeedView::Plugin
+        # Avo will run this hook on boot time
+        ActiveSupport.on_load(:avo_boot) do
+          # Register the plugin
+          Avo.plugin_manager.register :feed_view
+
+          # You can pass a priority too but it's not used at the moment
+          Avo.plugin_manager.register :feed_view, 5
         end
       end
     end
@@ -69,22 +47,56 @@ end
 
 This will add the plugin to a list of plugins which Avo will run the hooks on.
 
+## Hook into Avo
+
+```ruby
+module Avo
+  module FeedView
+    class Engine < ::Rails::Engine
+      isolate_namespace Avo::FeedView
+
+      initializer "avo-feed-view.init" do
+        ActiveSupport.on_load(:avo_boot) do
+          Avo.plugin_manager.register :feed_view
+
+          # Add some concerns
+          Avo::Resources::Base.include Avo::FeedView::Concerns::FeedViewConcern
+
+          # Remove some concerns
+          Avo::Resources::Base.included_modules.delete(Avo::Concerns::SOME_CONCERN)
+
+          # Add asset files to be loaded by Avo
+          # These assets will be added to Avo's `application.html.erb` layout file
+          Avo.asset_manager.add_javascript "/avo-advanced-assets/avo_advanced"
+          Avo.asset_manager.add_stylesheet "/avo-kanban-assets/avo_kanban"
+        end
+
+        ActiveSupport.on_load(:avo_init) do
+          # Run some code on each request
+          Avo::FeedView::Current.something = VALUE
+        end
+      end
+    end
+  end
+end
+```
+
 ## Hooks
 
-<Option name="`boot`">
+<Option name="`avo_boot`">
 
-The `boot` hook is called when the parent Rails application boots up. This is where you can register your scripts and stylesheets and also add your functionality to Avo.
+The `avo_boot` hook is called when the parent Rails application boots up. This is where you can register your scripts and stylesheets and also add your functionality to Avo.
 
 We use it heavily to add our own concerns to the `Avo::BaseResource` and `Avo::BaseController` classes and even extend the `Avo::ApplicationController` class.
 
 </Option>
 
-<Option name="`init`">
+<Option name="`avo_init`">
 
-The `init` hook is called on every request done inside Avo. You can use this hook to attach some code to the `Avo::App.context` object or do other things.
+The `avo_init` hook is called on every request done inside Avo. You can use this hook to attach some code to the `Avo::App.context` object or do other things.
 
 :::info
-We don't use it as much in our plugins as we do in the `boot` hook.
+We don't use it as much in our plugins as we do in the `avo_boot` hook.
 :::
 
 </Option>
@@ -129,8 +141,8 @@ module Avo
       isolate_namespace Avo::FeedView
 
       initializer "avo-feed-view.init" do
-        if defined?(Avo)
-          Avo.plugin_manager.register Avo::FeedView::Plugin
+        ActiveSupport.on_load(:avo_boot) do
+          Avo.plugin_manager.register :feed_view
         end
       end
 
