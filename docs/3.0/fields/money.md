@@ -47,6 +47,18 @@ gem "money-rails", "~> 1.12"
 ```
 :::
 
+:::warning Important: Monetization Requirement
+In order to fully utilize the money field's features, you must monetize the associated attribute at the model level using the `monetize` method from the `money-rails` gem. ([Usage example](https://github.com/RubyMoney/money-rails?tab=readme-ov-file#usage-example))
+
+For example:
+
+```ruby
+monetize :price_cents
+```
+
+Without this step, the money field may not behave as expected, and the field might not render.
+:::
+
 ## Options
 
 <Option name="`currencies`">

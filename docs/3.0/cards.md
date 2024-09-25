@@ -399,7 +399,7 @@ end
 
 You may want to separate the cards. You can use dividers to do that.
 
-:::code-group
+<!-- :::code-group -->
 ```ruby [On Dashboards]
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   def cards
@@ -412,7 +412,7 @@ class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   end
 end
 ```
-```ruby [On Resources]
+<!-- ```ruby [On Resources]
 class Avo::Resources::User < Avo::BaseResource
   def cards
     card Avo::Cards::ExampleColumnChart
@@ -424,7 +424,7 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
-:::
+::: -->
 
 <Image src="/assets/img/dashboards/divider.jpg" width="980" height="379" alt="Avo Dashboard Divider" />
 

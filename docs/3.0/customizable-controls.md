@@ -148,7 +148,7 @@ A dropdown where the user can see and run all the actions assigned to that resou
 
 #### Supported options
 
-`label`, `title`, `style`, `color`, `icon`, and `exclude`.
+`label`, `title`, `style`, `color`, `icon`, `include` and `exclude`.
 
 #### `exclude` option
 
@@ -166,6 +166,36 @@ actions_list exclude: [ExportSelection, PublishPost]
 :::info
 The list action's [icon](actions.md#icon) and the [dividers](actions.md#divider) are defined in `def actions` method.
 :::
+</Option>
+
+<Option name="`list`">
+
+<VersionReq version="3.13" />
+
+A dropdown that displays all the specified actions and links.
+
+#### Supported options
+
+`label`, `title`, `style`, `color` and `icon`
+
+
+#### Example
+
+```ruby
+list label: "Custom Index List", icon: "heroicons/outline/cube-transparent", style: :primary, color: :slate, title: "A custom list" do
+  link_to "Google", "https://google.com", icon: "heroicons/outline/academic-cap"
+  action Avo::Actions::Sub::DummyAction, icon: "heroicons/outline/globe"
+  link_to "Fish.com", "https://fish.com", icon: "heroicons/outline/fire", target: :_blank
+end
+```
+
+<Image src="/assets/img/resources/customizable-controls/custom_list.png" width="404" height="256" alt="Custom list opened" />
+
+
+Within the `list` block, the only permitted elements are `link_to` and `action`. For both `link_to` and `action`, you can include an optional `icon` parameter.
+
+In addition to the `icon`, the `link_to` element can accept additional parameters such as `target: :_blank` or `rel: "noopener"`, or any other extra arguments you may want to provide for the link. These extra arguments help define specific behaviors for the link, like opening it in a new tab or ensuring security best practices are followed.
+
 </Option>
 
 <Option name="`edit_button`">
