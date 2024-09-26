@@ -591,6 +591,88 @@ dynamic_filter :tags,
 
 </Option>
 
+<Option name="`fetch_values_from`">
+
+<VersionReq version="3.13" />
+
+:::warning
+This option is compatible **only** with `tags` filters.
+:::
+
+In some cases, you may need to retrieve values dynamically from an API. The `fetch_values_from` option allows you to provide a URL from which the filter will suggest values, functioning similarly to the `fetch_values_from` option in the tags field.
+
+When a user searches for a record, the filter's input will send a request to the server to fetch records that match the query.
+
+##### Default value
+
+`nil`
+
+:::info
+If you're using a `filterable` field the `fetch_values_from` are fetched from the field.
+
+```ruby
+field :tags, as: :tags,
+  fetch_values_from: -> { "/avo-filters/resources/cities/tags" }
+  filterable: true
+```
+:::
+
+#### Possible values
+
+- String
+```ruby
+fetch_values_from: "/avo-filters/resources/cities/tags"
+```
+
+- Proc that evaluates to a string.
+```ruby
+fetch_values_from: -> { "/avo-filters/resources/cities/tags" }
+```
+
+The string should resolve to an endpoint that returns an array of objects with the keys `value`, `label` and optionally `avatar`.
+
+::: code-group
+```ruby{3-19} [app/controllers/avo/skills_controller.rb]
+class Avo::CitiesController < Avo::ResourcesController
+  def tags
+    render json: [
+      {
+        value: 1,
+        label: "one",
+        avatar: "https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
+      },
+      {
+        value: 2,
+        label: "two",
+        avatar: "https://images.unsplash.com/photo-1567254790685-6b6d6abe4689?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
+      },
+      {
+        value: 3,
+        label: "three",
+        avatar: "https://images.unsplash.com/photo-1560765447-da05a55e72f8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
+      }
+    ]
+  end
+end
+```
+
+```ruby{5-11} [config/routes.rb]
+Rails.application.routes.draw do
+  # your routes...
+end
+
+if defined? ::Avo
+  Avo::Engine.routes.draw do
+    scope :resources do
+      get "cities/tags", to: "cities#tags"
+    end
+  end
+end
+```
+:::
+
+</Option>
+
 <Option name="`options`">
 <VersionReq version="3.10.10" />
 
