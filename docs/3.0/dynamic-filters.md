@@ -593,7 +593,7 @@ dynamic_filter :tags,
 
 <Option name="`fetch_values_from`">
 
-<VersionReq version="3.12.1" />
+<VersionReq version="3.13" />
 
 :::warning
 This option is compatible **only** with `tags` filters.
