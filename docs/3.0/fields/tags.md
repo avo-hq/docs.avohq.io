@@ -242,7 +242,7 @@ When the user searches for a record, the field will perform a request to the ser
 
 #### Possible values
 
-Valid values are `nil`, a string, or a block that evaluates to a string. The string should resolve to an enddpoint that returns an array of objects with the keys `value` and `label`.
+Valid values are `nil`, a string, or a block that evaluates to a string. The string should resolve to an endpoint that returns an array of objects with the keys `value` and `label`.
 
 ::: code-group
 
