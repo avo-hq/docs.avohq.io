@@ -418,6 +418,7 @@ class Avo::Resources::User < Avo::BaseResource
     card Avo::Cards::ExampleColumnChart
     card Avo::Cards::ExamplePieChart
     card Avo::Cards::ExampleBarChart
+    divider label: "Custom partials"
     card Avo::Cards::ExampleCustomPartial
     card Avo::Cards::MapCard
   end
