@@ -31,4 +31,6 @@ The `comments` query on the user `Index` page will have the `approved` scope att
 
 With version 2.5.0, you'll also have access to the `parent` record so that you can use that to scope your associated models even better.
 
+Starting with version 3.12, access to `resource` and `parent_resource` was additionally provided.
+
 All the `has_many` associations have the [`attach_scope`](./../associations/belongs_to#attach-scope) option available too.
