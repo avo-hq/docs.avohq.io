@@ -199,6 +199,20 @@ end
 
 <Image src="/assets/img/dashboards/prefix-suffix.jpg" width="651" height="168" alt="Avo Prefix & suffix" />
 
+<br>
+
+<VersionReq version="3.13" /> `prefix` and `suffix` became callable options.
+
+The blocks are executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent`.
+
+```ruby{3,4}
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.id = 'users_metric'
+  self.prefix = -> { params[:prefix] || parent.prefix }
+  self.suffix = -> { params[:suffix] || parent.suffix }
+end
+```
+
 ## Chartkick card
 
 A picture is worth a thousand words. So maybe a chart a hundred? Who knows? But creating charts in Avo is very easy with the help of the [chartkick](https://github.com/ankane/chartkick) gem.
