@@ -374,3 +374,15 @@ Next, in your fields `Show` component, you need to do a few things.
 ```
 
 <Image src="/assets/img/stimulus/hidden_input_color.gif" width="1000" height="76" alt="Hidden input controller" />
+
+### Non existing model field
+
+To ensure proper rendering of a custom field that lacks getters and setters at the model level, you must implement these methods within the model.
+
+```ruby
+  def custom_field
+  end
+
+  def custom_field=(value)
+  end
+```
