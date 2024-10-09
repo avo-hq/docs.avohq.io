@@ -116,7 +116,7 @@ Controls whether the user can see the [records reordering](./records-reordering)
 
 <Option name="`search?`">
 
-Controls whether the user can see the global search input or the [resource search input](./search) on top of the <Index /> page.
+Controls whether the user can see the [resource search input](./search) on top of the <Index /> page.
 </Option>
 
 ## Associations
