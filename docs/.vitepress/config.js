@@ -200,6 +200,12 @@ const config = {
           ],
         },
         {
+          text: "Audit Logging",
+          items: [
+            {text: "Overview", link: "/3.0/audit-logging/overview.html"},
+          ],
+        },
+        {
           text: "Custom content",
           items: [
             {text: "Custom views", link: "/3.0/custom-tools.html"},
