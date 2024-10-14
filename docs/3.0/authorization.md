@@ -560,6 +560,18 @@ Check out [this guide](guides/rolify-integration.md) to add rolify role manageme
 **`false`**
   - If a policy class or method is **missing**, the action will be considered **authorized** by default.
 
+**`Proc`**
+  - You can also set `implicit_authorization` as a `Proc` to apply custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context)
+
+    For example:
+
+    ```ruby
+    config.implicit_authorization = -> {
+      current_user.access_to_admin_panel? && !current_user.admin?
+    }
+    ```
+
+    In this case, missing policies will be handled based on the condition: if the user has access to the admin panel but isn't an admin, the `implicit_authorization` will be enabled. This option allows you to customize authorization decisions based on the context of the current user or other factors.
 ### Default
 
 - For **new applications** (starting from Avo `3.13.4`) the default value for `implicit_authorization` is `true`. This provides a more secure out-of-the-box experience by ensuring actions without explicit authorization are denied.
