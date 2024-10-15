@@ -27,6 +27,34 @@ Some of these requirements might change over time.
 - [`acts_as_list`](https://github.com/brendon/acts_as_list) gem (comes automatically as a requirement)
 - [`hotwire_combobox`](https://github.com/josefarias/hotwire_combobox) gem (comes automatically as a requirement)
 
+## Installation
+
+To install the `avo-kanban` gem, follow the steps below:
+
+1. Add the following line to your Gemfile:
+    ```ruby
+    gem "avo-kanban", source: "https://packager.dev/avo-hq/"
+    ```
+
+2. Run the `bundle install` command to install the gem:
+    ```bash
+    bundle install
+    ```
+
+3. Generate the necessary resources and controllers by running:
+    ```bash
+    rails generate avo:kanban install
+    ```
+
+    This command will create pre-configured resources and controllers for managing boards, columns, and items in your application. You can further customize the generated code to suit your needs.
+
+    This command will also generate the item's partial and a migration.
+
+4. Run the migration to apply the database changes:
+    ```bash
+    rails db:migrate
+    ```
+
 ## DB schema
 
 `Avo::Kanban::Board` -> has_many `Avo::Kanban::Column` -> has_many `Avo::Kanban::Item`
@@ -53,8 +81,6 @@ Each board has a configuration attached to it.
 We can configure what kind of resources can be added to the board.
 
 Similar we can change the column names and the value from the settings screen.
-
-Only the admins (`user.is_admin?`) can see the setting button and screen.
 
 ## Adding items to the board
 
@@ -107,12 +133,12 @@ Now, if we move the item to the `In progress` column, it will change the status 
 ### Items without that property
 
 Some models might belong on the same board but have different properties to show the status.
-Some omodels might use a timestamp like `published_at` to show the status.
+Some models might use a timestamp like `published_at` to show the status.
 Or some models might belong to a a status but that isn't dictated by a single property but a collection of properties.
 
-In order to mititgate that we can create virtual properties on the model.
+In order to mitigate that we can create virtual properties on the model.
 
-Let's imagine that a new baord that displays the posts in columns based on their "published" status. the board uses the `status` property to but the `Post` model doesn't have the `status` property as a column in the database.
+Let's imagine that a new board that displays the posts in columns based on their "published" status. the board uses the `status` property to but the `Post` model doesn't have the `status` property as a column in the database.
 We can create a virtual property on the model.
 
 ```ruby
@@ -157,3 +183,34 @@ In order to customize the card, you can add this partial to your `app/views/avo/
 ```
 
 The `item` is the `Avo::Kanban::Item` and the `record` is the actual record from the database.
+
+## Authorization
+
+This section assumes that you have already set up [authorization](authorization.html) in your application using Pundit.
+
+1. Generate a policy for the `Board` resource by running:
+```bash
+rails generate pundit:policy board
+```
+
+### Authorization Methods
+
+You can control access to various parts of the Kanban board by defining the following methods in your `BoardPolicy`:
+
+- `manage_column?`
+
+  Controls the visibility of the three-dot menu on each column (used for column management).
+
+- `edit?`
+
+  Controls the "Edit board" button on the board itself.
+  :::warning
+    Also controls the ability to edit the board in the resource view.
+  :::
+
+- `add_item?`
+
+  Controls the visibility of the "Add item" button on the board, which allows users to add new items to a column.
+  :::warning
+    Doesn't impact the ability to add items via the bottom of each column.
+  :::
