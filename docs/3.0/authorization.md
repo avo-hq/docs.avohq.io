@@ -541,10 +541,7 @@ end
 ```
 </Option>
 
-## Rolify integration
-
-Check out [this guide](guides/rolify-integration.md) to add rolify role management with Avo.
-
+## Implicit authorization
 <Option name="`implicit_authorization`">
 
 <VersionReq version="3.13.4" />
@@ -637,3 +634,7 @@ end
 
     - It’s recommended to disable [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) in production, though it's not mandatory. When `implicit_authorization` is set to `true`, the default behavior is to deny access for actions without a defined policy. In this case, it’s often better to show an unauthorized message to users rather than raise an error. However, keeping [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) enabled in development can be helpful for identifying missing policy classes.
 </Option>
+
+## Rolify integration
+
+Check out [this guide](guides/rolify-integration.md) to add rolify role management with Avo.
