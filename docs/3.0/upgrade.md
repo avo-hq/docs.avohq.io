@@ -3,16 +3,29 @@
 We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
+## Upgrade from 3.13.6 to 3.13.7
+
+The `implicit_authorization` option has been renamed to `explicit_authorization` to better align with the feature's functionality. The underlying logic remains unchanged, so you only need to perform a rename if you're already using it.
+
+```ruby
+config.implicit_authorization = true # [!code --]
+config.explicit_authorization = true # [!code ++]
+```
+
 
 ## Upgrade from 3.13.3 to 3.13.4
 
 <Option name="`implicit_authorization`">
 
-We’ve introduced the [`implicit_authorization`](authorization.html#implicit_authorization) configuration option to enhance the security of your applications. This option allows you to define how missing policy classes or methods are handled. When set to `true`, any action without an explicitly defined policy will automatically be denied, ensuring that unprotected actions are not unintentionally accessible. This new behavior offers a more secure approach for authorization.
+:::warning Option Renamed
+<VersionReq version="3.13.7" /> this option was renamed to `explicit_authorization`.
+:::
 
-For new applications, [`implicit_authorization`](authorization.html#implicit_authorization) is enabled by default, but existing applications will retain the legacy behavior (`false`), allowing missing policies or methods to authorize actions. We encourage you to adopt this new setting by enabling [`implicit_authorization`](authorization.html#implicit_authorization), as it provides greater control over your authorization flow and reduces the risk of unauthorized access due to missing policies. Before enabling it, be sure to review your policy classes to ensure all necessary methods are defined, preventing any unintended access restrictions.
+We’ve introduced the [`implicit_authorization`](authorization.html#explicit_authorization) configuration option to enhance the security of your applications. This option allows you to define how missing policy classes or methods are handled. When set to `true`, any action without an explicitly defined policy will automatically be denied, ensuring that unprotected actions are not unintentionally accessible. This new behavior offers a more secure approach for authorization.
 
-We highly recommend taking a moment to read through the entire [`implicit_authorization`](authorization.html#implicit_authorization) documentation section before making any changes. Understanding this feature is crucial to ensuring your application's security and functionality, so don’t skip it!
+For new applications, [`implicit_authorization`](authorization.html#explicit_authorization) is enabled by default, but existing applications will retain the legacy behavior (`false`), allowing missing policies or methods to authorize actions. We encourage you to adopt this new setting by enabling [`implicit_authorization`](authorization.html#explicit_authorization), as it provides greater control over your authorization flow and reduces the risk of unauthorized access due to missing policies. Before enabling it, be sure to review your policy classes to ensure all necessary methods are defined, preventing any unintended access restrictions.
+
+We highly recommend taking a moment to read through the entire [`implicit_authorization`](authorization.html#explicit_authorization) documentation section before making any changes. Understanding this feature is crucial to ensuring your application's security and functionality, so don’t skip it!
 </Option>
 
 
