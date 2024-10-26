@@ -12,7 +12,6 @@ field :body, as: :trix
 
 The `Trix` field renders a [WYSIWYG Editor](https://trix-editor.org/) and can be associated with a `string` or `text` column in the database. The value stored in the database will be the editor's resulting `HTML` content.
 
-
 <Image src="/assets/img/fields/trix.jpg" width="877" height="193" alt="Trix field" />
 
 Trix field is hidden from the `Index` view.
@@ -61,7 +60,6 @@ Enables file attachments.
 `nil`, or a symbol representing the `has_many_attachments` key on the model.
 </Option>
 
-
 ## File attachments
 
 <!-- @include: ./../common/files_gem_common.md-->
@@ -105,3 +103,18 @@ Trix integrates seamlessly with Action Text. It will automatically work with Act
 ## Demo app
 
 We prepared a [demo](https://trix.avodemo.com/) to showcase Trix's abilities to work with Action Text and Active Storage.
+
+## Javascript Alert Messages
+
+<VersionReq version="3.13.8" />
+
+You can customize the javascript alert messages for various actions in the Trix editor. Below are the default messages that can be translated or modified:
+
+```yml
+avo:
+  this_field_has_attachments_disabled: This field has attachments disabled.
+  you_cant_upload_new_resource: You can't upload files into the Trix editor until you save the resource.
+  you_havent_set_attachment_key: You haven't set an `attachment_key` to this Trix field.
+```
+
+Refer to the [default](https://github.com/avo-hq/avo/blob/main/lib/generators/avo/templates/locales/avo.en.yml) for more details.
