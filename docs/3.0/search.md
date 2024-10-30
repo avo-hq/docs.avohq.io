@@ -271,6 +271,15 @@ Avo.configure do |config|
 end
 ```
 
+<VersionReq version="3.13.5" /> `disabled_features` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context)
+
+```ruby{3}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.disabled_features = -> { current_user.is_admin? ? [] : [:global_search] }
+end
+```
+
 ### Scope out global or resource searches
 
 You may want to perform different searches on the `global` search from the `resource` search. You may use the `params[:global]` flag to figure that out.

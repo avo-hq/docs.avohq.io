@@ -73,7 +73,7 @@ That will render all `id` fields in the **Index** view as a link to that resourc
 
 <Image src="/assets/img/fields-reference/as-link-to-resource.jpg" width="694" height="166" alt="As link to resource" />
 
-## Resource controls on the left side
+## Resource controls on the left or both sides
 <DemoVideo demo-video="https://youtu.be/MfryUtcXqvU?t=706" />
 
 By default, the resource controls are located on the right side of the record rows, which might be hidden if there are a lot of columns. You might want to move the controls to the left side in that situation using the `resource_controls_placement` option.
@@ -84,8 +84,17 @@ Avo.configure do |config|
 end
 ```
 
-
 <Image src="/assets/img/customization/resource-controls-left.jpg" width="1206" height="920" alt="Resource controls on the left side" />
+
+<VersionReq version="3.13.7" class="mt-2" />
+
+You might want to render the controls on both sides
+
+```ruby{2}
+Avo.configure do |config|
+  config.resource_controls_placement = :both
+end
+```
 
 ## Container width
 
@@ -394,6 +403,15 @@ You might want to disable some Avo features. You can do that using the `disabled
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.disabled_features = [:global_search]
+end
+```
+
+<VersionReq version="3.13.5" /> `disabled_features` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context)
+
+```ruby{3}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.disabled_features = -> { current_user.is_admin? ? [] : [:global_search] }
 end
 ```
 
