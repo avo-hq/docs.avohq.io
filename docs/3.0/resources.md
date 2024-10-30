@@ -889,6 +889,25 @@ end
 
 </Option>
 
+<Option name="`self.controls_placement`">
+<VersionReq version="3.13.7" />
+
+By default, Avo renders action controls according to the `controls_placement` configuration, which is set to `right` by default. This value can be customized for each individual resource.
+
+#### Possible values
+
+Either `:left`, `:right` or `:both`
+
+```ruby
+class Avo::Resources::Task < Avo::BaseResource
+  self.controls_placement = :both
+
+  # ...
+end
+```
+
+</Option>
+
 ## Cards
 
 Use the `def cards` method to add some cards to your resource.

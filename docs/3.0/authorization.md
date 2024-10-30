@@ -116,7 +116,7 @@ Controls whether the user can see the [records reordering](./records-reordering)
 
 <Option name="`search?`">
 
-Controls whether the user can see the global search input or the [resource search input](./search) on top of the <Index /> page.
+Controls whether the user can see the [resource search input](./search) on top of the <Index /> page.
 </Option>
 
 ## Associations
@@ -539,6 +539,105 @@ rescue Pundit::NotDefinedError => error
   raise NoPolicyError.new error.message
 end
 ```
+</Option>
+
+## Explicit authorization
+
+<Option name="`explicit_authorization`">
+
+:::warning Option Renamed
+In versions between <Version version="3.13.4" /> and <Version version="3.13.6" />, this option is named `implicit_authorization`.
+:::
+
+<VersionReq version="3.13.4" />
+
+ This option gives you control over how missing policy classes or methods are handled during authorization checks in your Avo application.
+
+### Possible values
+
+**`true`**
+  - If a policy class or method is **missing** for a given resource or action, that action will automatically be considered **unauthorized**.
+  - This behavior enhances security by ensuring that any unconfigured or unhandled actions are denied by default.
+
+**`false`**
+  - If a policy class or method is **missing**, the action will be considered **authorized** by default.
+
+**`Proc`**
+  - You can also set `explicit_authorization` as a `Proc` to apply custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context)
+
+    For example:
+
+    ```ruby
+    config.explicit_authorization = -> {
+      current_user.access_to_admin_panel? && !current_user.admin?
+    }
+    ```
+
+    In this case, missing policies will be handled based on the condition: if the user has access to the admin panel but isn't an admin, the `explicit_authorization` will be enabled. This option allows you to customize authorization decisions based on the context of the current user or other factors.
+### Default
+
+- For **new applications** (starting from Avo `3.13.4`) the default value for `explicit_authorization` is `true`. This provides a more secure out-of-the-box experience by ensuring actions without explicit authorization are denied.
+
+- For **existing applications** upgrading to `3.13.4` or later the default value for `explicit_authorization` remains `false` to preserve backward compatibility. Existing applications will retain the permissive behavior unless explicitly changed.
+
+### Configuration:
+
+You can configure this setting in your `config/avo.rb` file:
+
+```ruby{4}
+Avo.configure do |config|
+  # Set to true to deny access when policies or methods are missing
+  # Set to false to allow access when policies or methods are missing
+  config.explicit_authorization = true
+end
+```
+
+### Examples:
+
+1. **When `explicit_authorization` is `true`**
+    - **Scenario**: You have a `Post` resource, but there is no policy class defined for it.
+    - **Result**: All actions for the `Post` resource (index, show, create, etc.) will be **unauthorized** unless you explicitly define a policy class and methods for those actions.
+
+    ---
+    - **Scenario**: You have a `Post` resource, and the policy class defined for it only defines the `show?` method.
+
+    ```ruby
+    class PostPolicy < ApplicationPolicy
+      def show?
+        user.admin?
+      end
+    end
+    ```
+    - **Result**: In this case, since the `PostPolicy` lacks an `index?` method, attempting to access the `index` action will be denied by default.
+
+2. **When `explicit_authorization: false`**
+    - **Scenario**: Same `Post` resource without a policy class.
+    - **Result**: All actions for the `Post` resource will be **authorized** even though there are no explicit policy methods. This could expose unintended behavior, as any unprotected action will be accessible.
+
+    ---
+
+    - **Scenario**: You have a `Post` resource, and the policy class defined for it only defines the `show?` method.
+    ```ruby
+    class PostPolicy < ApplicationPolicy
+      def show?
+        user.admin?
+      end
+    end
+    ```
+    - **Result**: In this case, missing methods like `index?` will allow access to the `index` action by default.
+
+
+### Migration Recommendations:
+
+- **For applications after from Avo `3.13.4`**
+
+    It is recommended to leave `explicit_authorization` set to `true`, ensuring all actions must be explicitly authorized to prevent unintentional access.
+
+- **For applications before from Avo `3.13.4`**
+
+    - If upgrading from an earlier version, carefully review your policies before enabling `explicit_authorization`. Missing policy methods that were previously allowing access will now deny access unless explicitly defined.
+
+    - It’s recommended to disable [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) in production, though it's not mandatory. When `explicit_authorization` is set to `true`, the default behavior is to deny access for actions without a defined policy. In this case, it’s often better to show an unauthorized message to users rather than raise an error. However, keeping [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) enabled in development can be helpful for identifying missing policy classes.
 </Option>
 
 ## Rolify integration
