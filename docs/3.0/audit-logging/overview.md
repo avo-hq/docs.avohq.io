@@ -197,7 +197,7 @@ class Avo::Resources::Product < Avo::BaseResource
   }
 
   def fields
-    main_menu do
+    main_panel do
       field :id, as: :id, link_to_record: true
       field :name, as: :text, link_to_record: true
       field :price, as: :number, step: 1
@@ -213,6 +213,22 @@ class Avo::Resources::Product < Avo::BaseResource
   def actions
     action Avo::Actions::ChangePrice
   end
+end
+```
+
+## Overview of all activities
+
+We've covered how to view activity for specific records and how to review all actions by a particular author. However, having an overview of all activities in one place can also be useful. This can be achieved by configuring the menu to include a section with an entry for all activities.
+
+```ruby{5-7}
+# config/initializers/avo.rb
+
+Avo.configure do |config|
+  config.main_menu = -> {
+    section "AuditLogging", icon: "presentation-chart-bar" do
+      resource :avo_activity
+    end
+  }
 end
 ```
 
@@ -311,22 +327,6 @@ class Avo::Resources::User < Avo::BaseResource
     field :products, as: :has_many
     field :avo_authored, as: :has_many
   end
-end
-```
-
-## Overview of all activities
-
-We've covered how to view activity for specific records and how to review all actions by a particular author. However, having an overview of all activities in one place can also be useful. This can be achieved by configuring the menu to include a section with an entry for all activities.
-
-```ruby{5-7}
-# config/initializers/avo.rb
-
-Avo.configure do |config|
-  config.main_menu = -> {
-    section "AuditLogging", icon: "presentation-chart-bar" do
-      resource :avo_activity
-    end
-  }
 end
 ```
 
