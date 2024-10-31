@@ -72,9 +72,9 @@ At this stage, all migrations, resources, and controllers required for the audit
 bin/rails db:migrate
 ```
 
-## Enable audit logging
+## Enable and configure audit logging
 
-### 1. Global enable
+### Global enable
 
 After installation, audit logging is disabled by default. To enable it, navigate to your `avo.rb` initializer file and update the configuration for the `Avo::AuditLogging` module.
 
@@ -96,7 +96,32 @@ end
 Setting this configuration to `false` will disable the audit logging feature entirely, overriding any other specific settings. We'll cover those specific settings in the next step.
 :::
 
-### 2. Enable specific resources and actions
+### Configure author models
+
+:::info
+If `User` is your only author model, you can skip this step as it will be automatically set by default.
+:::
+
+Avo needs to identify the author possible models to properly set up associations behind the scenes. This will allow to fetch all activities for a specific author using the `avo_authored` association. To mark a model as an author use the `config.author_model` or for multiples models use `config.author_models`
+
+```ruby{10,12-13}
+# config/initializers/avo.rb
+
+Avo.configure do |config|
+  # ...
+end
+
+Avo::AuditLogging.configure do |config|
+  config.enabled = true
+
+  config.author_model = "User"
+
+  # Or if multiples
+  config.author_models = ["User", "Account"]
+end
+```
+
+### Enable specific resources and actions
 
 At this stage, the audit logging feature should be enabled, but activities are not yet being saved. By default, only resources and actions that are explicitly enabled for auditing will be tracked.
 
@@ -143,15 +168,13 @@ end
 ```
 :::
 
-:::info
 At this point, all resources and actions with audit logging activity enabled are being tracked.
 
 But these activities aren't visible yet, right? Let's look at how to display them in the next step.
-:::
 
 ## Display logged activities
 
-### 1. Table with detailed activities
+### Table with detailed activities
 After installing and enabling audit logging, it's time to display the tracked activities. By default, they will appear like this, using the generated resource, which you can customize as needed.
 
 <Image src="/assets/img/3_0/audit-logging/avo-activities.png" width="1912" height="682" alt="Avo activities table image" />
@@ -182,7 +205,7 @@ end
 This table is displayed using the `Avo::Resources::AvoActivity` generated during installation. You have full control to customize it as desired.
 :::
 
-### 2. Sidebar with compact activities
+### Sidebar with compact activities
 
 During installation, a resource tool called `Avo::ResourceTools::Timeline` was also generated. This tool is designed for use in the sidebar, providing a compact view of activities that looks like this:
 
@@ -216,7 +239,7 @@ class Avo::Resources::Product < Avo::BaseResource
 end
 ```
 
-### 3. Overview of all activities
+### Overview of all activities
 
 We've covered how to view activity for specific records and how to review all actions by a particular author. However, having an overview of all activities in one place can also be useful. This can be achieved by configuring the menu to include a section with an entry for all activities.
 
@@ -293,27 +316,9 @@ Weâ€™ve already covered how to view all activity on a specific record. Now, letâ
 
 <Image src="/assets/img/3_0/audit-logging/authored.png" width="1926" height="739" alt="Authored table image" />
 
-### 1. Configure the resource as `author`
-
-To fetch all activities for a specific user, Avo needs to identify the user model as the author to properly set up associations behind the scenes. To mark a resource as an author, use the `author` key on the `self.audit_logging` class attribute hash configuration:
-
-```ruby{2-4}
-class Avo::Resources::User < Avo::BaseResource
-  self.audit_logging = {
-    author: true
-  }
-
-  def fields
-    field :id, as: :id, link_to_record: true
-    field :email, as: :text, link_to_record: true
-    field :products, as: :has_many
-  end
-end
-```
-
-### 2. Display the authored table
-
-Now that the `Avo::Resources::User` is marked as author and the `User` model have the required associations we can show the authored table:
+:::warning
+If you're using a model other than `User`, make sure you have already [configured the author models](#_2-configure-author-models).
+:::
 
 ```ruby{10}
 class Avo::Resources::User < Avo::BaseResource
