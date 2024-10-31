@@ -216,7 +216,7 @@ class Avo::Resources::Product < Avo::BaseResource
 end
 ```
 
-## Overview of all activities
+### 3. Overview of all activities
 
 We've covered how to view activity for specific records and how to review all actions by a particular author. However, having an overview of all activities in one place can also be useful. This can be achieved by configuring the menu to include a section with an entry for all activities.
 
