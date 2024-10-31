@@ -12,9 +12,9 @@ const links = {
   community: "https://avohq.io/pricing#comparison-heading",
   pro: "https://avohq.io/subscriptions/new?plan=pro",
   advanced: "https://avohq.io/subscriptions/new?plan=advanced",
-  kanban: "mailto:avo@avohq.io?subject=I'd%20like%20to%20learn%20more%20about%20the%20Kanban%20license&body=Hi%2C%0D%0A%0D%0AI'm%20....",
-  audit_logging: "mailto:avo@avohq.io?subject=I'd%20like%20to%20learn%20more%20about%20the%20Audit%20Logging%20license&body=Hi%2C%0D%0A%0D%0AI'm%20....",
-  custom: "mailto:avo@avohq.io?subject=I'd%20like%20to%20learn%20more%20about%20the%20Custom%20license&body=Hi%2C%0D%0A%0D%0AI'm%20....",
+  kanban: "https://savvycal.com/avo-hq/dev-chat-24",
+  audit_logging: "https://savvycal.com/avo-hq/dev-chat-24",
+  custom: "https://savvycal.com/avo-hq/dev-chat-24",
 };
 const labels = {
   community: "Community",
