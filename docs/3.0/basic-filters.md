@@ -13,6 +13,15 @@ Each filter is configured in a class with a few dedicated [methods and options](
 <Option name="`self.name`">
 
 `self.name` is what is going to be displayed to the user in the filters panel.
+
+```ruby
+self.name = 'User names filter'
+
+# Or
+
+self.name = -> { I18n.t("avo.filter.name") }
+```
+
 </Option>
 
 <Option name="`self.visible`">
