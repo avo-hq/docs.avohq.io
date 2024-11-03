@@ -5,7 +5,7 @@ betaStatus: Beta
 # Plugins
 
 :::warning
-This feature is in beta and we might change the API as we develope it.
+This feature is in beta and we might change the API as we develop it.
 
 These docs are in beta too, so please [ask for more information](https://github.com/avo-hq/avo/discussions) when you need it.
 :::
