@@ -563,14 +563,14 @@ self.authorize = -> {
 }
 ```
 
-## Actions dynamic backdrop
+## Actions close modal on backdrop click
 
-By default, action modals use a dynamic backdrop. Add `self.dynamic_backdrop = false` in case you want to prevent the user from closing the modal when clicking on the backdrop.
+By default, action modals use a dynamic backdrop. Add `self.close_modal_on_backdrop_click = false` in case you want to prevent the user from closing the modal when clicking on the backdrop.
 
 ```ruby{3}
 class Avo::Actions::DummyAction < Avo::BaseAction
   self.name = "Dummy action"
-  self.dynamic_backdrop = false
+  self.close_modal_on_backdrop_click = false
 
   def handle(query:, fields:, current_user:, resource:, **args)
     # Do something here
