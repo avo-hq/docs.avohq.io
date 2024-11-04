@@ -13,6 +13,35 @@ Each filter is configured in a class with a few dedicated [methods and options](
 <Option name="`self.name`">
 
 `self.name` is what is going to be displayed to the user in the filters panel.
+
+```ruby
+self.name = "User names filter"
+```
+
+<VersionReq version="3.14.0" />
+
+```ruby
+self.name = -> { I18n.t("avo.filter.name") }
+```
+Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `arguments`.
+
+</Option>
+
+<Option name="`self.button_label`">
+
+The value of `self.button_label` is the label displayed on the button that applies the filter.
+
+```ruby
+self.button_label = "Filter by user names"
+```
+
+<VersionReq version="3.14.0" />
+
+```ruby
+self.button_label = -> { I18n.t("avo.filter.button_label") }
+```
+Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `arguments`.
+
 </Option>
 
 <Option name="`self.visible`">
