@@ -565,6 +565,8 @@ self.authorize = -> {
 
 ## Actions close modal on backdrop click
 
+<VersionReq version="3.14.0" />
+
 By default, action modals use a dynamic backdrop. Add `self.close_modal_on_backdrop_click = false` in case you want to prevent the user from closing the modal when clicking on the backdrop.
 
 ```ruby{3}
