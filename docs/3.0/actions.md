@@ -448,9 +448,8 @@ append_to_response -> {
 
 <Option name="`reload_records`">
 <VersionReq version="3.14.0" />
-<br>
-<br>
-<DemoVideo demo-video="https://www.loom.com/share/6b9ae6a3968c447f98ac4f9a161fe781?sid=7e31f973-09a2-4ea8-a16e-90f379e67f4d" />
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/6b9ae6a3968c447f98ac4f9a161fe781?sid=17f08010-6a56-4e8c-8b80-692424327b55" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 
 :::warning
 This option **only** works on **Index** pages, **NOT** on **associations**.
