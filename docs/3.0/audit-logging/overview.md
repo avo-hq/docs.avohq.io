@@ -107,8 +107,8 @@ end
 Avo::AuditLogging.configure do |config| # [!code focus]
   config.enabled = true
 
-  # config.author_models = ["User"] # [!code --] # [!code focus]
-  config.author_model = "User" # [!code ++] # [!code focus]
+  # config.author_model = "User" # [!code --] # [!code focus]
+  config.author_model = "Account" # [!code ++] # [!code focus]
 
   # Or if multiples # [!code focus]
   config.author_models = ["User", "Account"] # [!code ++] # [!code focus]
