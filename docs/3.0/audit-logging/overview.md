@@ -4,10 +4,6 @@ betaStatus: Beta
 outline: [2,3]
 ---
 
-<!-- TODO:
-We need to have another page where we explain how the things works behind the scenes like, how the polymorphic association is setted and everithing ( maybe exposing to much we make it easy to replicate but... )
-
-We also need a page where we show how to extend the base configuration, like accessing the activitires on queries, aplying the activities scopes and how to extend those models and add more custom scopes -->
 
 # Audit Logging
 
@@ -25,10 +21,6 @@ The installation process will automatically generate the necessary migrations, r
 
 :::info
 When installing `avo-audit_logging` on a application, we strongly recommend following this documentation page step-by-step without skipping sections, as it was designed with that approach in mind.
-:::
-
-:::warning
-Certain configurations are required and will trigger code that runs at boot time. If something isn't working as expected during installation, please restart the server.
 :::
 
 ### 1. Install the gem
@@ -81,15 +73,16 @@ After installation, audit logging is disabled by default. To enable it, navigate
 Set `config.enabled` to `true` within this configuration.
 
 ```ruby{7-9}
-# config/initializers/avo.rb
+# config/initializers/avo.rb # [!code focus]
 
 Avo.configure do |config|
   # ...
 end
 
-Avo::AuditLogging.configure do |config|
-  config.enabled = true
-end
+Avo::AuditLogging.configure do |config| # [!code focus]
+  # config.enabled = false # [!code --] # [!code focus]
+  config.enabled = true # [!code ++] # [!code focus]
+end # [!code focus]
 ```
 
 :::info
@@ -104,21 +97,22 @@ If `User` is your only author model, you can skip this step as it will be automa
 
 Avo needs to identify the author possible models to properly set up associations behind the scenes. This will allow to fetch all activities for a specific author using the `avo_authored` association. To mark a model as an author use the `config.author_model` or for multiples models use `config.author_models`
 
-```ruby{10,12-13}
-# config/initializers/avo.rb
+```ruby
+# config/initializers/avo.rb # [!code focus]
 
 Avo.configure do |config|
   # ...
 end
 
-Avo::AuditLogging.configure do |config|
+Avo::AuditLogging.configure do |config| # [!code focus]
   config.enabled = true
 
-  config.author_model = "User"
+  # config.author_models = ["User"] # [!code --] # [!code focus]
+  config.author_model = "User" # [!code ++] # [!code focus]
 
-  # Or if multiples
-  config.author_models = ["User", "Account"]
-end
+  # Or if multiples # [!code focus]
+  config.author_models = ["User", "Account"] # [!code ++] # [!code focus]
+end # [!code focus]
 ```
 
 ### Enable specific resources and actions
@@ -129,10 +123,10 @@ To enable audit logging for specific resources or actions, use the `self.audit_l
 
 :::code-group
 ```ruby [Resource]{2-4}
-class Avo::Resources::Product < Avo::BaseResource
-  self.audit_logging = {
-    activity: true
-  }
+class Avo::Resources::Product < Avo::BaseResource # [!code focus]
+  self.audit_logging = { # [!code ++] # [!code focus]
+    activity: true # [!code ++] # [!code focus]
+  } # [!code ++] # [!code focus]
 
   def fields
     field :id, as: :id, link_to_record: true
@@ -144,16 +138,16 @@ class Avo::Resources::Product < Avo::BaseResource
   def actions
     action Avo::Actions::ChangePrice
   end
-end
+end # [!code focus]
 ```
 
 ```ruby [Action]{4-6}
-class Avo::Actions::ChangePrice < Avo::BaseAction
+class Avo::Actions::ChangePrice < Avo::BaseAction # [!code focus]
   self.name = "Change Price"
 
-  self.audit_logging = {
-    activity: true
-  }
+  self.audit_logging = { # [!code ++] # [!code focus]
+    activity: true # [!code ++] # [!code focus]
+  } # [!code ++] # [!code focus]
 
   def fields
     field :price, as: :number, default: -> { resource.record.price rescue nil }
@@ -164,7 +158,7 @@ class Avo::Actions::ChangePrice < Avo::BaseAction
       record.update!(price: fields[:price])
     end
   end
-end
+end # [!code focus]
 ```
 :::
 
@@ -181,24 +175,23 @@ After installing and enabling audit logging, it's time to display the tracked ac
 
 To display this table as an association view, add the `:avo_activities` field to resources that have audit logging enabled.
 
-```ruby{11}
-class Avo::Resources::Product < Avo::BaseResource
+```ruby
+class Avo::Resources::Product < Avo::BaseResource # [!code focus]
   self.audit_logging = {
     activity: true
   }
 
-  def fields
+  def fields # [!code focus]
     field :id, as: :id, link_to_record: true
     field :name, as: :text, link_to_record: true
     field :price, as: :number, step: 1
-    # ...
-    field :avo_activities, as: :has_many
-  end
+    field :avo_activities, as: :has_many # [!code ++] # [!code focus]
+  end # [!code focus]
 
   def actions
     action Avo::Actions::ChangePrice
   end
-end
+end # [!code focus]
 ```
 
 :::info
@@ -214,43 +207,43 @@ During installation, a resource tool called `Avo::ResourceTools::Timeline` was a
 This can be achieved by configuring the resource to ensure that the main menu sidebar includes the resource tool:
 
 ```ruby{7,12-15}
-class Avo::Resources::Product < Avo::BaseResource
+class Avo::Resources::Product < Avo::BaseResource # [!code focus]
   self.audit_logging = {
     activity: true
   }
 
-  def fields
-    main_panel do
+  def fields # [!code focus]
+    main_panel do # [!code ++] # [!code focus]
       field :id, as: :id, link_to_record: true
       field :name, as: :text, link_to_record: true
       field :price, as: :number, step: 1
 
-      sidebar do
-        tool Avo::ResourceTools::Timeline
-      end
-    end
-    # ...
-    field :avo_activities, as: :has_many
-  end
+      sidebar do # [!code ++] # [!code focus]
+        tool Avo::ResourceTools::Timeline # [!code ++] # [!code focus]
+      end # [!code ++] # [!code focus]
+    end # [!code ++] # [!code focus]
+
+    field :avo_activities, as: :has_many # [!code focus]
+  end # [!code focus]
 
   def actions
     action Avo::Actions::ChangePrice
   end
-end
+end # [!code focus]
 ```
 
 ### Overview of all activities
 
 We've covered how to view activity for specific records and how to review all actions by a particular author. However, having an overview of all activities in one place can also be useful. This can be achieved by configuring the menu to include a section with an entry for all activities.
 
-```ruby{5-7}
+```ruby
 # config/initializers/avo.rb
 
 Avo.configure do |config|
   config.main_menu = -> {
-    section "AuditLogging", icon: "presentation-chart-bar" do
-      resource :avo_activity
-    end
+    section "AuditLogging", icon: "presentation-chart-bar" do # [!code ++]
+      resource :avo_activity # [!code ++]
+    end # [!code ++]
   }
 end
 ```
@@ -263,15 +256,15 @@ If you prefer not to log all of these actions, configure the `actions` key withi
 
 Let's turn off `edit` and `show` logging for the `Avo::Resources::Product`:
 
-```ruby{4-7}
-class Avo::Resources::Product < Avo::BaseResource
-  self.audit_logging = {
-    activity: true,
-    actions: {
-      edit: false,
-      show: false
-    }
-  }
+```ruby
+class Avo::Resources::Product < Avo::BaseResource # [!code focus]
+  self.audit_logging = { # [!code focus]
+    activity: true, # [!code focus]
+    actions: { # [!code ++] # [!code focus]
+      edit: false, # [!code ++] # [!code focus]
+      show: false # [!code ++] # [!code focus]
+    } # [!code ++] # [!code focus]
+  } # [!code focus]
 
   def fields
     main_menu do
@@ -290,7 +283,7 @@ class Avo::Resources::Product < Avo::BaseResource
   def actions
     action Avo::Actions::ChangePrice
   end
-end
+end # [!code focus]
 ```
 
 The default value for `actions` is:
@@ -320,19 +313,15 @@ Weâ€™ve already covered how to view all activity on a specific record. Now, letâ
 If you're using a model other than `User`, make sure you have already [configured the author models](#_2-configure-author-models).
 :::
 
-```ruby{10}
-class Avo::Resources::User < Avo::BaseResource
-  self.audit_logging = {
-    author: true
-  }
-
-  def fields
+```ruby
+class Avo::Resources::User < Avo::BaseResource # [!code focus]
+  def fields # [!code focus]
     field :id, as: :id, link_to_record: true
     field :email, as: :text, link_to_record: true
     field :products, as: :has_many
-    field :avo_authored, as: :has_many
-  end
-end
+    field :avo_authored, as: :has_many # [!code ++] # [!code focus]
+  end # [!code focus]
+end # [!code focus]
 ```
 
 ## Display Record Versions
@@ -345,28 +334,28 @@ Each gem has its own method for enabling versioning, which needs to be configure
 
 
 :::code-group
-```ruby [audited]{4}
-# app/models/product.rb
+```ruby [audited]
+# app/models/product.rb # [!code focus]
 
-class Product < ApplicationRecord
-  audited
+class Product < ApplicationRecord # [!code focus]
+  audited # [!code ++] # [!code focus]
 
   belongs_to :user, optional: true
 
   validates_presence_of :price
-end
+end # [!code focus]
 ```
 
-```ruby [paper_trail]{4}
-# app/models/product.rb
+```ruby [paper_trail]
+# app/models/product.rb # [!code focus]
 
-class Product < ApplicationRecord
-  has_paper_trail
+class Product < ApplicationRecord # [!code focus]
+  has_paper_trail # [!code ++] # [!code focus]
 
   belongs_to :user, optional: true
 
   validates_presence_of :price
-end
+end # [!code focus]
 ```
 :::
 
@@ -376,7 +365,7 @@ To show record changes, you'll need to use one of the resources generated during
 
 :::code-group
 ```ruby [audited]{22}
-class Avo::Resources::Product < Avo::BaseResource
+class Avo::Resources::Product < Avo::BaseResource # [!code focus]
   self.audit_logging = {
     activity: true,
     actions: {
@@ -385,7 +374,7 @@ class Avo::Resources::Product < Avo::BaseResource
     }
   }
 
-  def fields
+  def fields # [!code focus]
     main_menu do
       field :id, as: :id, link_to_record: true
       field :name, as: :text, link_to_record: true
@@ -395,19 +384,19 @@ class Avo::Resources::Product < Avo::BaseResource
         tool Avo::ResourceTools::Timeline
       end
     end
-    # ...
+
     field :avo_activities, as: :has_many
-    field :audits, as: :has_many, use_resource: Avo::Resources::Audited
-  end
+    field :audits, as: :has_many, use_resource: Avo::Resources::Audited # [!code ++] # [!code focus]
+  end # [!code focus]
 
   def actions
     action Avo::Actions::ChangePrice
   end
-end
+end # [!code focus]
 ```
 
 ```ruby [paper_trail]{22}
-class Avo::Resources::Product < Avo::BaseResource
+class Avo::Resources::Product < Avo::BaseResource # [!code focus]
   self.audit_logging = {
     activity: true,
     actions: {
@@ -416,7 +405,7 @@ class Avo::Resources::Product < Avo::BaseResource
     }
   }
 
-  def fields
+  def fields # [!code focus]
     main_menu do
       field :id, as: :id, link_to_record: true
       field :name, as: :text, link_to_record: true
@@ -426,15 +415,15 @@ class Avo::Resources::Product < Avo::BaseResource
         tool Avo::ResourceTools::Timeline
       end
     end
-    # ...
+
     field :avo_activities, as: :has_many
-    field :versions, as: :has_many, use_resource: Avo::Resources::PaperTrail
-  end
+    field :versions, as: :has_many, use_resource: Avo::Resources::PaperTrail # [!code ++] # [!code focus]
+  end # [!code focus]
 
   def actions
     action Avo::Actions::ChangePrice
   end
-end
+end # [!code focus]
 ```
 :::
 
