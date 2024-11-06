@@ -55,12 +55,12 @@ Once you've chosen a gem, proceed by running the installation command:
 
 :::code-group
 ```bash [audited]
-bin/rails generate avo:audit install --gem audited
+bin/rails generate avo:audit_logging install --gem audited
 
 ```
 
 ```bash [paper_trail]
-bin/rails generate avo:audit install --gem paper_trail
+bin/rails generate avo:audit_logging install --gem paper_trail
 ```
 :::
 
