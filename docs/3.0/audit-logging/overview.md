@@ -361,6 +361,15 @@ end # [!code focus]
 
 ### 2. Display Record Versions
 
+:::warning
+If you're using `paper_trail` and the `changeset` field in the versions table consistently appears as `nil`, ensure you add the following configuration in your `application.rb` file:
+
+```ruby
+config.active_record.yaml_column_permitted_classes = [Symbol, Date, Time, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone]
+
+```
+:::
+
 To show record changes, you'll need to use one of the resources generated during installation. The resource name and structure will vary based on the gem you selected:
 
 :::code-group
