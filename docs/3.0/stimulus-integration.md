@@ -253,6 +253,19 @@ For debugging purposes only, the `resource_edit` Stimulus JS controller provides
 
 <DemoVideo demo-video="https://youtu.be/ZMOz22FaAUg?t=1127" />
 
+:::info Check the source code
+If you visit our demo website on the [course edit page](https://main.avodemo.com/avo/resources/courses/1/edit) you can see this in action.
+
+- Demo of the feature in action <br>
+https://main.avodemo.com/avo/resources/courses/1/edit
+- JS controller that does that change <br>
+https://github.com/avo-hq/main.avodemo.com/blob/main/app/javascript/controllers/course_controller.js
+- Rails controller that returns the results <br>
+https://github.com/avo-hq/main.avodemo.com/blob/main/app/controllers/avo/courses_controller.rb#L3
+- Stimulus action that triggers the update <br>
+https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L68
+:::
+
 The bigger purpose of this feature is to create your own Stimulus JS controllers to bring the functionality you need to the CRUD interface.
 
 Below is an example of how you could implement a city & country select feature where the city select will have its options changed when the user selects a country:
