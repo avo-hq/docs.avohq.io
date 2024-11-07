@@ -63,6 +63,20 @@ Customize the label for the delete row button tooltip.
 Any string value.
 </Option>
 
+<Option name="`reorder_text`">
+<VersionReq version="3.14.0" />
+
+Set a custom label for the tooltip on the reorder by drag-and-drop row button.
+
+#### Default
+
+`I18n.translate("avo.key_value_field.reorder_row")`
+
+#### Possible values
+
+Any string value.
+</Option>
+
 <Option name="`disabled`">
 Toggle on/off the ability to disable editing keys, editing values, adding rows, and deleting rows for that field.
 
