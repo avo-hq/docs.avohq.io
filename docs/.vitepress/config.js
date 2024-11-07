@@ -199,12 +199,12 @@ const config = {
             {text: "Dynamic Filters", link: "/3.0/dynamic-filters.html"},
           ],
         },
-        {
-          text: "Audit Logging",
-          items: [
-            {text: "Overview", link: "/3.0/audit-logging/overview.html"},
-          ],
-        },
+        // {
+        //   text: "Audit Logging",
+        //   items: [
+        //     {text: "Overview", link: "/3.0/audit-logging/overview.html"},
+        //   ],
+        // },
         {
           text: "Custom content",
           items: [
