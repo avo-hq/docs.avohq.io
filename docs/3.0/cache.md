@@ -135,7 +135,9 @@ $ bin/rails db:migrate
 To set Solid Cache as your Rails cache, you should add this to your environment config:
 
 ```ruby
-config.cache_store = :solid_cache_store
+config.cache_store = -> {
+  ActiveSupport::Cache.lookup_store(:solid_cache_store)
+}
 ```
 
 Check [Solid Cache repository](https://github.com/rails/solid_cache) for additional valuable information.
