@@ -415,13 +415,13 @@ Avo action responses are in the `turbo_stream` format. You can use the `append_t
 
 ```ruby{5-7}
 def handle(**args)
-    succeed "Modal closed!!"
-    close_modal
+  succeed "Modal closed!!"
+  close_modal
 
-    append_to_response -> {
-      turbo_stream.set_title("Cool title ;)")
-    }
-  end
+  append_to_response -> {
+    turbo_stream.set_title("Cool title ;)")
+  }
+end
 ```
 
 The `append_to_response` method accepts a Proc or lambda function. This function is executed within the context of the action's controller response.
@@ -442,6 +442,42 @@ append_to_response -> {
 append_to_response -> {
   turbo_stream.set_title("Cool title")
 }
+```
+:::
+</Option>
+
+<Option name="`reload_records`">
+<VersionReq version="3.14.0" />
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/6b9ae6a3968c447f98ac4f9a161fe781?sid=17f08010-6a56-4e8c-8b80-692424327b55" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+
+:::warning
+This option **only** works on **Index** pages, **NOT** on **associations**.
+:::
+
+This option leverages Turbo Stream to refresh specific table rows in response to an action. For individual records, you can use the `reload_record` alias method.
+
+```ruby{8}
+def handle(query:, fields:, **args)
+  query.each do |record|
+    record.update! active: !record.active
+
+    record.notify fields[:message] if fields[:notify_user]
+  end
+
+  reload_records(query)
+end
+```
+
+The `reload_records` and `reload_record` methods are aliases, and they accept either an array of records or a single record.
+
+:::code-group
+```ruby[Array]{1}
+reload_records([record_1, record_2])
+```
+
+```ruby[Single]{1}
+reload_record(record)
 ```
 :::
 </Option>
@@ -561,6 +597,25 @@ self.authorize = false
 self.authorize = -> {
   current_user.is_admin?
 }
+```
+
+## Actions close modal on backdrop click
+
+<VersionReq version="3.14.0" />
+
+By default, action modals use a dynamic backdrop. Add `self.close_modal_on_backdrop_click = false` in case you want to prevent the user from closing the modal when clicking on the backdrop.
+
+```ruby{3}
+class Avo::Actions::DummyAction < Avo::BaseAction
+  self.name = "Dummy action"
+  self.close_modal_on_backdrop_click = false
+
+  def handle(query:, fields:, current_user:, resource:, **args)
+    # Do something here
+
+    succeed 'Yup'
+  end
+end
 ```
 
 ## Custom action arguments
