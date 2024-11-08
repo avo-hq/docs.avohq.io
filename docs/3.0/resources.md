@@ -515,7 +515,7 @@ We know, the array notation looks weird, but it works.
 
 <Option name="`self.single_includes`">
 
-`single_includes` works the same as `includes` but it's going to eager load the associtations on the <Show /> and <Edit /> views only.
+`single_includes` works the same as `includes` but it's going to eager load the associations on the <Show /> and <Edit /> views only.
 </Option>
 
 <Option name="`self.attachments`">
