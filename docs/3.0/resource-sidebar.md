@@ -23,6 +23,9 @@ class Avo::Resources::User < Avo::BaseResource
       field :first_name, as: :text, placeholder: "John"
       field :last_name, as: :text, placeholder: "Doe"
 
+      # We can also add custom resource tools
+      tool UserTimeline
+
       sidebar do
         field :email, as: :gravatar, link_to_record: true, only_on: :show
         field :active, as: :boolean, name: "Is active", only_on: :show
