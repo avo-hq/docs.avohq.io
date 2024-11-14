@@ -570,7 +570,9 @@ end
 
 ## Associations lookup list limit
 
-<VersionReq version="3.14.0" />
+<Option name="`associations_lookup_list_limit`">
+
+<VersionReq version="3.14.1" />
 
 By default, there is a limit of a 1000 records per query when listing the association options. This limit ensures that the page will not crash due to large collections.
 Use `associations_lookup_list_limit` configuration to change the limit value.
@@ -582,4 +584,9 @@ Avo.configure do |config|
 end
 ```
 
+The message `There are more records available.` is shown when the limit is reached. To localize the message you can use `I18n.translate("avo.more_records_available")`.
+
+Using [searchable](./associations/belongs_to.html#searchable) is recommended for listing unlimited records with better performance and user experience.
+
 <Image src="/assets/img/customization/associations-lookup-list-limit.png" width="1206" height="920" alt="Associations lookup list limit configuration" />
+</Option>
