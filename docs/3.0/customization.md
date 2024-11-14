@@ -567,3 +567,19 @@ end
 
 <Image src="/assets/img/3_0/customization/click-row-to-view-record.gif" width="" height="" alt="Click to view record in Avo" />
 </Option>
+
+## Associations lookup list limit
+
+<VersionReq version="3.14.0" />
+
+By default, there is a limit of a 1000 records per query when listing the association options. This limit ensures that the page will not crash due to large collections.
+Use `associations_lookup_list_limit` configuration to change the limit value.
+
+```ruby{3}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.associations_lookup_list_limit = 1000
+end
+```
+
+<Image src="/assets/img/customization/associations-lookup-list-limit.png" width="1206" height="920" alt="Associations lookup list limit configuration" />
