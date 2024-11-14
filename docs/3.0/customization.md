@@ -588,5 +588,5 @@ The message `There are more records available.` is shown when the limit is reach
 
 Using [searchable](./associations/belongs_to.html#searchable) is recommended for listing unlimited records with better performance and user experience.
 
-<Image src="/assets/img/customization/associations-lookup-list-limit.png" width="1206" height="920" alt="Associations lookup list limit configuration" />
+<Image src="/assets/img/customization/associations-lookup-list-limit.png" width="2466" height="1098" alt="Associations lookup list limit configuration" />
 </Option>
