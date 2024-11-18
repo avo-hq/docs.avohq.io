@@ -25,9 +25,9 @@ field :role,
 
 <Option name="`options`">
 
-A `Hash` representing the options that should be displayed in the radio buttons.
+The `options` attribute accepts either a `Hash` or a proc, allowing the incorporation of custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](../execution-context) along with the `action`, `resource`, and `view`.
 
-The keys represent the value that will be persisted and the values are the visible labels.
+This attribute represents the options that should be displayed in the radio buttons.
 
 #### Default value
 
@@ -39,14 +39,24 @@ Empty `Hash`.
 
 #### Possible values
 
-Any `Hash`. Example:
+Any `Hash`. The keys represent the value that will be persisted and the values are the visible labels. Example:
 
 ```ruby
-{
+options: {
   admin: "Administrator",
   manager: "Manager",
   writer: "Writer"
 }
+```
+
+Or a `Proc`:
+
+```ruby
+options: -> do
+  record.roles.each_with_object({}) do |role, hash|
+    hash[role.id] = role.name.humanize
+  end
+end
 ```
 
 </Option>
