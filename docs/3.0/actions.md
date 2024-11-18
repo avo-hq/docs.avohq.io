@@ -736,20 +736,29 @@ Here's an example of how you can define actions dividers:
 
 ```ruby
 def actions
-    action Avo::Actions::ToggleInactive
-    action Avo::Actions::ToggleAdmin
-    divider
-    action Avo::Actions::Sub::DummyAction
-    action Avo::Actions::DownloadFile
-    divider
-    action Avo::Actions::Test::NoConfirmationRedirect
-    action Avo::Actions::Test::CloseModal
-  end
+  action Avo::Actions::ToggleInactive
+  action Avo::Actions::ToggleAdmin
+  divider
+  action Avo::Actions::Sub::DummyAction
+  action Avo::Actions::DownloadFile
+  divider
+  action Avo::Actions::Test::NoConfirmationRedirect
+  action Avo::Actions::Test::CloseModal
+end
 ```
 <Image src="/assets/img/action_divider.png" width="306" height="325" alt="" />
 
 <Option name="`label`">
-You can pass a `label` option to display that text
+
+The `label` option can be used to display specific text on dividers, enhancing usability by adding context to each section.
+
+```ruby
+def actions
+  action Avo::Actions::ToggleAdmin
+  divider label: "New section"
+  action Avo::Actions::Sub::DummyAction
+end
+```
 </Option>
 
 ## Icon
