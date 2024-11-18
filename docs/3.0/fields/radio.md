@@ -25,7 +25,7 @@ field :role,
 
 <Option name="`options`">
 
-The `options` attribute accepts either a `Hash` or a proc, allowing the incorporation of custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](../execution-context) along with the `action`, `resource`, and `view`.
+The `options` attribute accepts either a `Hash` or a proc, allowing the incorporation of custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](../execution-context) along with the `record`, `resource`, `view` and `field`.
 
 This attribute represents the options that should be displayed in the radio buttons.
 
