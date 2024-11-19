@@ -3,6 +3,14 @@
 We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
+## Upgrade from 3.14.0 to 3.14.1
+
+We’ve introduced the [`associations_lookup_list_limit`](customization.html#associations_lookup_list_limit) configuration option to prevent crashing when listing associations on large collections. The new default limit is set to a `1000` records.
+
+```ruby
+config.associations_lookup_list_limit = 1000
+```
+
 ## Upgrade from 3.13.6 to 3.13.7
 
 The `implicit_authorization` option has been renamed to `explicit_authorization` to better align with the feature's functionality. The underlying logic remains unchanged, so you only need to perform a rename if you're already using it.
