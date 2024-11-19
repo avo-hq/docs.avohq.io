@@ -14,6 +14,7 @@ field :type, as: :select, options: { 'Large container': :large, 'Medium containe
 ## Options
 
 <Option name="`options`">
+
 A `Hash` representing the options that should be displayed in the select. The keys represent the labels, and the values represent the value stored in the database.
 
 The options get cast as `ActiveSupport::HashWithIndifferentAccess` objects if they are a `Hash`.
@@ -28,6 +29,7 @@ The options get cast as `ActiveSupport::HashWithIndifferentAccess` objects if th
 </Option>
 
 <Option name="`enum`">
+
 Set the select options as an Active Record [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html). You may use `options` or `enum`, not both.
 
 ```ruby{3,10}
@@ -71,6 +73,7 @@ end
 </Option>
 
 <Option name="`include_blank`">
+
 ## Include blank
 
 The `Select` field also has the `include_blank` option. That can have three values.
