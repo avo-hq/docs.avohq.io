@@ -645,12 +645,29 @@ field :name, as: :text, html: {
 
 <Option name="`summarizable`">
 
+The `summarizable` field option adds a distribution chart on the index table.
+
+With this option enabled, you can get a summary of the grouped values from the field.
+
+For example, if you have a `status` field, you would be able to see how many entries fall under each status.
+Giving data insights and a summary of the grouped values from your field.
+
+Usage example:
+
 ```ruby
 field :status, as: :select, summarizable: true
 # or
-field :status, as: :badge, summarizable: true
+field :stage, as: :badge, summarizable: true
 ```
-This section is WIP.
+
+<Image src="/assets/img/fields-reference/summarizable.png" width="1815" height="922" alt="Summarizable option field chart" />
+
+:::info
+Since version <Version version="3.14.2" /> `summarizable` option works on association pages:
+
+<Image src="/assets/img/fields-reference/summarizable-associations.png" width="2220" height="1208" alt="Summarizable chart on associations" />
+:::
+
 </Option>
 
 <Option name="`for_attribute`">
