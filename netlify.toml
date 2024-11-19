@@ -111,3 +111,123 @@
   to = "https://v1-docs.avohq.io/1.0/field-options.html"
   status = 301
   force = false
+
+[[redirects]]
+  from = "/search.html"
+  to = "/3.0/search.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/licensing.html"
+  to = "/3.0/licensing.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/associations/belongs_to.html"
+  to = "/3.0/associations/belongs_to.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/fields/gravatar.html"
+  to = "/3.0/fields/gravatar.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/eject-views.html"
+  to = "/3.0/eject-views.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/associations/has_many.html"
+  to = "/3.0/associations/has_many.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/fields/textarea.html"
+  to = "/3.0/fields/textarea.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/fields/select.html"
+  to = "/3.0/fields/select.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/fields/file.html"
+  to = "/3.0/fields/file.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/fields/boolean_group.html"
+  to = "/3.0/fields/boolean_group.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/fields/trix.html"
+  to = "/3.0/fields/trix.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/custom-tools.html"
+  to = "/3.0/custom-tools.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/authorization.html"
+  to = "/3.0/authorization.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/resources.html"
+  to = "/3.0/resources.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/resource-tools.html"
+  to = "/3.0/resource-tools.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/faq.html"
+  to = "/3.0/faq.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/fields/boolean.html"
+  to = "/3.0/fields/boolean.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/fields/markdown.html"
+  to = "/3.0/fields/markdown.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/authentication.html"
+  to = "/3.0/authentication.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/installation.html"
+  to = "/3.0/installation.html"
+  status = 301
+  force = false
