@@ -167,3 +167,21 @@ class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   end
 end
 ```
+
+<Option name="`self.name`">
+
+`self.name` is what is going to be displayed to the user as the dashboard name.
+
+```ruby
+self.name = "Dashy"
+```
+
+<VersionReq version="3.14.2" /> `self.name` can be configured using a Proc.
+
+```ruby
+self.name = -> { I18n.t("avo.dashboards.dashy.name") }
+```
+
+Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `dashboard`.
+
+</Option>
