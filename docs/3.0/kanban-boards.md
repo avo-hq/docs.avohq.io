@@ -176,7 +176,13 @@ end
 This might change in the future.
 :::
 
-In order to customize the card, you can add this partial to your `app/views/avo/kanban/items/_item.html.erb` file.
+In order to customize the card, you can eject the `Avo::Kanban::Items::ItemComponent` component.
+
+```bash
+rails generate avo:eject --component Avo::Kanban::Items::ItemComponent
+```
+
+Then customize it at `app/components/avo/kanban/items/item_component.html.erb`
 
 ```erb
 <%= item.record.name %>
