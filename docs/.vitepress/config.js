@@ -97,6 +97,7 @@ const config = {
       {text: "Home", link: "/"},
       {text: "Docs", link: "/3.0/index.html"},
       {text: "Guides", link: "/3.0/guides.html"},
+      {text: "Releases", link: "https://avohq.io/releases"},
       {text: "FAQ", link: "/3.0/faq.html"},
       {text: "Team", link: "/team.html"},
       {text: "Version", items: [
