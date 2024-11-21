@@ -61,8 +61,3 @@ Take note of the parentheses around the `(:locale)` scope when mounting the engi
 
 This will instruct Rails to add the locale scope to all Avo nested engines too.
 
-:::info
-To guarantee that the `locale` scope is included in the `default_url_options`, you must explicitly add it to the Avo configuration.
-
-Check [this documentation section](./customization.html#default_url_options) for details on how to configure `default_url_options` setting.
-:::

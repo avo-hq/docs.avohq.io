@@ -52,4 +52,8 @@ In this example, we'll demonstrate how to add a `:locale` scope to your routes.
 
 <!-- @include: ./common/mount_avo_under_locale_scope_common.md-->
 
+:::info
+To guarantee that the `locale` scope is included in the `default_url_options`, you must explicitly add it to the Avo configuration.
 
+Check [this documentation section](customization.html#default_url_options) for details on how to configure `default_url_options` setting.
+:::
