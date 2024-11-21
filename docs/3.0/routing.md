@@ -40,47 +40,20 @@ end
 
 Sometimes you might have more exotic use-cases so you'd like to customize those paths accordingly.
 
-## Mount Avo under a `:locale` scope
+## Mount Avo under a scope
 
-Having a locale scope is a good way to set the locale for your users. Because of how Rails is mounting engines, that locale scope is not being applied to nested engines, so you'll need to nest them yourself.
+:::info
+The `:locale` scope provided is just an example. If your objective is to implement a route scope for localization within Avo, there's a detailed recipe available (including this step). Check out [this guide](guides/localization-scope) for comprehensive instructions.
 
-```ruby
-# This will work for Avo's routes but won't work for the nested engines.
-Rails.application.routes.draw do
-  scope ":locale" do
-    mount Avo::Engine, at: Avo.configuration.root_path
-  end
-end
-```
-
-The fix here is to tell Avo not to mount the engines and have them mounted yourself.
-
-::: code-group
-```ruby [config/avo.rb]{3}
-Avo.configure do |config|
-  # Disable automatic engine mounting
-  config.mount_avo_engines = false
-
-  # other configuration
-end
-```
-
-```ruby [config/routes.rb]{2-4,10-14}
-Rails.application.routes.draw do
-  scope ":locale" do
-    mount Avo::Engine, at: Avo.configuration.root_path
-  end
-
-  # other routes
-end
-
-if defined? ::Avo
-  Avo::Engine.routes.draw do
-    scope ":locale" do
-      instance_exec(&Avo.mount_engines)
-    end
-  end
-end
-```
+If your goal is adding another scope unrelated to localization, you're in the right place. This approach works for other types of scoped routing as well.
 :::
-This will instruct Rails to add the locale scope to all Avo nested engines too.
+
+In this example, we'll demonstrate how to add a `:locale` scope to your routes.
+
+<!-- @include: ./common/mount_avo_under_locale_scope_common.md-->
+
+:::info
+To guarantee that the `locale` scope is included in the `default_url_options`, you must explicitly add it to the Avo configuration.
+
+Check [this documentation section](customization.html#default_url_options) for details on how to configure `default_url_options` setting.
+:::

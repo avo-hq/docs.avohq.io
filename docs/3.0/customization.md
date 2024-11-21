@@ -483,6 +483,7 @@ config.logger = -> {
 ```
 
 <Option name="`default_url_options`">
+
 `default_url_options` is a Rails [controller method](https://apidock.com/rails/ActionController/Base/default_url_options) that will append params automatically to the paths you generate through path helpers.
 
 In order to implement some features like route-level Multitenancy we exposed an API to add to Avo's `default_url_options` method.
