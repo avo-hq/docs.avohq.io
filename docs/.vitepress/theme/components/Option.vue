@@ -23,7 +23,7 @@ export default {
 </script>
 
 <template>
-  <h2 :id="anchor" tabindex="-1">
+  <h2 :id="anchor" tabindex="-1" :class="{'!text-lg': !isCode}">
     <code v-if="isCode">
       <span class="hidden">-> </span>
       <span v-html="name" />
