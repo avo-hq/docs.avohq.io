@@ -12,11 +12,23 @@ With Avo, you have the flexibility to build apps either with or without authenti
 3. You can assign [lightweight roles](#user-roles) to your users.
 4. Any authentication strategy or gem of your choice can be utilized.
 
+:::info Rails 8 authentication scaffold
+In essence, the [authentication scaffold](https://github.com/rails/rails/pull/52328) that Rails 8 comes with is custom authentication so we need to do a few things to ensure it's working.
+
+Please follow [this guide](./guides/rails-authentication-scaffold) to enable it.
+:::
+
 ## Customize the `current_user` method
 
 Avo will not assume your authentication provider (the `current_user` method returns `nil`). That means that you have to tell Avo who the `current_user` is.
 
-### Using devise
+<Option name="Rails authentication scaffold">
+
+Please follow [this guide](./guides/rails-authentication-scaffold) to Rails' authentication scaffold.
+
+</Option>
+
+<Option name="Devise">
 
 For [devise](https://github.com/heartcombo/devise), you should set it to `current_user`.
 
@@ -26,8 +38,9 @@ Avo.configure do |config|
   config.current_user_method = :current_user
 end
 ```
+</Option>
 
-### Use a different authenticator
+<Option name="Other methods">
 
 Using another authentication provider, you may customize the `current_user` method to something else.
 
@@ -48,6 +61,8 @@ Avo.configure do |config|
   end
 end
 ```
+
+</Option>
 
 ## Customize the sign-out link
 
@@ -138,7 +153,7 @@ Avo roles are very lightweight and that's for a reason. Building with roles in m
 
 There are two extra roles that you can give to a user, besides the regular user. These roles can be assigned with a check on the `current_user` object.
 
-### 1. Admin user
+<Option name="1. Admin user">
 
 The check that Avo will do to figure that out is to run the `is_admin?` method on the [`current_user`](#customize-the-current-user-method) object.
 
@@ -150,7 +165,9 @@ You can do that check yourself using the `Avo::Current.user_is_admin?`.
 
 Avo doesn't use this setting momentarily but might in the future.
 
-### 2. Developer user
+</Option>
+
+<Option name="2. Developer user">
 
 There might be cases where you want to signal that a user is a developer. The developer will be able to see extra things like long backtrace messages in errors.
 
@@ -166,6 +183,8 @@ Avo uses this role to display long backtraces on non-validation errors.
 Ex: on record save, you might call an API which by some reason errors out. Instead of just getting a generic "Something went wrong" error, the developer user will see the error message and backtrace
 
 <Image src="/assets/img/3_0/authentication/backtrace.png" alt="Backtrace alert" width="1602" height="780" />
+
+</Option>
 
 ### Customize the methods that check for roles
 
