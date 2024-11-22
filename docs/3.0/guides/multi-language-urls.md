@@ -8,33 +8,16 @@ Implementing multi-language URLs is a common use-case. Using a route scope block
 
 ## 1. Mount Avo within a `:locale` scope
 
-<!-- @include: ./../common/mount_avo_under_locale_scope_common.md-->
+<!-- @include: ./../common/mount_avo_under_locale_scope_common.md -->
 
 ## 2. Apply the `locale` Scope
 
-To properly handle localization within Avo, you'll need to ensure the `locale` parameter is respected throughout the request.
+To properly handle localization within Avo, you'll need to ensure the `locale` parameter is respected throughout the request which we'll do by overriding the `set_avo_locale` method in your `Avo::ApplicationController` as follows:
 
-:::info
-If you've already ejected the `Avo::ApplicationController`, you can skip the ejection step below.
-:::
+<!-- @include: ./../common/application_controller_eject_notice.md -->
 
-### Eject the `Avo::ApplicationController`
-
-Run the following command to eject the `Avo::ApplicationController`:
-
-```bash
-rails generate avo:eject --controller application_controller
-```
-
-This command generates a customizable version of the `Avo::ApplicationController`, allowing you to override default behaviors.
-
-### Override the `set_avo_locale` method
-
-Next, override the `set_avo_locale` method to ensure that the `locale` parameter is applied throughout the request lifecycle. Update your controller as follows:
-
-```ruby{5-7}
+```ruby{4-6}
 # app/controllers/avo/application_controller.rb
-
 module Avo
   class ApplicationController < BaseApplicationController
     def set_avo_locale(&action)
@@ -44,4 +27,4 @@ module Avo
 end
 ```
 
-This implementation uses `I18n.with_locale` to set the desired locale for the duration of the request, ensuring consistent localization behavior across Avo's interface.
+This implementation uses `I18n.with_locale` to set the desired locale for the duration of the request, ensuring consistent localization behavior across Avo's interface and that it won't impact the other non-Avo parts of your app.
