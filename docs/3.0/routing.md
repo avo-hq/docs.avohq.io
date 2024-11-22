@@ -43,7 +43,7 @@ Sometimes you might have more exotic use-cases so you'd like to customize those 
 ## Mount Avo under a scope
 
 :::info
-The `:locale` scope provided is just an example. If your objective is to implement a route scope for localization within Avo, there's a detailed recipe available (including this step). Check out [this guide](guides/localization-scope) for comprehensive instructions.
+The `:locale` scope provided is just an example. If your objective is to implement a route scope for localization within Avo, there's a detailed recipe available (including this step). Check out [this guide](guides/multi-language-urls) for comprehensive instructions.
 
 If your goal is adding another scope unrelated to localization, you're in the right place. This approach works for other types of scoped routing as well.
 :::
