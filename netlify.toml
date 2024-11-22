@@ -46,6 +46,12 @@
   status = 301
   force = false
 
+[[redirects]]
+  from = "/3.0/localization-scope.html"
+  to = "/3.0/multi-language-urls.html"
+  status = 301
+  force = false
+
 # Redirects for 2.0 versions
 # -------------------------
 
