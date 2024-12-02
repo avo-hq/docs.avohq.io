@@ -496,7 +496,7 @@ end
 
 ### Callable options
 
-Both `name` and `message` allow a block. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `record` (if on show view), `resource`, `arguments` and `view`.
+Both `name` and `message` (and since <Version version="3.14.4" /> `confirm_button_label` and `cancel_button_label`) allow a block. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `record` (if on show view), `resource`, `arguments` and `view`.
 ### Customize the name
 
 ```ruby
@@ -513,6 +513,18 @@ end
 You may customize the labels for the action buttons using `confirm_button_label` and `cancel_button_label`.
 
 <Image src="/assets/img/actions/actions-button-labels.jpg" width="699" height="325" alt="Avo button labels" />
+<br>
+
+<VersionReq version="3.14.4" /> `confirm_button_label` and `cancel_button_label` became callable options.
+
+The blocks are executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource`, `record`, `view` and `arguments`.
+
+```ruby{2,3}
+class Avo::Actions::ReleaseFish < Avo::BaseAction
+  self.confirm_button_label = -> { "Release #{record.name}" }
+  self.cancel_button_label = -> { "Cancel release on #{record.name}" }
+end
+```
 
 ### No confirmation actions
 
