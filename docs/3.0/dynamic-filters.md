@@ -504,6 +504,9 @@ dynamic_filter :first_name,
 ```
 
 - Proc that returns an array of strings
+
+<VersionReq version="3.15.1" /> when the filter is applied to an association, the `parent_record` becomes accessible within the `suggestions` block.
+
 ```ruby {6,12}
 # Using field's filterable option
 field :first_name,
