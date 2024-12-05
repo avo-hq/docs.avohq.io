@@ -52,7 +52,7 @@ The partial is ready for you to customize further.
             # @resource.model
             # form (on create & edit pages. please check for presence first)
             # params
-            # Avo::App.context
+            # Avo::Current.context
             # current_user
           %>
         </div>
@@ -68,7 +68,7 @@ The partial is ready for you to customize further.
 
 You might need access to a few things in the partial.
 
-You have access to the `tool`, which is an instance of your tool `PostInfo`, and the `@resource`, which holds all the information about that particular resource (`view`, `model`, `params`, and others), the `params` of the request, the `Avo::App.context` and the `current_user`.
+You have access to the `tool`, which is an instance of your tool `PostInfo`, and the `@resource`, which holds all the information about that particular resource (`view`, `model`, `params`, and others), the `params` of the request, the `Avo::Current.context` and the `current_user`.
 That should give you all the necessary data to scope out the partial content.
 
 ## Tool visibility

@@ -150,7 +150,7 @@ end
 It's recommended you don't store your current user here but using the [`current_user_method`](./authentication.html#customize-the-current-user-method) config.
 :::
 
-You can access the context data with `::Avo::App.context` object.
+You can access the context data with `::Avo::Current.context` object.
 
 ## Eject
 [This section has moved.](./eject-views)

@@ -41,7 +41,7 @@ When you generate a new [resource tool](./resource-tools) you get access to the 
             # @resource.model
             # form (on create & edit pages. please check for presence first)
             # params
-            # Avo::App.context
+            # Avo::Current.context
             # current_user
           %>
         </div>
