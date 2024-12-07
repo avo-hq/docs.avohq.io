@@ -112,3 +112,34 @@ In this example:
 
 </Option>
 
+<Option name="`title`">
+
+<VersionReq version="3.15.0" />
+
+The `title` option enables you to specify a label for the entire group of tabs. This title serves as an overarching descriptor for the collection, providing context regarding the purpose or content of the tabs.
+
+You can define the title of a tabs group by passing it as an argument to the `tabs` block. The value should be a string that succinctly encapsulates the theme or purpose of the tabs.
+
+```ruby
+tabs title: "Tabs group title" do
+  # ...
+end
+```
+
+</Option>
+
+<Option name="`description`">
+
+<VersionReq version="3.15.0" />
+
+The `description` option allows you to provide an auxiliary explanation or detailed note for the entire group of tabs. This can be used to elaborate on the purpose of the tabs or provide additional guidance.
+
+You can define a description for a tabs group by passing it as an argument to the `tabs` block. The value should be a string that offers further clarity about the content or functionality of the tabs.
+
+```ruby
+tabs description: "Tabs group description" do
+  # ...
+end
+```
+
+</Option>
