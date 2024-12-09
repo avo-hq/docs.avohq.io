@@ -1,26 +1,54 @@
 # Licensing
 
-Avo has two types of licenses. The **Community edition** is free to use and works best for personal, hobby, and small commercial projects, and the **Pro edition** for when you need more advanced features.
+Avo runs on the [Open-Core model](https://en.wikipedia.org/wiki/Open-core_model). The **Community** edition is free to use and works best for personal, hobby, and small commercial projects.
+There are a couple of paid tiers (**Pro**, **Business**, and **Enterprise**) that give you more features, more customization, a higher level of control, and more support.
 
-## Community vs. Pro
+## Community vs. Paid
 
-The **Community version** has powerful features that you can use today like [Resource management](./resources.html), most [feature-rich](./field-options.html) [fields](./fields.html), out-of-the box [sorting](./field-options.html#sortable-fields), [filtering](./filters.html) and [actions](./actions.html) and all the [associations](./associations.html) you need.
+<Option name="Community">
 
-The **Pro version** has [advanced authorization](./authorization.html) using Pundit, [i18n support](./i18n.html), [Custom tools](./custom-tools.html), [Custom fields](./custom-tools.html) and much [more](https://avohq.io/pricing). [More](https://avohq.io/roadmap) features like Settings screens and Themes are coming soon.
+The **Community** version has powerful features that you can use today like [Resource management](./resources.html), most [feature-rich](./field-options.html) [fields](./fields.html), out-of-the box [sorting](./field-options.html#sortable-fields), [filtering](./filters.html) and [actions](./actions.html), all the [associations](./associations.html) you need, and about 70% of all the features Avo has to offer.
 
-The features are separated by their level of complexity and maintenance needs. Selling the Avo Pro edition as a paid upgrade allows us to fund this business and work on it full-time. That way, Avo improves over time, helping developers with more features and customization options.
+</Option>
+
+<Option name="Pro">
+
+The **Pro** tier comes with [Advanced Authorization](./authorization.html) using Pundit, [Advanced File Uploads](./fields/files.html#direct_upload), [Records Re-Ordering](./records-reordering.html), [Menu Editor](./menu-editor.html), and [Dashboards](./dashboards.html).
+
+</Option>
+
+<Option name="Business">
+
+The **Business** tier is a pick-and-choose plan which has a few features and add-ons to offer like [Customizable Controls](./customizable-controls.html), [Resource Scopes](./scopes.html), [Dynamic Filters](./dynamic-filters.html), [Kanban Boards](kanban-boards.html), Dynamic Fields, and Collaboration.
+In order to get a quote on the **Business** features, please [get in touch](https://avohq.io/pricing) with us.
+
+</Option>
+
+:::info
+The **Advanced tier** has been retired in December 2024.
+:::
+
+The features are separated by their level of complexity and maintenance needs. Selling the Avo Pro edition as a paid upgrade and enables us to fund this business and work on it full-time. That way, Avo improves over time, helping developers with more features and customization options.
 
 ## One license per site
 
 Each license can be used to run one application in one `production` environment on one URL. So when an app is in the `production` environment (`Rails.env.production?` is `true`), we only need to check that the license key and URL match the purchased license you're using for that app.
 
+:::info
+More info [here](https://avohq.io/faq/one-production-environment.html).
+:::
+
 ### More installations/environments per site
 
 You might have the same site running in multiple environments (`development`, `staging`, `test`, `QA`, etc.) for non-production purposes. You don't need extra licenses for those environments as long as they are not production environments (`Rails.env.production?` returns `false`).
 
+:::info
+More info [here](https://avohq.io/faq/one-license-per-url.html).
+:::
+
 ### Sites
 
-You can see your license keys on your [licenses](https://avohq.io/licenses) page.
+You can see your licenses and projects on your [dashboard](https://avohq.io/dashboard).
 
 ## Add the license key
 
@@ -43,9 +71,10 @@ Avo.configure do |config|
   config.display_license_request_timeout_error = false
 end
 ```
+
 ## Purchase a license
 
-You can purchase a license on the [purchase](https://avohq.io/purchase/pro) page.
+You can purchase a license from the [pricing](https://avohq.io/pricing) page.
 
 ## License validation
 
@@ -76,7 +105,7 @@ The requests are made at boot time and every hour when you use Avo on any licens
 If you need a special build without the license validation mechanism please [get in touch](mailto:adrian@avohq.io).
 
 
-## Upgrade your 1.0 license to 2.0
+## Upgrade your 1.0 license to 2.0, to 3.0
 
 We are grateful to our `1.0` customers for believing in us. So we offer a free and easy upgrade path and **a year of free updates** for version `2.0`.
 
@@ -84,3 +113,5 @@ If you have a 1.0 license and want to upgrade to 2.0, you need to log in to [avo
 After you add your billing details, you won't get charged immediately, but on the next billing cycle next year.
 
 If you choose not to renew the subscription after one year, that's fine; you can cancel at any time, no biggie. You won't get charged and will keep the last version available at the end of that subscription.
+
+Same treatment was applied with the 2.0 -> 3.0 customers.
