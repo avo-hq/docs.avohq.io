@@ -199,3 +199,18 @@ end
 ```
 
 <Image src="/assets/img/faq/newline/whitespace.png" width="1560" height="1160" alt="Render new lines" />
+
+## How to fix the `ActionDispatch::Cookies::CookieOverflow` error?
+
+The `ActionDispatch::Cookies::CookieOverflow` error occurs when the **cookie store** exceeds its size limit. Avo leverages the **session store** to save configuration data, such as page and per-page options for associated records. For instance, in a users show view, the posts table might store settings like page 3 and 72 records per page.
+
+Over time, especially in applications with numerous associations, this stored data can accumulate, potentially breaching the cookie size limit.
+
+### Why does this happen?
+
+By default, [Rails uses the cookie store for sessions](https://guides.rubyonrails.org/v8.0/configuring.html#config-session-store), which has a [size limit of 4096 bytes](https://api.rubyonrails.org/classes/ActionDispatch/Session/CookieStore.html). Once this threshold is exceeded, additional entries can trigger the `CookieOverflow` error.
+
+
+### How to resolve the issue
+
+To prevent this error, consider changing your session store configuration to use an alternative storage mechanism, such as Redis, Memcached, or another database-backed session store.
