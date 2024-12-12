@@ -40,7 +40,9 @@ You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have 
 :::
 
 <Option name="`mapkick_options`">
+
 The options you pass here are forwarded to the [`mapkick` gem](https://github.com/ankane/mapkick).
+
 </Option>
 
 <Option name="`record_marker`">
