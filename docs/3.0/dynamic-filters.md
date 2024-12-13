@@ -69,9 +69,19 @@ For instance, in the text filter example above, the `Contains` condition and the
  - Is false
  - Is null
  - Is not null
+
+```ruby
+{
+  is_true: "Is true",
+  is_false: "Is false",
+  is_null: "Is null",
+  is_not_null: "Is not null",
+}.invert
+```
+
 <div class="flex justify-between items-start flex-wrap">
-    <Image src="/assets/img/dynamic_filter_boolean.png" width="241" height="176" alt="" />
-    <Image src="/assets/img/dynamic_filter_boolean2.png" width="241" height="192" alt="" />
+  <Image src="/assets/img/dynamic_filter_boolean.png" width="241" height="176" alt="" />
+  <Image src="/assets/img/dynamic_filter_boolean2.png" width="241" height="192" alt="" />
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_admin?][is_true][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L38)
@@ -81,17 +91,29 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_adm
 
 ### Conditions
 
- - Is
- - Is not
- - Is on or before
- - Is on or after
- - Is within
+- Is
+- Is not
+- Is on or before
+- Is on or after
+- Is within
 - Is null
- - Is not null
+- Is not null
+
+```ruby
+{
+  is: "Is",
+  is_not: "Is not",
+  lte: "Is on or before",
+  gte: "Is on or after",
+  is_within: "Is within",
+  is_null: "Is null",
+  is_not_null: "Is not null",
+}.invert
+```
 
 <div class="flex justify-between items-start flex-wrap">
-    <Image src="/assets/img/dynamic_filter_date3.png" width="340" height="500" alt="" />
-    <Image src="/assets/img/dynamic_filter_date2.png" width="244" height="213" alt="" />
+  <Image src="/assets/img/dynamic_filter_date3.png" width="340" height="500" alt="" />
+  <Image src="/assets/img/dynamic_filter_date2.png" width="244" height="213" alt="" />
 </div>
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[created_at][lte][]=2024-07-02%2012%3A00), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L50)
@@ -111,6 +133,20 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[create
  - Is null
  - Is not null
 
+```ruby
+{
+  is: "=",
+  is_not: "!=",
+  gt: ">",
+  gte: ">=",
+  lt: "<",
+  lte: "<=",
+  is_within: "Is within",
+  is_null: "Is null",
+  is_not_null: "Is not null",
+}.invert
+```
+
 <div class="flex justify-between items-start flex-wrap">
   <Image src="/assets/img/dynamic_filter_number.png" width="244" height="205" alt="" />
   <Image src="/assets/img/dynamic_filter_number2.png" width="244" height="234" alt="" />
@@ -127,6 +163,15 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gt
  - Is not
  - Is null
  - Is not null
+
+```ruby
+{
+  is: "Is",
+  is_not: "Is not",
+  is_null: "Is null",
+  is_not_null: "Is not null",
+}.invert
+```
 
 <div class="flex justify-between items-start flex-wrap">
   <Image src="/assets/img/dynamic_filter_select.png" width="244" height="204" alt="" />
@@ -151,6 +196,21 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[coun
  - Is present
  - Is blank
 
+```ruby
+{
+  contains: "Contains",
+  does_not_contain: "Does not contain",
+  is: "Is",
+  is_not: "Is not",
+  starts_with: "Starts with",
+  ends_with: "Ends with",
+  is_null: "Is null",
+  is_not_null: "Is not null",
+  is_present: "Is present",
+  is_blank: "Is blank",
+}.invert
+```
+
 <div class="flex justify-between items-start flex-wrap">
   <Image src="/assets/img/dynamic_filter_text.png" width="244" height="203" alt="" />
   <Image src="/assets/img/dynamic_filter_text2.png" width="244" height="327" alt="" />
@@ -166,6 +226,15 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_
  - Contain
  - Overlap
  - Contained in ([`active_record_extended`](https://github.com/GeorgeKaraszi/ActiveRecordExtended) gem required)
+
+ ```ruby
+{
+  array_is: "Are",
+  array_contains: "Contain",
+  array_overlap: "Overlap",
+  array_contained_in: "Contained in" # (active_record_extended gem required)
+}.invert
+```
 
 :::warning
 Contained in will not work when using the `acts-as-taggable-on` gem.
