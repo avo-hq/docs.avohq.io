@@ -591,37 +591,3 @@ Using [searchable](./associations/belongs_to.html#searchable) is recommended for
 
 <Image src="/assets/img/customization/associations-lookup-list-limit.png" width="2466" height="1098" alt="Associations lookup list limit configuration" />
 </Option>
-
-<Option name="`cache_associations_pagination`">
-
-<VersionReq version="3.15.4" />
-
-Enables persistent pagination settings for associations across requests.
-
-### Default value
-
-`false`
-
-### How to enable
-
-```ruby{2}
-Avo.configure do |config|
-  config.cache_associations_pagination = true
-end
-```
-
-When `true`, the `page` and `per_page` settings for each association are stored in the session.
-
-:::warning
-**Important**: To avoid potential issues, it is recommended to configure the session store appropriately. Using the cookie store may cause an `ActionDispatch::Cookies::CookieOverflow` error.
-:::
-
-### Why change the session store?
-
-The **cookie store** has a 4096-byte size limit, and storing pagination data (page number and records per page) for multiple associations can lead to exceeding this limit, triggering the `ActionDispatch::Cookies::CookieOverflow` error.
-
-By default, Rails uses the cookie store for sessions. To prevent this, switch to a more scalable session store.
-
-For details, see [Rails session store configuration](https://guides.rubyonrails.org/v8.0/configuring.html#config-session-store).
-
-</Option>

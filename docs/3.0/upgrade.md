@@ -3,14 +3,6 @@
 We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
-## Upgrade from 3.15.3 to 3.15.4
-
-A new configuration flag, `cache_associations_pagination`, has been introduced to address frequent cookie overflow issues caused by storing `page` and `per_page` settings for associations in the session. This feature is now disabled by default. If your application requires persistent pagination for associations, you can enable the flag in your configuration.
-
-:::warning
-When enabling this feature, it is strongly recommended to change the session store to avoid potential cookie overflow errors. For more details, refer to the [`cache_associations_pagination` configuration documentation](./customization.html#cache_associations_pagination).
-:::
-
 ## Upgrade from 3.14.0 to 3.14.1
 
 We’ve introduced the [`associations_lookup_list_limit`](customization.html#associations_lookup_list_limit) configuration option to prevent crashing when listing associations on large collections. The new default limit is set to a `1000` records.
