@@ -591,3 +591,72 @@ Using [searchable](./associations/belongs_to.html#searchable) is recommended for
 
 <Image src="/assets/img/customization/associations-lookup-list-limit.png" width="2466" height="1098" alt="Associations lookup list limit configuration" />
 </Option>
+
+<Option name="`persistence`">
+
+### Persistent UI State Configuration <VersionReq version="3.15.4" />
+
+#### Overview
+
+The `persistence` configuration enables retention of specific UI settings, such as pagination and static filters, across user interactions.
+
+---
+
+#### Configuration
+
+By default, the `:driver` is `nil`, which means no persistence is applied. You can configure the `:driver` for persistence as follows:
+
+```ruby
+Avo.configure do |config|
+  config.persistence = {
+    driver: :session
+  }
+
+  # Or with a dynamic block
+
+  config.persistence = -> do
+    {
+      driver: :session
+    }
+  end
+end
+```
+
+---
+
+#### Behavior
+
+When enabled, the `persistence` configuration ensures the following:
+
+1. **Associations Pagination**
+   The pagination state (e.g., `page` and `per_page` settings) for association tables (e.g., `has_many` fields) is retained across requests.
+
+2. **Static Filters**
+   Static filter selections applied by users are preserved during their session.
+
+---
+
+#### How It Works
+
+Setting `:driver` to `:session` stores the UI state in the user session, enabling it to persist while the session remains active.
+
+---
+
+:::warning
+**Important**:
+To prevent issues with session storage limits, avoid relying solely on the default **cookie store** for session management. The **cookie store** in Rails has a size limit of 4096 bytes. Storing multiple pagination states and filter settings may exceed this limit, resulting in an `ActionDispatch::Cookies::CookieOverflow` error.
+:::
+
+#### Recommended Session Store
+
+To mitigate potential storage overflow, it is advisable to use a more scalable session store, such as:
+
+- **Redis Store**
+- **MemCache Store**
+
+For detailed guidance, refer to the [Rails session store configuration](https://guides.rubyonrails.org/v8.0/configuring.html#config-session-store).
+
+---
+
+By adopting the `persistence` configuration with a suitable session store, you can ensure a seamless user experience.
+</Option>
