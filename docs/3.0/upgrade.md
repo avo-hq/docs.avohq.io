@@ -3,6 +3,41 @@
 We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
+## Upgrade from 3.15.3 to 3.15.4
+
+The `config.cache_resource_filters` option is now **obsolete** and has been replaced with `config.persistence`. If you previously had:
+
+```ruby
+config.cache_resource_filters = true
+```
+
+You should update your configuration to:
+
+```ruby
+config.persistence = { driver: :session }
+```
+
+This updated setting preserves the same behavior, ensuring resource filters and association pagination states persist across requests for a consistent user experience. For additional details, refer to the [`persistence` documentation](./customization.html#persistence).
+
+---
+
+### Persistent Pagination Behavior
+
+By default, pagination settings for associations are no longer stored in the session. If your application requires persistent pagination, you must explicitly enable the `persistence` configuration:
+
+```ruby
+Avo.configure do |config|
+  config.persistence = { driver: :session }
+end
+```
+
+---
+
+:::warning
+**Important**:
+When enabling this feature, it is strongly recommended to **update the session store** to avoid potential cookie overflow errors. The default Rails **cookie store** has a size limit of 4096 bytes, and persisting multiple pagination states or filters can exceed this limit. For more information, refer to the [`persistence` configuration documentation](./customization.html#persistence).
+:::
+
 ## Upgrade from 3.14.0 to 3.14.1
 
 We’ve introduced the [`associations_lookup_list_limit`](customization.html#associations_lookup_list_limit) configuration option to prevent crashing when listing associations on large collections. The new default limit is set to a `1000` records.
