@@ -707,3 +707,17 @@ Within your field template you can now access the `@field.meta` attribute.
 <% end %>
 ```
 </Option>
+
+<Option name="`copyable`">
+
+<VersionReq version="3.15.6" class="mt-2" />
+
+The `copyable` option enables users to copy the field's value to their clipboard. When set to `true`, a clipboard icon appears when hovering over the field value, allowing easy copying. This feature can be particularly useful for fields such as unique identifiers, URLs, or other text-based content that users may frequently need to copy.
+
+```ruby
+field :name, as: :text, copyable: true
+```
+
+The `copyable` option is available for text-based fields such as `:text`, `:textarea`, and others that render text values.
+
+</Option>
