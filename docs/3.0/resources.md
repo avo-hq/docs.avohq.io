@@ -1070,3 +1070,35 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 </Option>
+
+<Option name="`self.external_link`">
+
+<VersionReq version="3.15.6" />
+
+<br>
+<br>
+
+<Image src="/assets/img/resources/external-link.png" width="1293" height="426" alt="External link demonstration" />
+
+
+It's often desirable to provide users with a link to the public path of a record outside of the Avo interface. The `external_link` option allows you to achieve this.
+
+### Usage
+
+To define an external link for a resource, set the `self.external_link` option with a lambda function. Within this lambda function, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `record`.
+
+```ruby{2-4}
+class Avo::Resources::Post < Avo::BaseResource
+  self.external_link = -> { # [!code focus]
+    main_app.post_path(record) # [!code focus]
+  } # [!code focus]
+end
+```
+
+The `self.external_link` lambda should return a string representing the URL of the record.
+
+You can use path helpers from your application (e.g., `main_app.post_path`) or any external URL generator.
+
+When this option is configured, Avo will display an external link button for the resource. Clicking it will take the user to the specified URL.
+
+</Option>
