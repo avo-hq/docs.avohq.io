@@ -38,11 +38,14 @@ Now, here comes the part which might seem unfamiliar but it's actually pretty st
 
 The scaffold adds the `Authentication` concern to your `ApplicationController` which is great. We will add it to Avo's `ApplicationController` and also add the `before_action`, but instead of just appending it wil will prepend it so we can ensure it will be fired as soon as possible in the request lifecycle.
 
-```ruby{4,7}
+Since `require_authentication` runs in the Avo context, it's necessary to delegate the `new_session_path` to the `main_app` to ensure proper routing.
+
+```ruby{4,5,8}
 # app/controllers/avo/application_controller.rb
 module Avo
   class ApplicationController < BaseApplicationController
     include Authentication
+    delegate :new_session_path, to: :main_app
 
     # we are prepending the action to ensure it will be fired very early on in the request lifecycle
     prepend_before_action :require_authentication
