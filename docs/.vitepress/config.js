@@ -141,6 +141,7 @@ const config = {
           text: "CRUD UI",
           items: [
             {text: "Resources", link: "/3.0/resources.html"},
+            {text: "Array Resources", link: "/3.0/array-resources.html"},
             {text: "Fields", link: "/3.0/fields.html"},
             {text: "Field options", link: "/3.0/field-options.html"},
             {text: "Controller configuration", link: "/3.0/controllers.html"},
