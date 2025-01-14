@@ -19,7 +19,14 @@ const getFiles = (directory, version) => {
     .filter(path => path !== 'index.md')
     .filter(path => path !== 'common')
     .filter(path => !path.includes('_common.md'))
-    .map((path) => ({text: humanize(path.replace('.md', '')), link: `/${version}/${directory}/${path.replace('.md', '.html')}`}))
+    .map((path) => {
+      let text = humanize(path.replace('.md', ''))
+      if (text === 'Easy mde') {
+        text = 'Easy MDE'
+      }
+      const link = `/${version}/${directory}/${path.replace('.md', '.html')}`
+      return {text, link}
+    })
 }
 
 export {getFiles}
