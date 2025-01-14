@@ -3,6 +3,19 @@
 We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
+
+## Upgrade from 3.16.1 to 3.16.2
+
+<Option name="markdown renamed to easy_mde">
+
+We added a new GitHub-inspired `markdown` field which supports ActiveStorage and gives us better control over the whole experience.
+
+This lead to us renaming the old `markdown` field to `easy_mde` and naming this new one `markdown`.
+If you'd like your app to work the same as before, rename all your `:markdown` field to `:easy_mde`.
+Otherwise leave them like that and enjoy the new field.
+
+</Option>
+
 ## Upgrade from 3.15.3 to 3.15.4
 
 The `config.cache_resource_filters` option is now **obsolete** and has been replaced with `config.persistence`. If you previously had:
