@@ -50,3 +50,8 @@ On top of the page.
 outline: [2,3] # shows the h2's and h3's
 outline: deep # shows the h2's all the way to h6
 ```
+
+## Write better docs
+
+- [diataxis.fr/](https://diataxis.fr/)
+- [refactoringenglish.com/chapters/rules-for-software-tutorials/](https://refactoringenglish.com/chapters/rules-for-software-tutorials/)
