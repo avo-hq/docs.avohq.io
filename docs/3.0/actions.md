@@ -72,6 +72,10 @@ The `belongs_to` field will only work on the <Show /> and <Edit /> page of a rec
 Read more on why [here](https://github.com/avo-hq/avo/issues/1572#issuecomment-1421461084).
 :::
 
+:::info
+<VersionReq version="3.16.2" /> the `query` object is accessible within fields.
+:::
+
 ```ruby
 def fields
   field :notify_user, as: :boolean
@@ -496,7 +500,14 @@ end
 
 ### Callable options
 
-Both `name` and `message` (and since <Version version="3.14.4" /> `confirm_button_label` and `cancel_button_label`) allow a block. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `record` (if on show view), `resource`, `arguments` and `view`.
+The `name` and `message` options (and, as of <Version version="3.14.4" />, the `confirm_button_label` and `cancel_button_label` options) support the use of a block. Within this block, you gain access to all attributes of the [`Avo::ExecutionContext`](execution-context), as well as the following:
+
+- `record` (if on the show view),
+- `resource`
+- `arguments`
+- `view`
+- `query` <VersionReq version="3.16.2" />
+
 ### Customize the name
 
 ```ruby
