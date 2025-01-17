@@ -53,3 +53,35 @@ This will also render the <Edit /> view with two separate fields to edit the coo
 
 <Image src="/assets/img/fields/location-edit.png" width="2564" height="532" alt="Location field" />
 </Option>
+
+<VersionReq version="3.16.2" />
+
+<Option name="`mapkick_options`">
+
+For example:
+
+```ruby
+mapkick_options: { style: 'mapbox://styles/mapbox/satellite-v9', controls: true },
+```
+
+#### Default
+
+`{}`
+
+#### Possible values
+
+Accepts the options as [specified in the Mapkick-gem](https://github.com/ankane/mapkick#options).
+
+</Option>
+
+## Options combined
+
+```ruby
+field :coordinates,
+ as: :location,
+ stored_as: [:latitude, :longitude],
+ mapkick_options: {
+   style: 'mapbox://styles/mapbox/satellite-v9',
+   controls: true
+ }
+```
