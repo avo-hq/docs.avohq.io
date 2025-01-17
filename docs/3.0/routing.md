@@ -57,3 +57,39 @@ To guarantee that the `locale` scope is included in the `default_url_options`, y
 
 Check [this documentation section](customization.html#default_url_options) for details on how to configure `default_url_options` setting.
 :::
+
+## Add your own routes
+
+You may want to add your own routes inside Avo so you can access different custom actions that you might have set in the Avo resource controllers.
+
+You can do that in your app's `routes.rb` file by opening up the Avo routes block and append your own.
+
+```ruby
+# routes.rb
+Rails.application.routes.draw do
+  mount Avo::Engine, at: Avo.configuration.root_path
+
+  # your other app routes
+end
+
+if defined? ::Avo
+  Avo::Engine.routes.draw do
+    # new route in new controller
+    put "switch_accounts/:id", to: "switch_accounts#update", as: :switch_account
+
+    scope :resources do
+      # append a route to a resource controller
+      get "courses/cities", to: "courses#cities"
+    end
+  end
+end
+
+# app/controllers/avo/switch_accounts_controller.rb
+class Avo::SwitchAccountsController < Avo::ApplicationController
+  def update
+    session[:tenant_id] = params[:id]
+
+    redirect_back fallback_location: root_path
+  end
+end
+```
