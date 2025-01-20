@@ -103,7 +103,7 @@ When you add the `target: :_blank` option, a tiny external link icon will be dis
 
 #### `link_to` options
 
-##### `path`
+#### `path`
 
 This is the path of the item.
 It may be ommited to make the API look like Rail's
@@ -222,6 +222,7 @@ end
 ```
 
 <Image src="/assets/img/menu-editor/group.jpg" width="252" height="205" alt="Avo menu editor" />
+
 </Option>
 
 <Option name="`all_resources`">
@@ -238,6 +239,7 @@ end
 </Option>
 
 <Option name="`all_dashboards`">
+
 Renders all dashboards.
 
 ```ruby
@@ -251,6 +253,7 @@ end
 </Option>
 
 <Option name="`all_tools`">
+
 Renders all tools.
 
 ```ruby

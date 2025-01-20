@@ -364,6 +364,7 @@ field :meta, as: :key_value, stacked: true
 ```
 
 #### `inline` layout (default)
+
 <Image src="/assets/img/fields/field_wrapper_layout_inline.jpg" width="808" height="117" alt="" />
 
 #### `stacked` layout
