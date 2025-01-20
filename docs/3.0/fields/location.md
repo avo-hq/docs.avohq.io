@@ -53,3 +53,34 @@ This will also render the <Edit /> view with two separate fields to edit the coo
 
 <Image src="/assets/img/fields/location-edit.png" width="2564" height="532" alt="Location field" />
 </Option>
+
+<Option name="`mapkick_options`">
+<VersionReq version="3.16.2" />
+
+The `mapkick_options` option allows you to customize the appearance and behavior of the map.
+
+Using this option, you can provide a hash of configuration settings supported by the Mapkick gem, such as specifying the map style, enabling or disabling controls, or adding additional customizations.
+
+#### Default
+
+`{}`
+
+#### Possible values
+
+Accepts the options as [specified in the Mapkick-gem](https://github.com/ankane/mapkick#options).
+
+For example:
+
+```ruby{4-7}
+field :coordinates,
+  as: :location,
+  stored_as: [:latitude, :longitude],
+  mapkick_options: {
+    style: 'mapbox://styles/mapbox/satellite-v9',
+    controls: true
+  }
+```
+
+By using `mapkick_options`, you can tailor the map's look and functionality to suit your application's requirements.
+
+</Option>
