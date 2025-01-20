@@ -390,6 +390,7 @@ WIP
 </Option>
 
 <Option name="`components`">
+
 The field's `components` option allows you to customize the view components used for rendering the field in all, `index`, `show` and `edit` views. This provides you with a high degree of flexibility.
 
 ### Ejecting the field components
@@ -422,6 +423,7 @@ Here's some examples of how to use the `components` option in a field definition
 field :description,
   as: :text,
   components: {
+    index_component: Avo::Fields::Admin::TextField::IndexComponent,
     show_component: Avo::Fields::Admin::TextField::ShowComponent,
     edit_component: "Avo::Fields::Admin::TextField::EditComponent"
   }
@@ -446,6 +448,8 @@ The components block it's executed using `Avo::ExecutionContent` and gives acces
 :::warning Initializer
 It's important to keep the initializer on your custom components as the original field view component initializer.
 :::
+
+</Option>
 
 <Option name="`html`">
 ### Attach HTML attributes

@@ -224,14 +224,6 @@ const config = {
           ],
         },
         {
-          text: "Native Avo components",
-          items: [
-            {text: "Avo::PanelComponent", link: "/3.0/native-components/avo-panel-component.html"},
-            {text: "Native field components", link: "/3.0/native-field-components.html"},
-            {text: "Field wrappers", link: "/3.0/field-wrappers.html"},
-          ],
-        },
-        {
           text: "Performance",
           items: [
             {text: "Cache", link: "/3.0/cache.html"},
@@ -239,25 +231,34 @@ const config = {
           ],
         },
         {
+          text: "Native Avo components",
+          collapsed: true,
+          items: [
+            {text: "<code>Avo::PanelComponent</code>", link: "/3.0/native-components/avo-panel-component.html"},
+            {text: "Native field components", link: "/3.0/native-field-components.html"},
+            {text: "Field wrappers", link: "/3.0/field-wrappers.html"},
+          ],
+        },
+        {
           text: "Internals",
+          collapsed: true,
           items: [
             {text: "Overview", link: "/3.0/internals.html"},
             {text: "Testing", link: "/3.0/testing.html"},
-            {text: "Avo::Current", link: "/3.0/avo-current.html"},
-            {text: "Avo::ExecutionContext", link: "/3.0/execution-context.html"},
-            {text: "Avo::Services::EncryptionService", link: "/3.0/encryption-service.html"},
+            {text: "<code>Avo::Current</code>", link: "/3.0/avo-current.html"},
+            {text: "<code>Avo::ExecutionContext</code>", link: "/3.0/execution-context.html"},
+            {text: "<code>Avo::Services::EncryptionService</code>", link: "/3.0/encryption-service.html"},
             {text: "Select All", link: "/3.0/select-all.html"},
             {text: "Icons", link: "/3.0/icons.html"},
           ],
         },
         {
           text: "Extending",
+          collapsed: true,
           items: [
-            {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller.html"},
-            {text: "Avo.asset_manager", link: "/3.0/asset-manager.html"},
+            {text: "<code>Avo::ApplicationController</code>", link: "/3.0/avo-application-controller.html"},
+            {text: "<code>Avo.asset_manager</code>", link: "/3.0/asset-manager.html"},
             {text: "Plugins", link: "/3.0/plugins.html"},
-        //     {text: "Avo::ApplicationController", link: "/3.0/avo-application-controller.html"},
-        //     {text: "Avo.asset_manager", link: "/3.0/asset-manager.html"},
           ],
         },
       ],
