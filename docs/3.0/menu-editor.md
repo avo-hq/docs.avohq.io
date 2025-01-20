@@ -100,9 +100,38 @@ link_to "Google", path: "https://google.com", target: :_blank
 <Image src="/assets/img/menu-editor/external-link.jpg" width="254" height="155" alt="Avo menu editor" />
 
 When you add the `target: :_blank` option, a tiny external link icon will be displayed.
+
+#### `link_to` options
+
+##### `path`
+
+This is the path of the item.
+It may be ommited to make the API look like Rail's
+
+```ruby
+config.main_menu = -> {
+  # These two are equivalent
+  link_to "Home", path: main_app.root_path
+  link_to "Home", main_app.root_path
+}
+```
+
+##### `data`
+
+You may add arbitraty `data` attributes to your link.
+
+You can make a link execute a `put`, `post`, or `delete` request similar to how you use the `data-turbo-method` attribute.
+
+```ruby
+config.main_menu = -> {
+  link_to "Sign out!", main_app.destroy_user_session_path, data: { turbo_method: :delete }
+}
+```
+
 </Option>
 
 <Option name="`render`">
+
 The `render` method will render renderable objects like partials or View Components.
 
 You can even pass `locals` to partials.
@@ -113,6 +142,7 @@ render "avo/sidebar/items/custom_tool"
 render "avo/sidebar/items/custom_tool", locals: { something: :here }
 render Super::Dooper::Component.new(something: :here)
 ```
+
 </Option>
 
 <Option name="`resource`">
