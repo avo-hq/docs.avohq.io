@@ -1,5 +1,5 @@
 ---
-version: "1.0"
+version: '1.0'
 license: community
 ---
 
@@ -22,26 +22,17 @@ field :description, as: :easy_mde
 The `easy_mde` field is hidden from the **Index** view.
 :::
 
-### Default behavior
+## Options
+
+<Option name="`always_show`">
 
 By default, the content of the `easy_mde` field is not visible on the `Show` view, instead, it's hidden under a `Show Content` link that, when clicked, displays the content. You can set `easy_mde` to always display the content by setting `always_show` to `true`.
 
-## Options
-
-<Option name="`height`">
-Sets the value of the editor
-
-### Default
-
-`auto`
-
-### Possible values
-
-`auto` or any number in pixels.
-
+<!-- @include: ./../common/default_boolean_false.md-->
 </Option>
 
-<Option name="`image_upload`">
+<Option name='`image_upload`'>
+
 If set to `true`, the editor will allow image uploads which will be uploaded using the direct uploads URL at `/rails/active_storage/direct_uploads`
 
 ### Default
@@ -52,6 +43,18 @@ If set to `true`, the editor will allow image uploads which will be uploaded usi
 
 `true` or `false`.
 
+</Option>
+
+<Option name="`height`">
+Sets the value of the editor
+
+### Default
+
+`auto`
+
+#### Possible values
+
+`auto` or any number in pixels.
 </Option>
 
 <Option name="`spell_checker`">
