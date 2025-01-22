@@ -63,7 +63,24 @@ Using this option, you can provide a hash of configuration settings supported by
 
 #### Default
 
-`{}`
+- When `static` is `false`:
+
+```ruby
+{
+  width: 300,
+  height: 300
+}
+```
+
+- When `static` is `true`:
+
+```ruby
+{
+  id: "location-map",
+  zoom: 15,
+  controls: true
+}
+```
 
 #### Possible values
 
@@ -82,5 +99,33 @@ field :coordinates,
 ```
 
 By using `mapkick_options`, you can tailor the map's look and functionality to suit your application's requirements.
+</Option>
 
+<Option name="`static`">
+<VersionReq version="3.16.2" />
+
+The `static` option enables the rendering of a static map leveraging the power of the [mapkick-static](https://github.com/ankane/mapkick-static) gem.
+
+:::warning
+You need to add the [mapkick-static](https://github.com/ankane/mapkick-static) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
+:::
+
+
+#### Default
+
+`false`
+
+#### Possible values
+
+`true` or `false`
+
+```ruby{4}
+field :coordinates,
+  as: :location,
+  stored_as: [:latitude, :longitude],
+  static: true,
+  mapkick_options: {
+    style: 'mapbox://styles/mapbox/satellite-v9'
+  }
+```
 </Option>
