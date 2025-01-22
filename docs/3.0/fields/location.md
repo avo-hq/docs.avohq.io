@@ -63,7 +63,7 @@ Using this option, you can provide a hash of configuration settings supported by
 
 #### Default
 
-- When `static` is `false`:
+- When `static` is `true`:
 
 ```ruby
 {
@@ -72,7 +72,7 @@ Using this option, you can provide a hash of configuration settings supported by
 }
 ```
 
-- When `static` is `true`:
+- When `static` is `false`:
 
 ```ruby
 {
