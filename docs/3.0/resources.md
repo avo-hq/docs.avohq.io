@@ -908,35 +908,6 @@ end
 
 </Option>
 
-## Cards
-
-Use the `def cards` method to add some cards to your resource.
-
-Check [cards documentation](./cards) for more details.
-
-```ruby{9-19}
-class Avo::Resources::User < Avo::BaseResource
-  def fields
-    field :id, as: :id
-    field :name, as: :text
-    field :email, as: :text
-    field :roles, as: :boolean_group, options: {admin: "Administrator", manager: "Manager", writer: "Writer"}
-  end
-
-  def cards
-    card Avo::Cards::ExampleAreaChart, cols: 3
-    card Avo::Cards::ExampleMetric, cols: 2
-    card Avo::Cards::ExampleMetric,
-      label: "Active users metric",
-      description: "Count of the active users.",
-      arguments: { active_users: true },
-      visible: -> { !resource.view.form? }
-  end
-end
-```
-
-<Image src="/assets/img/cards_on_resource.png" width="2520" height="1258" alt="Alt text" />
-
 <Option name="`self.pagination`">
 This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
 
@@ -1102,3 +1073,43 @@ You can use path helpers from your application (e.g., `main_app.post_path`) or a
 When this option is configured, Avo will display an external link button for the resource. Clicking it will take the user to the specified URL.
 
 </Option>
+
+<Option name="`self.discreet_information`">
+
+<VersionReq version="3.17" />
+
+Oftern we want to show some information about records without adding another field. `discreet_information` does exactly that 🙌
+
+More information on [`discreet_information`](./discreet-information)
+
+</Option>
+
+
+## Cards
+
+Use the `def cards` method to add some cards to your resource.
+
+Check [cards documentation](./cards) for more details.
+
+```ruby{9-19}
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+    field :email, as: :text
+    field :roles, as: :boolean_group, options: {admin: "Administrator", manager: "Manager", writer: "Writer"}
+  end
+
+  def cards
+    card Avo::Cards::ExampleAreaChart, cols: 3
+    card Avo::Cards::ExampleMetric, cols: 2
+    card Avo::Cards::ExampleMetric,
+      label: "Active users metric",
+      description: "Count of the active users.",
+      arguments: { active_users: true },
+      visible: -> { !resource.view.form? }
+  end
+end
+```
+
+<Image src="/assets/img/cards_on_resource.png" width="2520" height="1258" alt="Cards on resources - Avo for Rails" />

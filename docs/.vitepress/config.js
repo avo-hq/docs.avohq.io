@@ -133,6 +133,7 @@ const config = {
           items: [
             {text: "Installation", link: "/3.0/installation.html"},
             {text: "Gem server authentication", link: "/3.0/gem-server-authentication.html"},
+            {text: "License troubleshooting", link: "/3.0/license-troubleshooting.html"},
             {text: "Authentication", link: "/3.0/authentication.html"},
             {text: "Authorization", link: "/3.0/authorization.html"},
           ],
@@ -151,6 +152,7 @@ const config = {
             {text: "Resource sidebar", link: "/3.0/resource-sidebar.html"},
             {text: "Resource panels", link: "/3.0/resource-panels.html"},
             {text: "Resource tabs", link: "/3.0/tabs.html"},
+            {text: "Discreet information", link: "/3.0/discreet-information.html"},
             {text: "Customizable controls", link: "/3.0/customizable-controls.html"},
             {text: "Cover and Profile Photos", link: "/3.0/cover-and-profile-photos.html"},
           ],
