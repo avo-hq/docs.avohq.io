@@ -19,8 +19,10 @@ field :body, as: :markdown
 ```
 
 :::warning
-Please add the `redcarpet` gem to your `Gemfile`
+Please add these gems to your `Gemfile`.
+
 ```ruby
+gem "avo-markdown_field"
 gem "redcarpet"
 ```
 :::
