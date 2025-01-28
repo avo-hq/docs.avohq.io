@@ -912,7 +912,7 @@ class Avo::Resources::Task < Avo::BaseResource
   # After 3.16.3
    self.row_controls_config = {
     placement: :both,
-  }.freeze
+  }
 
   # ...
 end
@@ -940,7 +940,7 @@ class Avo::Resources::User < Avo::BaseResource
     placement: :right,
     float: true,
     show_on_hover: true,
-  }.freeze
+  }
 end
 ```
 </Option>

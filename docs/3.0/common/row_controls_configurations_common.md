@@ -9,7 +9,7 @@
   placement: :right,
   float: false,
   show_on_hover: false,
-}.freeze
+}
 ```
 
 #### Possible values

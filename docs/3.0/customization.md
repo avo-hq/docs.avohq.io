@@ -93,7 +93,7 @@ Avo.configure do |config|
   # After 3.16.3
   config.resource_row_controls_config = {
     placement: :left,
-  }.freeze
+  }
 end
 ```
 
@@ -110,7 +110,7 @@ Avo.configure do |config|
   # After 3.16.3
   config.resource_row_controls_config = {
     placement: :both,
-  }.freeze
+  }
 end
 ```
 
@@ -699,7 +699,7 @@ Avo.configure do |config|
     placement: :right,
     float: true,
     show_on_hover: true,
-  }.freeze
+  }
 end
 ```
 </Option>

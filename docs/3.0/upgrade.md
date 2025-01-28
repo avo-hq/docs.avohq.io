@@ -38,7 +38,7 @@ Global configuration:
 Avo.configure do |config|
   config.resource_row_controls_config = {
     placement: :left,
-  }.freeze
+  }
 end
 ```
 
@@ -48,7 +48,7 @@ Resource configuration:
 class Avo::Resources::User < Avo::BaseResource
   self.row_controls_config = {
     placement: :left,
-  }.freeze
+  }
 end
 ```
 
