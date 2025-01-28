@@ -53,8 +53,6 @@ end
 ```
 
 </Option>
-
-
 <Option name="Associations Fields Structural Updates">
 
 We've introduced enhancements and adjustments to the association fields (`has_many`, `has_and_belongs_to_many`, etc.) to improve functionality, maintainability, and consistency. While these changes are not breaking, it's important to be aware of the following:
