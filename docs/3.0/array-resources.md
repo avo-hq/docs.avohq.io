@@ -101,6 +101,3 @@ class Avo::Resources::Movie < Avo::Resources::ArrayResource
   end
 end
 ```
-
-
-TODO: link to array field and vice versa
