@@ -914,7 +914,6 @@ end
 
 </Option>
 
-
 <Option name="`self.pagination`">
 This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
 
