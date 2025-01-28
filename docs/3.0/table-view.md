@@ -42,7 +42,7 @@ end
 
 ### Resource configuration
 
-`row_controls_config` option allows you to customize the row controls for a specific resource, overriding the global configuration.
+`row_controls_config` allows you to customize the row controls for a specific resource, overriding the global configuration.
 
 This option can be configured individually for each resource and defaults to the global configuration value defined in `resource_row_controls_config`.
 
