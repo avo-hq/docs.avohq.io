@@ -892,21 +892,59 @@ end
 <Option name="`self.controls_placement`">
 <VersionReq version="3.13.7" />
 
+:::warning
+<VersionReq version="3.16.3" /> `controls_placement` option is **obsolete**.
+
+Use [`row_controls_config`](#row_controls_config) instead
+:::
+
 By default, Avo renders action controls according to the `controls_placement` configuration, which is set to `right` by default. This value can be customized for each individual resource.
 
 #### Possible values
 
 Either `:left`, `:right` or `:both`
 
-```ruby
+```ruby{3,6-8}
 class Avo::Resources::Task < Avo::BaseResource
+  # Between 3.13.7 and 3.16.3
   self.controls_placement = :both
+
+  # After 3.16.3
+   self.row_controls_config = {
+    placement: :both,
+  }.freeze
 
   # ...
 end
 ```
 
 </Option>
+
+<Option name="`row_controls_config`">
+This option allows you to define the configuration for resource-specific row controls, including their placement, floating behavior, and visibility on hover.
+
+You can use this option to override the global configuration for specific resources.
+
+:::info
+You can use [`resource_row_controls_config`](./customization#resource_row_controls_config) to configure controls for all the resources.
+:::
+
+<!-- @include: common/row_controls_configurations_common.md-->
+
+#### Examples
+
+```ruby{3-7}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.row_controls_config = {
+    placement: :right,
+    float: true,
+    show_on_hover: true,
+  }.freeze
+end
+```
+</Option>
+
 
 ## Cards
 

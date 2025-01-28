@@ -4,6 +4,57 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.16.2 to 3.16.3
+
+<Option name="Row controls configuration">
+This release introduces a breaking change to the way resource row controls configuration is handled. If you previously customized row controls placement, you'll need to update your configurations to match the new API.
+
+### What changed?
+
+The previous configuration methods have been replaced with a new structure to provide better flexibility and consistency.
+
+#### Previous configuration (obsolete)
+
+Global configuration:
+```ruby{3}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.resource_controls_placement = :left
+end
+```
+
+Resource configuration:
+```ruby{3}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.controls_placement = :left
+end
+```
+
+#### New configuration
+Global configuration:
+```ruby{3-5}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.resource_row_controls_config = {
+    placement: :left,
+  }.freeze
+end
+```
+
+Resource configuration:
+```ruby{3-5}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.row_controls_config = {
+    placement: :left,
+  }.freeze
+end
+```
+
+</Option>
+
+
 ## Upgrade from 3.16.1 to 3.16.2
 
 <Option name="markdown renamed to easy_mde">
