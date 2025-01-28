@@ -895,7 +895,7 @@ end
 :::warning
 <VersionReq version="3.16.3" /> `controls_placement` option is **obsolete**.
 
-Use [`row_controls_config`](#row_controls_config) instead
+Check [row controls configuration on table view](table-view.html#row-controls-configuration) instead
 :::
 
 By default, Avo renders action controls according to the `controls_placement` configuration, which is set to `right` by default. This value can be customized for each individual resource.
