@@ -12,7 +12,7 @@ The table view is the default way to display resources in Avo. It provides a pow
 :::info
 The configuration options for row controls depend on the version of Avo you are using.
 
-**If you are using a version earlier than <Version version="3.16.3" />**, jump this section and refer to the following pages for guidance:
+**If you are using a version earlier than <Version version="3.16.3" />**, refer to the following pages for guidance:
 
 - [How to adjust resource controls globally for all resources](customization.html#resource-controls-on-the-left-or-both-sides)
 - [Customize the placement of controls for individual resources](resources.html#self.controls_placement)
