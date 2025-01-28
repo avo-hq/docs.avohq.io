@@ -4,6 +4,23 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade from 3.16.2 to 3.16.3
+
+<Option name="Associations Fields Structural Updates">
+
+We've introduced enhancements and adjustments to the association fields (`has_many`, `has_and_belongs_to_many`, etc.) to improve functionality, maintainability, and consistency. While these changes are not breaking, it's important to be aware of the following:
+
+- **Customizations & Monkey Patches**: If you've implemented any monkey patches or custom overrides for association fields or their related classes, ensure these customizations still function as intended.
+- **Impact Areas**: These adjustments might affect areas where the internal structure or behavior of association fields was previously relied upon. Although core functionality remains intact, custom modifications may require a review.
+
+**Recommended Actions**:
+- Audit any custom patches or overrides tied to association fields.
+- Test the relevant functionality in your project after upgrading.
+
+For additional context and technical details, refer to the related pull request: [#3469](https://github.com/avo-hq/avo/pull/3469).
+
+</Option>
+
 ## Upgrade from 3.16.1 to 3.16.2
 
 <Option name="markdown renamed to easy_mde">
