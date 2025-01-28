@@ -17,19 +17,30 @@
 You can define the configuration using the following keys:
 
 - `:placement`
-  Defines the position of the row controls. Possible values are:
+
+  Defines the position of the row controls.
+
+  Possible values are:
   - `:left` - Places the controls on the left side of the resource row.
   - `:right` - Places the controls on the right side of the resource row.
   - `:both` - Displays controls on both sides of the resource row.
 
 - `:float`
+
   Determines whether the row controls should float over the row or not.
+  :::warning
+  The `float` option is designed to function optimally when `placement` is set to `:right`. While Avo does not restrict its usage with `:left` or `:both`, the applied styles are specifically intended for use with `:right`, and unexpected behavior may occur with other placements.
+  :::
   Possible values:
   - `true` - Enables floating behavior.
   - `false` - Disables floating behavior (default).
 
 - `:show_on_hover`
+
   Controls whether the row controls should be displayed only on hover.
+  :::warning
+  The `show_on_hover` option is designed to function optimally when `placement` is set to `:right`. While Avo does not restrict its usage with `:left` or `:both`, the applied styles are specifically intended for use with `:right`, and unexpected behavior may occur with other placements.
+  :::
   Possible values:
   - `true` - Displays the controls on hover only.
   - `false` - Always shows the controls (default).
