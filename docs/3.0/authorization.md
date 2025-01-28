@@ -447,6 +447,7 @@ web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
 By default, Avo will infer the policy from the model of the resource object. If you wish to use a different policy for a given resource, you can specify it directly in the resource using the `authorization_policy` option.
 
 ```ruby
+# app/avo/resources/photo_comment.rb
 class Avo::Resources::PhotoComment < Avo::BaseResource
   self.model_class = "Comment"
   self.authorization_policy = PhotoCommentPolicy

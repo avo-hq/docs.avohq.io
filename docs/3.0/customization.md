@@ -78,7 +78,7 @@ That will render all `id` fields in the **Index** view as a link to that resourc
 :::warning
 <VersionReq version="3.16.3" /> `resource_controls_placement` option is **obsolete**.
 
-Check [row controls configuration on table view](table-view.html#row-controls-configuration) instead
+Check [row controls configuration on table view](table-view.html#global-configuration) instead
 :::
 
 <DemoVideo demo-video="https://youtu.be/MfryUtcXqvU?t=706" />

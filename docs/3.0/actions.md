@@ -48,7 +48,8 @@ end
 
 To add the action to a resource, declare it inside the `actions` method as follows:
 
-```ruby{9}
+```ruby{10}
+# app/avo/resources/user.rb
 class Avo::Resources::User < Avo::BaseResource
   self.title = :name
 
@@ -282,7 +283,8 @@ def handle(query:, **args)
 end
 ```
 
-```ruby{7} [app/avo/resources/project.rb]
+```ruby{8} [app/avo/resources/project.rb]
+# app/avo/resources/project.rb
 class Avo::Resources::Project < Avo::BaseResource
   def fields
     # fields here
@@ -645,7 +647,8 @@ end
 
 Actions can have different behaviors according to their host resource. In order to achieve that, arguments can receive additional arguments as follows:
 
-```ruby{12-14}
+```ruby{13-15}
+# app/avo/resources/fish.rb
 class Avo::Resources::Fish < Avo::BaseResource
   self.title = :name
 
