@@ -74,26 +74,21 @@ That will render all `id` fields in the **Index** view as a link to that resourc
 <Image src="/assets/img/fields-reference/as-link-to-resource.jpg" width="694" height="166" alt="As link to resource" />
 
 ## Resource controls on the left or both sides
-<DemoVideo demo-video="https://youtu.be/MfryUtcXqvU?t=706" />
-
-By default, the resource controls are located on the right side of the record rows, which might be hidden if there are a lot of columns. You might want to move the controls to the left side in that situation.
 
 :::warning
 <VersionReq version="3.16.3" /> `resource_controls_placement` option is **obsolete**.
 
-Use [`resource_row_controls_config`](#resource_row_controls_config) instead
+Check [row controls configuration on table view](table-view.html#row-controls-configuration) instead
 :::
 
-```ruby{4,7-9}
+<DemoVideo demo-video="https://youtu.be/MfryUtcXqvU?t=706" />
+
+By default, the resource controls are located on the right side of the record rows, which might be hidden if there are a lot of columns. You might want to move the controls to the left side in that situation using the `resource_controls_placement` option.
+
+```ruby{3}
 # config/initializers/avo.rb
 Avo.configure do |config|
-  # Before 3.16.3
   config.resource_controls_placement = :left
-
-  # After 3.16.3
-  config.resource_row_controls_config = {
-    placement: :left,
-  }
 end
 ```
 
@@ -101,16 +96,10 @@ end
 
 <VersionReq version="3.13.7" class="mt-2" /> You're able to render the controls on both sides
 
-```ruby{4,7-9}
+```ruby{3}
 # config/initializers/avo.rb
 Avo.configure do |config|
-  # Between 3.13.7 and 3.16.3
   config.resource_controls_placement = :both
-
-  # After 3.16.3
-  config.resource_row_controls_config = {
-    placement: :both,
-  }
 end
 ```
 
@@ -677,29 +666,4 @@ For detailed guidance, refer to the [Rails session store configuration](https://
 ---
 
 By adopting the `persistence` configuration with a suitable session store, you can ensure a seamless user experience.
-</Option>
-
-<Option name="`resource_row_controls_config`">
-This option controls the configuration for resource row controls, including their placement, floating behavior, and visibility on hover.
-
-You can use this option to customize the appearance and behavior of row controls for all the resources.
-
-:::info
-You can use [`row_controls_config`](./resources#row_controls_config) to configure controls for a specific resource.
-:::
-
-<!-- @include: common/row_controls_configurations_common.md-->
-
-#### Examples
-
-```ruby{3-7}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.resource_row_controls_config = {
-    placement: :right,
-    float: true,
-    show_on_hover: true,
-  }
-end
-```
 </Option>

@@ -920,30 +920,6 @@ end
 
 </Option>
 
-<Option name="`row_controls_config`">
-This option allows you to define the configuration for resource-specific row controls, including their placement, floating behavior, and visibility on hover.
-
-You can use this option to override the global configuration for specific resources.
-
-:::info
-You can use [`resource_row_controls_config`](./customization#resource_row_controls_config) to configure controls for all the resources.
-:::
-
-<!-- @include: common/row_controls_configurations_common.md-->
-
-#### Examples
-
-```ruby{3-7}
-# app/avo/resources/user.rb
-class Avo::Resources::User < Avo::BaseResource
-  self.row_controls_config = {
-    placement: :right,
-    float: true,
-    show_on_hover: true,
-  }
-end
-```
-</Option>
 
 <Option name="`self.pagination`">
 This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
