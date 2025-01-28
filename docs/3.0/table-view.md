@@ -25,7 +25,7 @@ By default, resource controls are positioned on the right side of record rows. H
 
 ### Global configuration
 
-`resource_row_controls_config` option defines the default settings for row controls across all resources. These global configurations will apply to each resource unless explicitly overridden.
+`resource_row_controls_config` defines the default settings for row controls across all resources. These global configurations will apply to each resource unless explicitly overridden.
 
 This option can be configured on `config/initializers/avo.rb` and defaults to the following:
 
