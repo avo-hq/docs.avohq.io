@@ -21,6 +21,7 @@ Running this command will generate the standard Rails files (model, controller, 
 The auto-generated resource file will look like this:
 
 ```ruby
+# app/avo/resources/car.rb
 class Avo::Resources::Car < Avo::BaseResource
   self.includes = []
   # self.search = {
@@ -892,17 +893,22 @@ end
 <Option name="`self.controls_placement`">
 <VersionReq version="3.13.7" />
 
+:::warning
+<VersionReq version="3.16.3" /> `controls_placement` option is **obsolete**.
+
+Check [row controls configuration on table view](table-view.html#resource-configuration) instead
+:::
+
 By default, Avo renders action controls according to the `controls_placement` configuration, which is set to `right` by default. This value can be customized for each individual resource.
 
 #### Possible values
 
 Either `:left`, `:right` or `:both`
 
-```ruby
+```ruby{3}
+# app/avo/resources/task.rb
 class Avo::Resources::Task < Avo::BaseResource
   self.controls_placement = :both
-
-  # ...
 end
 ```
 

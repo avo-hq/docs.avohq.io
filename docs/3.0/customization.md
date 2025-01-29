@@ -74,11 +74,19 @@ That will render all `id` fields in the **Index** view as a link to that resourc
 <Image src="/assets/img/fields-reference/as-link-to-resource.jpg" width="694" height="166" alt="As link to resource" />
 
 ## Resource controls on the left or both sides
+
+:::warning
+<VersionReq version="3.16.3" /> `resource_controls_placement` option is **obsolete**.
+
+Check [row controls configuration on table view](table-view.html#global-configuration) instead
+:::
+
 <DemoVideo demo-video="https://youtu.be/MfryUtcXqvU?t=706" />
 
 By default, the resource controls are located on the right side of the record rows, which might be hidden if there are a lot of columns. You might want to move the controls to the left side in that situation using the `resource_controls_placement` option.
 
-```ruby{2}
+```ruby{3}
+# config/initializers/avo.rb
 Avo.configure do |config|
   config.resource_controls_placement = :left
 end
@@ -86,11 +94,10 @@ end
 
 <Image src="/assets/img/customization/resource-controls-left.jpg" width="1206" height="920" alt="Resource controls on the left side" />
 
-<VersionReq version="3.13.7" class="mt-2" />
+<VersionReq version="3.13.7" class="mt-2" /> You're able to render the controls on both sides
 
-You might want to render the controls on both sides
-
-```ruby{2}
+```ruby{3}
+# config/initializers/avo.rb
 Avo.configure do |config|
   config.resource_controls_placement = :both
 end

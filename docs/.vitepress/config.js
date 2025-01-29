@@ -148,7 +148,6 @@ const config = {
             {text: "Controller configuration", link: "/3.0/controllers.html"},
             {text: "Record previews", link: "/3.0/record-previews.html"},
             {text: "Scopes", link: "/3.0/scopes.html"},
-            {text: "Views", link: "/3.0/views.html"},
             {text: "Records reordering", link: "/3.0/records-reordering.html"},
             {text: "Resource sidebar", link: "/3.0/resource-sidebar.html"},
             {text: "Resource panels", link: "/3.0/resource-panels.html"},
@@ -159,12 +158,19 @@ const config = {
           ],
         },
         {
+          text: "Views",
+          items: [
+            {text: "Views", link: "/3.0/views.html"},
+            {text: "Table view", link: "/3.0/table-view.html"},
+            {text: "Grid view", link: "/3.0/grid-view.html"},
+            {text: "Map view", link: "/3.0/map-view.html"},
+          ],
+        },
+        {
           text: "Customize Avo",
           items: [
             {text: "Customization options", link: "/3.0/customization.html"},
             {text: "Eject views", link: "/3.0/eject-views.html"},
-            {text: "Grid view", link: "/3.0/grid-view.html"},
-            {text: "Map view", link: "/3.0/map-view.html"},
             {text: "Custom view types", link: "/3.0/custom-view-types.html"},
             {text: "Menu editor", link: "/3.0/menu-editor.html"},
             {text: "Search", link: "/3.0/search.html"},

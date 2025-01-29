@@ -6,6 +6,54 @@ If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedica
 
 ## Upgrade from 3.16.2 to 3.16.3
 
+<Option name="Row controls configuration">
+This release introduces a breaking change to the way resource row controls configuration is handled. If you previously customized row controls placement, you'll need to update your configurations to match the new API.
+
+### What changed?
+
+The previous configuration methods have been replaced with a new structure to provide better flexibility and consistency.
+
+#### Previous configuration (obsolete)
+
+Global configuration:
+```ruby{3}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.resource_controls_placement = :left
+end
+```
+
+Resource configuration:
+```ruby{3}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.controls_placement = :left
+end
+```
+
+#### New configuration
+Global configuration:
+```ruby{3-5}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.resource_row_controls_config = {
+    placement: :left,
+  }
+end
+```
+
+Resource configuration:
+```ruby{3-5}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.row_controls_config = {
+    placement: :left,
+  }
+end
+```
+
+</Option>
+
 <Option name="Associations Fields Structural Updates">
 
 We've introduced enhancements and adjustments to the association fields (`has_many`, `has_and_belongs_to_many`, etc.) to improve functionality, maintainability, and consistency. While these changes are not breaking, it's important to be aware of the following:
