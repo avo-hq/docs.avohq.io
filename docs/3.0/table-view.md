@@ -8,7 +8,7 @@ The table view is the default way to display resources in Avo. It provides a pow
 :::info
 The configuration options for row controls depend on the version of Avo you are using.
 
-**If you are using a version earlier than <Version version="3.16.3" />**, jump this section and refer to the following pages for guidance:
+**If you are using a version earlier than <Version version="3.16.3" />**, refer to the following pages for guidance:
 
 - [How to adjust resource controls globally for all resources](customization.html#resource-controls-on-the-left-or-both-sides)
 - [Customize the placement of controls for individual resources](resources.html#self.controls_placement)
@@ -21,7 +21,7 @@ By default, resource controls are positioned on the right side of record rows. H
 
 ## Global configuration
 
-`resource_row_controls_config` option defines the default settings for row controls across all resources. These global configurations will apply to each resource unless explicitly overridden.
+`resource_row_controls_config` defines the default settings for row controls across all resources. These global configurations will apply to each resource unless explicitly overridden.
 
 This option can be configured on `config/initializers/avo.rb` and defaults to the following:
 
@@ -38,7 +38,7 @@ end
 
 ## Resource configuration
 
-`row_controls_config` option allows you to customize the row controls for a specific resource, overriding the global configuration.
+`row_controls_config` allows you to customize the row controls for a specific resource, overriding the global configuration.
 
 This option can be configured individually for each resource and defaults to the global configuration value defined in `resource_row_controls_config`.
 
