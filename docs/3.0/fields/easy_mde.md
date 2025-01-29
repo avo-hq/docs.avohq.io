@@ -32,6 +32,7 @@ By default, the content of the `easy_mde` field is not visible on the `Show` vie
 </Option>
 
 <Option name="`height`">
+
 Sets the value of the editor
 
 #### Default
@@ -44,6 +45,7 @@ Sets the value of the editor
 </Option>
 
 <Option name="`spell_checker`">
+
 Toggles the editor's spell checker option.
 
 ```ruby

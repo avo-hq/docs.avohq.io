@@ -22,6 +22,7 @@ field :progress,
 ## Options
 
 <Option name="`failed_when`">
+
 Set the values for when the status is `failed`.
 
 #### Default value
@@ -34,6 +35,7 @@ Set the values for when the status is `failed`.
 </Option>
 
 <Option name="`loading_when`">
+
 Set the values for when the status is `loading`.
 
 #### Default value
@@ -46,6 +48,7 @@ Set the values for when the status is `loading`.
 </Option>
 
 <Option name="`success_when`">
+
 Set the values for when the status is `success`.
 
 #### Default value
@@ -58,6 +61,7 @@ Set the values for when the status is `success`.
 </Option>
 
 <Option name="`neutral_when`">
+
 Set the values for when the status is `neutral`.
 
 #### Default value

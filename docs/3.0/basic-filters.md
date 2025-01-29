@@ -68,11 +68,13 @@ Inside the visible block you can acces the following variables and you should re
 </Option>
 
 <Option name="`self.empty_message`">
+
 There might be times when you will want to show a message to the user when you're not returning any options.
 
 More on this in the [Empty message guide](#empty-message-text).
 </Option>
 <Option name="`options`">
+
 Some filters allow you to pass options to the user. For example on the [select filter](#select_filter) you can set the options in the dropdown, and on the [boolean filter](#boolean_filter) you may set the checkbox values.
 Each filter type has their own `options` configuration explained below.
 
@@ -80,6 +82,7 @@ In the `options` method you have access to the `request`, `params`, [`context`](
 </Option>
 
 <Option name="`apply`">
+
 The `apply` method is what is going to be run when Avo fetches the records on the <Index /> view.
 
 It recieves the `request` form which you can get all the `params` if you need them, it gets the `query` which is the query Avo made to fetch the records. It's a regular [Active Record](https://guides.rubyonrails.org/active_record_querying.html) which you can manipulate.
@@ -88,12 +91,14 @@ It also receives the `values` variable which holds the actual choices the user m
 </Option>
 
 <Option name="`default`">
+
 You may set default values for the `options` you set. For example you may set which option to be selected for the [select filter](#select_filter) and which checkboxes to be set for the [boolean filter](#boolean_filter).
 
 In the `default` method you have access to the `request`, `params`, [`context`](./customization#context), `view_context`, and `current_user` objects.
 </Option>
 
 <Option name="`react`">
+
 This is a hook in which you can change the value of the filter based on what other filters have for values.
 
 More on this in the [React to filters guide](#react-to-filters)
@@ -407,6 +412,7 @@ end
 </Option>
 
 <Option name="Date time Filter">
+
 <VersionReq version="3.11.8" />
 
 The ideal filter for date selection. This filter allows you to generate a date input, with options to include time selection and even a range selection mode. Customizable to suit your specific needs.

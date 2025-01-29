@@ -64,6 +64,7 @@ end
 The scope classes take a few options.
 
 <Option name="`name`">
+
 This value is going to be displayed on the scopes bar as the name of the scope.
 
 This can be a callable value and it receives the `resource` and `query` objects.
@@ -74,12 +75,14 @@ Please see [the recipe](./guides/display-scope-record-count.html) on how to enab
 </Option>
 
 <Option name="`description`">
+
 This value is going to be displayed when the user hovers over the scope.
 
 This can be a callable value and it receives the `resource` and `query` objects.
 </Option>
 
 <Option name="`scope`">
+
 The scope you return here is going to be applied to the query of records on that page.
 
 You can use a symbol which will indicate the scope on that model or a block which will have the `query` available so you can apply any modifications you need.
@@ -95,10 +98,12 @@ end
 </Option>
 
 <Option name="`visible`">
+
 From this block you can show, hide, and authorize the scope on the resource.
 </Option>
 
 <Option name="`default`">
+
 <VersionReq version="3.11" />
 
 The `default` option lets you select a default scope that is applied when you

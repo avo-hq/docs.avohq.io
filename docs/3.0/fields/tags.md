@@ -124,6 +124,7 @@ field :skills,
 </Option>
 
 <Option name="`suggestions_max_items`">
+
 Set of suggestions that can be displayed at once. The excessive items will be hidden and the user will have to narrow down the query to see them.
 
 ```ruby{4}
@@ -145,6 +146,7 @@ Integers
 </Option>
 
 <Option name="`close_on_select`">
+
 Set whether the `suggestions` dropdown should close after the user makes a selection.
 
 ```ruby{4}
@@ -160,6 +162,7 @@ field :items,
 </Option>
 
 <Option name="`acts_as_taggable_on`">
+
 Set the field the `acts_as_taggable_on` is set.
 
 #### Default

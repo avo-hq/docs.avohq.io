@@ -386,6 +386,7 @@ Now, all fields will have the stacked layout throughout your app.
 ## Field options
 
 <Option name="`use_resource`">
+
 <!-- TODO: this -->
 WIP
 </Option>

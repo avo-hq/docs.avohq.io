@@ -27,6 +27,7 @@ Use any number to size the image.
 </Option>
 
 <Option name="`height`">
+
 #### Default value
 
 `40`
@@ -37,6 +38,7 @@ Use any number to size the image.
 </Option>
 
 <Option name="`radius`">
+
 #### Default value
 
 `0`

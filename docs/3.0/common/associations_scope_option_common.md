@@ -1,4 +1,5 @@
 <Option name="`scope`">
+
 Scope out the records displayed in the table.
 
 #### Default

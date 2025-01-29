@@ -127,6 +127,7 @@ end
 </Option>
 
 <Option name="`description`">
+
 <LicenseReq license="pro" />
 
 You might want to show more than just the title in the search result. Avo provides the `item -> description` option to add some more information.
@@ -172,6 +173,7 @@ end
 </Option>
 
 <Option name="`image_format`">
+
 <LicenseReq license="pro" />
 
 The image you add to a search result can have a different format based on what you set on the `item -> image_format` attribute. You may choose between three options: `:square`, `:rounded` or `:circle`.

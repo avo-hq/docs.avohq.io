@@ -515,6 +515,7 @@ Now, when you visit `https://example.org/account/adrian/avo`, the `account_id` p
 </Option>
 
 <Option name="`turbo`">
+
 You may want to configure how turbo behave on Avo.
 
 You can configure it using `config.turbo` option on `avo.rb` initializer
@@ -531,6 +532,7 @@ Supported options with default values:
 </Option>
 
 <Option name="`pagination`">
+
 You can configure the default pagination settings key by key.
 
 ```ruby

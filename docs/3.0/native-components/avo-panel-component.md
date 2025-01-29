@@ -37,6 +37,7 @@ All options are optional. You may render a panel without options.
 ```
 
 <Option name="`name`">
+
 The name of the panel. It's displayed on the top under the breadcrumbs.
 
 #### Type
@@ -46,6 +47,7 @@ The name of the panel. It's displayed on the top under the breadcrumbs.
 </Option>
 
 <Option name="`description`">
+
 Small text under the name that speaks a bit about what the panel does.
 
 #### Type
@@ -55,6 +57,7 @@ Small text under the name that speaks a bit about what the panel does.
 </Option>
 
 <Option name="`classes`">
+
 A list of classes that should be applied to the panel container.
 
 #### Type
@@ -64,6 +67,7 @@ A list of classes that should be applied to the panel container.
 </Option>
 
 <Option name="`body_classes`">
+
 A list of classes that should be applied to the body of panel.
 
 #### Type
@@ -73,6 +77,7 @@ A list of classes that should be applied to the body of panel.
 </Option>
 
 <Option name="`data`">
+
 A hash of data attributes to be forwarded to the panel container.
 
 #### Type
@@ -82,6 +87,7 @@ A hash of data attributes to be forwarded to the panel container.
 </Option>
 
 <Option name="`display_breadcrumbs`">
+
 Toggles the breadcrumbs visibility. You can't customize the breadcrumbs yet.
 
 #### Type
@@ -95,6 +101,7 @@ Toggles the breadcrumbs visibility. You can't customize the breadcrumbs yet.
 The component has a few slots where you customize the content in certain areas.
 
 <Option name="`tools`">
+
 We created this slot as a place to put resource controls like the back, edit, delete, and detach buttons.
 This slot will collapse under the title and description when the screen resolution falls under `1024px`.
 
@@ -114,6 +121,7 @@ The section is automatically aligned to the right using `justify-end` class.
 </Option>
 
 <Option name="`body`">
+
 This is one of the main slots of the component where the bulk of the content is displayed.
 
 ```erb{2-4}
@@ -128,6 +136,7 @@ This is one of the main slots of the component where the bulk of the content is 
 </Option>
 
 <Option name="`bare_content`">
+
 Used when displaying the [Grid view](./../grid-view), it displays the data flush in the container and with no background.
 
 ```erb{2-4}
@@ -142,6 +151,7 @@ Used when displaying the [Grid view](./../grid-view), it displays the data flush
 </Option>
 
 <Option name="`footer_tools`">
+
 This is pretty much the same slot as `tools` but rendered under the `body` or `bare_content` slots.
 
 ```erb{2-4}
@@ -156,6 +166,7 @@ This is pretty much the same slot as `tools` but rendered under the `body` or `b
 </Option>
 
 <Option name="`footer`">
+
 The lowest available area at the end of the component.
 
 ```erb{2-4}
@@ -168,6 +179,7 @@ The lowest available area at the end of the component.
 </Option>
 
 <Option name="`sidebar`">
+
 The sidebar will conveniently show things in a smaller area on the right of the `body`.
 
 ```erb{2-4}

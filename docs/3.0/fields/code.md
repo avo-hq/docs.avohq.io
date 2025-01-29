@@ -31,6 +31,7 @@ Preview the themes here: [codemirror-themes](https://codemirror.net/demo/theme.h
 </Option>
 
 <Option name="`language`">
+
 Customize the syntax highlighting using the language method.
 
 #### Default value
@@ -43,6 +44,7 @@ Customize the syntax highlighting using the language method.
 </Option>
 
 <Option name="`height`">
+
 Customize the height of the editor.
 
 #### Default value
@@ -55,6 +57,7 @@ Customize the height of the editor.
 </Option>
 
 <Option name="`tab_size`">
+
 Customize the tab_size of the editor.
 
 #### Default value
@@ -67,6 +70,7 @@ Any integer value.
 </Option>
 
 <Option name="`indent_with_tabs`">
+
 Customize the type of indentation.
 
 #### Default value
@@ -79,6 +83,7 @@ Customize the type of indentation.
 </Option>
 
 <Option name="`line_wrapping`">
+
 Customize whether the editor should apply line wrapping.
 
 #### Default value

@@ -15,6 +15,7 @@ field :body, as: :textarea
 
 
 <Option name="`rows`">
+
 Set the number of rows visible in the `Edit` and `New` views.
 
 ```ruby

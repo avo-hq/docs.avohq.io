@@ -16,6 +16,7 @@ field :meta, as: :key_value
 ## Options
 
 <Option name="`key_label`">
+
 Customize the label for the key header.
 
 #### Default
@@ -28,6 +29,7 @@ Any string value.
 </Option>
 
 <Option name="`value_label`">
+
 Customize the label for the value header.
 
 #### Default
@@ -40,6 +42,7 @@ Any string value.
 </Option>
 
 <Option name="`action_text`">
+
 Customize the label for the add row button tooltip.
 
 #### Default
@@ -52,6 +55,7 @@ Any string value.
 </Option>
 
 <Option name="`delete_text`">
+
 Customize the label for the delete row button tooltip.
 
 #### Default
@@ -64,6 +68,7 @@ Any string value.
 </Option>
 
 <Option name="`reorder_text`">
+
 <VersionReq version="3.14.0" />
 
 Set a custom label for the tooltip on the reorder by drag-and-drop row button.
@@ -78,30 +83,35 @@ Any string value.
 </Option>
 
 <Option name="`disabled`">
+
 Toggle on/off the ability to disable editing keys, editing values, adding rows, and deleting rows for that field.
 
 <!-- @include: ./../common/default_boolean_false.md-->
 </Option>
 
 <Option name="`disable_editing_keys`">
+
 Toggle on/off the ability to edit the keys for that field. Turning this off will allow the user to customize only the value fields.
 
 <!-- @include: ./../common/default_boolean_false.md-->
 </Option>
 
 <Option name="`disable_editing_values`">
+
 Toggle on/off the ability to edit the values for that field. Turning this off will allow the user to customize only the key fields.
 
 <!-- @include: ./../common/default_boolean_false.md-->
 </Option>
 
 <Option name="`disable_adding_rows`">
+
 Toggle on/off the ability to add new rows.
 
 <!-- @include: ./../common/default_boolean_false.md-->
 </Option>
 
 <Option name="`disable_deleting_rows`">
+
 Toggle on/off the ability to delete rows from that field. Turning this on will prevent the user from deleting existing rows.
 
 <!-- @include: ./../common/default_boolean_false.md-->

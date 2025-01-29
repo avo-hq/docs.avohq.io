@@ -11,10 +11,12 @@ The `EncryptionService` is an service that can be called anywhere on the app.
 ### Public methods
 
 <Option name="`encrypt`">
+
 Used to encrypt data
 </Option>
 
 <Option name="`decrypt`">
+
 Used to decrypt data
 </Option>
 
@@ -23,10 +25,12 @@ Used to decrypt data
 ### Mandatory arguments:
 
 <Option name="`message`">
+
 Object to be encrypted
 </Option>
 
 <Option name="`purpose`">
+
 A symbol with the purpose of encryption, can be anything, it just ***need to match when decrypting***.
 </Option>
 

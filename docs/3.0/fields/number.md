@@ -14,6 +14,7 @@ field :age, as: :number
 ## Options
 
 <Option name="`min`">
+
 Set the `min` attribute.
 
 #### Default
@@ -26,6 +27,7 @@ Any number.
 </Option>
 
 <Option name="`max`">
+
 Set the `max` attribute.
 
 #### Default
@@ -38,6 +40,7 @@ Any number.
 </Option>
 
 <Option name="`step`">
+
 Set the `step` attribute.
 
 #### Default

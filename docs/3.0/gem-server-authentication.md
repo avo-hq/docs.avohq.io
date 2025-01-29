@@ -147,6 +147,7 @@ docker compose build --build-arg BUNDLE_PACKAGER__DEV=xxx
 Frequently asked questions:
 
 <Option name="`Forbidden 403`">
+
 If you're seeing this error `Retrying download gem from https://packager.dev/avo-hq/ due to error (1/4): Gem::RemoteFetcher::FetchError bad response Forbidden 403`, this probably means that bundler does not have access to the `BUNDLE_PACKAGER__DEV` environment variable.
 
 Please read the guides above on how to set that on your development machine and in deployment scenarios.

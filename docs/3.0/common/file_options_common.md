@@ -1,4 +1,5 @@
 <Option name="`accept`">
+
 Instructs the input to accept only a particular file type for that input using the `accept` option.
 
 ```ruby
@@ -15,6 +16,7 @@ field :cover_video, as: :file, accept: "image/*"
 </Option>
 
 <Option name="`direct_upload`">
+
 <LicenseReq license="pro" />
 
 If you have large files and don't want to overload the server with uploads, you can use the `direct_upload` feature, which will upload the file directly to your cloud provider.
@@ -27,6 +29,7 @@ field :cover_video, as: :file, direct_upload: true
 </Option>
 
 <Option name="`display_filename`">
+
 Option that specify if the file should have the caption present or not.
 
 ```ruby
