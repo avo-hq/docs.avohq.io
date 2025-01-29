@@ -19,6 +19,7 @@ field :documents, as: :files
 <!-- @include: ./../common/file_other_common.md-->
 
 <Option name="`view_type`">
+
 <Image src="/assets/img/files_view_types.gif" width="1734" height="431" alt="" />
 
 Set the default `view_type`.
@@ -33,6 +34,7 @@ Set the default `view_type`.
 </Option>
 
 <Option name="`hide_view_type_switcher`">
+
 Option to hide the view type switcher component.
 
 #### Default

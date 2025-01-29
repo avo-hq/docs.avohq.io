@@ -7,6 +7,7 @@ Once ejected, the views will not receive updates on new Avo releases. You must m
 :::
 
 <Option name="`--partial`">
+
 Utilize the `--partial` option when you intend to extract certain partial
 
 ## Prepared templates
@@ -57,6 +58,7 @@ You can eject any partial from Avo using the partial path.
 </Option>
 
 <Option name="`--component`">
+
 You can eject any view component from Avo using the `--component` option.
 
 ```bash
@@ -76,6 +78,7 @@ create  app/components/avo/index/table_row_component.html.erb
 </Option>
 
 <Option name="`--field-components`">
+
 With `--field-components` option is easy to eject, one or multiple field components. Notice that without using the `--scope`, the ejected components will override the original components for that field everywhere on the project.
 
 Check the `--scope` and the [`components`](./field-options.html#components) field options for more details on how to override the components only on specific parts of the project.
@@ -109,6 +112,7 @@ While utilizing the `--field-components` option, you can selectively extract a s
 
 
 <Option name="`--scope`">
+
 When you opt to eject a view component that exists under `Avo::Views` or a field component under `Avo::Fields` namespace, for example the `Avo::Views::ResourceIndexComponent` or `Avo::Fields::TextField::ShowComponent` you can employ the `--scope` option to specify the namespace that should be adopted by the ejected component, extending from `Avo::Views` / `Avo::Fields`.
 
 ```bash

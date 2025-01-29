@@ -1,4 +1,5 @@
 <Option name="`attach_scope`">
+
 Scope out the records the user sees on the Attach modal.
 
 #### Default

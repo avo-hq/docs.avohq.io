@@ -31,6 +31,7 @@ self.profile_photo = {
 ```
 
 <Option name="`visible_on`">
+
 This controls where the cover photo should be displayed.
 
 It defaults to the <Show />, <Edit />, and <New /> views, but you can change that to be displayed to the <Index /> view or a combination of views.
@@ -51,6 +52,7 @@ You may choose one view or a combination of them using an array.
 </Option>
 
 <Option name="`source`">
+
 This controls what should be displayed as the image.
 
 You can call a field on the record using a `Symbol`, or you can open a block where you have access to the `record` and add your own value.
@@ -107,6 +109,7 @@ self.cover_photo = {
 ```
 
 <Option name="`size`">
+
 This represents the height of the cover photo. It can be small, medium or large.
 
 ##### Optional
@@ -123,6 +126,7 @@ This represents the height of the cover photo. It can be small, medium or large.
 </Option>
 
 <Option name="`visible_on`">
+
 This controls where the cover photo should be displayed.
 
 It defaults to the <Show />, <Edit />, and <New /> views, but you can change that to be displayed to the <Index /> view or a combination of views.
@@ -143,6 +147,7 @@ You may choose one view or a combination of them using an array.
 </Option>
 
 <Option name="`source`">
+
 This controls what should be displayed as the image.
 
 You can call a field on the record using a `Symbol`, or you can open a block where you have access to the `record` and add your own value.

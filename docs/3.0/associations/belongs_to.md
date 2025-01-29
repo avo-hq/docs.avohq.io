@@ -18,6 +18,7 @@ You will see three field types when you add a `BelongsTo` association to a model
 <!-- @include: ./../common/associations_searchable_option_common.md-->
 
 <Option name="`allow_via_detaching`">
+
 Keeps the field enabled when visiting from the parent record.
 
 <!-- @include: ./../common/default_boolean_false.md-->
@@ -26,6 +27,7 @@ Keeps the field enabled when visiting from the parent record.
 <!-- @include: ./../common/associations_attach_scope_option_common.md-->
 
 <Option name="`polymorphic_as`">
+
 Sets the field as polymorphic with the key set on the model.
 
 #### Default
@@ -48,6 +50,7 @@ field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Pos
 </Option>
 
 <Option name="`types`">
+
 Sets the types the field can morph to.
 
 #### Default
@@ -70,6 +73,7 @@ field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Pos
 </Option>
 
 <Option name="`polymorphic_help`">
+
 Sets the help text for the polymorphic type dropdown. Useful when you need to specify to the user why and what they need to choose as polymorphic.
 
 #### Default
@@ -84,6 +88,7 @@ Any string.
 <!-- @include: ./../common/associations_use_resource_option_common.md-->
 
 <Option name="`can_create`">
+
 Controls the creation link visibility on forms.
 
 #### Default

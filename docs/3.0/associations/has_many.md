@@ -27,6 +27,7 @@ field :projects, as: :has_many
 
 
 <Option name="`linkable`">
+
 You can add use this option to make the association title clickable. That link will open a new page with the same view.
 
 This feature doesn't go deeper than this. It just helps you see the association table easier in a separate page.

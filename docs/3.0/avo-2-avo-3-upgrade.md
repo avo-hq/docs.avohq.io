@@ -65,6 +65,7 @@ Each paragraph will guide you through the upgrade process for each individual ch
 Most of these steps are breaking changes so you'll need to apply them if you're using the feature.
 
 <Option name="Update your `Gemfile`">
+
 The Avo gem comes in three flavors now. Community, Pro, or Advanced.
 
 You should add the one you use in your `Gemfile`. If you use Pro or Advanced you don't have to add `avo` too. Each gem adds their own dependencies.
@@ -79,6 +80,7 @@ If you want to install `avo-pro` or `avo-advanced` please ensure you have a [val
 </Option>
 
 <Option name="The status field changed behavior">
+
 Before, for the status you'd set the `failed` and `loading` states and everything else fell under `success`. That felt unnatural. We needed a `neutral` state.
 Now we changed the field so you'll set the `failed`, `loading`, and `success` values and the rest fall under `neutral`.
 
@@ -99,6 +101,7 @@ field :status,
 </Option>
 
 <Option name="`heading` has become a field type">
+
 Before, a heading used the `heading` method with a text string or HTML string as an argument.
 Now, it is a field type with an ID. It supports rendering as text and as HTML.
 
@@ -228,6 +231,7 @@ field :hidden_info,
 </Option>
 
 <Option name="Removed `index_text_align` option">
+
 Same behavior from `index_text_align` can be achieved using `html` and `class` options.
 
 ### Actions to take
@@ -243,6 +247,7 @@ field :users_required, as: :number, html: {index: {wrapper: {classes: "text-righ
 </Option>
 
 <Option name="Renamed `resolve_query_scope` to `index_query` in resources">
+
 The new method name `index_query` speaks more about what it does and the rest of the changes brings it more inline with the other APIs
 
 ### Actions to take
@@ -265,6 +270,7 @@ end
 </Option>
 
 <Option name="Removed `resolve_find_scope` in favor of `find_record_method`">
+
 The new `find_record_method` method works better as it enables you to use custom find matchers.
 
 ### Actions to take
@@ -288,6 +294,7 @@ end
 </Option>
 
 <Option name="Refactor the grid view API">
+
 We removed the old `grid do` block to `self.grid_view` to fall more inline with `self.map_view` and others.
 
 The `card` block will cycle through all of your records and you need to return a hash with the following keys `title`, `body`, `cover_url`.
@@ -329,6 +336,7 @@ self.grid_view = {
 </Option>
 
 <Option name="Refactored the search API">
+
 In Avo 2, the search options were scattered around multiple places. The query was used from the `search_query`, the record description was taken from an arbitrary `as_description: true` field option, and other mis-aligned places.
 
 In Avo 3 we brought all those things in a single `self.search` option.
@@ -471,6 +479,7 @@ end
 </Option>
 
 <Option name="Use the `def fields` API">
+
 We are introducing a new API for declaring fields. This brings many improvements from easier maintenance, better control, better composition, and more.
 
 ```ruby
@@ -563,6 +572,7 @@ Wrap all `field`, `tabs`, `tab`, `panel`, `sidebar`, and `tool` declarations fro
 </Option>
 
 <Option name="Use the `def actions` API">
+
 Similar to how we added the `def fields` wrapper to fields you should now wrap all actions in an `actions` method.
 
 
@@ -582,6 +592,7 @@ end
 </Option>
 
 <Option name="Use the `def filters` API">
+
 Similar to how we added the `def fields` wrapper to fields you should now wrap all filters in an `filters` method.
 
 
@@ -601,6 +612,7 @@ end
 </Option>
 
 <Option name="Use the `def scopes` API">
+
 Similar to how we added the `def fields` wrapper to fields you should now wrap all scopes in an `scopes` method.
 
 
@@ -620,6 +632,7 @@ end
 </Option>
 
 <Option name="Wrap all Dashboard `card` and `divider` definitions inside one `def cards` method">
+
 After the `def fields` refactor we did the same in dashboard files. Instead of declaring the cards in the class directly, you should do it in the `def cards` method.
 
 ```ruby{6-9,17-22}
@@ -650,6 +663,7 @@ end
 </Option>
 
 <Option name="`tool` is declared inside the `def fields` method">
+
 In Avo 3 you'll be able to insert resource tools in-between fields, tabs and panels, so now, the `tool`s must be called inside the `fields` method. This feature is unreleased yet, but you should make the change now so it'll be seamless when we add it.
 
 ### Actions to take
@@ -678,6 +692,7 @@ end
 </Option>
 
 <Option name="Remove `tabs_style` from the `tabs` declaration">
+
 We streamlined tabs and kept only the `:pills` style so now we only have one style of tabs.
 
 ### Actions to take

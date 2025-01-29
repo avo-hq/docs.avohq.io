@@ -20,6 +20,7 @@ Each field displayed on the <Index /> view is wrapped in this component that reg
 You may use the component `Avo::Index::FieldWrapperComponent` or the helper `index_field_wrapper`.
 
 <Option name="`dash_if_blank`">
+
 This option renders a dash `—` if the content inside responds to true on the `blank?` method.
 In the example below, we'd like to show the field as a red checkmark even if the content is `nil`.
 
@@ -35,6 +36,7 @@ In the example below, we'd like to show the field as a red checkmark even if the
 </Option>
 
 <Option name="`center_content`">
+
 Wraps the content in a container with `flex items-center justify-center` classes making everything centered horizontally and vertically.
 
 #### Default
@@ -49,6 +51,7 @@ Wraps the content in a container with `flex items-center justify-center` classes
 </Option>
 
 <Option name="`flush`">
+
 Removes the padding around the field allowing it to flow from edge to edge.
 
 #### Default
@@ -63,6 +66,7 @@ Removes the padding around the field allowing it to flow from edge to edge.
 </Option>
 
 <Option name="`field`">
+
 The instance of the field. It's usually passed in with the `field_wrapper_args`.
 
 ```erb
@@ -73,6 +77,7 @@ The instance of the field. It's usually passed in with the `field_wrapper_args`.
 </Option>
 
 <Option name="`resource`">
+
 The instance of the resource. It's usually passed in with the `field_wrapper_args`.
 
 ```erb
@@ -114,6 +119,7 @@ This space is rarely used and it's there just to fill some horizontal space so t
 ## Options
 
 <Option name="`dash_if_blank`">
+
 This option renders a dash `—` if the content inside responds to true on the `blank?` method.
 In the example below, we'd like to show the field as a red checkmark even if the content is `nil`.
 
@@ -129,6 +135,7 @@ In the example below, we'd like to show the field as a red checkmark even if the
 </Option>
 
 <Option name="`compact`">
+
 This renders the field in a more compact way by removing the **Extra** area and decresing the width of the **Label** and **Content** areas.
 
 This is enabled on the fields displayed in actions.
@@ -145,6 +152,7 @@ This is enabled on the fields displayed in actions.
 </Option>
 
 <Option name="`data`">
+
 Pass in some data attributes. Perhaps you would like to attach a StimulusJS controller to this field.
 
 ```erb
@@ -155,6 +163,7 @@ Pass in some data attributes. Perhaps you would like to attach a StimulusJS cont
 </Option>
 
 <Option name="`full_width`">
+
 This removes the **Extra** area and renders the **Value** area full width.
 
 This is used on fields that require a larger area to be displayed like [WYSIWYG editors](./fields/trix), [`KeyValue`](./fields/key_value), or [file fields](./fields/files).
@@ -171,6 +180,7 @@ This is used on fields that require a larger area to be displayed like [WYSIWYG 
 </Option>
 
 <Option name="`form`">
+
 The instance of the form that is going to be populated. It's usually passed in with the `field_wrapper_args` on the <Edit /> view.
 
 ```erb
@@ -181,6 +191,7 @@ The instance of the form that is going to be populated. It's usually passed in w
 </Option>
 
 <Option name="`field`">
+
 The instance of the field. It's usually passed in with the `field_wrapper_args`.
 
 ```erb
@@ -191,6 +202,7 @@ The instance of the field. It's usually passed in with the `field_wrapper_args`.
 </Option>
 
 <Option name="`help`">
+
 The text that is going to be displayed below the actual field on the <Edit /> view.
 
 ```erb
@@ -201,6 +213,7 @@ The text that is going to be displayed below the actual field on the <Edit /> vi
 </Option>
 
 <Option name="`label`">
+
 The text that is going to be displayed in the **Label** area. You might want to override it.
 
 ```erb
@@ -211,6 +224,7 @@ The text that is going to be displayed in the **Label** area. You might want to 
 </Option>
 
 <Option name="`resource`">
+
 The instance of the resource. It's usually passed in with the `field_wrapper_args`.
 
 ```erb
@@ -221,6 +235,7 @@ The instance of the resource. It's usually passed in with the `field_wrapper_arg
 </Option>
 
 <Option name="`stacked`">
+
 Display the field in a column layout with the label on top of the value
 
 ```erb
@@ -234,6 +249,7 @@ Display the field in a column layout with the label on top of the value
 
 
 <Option name="`style`">
+
 The you might want to pass some styles to the wrapper to change it's looks.
 
 ```erb
@@ -244,6 +260,7 @@ The you might want to pass some styles to the wrapper to change it's looks.
 </Option>
 
 <Option name="`view`">
+
 The view where the field is diplayed so it knows if it's a <Show /> or <Edit /> view. It's usually passed in with the `field_wrapper_args`.
 
 ```erb
