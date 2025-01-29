@@ -13,6 +13,7 @@ field :title, as: :text
 ## Options
 
 <Option name="`as_html`">
+
 Displays the value as HTML on the `Index` and `Show` views. Useful when you need to link to another record.
 
 ```ruby
@@ -26,6 +27,7 @@ end
 
 
 <Option name="`protocol`">
+
 Render the value with a protocol prefix on the `Index` and `Show` views. So, for example, you can make a text field a `mailto` link very quickly.
 
 ```ruby{3}

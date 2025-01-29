@@ -81,6 +81,7 @@ The generated view components are basic text fields for now.
 You can customize them and add as much or as little content as needed. More on customization [below](#customize-the-views).
 
 <Option name="Use existent field template">
+
 There may be times when you want to duplicate an existing field and start from there.
 
 To achieve this behavior, use the `--field_template` argument and pass the original field as a value.

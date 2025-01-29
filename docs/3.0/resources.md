@@ -738,6 +738,7 @@ end
 </Option>
 
 <Option name="`self.components`">
+
 By default, for each view we render an component:
 
 [Index](views.html#Index) -> `Avo::Views::ResourceIndexComponent`<br>
@@ -824,6 +825,7 @@ end
 </Option>
 
 <Option name="`self.default_sort_column`">
+
 <VersionReq version="3.10.7" />
 
 By default, Avo sorts records on the <Index /> view by the `created_at` attribute. However, you can customize this behavior using the `default_sort_column` option in your resource file.
@@ -867,6 +869,7 @@ end
 </Option>
 
 <Option name="`self.default_sort_direction`">
+
 <VersionReq version="3.11.5" />
 
 By default, Avo sorts records in descending order of the [default sort column](./resources#self.default_sort_column). However, you can customize this using the `self.default_sort_direction` option in your resource file.
@@ -891,6 +894,7 @@ end
 </Option>
 
 <Option name="`self.controls_placement`">
+
 <VersionReq version="3.13.7" />
 
 :::warning
@@ -915,6 +919,7 @@ end
 </Option>
 
 <Option name="`self.pagination`">
+
 This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
 
 By setting `self.pagination[:type]` to `:countless`, you can disable the pagination count on the index page.

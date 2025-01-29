@@ -324,14 +324,17 @@ Both the `record` and the `user` will be available for you to access.
 <Image src="/assets/img/authorization/file_actions.png" width="472" height="93" alt="" />
 
 <Option name="`upload_{FIELD_ID}?`">
+
 Controls whether the user can upload the attachment.
 </Option>
 
 <Option name="`download_{FIELD_ID}?`">
+
 Controls whether the user can download the attachment.
 </Option>
 
 <Option name="`delete_{FIELD_ID}?`">
+
 Controls whether the user can destroy the attachment.
 </Option>
 

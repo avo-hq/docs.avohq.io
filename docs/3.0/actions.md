@@ -248,6 +248,7 @@ end
 </Option>
 
 <Option name="`turbo`">
+
 There are times when you don't want to perform the actions with Turbo. In such cases, turbo should be set to false.
 </Option>
 
@@ -326,6 +327,7 @@ end
 </Option>
 
 <Option name="`close_modal`">
+
 <VersionReq version="3.3.0" />
 
 This type of response becomes useful when you are working with a form and need to execute an action without redirecting, ensuring that the form remains filled as it is.
@@ -348,6 +350,7 @@ end
 </Option>
 
 <Option name="`do_nothing`">
+
 `do_nothing` is an alias for `close_modal`.
 
 ```ruby{7}
@@ -364,6 +367,7 @@ end
 </Option>
 
 <Option name="`navigate_to_action`">
+
 <VersionReq version="3.4.2" />
 
 You may want to redirect to another action. Here's an example of how to create a multi-step process, passing arguments from one action to another.
@@ -415,6 +419,7 @@ You can see this multi-step process in action by visiting the [avodemo](https://
 </Option>
 
 <Option name="`append_to_response`">
+
 <VersionReq version="3.10.3" />
 
 Avo action responses are in the `turbo_stream` format. You can use the `append_to_response` method to append additional turbo stream responses to the default response.
@@ -453,6 +458,7 @@ append_to_response -> {
 </Option>
 
 <Option name="`reload_records`">
+
 <VersionReq version="3.14.0" />
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/6b9ae6a3968c447f98ac4f9a161fe781?sid=17f08010-6a56-4e8c-8b80-692424327b55" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>

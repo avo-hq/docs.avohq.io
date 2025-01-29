@@ -272,10 +272,12 @@ end
 ```
 
 <Option name="`button_label`">
+
 This will change the label on the expand label.
 </Option>
 
 <Option name="`always_expanded`">
+
 You may opt-in to have them always expanded and have the button hidden.
 </Option>
 
@@ -544,6 +546,7 @@ This is possible due to a Ransack feature. To use it, you need to add the associ
 </Option>
 
 <Option name="`suggestions`">
+
 Suggestions work on filters that provide text input, enhancing the user experience by offering relevant options. This functionality is especially useful in scenarios where users might need guidance or where the filter values are numerous or complex.
 
 ##### Default value
@@ -746,6 +749,7 @@ end
 </Option>
 
 <Option name="`options`">
+
 <VersionReq version="3.10.10" />
 
 Customize the options **for select type filters**. **This is available only for select type filters** and determines the options visible in the select dropdown.

@@ -19,6 +19,7 @@ By default, Avo displays a few buttons (controls) for the user to use on the <In
 You can take over and customize them all using the `index_controls`, `show_controls`, `edit_controls`, and `row_controls` class attributes.
 
 <Option name="Show page">
+
 On the <Show /> view the default configuration is `back_button`, `delete_button`, `detach_button`, `actions_list`, and `edit_button`.
 
 To start customizing the controls, add a `show_controls` block and start adding the desired controls.
@@ -46,6 +47,7 @@ end
 </Option>
 
 <Option name="Edit page">
+
 On the <Edit /> view the default configuration is `back_button`, `delete_button`, `actions_list`, and `save_button`.
 
 To start customizing the controls, add a `edit_controls` block and start adding the desired controls.
@@ -68,6 +70,7 @@ end
 </Option>
 
 <Option name="Index page">
+
 On the <Index /> view the default configuration contains the `actions_list`, `attach_button`, and `create_button`.
 
 To start customizing the controls, add a `index_controls` block and start adding the desired controls.
@@ -88,6 +91,7 @@ end
 </Option>
 
 <Option name="Row controls">
+
 On the <Index /> view the on the end of each table row the default configuration contains the `order_controls` `show_button`, `edit_button`, `detach_button`, and `delete_button`.
 
 To start customizing the controls, add a `row_controls` block and start adding the desired controls.
@@ -120,6 +124,7 @@ A control is an item that you can place in a designated area. They can be one of
 You may use the following controls:
 
 <Option name="`back_button`">
+
 Links to a previous page. The link is not a `history.back()` action. It's computed based on the parameters sent by Avo. That ensures the user has consistent hierarchical progress through the app.
 
 #### Supported options
@@ -128,6 +133,7 @@ Links to a previous page. The link is not a `history.back()` action. It's comput
 </Option>
 
 <Option name="`delete_button`">
+
 Adds the appropriate destroy form. It will take into account your authorization policy rules.
 
 #### Supported options
@@ -136,6 +142,7 @@ Adds the appropriate destroy form. It will take into account your authorization 
 </Option>
 
 <Option name="`detach_button`">
+
 Adds the appropriate detach form. It's visible only on the association (`has_one`) page. It will take into account your authorization policy rules.
 
 #### Supported options
@@ -144,6 +151,7 @@ Adds the appropriate detach form. It's visible only on the association (`has_one
 </Option>
 
 <Option name="`actions_list`">
+
 A dropdown where the user can see and run all the actions assigned to that resource.
 
 #### Supported options
@@ -203,6 +211,7 @@ In addition to the `icon`, the `link_to` element can accept additional parameter
 </Option>
 
 <Option name="`edit_button`">
+
 Links to the record edit page.
 
 #### Supported options
@@ -211,6 +220,7 @@ Links to the record edit page.
 </Option>
 
 <Option name="`link_to`">
+
 Renders a link to a path set by you.
 
 #### Supported options
@@ -219,6 +229,7 @@ Renders a link to a path set by you.
 </Option>
 
 <Option name="`action`">
+
 Renders a button that triggers an action. You must provide it an [Action](./actions) class.
 
 #### Supported options
@@ -264,6 +275,7 @@ end
 :::
 
 <Option name="`default_controls`">
+
 There are times when you just want to add a link before or after the default controls and don't want to re-add them all.
 Avo's got you covered! `default_controls` to the rescue.
 
@@ -284,6 +296,7 @@ Some controls take options. Not all controls take all options.
 Example: The `link_to` control is the only one that will take the `target` option, but most other controls use the `class` option.
 
 <Option name="`title`">
+
 Sets the tooltip for that control.
 
 #### Possible values
@@ -292,6 +305,7 @@ Any string value.
 </Option>
 
 <Option name="`style`">
+
 Sets the `style` attribute for the [`Avo::ButtonComponent`](https://github.com/avo-hq/avo/blob/main/app/components/avo/button_component.rb).
 
 #### Possible values
@@ -300,6 +314,7 @@ Sets the `style` attribute for the [`Avo::ButtonComponent`](https://github.com/a
 </Option>
 
 <Option name="`color`">
+
 Sets the `color` attribute for the [`Avo::ButtonComponent`](https://github.com/avo-hq/avo/blob/main/app/components/avo/button_component.rb)
 
 #### Possible values
@@ -308,6 +323,7 @@ Can be any color of [Tailwind`s default color pallete](https://tailwindcss.com/d
 </Option>
 
 <Option name="`icon`">
+
 Sets the icon for that button.
 
 #### Possible values
@@ -316,6 +332,7 @@ Any [Heroicon](https://heroicons.com) you want. You must specify the style of th
 </Option>
 
 <Option name="`target`">
+
 Sets the target for that control. So whatever you pass here will be passed to the control.
 
 #### Possible values
@@ -324,6 +341,7 @@ Sets the target for that control. So whatever you pass here will be passed to th
 </Option>
 
 <Option name="`class`">
+
 Sets the classes for that control.
 
 #### Possible values

@@ -226,6 +226,7 @@ end
 </Option>
 
 <Option name="`all_resources`">
+
 Renders all resources.
 
 ```ruby

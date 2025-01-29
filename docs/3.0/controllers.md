@@ -25,6 +25,7 @@ In order to make your controllers more flexible, there are several overridable m
 For the `create` method, you can modify the `after_create_path`, the messages, and the actions both on success or failure.
 
 <Option name="`after_create_path`">
+
 Overriding this method, you can tell Avo what path to follow after a record was created with success.
 
 ```ruby
@@ -35,6 +36,7 @@ end
 </Option>
 
 <Option name="`create_success_action`">
+
 Override this method to create a custom response when a record was created with success.
 
 ```ruby
@@ -47,6 +49,7 @@ end
 </Option>
 
 <Option name="`create_fail_action`">
+
 Override this method to create a custom response when a record failed to be created.
 
 ```ruby
@@ -60,6 +63,7 @@ end
 </Option>
 
 <Option name="`create_success_message`">
+
 Override this method to change the message the user receives when a record was created with success.
 
 ```ruby
@@ -70,6 +74,7 @@ end
 </Option>
 
 <Option name="`create_fail_message`">
+
 Override this method to change the message the user receives when a record failed to be created.
 
 ```ruby
@@ -83,6 +88,7 @@ end
 For the `update` method, you can modify the `after_update_path`, the messages, and the actions both on success or failure.
 
 <Option name="`after_update_path`">
+
 Overriding this method, you can tell Avo what path to follow after a record was updated with success.
 
 ```ruby
@@ -93,6 +99,7 @@ end
 </Option>
 
 <Option name="`update_success_action`">
+
 Override this method to create a custom response when a record was updated with success.
 
 ```ruby
@@ -105,6 +112,7 @@ end
 </Option>
 
 <Option name="`update_fail_action`">
+
 Override this method to create a custom response when a record failed to be updated.
 
 ```ruby
@@ -118,6 +126,7 @@ end
 </Option>
 
 <Option name="`update_success_message`">
+
 Override this method to change the message the user receives when a record was updated with success.
 
 ```ruby
@@ -128,6 +137,7 @@ end
 </Option>
 
 <Option name="`update_fail_message`">
+
 Override this method to change the message the user receives when a record failed to be updated.
 
 ```ruby
@@ -141,6 +151,7 @@ end
 For the `destroy` method, you can modify the `after_destroy_path`, the messages, and the actions both on success or failure.
 
 <Option name="`after_destroy_path`">
+
 Overriding this method, you can tell Avo what path to follow after a record was destroyed with success.
 
 ```ruby
@@ -151,6 +162,7 @@ end
 </Option>
 
 <Option name="`destroy_success_action`">
+
 Override this method to create a custom response when a record was destroyed with success.
 
 ```ruby
@@ -163,6 +175,7 @@ end
 </Option>
 
 <Option name="`destroy_fail_action`">
+
 Override this method to create a custom response when a record failed to be destroyed.
 
 ```ruby
@@ -175,6 +188,7 @@ end
 </Option>
 
 <Option name="`destroy_success_message`">
+
 Override this method to change the message the user receives when a record was destroyed with success.
 
 ```ruby
@@ -185,6 +199,7 @@ end
 </Option>
 
 <Option name="`destroy_fail_message`">
+
 Override this method to change the message the user receives when a record failed to be destroyed.
 
 ```ruby
