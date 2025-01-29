@@ -1,7 +1,3 @@
----
-outline: [2,3]
----
-
 # Table View
 
 The table view is the default way to display resources in Avo. It provides a powerful, tabular layout that supports searching, sorting, filtering, and pagination out of the box.
@@ -23,7 +19,7 @@ By default, resource controls are positioned on the right side of record rows. H
 <VersionReq version="3.16.3" /> Avo provides configuration options that allow you to customize row controls placement, floating behavior, and visibility on hover either globally or individually for each resource.
 
 
-### Global configuration
+## Global configuration
 
 `resource_row_controls_config` option defines the default settings for row controls across all resources. These global configurations will apply to each resource unless explicitly overridden.
 
@@ -40,7 +36,7 @@ Avo.configure do |config|
 end
 ```
 
-### Resource configuration
+## Resource configuration
 
 `row_controls_config` option allows you to customize the row controls for a specific resource, overriding the global configuration.
 
