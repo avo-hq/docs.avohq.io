@@ -30,7 +30,8 @@ end
 
 For example, when you have two models, `User` and `SuperUser` with STI, when you call `User.all`, Rails will return an instance of `User` and an instance of `SuperUser`. That confuses Avo in producing the proper resource of `User`. That's why when you deal with STI, the final resource `Avo::Resources::SuperUser` should receive the underlying `model_class` so Avo knows which model it represents.
 
-```ruby{4}
+```ruby{5}
+# app/avo/resources/super_user.rb
 class Avo::Resources::SuperUser < Avo::BaseResource
   self.title = :name
   self.includes = []
