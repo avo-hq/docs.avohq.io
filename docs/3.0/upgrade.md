@@ -394,6 +394,8 @@ field :name,
 
   link_to resource.record.name, path, data: data
 end
+```
+
 </Option>
 
 <Option name="`resource.record` or `record` as `nil` on visibility blocks">
