@@ -145,6 +145,7 @@ const config = {
             {text: "Array Resources", link: "/3.0/array-resources.html"},
             {text: "Fields", link: "/3.0/fields.html"},
             {text: "Field options", link: "/3.0/field-options.html"},
+            {text: "Field discovery", link: "/3.0/field-discovery.html"},
             {text: "Controller configuration", link: "/3.0/controllers.html"},
             {text: "Record previews", link: "/3.0/record-previews.html"},
             {text: "Scopes", link: "/3.0/scopes.html"},
