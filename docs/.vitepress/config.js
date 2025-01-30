@@ -160,7 +160,7 @@ const config = {
         {
           text: "Views",
           items: [
-            {text: "Views", link: "/3.0/views.html"},
+            {text: "Overview", link: "/3.0/views.html"},
             {text: "Table view", link: "/3.0/table-view.html"},
             {text: "Grid view", link: "/3.0/grid-view.html"},
             {text: "Map view", link: "/3.0/map-view.html"},
