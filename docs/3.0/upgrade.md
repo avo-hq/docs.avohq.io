@@ -361,6 +361,8 @@ If you want to keep `Contained in` option on arrays and tags filters you should 
 First iteration of multiple action flux was using `redirect_to` with `turbo_frame: "actions_show"`. With the update to turbo 8 the redirect was giving some troubles and we decided that is time to improve this experience with a proper response type, [`navigate_to_action`](actions.html#navigate_to_action).
 
 If you have a multiple action flux implemented with `redirect_to` you should change it to [`navigate_to_action`](actions.html#navigate_to_action).
+
+
 </Option>
 
 <Option name="Action `link_arguments` method">
@@ -525,21 +527,29 @@ class Avo::Cards::ExampleAreaChart < Avo::Cards::ChartkickCard
 class Avo::Cards::ExampleBarChart < Avo::Cards::ChartkickCard
 # ...
 
+
 ```
+
 </Option>
 
 
+
 ## Upgrade from 3.0.1.beta22 to 3.0.1.beta23
+
 <Option name="Caching">
 
 Since there are many available cache stores and we were allowing only few we changed the way of computing the cache store to be used by Avo.
 
 One of our concerns was to maintain the status quo, but if you notice any caching issues there is a new configurable option [`config.cache_store`](cache#custom-selection) that allows you to tell Avo what `cache_store` to use.
 
+
 Check [cache page](cache) for more details.
+
 </Option>
 
+
 ## Upgrade from 3.0.1.beta8 to 3.0.1.beta9
+
 <Option name="Heading as field">
 
 Heading option changed declaration mode, one of the main reasons for this change is to be able to generate a clear `data-field-id` on the DOM
@@ -557,12 +567,16 @@ field :personal_information, as: :heading       # data-field-id == "personal_inf
 field :heading, as: :heading, label: "Contact"  # data-field-id == "heading"
 field :dev, as: :heading, as_html: true, label: '<div class="underline uppercase font-bold">DEV</div>'
 ```
+
 :::
+
 </Option>
 
 <Option name="Badge field `secondary` option renamed to `neutral`">
 
+
 We believe that the term `neutral` better reflects the intended use.
+
 :::code-group
 ```ruby {8} [Before]
 field :stage,
@@ -610,7 +624,9 @@ class Avo::Resources::User < Avo::BaseResource
     field :email, as: :gravatar, link_to_record: true
   end
 end
+:::
 ```
+:::
 </Option>
 
 ## Upgrade from 3.0.1.beta5 to 3.0.1.beta6
