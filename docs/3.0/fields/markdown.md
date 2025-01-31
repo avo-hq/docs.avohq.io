@@ -1,92 +1,82 @@
 ---
-version: '3.17'
+version: '3.17.0'
 license: community
+betaStatus: Beta
 ---
 
 # Markdown
 
+<Image src="/assets/img/fields/markdown/markdown-field.gif" alt="Markdown field" size="800x427" />
+
 :::info
-In Avo 3.17 we renamed the `markdown` field `easy_mde` and introduced this custom one.
+In Avo 3.17 we renamed the `markdown` field `easy_mde` and introduced this custom one based on the [Marksmith editor](https://github.com/avo-hq/marksmith).
+
+Please read the docs on the repo for more information on how it works.
 :::
 
 This field is inspired by the wonderful GitHub editor we all love and use.
 
-It supports applying styles to the markup and dropping files in the editor. The file will be taken over by Rails and persisted using Active Storage.
-
+It supports applying styles to the markup, dropping files in the editor, and using the [Media Library](./../media-library).
+The uploaded files will be taken over by Rails and persisted using Active Storage.
 
 ```ruby
 field :body, as: :markdown
 ```
 
 :::warning
-Please add these gems to your `Gemfile`.
+Please ensure you have these gems in your `Gemfile`.
 
 ```ruby
-gem "avo-markdown_field"
-gem "redcarpet"
+gem "marksmith"
 ```
 :::
 
-## Customize the parser & renderer
+## Supported features
+
+- [x] ActiveStorage file attachments
+- [x] [Media Library](./../media-library) integration
+- [x] Preview panel
+- [x] [Ready-to-use renderer](https://github.com/avo-hq/marksmith#built-in-preview-renderer)
+- [x] Text formatting
+- [x] Lists
+- [x] Links
+- [x] Images
+- [x] Tables
+- [x] Code blocks
+- [x] Headings
+
+## Customize the renderer
 
 There are two places where we parse the markdown into the HTML you see.
 
 1. In the controller
 2. In the <Show /> field component
 
-You may customize the renderer by overriding the implementation.
-
-### Everywhere
-
-Both parsers inherit from the same parser from the field. So you can override in the field and it will be visible everywhere.
+You may customize the renderer by overriding the model.
 
 ```ruby
-# config/initializers/avo.rb
+# app/models/marksmith/renderer.rb
 
-module Avo
-  module Fields
-    class MarkdownField < BaseField
-      def self.parser
-      # update this to your liking
-        renderer = ::Redcarpet::Render::HTML.new(hard_wrap: true)
-        ::Redcarpet::Markdown.new(renderer, lax_spacing: true, fenced_code_blocks: true, hard_wrap: true)
-      end
+require "redcarpet"
+
+module Marksmith
+  class Renderer
+    def renderer
+      ::Redcarpet::Markdown.new(
+        ::Redcarpet::Render::HTML,
+        tables: true,
+        lax_spacing: true,
+        fenced_code_blocks: true,
+        space_after_headers: true,
+        hard_wrap: true,
+        autolink: true,
+        strikethrough: true,
+        underline: true,
+        highlight: true,
+        quote: true,
+        with_toc_data: true
+      )
     end
-  end
-end
-```
-
-### In the controller
-
-```ruby
-module Avo
-  class MarkdownPreviewsController < ApplicationController
-    def create
-      # fetch the resource to get some information off of it
-      resource_class = Avo.resource_manager.get_resource_by_name(params[:resource_class])
-      # initialize it
-      resource = resource_class.new view: :edit
-      # run field detection
-      resource.detect_fields
-      # fetch the field
-      field = resource.get_field(params[:field_id])
-      # render the result
-      @result = field.parser.render(params[:body])
-    end
-  end
-end
-```
-
-### In the `ShowFieldComponent`
-
-```ruby
-# app/components/avo/fields/markdown_field/show_component.rb
-
-class Avo::Fields::MarkdownField::ShowComponent < Avo::Fields::ShowComponent
-  def parsed_body
-    renderer = Redcarpet::Render::HTML.new(hard_wrap: true)
-    parser = Redcarpet::Markdown.new(renderer, lax_spacing: true, fenced_code_blocks: true, hard_wrap: true)
-    parser.render(@field.value)
   end
 end
 ```

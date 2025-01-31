@@ -13,6 +13,9 @@ const config = {
     image: {
       lazyLoading: true,
     },
+    config: (md) => {
+        md.use(require('markdown-it-task-lists'))
+    },
   },
   head: [
     [
@@ -232,6 +235,12 @@ const config = {
             {text: "Custom asset pipeline", link: "/3.0/custom-asset-pipeline.html"},
             {text: "TailwindCSS integration", link: "/3.0/tailwindcss-integration.html"},
           ],
+        },
+        {
+          text: "Media Library",
+          items: [
+            {text: "Overview", link: "/3.0/media-library.html"},
+          ]
         },
         {
           text: "Performance",

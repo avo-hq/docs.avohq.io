@@ -12,18 +12,15 @@ field :body, as: :trix
 
 The `Trix` field renders a [WYSIWYG Editor](https://trix-editor.org/) and can be associated with a `string` or `text` column in the database. The value stored in the database will be the editor's resulting `HTML` content.
 
+It supports [ActiveStorage](https://guides.rubyonrails.org/active_storage_overview.html) file attachments, [ActionText](https://guides.rubyonrails.org/action_text_overview.html), and seamlessly integrates with the [Media Library](./../media-library).
+
 <Image src="/assets/img/fields/trix.jpg" width="877" height="193" alt="Trix field" />
 
 Trix field is hidden from the `Index` view.
 
 ## Options
 
-<Option name="`always_show`">
-
-By default, the content of the `Trix` field is not visible on the `Show` view; instead, it's hidden under a `Show Content` link that, when clicked, displays the content. You can set Markdown to display the content by setting `always_show` to `true`.
-
-<!-- @include: ./../common/default_boolean_false.md-->
-</Option>
+<!-- @include: ./../common/field_options/always_show.md-->
 
 <Option name="`attachments_disabled`">
 
