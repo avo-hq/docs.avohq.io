@@ -1,10 +1,12 @@
 ---
 outline: [2,3]
+version: "3.17.0"
+license: community
+betaStatus: Beta
 ---
 
 # Field Discovery
 
-<VersionReq version="3.17.0">
 
 `discover_columns` and `discover_associations` automatically detect and configure fields for your Avo resources based on your model's database structure.
 
