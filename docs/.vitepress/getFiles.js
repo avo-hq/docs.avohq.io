@@ -24,6 +24,9 @@ const getFiles = (directory, version) => {
       if (text === 'Easy mde') {
         text = 'Easy MDE'
       }
+      if (text === 'Tip tap') {
+        text = 'Tip Tap'
+      }
       const link = `/${version}/${directory}/${path.replace('.md', '.html')}`
       return {text, link}
     })

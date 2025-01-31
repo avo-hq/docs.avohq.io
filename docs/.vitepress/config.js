@@ -233,6 +233,12 @@ const config = {
           ],
         },
         {
+          text: "Media Library",
+          items: [
+            {text: "Overview", link: "/3.0/media-library.html"},
+          ]
+        },
+        {
           text: "Performance",
           items: [
             {text: "Cache", link: "/3.0/cache.html"},
