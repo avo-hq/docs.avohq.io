@@ -4,10 +4,13 @@ outline: [2,3]
 
 # Field Discovery
 
+<VersionReq version="3.17.0">
+
 `discover_columns` and `discover_associations` automatically detect and configure fields for your Avo resources based on your model's database structure.
 
-```rb
-class UserResource < Avo::BaseResource
+```rb{6-7}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
   # ...
 
   def fields
@@ -23,8 +26,9 @@ end
 
 Specify which fields should be discovered, excluding all others.
 
-```rb
-class PostResource < Avo::BaseResource
+```rb{6-7}
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
   # ...
 
   def fields
@@ -48,8 +52,9 @@ Array of symbols representing column or association names
 
 Specify which fields should be excluded from discovery.
 
-```rb
-class PostResource < Avo::BaseResource
+```rb{6-7}
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
   # ...
 
   def fields
@@ -73,9 +78,11 @@ Array of symbols representing column or association names
 
 Override how specific column names are mapped to field types globally.
 
-```rb
+```rb{5-8}
 # config/initializers/avo.rb
 Avo.configure do |config|
+  # ...
+
   config.column_names_mapping = {
     published_at: { field: :date_time, timezone: 'UTC' },
     role: { field: :select, enum: -> { User.roles } }
@@ -97,9 +104,11 @@ Hash mapping column names to field configurations
 
 Override how database column types are mapped to field types globally.
 
-```rb
+```rb{5-8}
 # config/initializers/avo.rb
 Avo.configure do |config|
+  # ...
+
   config.column_types_mapping = {
     jsonb: { field: :code, language: 'json' },
     decimal: { field: :number, decimals: 2 }
@@ -121,8 +130,9 @@ Hash mapping database column types to field configurations
 
 ### Basic Discovery
 
-```rb
-class UserResource < Avo::BaseResource
+```rb{6-7}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
   # ...
 
   def fields
@@ -136,8 +146,9 @@ end
 
 This will add the provided options to every discovered field or association. This is particularly useful when having duplicative configurations across many fields.
 
-```rb
-class PostResource < Avo::BaseResource
+```rb{6-7}
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
   # ...
 
   def fields
@@ -149,8 +160,9 @@ end
 
 ### Combining Manual and Discovered Fields
 
-```rb
-class ProjectResource < Avo::BaseResource
+```rb{6,8-9,11}
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
   # ...
 
   def fields
@@ -191,5 +203,3 @@ The following associations are automatically configured:
 - `acts-as-taggable-on :tags` → `:tags`
 
 The full, up-to-date list can be found [here](https://github.com/avo-hq/avo/blob/main/lib/avo/mappings.rb)
-
-<Demo link="https://avodemo.com/resources/field_discovery_users" label="See the demo" />
