@@ -6,6 +6,8 @@ betaStatus: Beta
 
 # Markdown
 
+<Image src="/assets/img/fields/markdown/markdown-field.gif" alt="Markdown field" size="800x427" />
+
 :::info
 In Avo 3.17 we renamed the `markdown` field `easy_mde` and introduced this custom one based on the [Marksmith editor](https://github.com/avo-hq/marksmith).
 
@@ -14,7 +16,7 @@ Please read the docs on the repo for more information on how it works.
 
 This field is inspired by the wonderful GitHub editor we all love and use.
 
-It supports applying styles to the markup, dropping files in the editor, and using the [Media Library](./media-library).
+It supports applying styles to the markup, dropping files in the editor, and using the [Media Library](./../media-library).
 The uploaded files will be taken over by Rails and persisted using Active Storage.
 
 ```ruby
@@ -28,6 +30,20 @@ Please ensure you have these gems in your `Gemfile`.
 gem "marksmith"
 ```
 :::
+
+## Supported features
+
+- [x] ActiveStorage file attachments
+- [x] [Media Library](./../media-library) integration
+- [x] Preview panel
+- [x] [Ready-to-use renderer](https://github.com/avo-hq/marksmith#built-in-preview-renderer)
+- [x] Text formatting
+- [x] Lists
+- [x] Links
+- [x] Images
+- [x] Tables
+- [x] Code blocks
+- [x] Headings
 
 ## Customize the renderer
 

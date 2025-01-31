@@ -10,7 +10,7 @@ If you run an asset-intensive, having a place to view all those asses would be g
 The Media Library has two goals in mind.
 
 1. Browse and manage all your assets
-2. Use it to inject assets in all three of Avo's rich text editors ([trix]('./fields/trix'), [rhino]('./fields/rhino'), and [markdown]('./fields/markdown')).
+2. Use it to inject assets in all three of Avo's rich text editors ([trix](./fields/trix), [rhino](./fields/rhino), and [markdown](./fields/markdown)).
 
 :::warning
 The Media Library feature is still in alpha and future releases might contain breaking changes so keep an eye out for the upgrade guide.
