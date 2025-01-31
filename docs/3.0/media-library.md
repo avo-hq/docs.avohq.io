@@ -5,6 +5,8 @@ betaStatus: Alpha
 
 # Media Library
 
+<Image src="/assets/img/3_0/media-library/media-library.gif" alt="Media Library" size="800x453" />
+
 If you run an asset-intensive, having a place to view all those asses would be great. It's becoming easier with Avo and it's Media Library feature.
 
 The Media Library has two goals in mind.
@@ -76,6 +78,8 @@ end
 ## Use it with the rich text editors
 
 The Media Library will seamlessly integrate with all the rich text editors.
+
+<Image src="/assets/img/3_0/media-library/media-library-rhino.gif" alt="Media Library with Rhino field" size="800x453" />
 
 ```ruby
 field :body, as: :trix
