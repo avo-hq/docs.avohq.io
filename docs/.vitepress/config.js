@@ -13,6 +13,9 @@ const config = {
     image: {
       lazyLoading: true,
     },
+    config: (md) => {
+        md.use(require('markdown-it-task-lists'))
+    },
   },
   head: [
     [

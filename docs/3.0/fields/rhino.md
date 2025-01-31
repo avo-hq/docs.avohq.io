@@ -13,7 +13,7 @@ field :body, as: :rhino
 
 Rhino is based on [TipTap](https://tiptap.dev/) which is a powerful and flexible editor.
 
-The Rhino field supports [ActiveStorage](https://guides.rubyonrails.org/active_storage_overview.html) file attachments and seamlessly integrates with the [Media Library](./media-library).
+It supports [ActiveStorage](https://guides.rubyonrails.org/active_storage_overview.html) file attachments, [ActionText](https://guides.rubyonrails.org/action_text_overview.html), and seamlessly integrates with the [Media Library](./../media-library).
 
 ## Options
 
