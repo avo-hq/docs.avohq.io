@@ -10,12 +10,21 @@ You'll find all the new changes in the [Avo 2 to Avo 3 upgrade section](./avo-2-
 
 ## New features & big changes
 
+##### Enterprise features
+<LicenseReq license="enterprise" size="xs" />
+
+- Audit Logging
+- Role-Based Access Control
+
 ##### Advanced license features
 <LicenseReq license="advanced" size="xs" />
 
 - [Dynamic filters](./dynamic-filters)
+- [Custom dynamic filters](./dynamic-filters#custom-dynamic-filters)
 - [Custom controls on everywhere](./customizable-controls) (<Index />, <Show />, <Edit />,and `Row`)
 - [Resource scopes](./scopes)
+- [Kanban boards](./kanban-boards)
+- Collaboration
 
 ##### Pro license features
 <LicenseReq license="pro" size="xs" />
@@ -39,20 +48,15 @@ You'll find all the new changes in the [Avo 2 to Avo 3 upgrade section](./avo-2-
 - [Panel layout improvements](./resource-panels.html)
 - [Action link generator](./actions.html#action-link)
 - [StimulusJS in actions](./actions.html#stimulusjs)
+- [Array Adapter](https://docs.avohq.io/3.0/array-resources.html)
+- [GitHub-style Markdown editor](./fields/markdown.html)
+- Avo Meta
 - Multiple actions flows
 - Intelligent resource title
 
 ##### Coming soon
 
 - Theming
-- Audit logs (Enterprise feature)
-- Developer experience improvements
-  - linter
-  - VSCode extension
-  - improved error messaging
-- Resource adapters
-- Customizable dynamic filters
-- Custom resource adapters
 - Dynamic fields
 - Nested record creation
 - Resource tools in fields
