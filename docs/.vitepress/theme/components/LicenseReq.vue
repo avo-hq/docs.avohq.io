@@ -15,12 +15,14 @@ const links = {
   kanban: "https://savvycal.com/avo-hq/dev-chat-24",
   audit_logging: "https://savvycal.com/avo-hq/dev-chat-24",
   custom: "https://savvycal.com/avo-hq/dev-chat-24",
+  enterprise: "https://savvycal.com/avo-hq/discovery-call-ent",
 };
 const labels = {
   community: "Community",
   pro: "Pro",
   advanced: "Advanced",
   kanban: "Kanban",
+  enterprise: "Enterprise",
   audit_logging: "Audit logging",
   custom: "Custom",
 };
@@ -41,6 +43,7 @@ const label = computed(() => labels[license.value]);
       'bg-fuchsia-500 hover:bg-fuchsia-600': license == 'kanban',
       'bg-teal-500 hover:bg-teal-600': license == 'audit_logging',
       'bg-rose-500 hover:bg-rose-600': license == 'custom',
+      'bg-yellow-300 hover:bg-yellow-400 !text-black': license == 'enterprise',
       'text-xs px-1 py-px': size == 'xs',
       'text-sm px-2 py-1': size == 'sm',
     }"
