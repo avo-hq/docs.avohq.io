@@ -143,3 +143,19 @@ end
 ```
 
 </Option>
+
+<Option name="`lazy_load`">
+
+<VersionReq version="3.17.0" />
+
+The `lazy_load` option enables deferred loading of tab content, improving performance by fetching data only when the tab is clicked. By default, `lazy_load` is set to `false`, ensuring that all tabs load immediately. However, in form views, this option is automatically disabled to prevent data loss during form submission.
+
+```ruby{2}
+tabs do
+  tab "Address", lazy_load: true do
+    # ...
+  end
+end
+```
+
+</Option>
