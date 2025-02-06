@@ -269,6 +269,7 @@ const config = {
             {text: "<code>Avo::Services::EncryptionService</code>", link: "/3.0/encryption-service.html"},
             {text: "Select All", link: "/3.0/select-all.html"},
             {text: "Icons", link: "/3.0/icons.html"},
+            {text: "Reserved model names and routes", link: "/3.0/internal-model-names.html"},
           ],
         },
         {
