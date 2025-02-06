@@ -11,8 +11,6 @@ The `Select` field renders a `select` field.
 field :type, as: :select, options: { 'Large container': :large, 'Medium container': :medium, 'Tiny container': :tiny }, display_with_value: true, placeholder: 'Choose the type of the container.'
 ```
 
-## Options
-
 <Option name="`options`">
 
 A `Hash` representing the options that should be displayed in the select. The keys represent the labels, and the values represent the value stored in the database.
@@ -25,7 +23,26 @@ The options get cast as `ActiveSupport::HashWithIndifferentAccess` objects if th
 
 #### Possible values
 
-`{ 'Large container': :large, 'Medium container': :medium, 'Tiny container': :tiny }` or any other `Hash`.
+- `{ 'Large container': :large, 'Medium container': :medium, 'Tiny container': :tiny }` or any other `Hash`.
+- A lambda function that returns a `Hash` (computed options)
+
+### Computed options
+
+You may want to compute the values on the fly for your `Select` field. You can use a lambda for that where you have access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
+
+```ruby{5-7}
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  field :type,
+    as: :select,
+    options: -> do
+      record.get_types_from_the_database.map { |type| [type.name, type.id] }
+    end,
+    placeholder: 'Choose the type of the container.'
+end
+```
+
+The output value must be a supported [`options_for_select`](https://apidock.com/rails/ActionView/Helpers/FormOptionsHelper/options_for_select) value.
 </Option>
 
 <Option name="`enum`">
@@ -75,8 +92,6 @@ end
 
 <Option name="`include_blank`">
 
-## Include blank
-
 The `Select` field also has the `include_blank` option. That can have three values.
 
 If it's set to `false` (default), it will not show any blank option but only the options you configured.
@@ -103,20 +118,29 @@ end
 `nil`, `true`, `false`, or a string to be used as the first option.
 </Option>
 
-## Computed options
+<Option name="`multiple`">
 
-You may want to compute the values on the fly for your `Select` field. You can use a lambda for that where you have access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
+<VersionReq version="3.17.3" />
 
-```ruby{5-7}
+If it's set to `false` (default), it will only allow selecting a single option from the list.
+
+If it's set to `true`, it will enable multiple selections, allowing users to choose more than one option at a time.
+
+```ruby{5}
 # app/avo/resources/project.rb
 class Avo::Resources::Project < Avo::BaseResource
-  field :type,
+  field :categories,
     as: :select,
-    options: -> do
-      record.get_types_from_the_database.map { |type| [type.name, type.id] }
-    end,
-    placeholder: 'Choose the type of the container.'
+    multiple: true
 end
 ```
 
-The output value must be a supported [`options_for_select`](https://apidock.com/rails/ActionView/Helpers/FormOptionsHelper/options_for_select) value.
+#### Default
+
+`false`
+
+#### Possible values
+
+`true` or `false`
+
+</Option>
