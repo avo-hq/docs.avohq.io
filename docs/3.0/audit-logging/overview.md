@@ -58,7 +58,7 @@ After installation, audit logging is disabled by default. To enable it, navigate
 
 Set `config.enabled` to `true` within this configuration.
 
-```ruby{7-9}
+```ruby
 # config/initializers/avo.rb # [!code focus]
 
 Avo.configure do |config|
