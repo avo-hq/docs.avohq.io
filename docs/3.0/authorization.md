@@ -409,6 +409,32 @@ end
 
 Now, Avo will use `avo_index?` instead of `index?` to manage the **Index** view authorization.
 
+## Use Resource's Policy to authorize custom actions
+
+It may be necessary to authorize a specific field or custom action of a resource using a policy class rather than defining the authorization logic directly within the resource class. By doing so, we can delegate control to the policy class, ensuring a cleaner and more maintainable authorization structure.
+
+:::code-group
+```ruby [app/resources/product.rb]{8}
+field :amount,
+      as: :money,
+      currencies: %w[USD],
+      sortable: true,
+      filterable: true,
+      copyable: true,
+      # define ability to change the amount in policy class instead of doing it here
+      disabled: -> { !@resource.authorization.authorize_action(:amount?, raise_exception: false) }
+```
+```ruby [app/policies/product_policy.rb]{2-4}
+# Define ability to change the amount in Product Policy
+def amount?
+  user.admin?
+end
+
+```
+:::
+
+
+
 ## Raise errors when policies are missing
 
 The default behavior of Avo is to allow missing policies for resources silently. So, if you have a `User` model and a `Avo::Resources::User` but don't have a `UserPolicy`, Avo will not raise errors regarding missing policies and authorize that resource.
