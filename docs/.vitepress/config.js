@@ -219,7 +219,7 @@ const config = {
         {
           text: "Collaboration",
           items: [
-            {text: "Overview", link: "/3.0/kanban-boards.html"},
+            {text: "Overview", link: "/3.0/collaboration.html"},
           ],
         },
         {
