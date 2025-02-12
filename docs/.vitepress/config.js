@@ -211,6 +211,24 @@ const config = {
           ],
         },
         {
+          text: "Kanban board",
+          items: [
+            {text: "Overview", link: "/3.0/kanban-boards.html"},
+          ],
+        },
+        {
+          text: "Collaboration",
+          items: [
+            {text: "Overview", link: "/3.0/kanban-boards.html"},
+          ],
+        },
+        {
+          text: "Audit Logging",
+          items: [
+            {text: "Overview", link: "/3.0/audit-logging/overview.html"},
+          ],
+        },
+        {
           text: "Filters",
           items: [
             {text: "Overview", link: "/3.0/filters.html"},

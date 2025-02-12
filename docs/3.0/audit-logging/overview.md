@@ -1,5 +1,5 @@
 ---
-license: audit_logging
+license: enterprise
 betaStatus: Beta
 outline: [2,3]
 ---
