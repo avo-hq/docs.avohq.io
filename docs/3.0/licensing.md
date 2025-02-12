@@ -1,7 +1,7 @@
 # Licensing
 
 Avo runs on the [Open-Core model](https://en.wikipedia.org/wiki/Open-core_model). The **Community** edition is free to use and works best for personal, hobby, and small commercial projects.
-There are a couple of paid tiers (**Pro**, **Business**, and **Enterprise**) that give you more features, more customization, a higher level of control, and more support.
+There are a couple of paid tiers (**Pro**, **Advanced**, and **Enterprise**) that give you more features, more customization, a higher level of control, and more support.
 
 ## Community vs. Paid
 
@@ -17,16 +17,12 @@ The **Pro** tier comes with [Advanced Authorization](./authorization.html) using
 
 </Option>
 
-<Option name="Business">
+<Option name="Advanced">
 
-The **Business** tier is a pick-and-choose plan which has a few features and add-ons to offer like [Customizable Controls](./customizable-controls.html), [Resource Scopes](./scopes.html), [Dynamic Filters](./dynamic-filters.html), [Kanban Boards](kanban-boards.html), Dynamic Fields, and Collaboration.
-In order to get a quote on the **Business** features, please [get in touch](https://avohq.io/pricing) with us.
+The **Advanced** tier is a pick-and-choose plan which has a few features and add-ons to offer like [Customizable Controls](./customizable-controls.html), [Resource Scopes](./scopes.html), [Dynamic Filters](./dynamic-filters.html), [Kanban Boards](kanban-boards.html), Dynamic Fields, Collaboration, or White Labeling.
+In order to get a quote on the **Advanced** features, please [get in touch](https://savvycal.com/avo-hq/discovery-call-advanced) with us.
 
 </Option>
-
-:::info
-The **Advanced tier** has been retired in December 2024.
-:::
 
 The features are separated by their level of complexity and maintenance needs. Selling the Avo Pro edition as a paid upgrade and enables us to fund this business and work on it full-time. That way, Avo improves over time, helping developers with more features and customization options.
 
