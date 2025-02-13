@@ -322,7 +322,7 @@ class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
 end
 ```
 
-The blocks are executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent` and `arguments`
+The blocks are executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent`, `arguments` and `result_data`.
 
 ## Partial card
 
