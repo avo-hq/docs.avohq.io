@@ -385,12 +385,6 @@ Now, all fields will have the stacked layout throughout your app.
 
 ## Field options
 
-<Option name="`use_resource`">
-
-<!-- TODO: this -->
-WIP
-</Option>
-
 <Option name="`components`">
 
 The field's `components` option allows you to customize the view components used for rendering the field in all, `index`, `show` and `edit` views. This provides you with a high degree of flexibility.
