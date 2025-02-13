@@ -669,3 +669,23 @@ For detailed guidance, refer to the [Rails session store configuration](https://
 
 By adopting the `persistence` configuration with a suitable session store, you can ensure a seamless user experience.
 </Option>
+
+<Option name="alert_dismiss_time" default="5000">
+
+Specifies the duration (in milliseconds) for which alerts remain visible before automatically dismissing.
+A lower value results in quicker dismissal, while a higher value keeps the alert on screen for longer.
+
+### Default value
+
+`5000`
+
+### Example
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.alert_dismiss_time = 8000
+end
+```
+
+</Option>
