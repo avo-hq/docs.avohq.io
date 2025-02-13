@@ -1,6 +1,6 @@
 ---
-license: kanban
-betaStatus: Alpha 🧪 (experimental)
+license: Add-on
+betaStatus: Beta
 outline: [2,3]
 ---
 
