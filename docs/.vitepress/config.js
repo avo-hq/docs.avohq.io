@@ -153,12 +153,18 @@ const config = {
             {text: "Record previews", link: "/3.0/record-previews.html"},
             {text: "Scopes", link: "/3.0/scopes.html"},
             {text: "Records reordering", link: "/3.0/records-reordering.html"},
-            {text: "Resource sidebar", link: "/3.0/resource-sidebar.html"},
-            {text: "Resource panels", link: "/3.0/resource-panels.html"},
-            {text: "Resource tabs", link: "/3.0/tabs.html"},
             {text: "Discreet information", link: "/3.0/discreet-information.html"},
             {text: "Customizable controls", link: "/3.0/customizable-controls.html"},
             {text: "Cover and Profile Photos", link: "/3.0/cover-and-profile-photos.html"},
+          ],
+        },
+        {
+          text: "Layout",
+          items: [
+            {text: "Panels", link: "/3.0/resource-panels.html"},
+            {text: "Rows", link: "/3.0/resource-rows.html"},
+            {text: "Sidebars", link: "/3.0/resource-sidebar.html"},
+            {text: "Tabs", link: "/3.0/tabs.html"},
           ],
         },
         {
