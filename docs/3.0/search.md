@@ -309,47 +309,44 @@ In some cases, you might need to search for records based on attributes of assoc
 
 Assuming you have two models, `Application` and `Client`, with the following associations:
 
-```ruby
-  class Application < ApplicationRecord
-    belongs_to :client
-  end
+```ruby{3,8}
+# app/models/application.rb
+class Application < ApplicationRecord
+  belongs_to :client
+end
 
-  class Client < ApplicationRecord
-    has_many :applications
-  end
+# app/models/client.rb
+class Client < ApplicationRecord
+  has_many :applications
+end
 ```
 
 You can perform a search on `Application` records based on attributes of the associated `Client`. For example, searching by the client's email, name, or phone number:
 
-```ruby{5,10-14}
-  class Application < ApplicationRecord
-    self.search = {
-      query: lambda {
-        query
-        	.joins(:client)
-        	.ransack(
-	          id_eq: params[:q],
-	          name_cont: params[:q],
-	          workflow_name_cont: params[:q],
-	          client_id_eq: params[:q],
-	          client_first_name_cont: params[:q],
-	          client_last_name_cont: params[:q],
-	          client_email_cont: params[:q],
-	          client_phone_number_cont: params[:q],
-	          m: 'or'
+```ruby{6,11-15}
+# app/avo/resources/application.rb
+class Avo::Resources::Application < Avo::BaseResource
+  self.search = {
+    query: -> {
+      query
+        .joins(:client)
+        .ransack(
+          id_eq: params[:q],
+          name_cont: params[:q],
+          workflow_name_cont: params[:q],
+          client_id_eq: params[:q],
+          client_first_name_cont: params[:q],
+          client_last_name_cont: params[:q],
+          client_email_cont: params[:q],
+          client_phone_number_cont: params[:q],
+          m: 'or'
         ).result(distinct: false)
-      },
-      item: lambda {
-        {
-          title: record.external_client_id,
-          description: "#{record.client.name}, #{record.client.email}"
-        }
-      }
     }
-  end
+  }
+end
 ```
 
-In the above example, ransack is used to search for `Application` records based on various attributes of the associated `Client`, such as client_email_cont and client_phone_number_cont. The joins method is used to join the applications table with the clients table to perform the search efficiently.
+In the above example, ransack is used to search for `Application` records based on various attributes of the associated `Client`, such as `client_email_cont` and `client_phone_number_cont`. The joins method is used to join the applications table with the clients table to perform the search efficiently.
 
 This approach allows for flexible searching within associations, enabling you to find records based on related model attributes.
 
