@@ -17,7 +17,7 @@ field :preview, as: :preview
 
 The fields shown in the preview popup are configured similarly to how you [configure the visibility in the different views](./../resources#views).
 
-When you want to display a field in the peview popup simply call the `show_on :preview` option on the field.
+When you want to display a field in the preview popup simply call the `show_on :preview` option on the field.
 
 ```ruby
   field :name, as: :text, show_on :preview
