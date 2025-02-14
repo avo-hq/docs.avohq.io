@@ -194,7 +194,6 @@ end
 To fully understand this section, you should be familiar with the [`stacked`](./field-wrappers.html#stacked) field option and [`resource panels`](./resource-panels.html). These concepts will help you structure and customize your fields effectively.
 :::
 
-
 The `row` DSL allows you to group multiple fields horizontally within a [`panel`](./resource-panels.html#computed-panels-vs-manual-customization). This is useful for organizing related fields in a structured layout.
 
 To enhance readability and maintain a well-organized UI, it is recommended to use the [`stacked`](./field-wrappers.html#stacked) option for fields inside rows.
