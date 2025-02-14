@@ -21,15 +21,15 @@ gem "avo-rhino_field", "0.0.12.tw4"
 Add the appropriate entry to your `Gemfile`, depending on your tier:
 ```ruby
 # Avo Community
-gem "avo", "3.17.5.tw4"
+gem "avo", "3.17.6.tw4"
 
 # Avo Pro
-gem "avo", "3.17.5.tw4"
-gem "avo-pro", "3.17.5.tw4", source: "https://packager.dev/avo-hq/"
+gem "avo", "3.17.6.tw4"
+gem "avo-pro", "3.17.6.tw4", source: "https://packager.dev/avo-hq/"
 
 # Avo Advanced
-gem "avo", "3.17.5.tw4"
-gem "avo-advanced", "3.17.5.tw4", source: "https://packager.dev/avo-hq/"
+gem "avo", "3.17.6.tw4"
+gem "avo-advanced", "3.17.6.tw4", source: "https://packager.dev/avo-hq/"
 ```
 
 To report any issue please use [this PR](https://github.com/avo-hq/avo/pull/3632).
