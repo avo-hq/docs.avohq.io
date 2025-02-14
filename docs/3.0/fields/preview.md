@@ -22,3 +22,8 @@ When you want to display a field in the peview popup simply call the `show_on :p
 ```ruby
   field :name, as: :text, show_on :preview
 ```
+
+## Authorization
+
+
+Since version <Version version="3.18.0" /> the preview request authorization is controller with the [`preview?` policy method](./../authorization.html#preview).
