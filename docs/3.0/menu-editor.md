@@ -227,29 +227,43 @@ end
 
 <Option name="`all_resources`">
 
-Renders all resources.
+Renders all resources, except those explicitly excluded.
+
+#### Arguments:
+- `exclude`: *(Array, optional)* – A list of resource names to be excluded.
+
+#### Example:
 
 ```ruby
 section "App", icon: "heroicons/outline/beaker" do
   group "Resources", icon: "resources" do
-    all_resources
+    all_resources exclude: [:users, :orders]
   end
 end
 ```
+
+In the example above, all resources will be rendered except `Avo::Resources::Users` and `Avo::Resources::Orders`.
 
 </Option>
 
 <Option name="`all_dashboards`">
 
-Renders all dashboards.
+Renders all dashboards, except those explicitly excluded.
+
+#### Arguments:
+- `exclude`: *(Array, optional)* – A list of dashboard names to be excluded.
+
+#### Example:
 
 ```ruby
 section "App", icon: "heroicons/outline/beaker" do
   group "Dashboards", icon: "dashboards" do
-    all_dashboards
+    all_dashboards exclude: [:sales, :analytics]
   end
 end
 ```
+
+In this example, all dashboards will be rendered except `Avo::Resources::Sales` and `Avo::Resources::Analytics`.
 
 </Option>
 
