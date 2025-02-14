@@ -1,5 +1,18 @@
 ### Contributing
 
+#### Run Avo Docs Site Locally
+
+Avo uses [VitePress](https://vitepress.dev/guide/getting-started) to generate the docs site.
+
+To spin up a local server, run:
+
+```bash
+yarn install && yarn dev
+```
+
+The site will be available on `http://localhost:3011/`
+
+
 #### Field docs structure
 
 We begin the file with the name of the field. Next we write the field declaration and a short description of what the field does. Next we should attach an image or gif with it.
