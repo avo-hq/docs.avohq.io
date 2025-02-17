@@ -162,7 +162,7 @@ const config = {
           text: "Layout",
           items: [
             {text: "Panels", link: "/3.0/resource-panels.html"},
-            {text: "Rows", link: "/3.0/resource-rows.html"},
+            {text: "Clusters", link: "/3.0/resource-clusters.html"},
             {text: "Sidebars", link: "/3.0/resource-sidebar.html"},
             {text: "Tabs", link: "/3.0/tabs.html"},
           ],
