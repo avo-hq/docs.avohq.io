@@ -4,6 +4,34 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade to 3.18.0
+
+<Option name="Preview Policy">
+
+As of <Version version="3.18.0" />, a new policy method is available: `preview?`.
+
+This method determines whether a preview request is authorized.
+
+**Breaking Change:** Previously, the preview endpoint was always authorized.
+Now, access is denied unless the `preview?` policy method explicitly returns `true`.
+
+### Steps to Update
+
+To maintain the previous behavior of preview fields, add the `preview?`
+method returning `true` in your base policy class:
+
+```ruby
+# app/policies/application_policy.rb
+class ApplicationPolicy
+  def preview? = true
+end
+```
+
+You can now refine this method to restrict access for specific users or even default it to `false`. The example above simply ensures that behavior remains unchanged after upgrading.
+
+</Option>
+
+
 ## Upgrade from 3.16.2 to 3.16.3
 
 <Option name="Row controls configuration">
