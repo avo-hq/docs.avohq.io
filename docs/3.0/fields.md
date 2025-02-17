@@ -188,7 +188,6 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-
 ## Field Types
 
 <ul>
