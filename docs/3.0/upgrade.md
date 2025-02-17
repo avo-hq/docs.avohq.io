@@ -31,6 +31,40 @@ You can now refine this method to restrict access for specific users or even def
 
 </Option>
 
+<Option name="Deprecation of `row`">
+
+The `row` DSL has been available but undocumented for some time. As of <Version version="3.18.0" />, it has been officially deprecated in favor of `cluster`, which is now properly documented [here](./resource-clusters.html).
+
+### Steps to Update
+
+Replace all `row do` with `cluster do`.
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::Person < Avo::BaseResource
+  def fields
+    panel "Address" do
+      row do # [!code --]
+      cluster do # [!code ++]
+        field :street_address, stacked: true do
+          "1234 Elm Street"
+        end
+
+        field :city, stacked: true do
+          "Los Angeles"
+        end
+
+        field :zip_code, stacked: true do
+          "15234"
+        end
+      end
+    end
+  end
+end
+```
+
+</Option>
+
 
 ## Upgrade from 3.16.2 to 3.16.3
 
