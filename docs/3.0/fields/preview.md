@@ -25,5 +25,4 @@ When you want to display a field in the preview popup simply call the `show_on :
 
 ## Authorization
 
-
 Since version <Version version="3.18.0" /> the preview request authorization is controller with the [`preview?` policy method](./../authorization.html#preview).
