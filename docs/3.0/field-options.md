@@ -459,12 +459,25 @@ You may find more detailed information about the HTML attributes [here](./html.h
 
 <Option name="`summarizable`">
 
+<Image src="/assets/img/summarizable.png" width="554" height="347" alt="Field summarizable preview" />
+
+The `summarizable` option allows you to generate a visual summary of a column's data distribution. This feature provides a quick and intuitive overview of your dataset by displaying a chart within the table header.
+
+You can enable `summarizable` for a column like this:
+
 ```ruby
-field :status, as: :select, summarizable: true
-# or
-field :status, as: :badge, summarizable: true
+def fields
+  field :status, as: :select, summarizable: true
+  field :status, as: :badge, summarizable: true
+end
 ```
-This section is WIP.
+
+### How It Works
+
+When `summarizable` is enabled, a chart icon will appear in the table header for that column.
+Clicking on the icon will display a summary chart based on the data in that column.
+The chart provides a visual representation of data distribution, making it easier to analyze trends.
+
 </Option>
 
 <Option name="`for_attribute`">
