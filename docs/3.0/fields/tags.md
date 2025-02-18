@@ -268,6 +268,10 @@ Rails.application.routes.draw do
   # your routes
 
   authenticate :user, ->(user) { user.is_admin? } do
+    # After 3.18.0
+    mount_avo
+
+    # Before 3.18.0
     mount Avo::Engine, at: Avo.configuration.root_path
   end
 end

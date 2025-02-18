@@ -5,8 +5,27 @@ We stick to Rails defaults in terms of routing just to make working with Avo as 
 ## Avo's Engines
 
 Avo's functionality is bundled in a few gems and most of them have their own engines. By default we mount the engines under Avo's routes using a configuration like this one.
+:::code-group
+```ruby [Version >= 3.18.0]
+# Your app's routes.rb
+Rails.application.routes.draw do
+  mount_avo
 
-```ruby
+  # other routes
+end
+
+def mount_avo(at: Avo.configuration.root_path, **options)
+  mount Avo::Engine, at:, **options
+
+  scope at do
+    Avo.plugin_manager.engines.each do |engine|
+      mount engine[:klass], **engine[:options]
+    end
+  end
+end
+```
+
+```ruby [Version < 3.18.0]
 # Your app's routes.rb
 Rails.application.routes.draw do
   mount Avo::Engine, at: Avo.configuration.root_path
@@ -23,8 +42,18 @@ Avo::Engine.routes.draw do
   # other routes
 end
 ```
+:::
+
+The `mount_avo` method accepts a custom `as` argument along with other arguments supported by `mount`.
+
+By default, `as` is set to `Avo.configuration.root_path`.
+
 
 <Option name="`Avo.mount_engines` helper">
+
+:::warning
+This option has been **obsolete since version <Version version="3.18.0"/>** and is no longer supported.
+:::
 
 In order to make mounting the engines easier we added the `Avo.mount_engines` helper which returns a block that can be run in any routing context.
 
@@ -49,6 +78,24 @@ If your goal is adding another scope unrelated to localization, you're in the ri
 :::
 
 In this example, we'll demonstrate how to add a `:locale` scope to your routes.
+
+:::warning
+Ignore this warning if you're using a **version earlier than <Version version="3.18.0"/>**
+
+Starting from **version <Version version="3.18.0"/>**, the only required change in this step is to wrap the Avo mounting point within a locale scope:
+
+If you're using a **version bigger or equal to <Version version="3.18.0"/>**, after making this change, you can ignore the steps [Only Avo engine](./routing.html#only-avo-engine) and [Avo engine and nested engines](./routing.html#avo-engine-and-nested-engines)
+
+```ruby{4-6}
+# config/routes.rb
+
+Rails.application.routes.draw do
+  scope ":locale" do
+    mount_avo
+  end
+end
+```
+:::
 
 <!-- @include: ./common/mount_avo_under_locale_scope_common.md-->
 

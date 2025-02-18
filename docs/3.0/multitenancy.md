@@ -18,6 +18,24 @@ There are a couple of strategies here, but the a common one is to use route-base
 
 We need to do a few things:
 
+:::warning
+Ignore this warning if you're using a **version earlier than <Version version="3.18.0"/>**
+
+Starting from **version <Version version="3.18.0"/>**, steps 1 and 2 should be skipped, and the only required action is to wrap the Avo mounting point within a tenant scope:
+
+If you're using a **version bigger or equal to <Version version="3.18.0"/>**, after making this change, you can skip directly to step [3. Set the tenant for each request](./multi-language-urls.html#_3-set-the-tenant-for-each-request).
+
+```ruby{4-6}
+# config/routes.rb
+
+Rails.application.routes.draw do
+  scope "/:tenant_id" do
+    mount_avo
+  end
+end
+```
+:::
+
 #### 1. Disable automatic Avo engine mounting
 
 _Do this step only if you use other Avo gems (`avo-pro`, `avo-advanced`, etc.)_
