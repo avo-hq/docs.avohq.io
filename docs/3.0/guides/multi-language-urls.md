@@ -13,7 +13,7 @@ Ignore this warning if you're using a **version earlier than <Version version="3
 
 Starting from **version <Version version="3.18.0"/>**, the only required change in this step is to wrap the Avo mounting point within a locale scope:
 
-If you're using a **version bigger or equal to <Version version="3.18.0"/>**, after making this change, you can skip directly to step [2. Apply the `locale` Scope](./multi-language-urls.html#_2-apply-the-locale-scope).
+If you're using a **version bigger or equal to <Version version="3.18.0"/>**, after making this change, you can skip directly to step [2. Apply the `locale` Scope](#_2-apply-the-locale-scope).
 
 ```ruby{4-6}
 # config/routes.rb

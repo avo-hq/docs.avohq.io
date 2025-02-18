@@ -23,7 +23,7 @@ Ignore this warning if you're using a **version earlier than <Version version="3
 
 Starting from **version <Version version="3.18.0"/>**, steps 1 and 2 should be skipped, and the only required action is to wrap the Avo mounting point within a tenant scope:
 
-If you're using a **version bigger or equal to <Version version="3.18.0"/>**, after making this change, you can skip directly to step [3. Set the tenant for each request](./multi-language-urls.html#_3-set-the-tenant-for-each-request).
+If you're using a **version bigger or equal to <Version version="3.18.0"/>**, after making this change, you can skip directly to step [3. Set the tenant for each request](#_3-set-the-tenant-for-each-request).
 
 ```ruby{4-6}
 # config/routes.rb
