@@ -1,6 +1,7 @@
 ---
 version: '3.16.2'
 license: community
+betaStatus: Beta
 ---
 
 # Array Resources
