@@ -2,6 +2,7 @@
 version: '3.17.0'
 license: community
 betaStatus: Beta
+demoVideo: https://youtu.be/wnWvzQyyo6A?t=2128
 ---
 
 # Markdown
@@ -30,6 +31,10 @@ Please ensure you have these gems in your `Gemfile`.
 gem "marksmith"
 ```
 :::
+
+<div class="aspect-video">
+  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/wnWvzQyyo6A?start=2128" title="Avo 3.17 - Media Library, new Markdown field &amp; the Array Adapter" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
 
 ## Supported features
 

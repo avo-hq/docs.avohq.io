@@ -3,10 +3,10 @@ outline: [2,3]
 version: "3.17.0"
 license: community
 betaStatus: Beta
+demoVideo: https://youtu.be/wnWvzQyyo6A?t=1475
 ---
 
 # Field Discovery
-
 
 `discover_columns` and `discover_associations` automatically detect and configure fields for your Avo resources based on your model's database structure.
 
@@ -21,6 +21,10 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
+
+<div class="aspect-video">
+  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/wnWvzQyyo6A?start=1475" title="Avo 3.17 - Media Library, new Markdown field &amp; the Array Adapter" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
 
 ## Options
 

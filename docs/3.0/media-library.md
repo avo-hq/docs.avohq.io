@@ -1,6 +1,7 @@
 ---
 version: "3.17.0"
 betaStatus: Alpha
+demoVideo: https://youtu.be/wnWvzQyyo6A?t=1698
 ---
 
 # Media Library
@@ -19,6 +20,10 @@ The Media Library feature is still in alpha and future releases might contain br
 
 This is just the initial version and we'll be adding more features as we progress and get more feedback on usage.
 :::
+
+<div class="aspect-video">
+  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/wnWvzQyyo6A?start=1698" title="Avo 3.17 - Media Library, new Markdown field &amp; the Array Adapter" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
 
 ## How to enable it
 

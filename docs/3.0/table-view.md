@@ -82,6 +82,8 @@ The `float` and `show_on_hover` options are designed to function optimally when 
 
 Determines whether the row controls should float over the row.
 
+<DemoVideo demo-video="https://youtu.be/wnWvzQyyo6A?t=698" class="mb-4" />
+
 ##### Optional
 
 `true`
