@@ -117,6 +117,19 @@ Controls whether the user can see the [records reordering](./records-reordering)
 <Option name="`search?`">
 
 Controls whether the user can see the [resource search input](./search) on top of the <Index /> page.
+
+</Option>
+
+<Option name="`preview?`">
+
+<VersionReq version="3.18.0" />
+
+Controls access to the preview endpoint, which is triggered by the [preview field](./record-previews.html).
+
+:::info
+This policy method does not control the visibility of the [preview field](./record-previews.html). It only manages authorization at the endpoint level. To hide the preview field, use the `visible` field option.
+:::
+
 </Option>
 
 ## Associations

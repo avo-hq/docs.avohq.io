@@ -4,6 +4,68 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade to 3.18.0
+
+<Option name="Preview Policy">
+
+As of <Version version="3.18.0" />, a new policy method is available: `preview?`.
+
+This method determines whether a preview request is authorized.
+
+**Breaking Change:** Previously, the preview endpoint was always authorized.
+Now, access is denied unless the `preview?` policy method explicitly returns `true`.
+
+### Steps to Update
+
+To maintain the previous behavior of preview fields, add the `preview?`
+method returning `true` in your base policy class:
+
+```ruby
+# app/policies/application_policy.rb
+class ApplicationPolicy
+  def preview? = true
+end
+```
+
+You can now refine this method to restrict access for specific users or even default it to `false`. The example above simply ensures that behavior remains unchanged after upgrading.
+
+</Option>
+
+<Option name="Deprecation of `row`">
+
+The `row` DSL has been available but undocumented for some time. As of <Version version="3.18.0" />, it has been officially deprecated in favor of `cluster`, which is now properly documented [here](./resource-clusters.html).
+
+### Steps to Update
+
+Replace all `row do` with `cluster do`.
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::Person < Avo::BaseResource
+  def fields
+    panel "Address" do
+      row do # [!code --]
+      cluster do # [!code ++]
+        field :street_address, stacked: true do
+          "1234 Elm Street"
+        end
+
+        field :city, stacked: true do
+          "Los Angeles"
+        end
+
+        field :zip_code, stacked: true do
+          "15234"
+        end
+      end
+    end
+  end
+end
+```
+
+</Option>
+
+
 ## Upgrade from 3.16.2 to 3.16.3
 
 <Option name="Row controls configuration">

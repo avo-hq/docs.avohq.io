@@ -17,8 +17,12 @@ field :preview, as: :preview
 
 The fields shown in the preview popup are configured similarly to how you [configure the visibility in the different views](./../resources#views).
 
-When you want to display a field in the peview popup simply call the `show_on :preview` option on the field.
+When you want to display a field in the preview popup simply call the `show_on :preview` option on the field.
 
 ```ruby
   field :name, as: :text, show_on :preview
 ```
+
+## Authorization
+
+Since version <Version version="3.18.0" /> the preview request authorization is controller with the [`preview?` policy method](./../authorization.html#preview).
