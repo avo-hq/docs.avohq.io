@@ -18,41 +18,20 @@ There are a couple of strategies here, but the a common one is to use route-base
 
 We need to do a few things:
 
-#### 1. Disable automatic Avo engine mounting
+#### 1. Set the proper routing pattern
 
-_Do this step only if you use other Avo gems (`avo-pro`, `avo-advanced`, etc.)_
+Mount Avo under the `tenant_id` scope
 
-Avo will automatically mount it's engines unless you tell it otherwise, which is what we'll do now.
-:::code-group
-```ruby [config/avo.rb]{3}
-Avo.configure do |config|
-  # Disable automatic engine mounting
-  config.mount_avo_engines = false
-
-  # other configuration
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  scope "/:tenant_id" do
+    mount_avo
+  end
 end
 ```
-:::
 
-**Related:**
-  - [Avo's Engines](./routing#avo-s-engines)
-
-#### 2. Set the proper routing pattern
-
-:::code-group
-```ruby [config/routes.rb]
-# Mount Avo and it's engines under the `tenant_id` scope
-scope "/:tenant_id" do
-  mount Avo::Engine, at: Avo.configuration.root_path
-
-  scope Avo.configuration.root_path do
-    instance_exec(&Avo.mount_engines)
-  end
-```
-:::
-
-
-#### 3. Set the tenant for each request
+#### 2. Set the tenant for each request
 
 :::code-group
 ```ruby [config/initializers/avo.rb]{6}

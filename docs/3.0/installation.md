@@ -97,7 +97,7 @@ You can use the regular `host` constraint in the `routes.rb` file.
 
 ```ruby
 constraint host: 'avo' do
-  mount Avo::Engine, at: '/'
+  mount_avo at: '/'
 end
 ```
 

@@ -1,56 +1,44 @@
 # Routing
 
-We stick to Rails defaults in terms of routing just to make working with Avo as straighforward as possible.
+We stick to Rails defaults in terms of routing just to make working with Avo as straightforward as possible.
 
-## Avo's Engines
+Avo's functionality is distributed across multiple gems, each encapsulating its own engine. By default, these engines are mounted under Avo's scope within your Rails application.
 
-Avo's functionality is bundled in a few gems and most of them have their own engines. By default we mount the engines under Avo's routes using a configuration like this one.
+Each engine registers itself with Avo.
 
-```ruby
-# Your app's routes.rb
+### Default Mounting Behavior
+
+When the `mount_avo` method is invoked, Avo and all the associated engines are mounted at a common entry point. By default, this mounting point corresponds to `Avo.configuration.root_path`, but you can customize it using the `at` argument:
+
+```ruby{4,7}
+# config/routes.rb
 Rails.application.routes.draw do
-  mount Avo::Engine, at: Avo.configuration.root_path
+  # Mounts Avo at Avo.configuration.root_path
+  mount_avo
 
-  # other routes
-end
-
-# Avo's routes.rb
-Avo::Engine.routes.draw do
-  mount Avo::DynamicFilters::Engine, at: "/avo-dynamic_filters" if defined?(Avo::DynamicFilters::Engine)
-  mount Avo::Dashboards::Engine, at: "/dashboards" if defined?(Avo::Dashboards::Engine)
-  mount Avo::Pro::Engine, at: "/avo-pro" if defined?(Avo::Pro::Engine)
-
-  # other routes
+  # Mounts Avo at `/custom_path` instead of the default
+  mount_avo at: "custom_path"
 end
 ```
 
-<Option name="`Avo.mount_engines` helper">
-
-In order to make mounting the engines easier we added the `Avo.mount_engines` helper which returns a block that can be run in any routing context.
-
-```ruby
-# The configuration above turns into
-Avo::Engine.routes.draw do
-  instance_exec(&Avo.mount_engines)
-
-  # other routes
-end
-```
-</Option>
-
-Sometimes you might have more exotic use-cases so you'd like to customize those paths accordingly.
+If no custom path is specified, Avo is mounted at the default configuration root path.
 
 ## Mount Avo under a scope
 
-:::info
-The `:locale` scope provided is just an example. If your objective is to implement a route scope for localization within Avo, there's a detailed recipe available (including this step). Check out [this guide](guides/multi-language-urls) for comprehensive instructions.
-
-If your goal is adding another scope unrelated to localization, you're in the right place. This approach works for other types of scoped routing as well.
-:::
-
 In this example, we'll demonstrate how to add a `:locale` scope to your routes.
 
-<!-- @include: ./common/mount_avo_under_locale_scope_common.md-->
+The `:locale` scope is just an example. If your objective is to implement a route scope for localization within Avo, there's a detailed recipe available. Check out [this guide](guides/multi-language-urls) for comprehensive instructions.
+
+```ruby{4-6}
+# config/routes.rb
+
+Rails.application.routes.draw do
+  scope ":locale" do
+    mount_avo
+  end
+end
+```
+
 
 :::info
 To guarantee that the `locale` scope is included in the `default_url_options`, you must explicitly add it to the Avo configuration.
@@ -67,7 +55,7 @@ You can do that in your app's `routes.rb` file by opening up the Avo routes bloc
 ```ruby
 # routes.rb
 Rails.application.routes.draw do
-  mount Avo::Engine, at: Avo.configuration.root_path
+  mount_avo
 
   # your other app routes
 end

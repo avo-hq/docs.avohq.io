@@ -266,7 +266,7 @@ Rails.application.routes.draw do
         get "dashboard", to: "avo/tools#dashboard" # custom tool added before engine
       end
 
-      mount Avo::Engine, at: Avo.configuration.root_path # engine mounted last
+      mount_avo # engine mounted last
     end
   end
 end
@@ -505,7 +505,7 @@ end
 Rails.application.routes.draw do
   # Use to test out route-based multitenancy
   scope "/account/:account_id" do
-    mount Avo::Engine, at: Avo.configuration.root_path
+    mount_avo
   end
 end
 ```
