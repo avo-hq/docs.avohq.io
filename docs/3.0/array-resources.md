@@ -18,6 +18,21 @@ For more details on using the `Array` field, including examples and hierarchy of
 This integration allows for seamless configuration of dynamic or predefined array-based data within your application.
 :::
 
+:::warning ⚠️ Limitations
+
+#### Sorting
+- The array resource does **not support sorting**.
+
+#### Performance Considerations
+- When dealing with large datasets, you might experience suboptimal performance due to inherent architectural constraints.
+- **Caching Recommendation:**
+  - It is advisable to implement caching mechanisms as a viable solution to ameliorate these performance bottlenecks.
+  - **Note:** These caching mechanisms should ideally be integrated into the methods that fetch data, such as the `def records` method.
+
+**Please note that these caveats are based on the current implementation and may be subject to revisions in future releases.**
+
+:::
+
 ## Creating an Array Resource
 
 Generate an **Array Resource** using the `--array` flag:
