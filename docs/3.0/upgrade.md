@@ -6,6 +6,23 @@ If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedica
 
 ## Upgrade to 3.18.0
 
+<Option name="read_only and disabled options on has_one fields">
+
+The `read_only` and `disabled` options were interfering with the rendering of attach/create buttons on `has_one` fields, while leaving other association fields like `has_many` unaffected. To preserve consistency, these options have been excised from the attach/create functionality. The attach/create operations are now controlled exclusively by authorization.
+
+### Breaking Changes
+
+- The `read_only` and `disabled` options no longer influence the behavior of `has_one` fields.
+- Attach/create actions are now controlled solely via authorization. For further details, refer to:
+  - [attach_{association}?](https://docs.avohq.io/3.0/authorization.html#attach_association)
+  - [create_{association}?](https://docs.avohq.io/3.0/authorization.html#create_association)
+
+### Steps to Update
+
+Please **search for all `has_one` fields** that still utilize the `read_only` or `disabled` options and update them with the appropriate authorization methods as outlined above.
+
+</Option>
+
 <Option name="Preview Policy">
 
 As of <Version version="3.18.0" />, a new policy method is available: `preview?`.
@@ -31,7 +48,7 @@ You can now refine this method to restrict access for specific users or even def
 
 </Option>
 
-<Option name="Deprecation of `row`">
+<Option name="Deprecation of row">
 
 The `row` DSL has been available but undocumented for some time. As of <Version version="3.18.0" />, it has been officially deprecated in favor of `cluster`, which is now properly documented [here](./resource-clusters.html).
 
