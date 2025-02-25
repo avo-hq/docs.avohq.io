@@ -1,33 +1,37 @@
 ---
 license: community
 feedbackId: 837
+outline: deep
 ---
 
 # Actions
 
 <DemoVideo demo-video="https://youtu.be/BK47E7TMXn0?t=778" />
 
-Avo actions allow you to perform specific tasks on one or more of your records.
+Actions are powerful features in Avo that enable you to perform operations on one or multiple records simultaneously. They provide a flexible way to add custom functionality to your interface.
 
-For example, you might want to mark a user as active/inactive and optionally send a message that may be customized by the person that wants to run the action.
+## Overview
 
-Once you attach an action to a resource using the `action` method inside the `actions` method, it will appear in the **Actions** dropdown. By default, actions appear on the `Index`, `Show`, and `Edit` views. Versions previous to 2.9 would only display the actions on the `Index` and `Show` views.
+Actions are versatile tools that enhance your interface with powerful operational capabilities. They enable you to execute operations on single or multiple records simultaneously, while collecting additional input through customizable forms. Actions can handle various tasks, from triggering background jobs to generating and downloading files.
 
-<Image src="/assets/img/actions/actions-dropdown.gif" width="710" height="462" alt="Actions dropdown" />
+Common use cases for actions include managing user states (such as toggling active/inactive status), sending customized notification emails to users, generating comprehensive reports, and performing batch updates across multiple records. The flexibility of actions allows you to implement virtually any custom functionality your application requires.
 
-:::info
-Since version <Version version="2.13" /> you may use the [customizable controls](./customizable-controls) feature to show the actions outside the dropdown.
-:::
+These features make actions an essential component for building robust administrative interfaces, streamlining workflows, and managing data efficiently.
 
-## Creating an action
+## Generator
 
-To generate an action configuration file, run `bin/rails generate avo:action toggle_active`.
+Generate a new action file using the Rails generator:
+
+```bash
+bin/rails generate avo:action toggle_inactive
+```
+
+This will create a new action file at `app/avo/actions/toggle_inactive.rb` with a basic structure.
 
 ```ruby
-# app/avo/actions/toggle_active.rb
-
-class Avo::Actions::ToggleActive < Avo::BaseAction
-  self.name = "Toggle Active"
+# app/avo/actions/toggle_inactive.rb
+class Avo::Actions::ToggleInactive < Avo::BaseAction
+  self.name = "Toggle Inactive"
   # self.visible = -> do
   #   true
   # end
@@ -44,130 +48,243 @@ class Avo::Actions::ToggleActive < Avo::BaseAction
 end
 ```
 
-## Registering an action
+:::warning Record Selection
+By default, actions can only be triggered after selecting at least one record. For actions that should work without record selection (like "Export All" or "Generate Report"), you can either:
+- Use the `--standalone` flag when generating the action:
+```bash
+bin/rails generate avo:action export_users --standalone
+```
+- Or set `self.standalone = true` in the action class
+:::
 
-To add the action to a resource, declare it inside the `actions` method as follows:
+### `--standalone`
+Creates an action that doesn't require record selection. Useful for global operations like generating reports or exporting all records.
 
-```ruby{10}
+```bash
+bin/rails generate avo:action export_users --standalone
+```
+
+## Usage
+
+Actions are registered within a resource by using the `actions` method. This method defines which actions are available for that specific resource.
+
+### `action`
+
+The `action` method is used to register an action within the `actions` block. It accepts the action class as its first argument and optional configuration parameters
+
+```ruby
 # app/avo/resources/user.rb
 class Avo::Resources::User < Avo::BaseResource
-  self.title = :name
-
-  def fields
-    field :id, as: :id
-  end
-
   def actions
-    action Avo::Actions::ToggleActive
+    # Basic registration
+    action Avo::Actions::ToggleInactive
   end
 end
 ```
 
-## The `fields` method (optional)
+:::warning
+Using the Pundit policies, you can restrict access to actions using the `act_on?` method. If you think you should see an action on a resource and you don't, please check the policy method.
+
+More info [here](./authorization#act-on)
+:::
+
+Once attached, the action will appear in the **Actions** dropdown menu. By default, actions are available on:
+- Index view (for bulk operations)
+- Show view (for single record operations)
+- Edit view (new and edit)
+
+:::info
+You may use the [customizable controls](./customizable-controls) feature to show the actions outside the dropdown.
+:::
+
+<Option name="`arguments`" headingSize="4">
+
+The `arguments` option allows you to pass custom data to your action. These arguments are accessible throughout the entire action class including the `handle` and `fields` methods.
+
+```ruby{5-7,11-15}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def actions
+    action Avo::Actions::ToggleInactive,
+      arguments: {
+        special_message: true
+      }
+
+    # Or as a proc to make it dynamic
+    action Avo::Actions::ToggleInactive,
+      arguments: -> do
+        {
+          special_message: resource.view.index? && current_user.is_admin?
+        }
+      end
+  end
+end
+```
+
+Now, the arguments can be accessed all over the action class like inside `handle` and `fields` methods.
+
+```ruby{4-8}
+# app/avo/actions/toggle_inactive.rb
+class Avo::Actions::ToggleInactive < Avo::BaseAction
+  def handle(**args)
+    if arguments[:special_message]
+      succeed "I love 🥑"
+    else
+      succeed "Success response ✌️"
+    end
+  end
+end
+```
+</Option>
+
+<Option name="`icon`" headingSize="4">
+
+<VersionReq version="3.5.6" class="mt-4" />
+
+The `icon` option lets you specify an icon to display next to the action in the dropdown menu. Avo supports Heroicons by default.
+
+Here's an example of how you can define actions with icons:
+
+```ruby
+def actions
+  action Avo::Actions::ToggleInactive, icon: "heroicons/outline/globe"
+  action Avo::Actions::ToggleAdmin
+  action Avo::Actions::Sub::DummyAction
+  action Avo::Actions::DownloadFile, icon: "heroicons/outline/arrow-left"
+  action Avo::Actions::Test::NoConfirmationRedirect
+  action Avo::Actions::Test::CloseModal
+end
+```
+
+</Option>
+
+---
+
+### `divider`
+
+<VersionReq version="3.5.6" class="mt-4" />
+
+Action dividers allow you to organize and separate actions into logical groups, improving the overall layout and usability.
+This will create a visual separator in the actions dropdown menu, helping you group related actions together.
+
+```ruby
+def actions
+  # User status actions
+  action Avo::Actions::ActivateUser
+  action Avo::Actions::DeactivateUser
+
+  divider
+
+  # Communication actions
+  action Avo::Actions::SendWelcomeEmail
+  action Avo::Actions::SendPasswordReset
+end
+```
+
+<Option name="`label`" headingSize="4">
+
+You can also add a label to the divider for better organization:
+
+```ruby
+def actions
+  action Avo::Actions::ActivateUser
+  divider label: "Communication"
+  action Avo::Actions::SendWelcomeEmail
+end
+```
+
+</Option>
+
+
+## Fields
 
 You may add fields to the action just as you do it in a resource. Adding fields is optional.
 
-:::warning
-The `belongs_to` field will only work on the <Show /> and <Edit /> page of a record. It won't work on the <Index /> page of a resource.
-
-Read more on why [here](https://github.com/avo-hq/avo/issues/1572#issuecomment-1421461084).
-:::
-
-:::info
-<VersionReq version="3.16.2" /> the `query` object is accessible within fields.
-:::
+Since version <Version version="3.16.2" /> you can access the selected records through the `query` object within fields.
 
 ```ruby
-def fields
-  field :notify_user, as: :boolean
-  field :message, as: :textarea, default: 'Your account has been marked as inactive.'
-end
+# app/avo/actions/toggle_active.rb # [!code focus]
+class Avo::Actions::ToggleInactive < Avo::BaseAction # [!code focus]
+  self.name = "Toggle Inactive"
+
+  def fields # [!code focus]
+    field :notify_user, as: :boolean # [!code focus]
+    field :message, as: :textarea, default: "Your account has been marked as inactive." # [!code focus]
+  end # [!code focus]
+
+  def handle(query:, fields:, current_user:, resource:, **args)
+    query.each do |record|
+      # Do something with your records.
+    end
+  end
+end # [!code focus]
+
 ```
 
-:::warning Files authorization
+<Image src="/assets/img/actions/action-fields.jpg" width="711" height="332" alt="Actions" />
+
+:::warning Limitations
+
+---
+
+**Belongs to field**
+
+The `belongs_to` field will **only work** on the <Show /> and <Edit /> page of a record. It won't work on the <Index /> page of a resource.
+
+Read more on why [here](https://github.com/avo-hq/avo/issues/1572#issuecomment-1421461084).
+
+---
+
+**Files authorization**
+
 If you're using the `file` field on an action and attach it to a resource that's using the authorization feature, please ensure you have the `upload_{FIELD_ID}?` policy method returning `true`. Otherwise, the `file` input might be hidden.
 
 More about this on the [authorization page](./authorization#attachments).
 :::
 
+## Execution Logic
 
-<Image src="/assets/img/actions/action-fields.jpg" width="711" height="332" alt="Actions" />
-
-## The `handle` method
-
-This is where the magic happens. This method contains your action logic.
+The `handle` method is where you define what happens when your action is executed. This is the core of your action's business logic and is called when a user triggers the action from the UI.
 
 The handle method receives the following arguments:
-- `query` and `records`: both names can be used interchangeably. Single records are automatically wrapped in an array.
-- `fields`
-- `current_user`
-- `resource`
+- `query` Contains the selected record(s). Single records are automatically wrapped in an array for consistency
+- `fields` Contains the values submitted through the action's form fields
+- `current_user` The currently authenticated user
+- `resource` The Avo resource instance that triggered the action
 
 ```ruby
-def handle(query:, fields:, current_user:, resource:, **args)
-  # Do something
-end
-```
+# app/avo/actions/toggle_inactive.rb # [!code focus]
+class Avo::Actions::ToggleInactive < Avo::BaseAction # [!code focus]
+  self.name = "Toggle Inactive"
 
-## Passing Params to the Action Show Page
-When navigation to an action from a resource <Index /> or <Show /> views, it's sometimes useful to pass parameters to an action.
-
-One particular example is when you'd like to populate a field in that action with some particular value based on that param.
-
-```ruby
-class Action
   def fields
-    field :some_field, as: :hidden, default: -> { if previous_param == yes ? :yes : :no}
+    field :notify_user, as: :boolean
+    field :message, as: :textarea, default: "Your account has been marked as inactive."
   end
-end
+
+  def handle(query:, fields:, current_user:, resource:, **args) # [!code focus]
+    query.each do |record| # [!code focus]
+      # Toggle the inactive status # [!code focus]
+      record.update!(inactive: !record.inactive) # [!code focus]
+
+      # Send notification if requested # [!code focus]
+      if fields[:notify_user] # [!code focus]
+        # Assuming there's a notify method - implement according to your notification system # [!code focus]
+        record.notify(fields[:message]) # [!code focus]
+      end # [!code focus]
+    end # [!code focus]
+
+    succeed "Successfully toggled status for #{query.count} #{'record'.pluralize(query.count)}" # [!code focus]
+  end # [!code focus]
+end # [!code focus]
 ```
-Consider the following scenario:
 
-1. Navigate to `https://main.avodemo.com/avo/resources/users`.
-2. Add the parameter `hey=ya` to the URL: `https://main.avodemo.com/avo/resources/users?hey=ya`
-3. Attempt to run the dummy action.
-4. After triggering the action, verify that you can access the `hey` parameter.
-5. Ensure that the retrieved value of the `hey` parameter is `ya`.
+## Notification types
 
-#### Implementation
-
-To achieve this, we'll reference the `request.referer` object and extract parameters from the URL. Here is how to do it:
+After an action runs, you can respond to the user with different types of notifications. The default response reloads the page and shows an `Action ran successfully` message of type `inform`.
 
 ```ruby
-class Action
-  def fields
-    # Accessing the parameters passed from the parent view
-    field :some_field, as: :hidden, default: -> {
-      # Parsing the request referer to extract parameters
-      parent_params = URI.parse(request.referer).query.split("&").map { |param| param.split("=")}.to_h.with_indifferent_access
-      # Checking if the `hei` parameter equals `ya`
-      if parent_params[:hey] == 'ya'
-        :yes
-      else
-        :no
-      end
-    }
-  end
-end
-```
-Parse the `request.referer` to extract parameters using `URI.parse`.
-Split the query string into key-value pairs and convert it into a hash.
-Check if the `hey` parameter equals `ya`, and set the default value of `some_field` accordingly.
-
-## Action responses
-
-After an action runs, you may use several methods to respond to the user. For example, you may respond with just a message or with a message and an action.
-
-The default response is to reload the page and show the _Action ran successfully_ message.
-
-### Message responses
-
-Four message response methods are at your disposal: `succeed`, `error`, `warn`, and `inform`. These render green, red, orange, and blue alerts.
-
-```ruby{4-7}
 def handle(**args)
-  # Demo handle action
-
   succeed "Success response ✌️"
   warn "Warning response ✌️"
   inform "Info response ✌️"
@@ -175,46 +292,50 @@ def handle(**args)
 end
 ```
 
-<Image src="/assets/img/actions/alert-responses.png" width="1074" height="558" alt="Avo alert responses" />
+<Image src="/assets/img/actions/alert-responses.png" width="1074" height="558" alt="Avo notification types" />
 
-### Run actions silently
+<Option name="`succeed`" headingSize="3">
+Displays a green success alert to indicate successful completion.
+</Option>
+
+<Option name="`warn`" headingSize="3">
+Displays an orange warning alert for cautionary messages.
+</Option>
+
+<Option name="`inform`" headingSize="3">
+Displays a blue info alert for general information.
+</Option>
+
+<Option name="`error`" headingSize="3">
+Displays a red error alert to indicate failure or errors.
+</Option>
+
+<Option name="`silent`" headingSize="3">
 
 You may want to run an action and show no notification when it's done. That is useful for redirect scenarios. You can use the `silent` response for that.
 
 ```ruby
-def handle(**args)
-  # Demo handle action
-
+def handle(**args) # [!code focus]
   redirect_to "/admin/some-tool"
-  silent
-end
+  silent # [!code focus]
+end # [!code focus]
 ```
+</Option>
 
 ## Response types
 
-After you notify the user about what happened through a message, you may want to execute an action like `reload` (default action) or `redirect_to`. You may use message and action responses together.
+After an action completes, you can control how the UI responds through various response types. These powerful responses give you fine-grained control over the user experience by allowing you to:
 
-```ruby{14}
-def handle(query:, **args)
-  query.each do |record|
-    if record.admin?
-      error "Can't mark inactive! The user is an admin."
-    else
-      record.update active: false
+- **Navigate**: Reload pages or redirect users to different parts of your application
+- **Manipulate UI**: Control modals, update specific page elements, or refresh table rows
+- **Handle Files**: Trigger file downloads and handle data exports
+- **Show Feedback**: Combine with notification messages for clear user communication
 
-      succeed "Done! User marked as inactive!"
-    end
-  end
+You can use these responses individually or combine them to create sophisticated interaction flows. Here are all the available action responses:
 
-  reload
-end
-```
+<Option name="`reload`" headingSize=3>
 
-The available action responses are:
-
-<Option name="`reload`">
-
-When you use `reload`, a full-page reload will be triggered.
+The `reload` response triggers a full-page reload. This is the default behavior if no other response type is specified.
 
 ```ruby{9}
 def handle(query:, **args)
@@ -223,12 +344,12 @@ def handle(query:, **args)
   end
 
   succeed 'Done!'
-  reload
+  reload # This is optional since reload is the default behavior
 end
 ```
-
 </Option>
-<Option name="`redirect_to`">
+
+<Option name="`redirect_to`" headingSize=3>
 
 `redirect_to` will execute a redirect to a new path of your app. It accept `allow_other_host`, `status` and any other arguments.
 
@@ -247,22 +368,17 @@ end
 ```
 </Option>
 
-<Option name="`turbo`">
-
-There are times when you don't want to perform the actions with Turbo. In such cases, turbo should be set to false.
-</Option>
-
-<Option name="`download`">
+<Option name="`download`" headingSize=3>
 
 `download` will start a file download to your specified `path` and `filename`.
 
-**You need to set may_download_file to true for the download response to work like below**. That's required because we can't respond with a file download (send_data) when making a Turbo request.
+**You need to set `self.may_download_file` to true for the download response to work like below**. That's required because we can't respond with a file download (send_data) when making a Turbo request.
 
 If you find another way, please let us know 😅.
 
 :::code-group
 
-```ruby{3,18} [app/avo/actions/download_file.rb]
+```ruby{3,16} [app/avo/actions/download_file.rb]
 class Avo::Actions::DownloadFile < Avo::BaseAction
   self.name = "Download file"
   self.may_download_file = true
@@ -299,7 +415,7 @@ end
 :::
 </Option>
 
-<Option name="`keep_modal_open`">
+<Option name="`keep_modal_open`" headingSize=3>
 
 There might be situations where you want to run an action and if it fails, respond back to the user with some feedback but still keep it open with the inputs filled in.
 
@@ -326,15 +442,15 @@ end
 ```
 </Option>
 
-<Option name="`close_modal`">
+<Option name="`close_modal`" headingSize=3>
 
-<VersionReq version="3.3.0" />
+<VersionReq version="3.3.0" class="mt-4" />
 
 This type of response becomes useful when you are working with a form and need to execute an action without redirecting, ensuring that the form remains filled as it is.
 
 `close_modal` will flash all the messages gathered by [action responses](#action-responses) and will close the modal using turbo streams keeping the page still.
 
-```ruby{7}
+```ruby{7,9}
 class Avo::Actions::CloseModal < Avo::BaseAction
   self.name = "Close modal"
 
@@ -349,7 +465,7 @@ end
 ```
 </Option>
 
-<Option name="`do_nothing`">
+<Option name="`do_nothing`" headingSize=3>
 
 `do_nothing` is an alias for `close_modal`.
 
@@ -366,9 +482,9 @@ end
 ```
 </Option>
 
-<Option name="`navigate_to_action`">
+<Option name="`navigate_to_action`" headingSize=3>
 
-<VersionReq version="3.4.2" />
+<VersionReq version="3.4.2" class="mt-4" />
 
 You may want to redirect to another action. Here's an example of how to create a multi-step process, passing arguments from one action to another.
 In this example the initial action prompts the user to select the fields they wish to update, and in the subsequent action, the chosen fields will be accessible for updating.
@@ -418,9 +534,9 @@ end
 You can see this multi-step process in action by visiting the [avodemo](https://main.avodemo.com/avo/resources/cities). Select one of the records, click on the "Update" action, choose the fields to update, and then proceed to update the selected fields in the subsequent action.
 </Option>
 
-<Option name="`append_to_response`">
+<Option name="`append_to_response`" headingSize=3>
 
-<VersionReq version="3.10.3" />
+<VersionReq version="3.10.3" class="mt-4" />
 
 Avo action responses are in the `turbo_stream` format. You can use the `append_to_response` method to append additional turbo stream responses to the default response.
 
@@ -457,9 +573,9 @@ append_to_response -> {
 :::
 </Option>
 
-<Option name="`reload_records`">
+<Option name="`reload_records`" headingSize=3>
 
-<VersionReq version="3.14.0" />
+<VersionReq version="3.14.0" class="my-4" />
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/6b9ae6a3968c447f98ac4f9a161fe781?sid=17f08010-6a56-4e8c-8b80-692424327b55" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 
@@ -496,261 +612,275 @@ reload_record(record)
 
 ## Customization
 
-```ruby{2-6}
-class Avo::Actions::TogglePublished < Avo::BaseAction
-  self.name = 'Mark inactive'
-  self.message = 'Are you sure you want to mark this user as inactive?'
-  self.confirm_button_label = 'Mark inactive'
-  self.cancel_button_label = 'Not yet'
-  self.no_confirmation = true
-end
-```
+Actions can be customized in several ways to enhance the user experience. You can modify the action's display name, confirmation message, button labels, and confirmation behavior between other things.
 
-### Callable options
+There are 2 types of customization, visual and behavioral.
 
-The `name` and `message` options (and, as of <Version version="3.14.4" />, the `confirm_button_label` and `cancel_button_label` options) support the use of a block. Within this block, you gain access to all attributes of the [`Avo::ExecutionContext`](execution-context), as well as the following:
+### Visual customization
 
-- `record` (if on the show view),
-- `resource`
-- `arguments`
-- `view`
-- `query` <VersionReq version="3.16.2" />
+Visual customization is the process of modifying the action's appearance. This includes changing the action's name, message and button labels.
 
-### Customize the name
+All visual customization options can be set as a string or a block.
+
+The blocks are executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource`, `record`, `view`, `arguments` and `query`.
+
+<Option name="`name`" headingSize=4>
+
+The `name` option is used to change the action's display name.
 
 ```ruby
+# app/avo/actions/release_fish.rb
 class Avo::Actions::ReleaseFish < Avo::BaseAction
-  self.name = -> { "Release #{record.name}?" }
-  self.message = -> { "Are you sure you want to release the #{record.name}?" }
+  self.name = "Release fish" # [!code focus]
+
+  # Or as a block # [!code focus]
+  self.name = -> { # [!code focus]
+    record.present? ? "Release #{record.name}?" : "Release fish" # [!code focus]
+  } # [!code focus]
 end
 ```
 
-<!-- <img :src="('/assets/img/actions/actions-message.jpg')" alt="Avo message" class="border mb-4" /> -->
+</Option>
 
-### Customize the buttons
+<Option name="`message`" headingSize=4>
 
-You may customize the labels for the action buttons using `confirm_button_label` and `cancel_button_label`.
+The `message` option is used to change the action's confirmation message.
 
-<Image src="/assets/img/actions/actions-button-labels.jpg" width="699" height="325" alt="Avo button labels" />
-<br>
-
-<VersionReq version="3.14.4" /> `confirm_button_label` and `cancel_button_label` became callable options.
-
-The blocks are executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource`, `record`, `view` and `arguments`.
-
-```ruby{2,3}
+```ruby
+# app/avo/actions/release_fish.rb
 class Avo::Actions::ReleaseFish < Avo::BaseAction
-  self.confirm_button_label = -> { "Release #{record.name}" }
-  self.cancel_button_label = -> { "Cancel release on #{record.name}" }
+  self.message = "Are you sure you want to release the fish?" # [!code focus]
+
+  # Or as a block # [!code focus]
+  self.message = -> { # [!code focus]
+    if resource.record.present? # [!code focus]
+      "Are you sure you want to release the #{resource.record.name}?" # [!code focus]
+    else # [!code focus]
+      "Are you sure you want to release the fish?" # [!code focus]
+    end # [!code focus]
+  } # [!code focus]
 end
 ```
 
-### No confirmation actions
+</Option>
 
-You will be prompted by a confirmation modal when you run an action. If you don't want to show the confirmation modal, pass in the `self.no_confirmation = true` class attribute. That will execute the action without showing the modal at all.
+<Option name="`confirm_button_label`" headingSize=4>
 
-## Standalone actions
-
-You may need to run actions that are not necessarily tied to a model. Standalone actions help you do just that. Add `self.standalone` to an existing action or generate a new one using the `--standalone` option (`bin/rails generate avo:action global_action --standalone`).
-
-```ruby{3}
-class Avo::Actions::DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-  self.standalone = true
-
-  def handle(query:, fields:, current_user:, resource:, **args)
-    # Do something here
-
-    succeed 'Yup'
-  end
-end
-```
-
-## Actions visibility
-
-You may want to hide specific actions on screens, like a standalone action on the `Show` screen. You can do that using the `self.visible` attribute.
-
-```ruby{4}
-class Avo::Actions::DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-  self.standalone = true
-  self.visible = -> { view == :index }
-
-  def handle(query:, fields:, current_user:, resource:, **args)
-    # Do something here
-
-    succeed 'Yup'
-  end
-end
-```
-
-By default, actions are visible on the `Index`, `Show`, and `Edit` views, but you can enable them on the `New` screen, too (from version 2.9.0).
+The `confirm_button_label` option is used to change the action's confirmation button label.
 
 ```ruby
-self.visible = -> { view == :new }
+# app/avo/actions/release_fish.rb
+class Avo::Actions::ReleaseFish < Avo::BaseAction
+  self.confirm_button_label = "Release fish" # [!code focus]
 
-# Or use this if you want them to be visible on any view
-self.visible = -> { true }
+  # Or as a block # [!code focus]
+  self.confirm_button_label = -> { # [!code focus]
+    if resource.record.present? # [!code focus]
+      "Release #{resource.record.name}" # [!code focus]
+    else # [!code focus]
+      "Release fish" # [!code focus]
+    end # [!code focus]
+  } # [!code focus]
+end
 ```
 
-Inside the visible block you can access the following variables:
+</Option>
+
+<Option name="`cancel_button_label`" headingSize=4>
+
+The `cancel_button_label` option is used to change the action's cancel button label.
+
 ```ruby
-  self.visible = -> do
-    #   You have access to:
-    #   block
-    #   context
-    #   current_user
-    #   params
-    #   parent_resource (can access the parent_record by parent_resource.record)
-    #   resource (can access the record by resource.record)
-    #   view
-    #   view_context
-  end
+# app/avo/actions/release_fish.rb
+class Avo::Actions::ReleaseFish < Avo::BaseAction
+  self.cancel_button_label = "Cancel release" # [!code focus]
+
+  # Or as a block # [!code focus]
+  self.cancel_button_label = -> { # [!code focus]
+    if resource.record.present? # [!code focus]
+      "Cancel release on #{resource.record.name}" # [!code focus]
+    else # [!code focus]
+      "Cancel release" # [!code focus]
+    end # [!code focus]
+  } # [!code focus]
+end
 ```
 
-## Actions authorization
+</Option>
 
-:::warning
-Using the Pundit policies, you can restrict access to actions using the `act_on?` method. If you think you should see an action on a resource and you don't, please check the policy method.
 
-More info [here](./authorization#act-on)
+### Behavioral customization
+
+Behavioral customization is the process of modifying the action's behavior. This includes changing the action's confirmation behavior and authorization.
+
+<Option name="`no_confirmation`" headingSize=4>
+
+By default, actions display a confirmation modal before execution. You can bypass this modal by setting `self.no_confirmation = true`, which will execute the action immediately upon triggering.
+
+```ruby
+# app/avo/actions/release_fish.rb
+class Avo::Actions::ReleaseFish < Avo::BaseAction
+  self.no_confirmation = true # [!code focus]
+end
+```
+
+This is particularly useful for actions that:
+- Are safe to execute without confirmation
+- Need to provide immediate feedback
+- Are part of a multi-step workflow where confirmation is handled elsewhere
+
+</Option>
+
+<Option name="`standalone`" headingSize=4>
+
+Standalone actions allow you to execute operations that aren't tied to specific model records. These are useful for global operations like:
+
+- Generating system-wide reports
+- Running maintenance tasks
+- Triggering background jobs
+
+You can create a standalone action in two ways:
+
+1. Using the generator with the `--standalone` flag:
+```bash
+bin/rails generate avo:action global_action --standalone
+```
+
+2. Adding `self.standalone = true` to an existing action:
+```ruby
+# app/avo/actions/global_report.rb
+class Avo::Actions::GlobalReport < Avo::BaseAction
+  self.name = "Generate Global Report"
+  self.standalone = true # [!code focus]
+
+  def handle(**args)
+    # Your global operation logic here
+    succeed "Report generated successfully!"
+  end
+end
+```
+
+Standalone actions will be active in the Actions dropdown even when no records are selected. They can be used alongside regular record-based actions in the same resource.
+
+:::tip
+Standalone actions work well with the [`fields`](#fields) feature to collect additional input needed for the operation.
 :::
 
-The `self.authorize` attribute in action classes is handy when you need to manage authorization for actions. This attribute accepts either a boolean or a proc, allowing the incorporation of custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `action`, `resource`, and `view`.
+</Option>
+
+<Option name="`visible`" headingSize=4>
+
+You may want to hide specific actions on some views, like a standalone action on the `Show` and `Edit` views, and show it only on the `Index` view. You can do that using the `self.visible` attribute.
+
+```ruby{5,8}
+# app/avo/actions/global_report.rb
+class Avo::Actions::GlobalReport < Avo::BaseAction
+  self.name = "Generate Global Report"
+  self.standalone = true
+  self.visible = true # [!code focus]
+
+  # Or as a block # [!code focus]
+  self.visible = -> { view.index? } # [!code focus]
+end
+```
+
+The `visible` attribute accepts a boolean or a block.
+
+The block will be executed within the [`Avo::ExecutionContext`](execution-context) environment, giving you access to important contextual attributes like:
+- `view` - The current view type (index, show, edit)
+- `resource` - The current resource instance
+- `parent_resource` - The parent resource (if applicable).
+  - You can access the `parent_record` by `parent_resource.record`
+- Plus all other [`Avo::ExecutionContext`](execution-context) default attributes
+</Option>
+
+<Option name="`authorize`" headingSize=4>
+
+The `authorize` attribute is used to restrict access to actions based on custom logic.
 
 If an action is unauthorized, it will be hidden. If a bad actor attempts to proceed with the action, the controller will re-evaluate the authorization and block unauthorized requests.
 
 ```ruby
-self.authorize = false
+class Avo::Actions::GlobalReport < Avo::BaseAction
+  self.authorize = false # [!code focus]
 
-# Or
-
-self.authorize = -> {
-  current_user.is_admin?
-}
+  # Or as a block # [!code focus]
+  self.authorize = -> { # [!code focus]
+    current_user.is_admin? # [!code focus]
+  } # [!code focus]
+end
 ```
 
-## Actions close modal on backdrop click
+The `authorize` attribute accepts a boolean or a proc.
 
-<VersionReq version="3.14.0" />
+The block will be executed within the [`Avo::ExecutionContext`](execution-context) environment, giving you access to important contextual attributes like:
+- `action` - The current action instance
+- `resource` - The current resource instance
+- `view` - The current view type (index, show, edit)
+- All other [`Avo::ExecutionContext`](execution-context) attributes
 
-By default, action modals use a dynamic backdrop. Add `self.close_modal_on_backdrop_click = false` in case you want to prevent the user from closing the modal when clicking on the backdrop.
+</Option>
+
+<Option name="`close_modal_on_backdrop_click`" headingSize=4>
+
+<VersionReq version="3.14.0" class="mt-4" />
+
+By default, action modals use a dynamic backdrop.
+
+Add `self.close_modal_on_backdrop_click = false` in case you want to prevent the user from closing the modal when clicking on the backdrop.
 
 ```ruby{3}
-class Avo::Actions::DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-  self.close_modal_on_backdrop_click = false
-
-  def handle(query:, fields:, current_user:, resource:, **args)
-    # Do something here
-
-    succeed 'Yup'
-  end
+# app/avo/actions/toggle_inactive.rb
+class Avo::Actions::ToggleInactive < Avo::BaseAction
+  self.close_modal_on_backdrop_click = false # [!code focus]
 end
 ```
 
-## Custom action arguments
+</Option>
 
-Actions can have different behaviors according to their host resource. In order to achieve that, arguments can receive additional arguments as follows:
 
-```ruby{13-15}
-# app/avo/resources/fish.rb
-class Avo::Resources::Fish < Avo::BaseResource
-  self.title = :name
+<Option name="`turbo`" headingSize=4>
 
-  def fields
-    field :id, as: :id
-    field :name, as: :text
-    field :user, as: :belongs_to
-    field :type, as: :text, hide_on: :forms
-  end
+The `turbo` attribute is used to control the Turbo behavior of actions.
 
-  def actions
-    action DummyAction, arguments: {
-      special_message: true
-    }
+There are times when you don't want to perform the actions with Turbo. In such cases, turbo should be set to false.
 
-    # Or as a proc
-
-    action DummyAction, arguments: -> do
-      {
-        special_message: resource.view.index? && current_user.is_admin?
-      }
-    end
-  end
+```ruby
+class Avo::Actions::ToggleInactive < Avo::BaseAction
+  self.turbo = false # [!code focus]
 end
 ```
 
-Now, the arguments can be accessed inside `Avo::Actions::DummyAction` ***`handle` method*** and on the ***`visible` block***!
+The `turbo` attribute accepts a boolean.
+</Option>
 
-```ruby{4-6,8-14}
-class Avo::Actions::DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-  self.standalone = true
-  self.visible = -> do
-    arguments[:special_message]
-  end
+## Helpers
 
-  def handle(**args)
-    if arguments[:special_message]
-      succeed "I love 🥑"
-    else
-      succeed "Success response ✌️"
-    end
-  end
-end
-```
+### `link_arguments`
 
-## Action link
+The `link_arguments` method is used to generate the arguments for an action link.
 
 You may want to dynamically generate an action link. For that you need the action class and a resource instance (with or without record hydrated). Call the action's class method `link_arguments` with the resource instance as argument and it will return the `[path, data]` that are necessary to create a proper link to a resource.
 
 Let's see an example use case:
 
-:::code-group
-```ruby{7,8,9,10,11,12,13,15} [Current Version]
-field :name,
-  as: :text,
-  filterable: true,
-  name: "name (click to edit)",
-  only_on: :index do
+```ruby{4-,16} [Current Version]
+# app/avo/resources/city.rb
+class Avo::Resources::City < Avo::BaseResource
+  field :name, as: :text, name: "Name (click to edit)", only_on: :index do
+    path, data = Avo::Actions::City::Update.link_arguments(
+      resource: resource,
+      arguments: {
+        cities: Array[resource.record.id],
+        render_name: true
+      }
+    )
 
-  path, data = Avo::Actions::City::Update.link_arguments(
-    resource: resource,
-    arguments: {
-      cities: Array[resource.record.id],
-      render_name: true
-    }
-  )
-
-  link_to resource.record.name, path, data: data
+    link_to resource.record.name, path, data: data
+  end
 end
 ```
 
-```ruby{15,16,17,18,20} [< 3.4.2]
-field :name,
-  as: :text,
-  filterable: true,
-  name: "name (click to edit)",
-  only_on: :index do
-
-  arguments = Base64.encode64 Avo::Services::EncryptionService.encrypt(
-    message: {
-      cities: Array[resource.record.id],
-      render_name: true
-    },
-    purpose: :action_arguments
-  )
-
-  path, data = Avo::Actions::City::Update.link_arguments(
-    resource: resource,
-    arguments: arguments
-  )
-
-  link_to resource.record.name, path, data: data
-end
-```
-:::
 
 <Image src="/assets/img/actions/action_link.gif" width="684" height="391" alt="actions link demo" />
 
@@ -758,57 +888,51 @@ end
 
 Please follow our extended [StimulusJS guides](./stimulus-integration.html#use-stimulus-js-in-a-tool) for more information.
 
-## Divider
+## Guides
 
-<VersionReq version="3.5.6" />
+## TODO: organize guides into sub-sections and link to them here
 
-Action dividers allow you to organize and separate actions into logical groups, improving the overall layout and usability.
+### Passing Params to the Action Show Page
+When navigation to an action from a resource <Index /> or <Show /> views, it's sometimes useful to pass parameters to an action.
 
-Here's an example of how you can define actions dividers:
-
-```ruby
-def actions
-  action Avo::Actions::ToggleInactive
-  action Avo::Actions::ToggleAdmin
-  divider
-  action Avo::Actions::Sub::DummyAction
-  action Avo::Actions::DownloadFile
-  divider
-  action Avo::Actions::Test::NoConfirmationRedirect
-  action Avo::Actions::Test::CloseModal
-end
-```
-<Image src="/assets/img/action_divider.png" width="306" height="325" alt="" />
-
-<Option name="`label`">
-
-The `label` option can be used to display specific text on dividers, enhancing usability by adding context to each section.
+One particular example is when you'd like to populate a field in that action with some particular value based on that param.
 
 ```ruby
-def actions
-  action Avo::Actions::ToggleAdmin
-  divider label: "New section"
-  action Avo::Actions::Sub::DummyAction
-end
-```
-</Option>
-
-## Icon
-
-<VersionReq version="3.5.6" />
-Action icons allow you to enhance the visual representation of actions. Action icons provide a quick visual cue for users, helping them identify different actions at a glance.
-
-Here's an example of how you can define actions with icons:
-
-```ruby
-def actions
-    action Avo::Actions::ToggleInactive, icon: "heroicons/outline/globe"
-    action Avo::Actions::ToggleAdmin
-    action Avo::Actions::Sub::DummyAction
-    action Avo::Actions::DownloadFile, icon: "heroicons/outline/arrow-left"
-    action Avo::Actions::Test::NoConfirmationRedirect
-    action Avo::Actions::Test::CloseModal
+class Action
+  def fields
+    field :some_field, as: :hidden, default: -> { if previous_param == yes ? :yes : :no}
   end
+end
 ```
+Consider the following scenario:
 
-<Image src="/assets/img/action_icon.png" width="306" height="325" alt="" />
+1. Navigate to `https://main.avodemo.com/avo/resources/users`.
+2. Add the parameter `hey=ya` to the URL: `https://main.avodemo.com/avo/resources/users?hey=ya`
+3. Attempt to run the dummy action.
+4. After triggering the action, verify that you can access the `hey` parameter.
+5. Ensure that the retrieved value of the `hey` parameter is `ya`.
+
+**Implementation**
+
+To achieve this, we'll reference the `request.referer` object and extract parameters from the URL. Here is how to do it:
+
+```ruby
+class Action
+  def fields
+    # Accessing the parameters passed from the parent view
+    field :some_field, as: :hidden, default: -> {
+      # Parsing the request referer to extract parameters
+      parent_params = URI.parse(request.referer).query.split("&").map { |param| param.split("=")}.to_h.with_indifferent_access
+      # Checking if the `hei` parameter equals `ya`
+      if parent_params[:hey] == 'ya'
+        :yes
+      else
+        :no
+      end
+    }
+  end
+end
+```
+Parse the `request.referer` to extract parameters using `URI.parse`.
+Split the query string into key-value pairs and convert it into a hash.
+Check if the `hey` parameter equals `ya`, and set the default value of `some_field` accordingly.
