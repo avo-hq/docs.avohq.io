@@ -8,15 +8,11 @@ outline: deep
 
 <DemoVideo demo-video="https://youtu.be/BK47E7TMXn0?t=778" />
 
-Actions are powerful features in Avo that enable you to perform operations on one or multiple records simultaneously. They provide a flexible way to add custom functionality to your interface.
-
 ## Overview
 
-Actions are versatile tools that enhance your interface with powerful operational capabilities. They enable you to execute operations on single or multiple records simultaneously, while collecting additional input through customizable forms. Actions can handle various tasks, from triggering background jobs to generating and downloading files.
+Actions in Avo are powerful tools that enable operations on single or multiple records simultaneously, enhancing your interface with custom functionality. They support various tasks, from triggering background jobs to generating reports and handling batch updates, while also collecting additional input via customizable forms.
 
-Common use cases for actions include managing user states (such as toggling active/inactive status), sending customized notification emails to users, generating comprehensive reports, and performing batch updates across multiple records. The flexibility of actions allows you to implement virtually any custom functionality your application requires.
-
-These features make actions an essential component for building robust administrative interfaces, streamlining workflows, and managing data efficiently.
+Common use cases include managing user states, sending notifications, and automating data processing. Their flexibility makes them essential for building robust administrative interfaces, streamlining workflows, and managing data efficiently.
 
 ## Generator
 
@@ -141,18 +137,16 @@ end
 
 <VersionReq version="3.5.6" class="mt-4" />
 
-The `icon` option lets you specify an icon to display next to the action in the dropdown menu. Avo supports Heroicons by default.
+The `icon` option lets you specify the icon to display next to the action in the dropdown menu. Avo supports Heroicons by default.
 
 Here's an example of how you can define actions with icons:
 
-```ruby
-def actions
-  action Avo::Actions::ToggleInactive, icon: "heroicons/outline/globe"
-  action Avo::Actions::ToggleAdmin
-  action Avo::Actions::Sub::DummyAction
-  action Avo::Actions::DownloadFile, icon: "heroicons/outline/arrow-left"
-  action Avo::Actions::Test::NoConfirmationRedirect
-  action Avo::Actions::Test::CloseModal
+```ruby{4}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def actions
+    action Avo::Actions::ToggleInactive, icon: "heroicons/outline/globe"
+  end
 end
 ```
 
@@ -167,17 +161,20 @@ end
 Action dividers allow you to organize and separate actions into logical groups, improving the overall layout and usability.
 This will create a visual separator in the actions dropdown menu, helping you group related actions together.
 
-```ruby
-def actions
-  # User status actions
-  action Avo::Actions::ActivateUser
-  action Avo::Actions::DeactivateUser
+```ruby{8}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def actions
+    # User status actions
+    action Avo::Actions::ActivateUser
+    action Avo::Actions::DeactivateUser
 
-  divider
+    divider
 
-  # Communication actions
-  action Avo::Actions::SendWelcomeEmail
-  action Avo::Actions::SendPasswordReset
+    # Communication actions
+    action Avo::Actions::SendWelcomeEmail
+    action Avo::Actions::SendPasswordReset
+  end
 end
 ```
 
@@ -185,11 +182,14 @@ end
 
 You can also add a label to the divider for better organization:
 
-```ruby
-def actions
-  action Avo::Actions::ActivateUser
-  divider label: "Communication"
-  action Avo::Actions::SendWelcomeEmail
+```ruby{5}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def actions
+    action Avo::Actions::ActivateUser
+    divider label: "Communication"
+    action Avo::Actions::SendWelcomeEmail
+  end
 end
 ```
 
@@ -202,22 +202,22 @@ You may add fields to the action just as you do it in a resource. Adding fields 
 
 Since version <Version version="3.16.2" /> you can access the selected records through the `query` object within fields.
 
-```ruby
-# app/avo/actions/toggle_active.rb # [!code focus]
-class Avo::Actions::ToggleInactive < Avo::BaseAction # [!code focus]
+```ruby{5-8}
+# app/avo/actions/toggle_active.rb
+class Avo::Actions::ToggleInactive < Avo::BaseAction
   self.name = "Toggle Inactive"
 
-  def fields # [!code focus]
-    field :notify_user, as: :boolean # [!code focus]
-    field :message, as: :textarea, default: "Your account has been marked as inactive." # [!code focus]
-  end # [!code focus]
+  def fields
+    field :notify_user, as: :boolean
+    field :message, as: :textarea, default: "Your account has been marked as inactive."
+  end
 
   def handle(query:, fields:, current_user:, resource:, **args)
     query.each do |record|
       # Do something with your records.
     end
   end
-end # [!code focus]
+end
 
 ```
 
@@ -229,7 +229,7 @@ end # [!code focus]
 
 **Belongs to field**
 
-The `belongs_to` field will **only work** on the <Show /> and <Edit /> page of a record. It won't work on the <Index /> page of a resource.
+The `belongs_to` field will **only work** on the <Show /> and <Edit /> page of a record. It **won't** work on the <Index /> page of a resource.
 
 Read more on why [here](https://github.com/avo-hq/avo/issues/1572#issuecomment-1421461084).
 
@@ -237,7 +237,7 @@ Read more on why [here](https://github.com/avo-hq/avo/issues/1572#issuecomment-1
 
 **Files authorization**
 
-If you're using the `file` field on an action and attach it to a resource that's using the authorization feature, please ensure you have the `upload_{FIELD_ID}?` policy method returning `true`. Otherwise, the `file` input might be hidden.
+If you're using the `file` field on an action that is registered to a resource that's using the authorization feature, please ensure you have the `upload_{FIELD_ID}?` policy method returning `true`. Otherwise, the `file` input might be hidden.
 
 More about this on the [authorization page](./authorization#attachments).
 :::
@@ -283,42 +283,52 @@ end # [!code focus]
 
 After an action runs, you can respond to the user with different types of notifications. The default response reloads the page and shows an `Action ran successfully` message of type `inform`.
 
-```ruby
-def handle(**args)
-  succeed "Success response ✌️"
-  warn "Warning response ✌️"
-  inform "Info response ✌️"
-  error "Error response ✌️"
+<Option name="`succeed`" headingSize="3">
+
+Displays a **green** success alert to indicate successful completion.
+</Option>
+
+<Option name="`warn`" headingSize="3">
+
+Displays an **orange** warning alert for cautionary messages.
+</Option>
+
+<Option name="`inform`" headingSize="3">
+
+Displays a **blue** info alert for general information.
+</Option>
+
+<Option name="`error`" headingSize="3">
+
+Displays a **red** error alert to indicate failure or errors.
+</Option>
+
+```ruby{4-7}
+# app/avo/actions/toggle_inactive.rb
+class Avo::Actions::ToggleInactive < Avo::BaseAction
+  def handle(**args)
+    succeed "Success response ✌️"
+    warn "Warning response ✌️"
+    inform "Info response ✌️"
+    error "Error response ✌️"
+  end
 end
 ```
 
 <Image src="/assets/img/actions/alert-responses.png" width="1074" height="558" alt="Avo notification types" />
 
-<Option name="`succeed`" headingSize="3">
-Displays a green success alert to indicate successful completion.
-</Option>
-
-<Option name="`warn`" headingSize="3">
-Displays an orange warning alert for cautionary messages.
-</Option>
-
-<Option name="`inform`" headingSize="3">
-Displays a blue info alert for general information.
-</Option>
-
-<Option name="`error`" headingSize="3">
-Displays a red error alert to indicate failure or errors.
-</Option>
-
 <Option name="`silent`" headingSize="3">
 
 You may want to run an action and show no notification when it's done. That is useful for redirect scenarios. You can use the `silent` response for that.
 
-```ruby
-def handle(**args) # [!code focus]
-  redirect_to "/admin/some-tool"
-  silent # [!code focus]
-end # [!code focus]
+```ruby{5}
+# app/avo/actions/toggle_inactive.rb
+class Avo::Actions::ToggleInactive < Avo::BaseAction
+  def handle(**args)
+    redirect_to "/admin/some-tool"
+    silent
+  end
+end
 ```
 </Option>
 
@@ -884,13 +894,13 @@ end
 
 <Image src="/assets/img/actions/action_link.gif" width="684" height="391" alt="actions link demo" />
 
-## StimulusJS
-
-Please follow our extended [StimulusJS guides](./stimulus-integration.html#use-stimulus-js-in-a-tool) for more information.
 
 ## Guides
+// TODO: Organize guides into sub-sections and link to them here
 
-## TODO: organize guides into sub-sections and link to them here
+### StimulusJS
+
+Please follow our extended [StimulusJS guides](./stimulus-integration.html#use-stimulus-js-in-a-tool) for more information.
 
 ### Passing Params to the Action Show Page
 When navigation to an action from a resource <Index /> or <Show /> views, it's sometimes useful to pass parameters to an action.
