@@ -27,7 +27,6 @@ A list of prepared templates:
 - `:logo` ➡️ &nbsp; `app/views/avo/partials/_logo.html.erb`
 - `:head` ➡️ &nbsp; `app/views/avo/partials/_head.html.erb`
 - `:header` ➡️ &nbsp; `app/views/avo/partials/_header.html.erb`
-- `:footer` ➡️ &nbsp; `app/views/avo/partials/_footer.html.erb`
 - `:scripts` ➡️ &nbsp; `app/views/avo/partials/_scripts.html.erb`
 - `:sidebar_extra` ➡️ &nbsp; `app/views/avo/partials/_sidebar_extra.html.erb`
 
@@ -38,10 +37,6 @@ In the `app/views/avo/partials` directory, you will find the `_logo.html.erb` pa
 ### Header
 
 The `_header.html.erb` partial enables you to customize the name and link of your app.
-
-### Footer
-
-The `_footer.html.erb` partial enables you to customize the footer of your admin.
 
 ### Scripts
 
