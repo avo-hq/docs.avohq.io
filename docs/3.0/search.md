@@ -254,7 +254,7 @@ When a resource has the `search` attribute with a valid configuration, a new sea
 
 ## Global search
 
-<licensereq license="pro"></licensereq>
+<LicenseReq license="pro" />
 
 Avo also has a global search feature. It will search through all the resources that have the `search` attribute with a valid configuration.
 
