@@ -142,6 +142,21 @@ docker compose build --build-arg BUNDLE_PACKAGER__DEV=xxx
 ```
 </Option>
 
+## Bundle without premium gems
+
+If you don't need to use premium gems, you can use the community version of Avo.
+
+```ruby
+# Gemfile
+gem 'avo',
+
+group :avo, optional: true do
+  source "https://packager.dev/avo-hq/" do
+    gem "avo-advanced", "~> 3.17"
+  end
+end
+```
+
 ## FAQ
 
 Frequently asked questions:
