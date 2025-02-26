@@ -18,11 +18,15 @@ All cards have some standard settings like `id`, which must be unique, `label` a
 
 Each card has its own `cols` and `rows` settings to control the width and height of the card inside the parent's grid. They can have values from `1` to `6`.
 
+All this settings can be called as an lambda.
+
+The lambda will be executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent`, `resource`, `dashboard` and `card`.
+
 ```ruby{2-7}
 class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
-  self.id = 'users_metric'
-  self.label = 'Users count'
-  self.description = 'Users description'
+  self.id = "users_metric"
+  self.label = -> { "Users count" }
+  self.description = -> { "Users description" }
   self.cols = 1
   self.rows = 1
   self.display_header = true
