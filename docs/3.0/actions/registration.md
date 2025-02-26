@@ -25,13 +25,13 @@ end
 :::warning
 Using the Pundit policies, you can restrict access to actions using the `act_on?` method. If you think you should see an action on a resource and you don't, please check the policy method.
 
-More info [here](./authorization#act-on)
+More info [here](./../authorization#act-on)
 :::
 
 Once attached, the action will appear in the **Actions** dropdown menu. By default, actions are available on all views.
 
 :::info
-You may use the [customizable controls](./customizable-controls) feature to show the actions outside the dropdown.
+You may use the [customizable controls](./../customizable-controls) feature to show the actions outside the dropdown.
 :::
 
 <Option name="`arguments`" headingSize="3">

@@ -420,9 +420,9 @@ If you want to keep `Contained in` option on arrays and tags filters you should 
 
 <Option name="Multiple action flux">
 
-First iteration of multiple action flux was using `redirect_to` with `turbo_frame: "actions_show"`. With the update to turbo 8 the redirect was giving some troubles and we decided that is time to improve this experience with a proper response type, [`navigate_to_action`](actions.html#navigate_to_action).
+First iteration of multiple action flux was using `redirect_to` with `turbo_frame: "actions_show"`. With the update to turbo 8 the redirect was giving some troubles and we decided that is time to improve this experience with a proper response type, [`navigate_to_action`](actions/execution.html#navigate_to_action).
 
-If you have a multiple action flux implemented with `redirect_to` you should change it to [`navigate_to_action`](actions.html#navigate_to_action).
+If you have a multiple action flux implemented with `redirect_to` you should change it to [`navigate_to_action`](actions/execution.html#navigate_to_action).
 
 </Option>
 

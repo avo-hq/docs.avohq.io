@@ -35,7 +35,7 @@ end
 
 ### StimulusJS
 
-Please follow our extended [StimulusJS guides](./stimulus-integration.html#use-stimulus-js-in-a-tool) for more information.
+Please follow our extended [StimulusJS guides](./../stimulus-integration.html#use-stimulus-js-in-a-tool) for more information.
 
 ### Passing Params to the Action Show Page
 When navigation to an action from a resource <Index /> or <Show /> views, it's sometimes useful to pass parameters to an action.

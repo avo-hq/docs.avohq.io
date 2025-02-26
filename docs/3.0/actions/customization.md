@@ -17,9 +17,9 @@ Visual customization is the process of modifying the action's appearance. This i
 
 All visual customization options can be set as a string or a block.
 
-The blocks are executed using [`Avo::ExecutionContext`](execution-context). Within these blocks, you gain access to:
+The blocks are executed using [`Avo::ExecutionContext`](./../execution-context). Within these blocks, you gain access to:
 
-- All attributes of [`Avo::ExecutionContext`](execution-context)
+- All attributes of [`Avo::ExecutionContext`](./../execution-context)
 - `resource` - The current resource instance
 - `record` - The current record
 - `view` - The current view
@@ -183,12 +183,12 @@ end
 
 The `visible` attribute accepts a boolean or a block.
 
-The block will be executed within the [`Avo::ExecutionContext`](execution-context) environment, giving you access to important contextual attributes like:
+The block will be executed within the [`Avo::ExecutionContext`](./../execution-context) environment, giving you access to important contextual attributes like:
 - `view` - The current view type (index, show, edit)
 - `resource` - The current resource instance
 - `parent_resource` - The parent resource (if applicable).
   - You can access the `parent_record` by `parent_resource.record`
-- Plus all other [`Avo::ExecutionContext`](execution-context) default attributes
+- Plus all other [`Avo::ExecutionContext`](./../execution-context) default attributes
 </Option>
 
 <Option name="`authorize`" headingSize=3>
@@ -210,11 +210,11 @@ end
 
 The `authorize` attribute accepts a boolean or a proc.
 
-The block will be executed within the [`Avo::ExecutionContext`](execution-context) environment, giving you access to important contextual attributes like:
+The block will be executed within the [`Avo::ExecutionContext`](./../execution-context) environment, giving you access to important contextual attributes like:
 - `action` - The current action instance
 - `resource` - The current resource instance
 - `view` - The current view type (index, show, edit)
-- All other [`Avo::ExecutionContext`](execution-context) attributes
+- All other [`Avo::ExecutionContext`](./../execution-context) attributes
 
 </Option>
 

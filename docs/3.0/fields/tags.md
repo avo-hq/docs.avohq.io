@@ -225,7 +225,7 @@ Valid values are `nil` for array values and `select` for a single value.
 
 There might be cases where you want to dynamically fetch the values from an API. The `fetch_values_from` option enables you to pass a URL from where the field should suggest values.
 
-This options works wonderful when used in [Actions](./../actions.md).
+This options works wonderful when used in [Actions](./../actions/introduction.md).
 
 ```ruby{3}
 field :skills,
