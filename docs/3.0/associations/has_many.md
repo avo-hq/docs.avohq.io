@@ -17,6 +17,7 @@ field :projects, as: :has_many
 <!-- @include: ./../common/associations_searchable_option_common.md-->
 <!-- @include: ./../common/associations_attach_scope_option_common.md-->
 <!-- @include: ./../common/associations_scope_option_common.md-->
+<!-- @include: ./../common/associations_name_option_common.md-->
 <!-- @include: ./../common/associations_description_option_common.md-->
 <!-- @include: ./../common/associations_use_resource_option_common.md-->
 <!-- @include: ./../common/associations_discreet_pagination_option_common.md-->

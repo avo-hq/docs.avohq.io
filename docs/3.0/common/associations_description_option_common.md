@@ -10,5 +10,7 @@ Changes the text displayed under the association name.
 
 #### Possible values
 
-Any string.
+Any string or any zero arity lambda function.
+
+Within lambda, you have access to `query` and all attributes of [`Avo::ExecutionContext`](../execution-context).
 </Option>
