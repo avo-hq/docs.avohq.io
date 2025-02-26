@@ -192,6 +192,17 @@ const config = {
           ],
         },
         {
+          text: "Actions",
+          items: [
+            {text: "Introduction", link: "/3.0/actions/introduction.html"},
+            {text: "Generator", link: "/3.0/actions/generator.html"},
+            {text: "Registration", link: "/3.0/actions/registration.html"},
+            {text: "Execution & Feedback", link: "/3.0/actions/execution.html"},
+            {text: "Customization", link: "/3.0/actions/customization.html"},
+            {text: "Guides & Tutorials", link: "/3.0/actions/guides-and-tutorials.html"},
+          ],
+        },
+        {
           text: "Field types",
           collapsible: true,
           collapsed: true,
