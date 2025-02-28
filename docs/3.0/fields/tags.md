@@ -247,11 +247,13 @@ When the user searches for a record, the field will perform a request to the ser
 
 Valid values are `nil`, a string, or a block that evaluates to a string. The string should resolve to an endpoint that returns an array of objects with the keys `value` and `label`.
 
+The endpoint will receive the user input as `q` in the params. It is accessible by using `params["q"]`.
 ::: code-group
 
 ```ruby{2-10} [app/controllers/avo/skills_controller.rb]
 class Avo::SkillsController < Avo::ResourcesController
   def skills_for_user
+    # You can access the user input by using params["q"]
     skills = Skill.all.map do |skill|
       {
         value: skill.id,

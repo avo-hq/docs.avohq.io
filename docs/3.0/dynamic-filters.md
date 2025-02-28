@@ -706,10 +706,13 @@ fetch_values_from: -> { "/avo-filters/resources/cities/tags" }
 
 The string should resolve to an endpoint that returns an array of objects with the keys `value`, `label` and optionally `avatar`.
 
+The endpoint will receive the user input as `q` in the params. It is accessible by using `params["q"]`.
+
 ::: code-group
-```ruby{3-19} [app/controllers/avo/skills_controller.rb]
+```ruby{3-20} [app/controllers/avo/skills_controller.rb]
 class Avo::CitiesController < Avo::ResourcesController
   def tags
+    # You can access the user input by using params["q"]
     render json: [
       {
         value: 1,
