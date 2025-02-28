@@ -1,5 +1,5 @@
 ---
-version: '3.17'
+version: '3.18'
 betaStatus: Open Beta
 license: community
 ---
