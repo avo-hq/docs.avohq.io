@@ -3,11 +3,9 @@ license: community
 feedbackId: 837
 ---
 
-# Actions Introduction
+# Actions Overview
 
-<DemoVideo demo-video="https://youtu.be/BK47E7TMXn0?t=778" />
-
-## Overview
+<DemoVideo demo-video="https://youtu.be/BK47E7TMXn0?t=778" class="mt-4" />
 
 Actions in Avo are powerful tools that transform the way you interact with your data. They enable you to perform operations on one or multiple records simultaneously, extending your interface with custom functionality that goes beyond basic CRUD operations.
 

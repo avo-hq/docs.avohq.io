@@ -230,7 +230,7 @@ Renders a link to a path set by you.
 
 <Option name="`action`">
 
-Renders a button that triggers an action. You must provide it an [Action](./actions/introduction.md) class.
+Renders a button that triggers an action. You must provide it an [Action](./actions/overview.md) class.
 
 #### Supported options
 
