@@ -43,7 +43,7 @@ Rails.application.routes.draw do
   end
 
   authenticate :user, ->(user) { user.admin? } do
-    mount Avo::Engine => Avo.configuration.root_path
+    mount_avo
   end
 end
 ```

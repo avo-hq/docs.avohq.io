@@ -8,7 +8,16 @@ Implementing multi-language URLs is a common use-case. Using a route scope block
 
 ## 1. Mount Avo within a `:locale` scope
 
-<!-- @include: ./../common/mount_avo_under_locale_scope_common.md -->
+Using a locale scope is an effective way to set the locale for your users.
+
+```ruby{3-5}
+# config/routes.rb
+Rails.application.routes.draw do
+  scope ":locale" do
+    mount_avo
+  end
+end
+```
 
 ## 2. Apply the `locale` Scope
 
