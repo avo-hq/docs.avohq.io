@@ -16,7 +16,7 @@ The value can be the actual class or a string representation of that class.
 # the class
 Avo::Resources::Post
 
-# the stirng representation of the class
+# the string representation of the class
 "Avo::Resources::Post"
 ```
 </Option>
