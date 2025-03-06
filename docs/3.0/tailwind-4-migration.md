@@ -5,7 +5,7 @@ outline: deep
 # TailwindCSS 4 Migration Guide
 
 ## Overview
-With the upcoming release of Avo `3.19.0` in 1 April 2025 and no, this is not an April Fools' joke 😄, the framework will fully transition to TailwindCSS 4. To facilitate a smooth migration process, Avo `3.18.x` (which uses TailwindCSS 3) will continue to be maintained alongside a parallel version, `3.18.x.tw4`, which incorporates TailwindCSS 4.
+With the upcoming release of Avo `3.19.0` in 1 April 2025 and no, this is not an April Fools' joke 😄, Avo will fully transition to TailwindCSS 4. To facilitate a smooth migration process, Avo `3.18.x` (which uses TailwindCSS 3) will continue to be maintained alongside a parallel version, `3.18.x.tw4`, which incorporates TailwindCSS 4.
 
 **We strongly encourage you to utilize the `3.18.x.tw4` version as a testing ground for the migration. By doing so, you can identify potential issues, provide feedback, and ensure a seamless transition before the official release of Avo `3.19.0` in 1 April 2025.**
 
@@ -88,7 +88,68 @@ After, you can use the `3.18.x.tw4` version of the gem and it will work just fin
 
 ## You do have a TailwindCSS pipeline
 
-[WIP]
+If you have a TailwindCSS pipeline, the first required step is to update the TailwindCSS version to 4.x.
+
+After that, navigate to `config/avo/tailwind.config.js` and remove the `content` entry:
+
+```ruby
+# config/avo/tailwind.config.js
+const avoPreset = require('../../tmp/avo/tailwind.preset.js')
+
+module.exports = {
+  presets: [avoPreset],
+  content: [ # [!code --]
+    ...avoPreset.content, # [!code --]
+    './app/views/**/*.html.erb', # [!code --]
+    './app/helpers/**/*.rb', # [!code --]
+    './app/javascript/**/*.js', # [!code --]
+    './app/components/avo/**/*.html.erb', # [!code --]
+  ], # [!code --]
+}
+```
+
+Then, update `app/assets/stylesheets/avo/avo.tailwind.css` with the following changes:
+
+```css
+/* app/assets/stylesheets/avo/avo.tailwind.css */
+@import 'tailwindcss/base'; /* [!code --] */
+@import 'tailwindcss'; /* [!code ++] */
+/* Have all of Avo's custom and plugins styles available. */
+@import '../../../../tmp/avo/avo.base.css';
+@import 'tailwindcss/components'; /* [!code --] */
+@import 'tailwindcss/utilities'; /* [!code --] */
+
+/*
+
+@layer components {
+  .btn-primary {
+    @apply py-2 px-4 bg-blue-200;
+  }
+}
+
+*/
+```
+
+Additionally, remove the following files:
+
+- `app/assets/stylesheets/avo/tailwindcss/base.css`
+- `app/assets/stylesheets/avo/tailwindcss/components.cs`
+- `app/assets/stylesheets/avo/tailwindcss/utilities.css`
+
+Finally, relocate `app/assets/stylesheets/application.tailwind.css` to `app/assets/tailwind/application.css`.
+
+You can accomplish this by executing the following command:
+
+```bash
+git mv app/assets/stylesheets/application.tailwind.css app/assets/tailwind/application.css
+```
+
+Once these steps are completed, your TailwindCSS pipeline should be fully migrated and ready for Avo `3.19.0`.
+
+Review the complete set of changes we made to upgrade our demo app, which includes a custom TailwindCSS pipeline:
+
+- [Pull Request #3](https://github.com/avo-hq/ticketing.avodemo.com/pull/3)
+- [Commit 539c643](https://github.com/avo-hq/ticketing.avodemo.com/commit/539c64322f53fa2070a641303f5d289b7cb2e6a3)
 
 ## TailwindCSS 4 breaking changes
 
