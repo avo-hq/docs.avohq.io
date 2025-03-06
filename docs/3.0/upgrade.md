@@ -4,6 +4,18 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade to 3.19.0
+
+<Option name="TailwindCSS 4">
+
+With the upcoming release of Avo `3.19.0` in 1 April 2025 and no, this is not an April Fools' joke 😄, Avo will fully transition to TailwindCSS 4. To facilitate a smooth migration process, Avo `3.18.x` (which uses TailwindCSS 3) will continue to be maintained alongside a parallel version, `3.18.x.tw4`, which incorporates TailwindCSS 4.
+
+**We strongly encourage you to utilize the `3.18.x.tw4` version as a testing ground for the migration. By doing so, you can identify potential issues, provide feedback, and ensure a seamless transition before the official release of Avo `3.19.0` in 1 April 2025.**
+
+A dedicated guide covers the entire migration process. You can check it out [here](tailwind-4-migration).
+
+</Option>
+
 ## Upgrade to 3.18.0
 
 <Option name="read_only and disabled options on has_one fields">
