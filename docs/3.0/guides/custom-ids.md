@@ -42,7 +42,7 @@ With this setup, you can use `Post.find("bar")` to find records by their custom 
 :::info
 For a version of [friendly_id](https://github.com/norman/friendly_id) smaller then 5.0 you can use [custom query scopes](/3.0/customization.md#custom-query-scopes)
 :::
-View FriendlyID setup in action: [View Demo](https://main.avodemo.com/avo/resources/users)
+View [friendly_id](https://github.com/norman/friendly_id) setup in action: [View Demo](https://main.avodemo.com/avo/resources/users)
 
 Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/user.rb)
 
@@ -72,7 +72,7 @@ class Post < ApplicationRecord
 end
 ```
 
-View Prefixed IDs setup in action: [View Demo](https://main.avodemo.com/avo/resources/teams)
+View [prefixed_ids](https://github.com/excid3/prefixed_ids) setup in action: [View Demo](https://main.avodemo.com/avo/resources/teams)
 
 Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/team.rb)
 
@@ -92,7 +92,6 @@ And then execute:
 bundle install
 ```
 
-
 **Include Hashid Rails in the ActiveRecord model you'd like to enable hashids:**
 
 ```ruby{3}
@@ -102,6 +101,6 @@ class Post < ApplicationRecord
 end
 ```
 
-View hashid-rails setup in action: [View Demo](https://main.avodemo.com/avo/resources/spouses)
+View [hashid-rails](https://github.com/jcypret/hashid-rails) setup in action: [View Demo](https://main.avodemo.com/avo/resources/spouses)
 
 Check out the code: [Code on GitHub](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/spouse.rb)
