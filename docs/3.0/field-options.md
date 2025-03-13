@@ -349,7 +349,7 @@ It's customary on tables to align numbers to the right. You can do that using th
 
 ```ruby{2}
 class Avo::Resources::Project < Avo::BaseResource
-  field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
+  field :users_required, as: :number, html: {index: {wrapper: {classes: "flex justify-end"}}}
 end
 ```
 
