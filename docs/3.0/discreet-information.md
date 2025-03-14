@@ -127,7 +127,7 @@ end
 
 <Option name="`as`">
 
-The `as` option will transform the item into a badge if the `:badge` option is specified.
+The `as` option specifies the type of representation. Currently, only `:badge` is supported, but additional types may be introduced in the future.
 
 ```ruby
 # app/avo/resources/post.rb
