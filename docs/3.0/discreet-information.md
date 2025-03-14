@@ -129,7 +129,7 @@ end
 
 The `as` option specifies the type of representation. Currently, only `:badge` is supported, but additional types may be introduced in the future.
 
-```ruby
+```ruby{7}
 # app/avo/resources/post.rb
 class Avo::Resources::Post < Avo::BaseResource
   self.discreet_information = {
