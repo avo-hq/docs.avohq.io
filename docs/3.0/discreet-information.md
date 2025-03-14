@@ -62,7 +62,7 @@ end
 
 If the record doesn't have the `created_at` or `updated_at` attributes, they will be ommited.
 
-You can alternatively use `:timestamps_badge` to display the id as a badge.
+You can alternatively use `:timestamps_badge` to display the timestamps as a badge.
 
 ## Options
 
