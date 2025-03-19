@@ -5,9 +5,9 @@ outline: deep
 # TailwindCSS 4 Migration Guide
 
 ## Overview
-With the upcoming release of Avo `3.19.0` in 1 April 2025 and no, this is not an April Fools' joke 😄, Avo will fully transition to TailwindCSS 4. To facilitate a smooth migration process, Avo `3.18.x` (which uses TailwindCSS 3) will continue to be maintained alongside a parallel version, `3.18.x.tw4`, which incorporates TailwindCSS 4.
+Avo will fully transition to TailwindCSS 4. To facilitate a smooth migration process, Avo `3.18.x` (which uses TailwindCSS 3) will continue to be maintained alongside a parallel version, `3.18.x.tw4`, which incorporates TailwindCSS 4.
 
-**We strongly encourage you to utilize the `3.18.x.tw4` version as a testing ground for the migration. By doing so, you can identify potential issues, provide feedback, and ensure a seamless transition before the official release of Avo `3.19.0` in 1 April 2025.**
+**We strongly encourage you to utilize the `3.18.x.tw4` version as a testing ground for the migration. By doing so, you can identify potential issues, provide feedback, and ensure a seamless transition before the official release of Avo with TailwindCSS4.**
 
 This guide outlines the necessary steps to migrate to TailwindCSS 4, addressing two distinct scenarios:
 
@@ -83,7 +83,7 @@ To report any issue please leave a comment [here](https://github.com/avo-hq/avo/
 
 If you don't have a TailwindCSS pipeline, which should be the case for most cases, there isn't much to do besides following the steps in the [Use the `3.18.x.tw4` version](#use-the-3-18-x-tw4-version) section and address the [TailwindCSS 4 breaking changes](#tailwindcss-4-breaking-changes) below.
 
-After, you can use the `3.18.x.tw4` version of the gem and it will work just fine and ready for the Avo `3.19.0` release.
+After, you can use the `3.18.x.tw4` version of the gem and it will work just fine and ready for the Avo with TailwindCSS 4 release.
 
 
 ## You do have a TailwindCSS pipeline
