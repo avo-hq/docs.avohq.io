@@ -78,6 +78,7 @@ field :patrons,
 </Option>
 
 <!-- @include: ./../common/show_on_edit_common.md-->
+<!-- @include: ./../common/nested_common.md-->
 <!-- @include: ./../common/scopes_common.md-->
 <!-- @include: ./../common/show_hide_buttons_common.md-->
 <!-- @include: ./../common/reloadable.md-->
