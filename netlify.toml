@@ -52,6 +52,12 @@
   status = 301
   force = false
 
+[[redirects]]
+  from = "/3.0/actions.html"
+  to = "/3.0/actions/overview.html"
+  status = 301
+  force = false
+
 # Redirects for 2.0 versions
 # -------------------------
 
