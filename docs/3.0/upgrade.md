@@ -6,6 +6,61 @@ If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedica
 
 ## Upgrade to 3.18.0
 
+<Option name="read_only and disabled options on has_one fields">
+
+The `read_only` and `disabled` options were interfering with the rendering of attach/create buttons on `has_one` fields, while leaving other association fields like `has_many` unaffected. To preserve consistency, these options have been excised from the attach/create functionality. The attach/create operations are now controlled exclusively by authorization.
+
+### Breaking Changes
+
+- The `read_only` and `disabled` options no longer influence the behavior of `has_one` fields.
+- Attach/create actions are now controlled solely via authorization. For further details, refer to:
+  - [attach_{association}?](https://docs.avohq.io/3.0/authorization.html#attach_association)
+  - [create_{association}?](https://docs.avohq.io/3.0/authorization.html#create_association)
+
+### Steps to Update
+
+Please **search for all `has_one` fields** that still utilize the `read_only` or `disabled` options and update them with the appropriate authorization methods as outlined above.
+
+</Option>
+
+<Option name="Avo's mounting point update">
+
+We have refactored how Avo and its engines are mounted, eliminating the need for options like `mount_avo_engines` and custom engine mounting via `Avo.mount_engines`.
+
+As a result, both `mount_avo_engines` and `Avo.mount_engines` are now obsolete. The new mounting approach simplifies integration and removes the need for custom logic.
+
+### Breaking Change
+- `mount_avo_engines` and `Avo.mount_engines` are obsolete and should no longer be used.
+- Replace Avo mounting point with the new `mount_avo` approach.
+
+### Steps to Update
+1. **Remove all references** to `mount_avo_engines` and `Avo.mount_engines` from your application.
+2. **Update your `routes.rb` file** by replacing:
+   - `mount Avo::Engine, at: Avo.configuration.root_path` → with → `mount_avo`
+   - If using a custom path (`mount Avo::Engine, at: "custom/path"`), replace it with `mount_avo at: "custom/path"`
+
+By following these steps, your application will be fully compatible with the new mounting strategy.
+
+
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  mount Avo::Engine, at: Avo.configuration.root_path # [!code --]
+  mount_avo # [!code ++]
+end
+```
+
+
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  mount Avo::Engine, at: "custom/path" # [!code --]
+  mount_avo at: "custom/path" # [!code ++]
+end
+```
+
+</Option>
+
 <Option name="Preview Policy">
 
 As of <Version version="3.18.0" />, a new policy method is available: `preview?`.
@@ -31,7 +86,7 @@ You can now refine this method to restrict access for specific users or even def
 
 </Option>
 
-<Option name="Deprecation of `row`">
+<Option name="Deprecation of row">
 
 The `row` DSL has been available but undocumented for some time. As of <Version version="3.18.0" />, it has been officially deprecated in favor of `cluster`, which is now properly documented [here](./resource-clusters.html).
 

@@ -422,6 +422,32 @@ end
 
 Now, Avo will use `avo_index?` instead of `index?` to manage the **Index** view authorization.
 
+## Use Resource's Policy to authorize custom actions
+
+It may be necessary to authorize a specific field or custom action of a resource using a policy class rather than defining the authorization logic directly within the resource class. By doing so, we can delegate control to the policy class, ensuring a cleaner and more maintainable authorization structure.
+
+:::code-group
+```ruby [app/resources/product.rb]{8}
+field :amount,
+      as: :money,
+      currencies: %w[USD],
+      sortable: true,
+      filterable: true,
+      copyable: true,
+      # define ability to change the amount in policy class instead of doing it here
+      disabled: -> { !@resource.authorization.authorize_action(:amount?, raise_exception: false) }
+```
+```ruby [app/policies/product_policy.rb]{2-4}
+# Define ability to change the amount in Product Policy
+def amount?
+  user.admin?
+end
+
+```
+:::
+
+
+
 ## Raise errors when policies are missing
 
 The default behavior of Avo is to allow missing policies for resources silently. So, if you have a `User` model and a `Avo::Resources::User` but don't have a `UserPolicy`, Avo will not raise errors regarding missing policies and authorize that resource.
@@ -444,14 +470,21 @@ Now, you'll have to provide a policy for each resource you have in your app, thu
 <VersionReq version="3.11.7" />
 [Developers](authentication.html#_2-developer-user) have the ability to monitor any unauthorized actions. When a [developer user](authentication.html#_2-developer-user) makes a request that triggers an unauthorized action, a log entry similar to the following will be generated:
 
-In development each log entry provides details about the policy class, the action attempted, the user who made the request, and the record involved:
+In development each log entry provides details about the policy class, the action attempted, the global id of the user who made the request, and the global id of the record involved:
 ```bash
-web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
-web     | user: #<User id: 20, first_name: "Avo", last_name: "Cado", roles: {"admin"=>true, "manager"=>false, "writer"=>false}, team_id: nil, slug: "avo-cado", active: true, email: "avo@avohq.io", created_at: "2023-05-20 18:32:32.857042000 +0000", updated_at: "2024-01-03 14:20:00.352895000 +0000">
-web     | record: User(id: integer, first_name: string, last_name: string, roles: json, team_id: integer, slug: string, active: boolean, email: string, encrypted_password: string, reset_password_token: string, reset_password_sent_at: datetime, remember_created_at: datetime, created_at: datetime, updated_at: datetime)
+web     | [Avo->] Unauthorized action 'reorder?' for 'UserPolicy'
+web     | user: gid://dummy/User/20
+web     | record: gid://dummy/User/31
 ```
 
-In production each log entry provides details about the policy class and the attempted action:
+To find a record based on its global id you can use `GlobalID::Locator.locate`
+
+```ruby
+gid = "gid://dummy/User/20"
+user = GlobalID::Locator.locate(gid)
+```
+
+In production each log entry provides details only about the policy class and the attempted action:
 ```bash
 web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
 ```

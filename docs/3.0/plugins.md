@@ -24,7 +24,8 @@ This means we provide two hooks that you can use to extend the functionality of 
 
 The way we do it is through an initializer. We mostly use the `engine.rb` file to register the plugin.
 
-```ruby{8}
+```ruby{8-15}
+# lib/avo/feed_view/engine.rb
 module Avo
   module FeedView
     class Engine < ::Rails::Engine
@@ -36,8 +37,8 @@ module Avo
           # Register the plugin
           Avo.plugin_manager.register :feed_view
 
-          # You can pass a priority too but it's not used at the moment
-          Avo.plugin_manager.register :feed_view, 5
+          # Register the mounting point
+          Avo.plugin_manager.mount_engine Avo::FeedView::Engine, at: "/feed_view"
         end
       end
     end
