@@ -30,6 +30,24 @@ end
 
 <Image src="/assets/img/actions/action_link.gif" width="684" height="391" alt="actions link demo" />
 
+:::tip
+#### Generate an Action Link Without a Resource Instance
+Sometimes, you may need to generate an action link without having access to an instantiated resource.
+
+#### Scenario
+Imagine you want to trigger an action from a custom partial card on a dashboard, but there is no resource instance available.
+
+#### Solution
+In this case, you can create a new resource instance (with or without record) and use it as follows:
+
+```ruby
+path, data = Avo::Actions::City::Update.link_arguments(
+  resource: Avo::Resources::City.new(record: city)
+)
+
+link_to "Update city", path, data: data
+```
+:::
 
 ## Guides
 
