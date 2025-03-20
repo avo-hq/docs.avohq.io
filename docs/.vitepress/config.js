@@ -184,7 +184,6 @@ const config = {
             {text: "Custom view types", link: "/3.0/custom-view-types.html"},
             {text: "Menu editor", link: "/3.0/menu-editor.html"},
             {text: "Search", link: "/3.0/search.html"},
-            {text: "Actions", link: "/3.0/actions.html"},
             {text: "Localization (I18n)", link: "/3.0/i18n.html"},
             {text: "Branding", link: "/3.0/branding.html"},
             {text: "Routing", link: "/3.0/routing.html"},
