@@ -195,7 +195,7 @@ const config = {
           text: "Actions",
           items: [
             {text: "Overview", link: "/3.0/actions/overview.html"},
-            {text: "Generator", link: "/3.0/actions/generator.html"},
+            {text: "Generate", link: "/3.0/actions/generate.html"},
             {text: "Registration", link: "/3.0/actions/registration.html"},
             {text: "Execution & Feedback", link: "/3.0/actions/execution.html"},
             {text: "Customization", link: "/3.0/actions/customization.html"},
