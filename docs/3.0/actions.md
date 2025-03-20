@@ -551,7 +551,7 @@ You will be prompted by a confirmation modal when you run an action. If you don'
 
 ## Standalone actions
 
-You may need to run actions that are not necessarily tied to a model. Standalone actions help you do just that. Add `self.standalone` to an existing action or generate a new one using the `--standalone` option (`bin/rails generate avo:action global_action --standalone`).
+You may need to run actions that are not necessarily tied to specific records. Standalone actions help you do just that. Add `self.standalone` to an existing action or generate a new one using the `--standalone` option (`bin/rails generate avo:action global_action --standalone`).
 
 ```ruby{3}
 class Avo::Actions::DummyAction < Avo::BaseAction
