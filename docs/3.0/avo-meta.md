@@ -24,13 +24,6 @@ And then execute:
 $ bundle
 ```
 
-Additionally, you have to mount the engine, e.g.:
-
-```
-mount Avo::Meta::Engine, at: "#{Avo.configuration.root_path}/avo_meta/"
-```
-
-
 To use `Avo::Meta`, an additional database table containing the _schemas_ for each resource has to be created. For this, simply install the necessary migrations:
 
 ```bash
