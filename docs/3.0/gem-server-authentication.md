@@ -24,7 +24,7 @@ export BUNDLE_PACKAGER__DEV=xxx
 BUNDLE_PACKAGER__DEV=xxx bundle install
 ```
 
-Each hosting service will have their own way to add environment variables. Check out how to do it on [Heroku](#Heroku), [Hatchbox](#Hatchbox), [Docker](#docker_and_docker_compose), or [GitHub Actions](#git_hub_actions).
+Each hosting service will have their own way to add environment variables. Check out how to do it on [Heroku](#Heroku), [Hatchbox](#Hatchbox), [Docker](#docker_and_docker_compose), [Kamal](#Kamal) or [GitHub Actions](#git_hub_actions).
 
 :::warning Warning about using the `.env` file
 You might be tempted to add the token to your `.env` file, as you might do with your Rails app.
@@ -139,6 +139,39 @@ docker build --build-arg BUNDLE_PACKAGER__DEV=$BUNDLE_PACKAGER__DEV
 
 ```bash
 docker compose build --build-arg BUNDLE_PACKAGER__DEV=xxx
+```
+</Option>
+
+<Option name="Kamal">
+Kamal setup is very similar to Docker: include `BUNDLE_PACKAGER__DEV` in your secrets and then use it in your `Dockerfile`.
+
+In your `deploy.yml`:
+
+```yaml
+# Configure builder setup.
+
+builder:
+  arch: amd64
+  secrets:
+    - BUNDLE_PACKAGER__DEV
+```
+
+Then in `.kamal/secrets`:
+
+```
+# However you set your secrets in Kamal
+BUNDLE_PACKAGER__DEV=xxx
+```
+
+Finally, in your `Dockerfile`:
+
+```dockerfile
+# Install application gems
+COPY Gemfile Gemfile.lock ./
+
+RUN --mount=type=secret,id=BUNDLE_PACKAGER__DEV BUNDLE_PACKAGER__DEV=$(cat /run/secrets/BUNDLE_PACKAGER__DEV) bundle install  && \
+    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+    bundle exec bootsnap precompile --gemfile
 ```
 </Option>
 
