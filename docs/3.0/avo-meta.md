@@ -79,3 +79,20 @@ end
 To use the meta attributes in your application, simply access them like you would access a `has_one` association:
 
 `@user.meta.shoe_size`
+
+## Menu entry
+
+By default, "Meta Properties" will automatically appear in the sidebar if you are not using a custom menu.
+
+If you are using a custom menu, you need to explicitly add the menu entry:
+
+```ruby{5}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    section "Meta" do
+      resource :meta_schema
+    end
+  }
+end
+```
