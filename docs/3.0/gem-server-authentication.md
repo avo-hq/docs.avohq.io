@@ -143,6 +143,7 @@ docker compose build --build-arg BUNDLE_PACKAGER__DEV=xxx
 </Option>
 
 <Option name="Kamal">
+
 Kamal setup is very similar to Docker: include `BUNDLE_PACKAGER__DEV` in your secrets and then use it in your `Dockerfile`.
 
 In your `deploy.yml`:
