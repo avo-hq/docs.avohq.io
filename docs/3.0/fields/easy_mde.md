@@ -31,11 +31,25 @@ By default, the content of the `easy_mde` field is not visible on the `Show` vie
 <!-- @include: ./../common/default_boolean_false.md-->
 </Option>
 
+<Option name='`image_upload`'>
+
+If set to `true`, the editor will allow image uploads which will be uploaded using the direct uploads URL at `/rails/active_storage/direct_uploads`
+
+### Default
+
+`false`
+
+### Possible values
+
+`true` or `false`.
+
+</Option>
+
 <Option name="`height`">
 
 Sets the value of the editor
 
-#### Default
+### Default
 
 `auto`
 
