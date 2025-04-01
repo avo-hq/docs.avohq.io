@@ -178,9 +178,13 @@ RUN --mount=type=secret,id=BUNDLE_PACKAGER__DEV BUNDLE_PACKAGER__DEV=$(cat /run/
 
 </Option>
 
-## Bundle without premium gems
+## Bundle without paid gems
 
-If you don't need to use premium gems, you can use the community version of Avo.
+If you need to distribute your Rails app without the paid gems you can move them to an optional group.
+
+```bash
+RAILS_GROUPS=avo BUNDLE_WITH=avo bundle install
+```
 
 ```ruby
 # Gemfile
