@@ -24,13 +24,6 @@ And then execute:
 $ bundle
 ```
 
-Additionally, you have to mount the engine, e.g.:
-
-```
-mount Avo::Meta::Engine, at: "#{Avo.configuration.root_path}/avo_meta/"
-```
-
-
 To use `Avo::Meta`, an additional database table containing the _schemas_ for each resource has to be created. For this, simply install the necessary migrations:
 
 ```bash
@@ -86,3 +79,20 @@ end
 To use the meta attributes in your application, simply access them like you would access a `has_one` association:
 
 `@user.meta.shoe_size`
+
+## Menu entry
+
+By default, "Meta Properties" will automatically appear in the sidebar if you are not using a custom menu.
+
+If you are using a custom menu, you need to explicitly add the menu entry:
+
+```ruby{5}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    section "Meta" do
+      resource :meta_schema
+    end
+  }
+end
+```

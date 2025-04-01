@@ -172,7 +172,7 @@ actions_list exclude: DisableAccount
 actions_list exclude: [ExportSelection, PublishPost]
 ```
 :::info
-The list action's [icon](actions.md#icon) and the [dividers](actions.md#divider) are defined in `def actions` method.
+The list action's [icon](actions/registration.md#icon) and the [dividers](actions/registration.md#divider) are defined in `def actions` method.
 :::
 </Option>
 
@@ -203,7 +203,7 @@ end
 Within the `list` block, the only permitted elements are `link_to` and `action`. For both `link_to` and `action`, you can include an optional `icon` parameter.
 
 :::info
-<VersionReq version="3.14.1" /> [`divider`](actions.html#divider) is also permitted within the `list` block.
+<VersionReq version="3.14.1" /> [`divider`](actions/registration.html#divider) is also permitted within the `list` block.
 :::
 
 In addition to the `icon`, the `link_to` element can accept additional parameters such as `target: :_blank` or `rel: "noopener"`, or any other extra arguments you may want to provide for the link. These extra arguments help define specific behaviors for the link, like opening it in a new tab or ensuring security best practices are followed.
@@ -230,7 +230,7 @@ Renders a link to a path set by you.
 
 <Option name="`action`">
 
-Renders a button that triggers an action. You must provide it an [Action](./actions) class.
+Renders a button that triggers an action. You must provide it an [Action](./actions/overview.md) class.
 
 #### Supported options
 
