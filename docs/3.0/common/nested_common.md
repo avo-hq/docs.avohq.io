@@ -18,7 +18,7 @@ Enables this field as a nested form in the specified views.
 
 ##### Default value
 
-{}
+`{}`
 
 #### Possible values
 
