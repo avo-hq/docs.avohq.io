@@ -7,7 +7,7 @@ There are a couple of paid tiers (**Pro**, **Advanced**, and **Enterprise**) tha
 
 <Option name="Community">
 
-The **Community** version has powerful features that you can use today like [Resource management](./resources.html), most [feature-rich](./field-options.html) [fields](./fields.html), out-of-the box [sorting](./field-options.html#sortable-fields), [filtering](./filters.html) and [actions](./actions.html), all the [associations](./associations.html) you need, and about 70% of all the features Avo has to offer.
+The **Community** version has powerful features that you can use today like [Resource management](./resources.html), most [feature-rich](./field-options.html) [fields](./fields.html), out-of-the box [sorting](./field-options.html#sortable-fields), [filtering](./filters.html) and [actions](./actions/overview.html), all the [associations](./associations.html) you need, and about 70% of all the features Avo has to offer.
 
 </Option>
 
