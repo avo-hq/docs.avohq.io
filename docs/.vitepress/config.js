@@ -159,6 +159,24 @@ const config = {
           ],
         },
         {
+          text: "Field types",
+          collapsible: true,
+          collapsed: true,
+          items: fieldsMenuItems3,
+        },
+        {
+          text: "Associations",
+          collapsible: true,
+          collapsed: true,
+          items: [
+            {text: "Customization", link: "/3.0/associations.html"},
+            {text: 'Belongs to', link: '/3.0/associations/belongs_to.html'},
+            {text: 'Has one', link: '/3.0/associations/has_one.html'},
+            {text: 'Has many', link: '/3.0/associations/has_many.html'},
+            {text: 'Has and belongs to many', link: '/3.0/associations/has_and_belongs_to_many.html'},
+          ],
+        },
+        {
           text: "Layout",
           items: [
             {text: "Panels", link: "/3.0/resource-panels.html"},
@@ -199,24 +217,6 @@ const config = {
             {text: "Execution & Feedback", link: "/3.0/actions/execution.html"},
             {text: "Customization", link: "/3.0/actions/customization.html"},
             {text: "Guides & Tutorials", link: "/3.0/actions/guides-and-tutorials.html"},
-          ],
-        },
-        {
-          text: "Field types",
-          collapsible: true,
-          collapsed: true,
-          items: fieldsMenuItems3,
-        },
-        {
-          text: "Associations",
-          collapsible: true,
-          collapsed: true,
-          items: [
-            {text: "Customization", link: "/3.0/associations.html"},
-            {text: 'Belongs to', link: '/3.0/associations/belongs_to.html'},
-            {text: 'Has one', link: '/3.0/associations/has_one.html'},
-            {text: 'Has many', link: '/3.0/associations/has_many.html'},
-            {text: 'Has and belongs to many', link: '/3.0/associations/has_and_belongs_to_many.html'},
           ],
         },
         {
