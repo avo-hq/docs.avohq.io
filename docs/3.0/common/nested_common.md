@@ -40,16 +40,16 @@ Setting `nested: true` is a shortcut for `nested: { on: :forms }`.
 class Avo::Resources::Book < Avo::BaseResource
   def fields
     # Shortcut for full nesting
-    field :{{ this.$frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}, as: :{{ $frontmatter.field_type }}, nested: true
+    field :{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}, as: :{{ $frontmatter.field_type }}, nested: true
 
     # Explicit nesting on new only
-    field :{{ this.$frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}, as: :{{ $frontmatter.field_type }}, nested: { on: :new }
+    field :{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}, as: :{{ $frontmatter.field_type }}, nested: { on: :new }
 
     # Explicit nesting on edit only
-    field :{{ this.$frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}, as: :{{ $frontmatter.field_type }}, nested: { on: :edit }
+    field :{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}, as: :{{ $frontmatter.field_type }}, nested: { on: :edit }
 
     # Explicit nesting on both new and edit
-    field :{{ this.$frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}, as: :{{ $frontmatter.field_type }}, nested: { on: :forms }
+    field :{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}, as: :{{ $frontmatter.field_type }}, nested: { on: :forms }
 
     # Limit nested creation (for has_many or has_and_belongs_to_many only)
     field :authors,
