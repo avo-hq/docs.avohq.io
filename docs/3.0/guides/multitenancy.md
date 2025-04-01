@@ -78,7 +78,7 @@ Rails.application.routes.draw do
   # Your routes
 
   authenticate :user, -> user { user.admin? } do
-    mount Avo::Engine => Avo.configuration.root_path
+    mount_avo
   end
 end
 ```
@@ -93,7 +93,7 @@ Rails.application.routes.draw do
   # Your routes
 
   authenticate :user, -> user { user.admin? } do
-    mount Avo::Engine => Avo.configuration.root_path
+    mount_avo
   end
 end
 

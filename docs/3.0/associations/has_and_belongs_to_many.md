@@ -16,6 +16,7 @@ field :users, as: :has_and_belongs_to_many
 <!-- @include: ./../common/associations_searchable_option_common.md-->
 <!-- @include: ./../common/associations_attach_scope_option_common.md-->
 <!-- @include: ./../common/associations_scope_option_common.md-->
+<!-- @include: ./../common/associations_name_option_common.md-->
 <!-- @include: ./../common/associations_description_option_common.md-->
 <!-- @include: ./../common/associations_use_resource_option_common.md-->
 <!-- @include: ./../common/associations_discreet_pagination_option_common.md-->
@@ -23,6 +24,7 @@ field :users, as: :has_and_belongs_to_many
 
 <!-- @include: ./../common/search_query_scope_common.md-->
 <!-- @include: ./../common/show_on_edit_common.md-->
+<!-- @include: ./../common/nested_common.md-->
 
 ### Searchable `has_and_belongs_to_many`
 
