@@ -1,6 +1,9 @@
 ## Nested in Forms
+<div class="space-x-2">
+  <VersionReq version="3.19.0" />
+  <BetaStatus label="Public beta"></BetaStatus>
+</div>
 
-<VersionReq version="3.19.0" />
 
 You can use ["Show on edit screens"](#show-on-edit-screens) to make the `{{ $frontmatter.field_type }}` field available in the [edit](views.html#Edit) view. However, this will render it using the [show](views.html#Show) view component.
 
