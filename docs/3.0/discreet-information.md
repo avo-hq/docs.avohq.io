@@ -1,5 +1,5 @@
 ---
-version: '3.17'
+version: '3.18'
 betaStatus: Open Beta
 license: community
 ---
@@ -27,6 +27,23 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
+## Display the `id`
+
+To save field space, you can use the discreet information area to display the id of the current record.
+
+Set the option to the `:id` value and the id will be added next to the title.
+
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.discreet_information = :id
+
+  # fields and other resource configuration
+end
+```
+
+You can alternatively use `:id_badge` to display the id as a badge.
+
 ## Display the `created_at` and `updated_at` timestamps
 
 The reason why we built this feature was that we wanted a place to display the created and updated at timestamps but didn't want to use up a whole field for it.
@@ -44,6 +61,8 @@ end
 ```
 
 If the record doesn't have the `created_at` or `updated_at` attributes, they will be ommited.
+
+You can alternatively use `:timestamps_badge` to display the timestamps as a badge.
 
 ## Options
 
@@ -106,6 +125,23 @@ end
 
 </Option>
 
+<Option name="`as`">
+
+The `as` option specifies the type of representation. Currently, only `:badge` is supported, but additional types may be introduced in the future.
+
+```ruby{7}
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.discreet_information = {
+    tooltip: -> { "Product is #{record.published_at ? "published" : "draft"}" },
+    icon: "heroicons/outline/academic-cap",
+    url: -> { main_app. },
+    as: :badge
+  }
+end
+```
+
+</Option>
 
 ## Display multiple pieces of information
 

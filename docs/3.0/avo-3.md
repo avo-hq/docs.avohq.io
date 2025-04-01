@@ -46,8 +46,8 @@ You'll find all the new changes in the [Avo 2 to Avo 3 upgrade section](./avo-2-
 - [Testing helpers](./testing#testing-helpers)
 - [Eject command improvements](./eject-views.html)
 - [Panel layout improvements](./resource-panels.html)
-- [Action link generator](./actions.html#action-link)
-- [StimulusJS in actions](./actions.html#stimulusjs)
+- [Action link generator](./actions/guides-and-tutorials.html#action-link)
+- [StimulusJS in actions](./actions/guides-and-tutorials.html#stimulusjs)
 - [Array Adapter](https://docs.avohq.io/3.0/array-resources.html)
 - [GitHub-style Markdown editor](./fields/markdown.html)
 - Avo Meta

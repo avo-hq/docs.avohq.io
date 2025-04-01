@@ -254,7 +254,7 @@ When a resource has the `search` attribute with a valid configuration, a new sea
 
 ## Global search
 
-<licensereq license="pro"></licensereq>
+<LicenseReq license="pro" />
 
 Avo also has a global search feature. It will search through all the resources that have the `search` attribute with a valid configuration.
 
@@ -273,7 +273,7 @@ Avo.configure do |config|
 end
 ```
 
-<VersionReq version="3.13.5" /> `disabled_features` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context)
+Since version <Version version="3.13.5" /> `disabled_features` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context)
 
 ```ruby{3}
 # config/initializers/avo.rb

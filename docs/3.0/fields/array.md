@@ -9,7 +9,7 @@ demoVideo: https://youtu.be/wnWvzQyyo6A?t=1030
 
 The `Array` field in allows you to display and manage structured array data. This field supports flexibility in fetching and rendering data, making it suitable for various use cases.
 
-:::warning Important
+:::tip Important
 To use the `Array` field, you must create a resource specifically for it. Refer to the [Array Resource documentation](../array-resources) for detailed instructions.
 
 For example, to use `field :attendees, as: :array`, you can generate an array resource by running the following command:
@@ -37,6 +37,21 @@ class Avo::Resources::Course < Avo::BaseResource
   end
 end
 ```
+
+:::warning Authorization
+The `array` field internally inherits many behaviors from `has_many`, including authorization. If you are using authorization and the array field is not rendering, it is most likely not authorized.
+
+To explicitly authorize it, define the following method in the resource's policy:
+
+```ruby{3}
+# app/policies/course_policy.rb
+class CoursePolicy < ApplicationPolicy
+  def view_attendees? = true
+end
+```
+
+For more details, refer to the [view_{association}?](./../authorization.html#view_association) documentation.
+:::
 
 ### Example 2: Array field fetching data from the model's method
 

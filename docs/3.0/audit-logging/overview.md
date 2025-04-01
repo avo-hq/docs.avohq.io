@@ -4,7 +4,6 @@ betaStatus: Beta
 outline: [2,3]
 ---
 
-
 # Audit Logging
 
 Avo's Audit Logging feature provides a seamless way to track and visualize user activity and changes within your applications. It seamlessly integrates with [`paper_trail`](https://github.com/paper-trail-gem/paper_trail), offering flexible installation and customization options.
@@ -74,6 +73,26 @@ end # [!code focus]
 
 :::info
 Setting this configuration to `false` will disable the audit logging feature entirely, overriding any other specific settings. We'll cover those specific settings in the next steps.
+:::
+
+:::warning
+Setting this configuration to `false` will not prevent previously registered activity from being displayed.
+
+To control the display behavior when this configuration is set to `false`,
+you can wrap the relevant fields or tools within an `Avo::AuditLogging.configuration.enabled?` condition, like this:
+
+```ruby{6-8}
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id, link_to_record: true
+    field :email, as: :text, link_to_record: true
+    field :products, as: :has_many
+    if Avo::AuditLogging.configuration.enabled?
+      field :avo_authored, as: :has_many, name: "Activity"
+    end
+  end
+end
+```
 :::
 
 ### Configure author models

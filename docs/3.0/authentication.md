@@ -107,7 +107,7 @@ You probably do not want to allow Avo access to everybody. If you're using [devi
 
 ```ruby
 authenticate :user do
-  mount Avo::Engine => '/avo'
+  mount_avo at: '/avo'
 end
 ```
 
@@ -115,7 +115,7 @@ You may also add custom user validation such as `user.admin?` to only permit a s
 
 ```ruby
 authenticate :user, -> user { user.admin? } do
-  mount Avo::Engine => '/avo'
+  mount_avo at: '/avo'
 end
 ```
 
