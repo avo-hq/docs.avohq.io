@@ -109,3 +109,64 @@ module Marksmith
   end
 end
 ```
+
+<Option name="`media_library`">
+
+Controls the visibility of the **"Attach from gallery"** option in the markdown editor.
+
+##### Default value
+
+`true`
+
+#### Possible values
+
+- `true`
+- `false`
+
+#### Code example
+
+```ruby
+field :body, as: :markdown, media_library: false
+```
+</Option>
+
+
+<Option name="`file_uploads`">
+
+Controls the visibility of the **"Upload files"** option in the markdown editor.
+
+##### Default value
+
+`true`
+
+#### Possible values
+
+- `true`
+- `false`
+
+#### Code example
+
+```ruby
+field :body, as: :markdown, file_uploads: false
+```
+</Option>
+
+<Option name="`extra_preview_params`">
+
+Sends additional parameters to the **preview renderer** of the markdown field.
+Useful for injecting context-specific data during preview rendering.
+
+##### Default value
+
+`{}`
+
+#### Possible values
+
+- Any `Hash` of key-value pairs.
+
+#### Code example
+
+```ruby
+field :body, as: :markdown, extra_preview_params: { foo: :bar }
+```
+</Option>
