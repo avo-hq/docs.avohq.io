@@ -1,7 +1,8 @@
 ## Nested in Forms
 <div class="space-x-2">
-  <VersionReq version="3.19.0" />
-  <BetaStatus label="Public beta"></BetaStatus>
+  <VersionReq version="3.19.0"/>
+  <BetaStatus label="Public beta"/>
+  <LicenseReq license="advanced"/>
 </div>
 
 
