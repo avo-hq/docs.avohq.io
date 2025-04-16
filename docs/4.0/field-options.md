@@ -562,3 +562,54 @@ field :name, as: :text, copyable: true
 The `copyable` option is available for text-based fields such as `:text`, `:textarea`, and others that render text values.
 
 </Option>
+
+<Option name="`react_on`">
+
+<VersionReq version="4.0" class="mt-2" />
+
+The `react_on` option enables dynamic reactivity for a field when changes occur elsewhere in the form. When a specified field changes, the current field is re-evaluated, and the `@record` object is refreshed with the latest form values.
+
+:::tip
+To retrieve the original value of a field before it was changed, use the [`*_was`](https://api.rubyonrails.org/classes/ActiveModel/Dirty.html#method-i-2A_was) methods.
+
+```ruby
+# Current from form
+@record.country
+"USA"
+
+# Initial value
+@record.country_was
+"Spain"
+```
+:::
+
+#### Possible values
+
+You can configure the field to react to:
+
+- A single field: `:field_one`
+- Multiple fields: `[:field_one, :field_two]`
+- All fields in the form: `:all`
+
+#### Example
+
+In the example below, the `city` field is set to react whenever the `country` select field is changed. This ensures that the available city options are always relevant to the selected country.
+
+```ruby{11}
+# app/avo/resources/course.rb
+class Avo::Resources::Course < Avo::BaseResource
+  def fields
+    field :country,
+      as: :select,
+      options: Course.countries,
+      include_blank: "No country"
+
+    field :city,
+      as: :select,
+      react_on: :country,
+      options: -> { Course.cities.dig(@record.country&.to_sym) || [""] }
+  end
+end
+```
+
+</Option>
