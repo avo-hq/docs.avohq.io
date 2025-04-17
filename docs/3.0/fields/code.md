@@ -113,11 +113,11 @@ field :body, as: :code, pretty_generated: true
 The above is equivalent to:
 ```ruby
 field :body, as: :code,
-format_using: -> {
-  value.blank? ? value : JSON.pretty_generate(value)
-},
-update_using: -> {
-  JSON.parse(value)
-}
+  format_using: -> {
+    value.blank? ? value : JSON.pretty_generate(value)
+  },
+  update_using: -> {
+    JSON.parse(value)
+  }
 ```
 </Option>
