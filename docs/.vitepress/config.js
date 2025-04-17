@@ -143,6 +143,7 @@ const config = {
           items: [
             {text: "Resources", link: "/4.0/resources.html"},
             {text: "Array Resources", link: "/4.0/array-resources.html"},
+            {text: "HTTP Resources", link: "/4.0/http-resources.html"},
             {text: "Fields", link: "/4.0/fields.html"},
             {text: "Field options", link: "/4.0/field-options.html"},
             {text: "Field discovery", link: "/4.0/field-discovery.html"},
