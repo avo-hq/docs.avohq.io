@@ -110,7 +110,7 @@ The above is equivalent to:
 ```ruby
 field :body, as: :code,
 format_using: -> {
-  JSON.pretty_generate(JSON.parse(value.to_json))
+  value.blank? ? value : JSON.pretty_generate(value)
 },
 update_using: -> {
   JSON.parse(value)
