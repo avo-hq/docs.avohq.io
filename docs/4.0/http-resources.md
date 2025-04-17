@@ -1,6 +1,5 @@
 ---
-version: '4.0'
-betaStatus: Unreleased
+betaStatus: Alpha
 outline: deep
 ---
 
@@ -52,10 +51,7 @@ To wire an HTTP Resource to a data source, you must configure several attributes
 # app/avo/resources/author.rb
 class Avo::Resources::Author < Avo::Core::Resources::Http
   # The base URL for your external API
-  self.endpoint = "https://api.openalex.org/"
-
-  # A key used to namespace or organize resources logically
-  self.endpoint_key = "authors"
+  self.endpoint = "https://api.openalex.org/authors"
 
   # How to extract the list of records from the API response
   self.parse_collection = -> {
@@ -98,7 +94,6 @@ Here’s a brief reference for the main configuration options:
 | Option              | Description                                                                 |
 |---------------------|-----------------------------------------------------------------------------|
 | `endpoint`          | Base URL for the external API                                               |
-| `endpoint_key`      | Logical key to distinguish resource type                                    |
 | `parse_collection`  | Proc that returns the array of records                                      |
 | `parse_record`      | Proc that returns a single record                                           |
 | `parse_count`       | Proc that returns the total number of records                              |
