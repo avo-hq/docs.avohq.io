@@ -101,7 +101,7 @@ Automatically format and parse JSON content plus display it in a prettified way.
 
 #### Default value
 
-`true`
+`false`
 
 ```ruby
 field :body, as: :code, pretty_generated: true
