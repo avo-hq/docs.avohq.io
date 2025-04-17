@@ -103,6 +103,10 @@ Automatically format and parse JSON content plus display it in a prettified way.
 
 `false`
 
+#### Possible values
+
+`true` or `false`
+
 ```ruby
 field :body, as: :code, pretty_generated: true
 ```
