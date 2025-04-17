@@ -88,3 +88,4 @@ Customize whether the editor should apply line wrapping.
 #### Possible values
 
 `true` or `false`
+</Option>
