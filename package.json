@@ -12,7 +12,7 @@
   },
   "scripts": {
     "dev": "vitepress dev docs --port 3011",
-    "build": "vitepress build docs",
+    "build": "ruby concatenate.rb docs/4.0 && vitepress build docs",
     "serve": "vitepress serve docs"
   },
   "dependencies": {
