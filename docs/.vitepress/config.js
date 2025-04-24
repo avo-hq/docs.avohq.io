@@ -315,10 +315,10 @@ const config = {
             {text: "Plugins", link: "/4.0/plugins.html"},
           ],
         },
-        {
-          text: "Everything",
-          link: "/4.0/everything.html",
-        },
+        // {
+        //   text: "Everything",
+        //   link: "/4.0/everything.html",
+        // },
       ],
       "/3.0/": [
         {
