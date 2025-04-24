@@ -325,6 +325,7 @@ const config = {
             {text: "Avo 2 to Avo 3 upgrade", link: "/3.0/avo-2-avo-3-upgrade.html"},
             {text: "Technical Support", link: "/3.0/technical-support.html"},
             {text: "Best practices", link: "/3.0/best-practices.html"},
+            {text: "Code editors and LLM setup", link: "/4.0/editor.html"},
           ]
         },
         // {
