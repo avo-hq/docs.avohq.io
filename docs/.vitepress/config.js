@@ -104,6 +104,7 @@ const config = {
       {text: "FAQ", link: "/3.0/faq.html"},
       {text: "Team", link: "/team.html"},
       {text: "Version", items: [
+        {text: "4.0", link: "/4.0/index.html"},
         {text: "3.0", link: "/3.0/index.html"},
         {text: "2.0", link: "/2.0/index.html"},
         {text: "1.0", link: "https://v1-docs.avohq.io/1.0/"},
