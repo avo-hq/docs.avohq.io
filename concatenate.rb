@@ -149,8 +149,8 @@ begin
   end
 
   # Write the concatenated content to a new file
-  File.write(output_file, concatenated_content)
-  puts "All Markdown files have been concatenated into #{output_file}"
+  # File.write(output_file, concatenated_content)
+  # puts "All Markdown files have been concatenated into #{output_file}"
 
   # Write the concatenated content to a new file
   File.write(llmstx_file, concatenated_content)
