@@ -1,4 +1,4 @@
-# Zed
+# <img src="/assets/img/editor/zed.webp" alt="Zed" class="no-border h-8 -mt-2 inline-block self-center"> Zed
 
 Setup Zed to correctly generate Avo code based on your prompt.
 

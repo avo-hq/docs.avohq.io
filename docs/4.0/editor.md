@@ -11,7 +11,7 @@ The `https://avohq.io/llms.txt` file is a compact, text version of Avo's docs to
 ## Pick your tool
 
 <script setup>
-const editors = ["vscode", "cursor", "zed"]
+const editors = ["vscode", "cursor", "zed", "windsurf", "claude", "chatgpt", "gemini", "grok"]
 </script>
 
 <div class="flex flex-wrap gap-8">

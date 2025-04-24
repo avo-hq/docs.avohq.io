@@ -1,10 +1,10 @@
-# Cursor
+# <img src="/assets/img/editor/cursor.webp" alt="Cursor" class="no-border h-8 -mt-2 inline-block self-center"> Cursor
 
 Setup Cursor to correctly generate Avo code based on your prompt.
 
 ## Quick use
 
-In chat window type this and Cursor will use Avo's llms.txt file to generate code.
+  In chat window type this and Cursor will use Avo's llms.txt file to generate code.
 
 ```bash
 @web https://avohq.io/llms.txt
