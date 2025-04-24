@@ -1,4 +1,4 @@
-# VSCode
+# <img src="/assets/img/editor/vscode.webp" alt="VSCode" class="no-border h-8 -mt-2 inline-block self-center"> VSCode
 
 Setup VSCode to correctly generate Avo code based on your prompt.
 
