@@ -8,6 +8,8 @@ https://avohq.io/llms.txt
 
 The `https://avohq.io/llms.txt` file is a compact, text version of Avo's docs to help AI generate accurate Avo code based on your prompt.
 
+## Pick your tool
+
 <script setup>
 const editors = ["vscode", "cursor"]
 </script>
@@ -17,3 +19,8 @@ const editors = ["vscode", "cursor"]
     <img :src="`/assets/img/editor/${editor}.webp`" class="h-16" :alt="editor" />
   </a>
 </div>
+
+<br>
+
+> [!INFO] Thanks DaisyUI!
+> We sourced most of the docs from [DaisyUI's excellent editors page](https://daisyui.com/docs/editor/)
