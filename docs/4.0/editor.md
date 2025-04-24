@@ -23,4 +23,4 @@ const editors = ["vscode", "cursor", "zed", "windsurf", "claude", "chatgpt", "ge
 <br>
 
 > [!INFO] Thanks DaisyUI!
-> We sourced most of the docs from [DaisyUI's excellent editors page](https://daisyui.com/docs/editor/)
+> We sourced most of these docs from [DaisyUI's excellent editors page](https://daisyui.com/docs/editor/)
