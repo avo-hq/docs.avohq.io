@@ -117,6 +117,7 @@ const config = {
             {text: "Intro", link: "/4.0/index.html"},
             {text: "Technical Support", link: "/4.0/technical-support.html"},
             {text: "Best practices", link: "/4.0/best-practices.html"},
+            {text: "Code editors and LLM setup", link: "/4.0/editor.html"},
           ]
         },
         // {
