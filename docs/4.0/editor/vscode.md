@@ -32,3 +32,39 @@ curl -L https://avohq.io/llms.txt --create-dirs -o .vscode/avo.md
   ]
 }
 ```
+
+## MCP server
+
+MCP is a an API to communicate with AI models. You can add MCP servers and Copilot will communicate with them to get more accurate results.
+
+I suggest using [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) which provides many libraries including Avo's docs.
+
+1. Go to MCP settings in VSCode: `vscode://settings/mcp`
+
+2. Click Edit in settings.json`
+
+3. Add this:
+
+```json
+// settings.json
+{
+  "mcp": {
+    "servers": {
+     "Context7": {
+       "type": "stdio",
+       "command": "npx",
+       "args": ["-y", "@upstash/context7-mcp@latest"]
+     }
+    }
+  }
+}
+```
+
+5. Now in Agent Mode you can ask AI anything about Avo, and write `use context7` at the end of your prompt.
+
+For example:
+
+```bash
+create a new Avo resource for a product model. use context7
+```
+
