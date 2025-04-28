@@ -94,3 +94,30 @@ Customize whether the editor should apply line wrapping.
 
 `true` or `false`
 </Option>
+
+<Option name="`pretty_generated`">
+
+Automatically format and parse JSON content plus display it in a prettified way.
+
+#### Default value
+
+`false`
+
+#### Possible values
+
+`true` or `false`
+
+```ruby
+field :body, as: :code, pretty_generated: true
+```
+The above is equivalent to:
+```ruby
+field :body, as: :code,
+  format_using: -> {
+    value.blank? ? value : JSON.pretty_generate(value)
+  },
+  update_using: -> {
+    JSON.parse(value)
+  }
+```
+</Option>
