@@ -1,5 +1,5 @@
 ---
-license: Add-on
+license: add_on
 betaStatus: Beta
 ---
 
