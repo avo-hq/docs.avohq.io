@@ -28,3 +28,7 @@ It supports [ActiveStorage](https://guides.rubyonrails.org/active_storage_overvi
 ## Options
 
 <!-- @include: ./../common/field_options/always_show.md-->
+
+## Contributing
+
+You can contribute to the Rhino editor by visiting the [GitHub repository](https://github.com/avo-hq/avo-rhino_field).
