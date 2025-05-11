@@ -410,3 +410,7 @@ reload_record(record)
 ```
 :::
 </Option>
+
+<VersionReq version="3.20.1" class="my-4" />
+Note: You can use the `reload_records` method to refresh the `grid_view` or `map_view` items after an action is executed.
+Make sure to update to this version or later to access the new functionality.
