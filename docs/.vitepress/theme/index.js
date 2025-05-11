@@ -22,6 +22,9 @@ import AllContent from "../theme/components/AllContent.vue"
 import Image from "../theme/components/Image.vue"
 import RelatedList from "../theme/components/RelatedList.vue"
 import RelatedItem from "../theme/components/RelatedItem.vue"
+import EditorList from "../theme/components/EditorList.vue"
+import FieldTypesList from "../theme/components/FieldTypesList.vue"
+import RecipesList from "../theme/components/RecipesList.vue"
 import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline/index.js"
 import './custom.css'
 import {h} from "vue"
@@ -56,6 +59,10 @@ export default {
     app.component("InformationCircleIcon", InformationCircleIcon)
     app.component("CheckBadgeIcon", CheckBadgeIcon)
     app.component("ChatBubbleBottomCenterIcon", ChatBubbleBottomCenterIcon)
+
+    app.component("EditorList", EditorList)
+    app.component("FieldTypesList", FieldTypesList)
+    app.component("RecipesList", RecipesList)
   },
   Layout() {
     return h(DefaultTheme.Layout, null, {

@@ -13,6 +13,14 @@ The wonderful [Rhino Editor](https://rhino-editor.vercel.app/) built by [Konnor 
 field :body, as: :rhino
 ```
 
+:::info
+Add this line to your application's `Gemfile`:
+
+```ruby
+gem "avo-rhino_field"
+```
+:::
+
 Rhino is based on [TipTap](https://tiptap.dev/) which is a powerful and flexible WYSIWYG editor.
 
 It supports [ActiveStorage](https://guides.rubyonrails.org/active_storage_overview.html) file attachments, [ActionText](https://guides.rubyonrails.org/action_text_overview.html), and seamlessly integrates with the [Media Library](./../media-library).
@@ -20,3 +28,7 @@ It supports [ActiveStorage](https://guides.rubyonrails.org/active_storage_overvi
 ## Options
 
 <!-- @include: ./../common/field_options/always_show.md-->
+
+## Contributing
+
+You can contribute to the Rhino editor by visiting the [GitHub repository](https://github.com/avo-hq/avo-rhino_field).

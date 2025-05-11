@@ -132,6 +132,20 @@ field :company_url,
 end
 ```
 
+Since <Version version="3.20" /> `decorate` option has been available. It affects only display views. This is how the above examples would look when applying `decorate`
+
+```ruby
+field :is_writer, as: :text, decorate: -> { value.present? ? '👍' : '👎' }
+
+field :company_url,
+  as: :text,
+  decorate: -> {
+    link_to(value, value, target: "_blank")
+  } do
+  main_app.companies_url(record)
+end
+```
+
 ## Formatting with Rails helpers
 
 You can also format using Rails helpers like `number_to_currency` (note that `view_context` is used to access the helper):
