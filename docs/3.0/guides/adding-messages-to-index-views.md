@@ -29,7 +29,7 @@ end
 :::
 
 ::: code-group
-```erb [app/components/avo/views/resource_custom_index_component.html.erb]
+```html [app/components/avo/views/resource_custom_index_component.html.erb]
 <div>Add Avo::Views::ResourceCustomIndexComponent template here</div>
 ```
 :::
@@ -101,7 +101,7 @@ end
 Update the ERB template to render a message above the original component:
 
 ::: code-group
-```erb [app/components/avo/views/resource_custom_index_component.html.erb]
+```html [app/components/avo/views/resource_custom_index_component.html.erb]
 <div>Add Avo::Views::ResourceCustomIndexComponent template here</div> // [!code --]
 <div class="flex flex-col"> // [!code ++]
   <div class="flex flex-col justify-center p-4 bg-primary-100 rounded-md mb-4 text-sm"> // [!code ++]
@@ -175,7 +175,7 @@ end
 Now tweak the view to conditionally render the message:
 
 ::: code-group
-```erb [app/components/avo/views/resource_custom_index_component.html.erb]
+```html [app/components/avo/views/resource_custom_index_component.html.erb]
 <div class="flex flex-col">
   <% if @index_message.present? %> // [!code ++]
     <div class="flex flex-col justify-center p-4 bg-primary-100 rounded-md mb-4 text-sm">
