@@ -102,13 +102,13 @@ Update the ERB template to render a message above the original component:
 
 ::: code-group
 ```erb [app/components/avo/views/resource_custom_index_component.html.erb]
-<div>Add Avo::Views::ResourceCustomIndexComponent template here</div> # [!code --]
-<div class="flex flex-col"> # [!code ++]
-  <div class="flex flex-col justify-center p-4 bg-primary-100 rounded-md mb-4 text-sm"> # [!code ++]
-    Message here # [!code ++]
-  </div> # [!code ++]
-  <%= render Avo::Views::ResourceIndexComponent.new(**@kwargs) %> # [!code ++]
-</div> # [!code ++]
+<div>Add Avo::Views::ResourceCustomIndexComponent template here</div> // [!code --]
+<div class="flex flex-col"> // [!code ++]
+  <div class="flex flex-col justify-center p-4 bg-primary-100 rounded-md mb-4 text-sm"> // [!code ++]
+    Message here // [!code ++]
+  </div> // [!code ++]
+  <%= render Avo::Views::ResourceIndexComponent.new(**@kwargs) %> // [!code ++]
+</div> // [!code ++]
 ```
 :::
 
@@ -177,12 +177,12 @@ Now tweak the view to conditionally render the message:
 ::: code-group
 ```erb [app/components/avo/views/resource_custom_index_component.html.erb]
 <div class="flex flex-col">
-  <% if @index_message.present? %># [!code ++]
+  <% if @index_message.present? %> // [!code ++]
     <div class="flex flex-col justify-center p-4 bg-primary-100 rounded-md mb-4 text-sm">
-      Message here # [!code --]
-      <%= @index_message %># [!code ++]
+      Message here // [!code --]
+      <%= @index_message %> // [!code ++]
     </div>
-  <% end %># [!code ++]
+  <% end %> // [!code ++]
   <%= render Avo::Views::ResourceIndexComponent.new(**@kwargs) %>
 </div>
 
