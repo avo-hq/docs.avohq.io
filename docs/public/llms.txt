@@ -16071,7 +16071,7 @@ end
 
 ## Step 2: Use the component in your field declaration
 
-With the [`components`](./../fields/components.md) option, you can specify the component to be used for the `show` view of a field.
+With the [`components`](#field-options) option, you can specify the component to be used for the `show` view of a field.
 
 ```ruby{10-12}
 # app/avo/resources/course_link.rb
