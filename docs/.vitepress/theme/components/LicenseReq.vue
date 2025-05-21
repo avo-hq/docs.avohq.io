@@ -15,7 +15,7 @@ const links = {
   kanban: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=kanban",
   audit_logging: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=audit_logging",
   custom: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=custom",
-  add_on: "https://savvycal.com/adrianthedev/avo-addon-talk?quesions[0]=add_on",
+  add_on: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=add_on",
   enterprise: "https://savvycal.com/avo-hq/discovery-call-ent",
 };
 const labels = {
