@@ -7,10 +7,16 @@ Some guides have been written by us, and some by our community members.
   import { data } from './../.vitepress/recipes.data.js'
 
   // add guides written on the blog
-  const articles = [{
-    title: "Override the field method to add default values to field options",
-    link: "https://avohq.io/blog/override-the-field-method-to-add-default-values-to-field-options"
-  }]
+  const articles = [
+    {
+      title: "Override the field method to add default values to field options",
+      link: "https://avohq.io/blog/override-the-field-method-to-add-default-values-to-field-options"
+    },
+    {
+      title: "Implement soft-delete in Rails with Avo + Discard",
+      link: "https://greenhats.medium.com/implement-soft-delete-in-rails-with-avo-discard-bc33d1e84e79"
+    }
+  ]
 </script>
 
 <ul>
