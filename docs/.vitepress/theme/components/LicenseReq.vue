@@ -12,10 +12,10 @@ const links = {
   community: "https://avohq.io/pricing#comparison-heading",
   pro: "https://avohq.io/subscriptions/new?plan=pro",
   advanced: "https://avohq.io/subscriptions/new?plan=advanced",
-  kanban: "https://savvycal.com/avo-hq/dev-chat-24",
-  audit_logging: "https://savvycal.com/avo-hq/dev-chat-24",
-  custom: "https://savvycal.com/avo-hq/dev-chat-24",
-  add_on: "https://savvycal.com/avo-hq/dev-chat-24",
+  kanban: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=kanban",
+  audit_logging: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=audit_logging",
+  custom: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=custom",
+  add_on: "https://savvycal.com/adrianthedev/avo-addon-talk?quesions[0]=add_on",
   enterprise: "https://savvycal.com/avo-hq/discovery-call-ent",
 };
 const labels = {
