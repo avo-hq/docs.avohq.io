@@ -161,7 +161,7 @@ The check that Avo will do to figure that out is to run the `is_admin?` method o
 
 You can do that check yourself using the `Avo::Current.user_is_admin?`.
 
-#### When does Avo check if the use is an admin (`is_admin?`)
+#### When does Avo check if the user is an admin (`is_admin?`)
 
 Avo doesn't use this setting momentarily but might in the future.
 
