@@ -8,7 +8,7 @@ license: community
 The `Select` field renders a `select` field.
 
 ```ruby
-field :type, as: :select, options: { 'Large container': :large, 'Medium container': :medium, 'Tiny container': :tiny }, display_with_value: true, placeholder: 'Choose the type of the container.'
+field :type, as: :select, options: { 'Large container': :large, 'Medium container': :medium, 'Tiny container': :tiny }, display_value: true, placeholder: 'Choose the type of the container.'
 ```
 
 <Option name="`options`">
@@ -60,7 +60,7 @@ class Avo::Resources::Project < Avo::BaseResource
   field :type,
     as: :select,
     enum: ::Project.types,
-    display_with_value: true,
+    display_value: true,
     placeholder: 'Choose the type of the container.'
 end
 ```
