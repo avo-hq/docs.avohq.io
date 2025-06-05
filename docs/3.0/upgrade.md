@@ -4,6 +4,61 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade to `avo-kanban` `0.1.18`
+
+### TL;DR
+
+`resource.title` is now used consistently across the Kanban board for all display purposes.
+
+**Action required:**
+Remove `to_combobox_display` from all models and transfer its logic to `resource.title`.
+
+---
+
+### Changes
+
+**1. Removed `to_combobox_display` usage**
+- This method can now be removed from the model.
+- Instead, the `resource.title` is being used for display purposes.
+- **Action required:** Remove `to_combobox_display` from all models, *but only* if it's used exclusively for Avo Kanban. If it's used elsewhere, keep it.
+- Ensure that `resource.title` is configured consistently using the same logic previously implemented in `to_combobox_display`.
+
+For example:
+
+```ruby
+# app/models/car.rb
+class Car < ApplicationRecord
+  # Remove this and configure the resource.title instead
+  def to_combobox_display # [!code --]
+    "#{make} #{model}" # [!code --]
+  end # [!code --]
+end
+
+# app/avo/resources/car.rb
+class Avo::Resources::Car < Avo::BaseResource
+  self.search = {
+    query: -> {
+      query.ransack(id_eq: params[:q], make_cont: params[:q], model_cont: params[:q], m: "or").result(distinct: false)
+    }
+  }
+
+  # Same logic as in the model, but accessed through the record.make and record.model
+  self.title = -> { "#{record.make} #{record.model}" } # [!code ++]
+
+  def fields = discover_columns
+end
+```
+
+**2. Added validation for item and column IDs before sending requests**
+- Previously, a request to add items was being triggered when the combobox input lost focus, even when no column ID was present.
+- This led to incomplete data being sent to the server, resulting in a 500 error.
+- **Action required:** None, this is an internal fix to prevent malformed requests.
+
+**3. Using `resource.title` instead of `record.name` for display** each item title on the columns.
+- Rendering was breaking in some cases because certain models did not implement the `name` method.
+- Switching to `resource.title` resolves this issue.
+- **Action required:** None, this was a fix. Just ensure `resource.title` is properly configured, as it will now be the display value.
+
 ## Upgrade to 3.18.0
 
 <Option name="read_only and disabled options on has_one fields">
