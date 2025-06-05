@@ -115,7 +115,7 @@ The board has the `property` option set to `status` so we ensure that the `statu
 
 We should have `Issue`, `PullRequest`, and `ToDo` models and resources. The resources should have the `self.search[:query]` block configured.
 
-The models should have the `to_combobox_display` method configured so we know what to show in the search result. We might remove this requirement in the future.
+Each resource must have the `self.title` method configured. This title will be used as a label to identify records throughout the kanban board, including in the search box and on individual entries.
 
 Next in our board we should select these resources as allowed from the board settings.
 
