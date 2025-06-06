@@ -1,5 +1,6 @@
 ---
 license: advanced
+feedbackId: 3930
 ---
 
 # Bulk destroy action using customizable controls
@@ -52,6 +53,11 @@ end
 
 Once you've defined your bulk destroy action, you might want to make it available across multiple resources while excluding specific ones. This approach allows you to implement the action globally while maintaining control over where it can be used. The following configuration adds the bulk destroy functionality to your base resource class with a customized appearance and selective implementation.
 
+Related docs:
+
+- [Extending Avo::BaseResource](https://docs.avohq.io/3.0/resources.html#extending-avo-baseresource)
+- [Customizable controls](https://docs.avohq.io/3.0/customizable-controls.html)
+
 ```ruby
 # app/avo/base_resource.rb
 class Avo::BaseResource < Avo::Resources::Base
@@ -98,4 +104,5 @@ We value your experience with this bulk destroy implementation! Whether you've s
 - **Customizations**: Share how you've adapted this to better suit your specific needs
 - **Alternative approaches**: If you've implemented bulk destroy differently, we'd love to hear about your solution
 
+You can share your feedback through [Feedback: Bulk destroy action using customizable controls](https://github.com/avo-hq/avo/discussions/3930).
 
