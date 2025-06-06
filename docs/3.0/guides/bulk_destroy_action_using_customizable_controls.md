@@ -13,6 +13,8 @@ The bulk destroy action is particularly useful when you need to:
 - Provide clear warnings about the irreversible nature of the action
 - Handle the deletion process with proper error handling
 
+<Image src="/assets/img/guides/bulk_destroy/bulk_destroy_image.png" width="1937" height="1031" alt="Bulk destroy action" />
+
 ## Bulk destroy action
 
 ```ruby
