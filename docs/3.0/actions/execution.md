@@ -173,15 +173,18 @@ end
 
 `download` will start a file download to your specified `path` and `filename`.
 
-**You need to set `self.may_download_file` to true for the download response to work like below**. That's required because we can't respond with a file download (send_data) when making a Turbo request.
+:::warning
+**Ignore this warning if you are using Avo 3.2.2 or later.**
 
-If you find another way, please let us know 😅.
+You need to set `self.may_download_file` to true for the download response to work like below.
+:::
 
 :::code-group
 
-```ruby{3,16} [app/avo/actions/download_file.rb]
+```ruby{3-4,17} [app/avo/actions/download_file.rb]
 class Avo::Actions::DownloadFile < Avo::BaseAction
   self.name = "Download file"
+  # Only required for versions before 3.2.2
   self.may_download_file = true
 
 def handle(query:, **args)
