@@ -199,3 +199,15 @@ end
 ```
 
 <Image src="/assets/img/faq/newline/whitespace.png" width="1560" height="1160" alt="Render new lines" />
+
+## Getting `No valid predicate for combinator` error when filtering
+
+This error occurs when `config.ignore_unknown_conditions = false` is configured in the application. To fix it, you need to set it to `true`.
+
+```ruby
+config.ignore_unknown_conditions = false # [!code --]
+config.ignore_unknown_conditions = true # [!code ++]
+```
+
+This was originally discussed in [this issue](https://github.com/avo-hq/avo/issues/2622).
+
