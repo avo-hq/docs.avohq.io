@@ -148,6 +148,26 @@ end
 You can see the result in the admin panel using this URL `/avo`. The `Post` resource will be visible on the left sidebar.
 :::
 
+## Generating resources for all models
+
+To generate Avo resources for all models in your application, run:
+
+```bash
+rails generate avo:all_resources
+```
+
+### What it does
+
+1. Scans your `app/models` directory for all model files
+2. Excludes `ApplicationRecord` from the generation process
+3. For each model found, it:
+   - Generates a corresponding Avo resource using the `avo:resource` generator
+   - Handles errors gracefully, printing error messages if generation fails for any model
+
+This is particularly useful when:
+- Setting up Avo in an existing Rails application
+- Ensuring all your models have corresponding Avo resources
+
 ## Fields
 
 `Resource` files tell Avo what records should be displayed in the UI, but not what kinds of data they hold. You do that using the `fields` method.
