@@ -154,6 +154,10 @@ Adds the appropriate detach form. It's visible only on the association (`has_one
 
 A dropdown where the user can see and run all the actions assigned to that resource.
 
+:::info
+The actions' [icon](actions/registration.md#icon) and the [dividers](actions/registration.md#divider) are defined in the `def actions` method.
+:::
+
 #### Supported options
 
 `label`, `title`, `style`, `color`, `icon`, `include` and `exclude`.
@@ -167,13 +171,22 @@ It's used in conjunction with the `action` control. For example, when you extrac
 #### Example
 
 ```ruby
-actions_list exclude: DisableAccount
+actions_list exclude: Avo::Actions::DisableAccount
 # Or
-actions_list exclude: [ExportSelection, PublishPost]
+actions_list exclude: [Avo::Actions::ExportSelection, Avo::Actions::PublishPost]
 ```
-:::info
-The list action's [icon](actions/registration.md#icon) and the [dividers](actions/registration.md#divider) are defined in `def actions` method.
-:::
+
+#### `include` option
+
+This option is used to specify the actions that should be included in the `actions_list`. When this option is configured, only the actions specified in the `include` option will be displayed in the `actions_list` dropdown.
+
+#### Example
+
+```ruby
+actions_list include: Avo::Actions::DisableAccount
+# Or
+actions_list include: [Avo::Actions::ExportSelection, Avo::Actions::PublishPost]
+```
 </Option>
 
 <Option name="`list`">
