@@ -171,21 +171,21 @@ It's used in conjunction with the `action` control. For example, when you extrac
 #### Example
 
 ```ruby
-actions_list exclude: DisableAccount
+actions_list exclude: Avo::Actions::DisableAccount
 # Or
-actions_list exclude: [ExportSelection, PublishPost]
+actions_list exclude: [Avo::Actions::ExportSelection, Avo::Actions::PublishPost]
 ```
 
 #### `include` option
 
-Used to add actions to the list that are not defined in the `def actions` method.
+This option is used to specify the actions that should be included in the `actions_list`. When this option is configured, only the actions specified in the `include` option will be displayed in the `actions_list` dropdown.
 
 #### Example
 
 ```ruby
-actions_list include: DisableAccount
+actions_list include: Avo::Actions::DisableAccount
 # Or
-actions_list include: [ExportSelection, PublishPost]
+actions_list include: [Avo::Actions::ExportSelection, Avo::Actions::PublishPost]
 ```
 </Option>
 
