@@ -337,7 +337,7 @@ self.grid_view = {
 
 <Option name="Refactored the search API">
 
-In Avo 2, the search options were scattered around multiple places. The query was used from the `search_query`, the record description was taken from an arbitrary `as_description: true` field option, and other mis-aligned places.
+In Avo 2, the search options were scattered around multiple places. The query was used from the `search_query`, the record description was taken from an arbitrary `as_description: true` field option, the `as_label` option was used to display the record title in the search results, and other mis-aligned places.
 
 In Avo 3 we brought all those things in a single `self.search` option.
 
@@ -352,6 +352,7 @@ The `self.search[:item]` block will go through each of the found records where y
 - `as_description: true` is `self.search[:item][:description]`. (remove `as_description: true` from fields)
 - `as_avatar: true` is `self.search[:item][:image_url]`. (remove `as_avatar:` from fields)
 - `as_avatar: :rounded` is `self.search[:item][:image_format]`
+- `as_label: true` is `self.search[:item][:title]`. (remove `as_label:` from fields)
 
 ```ruby
 class Avo::Resources::User < Avo::BaseResource
