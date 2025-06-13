@@ -7298,6 +7298,10 @@ Adds the appropriate detach form. It's visible only on the association (`has_one
 
 A dropdown where the user can see and run all the actions assigned to that resource.
 
+:::info
+The actions' [icon](#registration) and the [dividers](#registration) are defined in the `def actions` method.
+:::
+
 #### Supported options
 
 `label`, `title`, `style`, `color`, `icon`, `include` and `exclude`.
@@ -7311,13 +7315,22 @@ It's used in conjunction with the `action` control. For example, when you extrac
 #### Example
 
 ```ruby
-actions_list exclude: DisableAccount
+actions_list exclude: Avo::Actions::DisableAccount
 # Or
-actions_list exclude: [ExportSelection, PublishPost]
+actions_list exclude: [Avo::Actions::ExportSelection, Avo::Actions::PublishPost]
 ```
-:::info
-The list action's [icon](#registration) and the [dividers](#registration) are defined in `def actions` method.
-:::
+
+#### `include` option
+
+This option is used to specify the actions that should be included in the `actions_list`. When this option is configured, only the actions specified in the `include` option will be displayed in the `actions_list` dropdown.
+
+#### Example
+
+```ruby
+actions_list include: Avo::Actions::DisableAccount
+# Or
+actions_list include: [Avo::Actions::ExportSelection, Avo::Actions::PublishPost]
+```
 </Option>
 
 <Option name="`list`">
@@ -8213,7 +8226,7 @@ For detailed guidance, refer to the [Rails session store configuration](https://
 By adopting the `persistence` configuration with a suitable session store, you can ensure a seamless user experience.
 </Option>
 
-<Option name="alert_dismiss_time" default="5000">
+<Option name="`alert_dismiss_time`">
 
 Specifies the duration (in milliseconds) for which alerts remain visible before automatically dismissing.
 A lower value results in quicker dismissal, while a higher value keeps the alert on screen for longer.
@@ -8233,6 +8246,29 @@ end
 
 </Option>
 
+<Option name="`first_sorting_option`">
+
+Defines the default sorting option for the fields on the index view.
+
+### Default value
+
+`:desc`
+
+### Possible values
+
+- `:asc`
+- `:desc`
+
+### Example
+
+```ruby{3}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.first_sorting_option = :asc
+end
+```
+
+</Option>
 
 
 # Dashboards
@@ -9027,6 +9063,10 @@ field :first_name,
   as: :text,
   filterable: {
     # ...
+    conditions: {
+      case_sensitive: "Is (case sensitive)",
+      not_case_sensitive: "Is (case insensitive)"
+    }.invert,
     query: -> {
       case filter_param.condition.to_sym
       when :case_sensitive
@@ -9040,6 +9080,10 @@ field :first_name,
 
 # Using dynamic_filter method
 dynamic_filter :first_name,
+  conditions: {
+    case_sensitive: "Is (case sensitive)",
+    not_case_sensitive: "Is (case insensitive)"
+  }.invert,
   query: -> {
     case filter_param.condition.to_sym
     when :case_sensitive
@@ -9387,6 +9431,68 @@ dynamic_filter :version,
 ```
 </Option>
 
+## Guides & Tutorials
+
+<Option name="How to filter associations">
+
+Learn how to effectively filter records based on their associations in Avo. This video tutorial demonstrates how to set up and use dynamic filters to query records through the attributes of their associations, enabling powerful and flexible data filtering capabilities.
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/d8bd49086d014d77a3013796c8480339?sid=aaaec555-b19f-429b-b0a7-e998a2d2128e" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+</Option>
+
+#### `belongs_to` example
+
+```ruby{5-11,16-18}
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  # Using field's filterable option
+  def fields
+    field :user,
+      as: :belongs_to,
+      filterable: {
+        label: "User (email & first_name)",
+        icon: "heroicons/solid/users",
+        query_attributes: [:user_email, :user_first_name]
+      }
+  end
+
+  # OR using dynamic_filter method
+  def filters
+    dynamic_filter label: "User (email & first_name)",
+      icon: "heroicons/solid/users",
+      query_attributes: [:user_email, :user_first_name]
+  end
+end
+```
+
+### `has_many` example
+
+```ruby{19-22}
+class Avo::Resources::Author < Avo::BaseResource
+  self.record_selector = false
+
+  def fields
+    field :preview, as: :preview
+    field :book_list, only_on: :preview do
+      tag.div do
+        tag.ul do
+          safe_join(
+            record.books.map do |book|
+              tag.li("#{book.title} (#{book.genre})")
+            end
+          )
+        end
+      end
+    end
+
+    field :name, filterable: true
+    # Filter the books by title and genre
+    field :books, as: :has_many, filterable: {
+      query_attributes: [:books_title, :books_genre]
+    }
+  end
+end
+```
 
 # <img src="/assets/img/editor/chatgpt.webp" alt="ChatGPT" class="no-border h-8 -mt-2 inline-block self-center"> ChatGPT
 
@@ -10273,6 +10379,18 @@ end
 ```
 
 <Image src="/assets/img/faq/newline/whitespace.png" width="1560" height="1160" alt="Render new lines" />
+
+## Getting `No valid predicate for combinator` error when filtering
+
+This error occurs when `config.ignore_unknown_conditions = false` is configured in the application. To fix it, you need to set it to `true`.
+
+```ruby
+config.ignore_unknown_conditions = false # [!code --]
+config.ignore_unknown_conditions = true # [!code ++]
+```
+
+This was originally discussed in [this issue](https://github.com/avo-hq/avo/issues/2622).
+
 
 
 
@@ -15475,6 +15593,114 @@ end
 ```
 
 
+
+# Bulk destroy action using customizable controls
+
+In this guide, we'll explore how to implement a customizable bulk destroy action in Avo. This allows to delete multiple records at once while providing users with a clear, informative interface that shows exactly what will be deleted. The implementation includes a confirmation message with a scrollable list of records to be deleted and clear warning messages about the permanent nature of this action.
+
+The bulk destroy action is particularly useful when you need to:
+- Delete multiple records simultaneously
+- Show users exactly which records will be affected
+- Provide clear warnings about the irreversible nature of the action
+- Handle the deletion process with proper error handling
+
+<Image src="/assets/img/guides/bulk_destroy/bulk_destroy_image.png" width="1937" height="1031" alt="Bulk destroy action" />
+
+## Bulk destroy action
+
+```ruby
+# app/avo/actions/bulk_destroy.rb
+class Avo::Actions::BulkDestroy < Avo::BaseActionAdd commentMore actions
+  self.name = "Bulk Destroy"
+  self.message = -> {
+    tag.div do
+      safe_join([
+        "Are you sure you want to delete these #{query.count} records?",
+        tag.div(class: "text-sm text-gray-500 mt-2 mb-2 font-bold") do
+          "These records will be permanently deleted:"
+        end,
+        tag.ul(class: "ml-4 overflow-y-scroll max-h-64") do
+          safe_join(query.map do |record|
+            tag.li(class: "text-sm text-gray-500") do
+              "- #{::Avo.resource_manager.get_resource_by_model_class(record.class).new(record:).record_title}"
+            end
+          end)
+        end,
+        tag.div(class: "text-sm text-red-500 mt-2 font-bold") do
+          "This action cannot be undone."
+        end
+      ])
+    end
+  }
+
+  def handle(query:, **)
+    query.each(&:destroy!)
+    succeed "Deleted #{query.count} records"
+  rescue => e
+    fail "Failed to delete #{query.count} records: #{e.message}"
+  end
+end
+```
+
+## Register it on all resources with except list
+
+Once you've defined your bulk destroy action, you might want to make it available across multiple resources while excluding specific ones. This approach allows you to implement the action globally while maintaining control over where it can be used. The following configuration adds the bulk destroy functionality to your base resource class with a customized appearance and selective implementation.
+
+Related docs:
+
+- [Extending Avo::BaseResource](https://docs.avohq.io/3.0/resources.html#extending-avo-baseresource)
+- [Customizable controls](https://docs.avohq.io/3.0/customizable-controls.html)
+
+```ruby
+# app/avo/base_resource.rb
+class Avo::BaseResource < Avo::Resources::Base
+  self.index_controls = -> {
+    # Don't show bulk destroy for these resources
+    return default_controls if resource.class.in?([
+      Avo::Resources::User,
+      Avo::Resources::Post,
+      Avo::Resources::Product,
+      Avo::Resources::Person,
+      Avo::Resources::Spouse,
+      Avo::Resources::Movie,
+      Avo::Resources::Fish,
+    ])
+
+    bulk_title = tag.span(class: "text-xs") do
+      safe_join([
+        "Delete all selected #{resource.plural_name.downcase}",
+        tag.br,
+        "Select at least one #{resource.singular_name.downcase} to run this action"
+      ])
+    end.html_safe
+
+    action Avo::Actions::BulkDestroy,
+      icon: "heroicons/solid/trash",
+      color: "red",
+      label: "",
+      style: :outline,
+      title: bulk_title
+
+    default_controls
+  }
+end
+```
+
+## Feedback
+
+We value your experience with this bulk destroy implementation! Whether you've successfully implemented it, made improvements, or encountered challenges, your feedback helps the community. Here's how you can contribute:
+
+- **Success stories**: Share how you've implemented this in your project and what benefits it brought to your workflow
+- **Improvements**: Tell us if you've enhanced this implementation with additional features or better error handling
+- **Questions**: Ask about specific use cases or implementation details you're unsure about
+- **Troubleshooting**: If you're experiencing issues, describe your setup and the problems you're encountering
+- **Customizations**: Share how you've adapted this to better suit your specific needs
+- **Alternative approaches**: If you've implemented bulk destroy differently, we'd love to hear about your solution
+
+You can share your feedback through [Feedback: Bulk destroy action using customizable controls](https://github.com/avo-hq/avo/discussions/3930).
+
+
+
 # Conditionally render styled rows
 
 <Image src="/assets/img/guides/conditionally-render-styled-rows/conditionally-render-styled-rows.png" width="2588" height="1068" alt="" />
@@ -17494,6 +17720,7 @@ We regularly publish videos on our [YouTube channel](https://www.youtube.com/@av
 
 SupeRails featured Avo in a few of [their videos](https://superails.com/playlists/avo).
 
+- [How to filter associations using dynamic filters](https://www.loom.com/share/d8bd49086d014d77a3013796c8480339)
 
 
 # HTML attributes
@@ -18463,7 +18690,7 @@ The board has the `property` option set to `status` so we ensure that the `statu
 
 We should have `Issue`, `PullRequest`, and `ToDo` models and resources. The resources should have the `self.search[:query]` block configured.
 
-The models should have the `to_combobox_display` method configured so we know what to show in the search result. We might remove this requirement in the future.
+Each resource must have the `self.title` method configured. This title will be used as a label to identify records throughout the kanban board, including in the search box and on individual entries.
 
 Next in our board we should select these resources as allowed from the board settings.
 
@@ -20282,10 +20509,10 @@ The `cluster` DSL allows you to group multiple fields horizontally within a [`pa
 
 To enhance readability and maintain a well-organized UI, it is recommended to use the [`stacked`](#field-wrappers) option for fields inside clusters.
 
-<Image src="/assets/img/row.png" width="1028" height="230" alt="Field naming convention" />
+<Image src="/assets/img/row.png" width="1028" height="230" alt="Cluster" />
 
 ```ruby{4-18}
-# app/avo/resources/user.rb
+# app/avo/resources/person.rb
 class Avo::Resources::Person < Avo::BaseResource
   def fields
     panel "Address" do
@@ -20307,6 +20534,47 @@ class Avo::Resources::Person < Avo::BaseResource
 end
 ```
 
+
+<Option name="`divider`">
+
+<VersionReq version="3.21.0" class="mt-2" />
+
+Adds a horizontal divider between fields.
+
+```ruby{5}
+# app/avo/resources/person.rb
+class Avo::Resources::Person < Avo::BaseResource
+  def fields
+    panel "Address" do
+      cluster divider: true do # [!code focus]
+        field :street_address, stacked: true do
+          "1234 Elm Street"
+        end
+
+        field :city, stacked: true do
+          "Los Angeles"
+        end
+
+        field :zip_code, stacked: true do
+          "15234"
+        end
+      end
+    end
+  end
+end
+```
+
+<Image src="/assets/img/cluster_with_divider.png" width="1944" height="404" alt="Cluster with divider" />
+
+##### Default value
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+
+</Option>
 
 # Resource panels
 <br>
@@ -20938,6 +21206,26 @@ end
 :::info
 You can see the result in the admin panel using this URL `/avo`. The `Post` resource will be visible on the left sidebar.
 :::
+
+## Generating resources for all models
+
+To generate Avo resources for all models in your application, run:
+
+```bash
+bin/rails generate avo:all_resources
+```
+
+### What it does
+
+1. Scans your `app/models` directory for all model files
+2. Excludes `ApplicationRecord` from the generation process
+3. For each model found, it:
+   - Generates a corresponding Avo resource using the `avo:resource` generator
+   - Handles errors gracefully, printing error messages if generation fails for any model
+
+This is particularly useful when:
+- Setting up Avo in an existing Rails application
+- Ensuring all your models have corresponding Avo resources
 
 ## Fields
 
