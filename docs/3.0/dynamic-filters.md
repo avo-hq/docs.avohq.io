@@ -437,6 +437,10 @@ field :first_name,
   as: :text,
   filterable: {
     # ...
+    conditions: {
+      case_sensitive: "Is (case sensitive)",
+      not_case_sensitive: "Is (case insensitive)"
+    }.invert,
     query: -> {
       case filter_param.condition.to_sym
       when :case_sensitive
