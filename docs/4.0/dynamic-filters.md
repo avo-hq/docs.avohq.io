@@ -9,6 +9,13 @@ The Dynamic filters make it so easy to add multiple, composable, and dynamic fil
 
 The first thing you need to do is add the `filterable: true` attribute to the fields you need to filter through. We use `ransack` behind the scenes so it's essential to configure the `ransackable_attributes` list to ensure that every filterable field is incorporated within it.
 
+:::info Filter Combination Logic
+When multiple filters are applied:
+- Filters on the same attribute are combined using OR conditions
+- Filters on different attributes are combined using AND conditions
+
+For example, if you have two filters on the `name` field (one for "John" and one for "Jane"), the query will find records where the name is either "John" OR "Jane". However, if you have one filter on `name` for "John" and another on `status` for "active", the query will find records where the name is "John" AND the status is "active".
+:::
 
 ```ruby{4-6} [Fields]
 class Avo::Resources::Project < Avo::BaseResource
