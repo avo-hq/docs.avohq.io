@@ -670,7 +670,7 @@ For detailed guidance, refer to the [Rails session store configuration](https://
 By adopting the `persistence` configuration with a suitable session store, you can ensure a seamless user experience.
 </Option>
 
-<Option name="alert_dismiss_time" default="5000">
+<Option name="`alert_dismiss_time`">
 
 Specifies the duration (in milliseconds) for which alerts remain visible before automatically dismissing.
 A lower value results in quicker dismissal, while a higher value keeps the alert on screen for longer.
@@ -685,6 +685,30 @@ A lower value results in quicker dismissal, while a higher value keeps the alert
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.alert_dismiss_time = 8000
+end
+```
+
+</Option>
+
+<Option name="`first_sorting_option`">
+
+Defines the default sorting option for the fields on the index view.
+
+### Default value
+
+`:desc`
+
+### Possible values
+
+- `:asc`
+- `:desc`
+
+### Example
+
+```ruby{3}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.first_sorting_option = :asc
 end
 ```
 
