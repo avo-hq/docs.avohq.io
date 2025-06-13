@@ -805,3 +805,57 @@ Learn how to effectively filter records based on their associations in Avo. This
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/d8bd49086d014d77a3013796c8480339?sid=aaaec555-b19f-429b-b0a7-e998a2d2128e" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 </Option>
+
+#### `belongs_to` example
+
+```ruby{5-11,16-18}
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  # Using field's filterable option
+  def fields
+    field :user,
+      as: :belongs_to,
+      filterable: {
+        label: "User (email & first_name)",
+        icon: "heroicons/solid/users",
+        query_attributes: [:user_email, :user_first_name]
+      }
+  end
+
+  # OR using dynamic_filter method
+  def filters
+    dynamic_filter label: "User (email & first_name)",
+      icon: "heroicons/solid/users",
+      query_attributes: [:user_email, :user_first_name]
+  end
+end
+```
+
+### `has_many` example
+
+```ruby{19-22}
+class Avo::Resources::Author < Avo::BaseResource
+  self.record_selector = false
+
+  def fields
+    field :preview, as: :preview
+    field :book_list, only_on: :preview do
+      tag.div do
+        tag.ul do
+          safe_join(
+            record.books.map do |book|
+              tag.li("#{book.title} (#{book.genre})")
+            end
+          )
+        end
+      end
+    end
+
+    field :name, filterable: true
+    # Filter the books by title and genre
+    field :books, as: :has_many, filterable: {
+      query_attributes: [:books_title, :books_genre]
+    }
+  end
+end
+```
