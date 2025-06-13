@@ -180,7 +180,6 @@ actions_list exclude: [ExportSelection, PublishPost]
 
 Used to add actions to the list that are not defined in the `def actions` method.
 
-
 #### Example
 
 ```ruby
