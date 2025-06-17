@@ -259,6 +259,13 @@ const config = {
         //   ],
         // },
         {
+          text: "Forms and pages",
+          items: [
+            {text: "Overview", link: "/4.0/forms-and-pages/overview.html"},
+            {text: "Generators", link: "/4.0/forms-and-pages/generator.html"},
+          ],
+        },
+        {
           text: "Custom content",
           items: [
             {text: "Custom views", link: "/4.0/custom-tools.html"},
