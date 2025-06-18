@@ -12,7 +12,7 @@ This will create a new form file at `app/avo/forms/your_form_name.rb` with the f
 
 ```ruby
 # app/avo/forms/your_form_name.rb
-class Avo::Forms::YourFormName < Avo::Core::Forms::Base
+class Avo::Forms::YourFormName < Avo::Forms::Core::Form
   self.title = "Your Form Name"
   self.description = "Manage your your form name"
 
@@ -44,7 +44,7 @@ Example:
 
 ```ruby
 # app/avo/pages/parent_page.rb
-class Avo::Pages::ParentPage < Avo::Core::Pages::Base
+class Avo::Pages::ParentPage < Avo::Forms::Core::Page
   self.title = "Parent Page"
   self.description = "A page for parent page"
 
@@ -57,7 +57,7 @@ end
 
 ```ruby
 # app/avo/pages/parent_page/sub_page.rb
-class Avo::Pages::ParentPage::SubPage < Avo::Core::Pages::Base
+class Avo::Pages::ParentPage::SubPage < Avo::Forms::Core::Page
   self.title = "Sub Page"
   self.description = "A page for sub page"
 end
@@ -71,7 +71,7 @@ rails generate avo:page your_page_name
 This will create a new page file at `app/avo/pages/your_page_name.rb` with the following structure:
 
 ```ruby
-class Avo::Pages::YourPageName < Avo::Core::Pages::Base
+class Avo::Pages::YourPageName < Avo::Forms::Core::Page
   self.title = "Your Page Name"
   self.description = "A page for your page name"
 
