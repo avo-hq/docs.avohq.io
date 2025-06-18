@@ -29,19 +29,35 @@ class Avo::Forms::YourFormName < Avo::Forms::Core::Form
 end
 ```
 
-### 🎨 Customization
-
-You can customize the generated form by:
-- ✏️ Modifying the `title` and `description`
-- ➕ Adding fields in the `fields` method
-- ⚙️ Implementing custom logic in the `handle` method
-
 ## Page Generator
 
 The page generator creates a new page class.
 
-:::info
+```bash
+rails generate avo:page your_page_name
+```
+
+This will create a new page file at `app/avo/pages/your_page_name.rb` with the following structure:
+
+```ruby
+class Avo::Pages::YourPageName < Avo::Forms::Core::Page
+  self.title = "Your Page Name"
+  self.description = "A page for your page name"
+
+  def forms
+    # form Avo::Forms::AnyFormClass
+  end
+
+  def sub_pages
+    # sub_page Avo::Pages::AnySubPageClass
+  end
+end
+```
+
+:::tip
 To create a sub-page, you need to create a page first. The sub-page need to be namespaced under the parent page.
+
+Read more about the [Page Hierarchy](./pages.html#hierarchy).
 
 Example:
 
@@ -67,38 +83,10 @@ end
 ```
 :::
 
-```bash
-rails generate avo:page your_page_name
-```
+## Best Practices
 
-This will create a new page file at `app/avo/pages/your_page_name.rb` with the following structure:
-
-```ruby
-class Avo::Pages::YourPageName < Avo::Forms::Core::Page
-  self.title = "Your Page Name"
-  self.description = "A page for your page name"
-
-  def forms
-    # form Avo::Forms::AnyFormClass
-  end
-
-  def sub_pages
-    # sub_page Avo::Pages::AnySubPageClass
-  end
-end
-```
-
-### 🎨 Customization
-
-You can customize the generated page by:
-- ✏️ Modifying the `title` and `description`
-- 📝 Adding forms in the `forms` method
-- 📑 Adding sub-pages in the `sub_pages` method
-
-## ✨ Best Practices
-
-1. 📝 Use descriptive names for your forms and pages
-2. 🎯 Keep form fields focused and relevant to their purpose
-3. 📁 Organize related forms and pages together
-4. 🗂️ Use sub-pages to create a logical navigation structure
-5. 💬 Add appropriate descriptions to help users understand the purpose of each form and page
+1. Use descriptive names for your forms and pages
+2. Keep form fields focused and relevant to their purpose
+3. Organize related forms and pages together
+4. Use sub-pages to create a logical navigation structure
+5. Add appropriate descriptions to help users understand the purpose of each form and page
