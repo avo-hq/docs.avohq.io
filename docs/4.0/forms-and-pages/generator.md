@@ -21,7 +21,10 @@ class Avo::Forms::YourFormName < Avo::Forms::Core::Form
   end
 
   def handle
+    flash[:success] = { body: "Form submitted successfully", timeout: :forever }
     flash[:notice] = params[:example]
+
+    default_response
   end
 end
 ```
