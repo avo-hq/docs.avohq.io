@@ -69,6 +69,25 @@ end
 
 After an action runs, you can respond to the user with different types of notifications or no feedback at all. The default feedback is an `Action ran successfully` message of type `inform`.
 
+All feedback notification methods (`succeed`, `warn`, `inform`, `error`) support an optional `timeout` parameter to control how long the notification remains visible:
+
+```ruby
+# Display notification for 5 seconds
+succeed 'Task completed successfully', timeout: 5000
+
+# Keep notification open indefinitely, until the user dismisses it
+warn 'Important warning - requires attention', timeout: :forever
+
+# Use default timeout (falls back to global configuration)
+inform 'Action completed'
+```
+
+:::info
+Set the `timeout` to `:forever` to keep the notification open indefinitely until the user dismisses it.
+
+The default timeout is set to `config.alert_dismiss_time` in the Avo configuration.
+:::
+
 <Option name="`succeed`" headingSize="3">
 
 Displays a **green** success alert to indicate successful completion.
