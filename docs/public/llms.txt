@@ -339,6 +339,25 @@ end
 
 After an action runs, you can respond to the user with different types of notifications or no feedback at all. The default feedback is an `Action ran successfully` message of type `inform`.
 
+All feedback notification methods (`succeed`, `warn`, `inform`, `error`) support an optional `timeout` parameter to control how long the notification remains visible:
+
+```ruby
+# Display notification for 5 seconds
+succeed 'Task completed successfully', timeout: 5000
+
+# Keep notification open indefinitely, until the user dismisses it
+warn 'Important warning - requires attention', timeout: :forever
+
+# Use default timeout (falls back to global configuration)
+inform 'Action completed'
+```
+
+:::info
+Set the `timeout` to `:forever` to keep the notification open indefinitely until the user dismisses it.
+
+The default timeout is set to `config.alert_dismiss_time` in the Avo configuration.
+:::
+
 <Option name="`succeed`" headingSize="3">
 
 Displays a **green** success alert to indicate successful completion.
@@ -14881,6 +14900,835 @@ Avo provides two types of filters you can use when building your app.
 - a lot more conditions than basic filters
 - the user can add multiple conditions per attribute
 - they are more composable
+
+
+
+# Forms
+
+Avo provide a powerful way to build custom forms for your interface. Unlike resources that are tied to database models, forms are standalone components that can handle any kind of data processing, settings management, or custom workflows.
+
+## Overview
+
+Forms in Avo are designed to:
+- Handle custom data processing and workflows
+- Manage application settings and configurations
+- Provide standalone forms not tied to specific models
+- Integrate seamlessly with pages for organized interfaces
+- Support all Avo field types and layout components
+- Be rendered anywhere in the interface
+
+Forms are typically displayed on [Pages](#pages) and can be used for various purposes like user preferences, system settings, data imports, or any custom functionality your application requires.
+
+Forms can also be rendered as a standalone component anywhere in the interface. For example, you can render the general settings form in a tool by using the following code:
+
+```erb
+<%= render Avo::Forms::Settings::General.new.component %>
+```
+
+## Generating Forms
+
+The generator usage is documented in the [Generators](#generator) page.
+
+## Form Structure
+
+Every form inherits from `Avo::Forms::Core::Form` and requires two main methods:
+
+1. **`def fields`** - Define the form structure and fields
+2. **`def handle`** - Process form submission and define response
+
+```ruby
+# app/avo/forms/app_settings.rb
+class Avo::Forms::AppSettings < Avo::Forms::Core::Form
+  self.title = "Application Settings"
+  self.description = "Manage your application configuration"
+
+  def fields
+    field :app_name, as: :text
+    field :maintenance_mode, as: :boolean
+  end
+
+  def handle
+    # Process form data
+    flash[:notice] = "Settings updated successfully"
+    default_response
+  end
+end
+```
+
+## Form Configuration Options
+
+Forms have several class attributes that customize their behavior and appearance.
+
+<Option name="self.title" headingSize=3>
+
+Sets the display title for the form.
+
+```ruby{3}
+# app/avo/forms/app_settings.rb
+class Avo::Forms::AppSettings < Avo::Forms::Core::Form
+  self.title = "Application Settings"
+end
+```
+
+</Option>
+
+<Option name="self.description" headingSize=3>
+
+Provides a description that appears below the form title.
+
+```ruby{3}
+# app/avo/forms/app_settings.rb
+class Avo::Forms::AppSettings < Avo::Forms::Core::Form
+  self.description = "Manage your application configurations"
+end
+```
+
+</Option>
+
+## Form Methods
+
+<Option name="def fields" headingSize=3>
+
+Define the structure and fields of your form. This method uses the same field syntax as Avo resources and actions, supporting all field types, [panels](#resource-panels), [clusters](#resource-clusters), and layout components.
+
+:::tip
+When using `panel` to group fields, you **must** use the `main_panel` for one of the panels where you want to display the save button.
+:::
+
+```ruby{3-5}
+# app/avo/forms/user_preferences.rb
+class Avo::Forms::UserPreferences < Avo::Forms::Core::Form
+  def fields
+    # Define form fields here
+  end
+end
+```
+
+</Option>
+
+<Option name="field" headingSize=3>
+
+Add individual fields to your form. Supports all Avo field types and options.
+
+```ruby
+# app/avo/forms/user_preferences.rb
+class Avo::Forms::UserPreferences < Avo::Forms::Core::Form
+  def fields
+    field :email, as: :text, required: true # [!code focus]
+    field :notifications, as: :boolean, default: true # [!code focus]
+    field :theme, as: :select, options: { light: "Light", dark: "Dark" } # [!code focus]
+  end
+end
+```
+
+**Field Options**
+
+All standard Avo field options are supported
+
+</Option>
+
+<Option name="def handle" headingSize=3>
+
+Process form submission and define the response. This method is called when the form is submitted and receives form data through the `params` object.
+
+:::warning
+Currently, the `handle` method is executed in the context of the controller method that receives the form request. This means that you can use any of the methods available in the controller to process the form data. **This is something experimental and might change in the future.**
+
+::::info
+This experiment is to see if by not building a heavy DSL for forms, we can make it easier to use and maintain.
+
+The main point is that since it is the controller method, everything is available and possible to the developer by using rails syntax.
+
+If we build a heavy DSL for the `handle` method like we do for actions, it and might feel restrictive to the developer in some cases.
+
+If you have any feedback, please share it with us.
+::::
+
+Right now the only pre-defined methods available in the controller are:
+- `default_response` - Standard redirect back turbo stream response
+
+```ruby{3-8}
+# app/avo/forms/user_preferences.rb
+class Avo::Forms::UserPreferences < Avo::Forms::Core::Form
+  def handle
+    # Process form data
+    # Access form data via params
+    # Set flash messages and redirect
+    default_response
+  end
+end
+```
+
+</Option>
+
+## Field Types and Layout
+
+Forms support all Avo field types and layout components:
+
+### Basic Fields
+
+```ruby
+def fields
+  field :name, as: :text
+  field :email, as: :text, required: true
+  field :age, as: :number
+  field :active, as: :boolean
+  field :bio, as: :textarea
+  field :role, as: :select, options: { admin: "Admin", user: "User" }
+end
+```
+
+### Panels and Organization
+
+```ruby
+def fields
+  main_panel "Personal Information" do
+    field :first_name, as: :text
+    field :last_name, as: :text
+    field :email, as: :text
+  end
+
+  panel "Preferences", description: "Customize your experience" do
+    field :theme, as: :select, options: { light: "Light", dark: "Dark" }
+    field :notifications, as: :boolean
+  end
+end
+```
+
+### Clusters for Inline Layout
+
+```ruby
+def fields
+  main_panel do
+    cluster do
+      field :first_name, as: :text
+      field :last_name, as: :text
+    end
+  end
+end
+```
+
+### Working with Records
+
+You can bind form fields to existing records:
+
+```ruby
+def fields
+  field :first_name, record: Avo::Current.user
+  field :last_name, record: Avo::Current.user
+  field :email, record: Avo::Current.user
+end
+```
+
+## Form Submission Handling
+
+### Processing Form Data
+
+```ruby
+def handle
+  # Access form parameters
+  app_name = params[:app_name]
+  maintenance_mode = params[:maintenance_mode]
+
+  # Update application settings
+  Rails.application.config.app_name = app_name
+  cookies[:maintenance_mode] = maintenance_mode
+
+  # Set success message
+  flash[:notice] = "Settings updated successfully"
+
+  # Return standard response
+  default_response
+end
+```
+
+### Flash Messages
+
+```ruby
+def handle
+  # Informative message
+  flash[:notice] = "Operation completed successfully"
+
+  # Error message
+  flash[:error] = "Something went wrong"
+
+  # Success with timeout
+  flash[:success] = { body: "Saved successfully", timeout: 3000 }
+
+  # Warning message without dismissing
+  flash[:warning] = { body: "Something went wrong", timeout: :forever }
+
+  default_response
+end
+```
+
+### Working with Models
+
+```ruby
+def handle
+  # Update current user
+  current_user.update(params.permit(:first_name, :last_name, :email))
+
+  # Create new records
+  Post.create(title: params[:title], body: params[:body])
+
+  # Complex data processing
+  if params[:import_data]
+    ImportService.new(params[:file]).process
+  end
+
+  flash[:notice] = "Data processed successfully"
+  default_response
+end
+```
+
+## Complete Examples
+
+### User Profile Settings Form
+
+```ruby
+# app/avo/forms/profile_settings.rb
+class Avo::Forms::ProfileSettings < Avo::Forms::Core::Form
+  self.title = "Profile Settings"
+  self.description = "Update your personal information"
+
+  def fields
+    main_panel do
+      cluster do
+        with_options stacked: true, record: Avo::Current.user do
+          field :first_name, as: :text, required: true
+          field :last_name, as: :text, required: true
+        end
+      end
+
+      field :email, as: :text, required: true, record: Avo::Current.user
+      field :phone, as: :text, record: Avo::Current.user
+    end
+
+    panel "Preferences" do
+      field :theme, as: :select,
+            options: { light: "Light", dark: "Dark", auto: "Auto" },
+            default: "auto"
+      field :email_notifications, as: :boolean, default: true
+      field :timezone, as: :select, options: ActiveSupport::TimeZone.all.map { |tz| [tz.name, tz.name] }
+    end
+  end
+
+  def handle
+    # Update user profile
+    current_user.update(params.permit(:first_name, :last_name, :email, :phone))
+
+    # Update preferences (assuming a preferences model)
+    current_user.preferences.update(
+      theme: params[:theme],
+      email_notifications: params[:email_notifications],
+      timezone: params[:timezone]
+    )
+
+    flash[:notice] = "Profile updated successfully"
+    default_response
+  end
+end
+```
+
+### Application Settings Form
+
+```ruby
+# app/avo/forms/app_settings.rb
+class Avo::Forms::AppSettings < Avo::Forms::Core::Form
+  self.title = "Application Settings"
+  self.description = "Configure global application settings"
+
+  def fields
+    main_panel do
+      field :app_name, as: :text,
+            default: -> { Rails.application.class.module_parent_name },
+            required: true
+      field :app_url, as: :text,
+            default: -> { request.base_url },
+            placeholder: "https://yourapp.com"
+      field :maintenance_mode, as: :boolean, default: false
+    end
+
+    panel "Email Configuration" do
+      field :support_email, as: :text,
+            default: "support@yourapp.com",
+            required: true
+      field :from_email, as: :text,
+            default: "noreply@yourapp.com",
+            required: true
+    end
+
+    panel "Feature Flags" do
+      field :enable_registrations, as: :boolean, default: true
+      field :enable_api_access, as: :boolean, default: false
+      field :max_file_upload_size, as: :number,
+            default: 10,
+            help_text: "Maximum file size in MB"
+    end
+  end
+
+  def handle
+    # Store in application configuration or settings model
+    settings = {
+      app_name: params[:app_name],
+      app_url: params[:app_url],
+      maintenance_mode: params[:maintenance_mode],
+      support_email: params[:support_email],
+      from_email: params[:from_email],
+      enable_registrations: params[:enable_registrations],
+      enable_api_access: params[:enable_api_access],
+      max_file_upload_size: params[:max_file_upload_size]
+    }
+
+    # Update application settings (your implementation)
+    ApplicationSettings.update_all(settings)
+
+    # Or store in Rails credentials
+    # Rails.application.credentials.update(settings)
+
+    flash[:success] = {
+      body: "Application settings updated successfully",
+      timeout: 5000
+    }
+    default_response
+  end
+end
+```
+
+### Data Import Form
+
+```ruby
+# app/avo/forms/data_import.rb
+class Avo::Forms::DataImport < Avo::Forms::Core::Form
+  self.title = "Import Data"
+  self.description = "Upload and import data from CSV files"
+
+  def fields
+    main_panel do
+      field :import_type, as: :select,
+            options: {
+              users: "Users",
+              products: "Products",
+              orders: "Orders"
+            },
+            required: true
+      field :csv_file, as: :file,
+            required: true,
+            help_text: "Select a CSV file to import"
+      field :skip_header_row, as: :boolean,
+            default: true,
+            help_text: "Skip the first row if it contains headers"
+    end
+
+    panel "Import Options" do
+      field :update_existing, as: :boolean,
+            default: false,
+            help_text: "Update existing records if found"
+      field :send_notification, as: :boolean,
+            default: true,
+            help_text: "Send email notification when import completes"
+    end
+  end
+
+  def handle
+    import_type = params[:import_type]
+    csv_file = params[:csv_file]
+    options = {
+      skip_header_row: params[:skip_header_row],
+      update_existing: params[:update_existing]
+    }
+
+    # Process the import
+    begin
+      importer = DataImporter.new(import_type, csv_file, options)
+      result = importer.process
+
+      if params[:send_notification]
+        ImportNotificationMailer.import_completed(current_user, result).deliver_later
+      end
+
+      flash[:success] = {
+        body: "Import completed: #{result[:imported]} records imported, #{result[:skipped]} skipped",
+        timeout: 10000
+      }
+    rescue => e
+      flash[:error] = "Import failed: #{e.message}"
+    end
+
+    default_response
+  end
+end
+```
+
+## Best Practices
+
+**Keep forms focused**: Each form should handle a specific set of related functionality rather than trying to do everything.
+
+**Use descriptive titles and descriptions**: Help users understand what the form does and what data is expected.
+
+**Organize with panels**: Group related fields together using panels for better user experience.
+
+**Validate input**: Always validate and sanitize form input in your handle method.
+
+**Provide feedback**: Use flash messages to inform users about the results of their actions.
+
+**Handle errors gracefully**: Wrap potentially failing operations in begin/rescue blocks.
+
+**Use default values**: Provide sensible defaults for form fields when possible.
+
+**Consider async processing**: For long-running operations, consider using background jobs and provide appropriate feedback to users.
+
+# Generators
+
+Avo Forms provides generators to help you quickly create forms and pages.
+
+## Form Generator
+
+```bash
+rails generate avo:form your_form_name
+```
+
+This will create a new form file at `app/avo/forms/your_form_name.rb` with the following structure:
+
+```ruby
+# app/avo/forms/your_form_name.rb
+class Avo::Forms::YourFormName < Avo::Forms::Core::Form
+  self.title = "Your Form Name"
+  self.description = "Manage your your form name"
+
+  def fields
+    field :example, as: :text, default: "Hello World"
+  end
+
+  def handle
+    flash[:success] = { body: "Form submitted successfully", timeout: :forever }
+    flash[:notice] = params[:example]
+
+    default_response
+  end
+end
+```
+
+## Page Generator
+
+The page generator creates a new page class.
+
+```bash
+rails generate avo:page your_page_name
+```
+
+This will create a new page file at `app/avo/pages/your_page_name.rb` with the following structure:
+
+```ruby
+class Avo::Pages::YourPageName < Avo::Forms::Core::Page
+  self.title = "Your Page Name"
+  self.description = "A page for your page name"
+
+  def forms
+    # form Avo::Forms::AnyFormClass
+  end
+
+  def sub_pages
+    # sub_page Avo::Pages::AnySubPageClass
+  end
+end
+```
+
+:::tip
+To create a sub-page, you need to create a page first. The sub-page need to be namespaced under the parent page.
+
+Read more about the [Page Hierarchy](#pages).
+
+Example:
+
+```ruby
+# app/avo/pages/parent_page.rb
+class Avo::Pages::ParentPage < Avo::Forms::Core::Page
+  self.title = "Parent Page"
+  self.description = "A page for parent page"
+
+  def sub_pages
+    sub_page Avo::Pages::ParentPage::SubPage
+  end
+end
+```
+<br>
+
+```ruby
+# app/avo/pages/parent_page/sub_page.rb
+class Avo::Pages::ParentPage::SubPage < Avo::Forms::Core::Page
+  self.title = "Sub Page"
+  self.description = "A page for sub page"
+end
+```
+:::
+
+## Best Practices
+
+1. Use descriptive names for your forms and pages
+2. Keep form fields focused and relevant to their purpose
+3. Organize related forms and pages together
+4. Use sub-pages to create a logical navigation structure
+5. Add appropriate descriptions to help users understand the purpose of each form and page
+
+
+## 📝 Overview
+
+:::warning
+🚧 This section is a work in progress.
+:::
+
+
+# Pages
+
+Avo provides a powerful page system that enables you to build structured interfaces with nested content organization. Pages in Avo work similarly to resources but are designed for displaying and managing forms and sub-pages rather than database records.
+
+## Hierarchy
+
+Pages are organized in a hierarchical structure that follows a specific pattern:
+
+### Page Structure
+
+1. **Main Pages**
+
+   Example: `Avo::Pages::Settings`
+
+   - Always 1 level deep in the namespace
+   - Act as containers for related sub-pages
+   - Have a navigation entry on the left sidebar menu (if `self.menu_entry` is `true`)
+   - When accessed directly, redirect to the default sub-page if one is configured
+
+2. **Sub-Pages**
+
+   Example: `Avo::Pages::Settings::General`, `Avo::Pages::Settings::Notifications`
+
+   - Always 2 or more levels deep in the namespace
+   - Contain the actual forms and content
+   - Are accessible through the parent page's navigation
+
+This hierarchical organization allows you to create structured interfaces where users can navigate through different sections and manage various settings or configurations.
+
+### Navigation Behavior
+
+When a user visits a main page that has sub-pages:
+
+1. If a default sub-page is configured, the user is automatically redirected to it
+2. If no default sub-page is configured, the main page is displayed with its own forms (if any)
+3. Sub-pages are displayed in a sidebar navigation for easy access
+
+## Generating Pages
+
+The generator usage is documented in the [Generators](#generator) page.
+
+## Page Configuration Options
+
+Pages have several class attributes that you can configure to customize their behavior and appearance.
+
+<Option name="self.title" headingSize=3>
+
+Sets the display title for the page.
+
+```ruby{3}
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  self.title = "Application Settings"
+end
+```
+</Option>
+
+<Option name="self.description" headingSize=3>
+
+Provides a description that appears below the page title.
+
+```ruby{3}
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  self.description = "Manage your application settings and preferences"
+end
+```
+
+</Option>
+
+
+## Page Methods
+
+<Option name="def sub_pages" headingSize=3>
+
+
+Define sub-pages that belong to this page. This method is used to register child pages and configure their relationship to the parent.
+
+```ruby{3-5}
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  def sub_pages
+    # ...
+  end
+end
+```
+
+</Option>
+
+<Option name="sub_page" headingSize=3>
+
+This method is used to register child pages that belong to this page.
+
+It expects the child page class as the first argument.
+
+```ruby
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  def sub_pages
+    sub_page Avo::Pages::Settings::General # [!code focus]
+  end
+end
+```
+
+When defining sub-pages, you can pass additional options:
+
+<div class="pl-8">
+
+#### `default`
+
+Marks a sub-page as the default one to display when the main page is accessed.
+
+**Default value**: `false`
+
+**Possible values**: `true` or `false`
+
+```ruby
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  def sub_pages
+    sub_page Avo::Pages::Settings::General, default: true # [!code focus]
+    sub_page Avo::Pages::Settings::Notifications
+  end
+end
+```
+
+</div>
+
+</Option>
+
+<Option name="def forms" headingSize=3>
+
+Define forms that should be displayed on this page. Forms are the primary way users interact with your page's functionality.
+
+```ruby{3-5}
+# app/avo/pages/settings/general.rb
+class Avo::Pages::Settings::General < Avo::Forms::Core::Page
+  def forms
+    # ...
+  end
+end
+```
+
+You can define multiple forms on a single page, and they will be displayed in the order you declare them.
+</Option>
+
+<Option name="form" headingSize=3>
+
+This method is used to register forms that should be displayed on this page.
+
+It expects the form class as the first argument.
+
+```ruby
+# app/avo/pages/settings/general.rb
+class Avo::Pages::Settings::General < Avo::Forms::Core::Page
+  def forms
+    form Avo::Forms::Settings::AppSettings # [!code focus]
+    form Avo::Forms::Settings::ProfileSettings # [!code focus]
+  end
+end
+```
+
+
+</Option>
+
+## Complete Example
+
+Here's a complete example showing a settings page with multiple sub-pages:
+
+```ruby
+# Main settings page
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  self.title = "Settings"
+  self.description = "Manage your application settings"
+
+  def sub_pages
+    sub_page Avo::Pages::Settings::General, default: true
+    sub_page Avo::Pages::Settings::Notifications
+    sub_page Avo::Pages::Settings::Integrations
+    sub_page Avo::Pages::Settings::Security
+  end
+end
+```
+
+```ruby
+# General settings sub-page
+# app/avo/pages/settings/general.rb
+class Avo::Pages::Settings::General < Avo::Forms::Core::Page
+  self.title = "General Settings"
+  self.description = "Basic application configuration"
+
+  def forms
+    form Avo::Forms::Settings::AppSettings
+    form Avo::Forms::Settings::CompanyInfo
+  end
+end
+```
+
+```ruby
+# Notifications sub-page
+# app/avo/pages/settings/notifications.rb
+class Avo::Pages::Settings::Notifications < Avo::Forms::Core::Page
+  self.title = "Notifications"
+  self.description = "Configure notification preferences"
+
+  def forms
+    form Avo::Forms::Settings::EmailNotifications
+    form Avo::Forms::Settings::SlackIntegration
+  end
+end
+```
+
+## Adding Pages to the Menu
+
+<LicenseReq license="pro"/>
+
+To make your pages accessible through Avo's main navigation, add them to your Avo configuration:
+
+```ruby{9-10,12,14}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    section "Resources", icon: "avo/resources" do
+      all_resources
+    end
+
+    section "Configuration", icon: "cog" do
+      page Avo::Pages::Settings, icon: "adjustments"
+      page Avo::Pages::SystemHealth, icon: "heart"
+
+      # Or
+
+      all_pages
+    end
+  }
+end
+```
+
+
+## Best Practices
+
+**Keep the hierarchy shallow**: While you can nest pages deeply, it's best to keep the structure simple with main pages and one level of sub-pages.
+
+**Set default sub-pages**: If your main page primarily serves as a container, always set a default sub-page to improve user experience.
+
+**Use descriptive titles and descriptions**: Help users understand what each page contains and what actions they can perform.
+
+**Group related functionality**: Use the page hierarchy to logically group related forms and settings.
 
 
 # Gem server authentication
