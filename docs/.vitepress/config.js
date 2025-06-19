@@ -264,6 +264,7 @@ const config = {
             {text: "Overview", link: "/4.0/forms-and-pages/overview.html"},
             {text: "Generators", link: "/4.0/forms-and-pages/generator.html"},
             {text: "Pages", link: "/4.0/forms-and-pages/pages.html"},
+            {text: "Forms", link: "/4.0/forms-and-pages/forms.html"},
           ],
         },
         {
