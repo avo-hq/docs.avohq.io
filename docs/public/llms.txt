@@ -13720,6 +13720,64 @@ end
 The output value must be a supported [`options_for_select`](https://apidock.com/rails/ActionView/Helpers/FormOptionsHelper/options_for_select) value.
 </Option>
 
+<Option name="`grouped_options`">
+
+<VersionReq version="3.22.0" />
+
+When you need to organize your select options into groups, you can use `grouped_options` instead of `options`. This creates optgroups in the select field, making it easier for users to navigate large sets of options.
+
+The `grouped_options` supports the same data structures as Rails' [`grouped_options_for_select`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html#method-i-grouped_options_for_select) helper.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+You can use either **Array syntax** or **Hash syntax**:
+
+**Array syntax:**
+```ruby
+field :country,
+  as: :select,
+  grouped_options: [
+    ['North America', [['United States', 'US'], 'Canada']],
+    ['Europe', ['Denmark', 'Germany', 'France']]
+  ]
+```
+
+**Hash syntax:**
+```ruby
+field :country,
+  as: :select,
+  grouped_options: {
+    'North America' => [['United States', 'US'], 'Canada'],
+    'Europe' => ['Denmark', 'Germany', 'France']
+  }
+```
+
+### Computed grouped options
+
+Just like with regular options, you can compute grouped options dynamically using a lambda:
+
+```ruby
+field :country,
+  as: :select,
+  grouped_options: -> do
+    {
+      'North America' => Country.north_american.map { |c| [c.name, c.code] },
+      'Europe' => Country.european.map { |c| [c.name, c.code] },
+      'Asia' => Country.asian.map { |c| [c.name, c.code] }
+    }
+  end
+```
+
+:::warning
+You should use either `options`, `grouped_options`, or `enum` - not multiple at the same time.
+:::
+
+</Option>
+
 <Option name="`enum`">
 
 Set the select options as an Active Record [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html). You may use `options` or `enum`, not both.
