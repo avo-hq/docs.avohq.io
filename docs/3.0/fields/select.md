@@ -47,6 +47,8 @@ The output value must be a supported [`options_for_select`](https://apidock.com/
 
 <Option name="`grouped_options`">
 
+<VersionReq version="3.22.0" />
+
 When you need to organize your select options into groups, you can use `grouped_options` instead of `options`. This creates optgroups in the select field, making it easier for users to navigate large sets of options.
 
 The `grouped_options` supports the same data structures as Rails' [`grouped_options_for_select`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html#method-i-grouped_options_for_select) helper.
