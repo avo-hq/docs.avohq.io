@@ -713,3 +713,34 @@ end
 ```
 
 </Option>
+
+<Option name="`exclude_from_status`">
+
+Defines which status items to exclude from the status page (`/avo_private/status`). This is useful for hiding sensitive information like license keys from the status page.
+
+### Default value
+
+`[]`
+
+### Possible values
+
+An array of strings or a callable that returns an array of strings representing the status items to exclude.
+
+### Example
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.exclude_from_status = ["license_key"]
+
+  # OR using a callable
+  config.exclude_from_status = -> do
+    ["license_key"]
+  end
+end
+```
+
+### Common use case
+
+The most common use case is to exclude the `license_key` from being displayed on the status page for security reasons.
+</Option>
