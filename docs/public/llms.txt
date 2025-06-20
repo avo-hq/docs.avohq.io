@@ -10017,6 +10017,20 @@ class Avo::Fields::Admins::TextField::ShowComponent < Avo::Fields::ShowComponent
 :::
 </Option>
 
+<Option name="`--controller`">
+
+You can eject any Avo controller using the `--controller` option. Once ejected, you'll be responsible for maintaining the ejected controller.
+
+```bash
+$ rails g avo:eject --controller application_controller
+```
+
+The most common use case is ejecting the `application_controller`. The ejected application controller serves as an extendable layer that inherits from `Avo::BaseApplicationController`, where the core logic resides. All your Avo controllers for a specific resource inherit from this extendable layer, allowing you to customize behavior that applies to all resources' controllers.
+
+This approach provides a clean way to add custom functionality or override default behaviors without directly modifying Avo's base controllers.
+
+</Option>
+
 
 # Execution context
 
