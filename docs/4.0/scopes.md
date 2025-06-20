@@ -203,7 +203,7 @@ end
 
 </Option>
 
-### Full example
+## Full example
 
 ```ruby
 # app/avo/scopes/even_id.rb
