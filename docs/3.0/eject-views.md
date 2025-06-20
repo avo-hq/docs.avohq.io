@@ -105,7 +105,6 @@ While utilizing the `--field-components` option, you can selectively extract a s
 
 </Option>
 
-
 <Option name="`--scope`">
 
 When you opt to eject a view component that exists under `Avo::Views` or a field component under `Avo::Fields` namespace, for example the `Avo::Views::ResourceIndexComponent` or `Avo::Fields::TextField::ShowComponent` you can employ the `--scope` option to specify the namespace that should be adopted by the ejected component, extending from `Avo::Views` / `Avo::Fields`.
@@ -132,4 +131,18 @@ class Avo::Fields::Admins::TextField::ShowComponent < Avo::Fields::ShowComponent
 `--scope users_admins` -> `Avo::Views::UsersAdmins::ResourceIndexComponent`<br>
 `--scope users/admins` -> `Avo::Views::Users::Admins::ResourceIndexComponent`
 :::
+</Option>
+
+<Option name="`--controller`">
+
+You can eject any Avo controller using the `--controller` option. Once ejected, you'll be responsible for maintaining the ejected controller.
+
+```bash
+$ rails g avo:eject --controller application_controller
+```
+
+The most common use case is ejecting the `application_controller`. The ejected application controller serves as an extendable layer that inherits from `Avo::BaseApplicationController`, where the core logic resides. All your Avo controllers for a specific resource inherit from this extendable layer, allowing you to customize behavior that applies to all resources' controllers.
+
+This approach provides a clean way to add custom functionality or override default behaviors without directly modifying Avo's base controllers.
+
 </Option>
