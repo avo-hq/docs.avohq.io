@@ -1,5 +1,6 @@
 ---
 license: add_on
+add_on: forms_feature
 betaStatus: Beta
 outline: [2,3]
 ---

@@ -5,6 +5,7 @@ const props = defineProps({
   license: String,
   title: String,
   size: String,
+  add_on: String,
 });
 const license = computed(() => props.license || "community");
 const size = computed(() => props.size || "sm");
@@ -15,7 +16,8 @@ const links = {
   kanban: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=kanban",
   audit_logging: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=audit_logging",
   custom: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=custom",
-  add_on: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=add_on",
+  add_on: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=add_on", // this is different from the other add_on links
+  add_on_blank: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=", // this is different from the other add_on links
   enterprise: "https://savvycal.com/avo-hq/discovery-call-ent",
 };
 const labels = {
@@ -28,7 +30,12 @@ const labels = {
   custom: "Custom",
   add_on: "Add-on",
 };
-const href = computed(() => links[license.value]);
+const href = computed(() => {
+  if (props.add_on) {
+    return links.add_on_blank + props.add_on;
+  }
+  return links[license.value];
+});
 const label = computed(() => labels[license.value]);
 </script>
 
