@@ -2,6 +2,7 @@
   "name": "avo-vitepress-docs",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "license": "MIT",
   "devDependencies": {
     "autoprefixer": "^10.4.8",
@@ -13,10 +14,20 @@
   "scripts": {
     "dev": "vitepress dev docs --port 3011",
     "build": "ruby concatenate.rb docs/4.0 && vitepress build docs",
-    "serve": "vitepress serve docs"
+    "serve": "vitepress serve docs",
+    "generate-llms-txt": "node scripts/generate-llms-txt.js",
+    "generate-llms-latest": "node scripts/generate-llms-txt.js latest",
+    "generate-llms-all": "node scripts/generate-llms-txt.js all",
+    "generate-llms-4": "node scripts/generate-llms-txt.js 4.0",
+    "generate-llms-3": "node scripts/generate-llms-txt.js 3.0",
+    "test": "echo \"Tests not implemented yet\" && exit 0"
+  },
+  "bin": {
+    "generate-llms-txt": "./scripts/generate-llms-txt.js"
   },
   "dependencies": {
     "@heroicons/vue": "^2.0.13",
+    "commander": "^12.1.0",
     "lodash": "^4.17.21",
     "markdown-it": "^13.0.1",
     "markdown-it-container": "^3.0.0",
