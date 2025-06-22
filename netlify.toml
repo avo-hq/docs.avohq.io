@@ -1,3 +1,10 @@
+# temporary until we set up a proper navigation for the LLMs
+[[redirects]]
+  from = "/llms.txt"
+  to = "/4.0/llms-full.txt"
+  status = 301
+  force = false
+
 [[redirects]]
   from = "/llms-full.txt"
   to = "/4.0/llms-full.txt"
