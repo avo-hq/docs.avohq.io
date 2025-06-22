@@ -2,6 +2,7 @@
 
 const { program } = require('commander');
 const path = require('path');
+const fs = require('fs');
 
 // Import our modules
 const { parseVitePressConfig, getDocumentationPages } = require('../lib/vitepress-parser.js');
@@ -75,6 +76,8 @@ class GenerateLLMsTxtCLI {
    * @param {Object} options - CLI options
    */
   async execute(version, options) {
+    // Store the original version parameter to check later
+    this.originalVersionParam = version;
     try {
       // Configure logging
       this.setupLogging(options);
@@ -94,7 +97,7 @@ class GenerateLLMsTxtCLI {
       });
 
       // Parse VitePress configuration
-      const configResult = this.parseConfiguration(options.config);
+      const configResult = await this.parseConfiguration(options.config);
       logger.success('Configuration parsed successfully', {
         versions: Object.keys(configResult.sidebar).length,
         configPath: configResult.configPath
@@ -181,12 +184,12 @@ class GenerateLLMsTxtCLI {
    * @param {string} configPath - Path to config file
    * @returns {Object} Parsed configuration
    */
-  parseConfiguration(configPath) {
+  async parseConfiguration(configPath) {
     try {
       const absoluteConfigPath = path.resolve(configPath);
       logger.debug('Parsing VitePress configuration', { configPath: absoluteConfigPath });
 
-      const result = parseVitePressConfig(absoluteConfigPath);
+      const result = await parseVitePressConfig(absoluteConfigPath);
 
       if (!result.sidebar || Object.keys(result.sidebar).length === 0) {
         throw new Error('No sidebar configuration found in VitePress config');
@@ -236,7 +239,27 @@ class GenerateLLMsTxtCLI {
           }
         }
 
-        logger.info(`Processing ${markdownFiles.length} markdown files for version ${version}`);
+                // Add the main guides.md file
+        const guidesIndexFile = path.join(options.docsDir, version, 'guides.md');
+        if (fs.existsSync(guidesIndexFile)) {
+          markdownFiles.push(path.resolve(guidesIndexFile));
+          logger.info(`Added main guides.md file`);
+        }
+
+        // Add all individual guides from the guides directory
+        const guidesDir = path.join(options.docsDir, version, 'guides');
+        if (fs.existsSync(guidesDir)) {
+          const guideFiles = fs.readdirSync(guidesDir)
+            .filter(file => file.endsWith('.md'))
+            .map(file => path.resolve(guidesDir, file));
+
+          markdownFiles.push(...guideFiles);
+          logger.info(`Added ${guideFiles.length} individual guide files from ${guidesDir}`);
+        } else {
+          logger.warn(`Guides directory not found: ${guidesDir}`);
+        }
+
+        logger.info(`Processing ${markdownFiles.length} markdown files (including guides) for version ${version}`);
 
         if (options.dryRun) {
           logger.info('Dry run mode - would process files:', { files: markdownFiles });
@@ -327,7 +350,7 @@ class GenerateLLMsTxtCLI {
 
                              // Generate output for this version in public directory
                const versionDir = path.join(options.docsDir, 'public', result.version);
-               const versionOutputPath = path.join(versionDir, 'llms.txt');
+               const versionOutputPath = path.join(versionDir, 'llms-full.txt');
 
               const versionOutputResult = await outputGenerator.generateOutput(
                 result.templateCollection,
@@ -353,8 +376,11 @@ class GenerateLLMsTxtCLI {
           }
         }
 
-        // Generate combined output file in public directory (if requested or if it's the default behavior)
-        if (results.length > 1) {
+                // Generate combined output file in public directory (only for single version or explicit requests)
+        // Skip combined file when processing "all" versions
+        const isProcessingAllVersions = this.originalVersionParam === 'all';
+
+        if (results.length > 1 && !isProcessingAllVersions) {
           const allSections = [];
           for (const result of results) {
             if (result.templateCollection && result.templateCollection.sections) {
@@ -398,6 +424,8 @@ class GenerateLLMsTxtCLI {
             version: 'combined',
             outputResult: combinedOutputResult
           });
+        } else if (isProcessingAllVersions) {
+          logger.info('Skipping combined output file when processing all versions - only generating versioned files');
         }
 
         // Also copy to version directories as everything.md (for backward compatibility)
@@ -511,13 +539,15 @@ class GenerateLLMsTxtCLI {
       }
     }
 
+    const isProcessingAllVersions = this.originalVersionParam === 'all';
+
     logger.success('Total Summary:', {
       versions: results.length,
       files: totalFiles,
       sections: totalSections,
       words: totalWords,
       individualFiles: results.map(r => `public/${r.version}/llms.txt`),
-      combinedFile: results.length > 1 ? options.output : null,
+      combinedFile: (results.length > 1 && !isProcessingAllVersions) ? options.output : null,
       dryRun: options.dryRun
     });
 
@@ -527,10 +557,12 @@ class GenerateLLMsTxtCLI {
       logger.info('Generated files:');
       for (const result of results) {
         logger.info(`  ✓ docs/public/${result.version}/llms.txt`);
-        logger.info(`  ✓ docs/${result.version}/everything.md`);
       }
-      if (results.length > 1) {
+      if (results.length > 1 && !isProcessingAllVersions) {
         logger.info(`  ✓ ${options.output} (combined)`);
+      }
+      if (isProcessingAllVersions) {
+        logger.info('Note: Combined file skipped when processing all versions');
       }
     }
   }
