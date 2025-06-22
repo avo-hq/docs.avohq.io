@@ -9,3 +9,7 @@ docs/.vuepress/dist
 docs/.vitepress/dist
 docs/.vitepress/cache
 settings.json
+
+docs/public/2.0/llms-full.txt
+docs/public/3.0/llms-full.txt
+docs/public/4.0/llms-full.txt
