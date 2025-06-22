@@ -1,6 +1,3 @@
-[build]
-  command = "yarn generate-llms-txt all && npm run build"
-
 [[redirects]]
   from = "/llms-full.txt"
   to = "/4.0/llms-full.txt"
