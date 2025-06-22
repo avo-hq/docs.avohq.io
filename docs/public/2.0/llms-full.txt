@@ -3,7 +3,7 @@
 Generated from VitePress documentation v2.0 for LLM consumption
 
 <!-- Generated file - do not edit directly -->
-<!-- Generated at: 2025-06-22T18:59:54.160Z -->
+<!-- Generated at: 2025-06-22T23:02:33.079Z -->
 <!-- Sections: 43 -->
 
 # Getting Started
@@ -814,7 +814,159 @@ Renamed `RelationsController` to `AssociationsController`
 
 ---
 
-# Untitled Section
+# Technical support
+
+Avo is designed to be a self-serve product with [comprehensive documentation](https://docs.avohq.io) and [demo apps](#demo-apps) to be used as references.
+
+But, even the best of us get stuck at some point and you might need a nudge in the right direction. There are a few levels of how can get help.
+
+1. [Open Source Software Support Policy](#open-source-software-support-policy)
+1. [Self-help](#self-help)
+1. [Help from the official team](#official-support)
+
+## Open Source Software Support
+
+Avo's Open Source Software (OSS) support primarily revolves around assisting users with issues related to the Avo and other Avo libraries. This involves troubleshooting and providing solutions for problems originating from Avo or its related subcomponents.
+
+However, it is crucial to understand that the OSS support does not extend to application-specific issues that do not originate from Avo or its related parts.
+This includes but is not limited to:
+
+- Incorrect application configurations unrelated to Avo.
+- Conflicts with other libraries or frameworks within your application.
+- Deployment issues on specific infrastructure or platforms.
+- Application-specific runtime errors.
+- Problems caused by third-party plugins or extensions.
+- Data issues within your application.
+- Issues related to application performance optimization.
+- Integration problems with other services or databases.
+- Design and architecture questions about your specific application.
+- Language-specific issues are unrelated to Avo or other Avo libraries.
+
+We acknowledge that understanding your specific applications and their configuration is essential, but due to the time and resource demands, this goes beyond the scope of our OSS support.
+
+:::tip Enhanced support
+For users seeking assistance with application-specific issues, we offer a few paid technical support plans. These subscriptions provide comprehensive support, including help with application-specific problems.
+
+1. Priority chat support
+2. Advanced hands-on support
+
+For more information about our support plans, please visit [this](https://avohq.io/support) page.
+
+:::
+
+## Self help
+
+This is how you can help yourself.
+
+<Option name="1. The docs">
+
+We work hard to ensure these documentation pages express everything Avo can do and keep them up to date.
+
+<div class="pl-6">
+
+#### 👈 Left Sidebar
+
+From the sidebar you can check out the major sections where we grouped up similar pieces of information.
+
+#### 🔎 Docs Search
+
+We use Algolia DocSearch so you can quickly find what you're looking for.
+
+#### 📚 Guides and FAQ page
+
+We compiled a list of helpful guides from ourselves and the community and a few FAQ items for you to check out.
+
+</div>
+
+</Option>
+
+<Option name="2. GitHub Issues & Discussions">
+
+<div class="pl-6">
+
+Avo is [LGPL-licensed](https://opensource.org/license/lgpl-3-0) and available on GitHub. We love to use [GitHub Issues](https://github.com/avo-hq/avo/issues/) to report bugs and [GitHub Discussions](https://github.com/avo-hq/avo/discussions) to receive feedback and suggestions.
+
+There is no guarantee [w.r.t.](https://preply.com/en/question/what-does-wrt-mean-41448) response time to the reports nor is there any guarantee that issues will be resolved (e.g., fixed) within any time frame.
+
+#### 😱 I'm in trouble
+
+So, when you run into troubles, please go on the [issues](https://github.com/avo-hq/avo/issues?q=) section and search to see if anyone else encountered your issue and found a way to fix it.
+
+Try out different queries as each person expresses themselves differently. Even if you don't find the exact same problem, it might give yout starting point.
+
+#### 🐛 I found a bug
+
+This is the perfect oportunity to open a [GitHub issue](https://avo.cool/new-issue). GitHub Issues is the perfect feature where one can ask questions, collaborate, reference other issues or PRs, or present screenshots and videos.
+
+It would be great if you could go through all the information that the issue asks of you (versions and others) as it will help us understand the problem better and shorten the back and forth of us asking that same information.
+
+The second great thing about GitHub Issues is that they are searchable and enables self-help for others.
+
+#### 📣 I have some feedback
+
+The next best way to send us your feedback and ideas si through GitHub Discussions. Think of GitHub Discussions like our forum where folks can share their thoughts.
+
+:::info
+We prefer GitHub Issues over any other form of communication.
+:::
+
+</div>
+
+</Option>
+
+<Option name="3. Demo apps">
+
+These apps have been made to showcase the technical abilities of Avo. You can browse their source-code to uncover many examples of how you can use Avo in many environments and with advanced use-cases.
+
+The [main demo app](https://main.avodemo.com/) is a catch-all all that mimics an internal tool. It has multiple examples about Avo's support to all the edge-cases you might encounter.
+
+The [ticketing demo app](https://ticketing.avodemo.com/) is an example of how you could build a ticketing support app for your customers completely in Avo.
+It also features websockets integration for live commenting on tickets alongside a custom tool that serves as a "Settings" page.
+
+</Option>
+
+## Help from the official team
+
+You sometimes need help from the authors. There are a few ways to do that.
+
+<Option name="1. Thursday is community day">
+
+We know that sometimes you just need to ask a quick question and a chat is the best place for that.
+From our experience, few quick questions are actually quick. Most of the times the answer is "it depends", and we need more information about the problem.
+
+The Discord server has a few channels marked `#avo-2`, `#avo-3`, `#resources`, `#front-end`, `#fields`, and more to try to narrow down the issues. There's a bot that will open up a thread after each question so please use those threads to make it easier to track the conversation.
+
+Due to the nature of how time-consuming it is, we can't offer free tech support.
+We are lucky that other community members have experience and pitch in from time to time.
+
+On Thursday we'll be present on the Discord server where we can answer your questions.
+
+</Option>
+
+<Option name="2. Paid support">
+
+The paid support chat comes in different flavours.
+
+If you'd like to know more about that, see our standard plans [here](https://avohq.io/support) or reach out to us on email.
+
+</Option>
+
+## Reproduction repository
+
+The easiest way for us to troubleshoot and check on an issue is to send us a reproduction repository which we can install and run in our local environments.
+
+```bash
+# run this command to get a new Rails app with Avo installed
+rails new -m https://avo.cool/new.rb APP_NAME
+
+# run to install avo-pro
+rails new -m https://avo.cool/new-pro.rb APP_NAME
+
+# run to install avo-advanced
+rails new -m https://avo.cool/new-advanced.rb APP_NAME
+```
+
+<iframe width="100%" height="344" src="https://www.youtube.com/embed/_zC5Ci7t7Lo" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 
@@ -3468,9 +3620,73 @@ You will see three field types when you add a `BelongsTo` association to a model
 
 ## Options
 
+<Option name="`searchable`">
+
+<div class="space-x-2">
+  <LicenseReq license="pro" />
+  <DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
+</div>
+
+Turns the attach field/modal from a `select` input to a searchable experience
+
+```ruby{4}
+class CourseLink < Avo::BaseResource
+  field :links,
+    as: :has_many,
+    searchable: true
+end
+```
+
+:::warning
+  Avo uses the **search feature** behind the scenes, so **make sure the target resource has the `search_query` option configured**.
+:::
+
+```ruby{3-5}
+# app/avo/resources/course_link_resource.rb
+class CourseLinkResource < Avo::BaseResource
+  self.search_query = -> do
+    scope.ransack(id_eq: params[:q], link_cont: params[:q], m: "or").result(distinct: false)
+  end
+end
+```
+
+#### Default
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+</Option>
+
 <Option name="`allow_via_detaching`">
 Keeps the field enabled when visiting from the parent record.
 
+#### Default
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+</Option>
+
+<Option name="`attach_scope`">
+Scope out the records the user sees on the Attach modal.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+```ruby{3}
+field :user,
+  as: :belongs_to,
+  attach_scope: -> { query.non_admins }
+```
+
+Pass in a block where you attach scopes to the `query` object. The block is executed in the `AssociationScopeHost`, so follow the docs to see what variables you have access to.
 </Option>
 
 <Option name="`polymorphic_as`">
@@ -3507,6 +3723,18 @@ Sets the help text for the polymorphic type dropdown. Useful when you need to sp
 #### Possible values
 
 Any string.
+</Option>
+
+<Option name="`use_resource`">
+Sets a different resource to be used when displaying (or redirecting to) the association table.
+
+#### Default
+
+`nil`. When nothing is selected, Avo infers the resource type from the reflected association.
+
+#### Possible values
+
+`PostResource`, `PhotoCommentResource`, or any Avo resource class.
 </Option>
 
 ## Overview
@@ -3688,6 +3916,78 @@ field :admin, as: :has_one
 
 ## Options
 
+<Option name="`searchable`">
+
+<div class="space-x-2">
+  <LicenseReq license="pro" />
+  <DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
+</div>
+
+Turns the attach field/modal from a `select` input to a searchable experience
+
+```ruby{4}
+class CourseLink < Avo::BaseResource
+  field :links,
+    as: :has_many,
+    searchable: true
+end
+```
+
+:::warning
+  Avo uses the **search feature** behind the scenes, so **make sure the target resource has the `search_query` option configured**.
+:::
+
+```ruby{3-5}
+# app/avo/resources/course_link_resource.rb
+class CourseLinkResource < Avo::BaseResource
+  self.search_query = -> do
+    scope.ransack(id_eq: params[:q], link_cont: params[:q], m: "or").result(distinct: false)
+  end
+end
+```
+
+#### Default
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+</Option>
+
+<Option name="`attach_scope`">
+Scope out the records the user sees on the Attach modal.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+```ruby{3}
+field :user,
+  as: :belongs_to,
+  attach_scope: -> { query.non_admins }
+```
+
+Pass in a block where you attach scopes to the `query` object. The block is executed in the `AssociationScopeHost`, so follow the docs to see what variables you have access to.
+</Option>
+
+## Show on edit screens
+
+By default, `has_and_belongs_to_many` is only visible on the `Show` page. If you want to enable it on the `Edit` page, too, you need to add the `show_on: :edit` option.
+
+:::warning
+  Adding associations on the `New` screen is not currently supported. The association needs some information from the parent record that hasn't been created yet (because the user is on the `New` screen).
+:::
+
+You may use the redirect helpers to have the following flow:
+
+1. User is on the `New` view. They can't see the association panels yet.
+1. User creates the record.
+1. They get redirected to the `Show`/`Edit` view, where they can see the association panels.
+1. User attaches associations.
+
 ---
 
 # Has Many
@@ -3700,6 +4000,168 @@ field :projects, as: :has_many
 
 ## Options
 
+<Option name="`searchable`">
+
+<div class="space-x-2">
+  <LicenseReq license="pro" />
+  <DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
+</div>
+
+Turns the attach field/modal from a `select` input to a searchable experience
+
+```ruby{4}
+class CourseLink < Avo::BaseResource
+  field :links,
+    as: :has_many,
+    searchable: true
+end
+```
+
+:::warning
+  Avo uses the **search feature** behind the scenes, so **make sure the target resource has the `search_query` option configured**.
+:::
+
+```ruby{3-5}
+# app/avo/resources/course_link_resource.rb
+class CourseLinkResource < Avo::BaseResource
+  self.search_query = -> do
+    scope.ransack(id_eq: params[:q], link_cont: params[:q], m: "or").result(distinct: false)
+  end
+end
+```
+
+#### Default
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+</Option>
+
+<Option name="`attach_scope`">
+Scope out the records the user sees on the Attach modal.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+```ruby{3}
+field :user,
+  as: :belongs_to,
+  attach_scope: -> { query.non_admins }
+```
+
+Pass in a block where you attach scopes to the `query` object. The block is executed in the `AssociationScopeHost`, so follow the docs to see what variables you have access to.
+</Option>
+
+<Option name="`scope`">
+Scope out the records displayed in the table.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+```ruby{3}
+field :user,
+  as: :belongs_to,
+  scope: -> { query.approved }
+```
+
+Pass in a block where you attach scopes to the `query` object. The block gets executed in the `AssociationScopeHost`, so follow the docs to see what variables you have access to.
+</Option>
+
+<Option name="`description`">
+Changes the text displayed under the association name.
+
+![](/assets/img/associations/description-option.jpg)
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+Any string.
+</Option>
+
+<Option name="`use_resource`">
+Sets a different resource to be used when displaying (or redirecting to) the association table.
+
+#### Default
+
+`nil`. When nothing is selected, Avo infers the resource type from the reflected association.
+
+#### Possible values
+
+`PostResource`, `PhotoCommentResource`, or any Avo resource class.
+</Option>
+
+<Option name="`discreet_pagination`">
+Hides the pagination details when only there's only one page for that association.
+
+#### Default
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+</Option>
+
+<Option name="`hide_search_input`">
+Hides the search input displayed on the association table.
+
+#### Default
+
+`false`. When nothing is selected and the `search_query` of association's resource is configured, Avo displays the search input.
+
+#### Possible values
+
+`true`, `false`.
+</Option>
+
+<Option name="`link_to_child_resource`">
+
+Sets which resource should be used in an STI scenario.
+
+See more on this in the STI section.
+
+#### Default
+
+`false`. When it's `false` it will use the same resource.
+
+#### Possible values
+
+`true`, `false`.
+</Option>
+
+## Search query scope
+
+<VersionReq version="2.13" />
+
+If the resource used for the `has_many` association has the `search_query` block configured, Avo will use that to scope out the search query to that association.
+
+For example, if you have a `Team` model that `has_many` `User`s, now you'll be able to search through that team's users instead of all of them.
+
+You can target that search using `params[:via_association]`. When the value of `params[:via_association]` is `has_many`, the search has been mad inside a has_many association.
+
+For example, if you want to show the records in a different order, you can do this:
+
+```ruby
+self.search_query = -> do
+  if params[:via_association] == 'has_many'
+    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false).order(name: :asc)
+  else
+    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+  end
+end
+```
+
 ## Has Many Through
 
 The `HasMany` association also supports the `:through` option.
@@ -3709,6 +4171,69 @@ field :members,
   as: :has_many,
   through: :memberships
 ```
+
+## Show on edit screens
+
+By default, `has_and_belongs_to_many` is only visible on the `Show` page. If you want to enable it on the `Edit` page, too, you need to add the `show_on: :edit` option.
+
+:::warning
+  Adding associations on the `New` screen is not currently supported. The association needs some information from the parent record that hasn't been created yet (because the user is on the `New` screen).
+:::
+
+You may use the redirect helpers to have the following flow:
+
+1. User is on the `New` view. They can't see the association panels yet.
+1. User creates the record.
+1. They get redirected to the `Show`/`Edit` view, where they can see the association panels.
+1. User attaches associations.
+
+## Add scopes to associations
+
+<DemoVideo demo-video="https://youtu.be/3ee9iq2CnzA" />
+
+When displaying `has_many` associations, you might want to scope out some associated records. For example, a user might have multiple comments, but on the user's `Show` page, you don't want to display all the comments, but only the approved ones.
+
+```ruby{5,16,22}
+# app/models/comment.rb
+class Comment < ApplicationRecord
+  belongs_to :user, optional: true
+
+  scope :approved, -> { where(approved: true) }
+end
+
+# app/models/user.rb
+class User < ApplicationRecord
+  has_many :comments
+end
+
+# app/avo/resources/user_resource.rb
+class UserResource < Avo::BaseResource
+  # Before v2.5.0
+  field :comments, as: :has_many, scope: -> { approved }
+end
+
+# app/avo/resources/user_resource.rb
+class UserResource < Avo::BaseResource
+  # After v2.5.0
+  field :comments, as: :has_many, scope: -> { query.approved }
+end
+```
+
+The `comments` query on the user `Index` page will have the `approved` scope attached.
+
+<img :src="('/assets/img/associations/scope.jpg')" alt="Association scope" class="border mb-4" />
+
+With version 2.5.0, you'll also have access to the `parent` record so that you can use that to scope your associated models even better.
+
+All the `has_many` associations have the `attach_scope` option available too.
+
+## Show/hide buttons
+
+You will want to control the visibility of the attach/detach/create/destroy/actions buttons visible throughout your app. You can use the policy methods to do that.
+
+Find out more on the authorization page.
+
+<img :src="('/assets/img/associations/authorization.jpg')" alt="Associations authorization" class="border mb-4" />
 
 ---
 
@@ -3721,6 +4246,167 @@ field :users, as: :has_and_belongs_to_many
 ```
 
 ## Options
+<Option name="`searchable`">
+
+<div class="space-x-2">
+  <LicenseReq license="pro" />
+  <DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
+</div>
+
+Turns the attach field/modal from a `select` input to a searchable experience
+
+```ruby{4}
+class CourseLink < Avo::BaseResource
+  field :links,
+    as: :has_many,
+    searchable: true
+end
+```
+
+:::warning
+  Avo uses the **search feature** behind the scenes, so **make sure the target resource has the `search_query` option configured**.
+:::
+
+```ruby{3-5}
+# app/avo/resources/course_link_resource.rb
+class CourseLinkResource < Avo::BaseResource
+  self.search_query = -> do
+    scope.ransack(id_eq: params[:q], link_cont: params[:q], m: "or").result(distinct: false)
+  end
+end
+```
+
+#### Default
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+</Option>
+
+<Option name="`attach_scope`">
+Scope out the records the user sees on the Attach modal.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+```ruby{3}
+field :user,
+  as: :belongs_to,
+  attach_scope: -> { query.non_admins }
+```
+
+Pass in a block where you attach scopes to the `query` object. The block is executed in the `AssociationScopeHost`, so follow the docs to see what variables you have access to.
+</Option>
+
+<Option name="`scope`">
+Scope out the records displayed in the table.
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+```ruby{3}
+field :user,
+  as: :belongs_to,
+  scope: -> { query.approved }
+```
+
+Pass in a block where you attach scopes to the `query` object. The block gets executed in the `AssociationScopeHost`, so follow the docs to see what variables you have access to.
+</Option>
+
+<Option name="`description`">
+Changes the text displayed under the association name.
+
+![](/assets/img/associations/description-option.jpg)
+
+#### Default
+
+`nil`
+
+#### Possible values
+
+Any string.
+</Option>
+
+<Option name="`use_resource`">
+Sets a different resource to be used when displaying (or redirecting to) the association table.
+
+#### Default
+
+`nil`. When nothing is selected, Avo infers the resource type from the reflected association.
+
+#### Possible values
+
+`PostResource`, `PhotoCommentResource`, or any Avo resource class.
+</Option>
+
+<Option name="`discreet_pagination`">
+Hides the pagination details when only there's only one page for that association.
+
+#### Default
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+</Option>
+
+<Option name="`hide_search_input`">
+Hides the search input displayed on the association table.
+
+#### Default
+
+`false`. When nothing is selected and the `search_query` of association's resource is configured, Avo displays the search input.
+
+#### Possible values
+
+`true`, `false`.
+</Option>
+
+## Search query scope
+
+<VersionReq version="2.13" />
+
+If the resource used for the `has_many` association has the `search_query` block configured, Avo will use that to scope out the search query to that association.
+
+For example, if you have a `Team` model that `has_many` `User`s, now you'll be able to search through that team's users instead of all of them.
+
+You can target that search using `params[:via_association]`. When the value of `params[:via_association]` is `has_many`, the search has been mad inside a has_many association.
+
+For example, if you want to show the records in a different order, you can do this:
+
+```ruby
+self.search_query = -> do
+  if params[:via_association] == 'has_many'
+    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false).order(name: :asc)
+  else
+    scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+  end
+end
+```
+
+## Show on edit screens
+
+By default, `has_and_belongs_to_many` is only visible on the `Show` page. If you want to enable it on the `Edit` page, too, you need to add the `show_on: :edit` option.
+
+:::warning
+  Adding associations on the `New` screen is not currently supported. The association needs some information from the parent record that hasn't been created yet (because the user is on the `New` screen).
+:::
+
+You may use the redirect helpers to have the following flow:
+
+1. User is on the `New` view. They can't see the association panels yet.
+1. User creates the record.
+1. They get redirected to the `Show`/`Edit` view, where they can see the association panels.
+1. User attaches associations.
 
 ### Searchable `has_and_belongs_to_many`
 
@@ -3730,6 +4416,54 @@ field :users, as: :has_and_belongs_to_many
 </div>
 
 Similar to `belongs_to`, the `has_many` associations support the `searchable` option.
+
+## Add scopes to associations
+
+<DemoVideo demo-video="https://youtu.be/3ee9iq2CnzA" />
+
+When displaying `has_many` associations, you might want to scope out some associated records. For example, a user might have multiple comments, but on the user's `Show` page, you don't want to display all the comments, but only the approved ones.
+
+```ruby{5,16,22}
+# app/models/comment.rb
+class Comment < ApplicationRecord
+  belongs_to :user, optional: true
+
+  scope :approved, -> { where(approved: true) }
+end
+
+# app/models/user.rb
+class User < ApplicationRecord
+  has_many :comments
+end
+
+# app/avo/resources/user_resource.rb
+class UserResource < Avo::BaseResource
+  # Before v2.5.0
+  field :comments, as: :has_many, scope: -> { approved }
+end
+
+# app/avo/resources/user_resource.rb
+class UserResource < Avo::BaseResource
+  # After v2.5.0
+  field :comments, as: :has_many, scope: -> { query.approved }
+end
+```
+
+The `comments` query on the user `Index` page will have the `approved` scope attached.
+
+<img :src="('/assets/img/associations/scope.jpg')" alt="Association scope" class="border mb-4" />
+
+With version 2.5.0, you'll also have access to the `parent` record so that you can use that to scope your associated models even better.
+
+All the `has_many` associations have the `attach_scope` option available too.
+
+## Show/hide buttons
+
+You will want to control the visibility of the attach/detach/create/destroy/actions buttons visible throughout your app. You can use the policy methods to do that.
+
+Find out more on the authorization page.
+
+<img :src="('/assets/img/associations/authorization.jpg')" alt="Associations authorization" class="border mb-4" />
 
 ---
 
@@ -9584,7 +10318,7 @@ The `AssociationScopeHost` inherits from `BaseHost` and has the `parent` and the
 
 ## Generation Information
 
-- **Generated at:** 2025-06-22T18:59:54.160Z
+- **Generated at:** 2025-06-22T23:02:33.079Z
 - **Total sections:** 43
 
 ### Source Files
