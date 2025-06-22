@@ -26,7 +26,7 @@ const {
 const CLI_CONFIG = {
   name: 'generate-llms-txt',
   version: '1.0.0',
-  description: 'Generate LLMs.txt files from VitePress documentation',
+  description: 'Generate LLMs.txt files from Avo documentation',
   defaultConfigPath: 'docs/.vitepress/config.js',
   defaultOutputPath: 'docs/public/llms.txt',
   defaultLogLevel: 'info'
@@ -340,8 +340,8 @@ class GenerateLLMsTxtCLI {
             try {
               // Generate individual version output
               const versionOutputOptions = {
-                title: options.title ? `${options.title} - Version ${result.version}` : `VitePress Documentation - Version ${result.version}`,
-                description: options.description || `Generated from VitePress documentation v${result.version} for LLM consumption`,
+                title: options.title ? `${options.title} - Version ${result.version}` : `Avo for Ruby on Rails Documentation - Version ${result.version}`,
+                description: options.description || `Generated from Avo documentation v${result.version} for LLM consumption`,
                 includeHeader: true,
                 includeTableOfContents: options.includeToc,
                 includeFooter: true,
@@ -399,8 +399,8 @@ class GenerateLLMsTxtCLI {
           };
 
           const combinedOutputOptions = {
-            title: options.title || 'VitePress Documentation - All Versions',
-            description: options.description || 'Generated from VitePress documentation for LLM consumption (all versions combined)',
+            title: options.title || 'Avo Documentation - All Versions',
+            description: options.description || 'Generated from Avo documentation for LLM consumption (all versions combined)',
             includeHeader: true,
             includeTableOfContents: options.includeToc,
             includeFooter: true,
