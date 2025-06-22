@@ -12,7 +12,7 @@ Setup Cursor to correctly generate Avo code based on your prompt.
 
 ## Permanent setup
 
-1. Press ⌘ CMD+⇧ Shift+P. Or if it's Windows, press⌃ Ctrl+⇧ Shift+P.
+1. Press <kbd>⌘ CMD</kbd>+<kbd>⇧ Shift</kbd>+<kbd>P</kbd>. Or if it's Windows, press <kbd>⌃ Ctrl</kbd>+<kbd>⇧ Shift</kbd>+<kbd>P</kbd>.
 2. Type `Add new custom docs`
 3. Add this: `https://avohq.io/llms-full.txt`
 4. Now in chat window you can type `@docs` and choose `Avo` to provide Avo's docs to Cursor.
@@ -33,7 +33,7 @@ MCP is a an API to communicate with AI models. You can add MCP servers and Curso
 
 I suggest using [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) which provides many libraries including Avo's docs.
 
-1. Go to Cursor settings ⌘ CMD+⇧ Shift+J (or ⌃ Ctrl+⇧ Shift+J on Windows)
+1. Go to Cursor settings <kbd>⌘ CMD</kbd>+<kbd>⇧ Shift</kbd>+<kbd>J</kbd> (or <kbd>⌃ Ctrl</kbd>+<kbd>⇧ Shift</kbd>+<kbd>J</kbd> on Windows)
 
 2. Click MCP from the left sidebar
 
