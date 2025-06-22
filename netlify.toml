@@ -1,4 +1,10 @@
 [[redirects]]
+  from = "/llms-full.txt"
+  to = "/4.0/llms-full.txt"
+  status = 301
+  force = false
+
+[[redirects]]
   from = "/3.0/recipes.html"
   to = "/3.0/guides.html"
   status = 301
