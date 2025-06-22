@@ -7,7 +7,7 @@ Setup Windsurf to correctly generate Avo code based on your prompt.
 In chat window type this and write your prompt.
 
 ```bash
-@web https://avohq.io/llms.txt
+@web https://avohq.io/llms-full.txt
 ```
 
 ## MCP server

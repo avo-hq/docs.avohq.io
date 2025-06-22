@@ -7,13 +7,13 @@ Setup Zed to correctly generate Avo code based on your prompt.
 In Thread chat type this before your prompt
 
 ```bash
-@fetch https://avohq.io/llms.txt
+@fetch https://avohq.io/llms-full.txt
 ```
 
 Or in Text thread chat type this before your prompt
 
 ```bash
-/fetch https://avohq.io/llms.txt
+/fetch https://avohq.io/llms-full.txt
 ```
 
 ## MCP server
