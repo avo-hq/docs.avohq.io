@@ -302,59 +302,111 @@ class GenerateLLMsTxtCLI {
   async generateFinalOutput(results, options) {
     return this.timer.measure('generateFinalOutput', async () => {
       try {
-        logger.info('Generating final output file', { outputPath: options.output });
+        logger.info('Generating output files', {
+          versions: results.map(r => r.version),
+          outputPath: options.output
+        });
 
-        // Combine all template collections
-        const allSections = [];
+        const fileUtils = new FileUtils();
+        const outputGenerator = new OutputGenerator(fileUtils);
+        const outputResults = [];
+
+        // Generate individual version files
         for (const result of results) {
           if (result.templateCollection && result.templateCollection.sections) {
-            allSections.push(...result.templateCollection.sections);
+            try {
+              // Generate individual version output
+              const versionOutputOptions = {
+                title: options.title ? `${options.title} - Version ${result.version}` : `VitePress Documentation - Version ${result.version}`,
+                description: options.description || `Generated from VitePress documentation v${result.version} for LLM consumption`,
+                includeHeader: true,
+                includeTableOfContents: options.includeToc,
+                includeFooter: true,
+                outputFormat: options.format
+              };
+
+              // Generate output for this version
+              const versionDir = path.join(options.docsDir, result.version);
+              const versionOutputPath = path.join(versionDir, 'llms.txt');
+
+              const versionOutputResult = await outputGenerator.generateOutput(
+                result.templateCollection,
+                versionOutputPath,
+                versionOutputOptions
+              );
+
+              logger.success(`Generated llms.txt for version ${result.version}`, {
+                outputPath: versionOutputResult.relativePath,
+                size: versionOutputResult.size,
+                sections: versionOutputResult.metadata.sections,
+                words: versionOutputResult.metadata.totalWords
+              });
+
+              outputResults.push({
+                version: result.version,
+                outputResult: versionOutputResult
+              });
+
+            } catch (error) {
+              logger.error(`Failed to generate output for version ${result.version}`, error);
+            }
           }
         }
 
-        const combinedCollection = {
-          sections: allSections,
-          metadata: {
-            totalSections: allSections.length,
-            totalWordCount: allSections.reduce((sum, s) => sum + (s.metadata?.wordCount || 0), 0),
-            versions: results.map(r => r.version),
-            generatedAt: new Date().toISOString()
+        // Generate combined output file in public directory (if requested or if it's the default behavior)
+        if (results.length > 1) {
+          const allSections = [];
+          for (const result of results) {
+            if (result.templateCollection && result.templateCollection.sections) {
+              allSections.push(...result.templateCollection.sections);
+            }
           }
-        };
 
-        // Generate output
-        const fileUtils = new FileUtils();
-        const outputGenerator = new OutputGenerator(fileUtils);
+          const combinedCollection = {
+            sections: allSections,
+            metadata: {
+              totalSections: allSections.length,
+              totalWordCount: allSections.reduce((sum, s) => sum + (s.metadata?.wordCount || 0), 0),
+              versions: results.map(r => r.version),
+              generatedAt: new Date().toISOString()
+            }
+          };
 
-        const outputOptions = {
-          title: options.title || 'VitePress Documentation',
-          description: options.description || 'Generated from VitePress documentation for LLM consumption',
-          includeHeader: true,
-          includeTableOfContents: options.includeToc,
-          includeFooter: true,
-          outputFormat: options.format
-        };
+          const combinedOutputOptions = {
+            title: options.title || 'VitePress Documentation - All Versions',
+            description: options.description || 'Generated from VitePress documentation for LLM consumption (all versions combined)',
+            includeHeader: true,
+            includeTableOfContents: options.includeToc,
+            includeFooter: true,
+            outputFormat: options.format
+          };
 
-        const outputResult = await outputGenerator.generateOutput(
-          combinedCollection,
-          options.output,
-          outputOptions
-        );
+          const combinedOutputResult = await outputGenerator.generateOutput(
+            combinedCollection,
+            options.output,
+            combinedOutputOptions
+          );
 
-        logger.success('Output file generated successfully', {
-          outputPath: outputResult.relativePath,
-          size: outputResult.size,
-          sections: outputResult.metadata.sections,
-          words: outputResult.metadata.totalWords
-        });
+          logger.success('Combined output file generated successfully', {
+            outputPath: combinedOutputResult.relativePath,
+            size: combinedOutputResult.size,
+            sections: combinedOutputResult.metadata.sections,
+            words: combinedOutputResult.metadata.totalWords
+          });
 
-        // Copy to version directories as everything.md
-        await this.copyToVersionDirectories(results, outputResult, options);
+          outputResults.push({
+            version: 'combined',
+            outputResult: combinedOutputResult
+          });
+        }
 
-        return outputResult;
+        // Also copy to version directories as everything.md (for backward compatibility)
+        await this.copyToVersionDirectories(results, outputResults, options);
+
+        return outputResults;
 
       } catch (error) {
-        logger.error('Failed to generate final output', error);
+        logger.error('Failed to generate output files', error);
         throw error;
       }
     });
@@ -363,19 +415,15 @@ class GenerateLLMsTxtCLI {
   /**
    * Copy generated content to version directories as everything.md
    * @param {Array} results - Processing results for all versions
-   * @param {Object} outputResult - Main output file result
+   * @param {Array} outputResults - Generated output results
    * @param {Object} options - CLI options
    */
-  async copyToVersionDirectories(results, outputResult, options) {
+  async copyToVersionDirectories(results, outputResults, options) {
     return this.timer.measure('copyToVersionDirectories', async () => {
       try {
-        logger.info('Copying generated content to version directories');
+        logger.info('Copying generated content to version directories as everything.md');
 
         const fileUtils = new FileUtils();
-
-        // Read the generated content from the main output file
-        const generatedContent = await fileUtils.readFile(outputResult.filePath);
-
         let successCount = 0;
         let errorCount = 0;
 
@@ -383,6 +431,17 @@ class GenerateLLMsTxtCLI {
           if (!result.version) continue;
 
           try {
+            // Find the corresponding output result for this version
+            const versionOutput = outputResults.find(o => o.version === result.version);
+
+            if (!versionOutput) {
+              logger.warn(`No output result found for version ${result.version}`);
+              continue;
+            }
+
+            // Read the generated content from the version-specific output file
+            const generatedContent = await fileUtils.readFile(versionOutput.outputResult.filePath);
+
             const versionDir = path.join(options.docsDir, result.version);
             const everythingPath = path.join(versionDir, 'everything.md');
 
@@ -446,7 +505,8 @@ class GenerateLLMsTxtCLI {
         logger.info(`Version ${result.version}:`, {
           files: result.stats.files,
           sections: result.stats.sections,
-          words: result.stats.totalWords
+          words: result.stats.totalWords,
+          outputFile: `${result.version}/llms.txt`
         });
       }
     }
@@ -456,12 +516,22 @@ class GenerateLLMsTxtCLI {
       files: totalFiles,
       sections: totalSections,
       words: totalWords,
-      outputFile: options.output,
+      individualFiles: results.map(r => `${r.version}/llms.txt`),
+      combinedFile: results.length > 1 ? options.output : null,
       dryRun: options.dryRun
     });
 
     if (options.dryRun) {
       logger.info('This was a dry run - no files were actually generated');
+    } else {
+      logger.info('Generated files:');
+      for (const result of results) {
+        logger.info(`  ✓ docs/${result.version}/llms.txt`);
+        logger.info(`  ✓ docs/${result.version}/everything.md`);
+      }
+      if (results.length > 1) {
+        logger.info(`  ✓ ${options.output} (combined)`);
+      }
     }
   }
 }
