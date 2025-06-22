@@ -16,7 +16,7 @@ MCP is a an API to communicate with AI models. You can add MCP servers and Winds
 
 I suggest using [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) which provides many libraries including Avo's docs.
 
-1. Press⌘ CMD+⇧ Shift+P(or⌃ Ctrl+⇧ Shift+Pon Windows)
+1. Press <kbd>⌘ CMD</kbd>+<kbd>⇧ Shift</kbd>+<kbd>P</kbd> (or <kbd>⌃ Ctrl</kbd>+<kbd>⇧ Shift</kbd>+<kbd>P</kbd> on Windows)
 
 2. Type `Windsurf: MCP Configuration Panel`
 
