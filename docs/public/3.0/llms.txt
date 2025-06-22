@@ -1786,12 +1786,12 @@ end
 
 # Code editors and LLM setup
 
-Use `https://avohq.io/llms.txt` to setup your LLM integration in Cursor, VSCode, and other code editors.
+Use `https://avohq.io/llms-full.txt` to setup your LLM integration in Cursor, VSCode, and other code editors.
 
 It's a compact, text version of Avo's docs to help AI generate accurate Avo code based on your prompt.
 
 ```bash
-https://avohq.io/llms.txt
+https://avohq.io/llms-full.txt
 ```
 
 ## Pick your tool
@@ -16102,29 +16102,29 @@ No let's do something about those views. Let's add a progress bar to the `Index`
 ```erb{1,15}
 # app/components/avo/fields/progress_bar_field/show_component.html.erb
 <%= show_field_wrapper field: @field, index: @index do %>
-  
+
   <% if @field.display_value %>
     <div class="text-center text-sm font-semibold w-full leading-none mb-1">
-      
+
       <%= @field.value %><%= @field.value_suffix if @field.value_suffix.present? %>
     </div>
   <% end %>
 
-  
+
   <progress max="<%= @field.max %>" value="<%= @field.value %>" class="block w-full"></progress>
 <% end %>
 
 # app/components/avo/fields/progress_bar_field/index_component.html.erb
 <%= index_field_wrapper field: @field do %>
-  
+
   <% if @field.display_value %>
     <div class="text-center text-sm font-semibold w-full leading-none mb-1">
-      
+
       <%= @field.value %><%= @field.value_suffix if @field.value_suffix.present? %>
     </div>
   <% end %>
 
-  
+
   <progress max="<%= @field.max %>" value="<%= @field.value %>" class="block w-24"></progress>
 <% end %>
 ```
@@ -16136,14 +16136,14 @@ For the `Edit` view, we're going to do something different. We'll implement a `r
 ```erb{1}
 # app/components/avo/fields/progress_bar_field/edit_component.html.erb
 <%= edit_field_wrapper field: @field, index: @index, form: @form, resource: @resource, displayed_in_modal: @displayed_in_modal do %>
-  
+
   <% if @field.display_value %>
     <div class="text-center text-sm font-semibold w-full leading-none mb-1">
-      
+
       <span class="js-progress-bar-value-<%= @field.id %>"><%= @field.value %></span><%= @field.value_suffix if @field.value_suffix.present? %>
     </div>
   <% end %>
-  
+
   <%= @form.range_field @field.id,
     class: 'w-full',
     placeholder: @field.placeholder,
@@ -16638,7 +16638,7 @@ For example for the following stimulus controllers `self.stimulus_controllers = 
 
 ```html{4-7}
 <div class="relative flex flex-col md:flex-row md:items-center pb-2 md:pb-0 leading-tight min-h-14" data-field-id="has_skills" data-field-type="boolean" data-resource-edit-target="hasSkillsBooleanWrapper" data-course-resource-target="hasSkillsBooleanWrapper" data-select-field-target="hasSkillsBooleanWrapper" data-association-fields-target="hasSkillsBooleanWrapper">
-  
+
 </div>
 ```
 
@@ -16665,7 +16665,7 @@ All stimulus controllers receive the `view` attribute in the DOM.
 
 ```html{4-5}
 <div class="space-y-12" data-model-id="280" data-controller="resource-edit course-resource" data-resource-edit-view-value="edit" data-course-resource-view-value="edit">
-  
+
 </div>
 ```
 
@@ -17082,7 +17082,7 @@ console.log("Hi from Avo custom JS 👋");
 ```erb
 
 <div data-controller="sample">
-  
+
 </div>
 ```
 
