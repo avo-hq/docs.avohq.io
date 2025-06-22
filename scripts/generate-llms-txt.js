@@ -1,26 +1,23 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+const { program } = require('commander');
+const path = require('path');
 
 // Import our modules
-import { parseVitePressConfig, getDocumentationPages } from '../lib/vitepress-parser.js';
-import { MarkdownProcessor } from '../lib/markdown-processor.js';
-import { TemplateGenerator, TemplateUtils, TEMPLATE_TYPES } from '../lib/template-generator.js';
-import { FileUtils, OutputGenerator } from '../lib/file-utils.js';
-import { processVersion, validateVersion } from '../lib/version-validator.js';
-import { 
-  logger, 
-  LOG_LEVELS, 
+const { parseVitePressConfig, getDocumentationPages } = require('../lib/vitepress-parser.js');
+const { MarkdownProcessor } = require('../lib/markdown-processor.js');
+const { TemplateGenerator, TemplateUtils, TEMPLATE_TYPES } = require('../lib/template-generator.js');
+const { FileUtils, OutputGenerator } = require('../lib/file-utils.js');
+const { processVersion, validateVersion } = require('../lib/version-validator.js');
+const {
+  logger,
+  LOG_LEVELS,
   Logger,
-  ErrorHandler, 
-  PerformanceTimer 
-} from '../lib/logger.js';
+  ErrorHandler,
+  PerformanceTimer
+} = require('../lib/logger.js');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+
 
 /**
  * CLI Configuration
@@ -81,11 +78,11 @@ class GenerateLLMsTxtCLI {
     try {
       // Configure logging
       this.setupLogging(options);
-      
-      logger.info('Starting LLMs.txt generation', { 
-        version, 
+
+      logger.info('Starting LLMs.txt generation', {
+        version,
         config: options.config,
-        output: options.output 
+        output: options.output
       });
 
       // Validate and process version parameter
@@ -107,13 +104,13 @@ class GenerateLLMsTxtCLI {
       const allResults = [];
       for (const targetVersion of versionResult.versions) {
         logger.info(`Processing version ${targetVersion}`);
-        
+
         const versionResult = await this.processVersion(
-          targetVersion, 
-          configResult, 
+          targetVersion,
+          configResult,
           options
         );
-        
+
         if (versionResult) {
           allResults.push(versionResult);
         }
@@ -152,10 +149,10 @@ class GenerateLLMsTxtCLI {
       logger.logFile = options.logFile;
     }
 
-    logger.debug('Logging configured', { 
-      level: options.logLevel, 
+    logger.debug('Logging configured', {
+      level: options.logLevel,
       verbose: options.verbose,
-      logFile: options.logFile 
+      logFile: options.logFile
     });
   }
 
@@ -167,7 +164,7 @@ class GenerateLLMsTxtCLI {
   processVersionParameter(version) {
     try {
       const validation = validateVersion(version);
-      
+
       if (!validation.valid) {
         throw new Error(`Invalid version parameter: ${validation.error}`);
       }
@@ -188,13 +185,13 @@ class GenerateLLMsTxtCLI {
     try {
       const absoluteConfigPath = path.resolve(configPath);
       logger.debug('Parsing VitePress configuration', { configPath: absoluteConfigPath });
-      
+
       const result = parseVitePressConfig(absoluteConfigPath);
-      
+
       if (!result.sidebar || Object.keys(result.sidebar).length === 0) {
         throw new Error('No sidebar configuration found in VitePress config');
       }
-      
+
       return result;
     } catch (error) {
       logger.error('Configuration parsing failed', error);
@@ -226,11 +223,11 @@ class GenerateLLMsTxtCLI {
         // Convert page links to file paths
         const fileUtils = new FileUtils();
         const markdownFiles = [];
-        
+
         for (const page of pages) {
           const filePath = path.join(options.docsDir, page.link.replace(/\.html$/, '.md'));
           const absolutePath = path.resolve(filePath);
-          
+
           const fileInfo = fileUtils.getFileInfo(absolutePath);
           if (fileInfo && fileInfo.isFile) {
             markdownFiles.push(absolutePath);
@@ -253,7 +250,7 @@ class GenerateLLMsTxtCLI {
         // Process markdown files
         const processor = new MarkdownProcessor();
         const processingResult = await processor.processFiles(markdownFiles);
-        
+
         logger.info(`Processed ${processingResult.results.length} files successfully`, {
           successful: processingResult.results.length,
           failed: processingResult.errors.length
@@ -269,9 +266,10 @@ class GenerateLLMsTxtCLI {
         }
 
         const generator = new TemplateGenerator(templateConfig);
-        const templateCollection = generator.generateSections(processingResult.results, {
+        const templateCollection = await generator.generateSections(processingResult.results, {
           includeTableOfContents: options.includeToc,
-          includeMetadata: options.includeMetadata
+          includeMetadata: options.includeMetadata,
+          outputFormat: templateConfig.outputFormat
         });
 
         logger.success(`Generated ${templateCollection.sections.length} sections for version ${version}`);
@@ -318,7 +316,7 @@ class GenerateLLMsTxtCLI {
           sections: allSections,
           metadata: {
             totalSections: allSections.length,
-            totalWordCount: allSections.reduce((sum, s) => sum + (s.metadata.wordCount || 0), 0),
+            totalWordCount: allSections.reduce((sum, s) => sum + (s.metadata?.wordCount || 0), 0),
             versions: results.map(r => r.version),
             generatedAt: new Date().toISOString()
           }
@@ -327,7 +325,7 @@ class GenerateLLMsTxtCLI {
         // Generate output
         const fileUtils = new FileUtils();
         const outputGenerator = new OutputGenerator(fileUtils);
-        
+
         const outputOptions = {
           title: options.title || 'VitePress Documentation',
           description: options.description || 'Generated from VitePress documentation for LLM consumption',
@@ -350,10 +348,78 @@ class GenerateLLMsTxtCLI {
           words: outputResult.metadata.totalWords
         });
 
+        // Copy to version directories as everything.md
+        await this.copyToVersionDirectories(results, outputResult, options);
+
         return outputResult;
 
       } catch (error) {
         logger.error('Failed to generate final output', error);
+        throw error;
+      }
+    });
+  }
+
+  /**
+   * Copy generated content to version directories as everything.md
+   * @param {Array} results - Processing results for all versions
+   * @param {Object} outputResult - Main output file result
+   * @param {Object} options - CLI options
+   */
+  async copyToVersionDirectories(results, outputResult, options) {
+    return this.timer.measure('copyToVersionDirectories', async () => {
+      try {
+        logger.info('Copying generated content to version directories');
+
+        const fileUtils = new FileUtils();
+
+        // Read the generated content from the main output file
+        const generatedContent = await fileUtils.readFile(outputResult.filePath);
+
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const result of results) {
+          if (!result.version) continue;
+
+          try {
+            const versionDir = path.join(options.docsDir, result.version);
+            const everythingPath = path.join(versionDir, 'everything.md');
+
+            // Ensure the version directory exists
+            if (!fileUtils.ensureDirectory(versionDir)) {
+              throw new Error(`Failed to create directory: ${versionDir}`);
+            }
+
+            // Write the content to everything.md
+            await fileUtils.writeFile(everythingPath, generatedContent, {
+              allowOverwrite: true,
+              createDirectories: true
+            });
+
+            logger.success(`Copied to version ${result.version}`, {
+              path: everythingPath
+            });
+
+            successCount++;
+
+          } catch (error) {
+            logger.error(`Failed to copy to version ${result.version}`, {
+              version: result.version,
+              error: error.message
+            });
+            errorCount++;
+          }
+        }
+
+        logger.success('Version directory copying completed', {
+          successful: successCount,
+          failed: errorCount,
+          total: results.length
+        });
+
+      } catch (error) {
+        logger.error('Failed to copy to version directories', error);
         throw error;
       }
     });
@@ -366,17 +432,17 @@ class GenerateLLMsTxtCLI {
    */
   reportResults(results, options) {
     logger.info('\n=== Generation Summary ===');
-    
+
     let totalFiles = 0;
     let totalSections = 0;
     let totalWords = 0;
-    
+
     for (const result of results) {
       if (result && result.stats) {
         totalFiles += result.stats.files || 0;
         totalSections += result.stats.sections || 0;
         totalWords += result.stats.totalWords || 0;
-        
+
         logger.info(`Version ${result.version}:`, {
           files: result.stats.files,
           sections: result.stats.sections,
@@ -384,7 +450,7 @@ class GenerateLLMsTxtCLI {
         });
       }
     }
-    
+
     logger.success('Total Summary:', {
       versions: results.length,
       files: totalFiles,
@@ -416,6 +482,6 @@ process.on('unhandledRejection', (reason, promise) => {
 /**
  * Initialize and run CLI
  */
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   new GenerateLLMsTxtCLI();
 }
