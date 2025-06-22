@@ -7,11 +7,11 @@ Setup ChatGPT to correctly generate Avo code based on your prompt.
 In Chat window, enable the `🌐 Search` feature, and add this before your prompt:
 
 ```bash
-https://avohq.io/llms.txt
+https://avohq.io/llms-full.txt
 ```
 
 For example:
 
 ```bash
-https://avohq.io/llms.txt create an Avo resource for a product model
+https://avohq.io/llms-full.txt create an Avo resource for a product model
 ```

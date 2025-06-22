@@ -7,7 +7,7 @@ Setup Claude to correctly generate Avo code based on your prompt.
 Copy and paste the file in the prompt and write your prompt.
 
 ```bash
-https://avohq.io/llms.txt
+https://avohq.io/llms-full.txt
 ```
 
 ## MCP server
