@@ -3,7 +3,7 @@
 Generated from VitePress documentation v4.0 for LLM consumption
 
 <!-- Generated file - do not edit directly -->
-<!-- Generated at: 2025-06-22T18:43:13.361Z -->
+<!-- Generated at: 2025-06-22T18:59:54.147Z -->
 <!-- Sections: 89 -->
 
 # Getting Started
@@ -17557,7 +17557,7 @@ We don't yet have a generator for that but what we do is to create a new Rails E
 
 ## Generation Information
 
-- **Generated at:** 2025-06-22T18:43:13.361Z
+- **Generated at:** 2025-06-22T18:59:54.147Z
 - **Total sections:** 89
 
 ### Source Files
