@@ -3,7 +3,7 @@
 Generated from VitePress documentation v2.0 for LLM consumption
 
 <!-- Generated file - do not edit directly -->
-<!-- Generated at: 2025-06-22T18:43:13.376Z -->
+<!-- Generated at: 2025-06-22T18:59:54.160Z -->
 <!-- Sections: 43 -->
 
 # Getting Started
@@ -9584,7 +9584,7 @@ The `AssociationScopeHost` inherits from `BaseHost` and has the `parent` and the
 
 ## Generation Information
 
-- **Generated at:** 2025-06-22T18:43:13.376Z
+- **Generated at:** 2025-06-22T18:59:54.160Z
 - **Total sections:** 43
 
 ### Source Files

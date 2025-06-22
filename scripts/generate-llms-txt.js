@@ -325,9 +325,9 @@ class GenerateLLMsTxtCLI {
                 outputFormat: options.format
               };
 
-              // Generate output for this version
-              const versionDir = path.join(options.docsDir, result.version);
-              const versionOutputPath = path.join(versionDir, 'llms.txt');
+                             // Generate output for this version in public directory
+               const versionDir = path.join(options.docsDir, 'public', result.version);
+               const versionOutputPath = path.join(versionDir, 'llms.txt');
 
               const versionOutputResult = await outputGenerator.generateOutput(
                 result.templateCollection,
@@ -401,7 +401,7 @@ class GenerateLLMsTxtCLI {
         }
 
         // Also copy to version directories as everything.md (for backward compatibility)
-        await this.copyToVersionDirectories(results, outputResults, options);
+        // await this.copyToVersionDirectories(results, outputResults, options);
 
         return outputResults;
 
@@ -506,7 +506,7 @@ class GenerateLLMsTxtCLI {
           files: result.stats.files,
           sections: result.stats.sections,
           words: result.stats.totalWords,
-          outputFile: `${result.version}/llms.txt`
+          outputFile: `public/${result.version}/llms.txt`
         });
       }
     }
@@ -516,7 +516,7 @@ class GenerateLLMsTxtCLI {
       files: totalFiles,
       sections: totalSections,
       words: totalWords,
-      individualFiles: results.map(r => `${r.version}/llms.txt`),
+      individualFiles: results.map(r => `public/${r.version}/llms.txt`),
       combinedFile: results.length > 1 ? options.output : null,
       dryRun: options.dryRun
     });
@@ -526,7 +526,7 @@ class GenerateLLMsTxtCLI {
     } else {
       logger.info('Generated files:');
       for (const result of results) {
-        logger.info(`  ✓ docs/${result.version}/llms.txt`);
+        logger.info(`  ✓ docs/public/${result.version}/llms.txt`);
         logger.info(`  ✓ docs/${result.version}/everything.md`);
       }
       if (results.length > 1) {
