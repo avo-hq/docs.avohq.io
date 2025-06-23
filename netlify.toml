@@ -13,7 +13,7 @@
 
 [[redirects]]
   from = "/4.0/editor.html"
-  to = "/4.0/llms.html"
+  to = "/4.0/llm-support.html"
   status = 301
   force = false
 

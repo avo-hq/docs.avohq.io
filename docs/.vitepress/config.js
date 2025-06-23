@@ -100,9 +100,10 @@ const config = {
       {text: "Home", link: "/"},
       {text: "Docs", link: "/3.0/index.html"},
       {text: "Guides and Videos", link: "/3.0/guides.html"},
-      {text: "Releases", link: "https://avohq.io/releases"},
       {text: "FAQ", link: "/3.0/faq.html"},
       {text: "Team", link: "/team.html"},
+      {text: "Releases", link: "https://avohq.io/releases"},
+      {text: "Blog", link: "https://avohq.io/blog"},
       {text: "Version", items: [
         {text: "4.0", link: "/4.0/index.html"},
         {text: "3.0", link: "/3.0/index.html"},
@@ -118,7 +119,7 @@ const config = {
             {text: "Intro", link: "/4.0/index.html"},
             {text: "Technical Support", link: "/4.0/technical-support.html"},
             {text: "Best practices", link: "/4.0/best-practices.html"},
-            {text: "Code editors and LLM setup", link: "/4.0/llms.html"},
+            {text: "Code editors and LLM setup", link: "/4.0/llm-support.html"},
           ]
         },
         // {
@@ -345,7 +346,7 @@ const config = {
             {text: "Avo 2 to Avo 3 upgrade", link: "/3.0/avo-2-avo-3-upgrade.html"},
             {text: "Technical Support", link: "/3.0/technical-support.html"},
             {text: "Best practices", link: "/3.0/best-practices.html"},
-            {text: "Code editors and LLM setup", link: "/3.0/llms.html"},
+            {text: "Code editors and LLM setup", link: "/3.0/llm-support.html"},
           ]
         },
         // {
@@ -551,7 +552,7 @@ const config = {
             {text: "Licensing", link: "/2.0/licensing.html"},
             {text: "Upgrade guide", link: "/2.0/upgrade.html"},
             {text: "Technical Support", link: "/2.0/technical-support.html"},
-            {text: "Code editors and LLM setup", link: "/2.0/llms.html"},
+            {text: "Code editors and LLM setup", link: "/2.0/llm-support.html"},
           ],
         },
         {
