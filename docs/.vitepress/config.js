@@ -245,6 +245,12 @@ const config = {
           ],
         },
         {
+          text: "REST API",
+          items: [
+            {text: "Overview", link: "/4.0/rest-api.html"},
+          ],
+        },
+        {
           text: "Filters",
           items: [
             {text: "Overview", link: "/4.0/filters.html"},
