@@ -12,6 +12,12 @@
   force = false
 
 [[redirects]]
+  from = "/4.0/editor.html"
+  to = "/4.0/llms.html"
+  status = 301
+  force = false
+
+[[redirects]]
   from = "/3.0/recipes.html"
   to = "/3.0/guides.html"
   status = 301
