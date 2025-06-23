@@ -109,6 +109,9 @@ hero:
     - theme: alt
       text: 📤 Upgrade guide
       link: /3.0/upgrade
+    - theme: brand
+      text: 🤖 LLM support
+      link: /3.0/llm-support.html
     # - theme: alt
     #   text: 🚀 Upgrade from Avo 2 to Avo 3
     #   link: /3.0/avo-2-avo-3-upgrade.html
