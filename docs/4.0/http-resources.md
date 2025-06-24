@@ -78,6 +78,11 @@ class Avo::Resources::Author < Avo::Core::Resources::Http
     end
   }
 
+  # Optional: custom headers to send with the request
+  self.headers = {
+    "Authorization" => "Bearer #{ENV.fetch("API_KEY")}"
+  }
+
   def fields
     field :id, as: :id
     field :display_name
@@ -87,19 +92,18 @@ class Avo::Resources::Author < Avo::Core::Resources::Http
 end
 ```
 
-### Option Reference
+### Response Option Reference
 
-Here’s a brief reference for the main configuration options:
+Here's a brief reference for the main configuration options:
 
 | Option              | Description                                                                 |
 |---------------------|-----------------------------------------------------------------------------|
-| `endpoint`          | Base URL for the external API                                               |
 | `parse_collection`  | Proc that returns the array of records                                      |
 | `parse_record`      | Proc that returns a single record                                           |
 | `parse_count`       | Proc that returns the total number of records                              |
 | `model_class_eval`  | Optional: proc to define extra model behavior, often used for `to_param`   |
 
-All HTTP Resource options accept a **proc** (i.e., a lambda or block). These procs are executed in a rich runtime context that gives you full access to the HTTP response and metadata around the request.
+All HTTP Resource response options accept a **proc** (i.e., a lambda or block). These procs are executed in a rich runtime context that gives you full access to the HTTP response and metadata around the request.
 
 Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context), including:
 
@@ -108,6 +112,17 @@ Within this block, you gain access to all attributes of [`Avo::ExecutionContext`
 - `headers` — the headers from the response, available via `raw_response.headers`
 
 This contextual access empowers you to define your resource’s behavior with a high degree of precision. Whether you're extracting deeply nested structures or implementing nuanced error handling, the execution context provides all the necessary components to **structure your parsing logic with clarity and control**.
+
+### Request Option Reference
+
+Here's a brief reference for the main request options:
+
+| Option              | Description                                                                 |
+|---------------------|-----------------------------------------------------------------------------|
+| `endpoint`          | Base URL for the external API                                               |
+| `headers`           | Optional: custom headers to send with the request                          |
+
+All HTTP Resource request options accept a **proc** (i.e., a lambda or block). These procs are executed in a rich runtime context that gives you full access to all attributes of [`Avo::ExecutionContext`](execution-context)
 
 ## Handling API Errors Gracefully
 
@@ -160,10 +175,14 @@ If your external API requires additional parameters, or conditional logic, you c
 # app/controllers/avo/authors_controller.rb
 class Avo::AuthorsController < Avo::Core::Controllers::Http
   def save_record
+    auth_headers = {
+      "Authorization" => "Bearer #{ENV.fetch("API_KEY")}"
+    }
+
     if action_name == "create"
-      response = MyCustomApi.post("/authors", body: @record.to_json, headers: auth_headers)
+      response = MyCustomApi.post("/authors", body: @record.as_json, headers: auth_headers)
     else
-      response = MyCustomApi.put("/authors/#{@record.id}", body: @record.to_json, headers: auth_headers)
+      response = MyCustomApi.put("/authors/#{@record.id}", body: @record.as_json, headers: auth_headers)
     end
 
     response.status == 200
