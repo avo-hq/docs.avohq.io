@@ -28,17 +28,17 @@ The REST API automatically generates endpoints for all your Avo resources, respe
 For a resource called `teams`, the following endpoints are automatically available:
 
 ```
-GET    /api/v1/teams        # List all teams
-POST   /api/v1/teams        # Create a new team
-GET    /api/v1/teams/:id    # Show a specific team
-PATCH  /api/v1/teams/:id    # Update a team
-PUT    /api/v1/teams/:id    # Update a team
-DELETE /api/v1/teams/:id    # Delete a team
+GET    /api/resources/v1/teams        # List all teams
+POST   /api/resources/v1/teams        # Create a new team
+GET    /api/resources/v1/teams/:id    # Show a specific team
+PATCH  /api/resources/v1/teams/:id    # Update a team
+PUT    /api/resources/v1/teams/:id    # Update a team
+DELETE /api/resources/v1/teams/:id    # Delete a team
 ```
 
 ## Response Format
 
-### Index (GET /api/v1/teams)
+### Index (GET /api/resources/v1/teams)
 
 ```json
 {
@@ -67,7 +67,7 @@ DELETE /api/v1/teams/:id    # Delete a team
 }
 ```
 
-### Show (GET /api/v1/teams/1)
+### Show (GET /api/resources/v1/teams/1)
 
 ```json
 {
@@ -115,10 +115,10 @@ DELETE /api/v1/teams/:id    # Delete a team
 
 The API respects field visibility settings from your resource configuration. Fields will be visible in API endpoints based on their standard view settings:
 
-- **Index API** (`GET /api/v1/teams`) - Shows fields visible on `:index` view
-- **Show API** (`GET /api/v1/teams/:id`) - Shows fields visible on `:show` view
-- **Create API** (`POST /api/v1/teams`) - Returns fields visible on `:new` view
-- **Update API** (`PATCH/PUT /api/v1/teams/:id`) - Returns fields visible on `:edit` view
+- **Index API** (`GET /api/resources/v1/teams`) - Shows fields visible on `:index` view
+- **Show API** (`GET /api/resources/v1/teams/:id`) - Shows fields visible on `:show` view
+- **Create API** (`POST /api/resources/v1/teams`) - Returns fields visible on `:new` view
+- **Update API** (`PATCH/PUT /api/resources/v1/teams/:id`) - Returns fields visible on `:edit` view
 
 ```ruby
 # app/avo/resources/team.rb
@@ -150,7 +150,7 @@ end
 To create a new resource, send a POST request with the field data in the request body. The API supports nested parameter format.
 
 ```bash
-POST /api/v1/teams
+POST /api/resources/v1/teams
 Content-Type: application/json
 
 {
@@ -166,7 +166,7 @@ Content-Type: application/json
 
 **Basic Creation:**
 ```bash
-curl -X POST /api/v1/teams \
+curl -X POST /api/resources/v1/teams \
   -H "Content-Type: application/json" \
   -d '{
     "team": {
@@ -178,7 +178,7 @@ curl -X POST /api/v1/teams \
 
 **With Associations:**
 ```bash
-curl -X POST /api/v1/teams \
+curl -X POST /api/resources/v1/teams \
   -H "Content-Type: application/json" \
   -d '{
     "team": {
@@ -264,7 +264,7 @@ Different field types accept different data formats:
 To update an existing resource, send a PATCH or PUT request with the field data. The API supports nested parameter format.
 
 ```bash
-PATCH /api/v1/teams/1
+PATCH /api/resources/v1/teams/1
 Content-Type: application/json
 
 {
@@ -279,7 +279,7 @@ Content-Type: application/json
 
 **Partial Update (PATCH):**
 ```bash
-curl -X PATCH /api/v1/teams/1 \
+curl -X PATCH /api/resources/v1/teams/1 \
   -H "Content-Type: application/json" \
   -d '{
     "team": {
@@ -290,7 +290,7 @@ curl -X PATCH /api/v1/teams/1 \
 
 **Full Update (PUT):**
 ```bash
-curl -X PUT /api/v1/teams/1 \
+curl -X PUT /api/resources/v1/teams/1 \
   -H "Content-Type: application/json" \
   -d '{
     "team": {
@@ -322,13 +322,13 @@ curl -X PUT /api/v1/teams/1 \
 ### Request Format
 
 ```bash
-DELETE /api/v1/teams/1
+DELETE /api/resources/v1/teams/1
 ```
 
 ### Example
 
 ```bash
-curl -X DELETE /api/v1/teams/1
+curl -X DELETE /api/resources/v1/teams/1
 ```
 
 **Response (Success - 200 OK):**
@@ -361,7 +361,7 @@ curl -X DELETE /api/v1/teams/1
 ### Example
 
 ```bash
-GET /api/v1/teams?page=2&per_page=10&sort_by=name&sort_direction=asc
+GET /api/resources/v1/teams?page=2&per_page=10&sort_by=name&sort_direction=asc
 ```
 
 ## Field Type Handling
@@ -412,7 +412,7 @@ If you need to customize the API behavior, you can generate a custom controller:
 rails generate avo:api_controller --version=v1
 ```
 
-This creates `app/controllers/avo/api/v1/resources_controller.rb` which inherits from `BaseController` and overrides only the necessary methods for JSON responses.
+This creates `app/controllers/avo/api/resources/v1/resources_controller.rb` which inherits from `BaseController` and overrides only the necessary methods for JSON responses.
 
 ### Override Methods
 
