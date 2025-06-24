@@ -248,7 +248,8 @@ const config = {
         {
           text: "REST API",
           items: [
-            {text: "Overview", link: "/4.0/rest-api.html"},
+            {text: "Overview", link: "/4.0/rest-api/overview.html"},
+            {text: "Generators", link: "/4.0/rest-api/generators.html"},
           ],
         },
         {
