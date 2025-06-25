@@ -1,6 +1,6 @@
 # Code editors and LLM setup
 
-Use `https://docs.avohq.io/4.0/llms-full.txt` to setup your LLM integration in Cursor, VSCode, and other code editors.
+Use [`https://docs.avohq.io/4.0/llms-full.txt`](https://docs.avohq.io/4.0/llms-full.txt) to setup your LLM integration in Cursor, VSCode, and other code editors.
 
 It's a compact, text version of Avo's docs to help AI generate accurate Avo code based on your prompt.
 
