@@ -251,6 +251,7 @@ const config = {
             {text: "Overview", link: "/4.0/rest-api/overview.html"},
             {text: "Mount", link: "/4.0/rest-api/mount.html"},
             {text: "Generators", link: "/4.0/rest-api/generators.html"},
+            {text: "CSRF Protection", link: "/4.0/rest-api/csrf-protection.html"},
           ],
         },
         {

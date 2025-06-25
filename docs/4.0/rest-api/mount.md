@@ -1,3 +1,9 @@
+---
+license: add_on
+betaStatus: Alpha
+outline: [2,3]
+---
+
 # Mount Avo API
 
 This document explains how to mount and configure the Avo API in your Rails application.

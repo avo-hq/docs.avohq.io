@@ -1,3 +1,9 @@
+---
+license: add_on
+betaStatus: Alpha
+outline: [2,3]
+---
+
 # Avo API Controller Generators
 
 This document explains how to use the Rails generators to create individual controllers for your Avo API resources.
