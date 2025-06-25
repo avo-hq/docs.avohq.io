@@ -3,6 +3,7 @@
 const { program } = require('commander');
 const path = require('path');
 const fs = require('fs');
+const { minimatch } = require('minimatch');
 
 // Import our modules
 const { parseVitePressConfig, getDocumentationPages } = require('../lib/vitepress-parser.js');
@@ -33,6 +34,22 @@ const CLI_CONFIG = {
 };
 
 /**
+ * Default ignore patterns for files to exclude from compilation
+ * These patterns are always applied unless overridden
+ */
+const DEFAULT_IGNORE_PATTERNS = [
+  '**/.*',           // Hidden files (dotfiles)
+  '**/*.tmp',        // Temporary files
+  '**/*.bak',        // Backup files
+  '**/*~',           // Editor backup files
+  '**/node_modules/**', // Node modules
+  '**/dist/**',      // Distribution directories
+  '**/build/**',     // Build directories
+  'upgrade.md'
+  // Add more default patterns as needed
+];
+
+/**
  * Main CLI class
  */
 class GenerateLLMsTxtCLI {
@@ -53,6 +70,9 @@ class GenerateLLMsTxtCLI {
       .option('-c, --config <path>', 'Path to VitePress config file', CLI_CONFIG.defaultConfigPath)
       .option('-o, --output <path>', 'Output file path', CLI_CONFIG.defaultOutputPath)
       .option('-d, --docs-dir <path>', 'Documentation directory', 'docs')
+      .option('--ignore <patterns...>', 'Additional ignore patterns for files to exclude (glob patterns supported, adds to defaults)')
+      .option('--ignore-only <patterns...>', 'Override default ignore patterns with only these patterns')
+      .option('--no-default-ignores', 'Disable default ignore patterns')
       .option('--log-level <level>', 'Logging level (silent, error, warn, info, debug)', CLI_CONFIG.defaultLogLevel)
       .option('--log-file <path>', 'Log to file')
       .option('--include-toc', 'Include table of contents', false)
@@ -203,6 +223,98 @@ class GenerateLLMsTxtCLI {
   }
 
   /**
+   * Get effective ignore patterns based on CLI options and defaults
+   * @param {Object} options - CLI options
+   * @returns {Array} Combined ignore patterns
+   */
+  getEffectiveIgnorePatterns(options) {
+    let patterns = [];
+
+    // Start with default patterns unless disabled
+    if (options.defaultIgnores !== false) {
+      patterns = [...DEFAULT_IGNORE_PATTERNS];
+    }
+
+    // Handle ignore-only option (override defaults)
+    if (options.ignoreOnly && options.ignoreOnly.length > 0) {
+      patterns = [...options.ignoreOnly];
+    } else if (options.ignore && options.ignore.length > 0) {
+      // Add additional patterns to defaults
+      patterns = patterns.concat(options.ignore);
+    }
+
+    // Remove duplicates
+    patterns = [...new Set(patterns)];
+
+    logger.debug('Effective ignore patterns', {
+      defaultCount: DEFAULT_IGNORE_PATTERNS.length,
+      cliCount: (options.ignore?.length || 0) + (options.ignoreOnly?.length || 0),
+      totalCount: patterns.length,
+      useDefaults: options.defaultIgnores !== false,
+      overrideMode: !!options.ignoreOnly,
+      patterns
+    });
+
+    return patterns;
+  }
+
+  /**
+   * Filter files based on ignore patterns
+   * @param {Array} files - Array of file paths
+   * @param {Array} ignorePatterns - Array of ignore patterns
+   * @param {string} docsDir - Base documentation directory
+   * @returns {Object} Filtered files and ignored files info
+   */
+  filterIgnoredFiles(files, ignorePatterns, docsDir) {
+    if (!ignorePatterns || ignorePatterns.length === 0) {
+      return {
+        filteredFiles: files,
+        ignoredFiles: [],
+        ignoredCount: 0
+      };
+    }
+
+    const filteredFiles = [];
+    const ignoredFiles = [];
+
+    for (const file of files) {
+      const relativePath = path.relative(docsDir, file);
+      let shouldIgnore = false;
+      let matchedPattern = null;
+
+      for (const pattern of ignorePatterns) {
+        // Support both glob patterns and simple path matching
+        if (minimatch(relativePath, pattern) ||
+            relativePath.includes(pattern) ||
+            file.includes(pattern)) {
+          shouldIgnore = true;
+          matchedPattern = pattern;
+          break;
+        }
+      }
+
+      if (shouldIgnore) {
+        ignoredFiles.push({ file, relativePath, pattern: matchedPattern });
+      } else {
+        filteredFiles.push(file);
+      }
+    }
+
+    logger.debug('File filtering completed', {
+      total: files.length,
+      filtered: filteredFiles.length,
+      ignored: ignoredFiles.length,
+      patterns: ignorePatterns
+    });
+
+    return {
+      filteredFiles,
+      ignoredFiles,
+      ignoredCount: ignoredFiles.length
+    };
+  }
+
+  /**
    * Process a specific version
    * @param {string} version - Version to process
    * @param {Object} configResult - Parsed configuration
@@ -239,7 +351,7 @@ class GenerateLLMsTxtCLI {
           }
         }
 
-                // Add the main guides.md file
+        // Add the main guides.md file
         const guidesIndexFile = path.join(options.docsDir, version, 'guides.md');
         if (fs.existsSync(guidesIndexFile)) {
           markdownFiles.push(path.resolve(guidesIndexFile));
@@ -259,24 +371,45 @@ class GenerateLLMsTxtCLI {
           logger.warn(`Guides directory not found: ${guidesDir}`);
         }
 
-        logger.info(`Processing ${markdownFiles.length} markdown files (including guides) for version ${version}`);
+        // Filter files based on ignore patterns
+        const effectiveIgnorePatterns = this.getEffectiveIgnorePatterns(options);
+        const filterResult = this.filterIgnoredFiles(markdownFiles, effectiveIgnorePatterns, options.docsDir);
+        const finalMarkdownFiles = filterResult.filteredFiles;
 
-        if (options.dryRun) {
-          logger.info('Dry run mode - would process files:', { files: markdownFiles });
+        if (filterResult.ignoredCount > 0) {
+          logger.info(`Ignored ${filterResult.ignoredCount} files based on ignore patterns`, {
+            defaultPatterns: DEFAULT_IGNORE_PATTERNS.length,
+            cliPatterns: (options.ignore?.length || 0) + (options.ignoreOnly?.length || 0),
+            totalPatterns: effectiveIgnorePatterns.length,
+            ignoredFiles: filterResult.ignoredFiles.map(f => `${f.relativePath} (${f.pattern})`)
+          });
+        }
+
+        logger.info(`Processing ${finalMarkdownFiles.length} markdown files (${filterResult.ignoredCount} ignored) for version ${version}`);
+
+                if (options.dryRun) {
+          logger.info('Dry run mode - would process files:', {
+            files: finalMarkdownFiles,
+            ignored: filterResult.ignoredFiles.map(f => `${f.relativePath} (${f.pattern})`),
+            ignorePatterns: effectiveIgnorePatterns
+          });
           return {
             version,
-            files: markdownFiles,
+            files: finalMarkdownFiles,
+            ignoredFiles: filterResult.ignoredFiles,
+            ignorePatterns: effectiveIgnorePatterns,
             dryRun: true
           };
         }
 
         // Process markdown files
         const processor = new MarkdownProcessor();
-        const processingResult = await processor.processFiles(markdownFiles);
+        const processingResult = await processor.processFiles(finalMarkdownFiles);
 
         logger.info(`Processed ${processingResult.results.length} files successfully`, {
           successful: processingResult.results.length,
-          failed: processingResult.errors.length
+          failed: processingResult.errors.length,
+          ignored: filterResult.ignoredCount
         });
 
         // Generate templates
@@ -302,9 +435,10 @@ class GenerateLLMsTxtCLI {
           templateCollection,
           processingResult,
           stats: {
-            files: markdownFiles.length,
+            files: finalMarkdownFiles.length,
             processed: processingResult.results.length,
             failed: processingResult.errors.length,
+            ignored: filterResult.ignoredCount,
             sections: templateCollection.sections.length,
             totalWords: templateCollection.metadata.totalWordCount
           }
