@@ -57,6 +57,8 @@ const config = {
       .replace(/index\.md$/, '')
       .replace(/\.md$/, '.html')
 
+    pageData.frontmatter.llmLink = `https://docs.avohq.io/${pageData?.params?.version}/llms-full.txt`
+
     pageData.frontmatter.head ??= []
     pageData.frontmatter.head.push([
       'link',

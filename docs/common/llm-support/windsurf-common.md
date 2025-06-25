@@ -1,4 +1,9 @@
-# <img src="/assets/img/llms/windsurf.webp" alt="Windsurf" class="no-border h-8 -mt-2 inline-block"> Windsurf
+---
+prev: false
+next: false
+---
+
+# <img src="/assets/img/llm-support/windsurf.webp" alt="Windsurf" class="no-border h-8 -mt-2 inline-block"> Windsurf
 
 Setup Windsurf to correctly generate Avo code based on your prompt.
 
@@ -6,9 +11,7 @@ Setup Windsurf to correctly generate Avo code based on your prompt.
 
 In chat window type this and write your prompt.
 
-```bash
-@web https://docs.avohq.io/4.0/llms-full.txt
-```
+<CustomCode :content="`@web ${$frontmatter.llmLink}`" />
 
 ## MCP server
 
