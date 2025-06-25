@@ -14,18 +14,19 @@ Cross-Site Request Forgery (CSRF) protection is a security measure that prevents
 
 The Avo API implements CSRF protection through a customizable class method hook in the `Avo::Api::Resources::V1::ResourcesController`:
 
-```ruby{7-9}
+```ruby{10-12}
 # app/controllers/avo/api/resources/v1/resources_controller.rb
 module Avo
   module Api
     module Resources
       module V1
         class ResourcesController < Avo::BaseController
+          delegate :setup_csrf_protection, to: :class
+          before_action :setup_csrf_protection, prepend: true
+
           def self.setup_csrf_protection
             protect_from_forgery with: :null_session
           end
-
-          setup_csrf_protection
         end
       end
     end
