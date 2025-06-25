@@ -1,16 +1,14 @@
 # Code editors and LLM setup
 
-Use `https://docs.avohq.io/2.0/llms-full.txt` to setup your LLM integration in Cursor, VSCode, and other code editors.
+Use <code><a :href="$frontmatter.llmLink" target="_blank">{{$frontmatter.llmLink}}</a></code> to setup your LLM integration in Cursor, VSCode, and other code editors.
 
 It's a compact, text version of Avo's docs to help AI generate accurate Avo code based on your prompt.
 
-```bash
-https://docs.avohq.io/2.0/llms-full.txt
-```
+<CustomCode :content="$frontmatter.llmLink" />
 
 ## Pick your tool
 
-<EditorList version="2.0" />
+<EditorList :version="$params.version" />
 
 <br>
 
