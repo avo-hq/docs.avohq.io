@@ -1,5 +1,6 @@
 ---
 license: add_on
+add_on: avo-api
 betaStatus: Alpha
 outline: [2,3]
 ---

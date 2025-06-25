@@ -1,3 +1,6 @@
+// Warning, those md files don't update on vitepress build in development mode.
+// You need to restart the server to see the changes.
+
 import fs from 'fs'
 import path from 'path'
 
