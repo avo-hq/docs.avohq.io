@@ -1,4 +1,9 @@
-# <img src="/assets/img/llms/cursor.webp" alt="Cursor" class="no-border h-8 -mt-2 inline-block self-center"> Cursor
+---
+prev: false
+next: false
+---
+
+# <img src="/assets/img/llm-support/cursor.webp" alt="Cursor" class="no-border h-8 -mt-2 inline-block self-center"> Cursor
 
 Setup Cursor to correctly generate Avo code based on your prompt.
 
@@ -6,15 +11,13 @@ Setup Cursor to correctly generate Avo code based on your prompt.
 
   In chat window type this and Cursor will use Avo's llms.txt file to generate code.
 
-```bash
-@web https://docs.avohq.io/3.0/llms-full.txt
-```
+<CustomCode :content="`@web ${$frontmatter.llmLink}`" />
 
 ## Permanent setup
 
 1. Press <kbd>⌘ CMD</kbd>+<kbd>⇧ Shift</kbd>+<kbd>P</kbd>. Or if it's Windows, press <kbd>⌃ Ctrl</kbd>+<kbd>⇧ Shift</kbd>+<kbd>P</kbd>.
 2. Type `Add new custom docs`
-3. Add this: `https://docs.avohq.io/3.0/llms-full.txt`
+3. Add this: `{{$frontmatter.llmLink}}`
 4. Now in chat window you can type `@docs` and choose `Avo` to provide Avo's docs to Cursor.
 
 ## Project-level permanent setup
@@ -23,9 +26,7 @@ You can setup Avo's llms.txt file to your repo so Cursor can use it by default. 
 
 Run this command to save the llms.txt file to `.cursor/rules/avohq.mdc`
 
-```bash
-curl -L https://docs.avohq.io/3.0/llms-full.txt --create-dirs -o .cursor/rules/avo.mdc
-```
+<CustomCode :content="`curl -L ${$frontmatter.llmLink} --create-dirs -o .cursor/rules/avo.mdc`" />
 
 ## MCP server
 
