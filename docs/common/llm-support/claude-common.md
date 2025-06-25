@@ -1,4 +1,9 @@
-# <img src="/assets/img/llms/claude.webp" alt="Claude" class="no-border h-8 -mt-2 inline-block self-center"> Claude
+---
+prev: false
+next: false
+---
+
+# <img src="/assets/img/llm-support/claude.webp" alt="Claude" class="no-border h-8 -mt-2 inline-block self-center"> Claude
 
 Setup Claude to correctly generate Avo code based on your prompt.
 
@@ -6,9 +11,7 @@ Setup Claude to correctly generate Avo code based on your prompt.
 
 Copy and paste the file in the prompt and write your prompt.
 
-```bash
-https://docs.avohq.io/3.0/llms-full.txt
-```
+<CustomCode :content="$frontmatter.llmLink" />
 
 ## MCP server
 

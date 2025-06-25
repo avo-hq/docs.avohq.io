@@ -1,4 +1,9 @@
-# <img src="/assets/img/llms/vscode.webp" alt="VSCode" class="no-border h-8 -mt-2 inline-block self-center"> VSCode
+---
+prev: false
+next: false
+---
+
+# <img src="/assets/img/llm-support/vscode.webp" alt="VSCode" class="no-border h-8 -mt-2 inline-block self-center"> VSCode
 
 Setup VSCode to correctly generate Avo code based on your prompt.
 
@@ -6,9 +11,7 @@ Setup VSCode to correctly generate Avo code based on your prompt.
 
 In chat window type this and VSCode will use Avo's llms.txt file to generate code.
 
-```bash
-#fetch https://docs.avohq.io/3.0/llms-full.txt
-```
+<CustomCode :content="`#fetch ${$frontmatter.llmLink}`" />
 
 ## Project-level permanent setup
 
@@ -16,9 +19,7 @@ You can setup Avo's llms.txt file to your repo so Copilot can use it by default.
 
 1. Run this command to save the llms.txt file to `.vscode/avo.md`
 
-```bash
-curl -L https://docs.avohq.io/3.0/llms-full.txt --create-dirs -o .vscode/avo.md
-```
+<CustomCode :content="`curl -L ${$frontmatter.llmLink} --create-dirs -o .vscode/avo.md`" />
 
 2. Add this to `.vscode/settings.json`
 

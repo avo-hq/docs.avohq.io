@@ -1,4 +1,9 @@
-# <img src="/assets/img/llms/zed.webp" alt="Zed" class="no-border h-8 -mt-2 inline-block self-center"> Zed
+---
+prev: false
+next: false
+---
+
+# <img src="/assets/img/llm-support/zed.webp" alt="Zed" class="no-border h-8 -mt-2 inline-block self-center"> Zed
 
 Setup Zed to correctly generate Avo code based on your prompt.
 
@@ -6,15 +11,11 @@ Setup Zed to correctly generate Avo code based on your prompt.
 
 In Thread chat type this before your prompt
 
-```bash
-@fetch https://docs.avohq.io/4.0/llms-full.txt
-```
+<CustomCode :content="`@fetch ${$frontmatter.llmLink}`" />
 
 Or in Text thread chat type this before your prompt
 
-```bash
-/fetch https://docs.avohq.io/4.0/llms-full.txt
-```
+<CustomCode :content="`/fetch ${$frontmatter.llmLink}`" />
 
 ## MCP server
 
