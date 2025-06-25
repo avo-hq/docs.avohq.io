@@ -244,16 +244,17 @@ const config = {
         {
           text: "Audit Logging",
           items: [
-            {text: "Overview", link: "/4.0/audit-logging/overview.html"},
+            {text: "Overview", link: "/4.0/audit-logging/"},
           ],
         },
         {
           text: "REST API",
           items: [
-            {text: "Overview", link: "/4.0/rest-api/overview.html"},
+            {text: "Overview", link: "/4.0/rest-api/"},
             {text: "Mount", link: "/4.0/rest-api/mount.html"},
             {text: "Generators", link: "/4.0/rest-api/generators.html"},
             {text: "CSRF Protection", link: "/4.0/rest-api/csrf-protection.html"},
+            {text: "Authentication", link: "/4.0/rest-api/authentication.html"},
           ],
         },
         {
@@ -473,7 +474,7 @@ const config = {
         {
           text: "Audit Logging",
           items: [
-            {text: "Overview", link: "/3.0/audit-logging/overview.html"},
+            {text: "Overview", link: "/3.0/audit-logging/"},
           ],
         },
         {
