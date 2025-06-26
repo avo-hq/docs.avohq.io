@@ -13,6 +13,57 @@ This document explains how to mount and configure the Avo API in your Rails appl
 
 The `mount_avo_api` method is a convenient Rails route helper that mounts the Avo API engine into your application's routing system. It provides a RESTful API for all your Avo resources, allowing external applications to interact with your data programmatically.
 
+:::warning IMPORTANT
+There is a caveat when mounting the API that requires attention:
+
+If you have `mount_avo` inside an `authenticate` block (like `authenticate :user`), you **must** mount the API outside and before that authentication block.
+
+**Why?** When the API is mounted inside an authentication block, all API endpoints will require the same authentication as your web interface, which breaks API functionality for external clients using API tokens.
+
+**This do not mean that API can't use authentication, check the [Authentication](./authentication) page for more information.**
+
+**Correct setup:**
+
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  # Mount Avo API FIRST - outside any authentication blocks
+  mount_avo_api
+
+  # Mount Avo web interface with authentication
+  authenticate :user do
+    mount_avo
+  end
+end
+```
+
+**Incorrect setups:**
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  # ❌ Don't do this - API will require web authentication
+  authenticate :user do
+    mount_avo_api  # This breaks API token authentication
+    mount_avo
+  end
+end
+```
+
+<br />
+
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  # ❌ Don't do this - API will require web authentication
+  authenticate :user do
+    mount_avo
+  end
+
+  mount_avo_api  # This breaks API token authentication
+end
+```
+:::
+
 ## Basic Usage
 
 ### Simple Mount
@@ -124,15 +175,15 @@ DELETE /admin/api/resources/v1/users/1   # Delete user
 Rails.application.routes.draw do
   devise_for :users
 
+  # Mount Avo API
+  mount_avo_api
+
   # Mount Avo
   authenticate :user do
     mount_avo do
       get "tool_with_form", to: "tools#tool_with_form", as: :tool_with_form
     end
   end
-
-  # Mount Avo API
-  mount_avo_api
 
   # Redirect to Avo root path
   root to: redirect(Avo.configuration.root_path)
