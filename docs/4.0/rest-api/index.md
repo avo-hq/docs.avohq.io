@@ -20,6 +20,21 @@ gem "avo-api", source: "https://packager.dev/avo-hq/"
 bundle install
 ```
 
+After installing the gem, run the install generator to set up your API controllers:
+
+```bash
+rails generate avo_api:install
+```
+
+This generator will:
+- Generate individual controllers for all your existing Avo resources
+- Export a customizable `BaseResourcesController` to your app directory
+- Provide examples for authentication, authorization, and customization
+
+:::tip PRO TIP
+The generated controllers inherit from the `BaseResourcesController`, which you can customize to add global API behavior like authentication, custom serialization, or response formatting.
+:::
+
 ## Overview
 
 The REST API automatically generates endpoints for all your Avo resources, respecting field visibility settings and authorization rules.
