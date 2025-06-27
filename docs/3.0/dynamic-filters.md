@@ -486,9 +486,12 @@ Check default conditions for each filter type above on this page.
 
 #### Possible values
 
-A hash with the desired key-values.
+- A hash with the desired key-values to customize available conditions
+- An empty hash `{}` to hide conditions dropdown and use the first default condition
 
-Usage example:
+##### Usage examples
+
+###### Custom conditions
 ```ruby {6-9,15-18}
 # Using field's filterable option
 field :first_name,
@@ -509,6 +512,31 @@ dynamic_filter :first_name,
     not_case_sensitive: "Not case sensitive"
   }.invert
 ```
+
+###### Hide conditions dropdown
+When set to an empty hash (`{}`), this option hides the conditions dropdown and automatically applies the first default condition for each filter type. This is particularly useful when you want to simplify the filter interface by removing the conditions selection, especially for filters where only one condition makes sense.
+
+```ruby{3}
+dynamic_filter :last_name,
+  type: :select,
+  conditions: {},
+  options: User.pluck(:last_name).compact
+```
+
+```ruby{4}
+field :department,
+  as: :select,
+  filterable: {
+    conditions: {},
+    type: :select,
+    options: ["Engineering", "Marketing", "Sales", "Support"]
+  }
+```
+
+:::info
+When `conditions: {}` is used, the filter will automatically use the first condition from the default conditions list for that filter type. For example, a select filter will use "Is" condition, and a text filter will use "Contains" condition.
+:::
+
 </Option>
 
 <Option name="`query_attributes`">
@@ -827,6 +855,77 @@ dynamic_filter :version,
   }
 ```
 </Option>
+
+<Option name="`render_apply_button`">
+
+Controls whether the "Apply" button should be rendered in the filter interface.
+
+##### Default value
+
+`true`
+
+#### Possible values
+
+Boolean value (`true` or `false`).
+
+When set to `false`, the apply button will be hidden from the filter interface. This is particularly useful when combined with `apply_on_select: true` to create an immediate filtering experience.
+
+##### Usage examples
+
+```ruby{3}
+dynamic_filter :status,
+  type: :select,
+  render_apply_button: false
+```
+
+```ruby{4-5}
+field :status,
+  as: :select,
+  filterable: {
+    render_apply_button: false,
+    apply_on_select: true,
+    options: ["active", "inactive", "pending"]
+  }
+```
+
+</Option>
+
+<Option name="`apply_on_select`">
+
+Controls whether the filter should be applied immediately when the selected value changes, without requiring the user to click the "Apply" button.
+
+##### Default value
+
+`false`
+
+#### Possible values
+
+Boolean value (`true` or `false`).
+
+When set to `true`, the filter will automatically apply as soon as the user selects or changes a value. This creates a more responsive user experience, especially when combined with `render_apply_button: false`.
+
+##### Usage examples
+
+```ruby{3-4}
+dynamic_filter :category,
+  type: :select,
+  apply_on_select: true,
+  render_apply_button: false
+```
+
+```ruby{4-5}
+field :priority,
+  as: :select,
+  filterable: {
+    apply_on_select: true,
+    render_apply_button: false,
+    options: ["high", "medium", "low"]
+  }
+```
+
+</Option>
+
+
 
 ## Guides & Tutorials
 
