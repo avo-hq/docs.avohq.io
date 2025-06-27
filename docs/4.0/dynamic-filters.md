@@ -719,32 +719,48 @@ fetch_values_from: "/avo-filters/resources/cities/tags"
 fetch_values_from: -> { "/avo-filters/resources/cities/tags" }
 ```
 
-The string should resolve to an endpoint that returns an array of objects with the keys `value`, `label` and optionally `avatar`.
+The endpoint should handle two different scenarios:
 
-The endpoint will receive the user input as `q` in the params. It is accessible by using `params["q"]`.
+1. **Search functionality**: When a user types in the filter input, the endpoint receives the user input as `q` in the params (`params["q"]`)
+2. **Initial load**: When the filter already has selected values (like on page load), the endpoint receives an array of values in `params[:value]` to fetch the corresponding labels
+
+The endpoint should return an array of objects with the keys `value`, `label` and optionally `avatar`.
 
 ::: code-group
-```ruby{3-20} [app/controllers/avo/cities_controller.rb]
+```ruby{3-33} [app/controllers/avo/cities_controller.rb]
 class Avo::CitiesController < Avo::ResourcesController
   def tags
-    # You can access the user input by using params["q"]
-    render json: [
-      {
-        value: 1,
-        label: "one",
-        avatar: "https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
-      },
-      {
-        value: 2,
-        label: "two",
-        avatar: "https://images.unsplash.com/photo-1567254790685-6b6d6abe4689?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
-      },
-      {
-        value: 3,
-        label: "three",
-        avatar: "https://images.unsplash.com/photo-1560765447-da05a55e72f8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
-      }
-    ]
+    if params[:value].present?
+      # Handle initial load: return labels for selected values
+      # params[:value] contains an array of selected values
+      selected_cities = City.where(id: params[:value])
+      render json: selected_cities.map do |city|
+        {
+          value: city.id,
+          label: city.name,
+          avatar: city.avatar_url
+        }
+      end
+    elsif params["q"].present?
+      # Handle search: return cities matching the query
+      cities = City.where("name ILIKE ?", "%#{params["q"]}%").limit(10)
+      render json: cities.map do |city|
+        {
+          value: city.id,
+          label: city.name,
+          avatar: city.avatar_url
+        }
+      end
+    else
+      # Handle empty state: return some default suggestions
+      render json: [
+        {
+          value: 1,
+          label: "New York",
+          avatar: "https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
+        }
+      ]
+    end
   end
 end
 ```
