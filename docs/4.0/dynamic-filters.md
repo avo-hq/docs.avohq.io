@@ -925,6 +925,48 @@ field :priority,
 
 </Option>
 
+<Option name="`humanized_value`">
+
+Allows you to customize how filter values are displayed in the filter interface by providing humanized, user-friendly representations of the internal filter values.
+
+##### Default value
+
+`value` - The filter will display the raw filter values.
+
+#### Possible values
+
+A lambda/proc that returns a string representing the humanized value. Within the function, you have access to the `value` and `filter` object which contains the current filter's condition, as well as all attributes of [`Avo::ExecutionContext`](execution-context). Additionally `parent_record` (when the filter is applied to an association) is available.
+
+##### Usage examples
+
+```ruby{4-11}
+field :is_capital,
+  as: :boolean,
+  filterable: {
+    humanized_value: -> {
+      case filter.condition
+      when "is_true"
+        "yes"
+      when "is_false"
+        "no"
+      end
+    }
+  }
+```
+
+```ruby{4-8}
+    dynamic_filter label: "Tags with fetch_values_from",
+      type: :tags,
+      fetch_values_from: -> { "/avo-filters/resources/cities/tags" },
+      humanized_value: -> {
+        City.controller_suggestions.select do |suggestion|
+          suggestion[:value].to_s.in?(value.split(","))
+        end.map { _1[:label] }.join(", ")
+      }
+```
+
+</Option>
+
 
 
 ## Guides & Tutorials
