@@ -976,7 +976,6 @@ field :is_capital,
 Learn how to effectively filter records based on their associations in Avo. This video tutorial demonstrates how to set up and use dynamic filters to query records through the attributes of their associations, enabling powerful and flexible data filtering capabilities.
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/d8bd49086d014d77a3013796c8480339?sid=aaaec555-b19f-429b-b0a7-e998a2d2128e" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
-</Option>
 
 #### `belongs_to` example
 
@@ -1031,3 +1030,202 @@ class Avo::Resources::Author < Avo::BaseResource
   end
 end
 ```
+</Option>
+
+<Option name="Composable filters">
+
+When you have multiple fields that require similar filtering logic, you can create reusable filter helpers to avoid code duplication. This is particularly useful when working with JSON columns, complex queries, or any scenario where multiple fields share the same filtering pattern.
+
+This guide demonstrates four different approaches to create composable filters, each with its own benefits and use cases.
+
+### The Problem: Repetitive Filter Code
+
+Before diving into the solutions, let's look at a common problem where filter logic is repeated across multiple fields:
+
+```ruby
+class Avo::Resources::Feedback < Avo::BaseResource
+  def fields
+    field :company_size, filterable: {
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'company_size'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'company_size' = '#{filter_param.value}'")) }
+    }
+
+    field :company_industry, filterable: {
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'company_industry'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'company_industry' = '#{filter_param.value}'")) }
+    }
+
+    field :title, filterable: {
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'title'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'title' = '#{filter_param.value}'")) }
+    }
+
+    field :description, filterable: {
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'description'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'description' = '#{filter_param.value}'")) }
+    }
+  end
+end
+```
+
+As you can see, the same filtering logic is repeated for each field, which violates the DRY (Don't Repeat Yourself) principle and makes the code harder to maintain.
+
+### Method 1: Helper Method with Field Configuration
+
+This approach extracts the common filtering logic into a helper method that returns the filterable configuration hash. It's the most straightforward refactoring and maintains the existing field-based approach.
+
+```ruby
+class Avo::Resources::Feedback < Avo::BaseResource
+  def filterable_helper(field_name)
+    {
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'#{field_name}'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'#{field_name}' = '#{filter_param.value}'")) }
+    }
+  end
+
+  def fields
+    field :company_size, filterable: filterable_helper(:company_size)
+    field :company_industry, filterable: filterable_helper(:company_industry)
+    field :title, filterable: filterable_helper(:title)
+    field :description, filterable: filterable_helper(:description)
+  end
+end
+```
+
+**Benefits:**
+- Simple refactoring that maintains the existing field structure
+- Easy to understand and implement
+- Minimal changes to existing code
+
+**Best for:** Quick refactoring of existing resources with repetitive filter logic.
+
+:::warning
+When you're using this approach within a `with_options` block, you need allow the extra args that are passed to the helper method.
+
+```ruby
+def filterable_helper(field_name, **args)
+  # ...
+end
+```
+:::
+
+### Method 2: Separate Fields and Filters with Helper
+
+This approach separates the field definitions from the filter definitions using the `dynamic_filter` method. The helper method now directly creates the dynamic filter instead of returning a configuration hash.
+
+```ruby
+class Avo::Resources::Feedback < Avo::BaseResource
+  def fields
+    field :company_size
+    field :company_industry
+    field :title
+    field :description
+  end
+
+  def filterable_helper(field_name)
+    dynamic_filter field_name,
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'#{field_name}'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'#{field_name}' = '#{filter_param.value}'")) }
+  end
+
+  def filters
+    filterable_helper(:company_size)
+    filterable_helper(:company_industry)
+    filterable_helper(:title)
+    filterable_helper(:description)
+  end
+end
+```
+
+**Benefits:**
+- Clear separation between field definitions and filter logic
+- Uses the more flexible `dynamic_filter` method
+- Filters can be defined independently of fields
+
+**Best for:**
+
+- Resources where you want to maintain clean separation between display fields and filtering logic.
+- Dynamic filters that are common across multiple resources.
+
+### Method 3: Programmatic Filter Generation
+
+This approach uses Ruby's array iteration to programmatically generate multiple filters with the same logic. It's the most concise and reduces the code to its essential elements.
+
+```ruby
+class Avo::Resources::Feedback < Avo::BaseResource
+  def fields
+    field :company_size
+    field :company_industry
+    field :title
+    field :description
+  end
+
+  def filters
+    [:company_size, :company_industry, :title, :description].map do |field_name|
+      dynamic_filter field_name,
+        type: :select,
+        options: -> { Feedback.pluck(Arel.sql("answers->>'#{field_name}'")).uniq },
+        query: -> { query.where(Arel.sql("answers->>'#{field_name}' = '#{filter_param.value}'")) }
+    end
+  end
+end
+```
+
+**Benefits:**
+- Most concise code
+- Easy to add or remove filterable fields by modifying the array
+- Clearly shows which fields share the same filtering logic
+
+**Best for:** Resources with many fields that share identical filtering logic, especially when the list of filterable fields might change frequently.
+
+### Method 4: Custom DSL with Method Override
+
+This approach creates a custom DSL by overriding the `field` method to intercept a special symbol (`:by_answer`). This provides the cleanest syntax at the field level while hiding the complexity in the method override.
+
+```ruby
+class Avo::Resources::Feedback < Avo::BaseResource
+  def fields
+    field :company_size, filterable: :by_answer
+    field :company_industry, filterable: :by_answer
+    field :title, filterable: :by_answer
+    field :description, filterable: :by_answer
+  end
+
+  def field(field_name, **args, &block)
+    if args[:filterable] == :by_answer
+      args[:filterable] = {
+        type: :select,
+        options: -> { Feedback.pluck(Arel.sql("answers->>'#{field_name}'")).uniq },
+        query: -> { query.where(Arel.sql("answers->>'#{field_name}' = '#{filter_param.value}'")) }
+      }
+    end
+
+    super(field_name, **args, &block)
+  end
+end
+```
+
+**Benefits:**
+- Creates a clean, semantic DSL
+- Hides complexity while maintaining readable field definitions
+- Easy to extend with additional filter types
+- Most maintainable for resources with many similar filterable fields
+
+**Best for:** Resources where you want to create a custom, reusable filtering pattern that feels natural and integrated with Avo's field DSL.
+
+### Choosing the Right Approach
+
+- **Method 1** for quick refactoring of existing code
+- **Method 2** when you want clear separation between fields and filters
+- **Method 3** when you have many fields with identical filtering logic
+- **Method 4** when you want to create a clean, reusable DSL for your team
+
+All approaches achieve the same goal of eliminating code duplication while providing different levels of abstraction and maintainability.
+
+</Option>
