@@ -4,6 +4,46 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade to 3.22.0
+
+<Option name="External image field options now apply to all views">
+
+### Breaking Change
+
+Previously, the external image field options (`width`, `height`, `radius`) were only applied on the Index view. Starting with version 3.22, these options now apply to **all views**.
+
+### Action Required
+
+**Review all external image fields** in your application to verify if this change affects your app's behavior or styling.
+
+### Maintaining Previous Behavior
+
+If you want to maintain the previous behavior where options only applied to the Index view, you need to update your external image fields to use conditional logic with procs:
+
+```ruby
+# Before (3.21 and earlier) - options only applied to Index view
+field :logo, as: :external_image, width: 40, height: 40, radius: 4
+
+# After (3.22+) - to maintain the same behavior, use conditional procs
+field :logo, as: :external_image,
+  width: -> { view.index? ? 40 : nil },
+  height: -> { view.index? ? 40 : nil },
+  radius: -> { view.index? ? 4 : nil }
+```
+
+Alternatively, if you want different styling for different views, you can now specify them conditionally:
+
+```ruby
+field :logo, as: :external_image,
+  width: -> { view.index? ? 40 : 150 },
+  height: -> { view.index? ? 40 : 150 },
+  radius: -> { view.index? ? 4 : 12 }
+```
+
+For more details on using execution context with external image fields, refer to the [external image field documentation](./fields/external_image.html).
+
+</Option>
+
 ## Upgrade to `avo-kanban` `0.1.18`
 
 ### TL;DR
