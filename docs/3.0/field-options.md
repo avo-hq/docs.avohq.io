@@ -96,11 +96,21 @@ This example will display a boolean field with the value computed from your cust
 
 ## Fields Formatter
 
-Sometimes you will want to process the database value before showing it to the user. You may do that using `format_using` block.
+Sometimes you will want to process the database value before showing it to the user.
 
+There are several ways to format fields.
+
+### Common formatting options
+
+In all cases, you have access to a bunch of variables inside this block, all the defaults that [`Avo::ExecutionContext`](./execution-context.html) provides plus `value`, `record`, `resource`, `view` and `field`.
+
+
+<Option name="`format_using`">
+Format the field value using a block.
+
+:::info
 Notice that this block will have effect on **all** views.
-
-You have access to a bunch of variables inside this block, all the defaults that [`Avo::ExecutionContext`](./execution-context.html) provides plus `value`, `record`, `resource`, `view` and `field`.
+:::
 
 ```ruby
 field :is_writer, as: :text, format_using: -> {
@@ -122,7 +132,7 @@ Another example:
 field :company_url,
   as: :text,
   format_using: -> {
-    if view == :new || view == :edit
+    if view.new? || view.edit?
       value
     else
       link_to(value, value, target: "_blank")
@@ -132,19 +142,30 @@ field :company_url,
 end
 ```
 
-Since <Version version="3.20" /> `decorate` option has been available. It affects only display views. This is how the above examples would look when applying `decorate`
+</Option>
+
+<Option name="`format_{view}_using`">
+
+Avo provides helper methods to format fields based on the current view.
+
+- `format_index_using` - Format the field value **only** for the **index** view
+- `format_show_using` - Format the field value **only** for the **show** view
+- `format_edit_using` - Format the field value **only** for the **edit** view
+- `format_new_using` - Format the field value **only** for the **new** view
+- `format_form_using` - Format the field value **only** for the **forms** view (**new** and **edit**)
+- `format_display_using` - Format the field value **only** for the **display** view (**index** and **show**)
+
+This methods are available for all fields.
+
+Example on how to format a field in the index and show views:
 
 ```ruby
-field :is_writer, as: :text, decorate: -> { value.present? ? '👍' : '👎' }
-
-field :company_url,
-  as: :text,
-  decorate: -> {
-    link_to(value, value, target: "_blank")
-  } do
-  main_app.companies_url(record)
-end
+field :is_writer, format_display_using: -> { value.present? ? '👍' : '👎' }
 ```
+
+<Image src="/assets/img/fields-reference/fields-formatter.png" width="943" height="156" alt="Fields formatter" />
+
+</Option>
 
 ## Formatting with Rails helpers
 
