@@ -44,6 +44,48 @@ For more details on using execution context with external image fields, refer to
 
 </Option>
 
+<Option name="decorate option deprecated in favor of format_display_using">
+
+### Breaking Change
+
+The `decorate` option has been deprecated in favor of `format_display_using`. This change was made to maintain consistency with the new [`format_{view}_using`](./field-options.html#format_view_using) enhancement that provides specific formatting options for different views.
+
+### Action Required
+
+Replace all instances of `decorate` with `format_display_using` throughout your application.
+
+### Steps to Update
+
+Perform a global search and replace in your codebase:
+
+```ruby
+# Before
+field :is_writer, as: :text, decorate: -> { value.present? ? '👍' : '👎' }
+
+field :company_url,
+  as: :text,
+  decorate: -> {
+    link_to(value, value, target: "_blank")
+  } do
+  main_app.companies_url(record)
+end
+
+# After
+field :is_writer, as: :text, format_display_using: -> { value.present? ? '👍' : '👎' }
+
+field :company_url,
+  as: :text,
+  format_display_using: -> {
+    link_to(value, value, target: "_blank")
+  } do
+  main_app.companies_url(record)
+end
+```
+
+The functionality remains exactly the same - both options format field values only for display views (index and show), leaving form views unaffected.
+
+</Option>
+
 ## Upgrade to `avo-kanban` `0.1.18`
 
 ### TL;DR
