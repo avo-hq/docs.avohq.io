@@ -45,42 +45,41 @@ bin/rails generate avo:resource Author --http
 
 ## Parsing Data from an Endpoint
 
-To wire an HTTP Resource to a data source, you must configure several attributes. Below is a breakdown of the supported options, each with an illustrative example.
+To wire an HTTP Resource to a data source, you must configure the `http_adapter` hash. Below is a breakdown of the supported options, each with an illustrative example.
 
 ```ruby
 # app/avo/resources/author.rb
 class Avo::Resources::Author < Avo::Core::Resources::Http
-  # The base URL for your external API
-  self.endpoint = "https://api.openalex.org/authors"
+  self.http_adapter = {
+    # The base URL for your external API
+    endpoint: "https://api.openalex.org/authors",
 
-  # How to extract the list of records from the API response
-  self.parse_collection = -> {
-    raise Avo::HttpError.new response["message"] if response["error"].present?
-    response["results"]
-  }
+    # How to extract the list of records from the API response
+    parse_collection: -> {
+      raise Avo::HttpError.new response["message"] if response["error"].present?
+      response["results"]
+    },
 
-  # How to extract a single record from the API response
-  self.parse_record = -> {
-    raise Avo::HttpError.new response["message"] if response["error"].present?
-    response
-  }
+    # How to extract a single record from the API response
+    parse_record: -> {
+      raise Avo::HttpError.new response["message"] if response["error"].present?
+      response
+    },
 
-  # How to extract the total count of records (useful for pagination)
-  self.parse_count = -> { response["meta"]["count"] }
+    # How to extract the total count of records (useful for pagination)
+    parse_count: -> { response["meta"]["count"] },
 
-  # Optional: custom method to find a record if the ID is encoded or non-standard
-  self.find_record_method = -> { query.find Base64.decode64(id) }
+    # Optional: redefines model behavior to obfuscate the ID via Base64
+    model_class_eval: -> {
+      define_method :to_param do
+        Base64.encode64(id)
+      end
+    },
 
-  # Optional: redefines model behavior to obfuscate the ID via Base64
-  self.model_class_eval = -> {
-    define_method :to_param do
-      Base64.encode64(id)
-    end
-  }
-
-  # Optional: custom headers to send with the request
-  self.headers = {
-    "Authorization" => "Bearer #{ENV.fetch("API_KEY")}"
+    # Optional: custom headers to send with the request
+    headers: {
+      "Authorization" => "Bearer #{ENV.fetch("API_KEY")}"
+    }
   }
 
   def fields
@@ -92,9 +91,11 @@ class Avo::Resources::Author < Avo::Core::Resources::Http
 end
 ```
 
+The `http_adapter` hash provides a clean, organized way to configure all HTTP-related settings in one place, making your resource configuration more maintainable and easier to understand.
+
 ### Response Option Reference
 
-Here's a brief reference for the main configuration options:
+Here's a brief reference for the main configuration options within the `http_adapter` hash:
 
 | Option              | Description                                                                 |
 |---------------------|-----------------------------------------------------------------------------|
@@ -115,7 +116,7 @@ This contextual access empowers you to define your resource’s behavior with a 
 
 ### Request Option Reference
 
-Here's a brief reference for the main request options:
+Here's a brief reference for the main request options within the `http_adapter` hash:
 
 | Option              | Description                                                                 |
 |---------------------|-----------------------------------------------------------------------------|
