@@ -278,6 +278,7 @@ const config = {
             {text: "Generators", link: "/4.0/forms-and-pages/generator.html"},
             {text: "Pages", link: "/4.0/forms-and-pages/pages.html"},
             {text: "Forms", link: "/4.0/forms-and-pages/forms.html"},
+            {text: "Guides and Tutorials", link: "/4.0/forms-and-pages/guides-and-tutorials.html"},
           ],
         },
         {
