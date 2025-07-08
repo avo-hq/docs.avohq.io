@@ -48,7 +48,7 @@ Format the date shown to the user on the `Edit` and `New` views.
 Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
 </Option>
 
-<Option name="`picker_options`;">
+<Option name="`picker_options`">
 
 Passes the options here to [flatpickr](https://flatpickr.js.org/).
 
