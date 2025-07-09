@@ -25,12 +25,12 @@ To enable search for a resource, you need to configure the `search` class attrib
 ```ruby{2-4}
 class Avo::Resources::User < Avo::BaseResource
   self.search = {
-    query: -> { query.ransack(name_eq: params[:q]).result(distinct: false) }
+    query: -> { query.ransack(name_eq: q).result(distinct: false) }
   }
 end
 ```
 
-The `query` block passes over the `params` object that holds the `q` param, the actual query string. It also provides the `query` variable on which you run the query. That ensures that the [authorization scopes](./authorization.html#scopes) have been appropriately applied.
+The `query` block provides the `q` variable, which contains the stripped search query string, and the `query` variable on which you run the query. That ensures that the [authorization scopes](./authorization.html#scopes) have been appropriately applied. If you need access to the unstripped query string, you can use `params[:q]` instead of `q`.
 
 In this block, you may configure the search however strict or loose you need it. Check out [ransack's search matchers](https://github.com/activerecord-hackery/ransack#search-matchers) to compose the query better.
 
@@ -113,7 +113,7 @@ You may configure that to be something more complex using the `item -> title` op
 ```ruby{6}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
-    query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
+    query: -> { query.ransack(name_cont: q, m: "or").result(distinct: false) },
     item: -> do
       {
         title: "[#{record.id}]#{record.name}",
@@ -135,7 +135,7 @@ You might want to show more than just the title in the search result. Avo provid
 ```ruby{7}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
-    query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
+    query: -> { query.ransack(name_cont: q, m: "or").result(distinct: false) },
     item:  -> do
       {
         title: "[#{record.id}]#{record.name}",
@@ -158,7 +158,7 @@ You may improve the results listing by adding an image to each search result. Yo
 ```ruby{8}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
-    query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
+    query: -> { query.ransack(name_cont: q, m: "or").result(distinct: false) },
     item: -> do
       {
         title: "[#{record.id}]#{record.name}",
@@ -181,7 +181,7 @@ The image you add to a search result can have a different format based on what y
 ```ruby{9}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
-    query: -> { query.ransack(name_cont: params[:q], m: "or").result(distinct: false) },
+    query: -> { query.ransack(name_cont: q, m: "or").result(distinct: false) },
     item: -> do
       {
         title: "[#{record.id}]#{record.name}",
@@ -206,7 +206,7 @@ You may improve the results listing header by adding a piece of text highlightin
 ```ruby{4}
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
-    query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) },
+    query: -> { query.ransack(id_eq: q, m: "or").result(distinct: false) },
     help: -> { "- search by id" }
   }
 end
@@ -220,7 +220,7 @@ By default, when a user clicks on a search result, they will be redirected to th
 ```ruby
 class Avo::Resources::City < Avo::BaseResource
   self.search = {
-    query: -> { query.ransack(name_eq: params[:q]).result(distinct: false) },
+    query: -> { query.ransack(name_eq: q).result(distinct: false) },
     result_path: -> { avo.resources_city_path record, custom: "yup" }
   }
 end
@@ -234,7 +234,7 @@ You might have a resource that you'd like to be able to perform a search on when
 ```ruby{9}
 class Avo::Resources::TeamMembership < Avo::BaseResource
   self.search = {
-    query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) },
+    query: -> { query.ransack(id_eq: q, m: "or").result(distinct: false) },
     item: -> do
       {
         description: record.level,
@@ -293,10 +293,10 @@ class Avo::Resources::Order < Avo::BaseResource
     query: -> {
       if params[:global]
         # Perform global search
-        query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+        query.ransack(id_eq: q, m: "or").result(distinct: false)
       else
         # Perform resource search
-        query.ransack(id_eq: params[:q], details_cont: params[:q], m: "or").result(distinct: false)
+        query.ransack(id_eq: q, details_cont: q, m: "or").result(distinct: false)
       end
     }
   }
@@ -331,14 +331,14 @@ class Avo::Resources::Application < Avo::BaseResource
       query
         .joins(:client)
         .ransack(
-          id_eq: params[:q],
-          name_cont: params[:q],
-          workflow_name_cont: params[:q],
-          client_id_eq: params[:q],
-          client_first_name_cont: params[:q],
-          client_last_name_cont: params[:q],
-          client_email_cont: params[:q],
-          client_phone_number_cont: params[:q],
+          id_eq: q,
+          name_cont: q,
+          workflow_name_cont: q,
+          client_id_eq: q,
+          client_first_name_cont: q,
+          client_last_name_cont: q,
+          client_email_cont: q,
+          client_phone_number_cont: q,
           m: 'or'
         ).result(distinct: false)
     }

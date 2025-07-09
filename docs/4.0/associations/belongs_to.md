@@ -215,7 +215,7 @@ Avo uses the [search feature](./../search) behind the scenes, so **make sure the
 class Avo::Resources::Post < Avo::BaseResource
   self.search = {
     query: -> {
-      query.ransack(id_eq: params[:q], name_cont: params[:q], body_cont: params[:q], m: "or").result(distinct: false)
+      query.ransack(id_eq: q, name_cont: q, body_cont: q, m: "or").result(distinct: false)
     }
   }
 end
@@ -224,7 +224,7 @@ end
 class Avo::Resources::Project < Avo::BaseResource
   self.search = {
     query: -> {
-      query.ransack(id_eq: params[:q], name_cont: params[:q], country_cont: params[:q], m: "or").result(distinct: false)
+      query.ransack(id_eq: q, name_cont: q, country_cont: q, m: "or").result(distinct: false)
     }
   }
 end

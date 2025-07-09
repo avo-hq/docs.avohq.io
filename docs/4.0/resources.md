@@ -25,7 +25,7 @@ The auto-generated resource file will look like this:
 class Avo::Resources::Car < Avo::BaseResource
   self.includes = []
   # self.search = {
-  #   query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) }
+  #   query: -> { query.ransack(id_eq: q, m: "or").result(distinct: false) }
   # }
 
   def fields
@@ -55,7 +55,7 @@ This command will generate the `Post` resource file in `app/avo/resources/post.r
 class Avo::Resources::Post < Avo::BaseResource
   self.includes = []
   # self.search = {
-  #   query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) }
+  #   query: -> { query.ransack(id_eq: q, m: "or").result(distinct: false) }
   # }
 
   def fields
@@ -106,7 +106,7 @@ end
 class Avo::Resources::Post < Avo::BaseResource
   self.includes = []
   # self.search = {
-  #   query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) }
+  #   query: -> { query.ransack(id_eq: q, m: "or").result(distinct: false) }
   # }
 
   def fields
