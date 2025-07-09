@@ -14,9 +14,9 @@ For example, if you want to show the records in a different order, you can do th
 self.search = {
   query: -> {
     if params[:via_association] == 'has_many'
-      query.ransack(id_eq: params[:q], m: "or").result(distinct: false).order(name: :asc)
+      query.ransack(id_eq: q, m: "or").result(distinct: false).order(name: :asc)
     else
-      query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+      query.ransack(id_eq: q, m: "or").result(distinct: false)
     end
   }
 }
