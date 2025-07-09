@@ -44,12 +44,12 @@ class Avo::Pages::YourPageName < Avo::Forms::Core::Page
   self.title = "Your Page Name"
   self.description = "A page for your page name"
 
-  def forms
+  def content
     # form Avo::Forms::AnyFormClass
   end
 
-  def sub_pages
-    # sub_page Avo::Pages::AnySubPageClass
+  def navigation
+    # page Avo::Pages::AnySubPageClass
   end
 end
 ```
@@ -67,8 +67,8 @@ class Avo::Pages::ParentPage < Avo::Forms::Core::Page
   self.title = "Parent Page"
   self.description = "A page for parent page"
 
-  def sub_pages
-    sub_page Avo::Pages::ParentPage::SubPage
+  def navigation
+    page Avo::Pages::ParentPage::SubPage
   end
 end
 ```
