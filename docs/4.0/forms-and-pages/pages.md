@@ -77,7 +77,7 @@ end
 
 ## Page Methods
 
-<Option name="def sub_pages" headingSize=3>
+<Option name="def navigation" headingSize=3>
 
 
 Define sub-pages that belong to this page. This method is used to register child pages and configure their relationship to the parent.
@@ -85,7 +85,7 @@ Define sub-pages that belong to this page. This method is used to register child
 ```ruby{3-5}
 # app/avo/pages/settings.rb
 class Avo::Pages::Settings < Avo::Forms::Core::Page
-  def sub_pages
+  def navigation
     # ...
   end
 end
@@ -93,7 +93,7 @@ end
 
 </Option>
 
-<Option name="sub_page" headingSize=3>
+<Option name="page" headingSize=3>
 
 This method is used to register child pages that belong to this page.
 
@@ -102,8 +102,8 @@ It expects the child page class as the first argument.
 ```ruby
 # app/avo/pages/settings.rb
 class Avo::Pages::Settings < Avo::Forms::Core::Page
-  def sub_pages
-    sub_page Avo::Pages::Settings::General # [!code focus]
+  def navigation
+    page Avo::Pages::Settings::General # [!code focus]
   end
 end
 ```
@@ -123,9 +123,9 @@ Marks a sub-page as the default one to display when the main page is accessed.
 ```ruby
 # app/avo/pages/settings.rb
 class Avo::Pages::Settings < Avo::Forms::Core::Page
-  def sub_pages
-    sub_page Avo::Pages::Settings::General, default: true # [!code focus]
-    sub_page Avo::Pages::Settings::Notifications
+  def navigation
+    page Avo::Pages::Settings::General, default: true # [!code focus]
+    page Avo::Pages::Settings::Notifications
   end
 end
 ```
@@ -134,14 +134,14 @@ end
 
 </Option>
 
-<Option name="def forms" headingSize=3>
+<Option name="def content" headingSize=3>
 
 Define forms that should be displayed on this page. Forms are the primary way users interact with your page's functionality.
 
 ```ruby{3-5}
 # app/avo/pages/settings/general.rb
 class Avo::Pages::Settings::General < Avo::Forms::Core::Page
-  def forms
+  def content
     # ...
   end
 end
@@ -159,7 +159,7 @@ It expects the form class as the first argument.
 ```ruby
 # app/avo/pages/settings/general.rb
 class Avo::Pages::Settings::General < Avo::Forms::Core::Page
-  def forms
+  def content
     form Avo::Forms::Settings::AppSettings # [!code focus]
     form Avo::Forms::Settings::ProfileSettings # [!code focus]
   end
@@ -180,11 +180,11 @@ class Avo::Pages::Settings < Avo::Forms::Core::Page
   self.title = "Settings"
   self.description = "Manage your application settings"
 
-  def sub_pages
-    sub_page Avo::Pages::Settings::General, default: true
-    sub_page Avo::Pages::Settings::Notifications
-    sub_page Avo::Pages::Settings::Integrations
-    sub_page Avo::Pages::Settings::Security
+  def navigation
+    page Avo::Pages::Settings::General, default: true
+    page Avo::Pages::Settings::Notifications
+    page Avo::Pages::Settings::Integrations
+    page Avo::Pages::Settings::Security
   end
 end
 ```
@@ -196,7 +196,7 @@ class Avo::Pages::Settings::General < Avo::Forms::Core::Page
   self.title = "General Settings"
   self.description = "Basic application configuration"
 
-  def forms
+  def content
     form Avo::Forms::Settings::AppSettings
     form Avo::Forms::Settings::CompanyInfo
   end
@@ -210,7 +210,7 @@ class Avo::Pages::Settings::Notifications < Avo::Forms::Core::Page
   self.title = "Notifications"
   self.description = "Configure notification preferences"
 
-  def forms
+  def content
     form Avo::Forms::Settings::EmailNotifications
     form Avo::Forms::Settings::SlackIntegration
   end

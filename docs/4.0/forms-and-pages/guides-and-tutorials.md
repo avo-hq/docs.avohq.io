@@ -47,7 +47,7 @@ Then reference it in your page:
 ```ruby
 # app/avo/pages/settings/profiles.rb
 class Avo::Pages::Settings::Profiles < Avo::Forms::Core::Page
-  def forms
+  def content
     form Avo::Forms::UserProfiles
   end
 end
@@ -71,7 +71,7 @@ class Avo::Pages::Settings::Integrations < Avo::Forms::Core::Page
   self.title = "Integrations"
   self.description = "Manage your integrations"
 
-  def forms
+  def content
     form ApiConfiguration
   end
 
