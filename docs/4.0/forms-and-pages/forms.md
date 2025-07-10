@@ -24,7 +24,7 @@ Forms are typically displayed on [Pages](./pages.html) and can be used for vario
 Forms can also be rendered as a standalone component anywhere in the interface. For example, you can render the general settings form in a tool by using the following code:
 
 ```erb
-<%= render Avo::Forms::Settings::General.new.component %>
+<%= render Avo::Forms::Settings::General.component %>
 ```
 
 ## Generating Forms

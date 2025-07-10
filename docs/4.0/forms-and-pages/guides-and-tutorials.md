@@ -56,7 +56,7 @@ end
 Or render it in a custom component:
 
 ```ruby
-<%= render Avo::Forms::UserProfiles.new.component %>
+<%= render Avo::Forms::UserProfiles.component %>
 ```
 
 
@@ -103,3 +103,33 @@ When defining forms inline within page classes, it's not immediately clear that 
 **Approach 1 (Default Generator)**: Good starting point for most forms. Easy to generate and maintain.
 
 **Approach 2 (Inline)**: Best for simple, page-specific forms that won't be reused elsewhere.
+
+## Page Organization Approaches
+
+In addition to form definition approaches, you can also choose how to organize your pages:
+
+### Virtual Pages
+
+Instead of creating separate page files for every form, you can use virtual pages:
+
+```ruby
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  def navigation
+    # Virtual page that renders a single form
+    page form: Avo::Forms::UserProfiles
+
+    # Virtual page with multiple forms
+    page "Integrations",
+      content: -> do
+        form Avo::Forms::SlackIntegration
+        form Avo::Forms::EmailIntegration
+      end
+  end
+end
+```
+
+**Virtual pages are ideal when:**
+- You have simple forms that don't need dedicated page files
+- You want to group related forms together without file proliferation
+- You're building settings or configuration interfaces with many small forms
