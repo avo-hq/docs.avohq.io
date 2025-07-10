@@ -520,4 +520,4 @@ Done 🙌 Now you have a controller connecting to a custom [Resource tool](./res
 
 Currently, Avo doesn't support the use of StimulusJS in the same manner in action modals. Please follow [this](https://github.com/avo-hq/avo/issues/2811) issue to get updates on when it will be available.
 
-This is not very prio on our near roadmap, but we will take a contribution in the form of a PR or a sponsorship in order to prioritize it on our end.
+This is not very high priority on our near roadmap, but we will take a contribution in the form of a PR or a sponsorship in order to prioritize it on our end.
