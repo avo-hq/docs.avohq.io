@@ -43,16 +43,32 @@ This will create a new page file at `app/avo/pages/your_page_name.rb` with the f
 class Avo::Pages::YourPageName < Avo::Forms::Core::Page
   self.title = "Your Page Name"
   self.description = "A page for your page name"
+  # self.navigation_label = "Your Page Name"
 
   def content
     # form Avo::Forms::AnyFormClass
   end
 
   def navigation
+    # Class-based page
     # page Avo::Pages::AnySubPageClass
+
+    # Virtual page with form, this page will be displayed in the navigation menu and when the user clicks on it, it will display the form.
+    # page form: Avo::Forms::AnyFormClass
+
+    # Virtual page with custom content, this page will be displayed in the navigation menu and when the user clicks on it, it will display the custom content.
+    # page "Custom Page",
+    #   description: "A page for custom page",
+    #   content: -> do
+    #     form Avo::Forms::SomeForm
+    #   end
   end
 end
 ```
+
+:::warning Boot-time Parsing
+The `def content` and `def navigation` methods are parsed only once during application boot. Do not use conditional logic (if/else statements) or dynamic content inside these methods, as they will not be re-evaluated during runtime.
+:::
 
 :::tip
 To create a sub-page, you need to create a page first. The sub-page need to be namespaced under the parent page.
