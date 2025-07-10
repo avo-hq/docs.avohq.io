@@ -74,6 +74,25 @@ end
 
 </Option>
 
+<Option name="self.navigation_label" headingSize=3>
+
+Customizes the label displayed in the Avo menu entry and page sidebar menu entry.
+
+**Default behavior:**
+- If `navigation_label` is not set, it defaults to the `title`
+- If `title` is not set, it takes the last namespace from the class and humanizes it
+
+```ruby{3}
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  self.navigation_label = "App Configuration"
+end
+```
+
+This is particularly useful when you want different text in navigation menus than what's displayed as the page title, or when you want to shorten long titles for better menu presentation.
+
+</Option>
+
 
 ## Page Methods
 
@@ -187,6 +206,7 @@ Here's a complete example showing a settings page with multiple sub-pages:
 class Avo::Pages::Settings < Avo::Forms::Core::Page
   self.title = "Settings"
   self.description = "Manage your application settings"
+  self.navigation_label = "App Settings"
 
   def navigation
     page Avo::Pages::Settings::General, default: true
@@ -259,5 +279,7 @@ end
 **Set default sub-pages**: If your main page primarily serves as a container, always set a default sub-page to improve user experience.
 
 **Use descriptive titles and descriptions**: Help users understand what each page contains and what actions they can perform.
+
+**Customize navigation labels**: Use `navigation_label` to provide concise, menu-friendly names that may differ from your page titles, especially for long or technical titles.
 
 **Group related functionality**: Use the page hierarchy to logically group related forms and settings.
