@@ -43,13 +43,25 @@ This will create a new page file at `app/avo/pages/your_page_name.rb` with the f
 class Avo::Pages::YourPageName < Avo::Forms::Core::Page
   self.title = "Your Page Name"
   self.description = "A page for your page name"
+  # self.navigation_label = "Your Page Name"
 
   def content
     # form Avo::Forms::AnyFormClass
   end
 
   def navigation
+    # Class-based page
     # page Avo::Pages::AnySubPageClass
+
+    # Virtual page with form, this page will be displayed in the navigation menu and when the user clicks on it, it will display the form.
+    # page form: Avo::Forms::AnyFormClass
+
+    # Virtual page with custom content, this page will be displayed in the navigation menu and when the user clicks on it, it will display the custom content.
+    # page "Custom Page",
+    #   description: "A page for custom page",
+    #   content: -> do
+    #     form Avo::Forms::SomeForm
+    #   end
   end
 end
 ```

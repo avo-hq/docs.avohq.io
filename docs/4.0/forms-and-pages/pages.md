@@ -118,9 +118,11 @@ end
 
 <Option name="page" headingSize=3>
 
-This method is used to register child pages that belong to this page.
+This method is used to register sub pages that belong to this page. The `page` method supports three different types of declarations:
 
-It expects the child page class as the first argument.
+#### 1. Class-based pages (backed by a file)
+
+The traditional approach where you reference an existing page class.
 
 ```ruby
 # app/avo/pages/settings.rb
@@ -131,13 +133,46 @@ class Avo::Pages::Settings < Avo::Forms::Core::Page
 end
 ```
 
-When defining sub-pages, you can pass additional options:
+#### 2. Virtual pages that render a form
+
+Create a "virtual" page that directly renders a form without requiring a separate page file. If title and description are not provided, the page will use the form's title and description.
+
+```ruby
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  def navigation
+    page form: Avo::Forms::Profiles # [!code focus]
+  end
+end
+```
+
+#### 3. Virtual pages with custom content
+
+Create a "virtual" page with a custom title and content block that can contain multiple forms.
+
+```ruby
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  def navigation
+    page "Settings", # [!code focus]
+      description: "Manage your application settings and preferences", # [!code focus]
+      content: -> do # [!code focus]
+        form Avo::Forms::General # [!code focus]
+        form Avo::Forms::Integrations # [!code focus]
+      end # [!code focus]
+  end
+end
+```
+
+### Page Options
+
+When defining pages, you can pass additional options:
 
 <div class="pl-8">
 
 #### `default`
 
-Marks a sub-page as the default one to display when the main page is accessed.
+Marks a page as the default one to display when the main page is accessed. Available for all page types.
 
 **Default value**: `false`
 
@@ -148,7 +183,10 @@ Marks a sub-page as the default one to display when the main page is accessed.
 class Avo::Pages::Settings < Avo::Forms::Core::Page
   def navigation
     page Avo::Pages::Settings::General, default: true # [!code focus]
-    page Avo::Pages::Settings::Notifications
+    page form: Avo::Forms::Profiles
+    page "Custom Settings",
+      content: -> { form Avo::Forms::Custom },
+      default: false
   end
 end
 ```
@@ -210,8 +248,12 @@ class Avo::Pages::Settings < Avo::Forms::Core::Page
 
   def navigation
     page Avo::Pages::Settings::General, default: true
-    page Avo::Pages::Settings::Notifications
-    page Avo::Pages::Settings::Integrations
+    page form: Avo::Forms::UserProfiles
+    page "Integrations",
+      content: -> do
+        form Avo::Forms::Settings::SlackIntegration
+        form Avo::Forms::Settings::EmailIntegration
+      end
     page Avo::Pages::Settings::Security
   end
 end
@@ -281,5 +323,10 @@ end
 **Use descriptive titles and descriptions**: Help users understand what each page contains and what actions they can perform.
 
 **Customize navigation labels**: Use `navigation_label` to provide concise, menu-friendly names that may differ from your page titles, especially for long or technical titles.
+
+**Choose the right page type**:
+- Use **class-based pages** for complex pages with custom logic or multiple forms
+- Use **virtual pages with forms** for simple, single-form pages to reduce file clutter
+- Use **virtual pages with custom content** for organizing multiple related forms without creating separate page files
 
 **Group related functionality**: Use the page hierarchy to logically group related forms and settings.
