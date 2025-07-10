@@ -82,6 +82,10 @@ end
 
 Define sub-pages that belong to this page. This method is used to register child pages and configure their relationship to the parent.
 
+:::warning Boot-time Parsing
+The `def navigation` method is parsed only once during application boot. Do not use conditional logic (if/else statements) or dynamic content inside this method, as it will not be re-evaluated during runtime.
+:::
+
 ```ruby{3-5}
 # app/avo/pages/settings.rb
 class Avo::Pages::Settings < Avo::Forms::Core::Page
@@ -137,6 +141,10 @@ end
 <Option name="def content" headingSize=3>
 
 Define forms that should be displayed on this page. Forms are the primary way users interact with your page's functionality.
+
+:::warning Boot-time Parsing
+The `def content` method is parsed only once during application boot. Do not use conditional logic (if/else statements) or dynamic content inside this method, as it will not be re-evaluated during runtime.
+:::
 
 ```ruby{3-5}
 # app/avo/pages/settings/general.rb

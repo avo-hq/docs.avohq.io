@@ -54,6 +54,10 @@ class Avo::Pages::YourPageName < Avo::Forms::Core::Page
 end
 ```
 
+:::warning Boot-time Parsing
+The `def content` and `def navigation` methods are parsed only once during application boot. Do not use conditional logic (if/else statements) or dynamic content inside these methods, as they will not be re-evaluated during runtime.
+:::
+
 :::tip
 To create a sub-page, you need to create a page first. The sub-page need to be namespaced under the parent page.
 
