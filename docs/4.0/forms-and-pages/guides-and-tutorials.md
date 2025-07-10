@@ -56,7 +56,7 @@ end
 Or render it in a custom component:
 
 ```ruby
-<%= render Avo::Forms::UserProfiles.new.component %>
+<%= render Avo::Forms::UserProfiles.component %>
 ```
 
 
