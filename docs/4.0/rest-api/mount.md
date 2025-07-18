@@ -77,9 +77,19 @@ Rails.application.routes.draw do
 end
 ```
 
-This will mount the API at the default path: `#{Avo.configuration.root_path}/api`
+This will mount the API at the default path: `/api`
 
-If your Avo is configured with `root_path = "/admin"`, the API will be available at `/admin/api`.
+### Using Avo's Root Path
+
+If you want to mount the API under Avo's configured root path (like the previous default behavior), you can specify it explicitly:
+
+```ruby
+Rails.application.routes.draw do
+  mount_avo_api at: "#{Avo.configuration.root_path}/api"
+end
+```
+
+For example, if your Avo is configured with `root_path = "/admin"`, this will make the API available at `/admin/api`.
 
 ### Custom Mount Path
 
@@ -102,7 +112,7 @@ mount_avo_api at: "/custom/api/path"
 ```
 
 **Parameters:**
-- `at:` - String specifying where to mount the API (default: `"#{Avo.configuration.root_path}/api"`)
+- `at:` - String specifying where to mount the API (default: `"api"`)
 
 ### Additional Mount Options
 
@@ -145,12 +155,12 @@ When you mount the API, it automatically generates RESTful endpoints for all you
 For each resource, the following endpoints are created:
 
 ```
-GET    /admin/api/resources/v1/{resource_name}        # List resources
-POST   /admin/api/resources/v1/{resource_name}        # Create resource
-GET    /admin/api/resources/v1/{resource_name}/:id    # Show resource
-PATCH  /admin/api/resources/v1/{resource_name}/:id    # Update resource
-PUT    /admin/api/resources/v1/{resource_name}/:id    # Update resource
-DELETE /admin/api/resources/v1/{resource_name}/:id    # Delete resource
+GET    /api/resources/v1/{resource_name}        # List resources
+POST   /api/resources/v1/{resource_name}        # Create resource
+GET    /api/resources/v1/{resource_name}/:id    # Show resource
+PATCH  /api/resources/v1/{resource_name}/:id    # Update resource
+PUT    /api/resources/v1/{resource_name}/:id    # Update resource
+DELETE /api/resources/v1/{resource_name}/:id    # Delete resource
 ```
 
 ### Example for User Resource
@@ -158,12 +168,12 @@ DELETE /admin/api/resources/v1/{resource_name}/:id    # Delete resource
 If you have an `Avo::Resources::User` resource:
 
 ```
-GET    /admin/api/resources/v1/users     # List users
-POST   /admin/api/resources/v1/users     # Create user
-GET    /admin/api/resources/v1/users/1   # Show user
-PATCH  /admin/api/resources/v1/users/1   # Update user
-PUT    /admin/api/resources/v1/users/1   # Update user
-DELETE /admin/api/resources/v1/users/1   # Delete user
+GET    /api/resources/v1/users     # List users
+POST   /api/resources/v1/users     # Create user
+GET    /api/resources/v1/users/1   # Show user
+PATCH  /api/resources/v1/users/1   # Update user
+PUT    /api/resources/v1/users/1   # Update user
+DELETE /api/resources/v1/users/1   # Delete user
 ```
 
 ## Complete Examples
