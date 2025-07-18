@@ -159,9 +159,9 @@ You can test your authentication implementations by making requests with and wit
 
 ```bash{1-2,4-6}
 # Should return 401
-curl -X GET "http://localhost:3000/admin/api/resources/v1/users"
+curl -X GET "http://localhost:3000/api/resources/v1/users"
 
 # Should return 200 (if properly authenticated)
-curl -X GET "http://localhost:3000/admin/api/resources/v1/users"
+curl -X GET "http://localhost:3000/api/resources/v1/users"
   -H "Authorization: Basic YXZvQGF2b2hxLmlvOldIWV9BUkVfWU9VX1NPX0NVUklPVVM/"
 ```
