@@ -256,15 +256,74 @@ When a resource has the `search` attribute with a valid configuration, a new sea
 
 <LicenseReq license="pro" />
 
-Avo also has a global search feature. It will search through all the resources that have the `search` attribute with a valid configuration.
+Avo features a powerful global search that searches across all resources that have the `search` attribute configured. The global search provides a modern, responsive interface with live search results, keyboard navigation, and rich result presentation.
 
-You open the global search input by clicking the trigger on the navbar or by using the <kbd>CMD</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on Windows).
+### Opening global search
+
+You can open the global search in several ways:
+
+- **Click the search input** in the navbar
+- **Keyboard shortcut**: <kbd>CMD</kbd> + <kbd>K</kbd> (macOS) or <kbd>Ctrl</kbd> + <kbd>K</kbd> (Windows/Linux)
+- **Focus and start typing** in the search input
 
 <Image src="/assets/img/search/global_search_trigger.jpg" width="960" height="76" alt="Global search trigger" />
 
+### Search interface
+
+The global search displays results in a dropdown container below the search input. As you type, Avo performs live searches with the following features:
+
+#### Live search results
+- Results appear instantly as you type (with debouncing)
+- Shows results from all searchable resources
+- Displays rich information including images, titles, and descriptions
+- Shows result counts for each resource type
+
+#### Keyboard navigation
+The global search supports full keyboard navigation:
+
+- **<kbd>↑</kbd> / <kbd>↓</kbd>**: Navigate through search results
+- **<kbd>Enter</kbd>**: Select the highlighted result or go to "Show all results"
+- **<kbd>Escape</kbd>**: Close the search results
+- **<kbd>CMD/Ctrl</kbd> + <kbd>K</kbd>**: Focus the search input
+
+#### Resource navigation
+The search results include a "Go to" section that allows you to quickly navigate to resource index pages:
+
+- Type a resource name to filter the navigation options
+- Click or press Enter to navigate to the resource index
+- Useful for quickly accessing specific resource types
+
+#### Show all results
+When you have search results, a "Show all results for [query]" option appears:
+
+- Click to view comprehensive search results on a dedicated page
+- Press <kbd>Enter</kbd> when the search input is focused to navigate there
+- Shows all matching records across all resources in a structured layout
+
+### Search result presentation
+
+Global search results can display rich information for each record:
+
+- **Title**: The main identifier for the record
+- **Description**: Additional context (when configured with `item -> description`)
+- **Images**: Avatars or thumbnails (when configured with `item -> image_url`)
+- **Highlighting**: Search terms are highlighted in results
+
+### Development warnings
+
+<VersionReq version="4.0" />
+
+In development mode, the global search shows helpful warnings about resource configuration:
+
+- **Resources without search configured**: Lists resources that don't have a `search` query block
+- **Resources hidden from global search**: Shows resources with `hide_on_global: true`
+- **Quick configuration links**: Direct links to documentation for enabling search
+
+These warnings can be dismissed temporarily or permanently using the warning controls.
+
 ### Hide the global search
 
-If you, by any chance, want to hide the global search, you can do so using this setting 👇
+You can disable the global search feature entirely:
 
 ```ruby{3}
 # config/initializers/avo.rb
@@ -273,7 +332,7 @@ Avo.configure do |config|
 end
 ```
 
-Since version <Version version="3.13.5" /> `disabled_features` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context)
+Since version <Version version="3.13.5" /> `disabled_features` can be callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context):
 
 ```ruby{3}
 # config/initializers/avo.rb
@@ -284,8 +343,7 @@ end
 
 ### Scope out global or resource searches
 
-You may want to perform different searches on the `global` search from the `resource` search. You may use the `params[:global]` flag to figure that out.
-
+You may want to perform different searches on the `global` search from the `resource` search. You can use the `params[:global]` flag to differentiate:
 
 ```ruby
 class Avo::Resources::Order < Avo::BaseResource
@@ -299,6 +357,34 @@ class Avo::Resources::Order < Avo::BaseResource
         query.ransack(id_eq: q, details_cont: q, m: "or").result(distinct: false)
       end
     }
+  }
+end
+```
+
+### Advanced configuration
+
+#### Custom search paths
+
+You can customize where users are redirected when clicking search results using the `result_path` option:
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+  self.search = {
+    query: -> { query.ransack(name_cont: q).result(distinct: false) },
+    result_path: -> { avo.resources_project_path(record, tab: "details") }
+  }
+end
+```
+
+#### Search result limits
+
+Control how many results appear in the global search dropdown:
+
+```ruby
+class Avo::Resources::User < Avo::BaseResource
+  self.search = {
+    query: -> { query.ransack(name_cont: q).result(distinct: false) },
+    results_count: 3  # Only show 3 users in global search dropdown
   }
 end
 ```
