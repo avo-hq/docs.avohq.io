@@ -99,6 +99,10 @@ en:
 
 The message can use interpolation variables like `%{property}`, `%{old_value}`, and `%{new_value}`.
 
+##### Safe HTML Translations
+
+When your translation messages contain HTML markup (as shown in the example above), Rails automatically treats them as safe HTML when the translation key ends with `_html`. This follows Rails' [safe HTML translations](https://guides.rubyonrails.org/i18n.html#using-safe-html-translations) convention, allowing you to include styling and formatting in your collaboration timeline messages without additional escaping.
+
 </Option>
 
 <Option name="collaboration_timeline">
