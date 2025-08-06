@@ -25,7 +25,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-The `query` block provides the `q` variable, which contains the stripped search query string, and the `query` variable on which you run the query. That ensures that the [authorization scopes](./authorization.html#scopes) have been appropriately applied. If you need access to the unstripped query string, you can use `params[:q]` instead of `q`.
+The `query` block provides the `q` variable, which contains the stripped search query string, and the `query` variable on which you run the query. That ensures that the [authorization scopes](./../authorization.html#scopes) have been appropriately applied. If you need access to the unstripped query string, you can use `params[:q]` instead of `q`.
 
 In this block, you may configure the search however strict or loose you need it. Check out [ransack's search matchers](https://github.com/activerecord-hackery/ransack#search-matchers) to compose the query better.
 
@@ -35,7 +35,7 @@ If you're using ransack version 4 and up you must add `ransackable_attributes` a
 
 ## Authorize search
 
-Search is authorized in policy files using the [`search?`](./authorization#search) method.
+Search is authorized in policy files using the [`search?`](./../authorization#search) method.
 
 ```ruby
 class UserPolicy < ApplicationPolicy
@@ -47,7 +47,7 @@ end
 
 If the `search?` method returns false, the search operation for that resource is not going to show up in the global search and the search box on index is not going to be displayed.
 
-If you're using `search?` already in your policy file, you can alias it to some other method in you initializer using the `config.authorization_methods` config. More about that on [the authorization page](./authorization.html#using-different-policy-methods).
+If you're using `search?` already in your policy file, you can alias it to some other method in you initializer using the `config.authorization_methods` config. More about that on [the authorization page](./../authorization.html#using-different-policy-methods).
 
 ```ruby
 Avo.configure do |config|

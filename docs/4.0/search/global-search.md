@@ -6,7 +6,7 @@ license: pro
 
 Avo has a powerful global search feature powered by Hotwire. It searches through all the resources that have the `search` attribute with a valid configuration.
 
-The global search leverages the [resource search](./resource-search) configuration. Please refer to the [resource search](./resource-search) section for more information on how to configure and authorize the search for a resource.
+The global search leverages the [resource search](./resource-search) configuration. Please refer to the [resource search](./resource-search) section for more information on how to configure the search for a resource.
 
 You open the global search by clicking the trigger on the navbar or by using the <kbd>Cmd</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on Windows). The search includes enhanced keyboard navigation:
 
@@ -28,7 +28,7 @@ Avo.configure do |config|
 end
 ```
 
-You can also conditionally disable it using a lambda. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context).
+You can also conditionally disable it using a lambda. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](./../execution-context).
 
 ```ruby{3}
 # config/initializers/avo.rb
@@ -43,7 +43,7 @@ The `item` configuration is used to configure the item displayed in the search r
 
 | Option | Description | Default | Possible Values |
 |--------|-------------|---------|-----------------|
-| `title` | The title of the search result | [Resource title](./resources.html#self_title) | Any string |
+| `title` | The title of the search result | [Resource title](./../resources.html#self_title) | Any string |
 | `description` | The description of the search result | `nil` | Any string |
 | `image_url` | The URL of the image to display in the search result | `nil` | Any valid URL |
 | `image_format` | The format of the image to display in the search result | `:square` | `:square`, `:rounded`, `:circle` |
@@ -137,7 +137,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-You can also assign a lambda to dynamically set the value. Inside that block you have access to all attributes of the [`Avo::ExecutionContext`](execution-context).
+You can also assign a lambda to dynamically set the value. Inside that block you have access to all attributes of the [`Avo::ExecutionContext`](./../execution-context).
 
 ```ruby{3}
 class Avo::Resources::User < Avo::BaseResource
