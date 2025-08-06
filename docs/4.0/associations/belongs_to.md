@@ -206,7 +206,7 @@ end
 ```
 
 :::info
-Avo uses the [search feature](./../search) behind the scenes, so **make sure the target resource has the `query` option configured inside the `search` block**.
+Avo uses the [resource search feature](./../search/resource-search) behind the scenes, so **make sure the target resource has the `query` option configured inside the `search` block**.
 :::
 
 

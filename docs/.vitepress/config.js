@@ -119,6 +119,7 @@ const config = {
           text: "Avo 4",
           items: [
             {text: "Intro", link: "/4.0/index.html"},
+            {text: "Avo 3 to Avo 4 upgrade", link: "/4.0/avo-3-avo-4-upgrade.html"},
             {text: "Technical Support", link: "/4.0/technical-support.html"},
             {text: "Best practices", link: "/4.0/best-practices.html"},
             {text: "Code editors and LLM setup", link: "/4.0/llm-support.html"},
@@ -204,7 +205,8 @@ const config = {
             {text: "Eject views", link: "/4.0/eject-views.html"},
             {text: "Custom view types", link: "/4.0/custom-view-types.html"},
             {text: "Menu editor", link: "/4.0/menu-editor.html"},
-            {text: "Search", link: "/4.0/search.html"},
+            {text: "Resource Search", link: "/4.0/search/resource-search.html"},
+            {text: "Global Search", link: "/4.0/search/global-search.html"},
             {text: "Localization (I18n)", link: "/4.0/i18n.html"},
             {text: "Branding", link: "/4.0/branding.html"},
             {text: "Routing", link: "/4.0/routing.html"},

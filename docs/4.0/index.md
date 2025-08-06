@@ -28,7 +28,7 @@ You can extend Avo in different layers. For example, in the CRUD UI, you may add
 
 You can even create [Custom tools](./custom-tools) where you can add all the content you need using Rails partials or View Components.
 
-Most of the places where records are listed like [Has many associations](./associations/has_many), [attach modals](./associations/belongs_to.html#belongs-to-attach-scope), [search](./search), and more are scopable to meet your multi-tenancy scenarios.
+Most of the places where records are listed like [Has many associations](./associations/has_many), [attach modals](./associations/belongs_to.html#belongs-to-attach-scope), [resource search](./search/resource-search), and more are scopable to meet your multi-tenancy scenarios.
 
 Most of the views you see are exportable using the [`eject` command](./eject-views).
 
