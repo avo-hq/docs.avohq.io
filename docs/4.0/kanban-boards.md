@@ -232,52 +232,52 @@ In this scenario, you might need to extend the kanban models to add custom assoc
 Avo.configure do |config|
   config.root_path = '/admin'
   # ... other config options ...
+end
 
-  Rails.configuration.to_prepare do
-    Avo::Kanban::Board.class_eval do
-      belongs_to :team, optional: true
-      has_many :board_watchers, dependent: :destroy
+Rails.configuration.to_prepare do
+  Avo::Kanban::Board.class_eval do
+    belongs_to :team, optional: true
+    has_many :board_watchers, dependent: :destroy
 
-      validates :name, presence: true, uniqueness: { scope: :team_id }
+    validates :name, presence: true, uniqueness: { scope: :team_id }
+  end
+
+  Avo::Kanban::Column.class_eval do
+    belongs_to :workflow_stage, optional: true
+    has_one :sla_config, dependent: :destroy
+
+    after_update :notify_stage_change
+
+    private
+
+    def notify_stage_change
+      # Custom logic to notify team members of stage changes
+      BoardNotificationService.new(self).notify_stage_update
+    end
+  end
+
+  Avo::Kanban::Item.class_eval do
+    has_many :item_comments, dependent: :destroy
+    belongs_to :assignee, class_name: 'User', optional: true
+
+    after_destroy :cleanup_item_data
+    before_update :track_movement_history
+
+    private
+
+    def cleanup_item_data
+      # Clear any business-specific property when item is removed
+      record.update!("#{board.property}": nil)
     end
 
-    Avo::Kanban::Column.class_eval do
-      belongs_to :workflow_stage, optional: true
-      has_one :sla_config, dependent: :destroy
-
-      after_update :notify_stage_change
-
-      private
-
-      def notify_stage_change
-        # Custom logic to notify team members of stage changes
-        BoardNotificationService.new(self).notify_stage_update
-      end
-    end
-
-    Avo::Kanban::Item.class_eval do
-      has_many :item_comments, dependent: :destroy
-      belongs_to :assignee, class_name: 'User', optional: true
-
-      after_destroy :cleanup_item_data
-      before_update :track_movement_history
-
-      private
-
-      def cleanup_item_data
-        # Clear any business-specific property when item is removed
-        record.update!("#{board.property}": nil)
-      end
-
-      def track_movement_history
-        if column_id_changed?
-          ItemMovementTracker.create!(
-            item: self,
-            from_column_id: column_id_was,
-            to_column_id: column_id,
-            moved_at: Time.current
-          )
-        end
+    def track_movement_history
+      if column_id_changed?
+        ItemMovementTracker.create!(
+          item: self,
+          from_column_id: column_id_was,
+          to_column_id: column_id,
+          moved_at: Time.current
+        )
       end
     end
   end
