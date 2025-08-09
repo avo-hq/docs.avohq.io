@@ -52,6 +52,19 @@ The global search now includes a comprehensive results page:
 #### Breaking changes and migration notes
 <br>
 
+##### Avo Pro mount point removal
+
+To provide a cleaner public URL for the search page, `Avo::Pro` is no longer mounted under the `avo-pro` path prefix.
+
+- Previous mount point: `.../avo-pro/...`
+- New mount point: no prefix (mounted at the Avo engine root)
+
+Most `Avo::Pro` generated links were for internal requests (such as reordering) and were not user-visible. With the introduction of the dedicated search page, the public path became visible, so we removed the `avo-pro` prefix to be able to use `/admin/search?q=da` as the public search page instead of `/admin/avo-pro/search?q=da`.
+
+If you have hardcoded links that include the `avo-pro` prefix, update them to the new path or, preferably, use Rails route helpers going forward.
+
+This is **not breaking** unless you used hardcoded URLs, if you used Rails path helpers, no action is needed.
+
 ##### Removed `help` option
 
 The `help` option in the search configuration is now obsolete and has been removed. If you were using this option in your search configuration, you should remove it:
