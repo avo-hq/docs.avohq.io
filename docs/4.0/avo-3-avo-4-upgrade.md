@@ -98,3 +98,43 @@ class Avo::Resources::User < Avo::BaseResource
     result_path: -> { avo.resources_user_path(record) } # [!code --]
   }
 end
+```
+
+## Actions
+
+### Confirmation option renamed
+
+- **What changed**: The `no_confirmation` action option was renamed to `confirmation` and the default behavior flipped.
+  - Avo 3: `no_confirmation` (default: false), set to `true` to skip the confirmation modal.
+  - Avo 4: `confirmation` (default: true), set to `false` to skip the confirmation modal.
+
+#### Static configuration
+
+```ruby
+# Avo 3
+class Avo::Actions::ExportCsv < Avo::BaseAction
+  self.no_confirmation = true
+end
+
+# Avo 4
+class Avo::Actions::ExportCsv < Avo::BaseAction
+  self.confirmation = false
+end
+```
+
+#### Dynamic configuration (lambda)
+
+```ruby
+# Avo 3
+self.no_confirmation = -> { arguments[:no_confirmation] || false }
+
+# Avo 4
+self.confirmation = -> { arguments.key?(:confirmation) ? arguments[:confirmation] : true }
+```
+
+
+#### If you customized the actions modal/view
+
+- **Data attribute**: `data-action-no-confirmation-value` → `data-action-confirmation-value`
+- **Stimulus value**: `noConfirmation` → `confirmation`
+- **Behavior**: show the modal when `confirmation` is true, submit immediately when `confirmation` is false.
