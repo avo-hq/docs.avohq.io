@@ -115,14 +115,14 @@ end
 
 Behavioral customization is the process of modifying the action's behavior. This includes changing the action's confirmation behavior and authorization.
 
-<Option name="`no_confirmation`" headingSize=3>
+<Option name="`confirmation`" headingSize=3>
 
-By default, actions display a confirmation modal before execution. You can bypass this modal by setting `self.no_confirmation = true`, which will execute the action immediately upon triggering.
+By default, actions display a confirmation modal before execution. You can bypass this modal by setting `self.confirmation = false`, which will execute the action immediately upon triggering.
 
 ```ruby{3}
 # app/avo/actions/release_fish.rb
 class Avo::Actions::ReleaseFish < Avo::BaseAction
-  self.no_confirmation = true
+  self.confirmation = false
 end
 ```
 

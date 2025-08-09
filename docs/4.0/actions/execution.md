@@ -16,7 +16,7 @@ When a user triggers an action in Avo, the following flow occurs:
 2. The action is initiated by the user through the index page (bulk actions), show page (single record actions), [or resource controls (custom action buttons)](./../customizable-controls.md)
 
 3. Form display phase (optional):
-    - This phase can be bypassed by setting `self.no_confirmation = true`
+    - This phase can be bypassed by setting `self.confirmation = false`
     - By default, a modal is displayed where the user can confirm or cancel the action
     - If the action has defined fields, they will be shown in the modal for the user to fill out
     - The user can then choose to run the action or cancel it
