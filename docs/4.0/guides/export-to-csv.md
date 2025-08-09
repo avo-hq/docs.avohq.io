@@ -8,7 +8,7 @@ Below you have an example which you can take and customize to your liking. It ev
 # app/avo/actions/export_csv.rb
 class Avo::Actions::ExportCsv < Avo::BaseAction
   self.name = "Export CSV"
-  self.no_confirmation = false
+  self.confirmation = true
   self.standalone = true
 
   def fields
