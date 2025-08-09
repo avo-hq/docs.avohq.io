@@ -227,7 +227,7 @@ Sometimes, the default kanban models aren't quite enough for your specific use c
 
 In this scenario, you might need to extend the kanban models to add custom associations, validations, or callbacks that align with your business logic. Here's how you can safely extend the `Avo::Kanban::Board`, `Avo::Kanban::Column`, and `Avo::Kanban::Item` models:
 
-```ruby{6-53}
+```ruby{7-54}
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.root_path = '/admin'
