@@ -467,3 +467,67 @@ divider label: "Custom partials", visible: -> {
   true
 }
 ```
+
+## View specific card methods
+
+Similar to the view specific field methods such as `index_fields`, `show_fields` and so on, we have various card methods which let you define cards to be displayed for a specific view. 
+
+Available card methods by view include:
+
+### Index view:
+
+`index_cards`: Defines cards displayed on the resource index page
+
+`display_cards`: Defines cards displayed on the resource index page if the more specific `index_cards` method is not provided
+
+### Show view:
+`show_cards`: Defines cards displayed on the resource show page
+
+`display_cards`: Defines cards displayed on the resource show page if the more specific `show_cards` method is not provided
+
+### New view:
+`new_cards`: Defines cards displayed on the resource new page
+
+`form_cards`: Fallback method for defining cards displayed on new view if more specific `new_cards` method is not specified
+
+### Edit view:
+`edit_cards`: Defines cards displayed on the resource edit page
+
+`form_cards`: Fallback method for defining cards displayed on new view if more specific `edit_cards` method is not specified
+
+### Fallback:
+
+`cards` is a view card method defaulted to when no view-specific or context-specific card methods are provided.
+
+When resolving which cards to display for a given view, view-specific card methods such as `index_cards` are considered first and if these are not provided, we default to context-specific card methods such as `display_cards` for show and index views and `form_cards` for new and edit views. 
+
+### Example:
+
+Assuming we have the card below:
+
+```ruby
+class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
+  self.id = "amount_raised"
+  self.label = "Amount raised"
+  self.prefix = "$"
+  self.format = -> {
+    number_to_social value, start_at: 1_000
+  }
+
+  def query
+    result 9001
+  end
+end
+```
+To display this card on the project resource show page using the `show_cards` method, we'd achieve that using the code below:
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+
+  def show_cards
+    card Avo::Cards::AmountRaised
+  end
+
+end
+```
+When you navigate to the project resource show page, you'll see a card displaying the amount raised. 
