@@ -406,7 +406,7 @@ append_to_response -> {
 This option **only** works on **Index** pages, **NOT** on **associations**.
 :::
 
-This option leverages Turbo Stream to refresh specific table rows in response to an action. For individual records, you can use the `reload_record` alias method.
+This option leverages Turbo Stream to refresh specific table rows and grid view cards in response to an action. For individual records, you can use the `reload_record` alias method.
 
 ```ruby{8}
 def handle(query:, fields:, **args)
