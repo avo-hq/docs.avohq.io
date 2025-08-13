@@ -176,7 +176,7 @@ end # [!code focus]
 
 The `activity` key also supports a lambda to dynamically determine if the activity should be logged.
 
-Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `payload`, `action`, `records` and `activity_class`.
+Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](./../execution-context) along with the `payload`, `action`, `records` and `activity_class`.
 
 A common use case is to configure audit logging for specific users, for example if you have a `User` model and a method `audit_avo_activity?` on it that returns a boolean that indicates if activities should be logged for the user:
 
