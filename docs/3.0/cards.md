@@ -468,42 +468,24 @@ divider label: "Custom partials", visible: -> {
 }
 ```
 
-## View specific card methods
+## View-specific card methods
 
-Similar to the view specific field methods such as `index_fields`, `show_fields` and so on, we have various card methods which let you define cards to be displayed for a specific view. 
+Similar to view-specific field methods like `index_fields` and `show_fields`, resources can define view-specific card methods to control which cards render on each page.
 
-Available card methods by view include:
+### Resolution order by view
 
-### Index view:
+| View | Specific method | Context fallback | Final fallback |
+| --- | --- | --- | --- |
+| Index | `index_cards` | `display_cards` | `cards` |
+| Show | `show_cards` | `display_cards` | `cards` |
+| New | `new_cards` | `form_cards` | `cards` |
+| Edit | `edit_cards` | `form_cards` | `cards` |
 
-`index_cards`: Defines cards displayed on the resource index page
+Avo picks the first method available in the order listed above for the current view.
 
-`display_cards`: Defines cards displayed on the resource index page if the more specific `index_cards` method is not provided
+### Example
 
-### Show view:
-`show_cards`: Defines cards displayed on the resource show page
-
-`display_cards`: Defines cards displayed on the resource show page if the more specific `show_cards` method is not provided
-
-### New view:
-`new_cards`: Defines cards displayed on the resource new page
-
-`form_cards`: Fallback method for defining cards displayed on new view if more specific `new_cards` method is not specified
-
-### Edit view:
-`edit_cards`: Defines cards displayed on the resource edit page
-
-`form_cards`: Fallback method for defining cards displayed on new view if more specific `edit_cards` method is not specified
-
-### Fallback:
-
-`cards` is a view card method defaulted to when no view-specific or context-specific card methods are provided.
-
-When resolving which cards to display for a given view, view-specific card methods such as `index_cards` are considered first and if these are not provided, we default to context-specific card methods such as `display_cards` for show and index views and `form_cards` for new and edit views. 
-
-### Example:
-
-Assuming we have the card below:
+Assume this card class:
 
 ```ruby
 class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
@@ -519,15 +501,28 @@ class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
   end
 end
 ```
-To display this card on the project resource show page using the `show_cards` method, we'd achieve that using the code below:
+
+Define where it should appear on the `Project` resource:
 
 ```ruby
 class Avo::Resources::Project < Avo::BaseResource
-
+  # Show page uses `show_cards` first
   def show_cards
     card Avo::Cards::AmountRaised
   end
 
+  # Index and show pages fall back to `display_cards` only when
+  # their specific method (`index_cards`/`show_cards`) is not defined
+  def display_cards
+    card Avo::Cards::AmountRaised
+  end
+
+  # New and edit pages fall back to `form_cards` when `new_cards`/`edit_cards` are not defined
+  def form_cards
+    card Avo::Cards::AmountRaised
+  end
 end
 ```
-When you navigate to the project resource show page, you'll see a card displaying the amount raised. 
+
+With the setup above, the card will render on the Project show page via `show_cards`. If you remove `show_cards`, Avo will use `display_cards` for the show page. For new/edit pages, Avo will use `form_cards` unless you define `new_cards` or `edit_cards` respectively.
+
