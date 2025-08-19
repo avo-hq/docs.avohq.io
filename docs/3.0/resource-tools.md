@@ -212,7 +212,7 @@ If you run this code, you'll notice that the `information.information_age` param
 
 ## Where to add logic
 
-It's a good practice not to keep login in view files (partials).
+It's a good practice not to keep logic in view files (partials).
 You can hide that logic inside the tool using instance variables and methods, and access it in the partial using the `tool` variable.
 
 [Here's an example](https://github.com/avo-hq/main.avodemo.com/commit/c8ecb9b53a770103a993df4c2b3acec0a1faf737) on how you could do that.
