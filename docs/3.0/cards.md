@@ -470,6 +470,8 @@ divider label: "Custom partials", visible: -> {
 
 ## View-specific card methods
 
+<VersionReq version="3.24.0" />
+
 Similar to view-specific field methods like `index_fields` and `show_fields`, resources can define view-specific card methods to control which cards render on each page.
 
 ### Resolution order by view
