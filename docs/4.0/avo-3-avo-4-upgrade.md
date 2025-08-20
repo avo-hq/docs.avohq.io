@@ -79,7 +79,6 @@ end
 Avo.configure do |config|
   config.global_search = {
     enabled: false,
-    navigation_section: true,
   }
 end
 ```
