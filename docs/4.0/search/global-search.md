@@ -17,23 +17,31 @@ You open the global search by clicking the trigger on the navbar or by using the
 
 The global search shows a limited number of quick results in the dropdown, with an option to view all matching results on a dedicated page without limits.
 
-## Disable the global search
+## Global configuration
 
-If you want to hide the global search, you can disable it using the `disabled_features` setting:
+Use the `global_search` configuration to enable/disable the feature and control related options.
 
-```ruby{3}
+```ruby{3-6}
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.disabled_features = [:global_search]
+  config.global_search = {
+    enabled: true,
+    navigation_section: true,
+  }
 end
 ```
 
-You can also conditionally disable it using a lambda. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](./../execution-context).
+Set `enabled: false` to hide the global search.
 
-```ruby{3}
+All configuration options can be set using a lambda. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](./../execution-context).
+
+```ruby{3-6}
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.disabled_features = -> { current_user.is_admin? ? [] : [:global_search] }
+  config.global_search = {
+    enabled: -> { current_user.is_admin? },
+    navigation_section: -> { current_user.is_admin? },
+  }
 end
 ```
 
