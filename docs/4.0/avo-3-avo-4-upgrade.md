@@ -65,6 +65,27 @@ If you have hardcoded links that include the `avo-pro` prefix, update them to th
 
 This is **not breaking** unless you used hardcoded URLs, if you used Rails path helpers, no action is needed.
 
+##### Removed `disabled_features` configuration
+
+The `disabled_features` configuration has been removed. It was previously used only for toggling the global search. Replace any usage with the new `global_search` configuration.
+
+```ruby
+# Before
+Avo.configure do |config|
+  config.disabled_features = [:global_search]
+end
+
+# After
+Avo.configure do |config|
+  config.global_search = {
+    enabled: false,
+    navigation_section: true,
+  }
+end
+```
+
+Check the [global search configuration](./search/global-search.md) for more information.
+
 ##### Removed `help` option
 
 The `help` option in the search configuration is now obsolete and has been removed. If you were using this option in your search configuration, you should remove it:
