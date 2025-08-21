@@ -967,7 +967,7 @@ field :is_capital,
 
 </Option>
 
-<Option name="`humanized_label`">
+<Option name="`humanized_condition`">
 
 <VersionReq version="3.24.0" />
 
