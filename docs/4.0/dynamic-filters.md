@@ -967,6 +967,35 @@ field :is_capital,
 
 </Option>
 
+<Option name="`humanized_condition`">
+
+<VersionReq version="3.24.0" />
+
+Allows you to customize how filter conditions are displayed in the filter's pill interface by providing humanized, user-friendly representations of the internal filter conditions.
+
+##### Default value
+
+`condition` - The filter will display the auto-generated label for the filter condition.
+
+#### Possible values
+
+A lambda/proc that returns a string representing the humanized value. Within the function, you have access to the `condition` and `filter` object which contains the current filter's condition, as well as all attributes of [`Avo::ExecutionContext`](execution-context). Additionally `parent_record` (when the filter is applied to an association) is available.
+
+##### Usage examples
+
+```ruby{5-7}
+dynamic_filter :author,
+  type: :tags,
+  icon: "heroicons/outline/users",
+  conditions: {},
+  humanized_condition: -> {
+    (filter.value.split(",").count > 1) ? "are" : "is"
+  },
+  query: -> {
+    query.where(author_id: filter_param.value.split(","))
+  }
+```
+</Option>
 
 
 ## Guides & Tutorials
