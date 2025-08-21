@@ -35,6 +35,9 @@ Keep your team in sync with built-in comments and status updates. No more scatte
 
 6. **Add timeline:** Include the collaboration timeline in your resource using `collaboration_timeline`.
 
+7. **Configure permissions:** Add the [required authorization methods](https://docs.avohq.io/3.0/collaborate/authorization.html) to your resource policies.
+   
+
 <Option name="self.collaboration">
 
 Configure collaboration settings for your resource. This hash contains author and watchers configuration.
