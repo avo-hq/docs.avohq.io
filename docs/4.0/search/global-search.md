@@ -98,28 +98,6 @@ end
 ```
 </Option>
 
-
-### Scope out global or resource searches
-
-You may want to perform different searches on the `global` search from the `resource` search. You may use the `params[:global]` flag to figure that out.
-
-```ruby{5-11}
-# app/avo/resources/order.rb
-class Avo::Resources::Order < Avo::BaseResource
-  self.search = {
-    query: -> {
-      if params[:global]
-        # Perform global search
-        query.ransack(id_eq: q, m: "or").result(distinct: false)
-      else
-        # Perform resource search
-        query.ransack(id_eq: q, details_cont: q, m: "or").result(distinct: false)
-      end
-    }
-  }
-end
-```
-
 <Option name="`results_count`">
 
 By default, Avo displays 8 search results for each resource in the global search. You can change the number of results displayed by configuring the `search_results_count` option:
@@ -158,6 +136,58 @@ end
 If you configure `results_count` by specifying it in the resource file then that number takes precedence over the global [`search_results_count`](#search_results_count) for that resource.
 
 </Option>
+
+<Option name="`display_count`">
+
+By default, Avo displays the search results count for each resource in the global search. Example: "Users (8 of 21)". You can avoid counting the number of results by configuring the `display_count` option
+
+This is useful if you have a custom search provider that doesn't return the number of results or if you want to avoid counting the number of results on large datasets.
+
+```ruby{4}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.search = {
+    display_count: false
+    query: -> {
+      # ...
+    },
+  }
+end
+```
+
+You can also assign a lambda to dynamically set the value. Inside that block you have access to all attributes of the [`Avo::ExecutionContext`](./../execution-context).
+
+```ruby{4}
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.search = {
+    display_count: -> { user.admin? }
+  }
+end
+```
+
+</Option>
+
+## Scope out global or resource searches
+
+You may want to perform different searches on the `global` search from the `resource` search. You may use the `params[:global]` flag to figure that out.
+
+```ruby{5-11}
+# app/avo/resources/order.rb
+class Avo::Resources::Order < Avo::BaseResource
+  self.search = {
+    query: -> {
+      if params[:global]
+        # Perform global search
+        query.ransack(id_eq: q, m: "or").result(distinct: false)
+      else
+        # Perform resource search
+        query.ransack(id_eq: q, details_cont: q, m: "or").result(distinct: false)
+      end
+    }
+  }
+end
+```
 
 ## Custom search provider
 
