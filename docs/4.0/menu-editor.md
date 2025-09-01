@@ -230,14 +230,14 @@ end
 Renders all resources, except those explicitly excluded.
 
 #### Arguments:
-- `exclude`: *(Array, optional)* – A list of resource names to be excluded.
+- `except`: *(Array, optional)* – A list of resource names to be excluded.
 
 #### Example:
 
 ```ruby
 section "App", icon: "heroicons/outline/beaker" do
   group "Resources", icon: "resources" do
-    all_resources exclude: [:users, :orders]
+    all_resources except: [:users, :orders]
   end
 end
 ```
@@ -251,14 +251,14 @@ In the example above, all resources will be rendered except `Avo::Resources::Use
 Renders all dashboards, except those explicitly excluded.
 
 #### Arguments:
-- `exclude`: *(Array, optional)* – A list of dashboard names to be excluded.
+- `except`: *(Array, optional)* – A list of dashboard names to be excluded.
 
 #### Example:
 
 ```ruby
 section "App", icon: "heroicons/outline/beaker" do
   group "Dashboards", icon: "dashboards" do
-    all_dashboards exclude: [:sales, :analytics]
+    all_dashboards except: [:sales, :analytics]
   end
 end
 ```
