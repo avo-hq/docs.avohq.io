@@ -19,7 +19,7 @@ feedbackId: 834
 Fields are the backbone of a [`Resource`](./resources).
 Through fields you tell Avo what to fetch from the database and how to display it on the <Index />, <Show />, and <Edit /> views.
 
-Fields can also be used in [`Actions`](./actions) to gather user input before running the action.
+Fields can also be used in [`Actions`](./actions/overview) to gather user input before running the action.
 
 Avo ships with various simple fields like `text`, `textarea`, `number`, `password`, `boolean`, `select`, and more complex ones like `markdown`, `key_value`, `trix`, `tags`, and `code`.
 
