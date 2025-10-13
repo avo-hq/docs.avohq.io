@@ -4,6 +4,88 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade to 3.22.0
+
+<Option name="External image field options now apply to all views">
+
+### Breaking Change
+
+Previously, the external image field options (`width`, `height`, `radius`) were only applied on the Index view. Starting with version 3.22, these options now apply to **all views**.
+
+### Action Required
+
+**Review all external image fields** in your application to verify if this change affects your app's behavior or styling.
+
+### Maintaining Previous Behavior
+
+If you want to maintain the previous behavior where options only applied to the Index view, you need to update your external image fields to use conditional logic with procs:
+
+```ruby
+# Before (3.21 and earlier) - options only applied to Index view
+field :logo, as: :external_image, width: 40, height: 40, radius: 4
+
+# After (3.22+) - to maintain the same behavior, use conditional procs
+field :logo, as: :external_image,
+  width: -> { view.index? ? 40 : nil },
+  height: -> { view.index? ? 40 : nil },
+  radius: -> { view.index? ? 4 : nil }
+```
+
+Alternatively, if you want different styling for different views, you can now specify them conditionally:
+
+```ruby
+field :logo, as: :external_image,
+  width: -> { view.index? ? 40 : 150 },
+  height: -> { view.index? ? 40 : 150 },
+  radius: -> { view.index? ? 4 : 12 }
+```
+
+For more details on using execution context with external image fields, refer to the [external image field documentation](./fields/external_image.html).
+
+</Option>
+
+<Option name="decorate option deprecated in favor of format_display_using">
+
+### Breaking Change
+
+The `decorate` option has been deprecated in favor of `format_display_using`. This change was made to maintain consistency with the new [`format_{view}_using`](./field-options.html#format_view_using) enhancement that provides specific formatting options for different views.
+
+### Action Required
+
+Replace all instances of `decorate` with `format_display_using` throughout your application.
+
+### Steps to Update
+
+Perform a global search and replace in your codebase:
+
+```ruby
+# Before
+field :is_writer, as: :text, decorate: -> { value.present? ? '👍' : '👎' }
+
+field :company_url,
+  as: :text,
+  decorate: -> {
+    link_to(value, value, target: "_blank")
+  } do
+  main_app.companies_url(record)
+end
+
+# After
+field :is_writer, as: :text, format_display_using: -> { value.present? ? '👍' : '👎' }
+
+field :company_url,
+  as: :text,
+  format_display_using: -> {
+    link_to(value, value, target: "_blank")
+  } do
+  main_app.companies_url(record)
+end
+```
+
+The functionality remains exactly the same - both options format field values only for display views (index and show), leaving form views unaffected.
+
+</Option>
+
 ## Upgrade to `avo-kanban` `0.1.18`
 
 ### TL;DR

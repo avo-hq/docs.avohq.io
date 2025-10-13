@@ -26,6 +26,12 @@ rails db:migrate
 
 **Add `friendly_id` to your model:**
 
+:::warning
+To enable full compatibility with Avo, you need to use the `use: :finders` option.
+
+It also can be used as array of options like `use: [:finders, :slugged]`.
+:::
+
 ```ruby{3,6}
 # app/models/post.rb
 class Post < ApplicationRecord

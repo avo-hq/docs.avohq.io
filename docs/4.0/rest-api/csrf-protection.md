@@ -108,7 +108,7 @@ To test that CSRF protection is working:
 
 ```bash
 # This should work (with null_session, no exception is raised)
-curl -X POST http://localhost:3000/admin/api/resources/v1/users \
+curl -X POST http://localhost:3000/api/resources/v1/users \
   -H "Content-Type: application/json" \
   -d '{"user": {"first_name": "Test User"}}'
 ```

@@ -16,7 +16,7 @@ When a user triggers an action in Avo, the following flow occurs:
 2. The action is initiated by the user through the index page (bulk actions), show page (single record actions), [or resource controls (custom action buttons)](./../customizable-controls.md)
 
 3. Form display phase (optional):
-    - This phase can be bypassed by setting `self.no_confirmation = true`
+    - This phase can be bypassed by setting `self.confirmation = false`
     - By default, a modal is displayed where the user can confirm or cancel the action
     - If the action has defined fields, they will be shown in the modal for the user to fill out
     - The user can then choose to run the action or cancel it
@@ -28,6 +28,11 @@ When a user triggers an action in Avo, the following flow occurs:
     - User feedback is configured ([`succeed`](#succeed), [`warn`](#warn), [`inform`](#inform), [`error`](#error), or [`silent`](#silent))
     - Response type is configured ([`redirect_to`](#redirect_to), [`reload`](#reload), [`keep_modal_open`](#keep_modal_open), and [more](#response-types))
 
+## Fields
+
+An action can define fields, which will be shown to the user in the action's modal. Fields on an action work the same way as on resources. Whenever an action runs on a single record, those fields are tied to that record. Otherwise, they're just form inputs that are passed to the action's `handle` method.
+
+Check out the [Fields page](./../fields.md) for more information.
 
 ## The `handle` method
 
@@ -406,7 +411,7 @@ append_to_response -> {
 This option **only** works on **Index** pages, **NOT** on **associations**.
 :::
 
-This option leverages Turbo Stream to refresh specific table rows in response to an action. For individual records, you can use the `reload_record` alias method.
+This option leverages Turbo Stream to refresh specific table rows and grid view cards in response to an action. For individual records, you can use the `reload_record` alias method.
 
 ```ruby{8}
 def handle(query:, fields:, **args)

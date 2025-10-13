@@ -15,6 +15,13 @@ field :logo, as: :external_image
 
 ## Options
 
+All options can be static values or procs that are executed within Avo's execution context. When using procs, you have access to all the defaults that [`Avo::ExecutionContext`](../execution-context.html) provides plus:
+
+- `record`
+- `resource`
+- `view`
+- `field`
+
 <Option name="`width`">
 
 #### Default value
@@ -23,7 +30,13 @@ field :logo, as: :external_image
 
 #### Possible values
 
-Use any number to size the image.
+Use any number to size the image, or a proc that returns a number.
+
+#### Example with proc
+
+```ruby
+field :logo, as: :external_image, width: -> { view.index? ? 30 : 120 }
+```
 </Option>
 
 <Option name="`height`">
@@ -34,7 +47,13 @@ Use any number to size the image.
 
 #### Possible values
 
-Use any number to size the image.
+Use any number to size the image, or a proc that returns a number.
+
+#### Example with proc
+
+```ruby
+field :logo, as: :external_image, height: -> { view.index? ? 30 : 120 }
+```
 </Option>
 
 <Option name="`radius`">
@@ -45,10 +64,29 @@ Use any number to size the image.
 
 #### Possible values
 
-Use any number to set the radius value.
+Use any number to set the radius value, or a proc that returns a number.
+
+#### Example with proc
+
+```ruby
+field :logo, as: :external_image, radius: -> { view.index? ? 4 : 8 }
+```
 </Option>
 
 <!-- @include: ./../common/link_to_record_common.md-->
+
+## Conditional sizing based on view
+
+You can use procs to set different image dimensions and styling based on the current view:
+
+```ruby
+field :logo, as: :external_image,
+  width: -> { view.index? ? 40 : 150 },
+  height: -> { view.index? ? 40 : 150 },
+  radius: -> { view.index? ? 4 : 12 }
+```
+
+This example will display smaller, slightly rounded images on the index view (40x40px with 4px radius) and larger, more rounded images on the show view (150x150px with 12px radius).
 
 ## Use computed values
 
