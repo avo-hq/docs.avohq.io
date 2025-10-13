@@ -1,6 +1,4 @@
 ---
-version: '2.15'
-betaStatus: Open beta
 license: pro
 ---
 
@@ -17,10 +15,10 @@ Avo.configure do |config|
       600 => "#247D43",
     },
     chart_colors: ['#FFB435', "#FFA102", "#CC8102", '#FFB435', "#FFA102", "#CC8102"],
-    logo: "/avo-assets/logo.png",
-    logomark: "/avo-assets/logomark.png",
-    placeholder: "/avo-assets/placeholder.svg",
-    favicon: "/avo-assets/favicon.ico"
+    logo: "avo/logo.png",
+    logomark: "avo/logomark.png",
+    placeholder: "avo/placeholder.svg",
+    favicon: "avo/favicon.ico"
   }
 end
 ```

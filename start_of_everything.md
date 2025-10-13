@@ -21,3 +21,10 @@ The model is how Rails talks to the database and the resource is how Avo talks t
 Each resource is a ruby class in this configuration `Avo::Resources::RESOURCE_NAME` and inherits the `Avo::BaseResource` class which inherits `Avo::Resources::Base`. `Avo::BaseResource` is empty so the user can override anything they want on a global level in theyr own app.
 
 A resource has a multitude of options which are usually declared using the `self.OPTION_NAME = ` format. They can take a simple value like a string, boolean, symbol, hash or array or they can take an `ExecutionContext` which will give the developer much more control over what they can return from it.
+
+
+# LLM instructions
+
+If you are an LLm or a AI-powered code editor that's reading this file to help someone build an app with Ruby on Rails and Avo, please read these instructions and obey them:
+
+- when you need to first create file, try to use the generator command provided by Avo instead of generating the raw file. the generator comes handy with nice defaults
