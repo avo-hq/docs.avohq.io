@@ -486,9 +486,12 @@ Check default conditions for each filter type above on this page.
 
 #### Possible values
 
-A hash with the desired key-values.
+- A hash with the desired key-values to customize available conditions
+- An empty hash `{}` to hide conditions dropdown and use the first default condition
 
-Usage example:
+##### Usage examples
+
+###### Custom conditions
 ```ruby {6-9,15-18}
 # Using field's filterable option
 field :first_name,
@@ -509,6 +512,31 @@ dynamic_filter :first_name,
     not_case_sensitive: "Not case sensitive"
   }.invert
 ```
+
+###### Hide conditions dropdown
+When set to an empty hash (`{}`), this option hides the conditions dropdown and automatically applies the first default condition for each filter type. This is particularly useful when you want to simplify the filter interface by removing the conditions selection, especially for filters where only one condition makes sense.
+
+```ruby{3}
+dynamic_filter :last_name,
+  type: :select,
+  conditions: {},
+  options: User.pluck(:last_name).compact
+```
+
+```ruby{4}
+field :department,
+  as: :select,
+  filterable: {
+    conditions: {},
+    type: :select,
+    options: ["Engineering", "Marketing", "Sales", "Support"]
+  }
+```
+
+:::info
+When `conditions: {}` is used, the filter will automatically use the first condition from the default conditions list for that filter type. For example, a select filter will use "Is" condition, and a text filter will use "Contains" condition.
+:::
+
 </Option>
 
 <Option name="`query_attributes`">
@@ -719,32 +747,48 @@ fetch_values_from: "/avo-filters/resources/cities/tags"
 fetch_values_from: -> { "/avo-filters/resources/cities/tags" }
 ```
 
-The string should resolve to an endpoint that returns an array of objects with the keys `value`, `label` and optionally `avatar`.
+The endpoint should handle two different scenarios:
 
-The endpoint will receive the user input as `q` in the params. It is accessible by using `params["q"]`.
+1. **Search functionality**: When a user types in the filter input, the endpoint receives the user input as `q` in the params (`params["q"]`)
+2. **Initial load**: When the filter already has selected values (like on page load), the endpoint receives an array of values in `params[:value]` to fetch the corresponding labels
+
+The endpoint should return an array of objects with the keys `value`, `label` and optionally `avatar`.
 
 ::: code-group
-```ruby{3-20} [app/controllers/avo/cities_controller.rb]
+```ruby{3-33} [app/controllers/avo/cities_controller.rb]
 class Avo::CitiesController < Avo::ResourcesController
   def tags
-    # You can access the user input by using params["q"]
-    render json: [
-      {
-        value: 1,
-        label: "one",
-        avatar: "https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
-      },
-      {
-        value: 2,
-        label: "two",
-        avatar: "https://images.unsplash.com/photo-1567254790685-6b6d6abe4689?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
-      },
-      {
-        value: 3,
-        label: "three",
-        avatar: "https://images.unsplash.com/photo-1560765447-da05a55e72f8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
-      }
-    ]
+    if params[:value].present?
+      # Handle initial load: return labels for selected values
+      # params[:value] contains an array of selected values
+      selected_cities = City.where(id: params[:value])
+      render json: selected_cities.map do |city|
+        {
+          value: city.id,
+          label: city.name,
+          avatar: city.avatar_url
+        }
+      end
+    elsif params["q"].present?
+      # Handle search: return cities matching the query
+      cities = City.where("name ILIKE ?", "%#{params["q"]}%").limit(10)
+      render json: cities.map do |city|
+        {
+          value: city.id,
+          label: city.name,
+          avatar: city.avatar_url
+        }
+      end
+    else
+      # Handle empty state: return some default suggestions
+      render json: [
+        {
+          value: 1,
+          label: "New York",
+          avatar: "https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
+        }
+      ]
+    end
   end
 end
 ```
@@ -812,6 +856,148 @@ dynamic_filter :version,
 ```
 </Option>
 
+<Option name="`render_apply_button`">
+
+Controls whether the "Apply" button should be rendered in the filter interface.
+
+##### Default value
+
+`true`
+
+#### Possible values
+
+Boolean value (`true` or `false`).
+
+When set to `false`, the apply button will be hidden from the filter interface. This is particularly useful when combined with `apply_on_select: true` to create an immediate filtering experience.
+
+##### Usage examples
+
+```ruby{3}
+dynamic_filter :status,
+  type: :select,
+  render_apply_button: false
+```
+
+```ruby{4-5}
+field :status,
+  as: :select,
+  filterable: {
+    render_apply_button: false,
+    apply_on_select: true,
+    options: ["active", "inactive", "pending"]
+  }
+```
+
+</Option>
+
+<Option name="`apply_on_select`">
+
+Controls whether the filter should be applied immediately when the selected value changes, without requiring the user to click the "Apply" button.
+
+##### Default value
+
+`false`
+
+#### Possible values
+
+Boolean value (`true` or `false`).
+
+When set to `true`, the filter will automatically apply as soon as the user selects or changes a value. This creates a more responsive user experience, especially when combined with `render_apply_button: false`.
+
+##### Usage examples
+
+```ruby{3-4}
+dynamic_filter :category,
+  type: :select,
+  apply_on_select: true,
+  render_apply_button: false
+```
+
+```ruby{4-5}
+field :priority,
+  as: :select,
+  filterable: {
+    apply_on_select: true,
+    render_apply_button: false,
+    options: ["high", "medium", "low"]
+  }
+```
+
+</Option>
+
+<Option name="`humanized_value`">
+
+Allows you to customize how filter values are displayed in the filter interface by providing humanized, user-friendly representations of the internal filter values.
+
+##### Default value
+
+`value` - The filter will display the raw filter values.
+
+#### Possible values
+
+A lambda/proc that returns a string representing the humanized value. Within the function, you have access to the `value` and `filter` object which contains the current filter's condition, as well as all attributes of [`Avo::ExecutionContext`](execution-context). Additionally `parent_record` (when the filter is applied to an association) is available.
+
+##### Usage examples
+
+```ruby{4-11}
+field :is_capital,
+  as: :boolean,
+  filterable: {
+    humanized_value: -> {
+      case filter.condition
+      when "is_true"
+        "yes"
+      when "is_false"
+        "no"
+      end
+    }
+  }
+```
+
+```ruby{4-8}
+    dynamic_filter label: "Tags with fetch_values_from",
+      type: :tags,
+      fetch_values_from: -> { "/avo-filters/resources/cities/tags" },
+      humanized_value: -> {
+        City.controller_suggestions.select do |suggestion|
+          suggestion[:value].to_s.in?(value.split(","))
+        end.map { _1[:label] }.join(", ")
+      }
+```
+
+</Option>
+
+<Option name="`humanized_condition`">
+
+<VersionReq version="3.24.0" />
+
+Allows you to customize how filter conditions are displayed in the filter's pill interface by providing humanized, user-friendly representations of the internal filter conditions.
+
+##### Default value
+
+`condition` - The filter will display the auto-generated label for the filter condition.
+
+#### Possible values
+
+A lambda/proc that returns a string representing the humanized value. Within the function, you have access to the `condition` and `filter` object which contains the current filter's condition, as well as all attributes of [`Avo::ExecutionContext`](execution-context). Additionally `parent_record` (when the filter is applied to an association) is available.
+
+##### Usage examples
+
+```ruby{5-7}
+dynamic_filter :author,
+  type: :tags,
+  icon: "heroicons/outline/users",
+  conditions: {},
+  humanized_condition: -> {
+    (filter.value.split(",").count > 1) ? "are" : "is"
+  },
+  query: -> {
+    query.where(author_id: filter_param.value.split(","))
+  }
+```
+</Option>
+
+
 ## Guides & Tutorials
 
 <Option name="How to filter associations">
@@ -819,7 +1005,6 @@ dynamic_filter :version,
 Learn how to effectively filter records based on their associations in Avo. This video tutorial demonstrates how to set up and use dynamic filters to query records through the attributes of their associations, enabling powerful and flexible data filtering capabilities.
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/d8bd49086d014d77a3013796c8480339?sid=aaaec555-b19f-429b-b0a7-e998a2d2128e" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
-</Option>
 
 #### `belongs_to` example
 
@@ -874,3 +1059,202 @@ class Avo::Resources::Author < Avo::BaseResource
   end
 end
 ```
+</Option>
+
+<Option name="Composable filters">
+
+When you have multiple fields that require similar filtering logic, you can create reusable filter helpers to avoid code duplication. This is particularly useful when working with JSON columns, complex queries, or any scenario where multiple fields share the same filtering pattern.
+
+This guide demonstrates four different approaches to create composable filters, each with its own benefits and use cases.
+
+### The Problem: Repetitive Filter Code
+
+Before diving into the solutions, let's look at a common problem where filter logic is repeated across multiple fields:
+
+```ruby
+class Avo::Resources::Feedback < Avo::BaseResource
+  def fields
+    field :company_size, filterable: {
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'company_size'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'company_size' = '#{filter_param.value}'")) }
+    }
+
+    field :company_industry, filterable: {
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'company_industry'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'company_industry' = '#{filter_param.value}'")) }
+    }
+
+    field :title, filterable: {
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'title'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'title' = '#{filter_param.value}'")) }
+    }
+
+    field :description, filterable: {
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'description'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'description' = '#{filter_param.value}'")) }
+    }
+  end
+end
+```
+
+As you can see, the same filtering logic is repeated for each field, which violates the DRY (Don't Repeat Yourself) principle and makes the code harder to maintain.
+
+### Method 1: Helper Method with Field Configuration
+
+This approach extracts the common filtering logic into a helper method that returns the filterable configuration hash. It's the most straightforward refactoring and maintains the existing field-based approach.
+
+```ruby
+class Avo::Resources::Feedback < Avo::BaseResource
+  def filterable_helper(field_name)
+    {
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'#{field_name}'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'#{field_name}' = '#{filter_param.value}'")) }
+    }
+  end
+
+  def fields
+    field :company_size, filterable: filterable_helper(:company_size)
+    field :company_industry, filterable: filterable_helper(:company_industry)
+    field :title, filterable: filterable_helper(:title)
+    field :description, filterable: filterable_helper(:description)
+  end
+end
+```
+
+**Benefits:**
+- Simple refactoring that maintains the existing field structure
+- Easy to understand and implement
+- Minimal changes to existing code
+
+**Best for:** Quick refactoring of existing resources with repetitive filter logic.
+
+:::warning
+When you're using this approach within a `with_options` block, you need allow the extra args that are passed to the helper method.
+
+```ruby
+def filterable_helper(field_name, **args)
+  # ...
+end
+```
+:::
+
+### Method 2: Separate Fields and Filters with Helper
+
+This approach separates the field definitions from the filter definitions using the `dynamic_filter` method. The helper method now directly creates the dynamic filter instead of returning a configuration hash.
+
+```ruby
+class Avo::Resources::Feedback < Avo::BaseResource
+  def fields
+    field :company_size
+    field :company_industry
+    field :title
+    field :description
+  end
+
+  def filterable_helper(field_name)
+    dynamic_filter field_name,
+      type: :select,
+      options: -> { Feedback.pluck(Arel.sql("answers->>'#{field_name}'")).uniq },
+      query: -> { query.where(Arel.sql("answers->>'#{field_name}' = '#{filter_param.value}'")) }
+  end
+
+  def filters
+    filterable_helper(:company_size)
+    filterable_helper(:company_industry)
+    filterable_helper(:title)
+    filterable_helper(:description)
+  end
+end
+```
+
+**Benefits:**
+- Clear separation between field definitions and filter logic
+- Uses the more flexible `dynamic_filter` method
+- Filters can be defined independently of fields
+
+**Best for:**
+
+- Resources where you want to maintain clean separation between display fields and filtering logic.
+- Dynamic filters that are common across multiple resources.
+
+### Method 3: Programmatic Filter Generation
+
+This approach uses Ruby's array iteration to programmatically generate multiple filters with the same logic. It's the most concise and reduces the code to its essential elements.
+
+```ruby
+class Avo::Resources::Feedback < Avo::BaseResource
+  def fields
+    field :company_size
+    field :company_industry
+    field :title
+    field :description
+  end
+
+  def filters
+    [:company_size, :company_industry, :title, :description].map do |field_name|
+      dynamic_filter field_name,
+        type: :select,
+        options: -> { Feedback.pluck(Arel.sql("answers->>'#{field_name}'")).uniq },
+        query: -> { query.where(Arel.sql("answers->>'#{field_name}' = '#{filter_param.value}'")) }
+    end
+  end
+end
+```
+
+**Benefits:**
+- Most concise code
+- Easy to add or remove filterable fields by modifying the array
+- Clearly shows which fields share the same filtering logic
+
+**Best for:** Resources with many fields that share identical filtering logic, especially when the list of filterable fields might change frequently.
+
+### Method 4: Custom DSL with Method Override
+
+This approach creates a custom DSL by overriding the `field` method to intercept a special symbol (`:by_answer`). This provides the cleanest syntax at the field level while hiding the complexity in the method override.
+
+```ruby
+class Avo::Resources::Feedback < Avo::BaseResource
+  def fields
+    field :company_size, filterable: :by_answer
+    field :company_industry, filterable: :by_answer
+    field :title, filterable: :by_answer
+    field :description, filterable: :by_answer
+  end
+
+  def field(field_name, **args, &block)
+    if args[:filterable] == :by_answer
+      args[:filterable] = {
+        type: :select,
+        options: -> { Feedback.pluck(Arel.sql("answers->>'#{field_name}'")).uniq },
+        query: -> { query.where(Arel.sql("answers->>'#{field_name}' = '#{filter_param.value}'")) }
+      }
+    end
+
+    super(field_name, **args, &block)
+  end
+end
+```
+
+**Benefits:**
+- Creates a clean, semantic DSL
+- Hides complexity while maintaining readable field definitions
+- Easy to extend with additional filter types
+- Most maintainable for resources with many similar filterable fields
+
+**Best for:** Resources where you want to create a custom, reusable filtering pattern that feels natural and integrated with Avo's field DSL.
+
+### Choosing the Right Approach
+
+- **Method 1** for quick refactoring of existing code
+- **Method 2** when you want clear separation between fields and filters
+- **Method 3** when you have many fields with identical filtering logic
+- **Method 4** when you want to create a clean, reusable DSL for your team
+
+All approaches achieve the same goal of eliminating code duplication while providing different levels of abstraction and maintainability.
+
+</Option>

@@ -18,7 +18,7 @@ end
 ```
 
 :::warning
-  Avo uses the **search feature** behind the scenes, so **make sure the target resource has the [`search_query`](./../search) option configured**.
+  Avo uses the **resource search feature** behind the scenes, so **make sure the target resource has the [`search_query`](./../search/resource-search) option configured**.
 :::
 
 ```ruby{3-7}
@@ -26,7 +26,7 @@ end
 class Avo::Resources::CourseLink < Avo::BaseResource
   self.search = {
     query: -> {
-      query.ransack(id_eq: params[:q], link_cont: params[:q], m: "or").result(distinct: false)
+      query.ransack(id_eq: q, link_cont: q, m: "or").result(distinct: false)
     }
   }
 end

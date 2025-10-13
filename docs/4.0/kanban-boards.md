@@ -220,3 +220,68 @@ You can control access to various parts of the Kanban board by defining the foll
   :::warning
     Doesn't impact the ability to add items via the bottom of each column.
   :::
+
+## Customizing kanban models for your business logic
+
+Sometimes, the default kanban models aren't quite enough for your specific use case. Let's say you're building a project management system where kanban boards need to belong to specific teams, and each column represents a workflow stage that needs to track additional metadata like SLA targets or approval requirements.
+
+In this scenario, you might need to extend the kanban models to add custom associations, validations, or callbacks that align with your business logic. Here's how you can safely extend the `Avo::Kanban::Board`, `Avo::Kanban::Column`, and `Avo::Kanban::Item` models:
+
+```ruby{7-54}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.root_path = '/admin'
+  # ... other config options ...
+end
+
+Rails.configuration.to_prepare do
+  Avo::Kanban::Board.class_eval do
+    belongs_to :team, optional: true
+    has_many :board_watchers, dependent: :destroy
+
+    validates :name, presence: true, uniqueness: { scope: :team_id }
+  end
+
+  Avo::Kanban::Column.class_eval do
+    belongs_to :workflow_stage, optional: true
+    has_one :sla_config, dependent: :destroy
+
+    after_update :notify_stage_change
+
+    private
+
+    def notify_stage_change
+      # Custom logic to notify team members of stage changes
+      BoardNotificationService.new(self).notify_stage_update
+    end
+  end
+
+  Avo::Kanban::Item.class_eval do
+    has_many :item_comments, dependent: :destroy
+    belongs_to :assignee, class_name: 'User', optional: true
+
+    after_destroy :cleanup_item_data
+    before_update :track_movement_history
+
+    private
+
+    def cleanup_item_data
+      # Clear any business-specific property when item is removed
+      record.update!("#{board.property}": nil)
+    end
+
+    def track_movement_history
+      if column_id_changed?
+        ItemMovementTracker.create!(
+          item: self,
+          from_column_id: column_id_was,
+          to_column_id: column_id,
+          moved_at: Time.current
+        )
+      end
+    end
+  end
+end
+```
+
+This approach allows you to seamlessly integrate the kanban functionality with your existing domain models while maintaining the flexibility to add custom business logic as your application grows.

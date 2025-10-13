@@ -1,6 +1,9 @@
 ---
 version: '1.0'
 license: community
+field_type: 'date_time'
+default_format: 'yyyy-LL-dd TT'
+default_picker_format: 'Y-m-d H:i:S'
 ---
 
 # DateTime
@@ -21,70 +24,6 @@ field :joined_at,
 
 ## Options
 
-<Option name="`format`">
-
-Format the date shown to the user on the `Index` and `Show` views.
-
-#### Default
-
-`yyyy-LL-dd TT`
-
-#### Possible values
-
-Use [`luxon`](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) formatting tokens.
-</Option>
-<Option name="`picker_format`">
-
-Format the date shown to the user on the `Edit` and `New` views.
-
-#### Default
-
-`Y-m-d H:i:S`
-
-#### Possible values
-
-Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
-</Option>
-<Option name="`time_24hr`">
-
-Displays time picker in 24-hour mode or AM/PM selection.
-
-<!-- @include: ./../common/default_boolean_false.md -->
-</Option>
-<Option name="`timezone`">
-
-Select in which timezone the values should be cast.
-
-#### Default
-
-If nothing is selected, the browser's timezone will be used.
-
-#### Possible values
-
-[TZInfo identifiers](https://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html).
-
-```ruby{1,3}
-field :started_at, as: :date_time, timezone: "EET"
-# Or
-field :started_at, as: :date_time, timezone: -> { record.timezone }
-```
-</Option>
-
-<Option name="`picker_options`">
-
-Passes the options here to [flatpickr](https://flatpickr.js.org/).
-
-#### Default
-
-`{}`
-
-#### Possible values
-
-Use [`flatpickr`](https://flatpickr.js.org/options) options.
-</Option>
-
-:::warning
-These options may override other options like `time_24hr`.
-:::
-
+<!-- @include: ./../common/date_all_common.md-->
 <!-- @include: ./../common/date_date_time_common.md-->
+<!-- @include: ./../common/date_time_time_common.md-->

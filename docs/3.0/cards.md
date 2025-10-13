@@ -467,3 +467,64 @@ divider label: "Custom partials", visible: -> {
   true
 }
 ```
+
+## View-specific card methods
+
+<VersionReq version="3.24.0" />
+
+Similar to view-specific field methods like `index_fields` and `show_fields`, resources can define view-specific card methods to control which cards render on each page.
+
+### Resolution order by view
+
+| View | Specific method | Context fallback | Final fallback |
+| --- | --- | --- | --- |
+| Index | `index_cards` | `display_cards` | `cards` |
+| Show | `show_cards` | `display_cards` | `cards` |
+| New | `new_cards` | `form_cards` | `cards` |
+| Edit | `edit_cards` | `form_cards` | `cards` |
+
+Avo picks the first method available in the order listed above for the current view.
+
+### Example
+
+Assume this card class:
+
+```ruby
+class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
+  self.id = "amount_raised"
+  self.label = "Amount raised"
+  self.prefix = "$"
+  self.format = -> {
+    number_to_social value, start_at: 1_000
+  }
+
+  def query
+    result 9001
+  end
+end
+```
+
+Define where it should appear on the `Project` resource:
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+  # Show page uses `show_cards` first
+  def show_cards
+    card Avo::Cards::AmountRaised
+  end
+
+  # Index and show pages fall back to `display_cards` only when
+  # their specific method (`index_cards`/`show_cards`) is not defined
+  def display_cards
+    card Avo::Cards::AmountRaised
+  end
+
+  # New and edit pages fall back to `form_cards` when `new_cards`/`edit_cards` are not defined
+  def form_cards
+    card Avo::Cards::AmountRaised
+  end
+end
+```
+
+With the setup above, the card will render on the Project show page via `show_cards`. If you remove `show_cards`, Avo will use `display_cards` for the show page. For new/edit pages, Avo will use `form_cards` unless you define `new_cards` or `edit_cards` respectively.
+

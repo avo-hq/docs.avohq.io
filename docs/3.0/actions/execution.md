@@ -28,6 +28,11 @@ When a user triggers an action in Avo, the following flow occurs:
     - User feedback is configured ([`succeed`](#succeed), [`warn`](#warn), [`inform`](#inform), [`error`](#error), or [`silent`](#silent))
     - Response type is configured ([`redirect_to`](#redirect_to), [`reload`](#reload), [`keep_modal_open`](#keep_modal_open), and [more](#response-types))
 
+## Fields
+
+An action can define fields, which will be shown to the user in the action's modal. Fields on an action work the same way as on resources. Whenever an action runs on a single record, those fields are tied to that record. Otherwise, they're just form inputs that are passed to the action's `handle` method.
+
+Check out the [Fields page](./../fields.md) for more information.
 
 ## The `handle` method
 
@@ -406,7 +411,9 @@ append_to_response -> {
 This option **only** works on **Index** pages, **NOT** on **associations**.
 :::
 
-This option leverages Turbo Stream to refresh specific table rows in response to an action. For individual records, you can use the `reload_record` alias method.
+This option leverages Turbo Stream to refresh specific table rows (and grid view cards since <Version version="3.24.0"/>) in response to an action.
+
+For individual records, you can use the `reload_record` alias method.
 
 ```ruby{8}
 def handle(query:, fields:, **args)

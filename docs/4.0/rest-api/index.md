@@ -20,6 +20,21 @@ gem "avo-api", source: "https://packager.dev/avo-hq/"
 bundle install
 ```
 
+After installing the gem, run the install generator to set up your API controllers:
+
+```bash
+rails generate avo_api:install
+```
+
+This generator will:
+- Generate individual controllers for all your existing Avo resources
+- Export a customizable `BaseResourcesController` to your app directory
+- Provide examples for authentication, authorization, and customization
+
+:::tip PRO TIP
+The generated controllers inherit from the `BaseResourcesController`, which you can customize to add global API behavior like authentication, custom serialization, or response formatting.
+:::
+
 ## Overview
 
 The REST API automatically generates endpoints for all your Avo resources, respecting field visibility settings and authorization rules.
@@ -140,9 +155,42 @@ end
 
 ## Authentication & Authorization
 
-:::warning 🚧 Work In Progress
-<!-- The API uses the same authentication and authorization as your Avo admin panel. Make sure to authenticate your API requests according to your Avo configuration. -->
+:::info
+Check out the [Authentication](./authentication) page for more information on how to authenticate your requests.
 :::
+
+For authenticated requests, the API uses the same [authorization](./../authorization) as your Avo interface. Authorization is automatically applied based on each resource's policy.
+
+### Policy-Based Authorization
+
+Each resource's authorization is handled through its corresponding policy class (using Pundit). The API respects your existing authorization rules:
+
+```ruby
+# app/policies/comment_policy.rb
+class CommentPolicy < ApplicationPolicy
+  class Scope < ApplicationPolicy::Scope
+    def resolve
+      user.admin? ? scope.all : scope.where(user:)
+    end
+  end
+end
+```
+
+```ruby
+# Admin user request
+GET /api/resources/v1/comments
+# Returns: All comments (4 records)
+
+# Regular user request
+GET /api/resources/v1/comments
+# Returns: Only user's own comments (2 records)
+
+# Unauthorized request
+GET /api/resources/v1/comments
+# Returns: 401 Unauthorized
+```
+
+The same authorization logic that protects your Avo admin interface automatically protects your API endpoints.
 
 ## Creating Resources (POST)
 

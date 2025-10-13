@@ -402,32 +402,6 @@ class Course < ApplicationRecord
 end
 ```
 
-## Disable features
-
-You might want to disable some Avo features. You can do that using the `disabled_features` option.
-
-```ruby{3}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.disabled_features = [:global_search]
-end
-```
-
-<VersionReq version="3.13.5" /> `disabled_features` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context)
-
-```ruby{3}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.disabled_features = -> { current_user.is_admin? ? [] : [:global_search] }
-end
-```
-
-After this setting, the global search will be hidden for users.
-
-Supported options:
-
-- `global_search`
-
 ## Customize profile name, photo, and title
 
 You might see on the sidebar footer a small profile widget. The widget displays three types of information about the user; `name`, `photo`, and `title`.

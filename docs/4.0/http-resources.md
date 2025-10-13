@@ -9,14 +9,6 @@ outline: deep
 
 An **HTTP Resource** is a flexible resource that can be backed by an **endpoint** request. Unlike traditional resources tied to Active Record models, HTTP Resources allow dynamic interaction with external APIs and non-persistent data sources.
 
-:::warning ⚠️ Limitations
-
-- The HTTP Resource does **not support sorting** at this time.
-
-**Please note that these limitations stem from the current implementation and may evolve in future releases.**
-
-:::
-
 ## Installing the gem
 
 To enable HTTP Resource functionality in your Avo project, you need to include the `avo-http_resource` gem.
@@ -45,42 +37,51 @@ bin/rails generate avo:resource Author --http
 
 ## Parsing Data from an Endpoint
 
-To wire an HTTP Resource to a data source, you must configure several attributes. Below is a breakdown of the supported options, each with an illustrative example.
+To wire an HTTP Resource to a data source, you must configure the `http_adapter` hash. Below is a breakdown of the supported options, each with an illustrative example.
 
 ```ruby
 # app/avo/resources/author.rb
 class Avo::Resources::Author < Avo::Core::Resources::Http
-  # The base URL for your external API
-  self.endpoint = "https://api.openalex.org/authors"
+  self.http_adapter = {
+    # The base URL for your external API
+    endpoint: "https://api.openalex.org/authors",
 
-  # How to extract the list of records from the API response
-  self.parse_collection = -> {
-    raise Avo::HttpError.new response["message"] if response["error"].present?
-    response["results"]
-  }
+    # How to extract the list of records from the API response
+    parse_collection: -> {
+      raise Avo::HttpError.new response["message"] if response["error"].present?
+      response["results"]
+    },
 
-  # How to extract a single record from the API response
-  self.parse_record = -> {
-    raise Avo::HttpError.new response["message"] if response["error"].present?
-    response
-  }
+    # How to extract a single record from the API response
+    parse_record: -> {
+      raise Avo::HttpError.new response["message"] if response["error"].present?
+      response
+    },
 
-  # How to extract the total count of records (useful for pagination)
-  self.parse_count = -> { response["meta"]["count"] }
+    # How to extract the total count of records (useful for pagination)
+    parse_count: -> { response["meta"]["count"] },
 
-  # Optional: custom method to find a record if the ID is encoded or non-standard
-  self.find_record_method = -> { query.find Base64.decode64(id) }
+    # Optional: redefines model behavior to obfuscate the ID via Base64
+    model_class_eval: -> {
+      define_method :to_param do
+        Base64.encode64(id)
+      end
+    },
 
-  # Optional: redefines model behavior to obfuscate the ID via Base64
-  self.model_class_eval = -> {
-    define_method :to_param do
-      Base64.encode64(id)
-    end
-  }
+    # Optional: custom headers to send with the request
+    headers: {
+      "Authorization" => "Bearer #{ENV.fetch("API_KEY")}"
+    },
 
-  # Optional: custom headers to send with the request
-  self.headers = {
-    "Authorization" => "Bearer #{ENV.fetch("API_KEY")}"
+    # Optional: build arbitrary query params (sorting, filtering, etc.)
+    # Runs in an execution context with access to `params` (when available)
+    query_params: -> {
+      if params[:sort_by].present? && params[:sort_direction].present?
+        { sort: "#{params[:sort_by]}:#{params[:sort_direction]}" }
+      else
+        {}
+      end
+    }
   }
 
   def fields
@@ -92,9 +93,11 @@ class Avo::Resources::Author < Avo::Core::Resources::Http
 end
 ```
 
+The `http_adapter` hash provides a clean, organized way to configure all HTTP-related settings in one place, making your resource configuration more maintainable and easier to understand.
+
 ### Response Option Reference
 
-Here's a brief reference for the main configuration options:
+Here's a brief reference for the main configuration options within the `http_adapter` hash:
 
 | Option              | Description                                                                 |
 |---------------------|-----------------------------------------------------------------------------|
@@ -115,14 +118,15 @@ This contextual access empowers you to define your resource’s behavior with a 
 
 ### Request Option Reference
 
-Here's a brief reference for the main request options:
+Here's a brief reference for the main request options within the `http_adapter` hash:
 
 | Option              | Description                                                                 |
 |---------------------|-----------------------------------------------------------------------------|
 | `endpoint`          | Base URL for the external API                                               |
 | `headers`           | Optional: custom headers to send with the request                          |
+| `query_params`      | Proc returning a Hash merged into the request query (sorting/filters)       |
 
-All HTTP Resource request options accept a **proc** (i.e., a lambda or block). These procs are executed in a rich runtime context that gives you full access to all attributes of [`Avo::ExecutionContext`](execution-context)
+All HTTP Resource request options accept a **proc** (i.e., a lambda or block). These procs are executed in a rich runtime context that gives you access to attributes of [`Avo::ExecutionContext`](execution-context), including controller `params` when available (useful to map UI sorting/filtering to API query parameters).
 
 ## Handling API Errors Gracefully
 

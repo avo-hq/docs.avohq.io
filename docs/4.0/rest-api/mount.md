@@ -13,6 +13,57 @@ This document explains how to mount and configure the Avo API in your Rails appl
 
 The `mount_avo_api` method is a convenient Rails route helper that mounts the Avo API engine into your application's routing system. It provides a RESTful API for all your Avo resources, allowing external applications to interact with your data programmatically.
 
+:::warning IMPORTANT
+There is a caveat when mounting the API that requires attention:
+
+If you have `mount_avo` inside an `authenticate` block (like `authenticate :user`), you **must** mount the API outside and before that authentication block.
+
+**Why?** When the API is mounted inside an authentication block, all API endpoints will require the same authentication as your web interface, which breaks API functionality for external clients using API tokens.
+
+**This do not mean that API can't use authentication, check the [Authentication](./authentication) page for more information.**
+
+**Correct setup:**
+
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  # Mount Avo API FIRST - outside any authentication blocks
+  mount_avo_api
+
+  # Mount Avo web interface with authentication
+  authenticate :user do
+    mount_avo
+  end
+end
+```
+
+**Incorrect setups:**
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  # ❌ Don't do this - API will require web authentication
+  authenticate :user do
+    mount_avo_api  # This breaks API token authentication
+    mount_avo
+  end
+end
+```
+
+<br />
+
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  # ❌ Don't do this - API will require web authentication
+  authenticate :user do
+    mount_avo
+  end
+
+  mount_avo_api  # This breaks API token authentication
+end
+```
+:::
+
 ## Basic Usage
 
 ### Simple Mount
@@ -26,9 +77,19 @@ Rails.application.routes.draw do
 end
 ```
 
-This will mount the API at the default path: `#{Avo.configuration.root_path}/api`
+This will mount the API at the default path: `/api`
 
-If your Avo is configured with `root_path = "/admin"`, the API will be available at `/admin/api`.
+### Using Avo's Root Path
+
+If you want to mount the API under Avo's configured root path (like the previous default behavior), you can specify it explicitly:
+
+```ruby
+Rails.application.routes.draw do
+  mount_avo_api at: "#{Avo.configuration.root_path}/api"
+end
+```
+
+For example, if your Avo is configured with `root_path = "/admin"`, this will make the API available at `/admin/api`.
 
 ### Custom Mount Path
 
@@ -51,7 +112,7 @@ mount_avo_api at: "/custom/api/path"
 ```
 
 **Parameters:**
-- `at:` - String specifying where to mount the API (default: `"#{Avo.configuration.root_path}/api"`)
+- `at:` - String specifying where to mount the API (default: `"api"`)
 
 ### Additional Mount Options
 
@@ -94,12 +155,12 @@ When you mount the API, it automatically generates RESTful endpoints for all you
 For each resource, the following endpoints are created:
 
 ```
-GET    /admin/api/resources/v1/{resource_name}        # List resources
-POST   /admin/api/resources/v1/{resource_name}        # Create resource
-GET    /admin/api/resources/v1/{resource_name}/:id    # Show resource
-PATCH  /admin/api/resources/v1/{resource_name}/:id    # Update resource
-PUT    /admin/api/resources/v1/{resource_name}/:id    # Update resource
-DELETE /admin/api/resources/v1/{resource_name}/:id    # Delete resource
+GET    /api/resources/v1/{resource_name}        # List resources
+POST   /api/resources/v1/{resource_name}        # Create resource
+GET    /api/resources/v1/{resource_name}/:id    # Show resource
+PATCH  /api/resources/v1/{resource_name}/:id    # Update resource
+PUT    /api/resources/v1/{resource_name}/:id    # Update resource
+DELETE /api/resources/v1/{resource_name}/:id    # Delete resource
 ```
 
 ### Example for User Resource
@@ -107,12 +168,12 @@ DELETE /admin/api/resources/v1/{resource_name}/:id    # Delete resource
 If you have an `Avo::Resources::User` resource:
 
 ```
-GET    /admin/api/resources/v1/users     # List users
-POST   /admin/api/resources/v1/users     # Create user
-GET    /admin/api/resources/v1/users/1   # Show user
-PATCH  /admin/api/resources/v1/users/1   # Update user
-PUT    /admin/api/resources/v1/users/1   # Update user
-DELETE /admin/api/resources/v1/users/1   # Delete user
+GET    /api/resources/v1/users     # List users
+POST   /api/resources/v1/users     # Create user
+GET    /api/resources/v1/users/1   # Show user
+PATCH  /api/resources/v1/users/1   # Update user
+PUT    /api/resources/v1/users/1   # Update user
+DELETE /api/resources/v1/users/1   # Delete user
 ```
 
 ## Complete Examples
@@ -124,15 +185,15 @@ DELETE /admin/api/resources/v1/users/1   # Delete user
 Rails.application.routes.draw do
   devise_for :users
 
+  # Mount Avo API
+  mount_avo_api
+
   # Mount Avo
   authenticate :user do
     mount_avo do
       get "tool_with_form", to: "tools#tool_with_form", as: :tool_with_form
     end
   end
-
-  # Mount Avo API
-  mount_avo_api
 
   # Redirect to Avo root path
   root to: redirect(Avo.configuration.root_path)

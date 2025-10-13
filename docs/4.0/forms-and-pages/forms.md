@@ -24,7 +24,7 @@ Forms are typically displayed on [Pages](./pages.html) and can be used for vario
 Forms can also be rendered as a standalone component anywhere in the interface. For example, you can render the general settings form in a tool by using the following code:
 
 ```erb
-<%= render Avo::Forms::Settings::General.new.component %>
+<%= render Avo::Forms::Settings::General.component %>
 ```
 
 ## Generating Forms
@@ -133,10 +133,8 @@ All standard Avo field options are supported
 
 Process form submission and define the response. This method is called when the form is submitted and receives form data through the `params` object.
 
-:::warning
 Currently, the `handle` method is executed in the context of the controller method that receives the form request. This means that you can use any of the methods available in the controller to process the form data. **This is something experimental and might change in the future.**
 
-::::info
 This experiment is to see if by not building a heavy DSL for forms, we can make it easier to use and maintain.
 
 The main point is that since it is the controller method, everything is available and possible to the developer by using rails syntax.
@@ -144,7 +142,6 @@ The main point is that since it is the controller method, everything is availabl
 If we build a heavy DSL for the `handle` method like we do for actions, it and might feel restrictive to the developer in some cases.
 
 If you have any feedback, please share it with us.
-::::
 
 Right now the only pre-defined methods available in the controller are:
 - `default_response` - Standard redirect back turbo stream response

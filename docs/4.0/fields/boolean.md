@@ -36,3 +36,13 @@ What should count as false. You can use `0`, `no`, or a different value.
 
 `[false, "false", "0"]`
 </Option>
+
+<Option name="`as_toggle`">
+
+Render the field as a toggle on the form views.
+
+#### Default value
+
+`false`
+
+</Option>
