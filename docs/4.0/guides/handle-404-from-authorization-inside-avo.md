@@ -14,6 +14,6 @@ rails generate avo:eject --controller application_controller
 
 ```ruby
 class Avo::ApplicationController
-  rescue_from ActiveRecord::RecordNotFound, with: -> { redirect_to Avo.configuration.root_path, notice: "You are not authorized" }
+  rescue_from ActiveRecord::RecordNotFound, with: -> { redirect_to Avo.configuration.root_path, notice: t("avo.no_item_found") }
 end
 ```
