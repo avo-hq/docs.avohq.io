@@ -18,8 +18,8 @@ const config = {
     },
   },
   head: [
-    ["script", { src: "https://unpkg.com/@inkeep/uikit-js@0.3.8/dist/embed.js", type: "module", defer: true }],
-    ["script", { src: "/static/addInkeep.js", type: "module", defer: true }],
+    // ["script", { src: "https://unpkg.com/@inkeep/uikit-js@0.3.8/dist/embed.js", type: "module", defer: true }],
+    // ["script", { src: "/static/addInkeep.js", type: "module", defer: true }],
     ["script", { async: true, src: "https://seltrk.avohq.io/seline.js", dataToken: "803b01c143d844b" }],
     ["script", { async: true, src: 'https://www.googletagmanager.com/gtag/js?id=G-VWMV2FNBQ1' }
     ],
