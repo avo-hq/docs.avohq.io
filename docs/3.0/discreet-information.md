@@ -7,7 +7,7 @@ license: community
 # Discreet Information
 
 Sometimes you need to have some information available on the record page, but not necesarily front-and-center.
-This is where the Discreet Information option is handy.
+This is where the Discreet Information option is handy. You can use it to display one or more pieces of information.
 
 ```ruby
 # app/avo/resources/post.rb
@@ -142,16 +142,6 @@ end
 ```
 
 </Option>
-
-## Display multiple pieces of information
-
-You can use it to display one or more pieces of information.
-
-## Information properties
-
-Each piece of information has a fe
-
-
 
 ## Full configuration
 
