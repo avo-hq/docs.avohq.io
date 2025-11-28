@@ -719,3 +719,26 @@ end
 The most common use case is to exclude the `license_key` from being displayed on the status page for security reasons.
 
 </Option>
+
+<Option name="`send_metadata`">
+
+Controls whether Avo sends usage metadata to Avo HQ, such as fields count, resources count, and other relevant metrics. This helps the Avo team understand how the framework is being used.
+
+:::info
+This option only takes effect on the community tier. Any other paid tier always sends metadata.
+:::
+
+### Default value
+
+`true`
+
+### Example
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.send_metadata = false
+end
+```
+
+</Option>
