@@ -334,6 +334,10 @@ When working with files, it may be necessary to establish policies that determin
 
 Both the `record` and the `user` will be available for you to access.
 
+:::info Actions inherit attachment authorization
+These attachment authorization methods also apply to file fields in [actions](./actions) that run on the resource using the same policy. For example, if you define `upload_file?` in `PostPolicy` and have an action on `Avo::Resources::Post` with `field :file, as: :file`, the same `upload_file?` policy method will be used to authorize the file upload in that action.
+:::
+
 <Image src="/assets/img/authorization/file_actions.png" width="472" height="93" alt="" />
 
 <Option name="`upload_{FIELD_ID}?`">
