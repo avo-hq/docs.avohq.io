@@ -1,6 +1,5 @@
 ---
-version: '2.17'
-license: pro
+license: community
 feedbackId: 1073
 demoVideo: https://youtu.be/3udJOcc0Jfo
 ---
