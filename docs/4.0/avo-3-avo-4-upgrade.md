@@ -158,3 +158,75 @@ self.confirmation = -> { arguments.key?(:confirmation) ? arguments[:confirmation
 - **Data attribute**: `data-action-no-confirmation-value` → `data-action-confirmation-value`
 - **Stimulus value**: `noConfirmation` → `confirmation`
 - **Behavior**: show the modal when `confirmation` is true, submit immediately when `confirmation` is false.
+
+## Layout
+
+### `main_panel` is obsolete
+
+The `main_panel` DSL has been removed in Avo 4. Previously, `main_panel` was responsible for holding the header component (title, description, controls, etc.) along with your fields.
+
+Te migration depends on your current setup:
+
+#### `main_panel` is the first panel and has no sidebar
+
+Replace `main_panel` directly with `card`:
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    main_panel do # [!code --]
+    card do # [!code ++]
+      field :id, as: :id
+      field :name, as: :text
+    end
+  end
+end
+```
+
+#### `main_panel` is the first panel and has a sidebar
+
+Replace `main_panel` with `panel` and wrap the fields (outside the sidebar) with `card`:
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    main_panel do # [!code --]
+    panel do # [!code ++]
+      card do # [!code ++]
+        field :id, as: :id
+        field :id, as: :id
+      end # [!code ++]
+
+      sidebar do
+        field :created_at, as: :date_time
+      end
+    end
+  end
+```
+
+#### Content above `main_panel`
+
+If you have content above `main_panel`, add an explicit `header` before the renamed `main_panel`:
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    panel do
+      field :status, as: :badge
+    end
+
+    header # [!code ++]
+
+    main_panel do # [!code --]
+    card do # [!code ++]
+      field :id, as: :id
+      field :name, as: :text
+    end
+  end
+end
+```
+
+See the [Resource Header](./resource-header) documentation for more details on the new `header` DSL.
