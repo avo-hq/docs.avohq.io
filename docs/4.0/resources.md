@@ -786,8 +786,9 @@ self.components = {
   "Avo::Views::ResourceShowComponent": "Avo::Custom::ResourceShowComponent",
   "Avo::Views::ResourceEditComponent": "Avo::Custom::ResourceEditComponent",
   "Avo::Index::GridItemComponent": "Avo::Custom::GridItemComponent",
-  "Avo::Index::ResourceMapComponent": "Avo::Custom::ResourceMapComponent",
-  "Avo::Index::ResourceTableComponent": "Avo::Custom::ResourceTableComponent",
+  "Avo::ViewTypes::MapComponent": "Avo::Custom::MapComponent",
+  "Avo::ViewTypes::TableComponent": "Avo::Custom::TableComponent",
+  "Avo::ViewTypes::GridComponent": "Avo::Custom::GridComponent",
   "Avo::Index::TableRowComponent": "Avo::Custom::TableRowComponent"
 }
 ```
