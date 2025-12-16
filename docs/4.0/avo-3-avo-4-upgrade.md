@@ -230,3 +230,28 @@ end
 ```
 
 See the [Resource Header](./resource-header) documentation for more details on the new `header` DSL.
+
+## Components
+
+### Renamed view type components
+
+Several view type components have been renamed and moved from the `Avo::Index` namespace to `Avo::ViewTypes`:
+
+| Avo 3 | Avo 4 |
+|-------|-------|
+| `Avo::Index::ResourceMapComponent` | `Avo::ViewTypes::MapComponent` |
+| `Avo::Index::ResourceTableComponent` | `Avo::ViewTypes::TableComponent` |
+
+If you're using `self.components` in your resources to customize these components, update the keys accordingly:
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.components = {
+    "Avo::Index::ResourceMapComponent": "Avo::Custom::ResourceMapComponent", # [!code --]
+    "Avo::Index::ResourceTableComponent": "Avo::Custom::ResourceTableComponent", # [!code --]
+    "Avo::ViewTypes::MapComponent": "Avo::Custom::ResourceMapComponent", # [!code ++]
+    "Avo::ViewTypes::TableComponent": "Avo::Custom::ResourceTableComponent", # [!code ++]
+  }
+end
+```
