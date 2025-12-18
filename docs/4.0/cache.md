@@ -2,6 +2,16 @@
 
 Avo uses the application's cache system to enhance performance. The cache system is especially beneficial when dealing with resource index tables and license requests.
 
+:::warning Operational cache store required
+A working cache store is **mandatory**. Avo verifies the cache store is operational during boot by performing a write/read/delete test.
+
+If the cache store is not operational, Avo will redirect all requests to an error page:
+- **[Admins and developers](authentication#customize-the-methods-that-check-for-roles)** will see detailed error information including the specific error message and a link to this documentation.
+- **Other users** will see a generic message asking them to contact their administrator.
+
+This ensures issues are caught early and provides clear guidance for resolution.
+:::
+
 ## Cache store selection
 
 The cache system dynamically selects the appropriate cache store based on the application's environment:
