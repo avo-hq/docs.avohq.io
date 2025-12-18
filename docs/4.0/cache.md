@@ -20,13 +20,9 @@ The cache system dynamically selects the appropriate cache store based on the ap
 
 In production, if the existing cache store is one of the following: `ActiveSupport::Cache::MemoryStore` or `ActiveSupport::Cache::NullStore` it will use the default `:file_store` with a cache path of `tmp/cache`. Otherwise, the existing cache store `Rails.cache` will be used.
 
-### Test
-
-In testing, it directly uses the `Rails.cache` store.
-
 ### Development and other environments
 
-In all other environments the `:memory_store` is used.
+In all other environments the `:file_store` is used.
 
 ### Custom selection
 
