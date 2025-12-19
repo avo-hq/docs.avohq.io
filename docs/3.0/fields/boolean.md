@@ -37,6 +37,17 @@ What should count as false. You can use `0`, `no`, or a different value.
 `[false, "false", "0"]`
 </Option>
 
+<Option name="`nil_as_indeterminate`">
+
+When `true`, `nil` values render as a gray minus-circle icon on **Show** and **Index** views instead of the default dash. This keeps the `nil` value intact while making it more visible.
+
+<Image src="/assets/img/fields/boolean_nil_as_indeterminate.png" width="265" height="200" alt="nil_as_indeterminate option" />
+
+#### Default value
+
+`false`
+</Option>
+
 <Option name="`as_toggle`">
 
 <VersionReq version="3.24.1" />
