@@ -7,7 +7,83 @@ license: community
 
 The `Badge` field is used to display an easily recognizable status of a record.
 
-<Image src="/assets/img/fields/badge.jpg" width="244" height="476" alt="Badge field" />
+<Image src="/assets/img/fields/badge_v4.jpg" width="508" height="124" alt="Badge field" />
+
+```ruby
+field :stage,
+  as: :badge,
+  color: :green,
+  style: :solid,
+  icon: "heroicons/outline/document-text"
+```
+
+## Description
+
+The Badge field displays a colored indicator with optional icons. You can customize the `color`, `style`, and `icon` for each value dynamically using procs.
+
+The `Badge` field is intended to be displayed only on **Index** and **Show** views. To update the value shown by the badge field, use another field like [Text](#text) or [Select](#select) with `hide_on: [:index, :show]`.
+
+## Options
+
+<Option name="`color`">
+
+Sets the badge color. Accepts a static value or a proc for dynamic coloring based on the record.
+
+#### Available colors
+
+**Base colors:** `orange`, `yellow`, `green`, `teal`, `blue`, `purple`
+
+**Semantic colors:** `secondary`, `success`, `error`, `warning`, `informative`
+
+
+```ruby
+field :status, as: :badge, color: "green"
+
+# Or dynamically
+field :status, as: :badge, color: -> { record.active? ? "green" : "orange" }
+```
+</Option>
+
+<Option name="`style`">
+
+Controls the badge appearance style.
+
+:::warning
+The `style` option only applies to **base colors**. Semantic colors have their own built-in styling.
+:::
+
+#### Available styles
+
+- `subtle` - Light background with colored text (default)
+- `solid` - Solid colored background with white text
+
+```ruby
+field :status, as: :badge, color: :green, style: "solid"
+
+# Or dynamically
+field :status, as: :badge, color: :green, style: -> { record.completed? ? "solid" : "subtle" }
+```
+</Option>
+
+<Option name="`icon`">
+
+Adds an icon to the badge.
+
+```ruby
+field :status, as: :badge, icon: "heroicons/outline/check-circle"
+
+# Or dynamically
+field :status, as: :badge, icon: -> {
+  record.approved? ? "heroicons/outline/check-circle" : "heroicons/outline/x-circle"
+}
+```
+</Option>
+
+## Legacy `options` syntax
+
+:::info Backward compatibility
+The legacy `options` syntax is still supported. Avo maps the old color names to the new ones automatically.
+:::
 
 ```ruby
 field :stage,
@@ -18,35 +94,57 @@ field :stage,
     warning: 'on hold',
     danger: :cancelled,
     neutral: :drafting
-  } # The mapping of custom values to badge values.
+  }
 ```
 
-## Description
-
-By default, the badge field supports five value types: `info` (blue), `success` (green), `danger` (red), `warning` (yellow) and `neutral` (gray). We can choose what database values are mapped to which type with the `options` parameter.
-
-The `options` parameter is a `Hash` that has the state as the `key` and your configured values as `value`. The `value` param can be a symbol, string, or array of symbols or strings.
-
-The `Badge` field is intended to be displayed only on **Index** and **Show** views. In order to update the value shown by badge field you need to use another field like [Text](#text) or [Select](#select), in combination with `hide_on: index` and `hide_on: show`.
-
-
-## Options
-
-<Option name="`options`">
-
-The options should be a hash with the keys of one of the five available types (`info`, `success`, `warning`, `danger`, `neutral`) and the values matching your record's database values.
-
-#### Default value
-
-`{ info: :info, success: :success, danger: :danger, warning: :warning, neutral: :neutral }`
-
-Below is an example of how you can use two fields in that combination.
-</Option>
+The legacy colors map as follows:
+- `info` → informative
+- `success` → success
+- `danger` → error
+- `warning` → warning
+- `neutral` → secondary
 
 ## Examples
 
-```ruby
-field :stage, as: :select, hide_on: [:show, :index], options: { 'Discovery': :discovery, 'Idea': :idea, 'Done': :done, 'On hold': 'on hold', 'Cancelled': :cancelled, 'Drafting': :drafting }, placeholder: 'Choose the stage.'
-field :stage, as: :badge, options: { info: [:discovery, :idea], success: :done, warning: 'on hold', danger: :cancelled, neutral: :drafting }
-```
+### Using Badge with a Select field for editing
 
+Since Badge is display-only, pair it with a Select field to allow editing:
+
+```ruby
+field :stage,
+  as: :select,
+  hide_on: [:show, :index],
+  options: {
+    'Discovery': :discovery,
+    'Idea': :idea,
+    'Done': :done,
+    'On hold': 'on hold',
+    'Cancelled': :cancelled,
+    'Drafting': :drafting
+  },
+  placeholder: 'Choose the stage.'
+
+field :stage,
+  as: :badge,
+  hide_on: :forms,
+  color: -> {
+    {
+      "Discovery" => "green",
+      "Idea" => "blue",
+      "Drafting" => "purple",
+      "Done" => "green",
+      "On hold" => "orange",
+      "Cancelled" => "orange"
+    }[record.stage]
+  },
+  style: -> { ["Done", "Cancelled"].include?(record.stage) ? "solid" : "subtle" },
+  icon: -> {
+    {
+      "Discovery" => "heroicons/outline/magnifying-glass",
+      "Drafting" => "heroicons/outline/document-text",
+      "Done" => "heroicons/outline/check-circle",
+      "On hold" => "heroicons/outline/pause-circle",
+      "Cancelled" => "heroicons/outline/x-circle"
+    }[record.stage]
+  }
+```
