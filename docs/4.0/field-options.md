@@ -112,6 +112,8 @@ Format the field value using a block.
 Notice that this block will have effect on **all** views.
 :::
 
+Formatting affects copyable value, when using `format_using` with `copyable`, the formatted value is what gets copied to the clipboard, not the original database value. For example, using `format_using: -> { value.truncate(20) }` will copy the truncated text (including the `...`). If you need to display a truncated value while copying the full value, consider using CSS truncation via the [`html` option](./html) instead of `format_using`.
+
 ```ruby
 field :is_writer, as: :text, format_using: -> {
   if view.form?
