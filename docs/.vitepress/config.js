@@ -168,6 +168,7 @@ const config = {
         {
           text: "Layout",
           items: [
+            { text: "Header", link: "/4.0/resource-header.html" },
             { text: "Panels", link: "/4.0/resource-panels.html" },
             { text: "Clusters", link: "/4.0/resource-clusters.html" },
             { text: "Sidebars", link: "/4.0/resource-sidebar.html" },
