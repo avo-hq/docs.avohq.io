@@ -54,6 +54,7 @@ class Avo::Resources::Project < Avo::BaseResource
   end
 end
 ```
+
 <Image src="/assets/img/custom-fields/progress-show.jpg" width="1046" height="180" alt="Progress custom field" />
 
 The generated view components are basic text fields for now.
@@ -141,28 +142,29 @@ module Avo
   end
 end
 ```
+
 </Option>
 
 ## Field options
 
 This file is where you may add field-specific options.
 
- ```ruby{3-6,11-14}
+```ruby{3-6,11-14}
 # app/avo/fields/progress_bar_field.rb
 class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
-  attr_reader :max
-  attr_reader :step
-  attr_reader :display_value
-  attr_reader :value_suffix
+ attr_reader :max
+ attr_reader :step
+ attr_reader :display_value
+ attr_reader :value_suffix
 
-  def initialize(name, **args, &block)
-    super(name, **args, &block)
+ def initialize(name, **args, &block)
+   super(name, **args, &block)
 
-    @max = 100
-    @step = 1
-    @display_value = false
-    @value_suffix = nil
-  end
+   @max = 100
+   @step = 1
+   @display_value = false
+   @value_suffix = nil
+ end
 end
 ```
 
@@ -297,6 +299,7 @@ function updateValue(e) {
 }
 </script>
 ```
+
 <Image src="/assets/img/custom-fields/progress-edit.jpg" width="1144" height="182" alt="Progress bar custom field edit" />
 
 ## Field assets
@@ -306,6 +309,7 @@ Because there isn't just one standardized way of handling assets in Rails, we de
 In the example above, we added javascript on the page just to demonstrate the functionality. In reality, you might add that to a stimulus controller inside your own Avo [dedicated pipeline](./custom-asset-pipeline.html) (webpacker or sprockets).
 
 Some styles were added in the asset pipeline directly.
+
 ```css
 progress {
   @apply h-2 bg-white border border-gray-400 rounded shadow-inner;
@@ -313,9 +317,8 @@ progress {
 progress[value]::-webkit-progress-bar {
   @apply bg-white border border-gray-500 rounded shadow-inner;
 }
-progress[value]::-webkit-progress-value{
+progress[value]::-webkit-progress-value {
   @apply bg-green-600 rounded;
-
 }
 progress[value]::-moz-progress-bar {
   @apply bg-green-600 rounded appearance-none;
@@ -387,3 +390,22 @@ To ensure proper rendering of a custom field that lacks getters and setters at t
   def custom_field=(value)
   end
 ```
+
+## Field methods
+
+We won't be able to list all the methods available for a field here, but we've added a few methods to help you build better fields.
+
+<Option name="`table_header_class`">
+
+This adds a class to the `th` element of the table header.
+We added it when we needed to force a certain column to be a certain size, but you can use it for any purpose.
+
+It defaults to `nil`
+
+```ruby
+def table_header_class
+  "w-32"
+end
+```
+
+</Option>
