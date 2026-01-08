@@ -1,5 +1,5 @@
 ---
-version: '2.13'
+version: "2.13"
 license: pro
 betaStatus: Beta
 demoVideo: https://youtu.be/qUvMh7AkrlU
@@ -58,6 +58,7 @@ Links to a previous page. The link is not a `history.back()` action. It's comput
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
+
 </Option>
 
 <Option name="`delete_button`">
@@ -66,6 +67,7 @@ Adds the appropriate destroy form. It will take into account your authorization 
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
+
 </Option>
 
 <Option name="`detach_button`">
@@ -74,6 +76,7 @@ Adds the appropriate detach form. It's visible only on the association (`has_one
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
+
 </Option>
 
 <Option name="`actions_list`">
@@ -96,6 +99,7 @@ actions_list exclude: DisableAccount
 # Or
 actions_list exclude: [ExportSelection, PublishPost]
 ```
+
 </Option>
 
 <Option name="`edit_button`">
@@ -104,6 +108,7 @@ Links to the record edit page.
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
+
 </Option>
 
 <Option name="`link_to`">
@@ -112,6 +117,7 @@ Renders a link to a path set by you.
 #### Supported options
 
 `title`, `style`, `color`, `icon`, `target`, `data`, and `class`.
+
 </Option>
 
 <Option name="`action`">
@@ -128,12 +134,13 @@ action DisableAccount
 action ExportSelection, style: :text
 action PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 ```
+
 </Option>
 
 :::warning
 The way `show_controls` works is like a shortcut the the actions that you already declared on your resource, so you should also declare it on the resource as you normally would in order to have it here.
 
-```ruby{6,10}
+````ruby{6,10}
 class FishResource < Avo::BaseResource
   self.title = :name
 
@@ -145,6 +152,7 @@ class FishResource < Avo::BaseResource
   # Also declare it here
   action ReleaseFish, arguments: { both_actions: "Will use them" }
 end
+```
 :::
 
 ## Control Options
@@ -155,6 +163,7 @@ Sets the tooltip for that control.
 #### Possible values
 
 Any string value.
+
 </Option>
 
 <Option name="`style`">
@@ -163,14 +172,16 @@ Sets the `style` attribute for the [`Avo::ButtonComponent`](https://github.com/a
 #### Possible values
 
 `:primary`, `:outline`, `:text`
+
 </Option>
 
-<Option name="`color`">
+<Option name="color">
 Sets the `color` attribute for the [`Avo::ButtonComponent`](https://github.com/avo-hq/avo/blob/main/app/components/avo/button_component.rb)
 
 #### Possible values
 
 Can be any color of [Tailwind's default color pallete](https://tailwindcss.com/docs/customizing-colors#default-color-palette) as a symbol.
+
 </Option>
 
 <Option name="`icon`">
@@ -179,6 +190,7 @@ Sets the icon for that button.
 #### Possible values
 
 Any [Heroicon](https://heroicons.com) you want. You must specify the style of the heroicon like so `heoricons/outline/academic-cap` or `heroicons/solid/adjustments`.
+
 </Option>
 
 <Option name="`target`">
@@ -187,6 +199,7 @@ Sets the target for that control. So whatever you pass here will be passed to th
 #### Possible values
 
 `:_blank`, `:_top`, `:_self`
+
 </Option>
 
 <Option name="`class`">
@@ -195,6 +208,7 @@ Sets the classes for that control.
 #### Possible values
 
 Any string value.
+
 </Option>
 
 ## Conditionally hiding/showing actions
@@ -214,4 +228,4 @@ class FishResource < Avo::BaseResource
     edit_button label: ""
   end
 end
-```
+````
