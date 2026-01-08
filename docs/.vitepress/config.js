@@ -2,6 +2,7 @@ import { getFiles } from "./getFiles"
 
 const fieldsMenuItems2 = getFiles('fields', '2.0')
 const fieldsMenuItems3 = getFiles('fields', '3.0')
+const fieldsMenuItems4 = getFiles('fields', '4.0')
 
 /**
  * @type {import('vitepress').UserConfig}
@@ -145,13 +146,14 @@ const config = {
             { text: "Discreet information", link: "/4.0/discreet-information.html" },
             { text: "Customizable controls", link: "/4.0/customizable-controls.html" },
             { text: "Cover and Profile Photos", link: "/4.0/cover-and-profile-photos.html" },
+            { text: "Breadcrumbs", link: "/4.0/breadcrumbs.html" },
           ],
         },
         {
           text: "Field types",
           collapsible: true,
           collapsed: true,
-          items: fieldsMenuItems3,
+          items: fieldsMenuItems4,
         },
         {
           text: "Associations",
