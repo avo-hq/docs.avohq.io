@@ -7,7 +7,7 @@ license: community
 
 The `Badge` field is used to display an easily recognizable status of a record.
 
-<Image src="/assets/img/fields/badge_v4.jpg" width="508" height="124" alt="Badge field" />
+<Image src="/assets/img/fields/badge_v4.jpg" width="450" height="194" alt="Badge field" />
 
 ```ruby
 field :stage,
@@ -33,7 +33,7 @@ Sets the badge color. Accepts a static value or a proc for dynamic coloring base
 
 **Base colors:** `orange`, `yellow`, `green`, `teal`, `blue`, `purple`
 
-**Semantic colors:** `secondary`, `success`, `error`, `warning`, `informative`
+**Semantic colors:** `neutral`, `success`, `error`, `danger`, `info`
 
 
 ```ruby
@@ -47,10 +47,6 @@ field :status, as: :badge, color: -> { record.active? ? "green" : "orange" }
 <Option name="`style`">
 
 Controls the badge appearance style.
-
-:::warning
-The `style` option only applies to **base colors**. Semantic colors have their own built-in styling.
-:::
 
 #### Available styles
 
@@ -82,7 +78,7 @@ field :status, as: :badge, icon: -> {
 ## Legacy `options` syntax
 
 :::info Backward compatibility
-The legacy `options` syntax is still supported. Avo maps the old color names to the new ones automatically.
+The legacy `options` syntax is still supported. Avo maps the old colors to the new ones automatically.
 :::
 
 ```ruby
@@ -96,14 +92,6 @@ field :stage,
     neutral: :drafting
   }
 ```
-
-The legacy colors map as follows:
-- `info` → informative
-- `success` → success
-- `danger` → error
-- `warning` → warning
-- `neutral` → secondary
-
 ## Examples
 
 ### Using Badge with a Select field for editing
