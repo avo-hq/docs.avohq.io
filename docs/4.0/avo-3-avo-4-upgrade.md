@@ -1,10 +1,15 @@
 ---
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Upgrade guide
 
-The upgrade process from Avo 3 to Avo 4 contains several important improvements and changes. Most of the API remains consistent, but there are some key updates to search functionality, TailwindCSS integration, and other features.
+The upgrade process from Avo 3 to Avo 4 contains several important improvements and changes.
+
+We've made these changes to improve consistency and usability of the API and we've added some new features.
+Here's what you need to know to upgrade your Avo 3 application to Avo 4.
+
+Take these steps one by one in order to upgrade your app.
 
 Depending on how you use Avo you might not need to do all the steps.
 
@@ -13,6 +18,15 @@ Depending on how you use Avo you might not need to do all the steps.
 :::info Ensure you have a valid license
 Avo 4 requires a valid v4 license key. Your v3 license key won't work with Avo 4. Please upgrade your license at [avohq.io/pricing](https://avohq.io/pricing).
 ::: -->
+
+## Icons
+
+We started using the Tabler icons instead of the Heroicons.
+They are available in the [`avo-icons`](https://github.com/avo-hq/avo-icons) gem.
+
+## Avatars and initials
+
+Avo now uses the avatar and initials of a record or resource throughout the app.
 
 ## Search
 
@@ -31,25 +45,31 @@ Global search has undergone a major architectural change in Avo 4. The previous 
 This transition brings several significant benefits:
 
 #### Fully owned component
+
 - **Complete control**: Avo now has full development control over the search experience
 - **No external dependencies**: No longer relies on Algolia's autocomplete plugin
 - **Future enhancements**: Much greater possibility for future improvements and customizations
 - **Consistent experience**: Better integration with Avo's overall design system
 
 #### Enhanced navigation and keyboard shortcuts
+
 The new search component includes improved keyboard navigation:
+
 - <kbd>Ctrl</kbd> + <kbd>K</kbd> or <kbd>Cmd</kbd> + <kbd>K</kbd> - Open global search
 - <kbd>Up</kbd> and <kbd>Down</kbd> arrow keys - Navigate through search results
 - <kbd>Enter</kbd> - Visit the selected record
 - <kbd>Esc</kbd> - Close the search modal
 
 #### New "Show all results" functionality
+
 The global search now includes a comprehensive results page:
+
 - **Quick results**: The search dropdown shows a limited number of results (respecting the configured limit)
 - **Show all results page**: A dedicated page that displays all matching results without the limit restriction
 - **Seamless transition**: Easy access from the search dropdown to view comprehensive results
 
 #### Breaking changes and migration notes
+
 <br>
 
 ##### Avo Pro mount point removal
@@ -152,7 +172,6 @@ self.no_confirmation = -> { arguments[:no_confirmation] || false }
 self.confirmation = -> { arguments.key?(:confirmation) ? arguments[:confirmation] : true }
 ```
 
-
 #### If you customized the actions modal/view
 
 - **Data attribute**: `data-action-no-confirmation-value` → `data-action-confirmation-value`
@@ -237,9 +256,9 @@ See the [Resource Header](./resource-header) documentation for more details on t
 
 Several view type components have been renamed and moved from the `Avo::Index` namespace to `Avo::ViewTypes`:
 
-| Avo 3 | Avo 4 |
-|-------|-------|
-| `Avo::Index::ResourceMapComponent` | `Avo::ViewTypes::MapComponent` |
+| Avo 3                                | Avo 4                            |
+| ------------------------------------ | -------------------------------- |
+| `Avo::Index::ResourceMapComponent`   | `Avo::ViewTypes::MapComponent`   |
 | `Avo::Index::ResourceTableComponent` | `Avo::ViewTypes::TableComponent` |
 
 If you're using `self.components` in your resources to customize these components, update the keys accordingly:
@@ -254,6 +273,29 @@ class Avo::Resources::User < Avo::BaseResource
     "Avo::ViewTypes::TableComponent": "Avo::Custom::ResourceTableComponent", # [!code ++]
   }
 end
+```
+
+
+## Breadcrumbs
+
+The Breadcrumbs API has been improved.
+This is mostly an internal change but you might have a few `add_breadcrumb` calls in your code. Sarch for those and update them to the new API using positional arguments.
+
+`add_breadcrumb` now takes keyword arguments instead of positional arguments.
+
+```ruby
+add_breadcrumb "Home", root_path
+```
+
+```ruby
+add_breadcrumb title: "Home", path: root_path
+```
+
+`add_breadcrumb` now takes `icon` and `initials` options for a more immersive experience.
+
+```ruby
+add_breadcrumb title: "Home", icon: "heroicons/outline/home", initials: "AM"
+add_breadcrumb title: "Home", icon: "tabler/outline/home", initials: "PB"
 ```
 
 ## Grid View
