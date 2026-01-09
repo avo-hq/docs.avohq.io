@@ -147,9 +147,9 @@ Sets the badge color. Accepts a static value or a proc for dynamic coloring base
 
 #### Available colors
 
-**Base colors:** `orange`, `yellow`, `green`, `teal`, `blue`, `purple`
+**Base colors:** `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
 
-**Semantic colors:** `neutral`, `success`, `error`, `danger`, `info`
+**Semantic colors:** `neutral`, `success`, `danger`, `info`
 
 ```ruby{10}
 self.grid_view = {
