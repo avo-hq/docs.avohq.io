@@ -19,6 +19,7 @@ const getFiles = (directory, version) => {
     .filter(path => path !== 'index.md')
     .filter(path => path !== 'common')
     .filter(path => !path.includes('_common.md'))
+    .filter(path => path !== '.DS_Store')
     .map((path) => {
       let text = humanize(path.replace('.md', ''))
       if (text === 'Easy mde') {
@@ -28,8 +29,8 @@ const getFiles = (directory, version) => {
         text = 'Tip Tap'
       }
       const link = `/${version}/${directory}/${path.replace('.md', '.html')}`
-      return {text, link}
+      return { text, link }
     })
 }
 
-export {getFiles}
+export { getFiles }
