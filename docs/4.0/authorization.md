@@ -20,11 +20,14 @@ You must manually require `pundit` or your authorization library in your `Gemfil
 # Minimal authorization through OO design and pure Ruby classes
 gem "pundit"
 ```
+
 And update config/initializers/avo.rb with following configuration:
+
 ```ruby
 # Example of enabling authorization client in Avo configuration
 config.authorization_client = :pundit
 ```
+
 :::
 
 ## Ensure Avo knows who your current user is
@@ -53,9 +56,9 @@ These methods control whether the resource appears on the sidebar, if the view/e
 `index?` is used to display/hide the resources on the sidebar and restrict access to the resources **Index** view.
 
 :::info
-  This option is used in the **auto-generated menu**, not in the **menu editor**.
+This option is used in the **auto-generated menu**, not in the **menu editor**.
 
-  You'll have to use your own logic in the [`visible`](./menu-editor#item-visibility) block for that.
+You'll have to use your own logic in the [`visible`](./menu-editor#item-visibility) block for that.
 :::
 
 </Option>
@@ -146,7 +149,6 @@ For a `has_many :users` association use the plural version method `view_users?`,
 
 We'll have this example of a `Post` resource with many `Comment`s through the `has_many :comments` association.
 
-
 :::info The `record` variable in policy methods
 In the `Post` `has_many` `Comments` example, when you want to authorize `show_comments?` in `PostPolicy` you will have a `Comment` instance as the `record` variable, but when you try to authorize the `attach_comments?`, you won't have that `Comment` instance because you want to create one, but we expose the parent `Post` instance so you have more information about that authorization action that you're trying to make.
 :::
@@ -224,6 +226,7 @@ Controls whether the `Actions` dropdown is visible. The `record` variable is the
 <Option name="`reorder_{association}?`">
 
 Controls whether the user can see the [records reordering](./records-reordering) buttons on the `has_many` <Index /> page.
+
 </Option>
 
 ## Removing duplication
@@ -335,7 +338,7 @@ When working with files, it may be necessary to establish policies that determin
 Both the `record` and the `user` will be available for you to access.
 
 :::info Actions inherit attachment authorization
-These attachment authorization methods also apply to file fields in [actions](./actions/overview) that run on the resource using the same policy. For example, if you define `upload_file?` in `PostPolicy` and have an action on `Avo::Resources::Post` with `field :file, as: :file`, the same `upload_file?` policy method will be used to authorize the file upload in that action.
+These attachment authorization methods also apply to file fields in [actions](./actions/index) that run on the resource using the same policy. For example, if you define `upload_file?` in `PostPolicy` and have an action on `Avo::Resources::Post` with `field :file, as: :file`, the same `upload_file?` policy method will be used to authorize the file upload in that action.
 :::
 
 <Image src="/assets/img/authorization/file_actions.png" width="472" height="93" alt="" />
@@ -343,16 +346,19 @@ These attachment authorization methods also apply to file fields in [actions](./
 <Option name="`upload_{FIELD_ID}?`">
 
 Controls whether the user can upload the attachment.
+
 </Option>
 
 <Option name="`download_{FIELD_ID}?`">
 
 Controls whether the user can download the attachment.
+
 </Option>
 
 <Option name="`delete_{FIELD_ID}?`">
 
 Controls whether the user can destroy the attachment.
+
 </Option>
 
 :::info AUTHORIZE IN BULK
@@ -367,6 +373,7 @@ If you want to allow or disallow these methods in bulk you can use a little meta
   end
 end
 ```
+
 :::
 
 ## Scopes
@@ -399,12 +406,12 @@ A `Post` has_many `Comment`s. The `CommentPolicy::Scope` will not affect the `ha
 # The `query` is the Active Record query being done on the comments. ex: post.comments
 field :comments, as: :has_many, scope: -> { Pundit.policy_scope(parent, query) }
 ```
+
 :::
 
 ## Using different policy methods
 
 By default Avo will use the generated Pundit methods (`index?`, `show?`, `create?`, `new?`, `update?`, `edit?` and `destroy?`). But maybe, in your app, you're already using these methods and would like to use different ones for Avo. You may want override these methods inside your configuration with a simple map using the `authorization_methods` key.
-
 
 ```ruby{6-14}
 Avo.configure do |config|
@@ -431,6 +438,7 @@ Now, Avo will use `avo_index?` instead of `index?` to manage the **Index** view 
 It may be necessary to authorize a specific field or custom action of a resource using a policy class rather than defining the authorization logic directly within the resource class. By doing so, we can delegate control to the policy class, ensuring a cleaner and more maintainable authorization structure.
 
 :::code-group
+
 ```ruby [app/resources/product.rb]{8}
 field :amount,
       as: :money,
@@ -441,6 +449,7 @@ field :amount,
       # define ability to change the amount in policy class instead of doing it here
       disabled: -> { !@resource.authorization.authorize_action(:amount?, raise_exception: false) }
 ```
+
 ```ruby [app/policies/product_policy.rb]{2-4}
 # Define ability to change the amount in Product Policy
 def amount?
@@ -448,9 +457,8 @@ def amount?
 end
 
 ```
+
 :::
-
-
 
 ## Raise errors when policies are missing
 
@@ -471,10 +479,12 @@ end
 Now, you'll have to provide a policy for each resource you have in your app, thus making it a more secure app.
 
 ## Logs
+
 <VersionReq version="3.11.7" />
 [Developers](authentication.html#_2-developer-user) have the ability to monitor any unauthorized actions. When a [developer user](authentication.html#_2-developer-user) makes a request that triggers an unauthorized action, a log entry similar to the following will be generated:
 
 In development each log entry provides details about the policy class, the action attempted, the global id of the user who made the request, and the global id of the record involved:
+
 ```bash
 web     | [Avo->] Unauthorized action 'reorder?' for 'UserPolicy'
 web     | user: gid://dummy/User/20
@@ -489,6 +499,7 @@ user = GlobalID::Locator.locate(gid)
 ```
 
 In production each log entry provides details only about the policy class and the attempted action:
+
 ```bash
 web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
 ```
@@ -593,6 +604,7 @@ rescue Pundit::NotDefinedError => error
   raise NoPolicyError.new error.message
 end
 ```
+
 </Option>
 
 ## Explicit authorization
@@ -605,29 +617,33 @@ In versions between <Version version="3.13.4" /> and <Version version="3.13.6" /
 
 <VersionReq version="3.13.4" />
 
- This option gives you control over how missing policy classes or methods are handled during authorization checks in your Avo application.
+This option gives you control over how missing policy classes or methods are handled during authorization checks in your Avo application.
 
 ### Possible values
 
 **`true`**
-  - If a policy class or method is **missing** for a given resource or action, that action will automatically be considered **unauthorized**.
-  - This behavior enhances security by ensuring that any unconfigured or unhandled actions are denied by default.
+
+- If a policy class or method is **missing** for a given resource or action, that action will automatically be considered **unauthorized**.
+- This behavior enhances security by ensuring that any unconfigured or unhandled actions are denied by default.
 
 **`false`**
-  - If a policy class or method is **missing**, the action will be considered **authorized** by default.
+
+- If a policy class or method is **missing**, the action will be considered **authorized** by default.
 
 **`Proc`**
-  - You can also set `explicit_authorization` as a `Proc` to apply custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context)
 
-    For example:
+- You can also set `explicit_authorization` as a `Proc` to apply custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context)
 
-    ```ruby
-    config.explicit_authorization = -> {
-      current_user.access_to_admin_panel? && !current_user.admin?
-    }
-    ```
+  For example:
 
-    In this case, missing policies will be handled based on the condition: if the user has access to the admin panel but isn't an admin, the `explicit_authorization` will be enabled. This option allows you to customize authorization decisions based on the context of the current user or other factors.
+  ```ruby
+  config.explicit_authorization = -> {
+    current_user.access_to_admin_panel? && !current_user.admin?
+  }
+  ```
+
+  In this case, missing policies will be handled based on the condition: if the user has access to the admin panel but isn't an admin, the `explicit_authorization` will be enabled. This option allows you to customize authorization decisions based on the context of the current user or other factors.
+
 ### Default
 
 - For **new applications** (starting from Avo `3.13.4`) the default value for `explicit_authorization` is `true`. This provides a more secure out-of-the-box experience by ensuring actions without explicit authorization are denied.
@@ -649,50 +665,56 @@ end
 ### Examples:
 
 1. **When `explicit_authorization` is `true`**
-    - **Scenario**: You have a `Post` resource, but there is no policy class defined for it.
-    - **Result**: All actions for the `Post` resource (index, show, create, etc.) will be **unauthorized** unless you explicitly define a policy class and methods for those actions.
 
-    ---
-    - **Scenario**: You have a `Post` resource, and the policy class defined for it only defines the `show?` method.
+   - **Scenario**: You have a `Post` resource, but there is no policy class defined for it.
+   - **Result**: All actions for the `Post` resource (index, show, create, etc.) will be **unauthorized** unless you explicitly define a policy class and methods for those actions.
 
-    ```ruby
-    class PostPolicy < ApplicationPolicy
-      def show?
-        user.admin?
-      end
-    end
-    ```
-    - **Result**: In this case, since the `PostPolicy` lacks an `index?` method, attempting to access the `index` action will be denied by default.
+   ***
+
+   - **Scenario**: You have a `Post` resource, and the policy class defined for it only defines the `show?` method.
+
+   ```ruby
+   class PostPolicy < ApplicationPolicy
+     def show?
+       user.admin?
+     end
+   end
+   ```
+
+   - **Result**: In this case, since the `PostPolicy` lacks an `index?` method, attempting to access the `index` action will be denied by default.
 
 2. **When `explicit_authorization: false`**
-    - **Scenario**: Same `Post` resource without a policy class.
-    - **Result**: All actions for the `Post` resource will be **authorized** even though there are no explicit policy methods. This could expose unintended behavior, as any unprotected action will be accessible.
 
-    ---
+   - **Scenario**: Same `Post` resource without a policy class.
+   - **Result**: All actions for the `Post` resource will be **authorized** even though there are no explicit policy methods. This could expose unintended behavior, as any unprotected action will be accessible.
 
-    - **Scenario**: You have a `Post` resource, and the policy class defined for it only defines the `show?` method.
-    ```ruby
-    class PostPolicy < ApplicationPolicy
-      def show?
-        user.admin?
-      end
-    end
-    ```
-    - **Result**: In this case, missing methods like `index?` will allow access to the `index` action by default.
+   ***
 
+   - **Scenario**: You have a `Post` resource, and the policy class defined for it only defines the `show?` method.
+
+   ```ruby
+   class PostPolicy < ApplicationPolicy
+     def show?
+       user.admin?
+     end
+   end
+   ```
+
+   - **Result**: In this case, missing methods like `index?` will allow access to the `index` action by default.
 
 ### Migration Recommendations:
 
 - **For applications after from Avo `3.13.4`**
 
-    It is recommended to leave `explicit_authorization` set to `true`, ensuring all actions must be explicitly authorized to prevent unintentional access.
+  It is recommended to leave `explicit_authorization` set to `true`, ensuring all actions must be explicitly authorized to prevent unintentional access.
 
 - **For applications before from Avo `3.13.4`**
 
-    - If upgrading from an earlier version, carefully review your policies before enabling `explicit_authorization`. Missing policy methods that were previously allowing access will now deny access unless explicitly defined.
+      - If upgrading from an earlier version, carefully review your policies before enabling `explicit_authorization`. Missing policy methods that were previously allowing access will now deny access unless explicitly defined.
 
-    - It’s recommended to disable [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) in production, though it's not mandatory. When `explicit_authorization` is set to `true`, the default behavior is to deny access for actions without a defined policy. In this case, it’s often better to show an unauthorized message to users rather than raise an error. However, keeping [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) enabled in development can be helpful for identifying missing policy classes.
-</Option>
+      - It’s recommended to disable [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) in production, though it's not mandatory. When `explicit_authorization` is set to `true`, the default behavior is to deny access for actions without a defined policy. In this case, it’s often better to show an unauthorized message to users rather than raise an error. However, keeping [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) enabled in development can be helpful for identifying missing policy classes.
+
+  </Option>
 
 ## Rolify integration
 

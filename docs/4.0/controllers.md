@@ -1,5 +1,4 @@
 ---
-version: '2.14'
 demoVideo: https://youtu.be/peKt90XhdOg?t=11
 ---
 
@@ -22,6 +21,7 @@ end
 In order to make your controllers more flexible, there are several overridable methods similar to how [devise](https://github.com/heartcombo/devise#controller-filters-and-helpers:~:text=You%20can%20also%20override%20after_sign_in_path_for%20and%20after_sign_out_path_for%20to%20customize%20your%20redirect%20hooks) overrides `after_sign_in_path_for` and `after_sign_out_path_for`.
 
 ## Create methods
+
 For the `create` method, you can modify the `after_create_path`, the messages, and the actions both on success or failure.
 
 <Option name="`after_create_path`">
@@ -33,6 +33,7 @@ def after_create_path
   "/avo/resources/users"
 end
 ```
+
 </Option>
 
 <Option name="`create_success_action`">
@@ -46,6 +47,7 @@ def create_success_action
   end
 end
 ```
+
 </Option>
 
 <Option name="`create_fail_action`">
@@ -60,6 +62,7 @@ def create_fail_action
   end
 end
 ```
+
 </Option>
 
 <Option name="`create_success_message`">
@@ -71,6 +74,7 @@ def create_success_message
   "#{@resource.name} #{t("avo.was_successfully_created")}."
 end
 ```
+
 </Option>
 
 <Option name="`create_fail_message`">
@@ -82,9 +86,11 @@ def create_fail_message
   t "avo.you_missed_something_check_form"
 end
 ```
+
 </Option>
 
 ## Update methods
+
 For the `update` method, you can modify the `after_update_path`, the messages, and the actions both on success or failure.
 
 <Option name="`after_update_path`">
@@ -96,6 +102,7 @@ def after_update_path
   "/avo/resources/users"
 end
 ```
+
 </Option>
 
 <Option name="`update_success_action`">
@@ -109,6 +116,7 @@ def update_success_action
   end
 end
 ```
+
 </Option>
 
 <Option name="`update_fail_action`">
@@ -123,6 +131,7 @@ def update_fail_action
   end
 end
 ```
+
 </Option>
 
 <Option name="`update_success_message`">
@@ -134,6 +143,7 @@ def update_success_message
   "#{@resource.name} #{t("avo.was_successfully_updated")}."
 end
 ```
+
 </Option>
 
 <Option name="`update_fail_message`">
@@ -145,9 +155,11 @@ def update_fail_message
   t "avo.you_missed_something_check_form"
 end
 ```
+
 </Option>
 
 ## Destroy methods
+
 For the `destroy` method, you can modify the `after_destroy_path`, the messages, and the actions both on success or failure.
 
 <Option name="`after_destroy_path`">
@@ -159,6 +171,7 @@ def after_update_path
   "/avo/resources/users"
 end
 ```
+
 </Option>
 
 <Option name="`destroy_success_action`">
@@ -172,6 +185,7 @@ def destroy_success_action
   end
 end
 ```
+
 </Option>
 
 <Option name="`destroy_fail_action`">
@@ -185,6 +199,7 @@ def destroy_fail_action
   end
 end
 ```
+
 </Option>
 
 <Option name="`destroy_success_message`">
@@ -196,6 +211,7 @@ def destroy_success_message
   t("avo.resource_destroyed", attachment_class: @attachment_class)
 end
 ```
+
 </Option>
 
 <Option name="`destroy_fail_message`">
@@ -207,6 +223,5 @@ def destroy_fail_message
   @errors.present? ? @errors.join(". ") : t("avo.failed")
 end
 ```
+
 </Option>
-
-

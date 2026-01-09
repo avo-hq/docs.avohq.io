@@ -19,14 +19,19 @@ Depending on how you use Avo you might not need to do all the steps.
 Avo 4 requires a valid v4 license key. Your v3 license key won't work with Avo 4. Please upgrade your license at [avohq.io/pricing](https://avohq.io/pricing).
 ::: -->
 
-## Icons
+### Icons
 
 We started using the Tabler icons instead of the Heroicons.
-They are available in the [`avo-icons`](https://github.com/avo-hq/avo-icons) gem.
+They are provided by the [`avo-icons`](https://github.com/avo-hq/avo-icons) gem and you can quickly search for them using the [tabler icon search](https://tabler.io/icons).
 
-## Avatars and initials
+Try to use the Tabler icons instead of the Heroicons moving forward.
+
+### Avatars and initials
 
 Avo now uses the avatar and initials of a record or resource throughout the app.
+
+You set the avatar using the `avatar` configuration (ex-profile photo). The avatar will be used by Avo in multiple places in the app like the <Show /> and <Edit /> views, and the new breadcrumbs.
+In addition you can use the `avatar` field to display the avatar in the <Index /> view.
 
 ## Search
 
@@ -295,4 +300,38 @@ add_breadcrumb title: "Home", path: root_path
 ```ruby
 add_breadcrumb title: "Home", icon: "heroicons/outline/home", initials: "AM"
 add_breadcrumb title: "Home", icon: "tabler/outline/home", initials: "PB"
+```
+
+## Renamed `profile_photo` to `avatar`
+
+The `profile_photo` configuration has been renamed to `avatar`.
+
+```ruby
+# Before
+self.profile_photo = {
+  source: :profile_photo # an Active Storage field or a path
+}
+
+# After
+self.avatar = {
+  source: :avatar # an Active Storage field or a path
+}
+```
+
+The new avatar field will be used throughtout the app to display the record in a visual way.
+
+## Renamed `cover_photo` to `cover`
+
+The `cover_photo` configuration has been renamed to `cover`.
+
+```ruby
+# Before
+self.cover_photo = {
+  source: :cover_photo # an Active Storage field or a path
+}
+
+# After
+self.cover = {
+  source: :cover # an Active Storage field or a path
+}
 ```

@@ -131,59 +131,87 @@ const config = {
           ],
         },
         {
-          text: "CRUD UI",
+          text: "Resources",
           items: [
-            { text: "Resources", link: "/4.0/resources.html" },
+            { text: "Overview", link: "/4.0/resources.html" },
             { text: "Array Resources", link: "/4.0/array-resources.html" },
             { text: "HTTP Resources", link: "/4.0/http-resources.html" },
-            { text: "Fields", link: "/4.0/fields.html" },
-            { text: "Field options", link: "/4.0/field-options.html" },
-            { text: "Field discovery", link: "/4.0/field-discovery.html" },
-            { text: "Controller configuration", link: "/4.0/controllers.html" },
             { text: "Record previews", link: "/4.0/record-previews.html" },
             { text: "Scopes", link: "/4.0/scopes.html" },
             { text: "Records reordering", link: "/4.0/records-reordering.html" },
             { text: "Discreet information", link: "/4.0/discreet-information.html" },
             { text: "Customizable controls", link: "/4.0/customizable-controls.html" },
-            { text: "Cover and Profile Photos", link: "/4.0/cover-and-profile-photos.html" },
+            { text: "Avatar", link: "/4.0/avatar.html" },
+            { text: "Cover", link: "/4.0/cover.html" },
+
+            {
+              text: "Views",
+              collapsed: true,
+              items: [
+                { text: "Overview", link: "/4.0/views.html" },
+                { text: "Table view", link: "/4.0/table-view.html" },
+                { text: "Grid view", link: "/4.0/grid-view.html" },
+                { text: "Map view", link: "/4.0/map-view.html" },
+              ],
+            },
+
+            { text: "Controller configuration", link: "/4.0/controllers.html" },
             { text: "Breadcrumbs", link: "/4.0/breadcrumbs.html" },
+          ]
+        },
+        {
+          text: "Fields",
+          items: [
+            { text: "Fields", link: "/4.0/fields.html" },
+            { text: "Field options", link: "/4.0/field-options.html" },
+            { text: "Field discovery", link: "/4.0/field-discovery.html" },
+
+            {
+              text: "Layout",
+              collapsed: true,
+              items: [
+                { text: "Header", link: "/4.0/resource-header.html" },
+                { text: "Panels", link: "/4.0/resource-panels.html" },
+                { text: "Clusters", link: "/4.0/resource-clusters.html" },
+                { text: "Sidebars", link: "/4.0/resource-sidebar.html" },
+                { text: "Tabs", link: "/4.0/tabs.html" },
+              ],
+            },
+            {
+              text: "Field types",
+              collapsed: true,
+              items: fieldsMenuItems4,
+            },
+            {
+              text: "Associations",
+              collapsed: true,
+              items: [
+                { text: "Customization", link: "/4.0/associations.html" },
+                { text: 'Belongs to', link: '/4.0/associations/belongs_to.html' },
+                { text: 'Has one', link: '/4.0/associations/has_one.html' },
+                { text: 'Has many', link: '/4.0/associations/has_many.html' },
+                { text: 'Has and belongs to many', link: '/4.0/associations/has_and_belongs_to_many.html' },
+              ],
+            },
           ],
         },
         {
-          text: "Field types",
-          collapsible: true,
-          collapsed: true,
-          items: fieldsMenuItems4,
-        },
-        {
-          text: "Associations",
-          collapsible: true,
-          collapsed: true,
+          text: "Actions",
           items: [
-            { text: "Customization", link: "/4.0/associations.html" },
-            { text: 'Belongs to', link: '/4.0/associations/belongs_to.html' },
-            { text: 'Has one', link: '/4.0/associations/has_one.html' },
-            { text: 'Has many', link: '/4.0/associations/has_many.html' },
-            { text: 'Has and belongs to many', link: '/4.0/associations/has_and_belongs_to_many.html' },
+            { text: "Overview", link: "/4.0/actions/overview.html" },
+            { text: "Generate", link: "/4.0/actions/generate.html" },
+            { text: "Registration", link: "/4.0/actions/registration.html" },
+            { text: "Execution & Feedback", link: "/4.0/actions/execution.html" },
+            { text: "Customization", link: "/4.0/actions/customization.html" },
+            { text: "Guides & Tutorials", link: "/4.0/actions/guides-and-tutorials.html" },
           ],
         },
         {
-          text: "Layout",
+          text: "Filters",
           items: [
-            { text: "Header", link: "/4.0/resource-header.html" },
-            { text: "Panels", link: "/4.0/resource-panels.html" },
-            { text: "Clusters", link: "/4.0/resource-clusters.html" },
-            { text: "Sidebars", link: "/4.0/resource-sidebar.html" },
-            { text: "Tabs", link: "/4.0/tabs.html" },
-          ],
-        },
-        {
-          text: "Views",
-          items: [
-            { text: "Overview", link: "/4.0/views.html" },
-            { text: "Table view", link: "/4.0/table-view.html" },
-            { text: "Grid view", link: "/4.0/grid-view.html" },
-            { text: "Map view", link: "/4.0/map-view.html" },
+            { text: "Overview", link: "/4.0/filters.html" },
+            { text: "Basic Filters", link: "/4.0/basic-filters.html" },
+            { text: "Dynamic Filters", link: "/4.0/dynamic-filters.html" },
           ],
         },
         {
@@ -199,17 +227,19 @@ const config = {
             { text: "Branding", link: "/4.0/branding.html" },
             { text: "Routing", link: "/4.0/routing.html" },
             { text: "Multitenancy", link: "/4.0/multitenancy.html" },
-          ],
-        },
-        {
-          text: "Actions",
-          items: [
-            { text: "Overview", link: "/4.0/actions/overview.html" },
-            { text: "Generate", link: "/4.0/actions/generate.html" },
-            { text: "Registration", link: "/4.0/actions/registration.html" },
-            { text: "Execution & Feedback", link: "/4.0/actions/execution.html" },
-            { text: "Customization", link: "/4.0/actions/customization.html" },
-            { text: "Guides & Tutorials", link: "/4.0/actions/guides-and-tutorials.html" },
+            {
+              text: "Custom content",
+              collapsed: true,
+              items: [
+                { text: "Custom views", link: "/4.0/custom-tools.html" },
+                { text: "Custom fields", link: "/4.0/custom-fields.html" },
+                { text: "Custom errors", link: "/4.0/custom-errors.html" },
+                { text: "Resource tools", link: "/4.0/resource-tools.html" },
+                { text: "Stimulus JS integration", link: "/4.0/stimulus-integration.html" },
+                { text: "Custom asset pipeline", link: "/4.0/custom-asset-pipeline.html" },
+                { text: "TailwindCSS integration", link: "/4.0/tailwindcss-integration.html" },
+              ],
+            },
           ],
         },
         {
@@ -226,16 +256,13 @@ const config = {
           ],
         },
         {
-          text: "Collaboration",
+          text: "Forms and pages",
           items: [
-            { text: "Overview", link: "/4.0/collaborate/overview.html" },
-            { text: "Authorization", link: "/4.0/collaborate/authorization.html" },
-          ],
-        },
-        {
-          text: "Audit Logging",
-          items: [
-            { text: "Overview", link: "/4.0/audit-logging/" },
+            { text: "Overview", link: "/4.0/forms-and-pages/overview.html" },
+            { text: "Generators", link: "/4.0/forms-and-pages/generator.html" },
+            { text: "Pages", link: "/4.0/forms-and-pages/pages.html" },
+            { text: "Forms", link: "/4.0/forms-and-pages/forms.html" },
+            { text: "Guides and Tutorials", link: "/4.0/forms-and-pages/guides-and-tutorials.html" },
           ],
         },
         {
@@ -249,39 +276,16 @@ const config = {
           ],
         },
         {
-          text: "Filters",
+          text: "Collaboration",
           items: [
-            { text: "Overview", link: "/4.0/filters.html" },
-            { text: "Basic Filters", link: "/4.0/basic-filters.html" },
-            { text: "Dynamic Filters", link: "/4.0/dynamic-filters.html" },
-          ],
-        },
-        // {
-        //   text: "Audit Logging",
-        //   items: [
-        //     {text: "Overview", link: "/4.0/audit-logging/overview.html"},
-        //   ],
-        // },
-        {
-          text: "Forms and pages",
-          items: [
-            { text: "Overview", link: "/4.0/forms-and-pages/overview.html" },
-            { text: "Generators", link: "/4.0/forms-and-pages/generator.html" },
-            { text: "Pages", link: "/4.0/forms-and-pages/pages.html" },
-            { text: "Forms", link: "/4.0/forms-and-pages/forms.html" },
-            { text: "Guides and Tutorials", link: "/4.0/forms-and-pages/guides-and-tutorials.html" },
+            { text: "Overview", link: "/4.0/collaborate/overview.html" },
+            { text: "Authorization", link: "/4.0/collaborate/authorization.html" },
           ],
         },
         {
-          text: "Custom content",
+          text: "Audit Logging",
           items: [
-            { text: "Custom views", link: "/4.0/custom-tools.html" },
-            { text: "Custom fields", link: "/4.0/custom-fields.html" },
-            { text: "Custom errors", link: "/4.0/custom-errors.html" },
-            { text: "Resource tools", link: "/4.0/resource-tools.html" },
-            { text: "Stimulus JS integration", link: "/4.0/stimulus-integration.html" },
-            { text: "Custom asset pipeline", link: "/4.0/custom-asset-pipeline.html" },
-            { text: "TailwindCSS integration", link: "/4.0/tailwindcss-integration.html" },
+            { text: "Overview", link: "/4.0/audit-logging/" },
           ],
         },
         {
@@ -292,22 +296,14 @@ const config = {
         },
         {
           text: "Performance",
+          collapsed: true,
           items: [
             { text: "Cache", link: "/4.0/cache.html" },
             { text: "Views", link: "/4.0/views-performance.html" },
           ],
         },
         {
-          text: "Native Avo components",
-          collapsed: true,
-          items: [
-            { text: "<code>Avo::PanelComponent</code>", link: "/4.0/native-components/avo-panel-component.html" },
-            { text: "Native field components", link: "/4.0/native-field-components.html" },
-            { text: "Field wrappers", link: "/4.0/field-wrappers.html" },
-          ],
-        },
-        {
-          text: "Internals",
+          text: "Internals and Extending",
           collapsed: true,
           items: [
             { text: "Overview", link: "/4.0/internals.html" },
@@ -318,15 +314,24 @@ const config = {
             { text: "Select All", link: "/4.0/select-all.html" },
             { text: "Icons", link: "/4.0/icons.html" },
             { text: "Reserved model names and routes", link: "/4.0/internal-model-names.html" },
-          ],
-        },
-        {
-          text: "Extending",
-          collapsed: true,
-          items: [
-            { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
-            { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
-            { text: "Plugins", link: "/4.0/plugins.html" },
+            {
+              text: "Native Avo components",
+              collapsed: true,
+              items: [
+                { text: "<code>Avo::PanelComponent</code>", link: "/4.0/native-components/avo-panel-component.html" },
+                { text: "Native field components", link: "/4.0/native-field-components.html" },
+                { text: "Field wrappers", link: "/4.0/field-wrappers.html" },
+              ],
+            },
+            {
+              text: "Extending",
+              collapsed: true,
+              items: [
+                { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
+                { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
+                { text: "Plugins", link: "/4.0/plugins.html" },
+              ],
+            },
           ],
         },
         // {
