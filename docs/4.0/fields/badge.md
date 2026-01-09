@@ -31,16 +31,23 @@ Sets the badge color. Accepts a static value or a proc for dynamic coloring base
 
 #### Available colors
 
-**Base colors:** `orange`, `yellow`, `green`, `teal`, `blue`, `purple`
+**Base colors:** `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
 
-**Semantic colors:** `neutral`, `success`, `error`, `danger`, `info`
+**Semantic colors:** `neutral`, `success`, `danger`, `info`
 
+:::info Default behavior
+If an invalid color is provided, it will default to `neutral`.
+:::
 
 ```ruby
+# Using base colors
 field :status, as: :badge, color: "green"
 
+# Using semantic colors
+field :status, as: :badge, color: "success"
+
 # Or dynamically
-field :status, as: :badge, color: -> { record.active? ? "green" : "orange" }
+field :status, as: :badge, color: -> { record.completed? ? "success" : "neutral" }
 ```
 </Option>
 
@@ -52,6 +59,10 @@ Controls the badge appearance style.
 
 - `subtle` - Light background with colored text (default)
 - `solid` - Solid colored background with white text
+
+:::info Default behavior
+If an invalid style is provided, it will default to `subtle`.
+:::
 
 ```ruby
 field :status, as: :badge, color: :green, style: "solid"
@@ -92,7 +103,44 @@ field :stage,
     neutral: :drafting
   }
 ```
+
+:::info Default behavior
+If a value doesn't match any of the configured options, it will default to `neutral`.
+:::
+
 ## Examples
+
+### Using base colors
+
+```ruby
+field :priority, as: :badge,
+  color: -> {
+    {
+      "low" => "green",
+      "medium" => "amber",
+      "high" => "orange",
+      "urgent" => "red"
+    }[record.priority] || "neutral"
+  }
+```
+
+### Using semantic colors
+
+```ruby
+field :status, as: :badge,
+  color: -> {
+    case record.status
+    when "active", "completed"
+      "success"
+    when "pending", "review"
+      "info"
+    when "failed", "cancelled"
+      "danger"
+    else
+      "neutral"
+    end
+  }
+```
 
 ### Using Badge with a Select field for editing
 
