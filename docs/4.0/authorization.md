@@ -338,7 +338,7 @@ When working with files, it may be necessary to establish policies that determin
 Both the `record` and the `user` will be available for you to access.
 
 :::info Actions inherit attachment authorization
-These attachment authorization methods also apply to file fields in [actions](./actions/index) that run on the resource using the same policy. For example, if you define `upload_file?` in `PostPolicy` and have an action on `Avo::Resources::Post` with `field :file, as: :file`, the same `upload_file?` policy method will be used to authorize the file upload in that action.
+These attachment authorization methods also apply to file fields in [actions](./actions/overview) that run on the resource using the same policy. For example, if you define `upload_file?` in `PostPolicy` and have an action on `Avo::Resources::Post` with `field :file, as: :file`, the same `upload_file?` policy method will be used to authorize the file upload in that action.
 :::
 
 <Image src="/assets/img/authorization/file_actions.png" width="472" height="93" alt="" />
@@ -714,7 +714,7 @@ end
 
       - It’s recommended to disable [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) in production, though it's not mandatory. When `explicit_authorization` is set to `true`, the default behavior is to deny access for actions without a defined policy. In this case, it’s often better to show an unauthorized message to users rather than raise an error. However, keeping [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) enabled in development can be helpful for identifying missing policy classes.
 
-  </Option>
+</Option>
 
 ## Rolify integration
 
