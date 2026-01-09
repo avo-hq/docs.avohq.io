@@ -88,79 +88,135 @@ end
 
 ## Grid Item Badge
 
-<VersionReq version="3.15" />
+<Image src="/assets/img/4_0/grid-view/grid-badge.png" size="2080 x910" alt="Avo Grid View Badge Element" />
 
-<br>
-<br>
+You can display and customize a badge on top of your grid items. Badges are useful for showing status indicators, labels, or other visual cues that help users quickly identify important information about each item.
 
-<Image src="/assets/img/3_0/grid-view/grid-badge.png" size="2080 x1210" alt="Avo Grid View Badge Element" />
+## Options
 
-One common scenario is to show a badge on top of your grid items. Avo enables you to do that pretty easy using these three options.
+<Option name="`title`">
 
-<Option name="`badge_label`">
-
-The label is what the user sees on top of your grid item.
-
-```ruby{7}
-self.grid_view = {
-  card: -> do
-    {
-      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize: "300x300")) : nil,
-      title: record.title,
-      body: simple_format(record.description),
-      badge_label: (record.updated_at < 1.week.ago ? "New" : "Updated"),
-    }
-  end
-}
-```
-
-<Image src="/assets/img/3_0/grid-view/badge-label.png" size="1022 x686" alt="Avo Grid View Badge Label" />
-
-</Option>
-
-<Option name="`badge_color`">
-
-You may style it in any [TailwindCSS color](https://tailwindcss.com/docs/customizing-colors#default-color-palette) you prefer.
-
-It only needs to know the color name (`green`, `blue`, `fuchsia`, etc.).
+The `title` option sets the tooltip text that appears when users hover over the badge. This is useful for providing additional context or detailed information about the badge.
 
 ```ruby{8}
 self.grid_view = {
   card: -> do
     {
-      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize: "300x300")) : nil,
+      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize_to_fill: [300, 300])) : nil,
       title: record.title,
       body: simple_format(record.description),
-      badge_label: (record.updated_at < 1.week.ago ? "New" : "Updated"),
-      badge_color: (record.updated_at < 1.week.ago ? "green" : "orange")
+      badge: {
+        title: (record.status == :new) ? "New product here" : "Updated product here",
+      }
     }
-  end
+  end,
 }
 ```
 
-<Image src="/assets/img/3_0/grid-view/badge-color.png" size="1016x 678" alt="Avo Grid View Badge Color" />
+<Image src="/assets/img/4_0/grid-view/badge-title.png" size="1088x 740" alt="Avo Grid View Badge Title" />
 
 </Option>
 
-<Option name="`badge_title`">
+<Option name="`label`">
 
-The title refers to the tooltip that the user gets when they hover over the badge.
+The `label` option defines the visible text displayed on the badge. This is the primary content that users will see on your grid items.
 
 ```ruby{9}
 self.grid_view = {
   card: -> do
     {
-      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize: "300x300")) : nil,
+      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize_to_fill: [300, 300])) : nil,
       title: record.title,
       body: simple_format(record.description),
-      badge_label: (record.updated_at < 1.week.ago ? "New" : "Updated"),
-      badge_color: (record.updated_at < 1.week.ago ? "green" : "orange"),
-      badge_title: (record.updated_at < 1.week.ago ? "New product here" : "Updated product here")
+      badge: {
+        title: (record.status == :new) ? "New product here" : "Updated product here",
+        label: (record.status == :new) ? "New" : "Updated",
+      }
     }
-  end
+  end,
 }
 ```
 
-<Image src="/assets/img/3_0/grid-view/badge-title.png" size="1088x 740" alt="Avo Grid View Badge Title" />
+<Image src="/assets/img/4_0/grid-view/badge-label.png" size="1022 x686" alt="Avo Grid View Badge Label" />
 
+</Option>
+
+<Option name="`color`">
+
+Sets the badge color. Accepts a static value or a proc for dynamic coloring based on the record.
+
+#### Available colors
+
+**Base colors:** `orange`, `yellow`, `green`, `teal`, `blue`, `purple`
+
+**Semantic colors:** `neutral`, `success`, `error`, `danger`, `info`
+
+```ruby{10}
+self.grid_view = {
+  card: -> do
+    {
+      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize_to_fill: [300, 300])) : nil,
+      title: record.title,
+      body: simple_format(record.description),
+      badge: {
+        title: (record.status == :new) ? "New product here" : "Updated product here",
+        label: (record.status == :new) ? "New" : "Updated",
+        color: (record.status == :new) ? "green" : "orange",
+      }
+    }
+  end,
+}
+```
+</Option>
+
+<Option name="`style`">
+
+Controls the badge appearance style.
+
+#### Available styles
+
+- `subtle` - Light background with colored text (default)
+- `solid` - Solid colored background with white text
+
+```ruby{11}
+self.grid_view = {
+  card: -> do
+    {
+      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize_to_fill: [300, 300])) : nil,
+      title: record.title,
+      body: simple_format(record.description),
+      badge: {
+        title: (record.status == :new) ? "New product here" : "Updated product here",
+        label: (record.status == :new) ? "New" : "Updated",
+        color: (record.status == :new) ? "green" : "orange",
+        style: (record.status == :new) ? "solid" : "subtle",
+      }
+    }
+  end,
+}
+```
+</Option>
+
+<Option name="`icon`">
+
+Adds an icon to the badge.
+
+```ruby{12}
+self.grid_view = {
+  card: -> do
+    {
+      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize_to_fill: [300, 300])) : nil,
+      title: record.title,
+      body: simple_format(record.description),
+      badge: {
+        title: (record.status == :new) ? "New product here" : "Updated product here",
+        label: (record.status == :new) ? "New" : "Updated",
+        color: (record.status == :new) ? "green" : "orange",
+        style: (record.status == :new) ? "solid" : "subtle",
+        icon: (record.status == :new) ? "heroicons/outline/arrow-trending-up" : "",
+      }
+    }
+  end,
+}
+```
 </Option>
