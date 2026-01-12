@@ -253,7 +253,23 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-See the [Resource Header](./resource-header) documentation for more details on the new `header` DSL.
+### `panel` title in keyword arguments
+
+The `panel` title is now given as a keyword argument to the `panel` method.
+
+```ruby
+# before
+panel "User information" do
+  field :id, as: :id
+  field :name, as: :text
+end
+
+# after
+panel title: "User information" do
+  field :id, as: :id
+  field :name, as: :text
+end
+```
 
 ## Components
 
@@ -389,3 +405,17 @@ self.grid_view = {
    - `badge: { icon: ... }` - Adds an icon to the badge
 
 See the [Grid Item Badge](./grid-view#grid-item-badge) documentation for more details on all available options.
+
+## Discreet information updates
+
+We've made a few updates to the discreet information API to make it more versatile.
+
+### Removed API options
+
+1. We removed `id_text` and `id_badge` as they didn't really look good. Use `id` instead.
+2. The `timestamps_badge` was removed
+3. We added `:created_at` and `:updated_at` types which show the timestamps as a key-value pair.
+4. `label` is now `text`
+5. `url_target` is now `target`
+6. `as` can be `icon`, `text`, `badge`, `key_value`
+7. `key_value` has `key` and `text` options
