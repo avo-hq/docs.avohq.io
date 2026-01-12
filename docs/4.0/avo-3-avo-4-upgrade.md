@@ -356,39 +356,40 @@ self.cover = {
 
 ### Grid Item Badge breaking change
 
-The grid item badge configuration has been restructured from flat properties to a nested hash structure. The `badge_label`, `badge_color`, and `badge_title` options are now grouped under a `badge` hash, and new options (`style` and `icon`) have been added.
+The grid item badge configuration has been restructured from flat properties to a nested hash structure.
+
+:::warning Breaking Change
+The old flat properties (`badge_label`, `badge_color`, `badge_title`) are no longer supported in Avo 4.
+You must migrate to the new nested `badge` hash structure.
+:::
 
 ```ruby
 # Avo 3.15
 self.grid_view = {
   card: -> do
     {
-      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize_to_fill: [300, 300])) : nil,
       title: record.title,
-      body: simple_format(record.description),
-      badge_label: (record.status == :new) ? "New" : "Updated", # [!code --]
-      badge_color: (record.status == :new) ? "green" : "orange", # [!code --]
-      badge_title: (record.status == :new) ? "New product here" : "Updated product here", # [!code --]
+      badge_label: record.status,        # [!code --]
+      badge_color: status_color,         # [!code --]
+      badge_title: "Status: #{record.status}" # [!code --]
     }
-  end,
+  end
 }
 
 # Avo 4
 self.grid_view = {
   card: -> do
     {
-      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize_to_fill: [300, 300])) : nil,
       title: record.title,
-      body: simple_format(record.description),
-      badge: { # [!code ++]
-        label: (record.status == :new) ? "New" : "Updated", # [!code ++]
-        color: (record.status == :new) ? "green" : "orange", # [!code ++]
-        style: (record.status == :new) ? "solid" : "subtle", # [!code ++]
-        title: (record.status == :new) ? "New product here" : "Updated product here", # [!code ++]
-        icon: (record.status == :new) ? "heroicons/outline/arrow-trending-up" : "", # [!code ++]
-      } # [!code ++]
+      badge: {                           # [!code ++]
+        label: record.status,            # [!code ++]
+        color: status_color,             # [!code ++]
+        style: "solid",                  # [!code ++]
+        title: "Status tooltip",         # [!code ++]
+        icon: "heroicons/outline/check"  # [!code ++]
+      }                                   # [!code ++]
     }
-  end,
+  end
 }
 ```
 
@@ -403,6 +404,8 @@ self.grid_view = {
 2. **Add optional new properties** if needed:
    - `badge: { style: ... }` - Controls badge appearance (`subtle` or `solid`)
    - `badge: { icon: ... }` - Adds an icon to the badge
+
+For detailed information about available colors, styles, and icons, see the [Badge field documentation](./fields/badge).
 
 See the [Grid Item Badge](./grid-view#grid-item-badge) documentation for more details on all available options.
 
