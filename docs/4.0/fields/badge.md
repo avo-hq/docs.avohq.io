@@ -1,11 +1,11 @@
 ---
-version: '1.0'
+version: "1.0"
 license: community
 ---
 
 # Badge
 
-The `Badge` field is used to display an easily recognizable status of a record.
+The `badge` field is used to display an easily recognizable status of a record.
 
 <Image src="/assets/img/fields/badge_v4.jpg" width="450" height="194" alt="Badge field" />
 
@@ -14,7 +14,9 @@ field :status, as: :badge,
   options: {
     success: "Done",
     danger: "Cancelled",
-    warning: "On hold"
+    warning: "On hold",
+    green: "In review",
+    purple: "Idea"
   }
 ```
 

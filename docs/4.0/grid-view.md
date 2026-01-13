@@ -1,9 +1,8 @@
 # Grid view
 
-<br>
-<Image src="/assets/img/grid-view.jpg" width="1312" height="1096" alt="Avo grid view" />
-
 Some resources are best displayed in a grid view. We can do that with Avo using a `cover_url`, a `title`, and a `body`.
+
+<Image src="/assets/img/grid-view.jpg" width="1312" height="1096" alt="Avo grid view" />
 
 ## Enable grid view
 
@@ -26,9 +25,70 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
+## Options
+
+Next, you should configure a few things for the grid card.
+
+<Option name="`title`">
+
+What should be used as the title of the card.
+
+```ruby
+self.grid_view = {
+  card: -> do
+    {
+      title: record.title
+    }
+  end
+}
+```
+
+</Option>
+
+<Option name="`body`">
+
+What should be used as the body of the card. You can use this field to display a description of the record.
+
+```ruby
+self.grid_view = {
+  card: -> do
+    {
+      body: record.truncated_body
+    }
+  end
+}
+```
+
+</Option>
+<Option name="`cover_url`">
+
+What should be used as the cover URL of the card.
+
+```ruby
+self.grid_view = {
+  card: -> do
+    {
+      cover_url: record.image.attached? ? main_app.url_for(record.image.variant(resize_to_fill: [300, 300])) : nil
+    }
+  end
+}
+```
+
+If `nil` is given, a default placeholder image will be used.
+
+</Option>
+
+<Option name="`badge`">
+
+Optionally you may add a badge to give more context to the card or make it stand out.
+
+See [below](#grid-item-badge) a list of options you can configure for the badge.
+
+</Option>
+
 <Image src="/assets/img/view-switcher.png" width="822" height="153" alt="Avo view switcher" />
 
-## Make default view
+## Make grid the default view
 
 To make the grid the default way of viewing a resource **Index**, we have to use the `default_view_type` class attribute.
 
@@ -93,6 +153,7 @@ end
 You can display and customize a badge on top of your grid items. Badges are useful for showing status indicators, labels, or other visual cues that help users quickly identify important information about each item.
 
 ### Complete Example
+
 ```ruby
 # Dynamic badge based on record status
 self.grid_view = {
@@ -113,13 +174,20 @@ self.grid_view = {
 }
 ```
 
-## Options
+### Options
 
 <Option name="`label`">
 
 The visible text displayed on the badge. This is the primary content that users will see on your grid items.
+
 ```ruby
-badge: { label: "New" }
+self.grid_view = {
+  card: -> do
+    {
+      badge: { label: "New" }
+    }
+  end
+}
 ```
 
 <Image src="/assets/img/4_0/grid-view/badge-label.png" size="1022 x686" alt="Avo Grid View Badge Label" />
@@ -135,10 +203,17 @@ Sets the badge color. Accepts a static value or a proc for dynamic coloring base
 **Base colors:** `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
 
 **Semantic colors:** `neutral`, `success`, `danger`, `warning`, `info`
+
 ```ruby
-badge: {
-  label: "New",
-  color: "green"
+self.grid_view = {
+  card: -> do
+    {
+      badge: {
+        label: "New",
+        color: "green"
+      }
+    }
+  end
 }
 ```
 
@@ -152,11 +227,18 @@ Controls the badge appearance style.
 
 - `subtle` - Light background with colored text (default)
 - `solid` - Solid colored background with white text
+
 ```ruby
-badge: {
-  label: "New",
-  color: "green",
-  style: "solid"
+self.grid_view = {
+  card: -> do
+    {
+      badge: {
+        label: "New",
+        color: "green",
+        style: "solid"
+      }
+    }
+  end
 }
 ```
 
@@ -165,10 +247,17 @@ badge: {
 <Option name="`title`">
 
 The tooltip text that appears when users hover over the badge. Useful for providing additional context or detailed information.
+
 ```ruby
-badge: {
-  label: "New",
-  title: "New product available"
+self.grid_view = {
+  card: -> do
+    {
+      badge: {
+        label: "New",
+        title: "New product available"
+      }
+    }
+  end
 }
 ```
 
@@ -179,12 +268,21 @@ badge: {
 <Option name="`icon`">
 
 Adds an icon to the badge.
+
 ```ruby
-badge: {
-  label: "New",
-  color: "green",
-  icon: "heroicons/outline/arrow-trending-up"
+self.grid_view = {
+  card: -> do
+    {
+      badge: {
+        label: "New",
+        color: "green",
+        icon: "tabler/outline/trending-up"
+      }
+    }
+  end
 }
 ```
+
+You may cusomt
 
 </Option>

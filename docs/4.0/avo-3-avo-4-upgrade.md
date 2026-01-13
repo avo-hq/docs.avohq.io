@@ -352,16 +352,9 @@ self.cover = {
 }
 ```
 
-## Grid View
+## Grid Item Badge DSL tweaks
 
-### Grid Item Badge breaking change
-
-The grid item badge configuration has been restructured from flat properties to a nested hash structure.
-
-:::warning Breaking Change
-The old flat properties (`badge_label`, `badge_color`, `badge_title`) are no longer supported in Avo 4.
-You must migrate to the new nested `badge` hash structure.
-:::
+The grid item badge configuration has been updated from flat properties to a nested hash structure.
 
 ```ruby
 # Avo 3.15
@@ -413,12 +406,12 @@ See the [Grid Item Badge](./grid-view#grid-item-badge) documentation for more de
 
 We've made a few updates to the discreet information API to make it more versatile.
 
-### Removed API options
+### API tweaks
 
-1. We removed `id_text` and `id_badge` as they didn't really look good. Use `id` instead.
+1. Removed `id_text` and `id_badge` as they didn't really look good. Use `id` instead.
 2. The `timestamps_badge` was removed
-3. We added `:created_at` and `:updated_at` types which show the timestamps as a key-value pair.
+3. New `:created_at` and `:updated_at` types which show the timestamps as a key-value pair.
 4. `label` is now `text`
-5. `url_target` is now `target`
+5. Renamed `url_target` to `target`
 6. `as` can be `icon`, `text`, `badge`, `key_value`
-7. `key_value` has `key` and `text` options
+7. `key_value` has `key` and `value` options
