@@ -283,6 +283,4 @@ self.grid_view = {
 }
 ```
 
-You may cusomt
-
 </Option>
