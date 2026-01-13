@@ -60,34 +60,42 @@ Avo::ExecutionContext.new(target: &SOME_BLOCK, record: User.first).handle
 
 This means you could throw any type of object at it and it it responds to a `call` method wil will be called with all those objects.
 
+## Common objects
+
 <Option name="`target`">
 
 The block you'll pass to be evaluated. It may be anything but will only be evaluated if it responds to a `call` method.
+
 </Option>
 
 <Option name="`context`">
 
 Aliased to [`Avo::Current.context`](./avo-current#context).
+
 </Option>
 
 <Option name="`current_user`">
 
 Aliased to [`Avo::Current.user`](./avo-current#user).
+
 </Option>
 
 <Option name="`view_context`">
 
 Aliased to [`Avo::Current.view_context`](./avo-current#view_context).
+
 </Option>
 
 <Option name="`request`">
 
 Aliased to [`Avo::Current.request`](./avo-current#request).
+
 </Option>
 
 <Option name="`params`">
 
 Aliased to [`Avo::Current.params`](./avo-current#params).
+
 </Option>
 
 <Option name="Custom variables">
@@ -98,6 +106,7 @@ This is how we can expose `view`, `record`, and `resource` in the computed field
 ```ruby
 Avo::ExecutionContext.new(target: &SOME_BLOCK, record: User.first, view: :index, resource: resource).handle
 ```
+
 </Option>
 
 <Option name="`helpers`">
@@ -115,4 +124,5 @@ end
 
 field :name, as: :text, format_using: -> { helpers.simple_name(value) }
 ```
+
 </Option>
