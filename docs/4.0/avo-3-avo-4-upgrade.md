@@ -253,7 +253,23 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-See the [Resource Header](./resource-header) documentation for more details on the new `header` DSL.
+### `panel` title in keyword arguments
+
+The `panel` title is now given as a keyword argument to the `panel` method.
+
+```ruby
+# before
+panel "User information" do
+  field :id, as: :id
+  field :name, as: :text
+end
+
+# after
+panel title: "User information" do
+  field :id, as: :id
+  field :name, as: :text
+end
+```
 
 ## Components
 
@@ -335,3 +351,67 @@ self.cover = {
   source: :cover # an Active Storage field or a path
 }
 ```
+
+## Grid Item Badge DSL tweaks
+
+The grid item badge configuration has been updated from flat properties to a nested hash structure.
+
+```ruby
+# Avo 3.15
+self.grid_view = {
+  card: -> do
+    {
+      title: record.title,
+      badge_label: record.status,        # [!code --]
+      badge_color: status_color,         # [!code --]
+      badge_title: "Status: #{record.status}" # [!code --]
+    }
+  end
+}
+
+# Avo 4
+self.grid_view = {
+  card: -> do
+    {
+      title: record.title,
+      badge: {                           # [!code ++]
+        label: record.status,            # [!code ++]
+        color: status_color,             # [!code ++]
+        style: "solid",                  # [!code ++]
+        title: "Status tooltip",         # [!code ++]
+        icon: "heroicons/outline/check"  # [!code ++]
+      }                                   # [!code ++]
+    }
+  end
+}
+```
+
+#### Migration steps
+
+1. **Replace flat badge properties** with a `badge` hash:
+
+   - `badge_label` → `badge: { label: ... }`
+   - `badge_color` → `badge: { color: ... }`
+   - `badge_title` → `badge: { title: ... }`
+
+2. **Add optional new properties** if needed:
+   - `badge: { style: ... }` - Controls badge appearance (`subtle` or `solid`)
+   - `badge: { icon: ... }` - Adds an icon to the badge
+
+For detailed information about available colors, styles, and icons, see the [Badge field documentation](./fields/badge).
+
+See the [Grid Item Badge](./grid-view#grid-item-badge) documentation for more details on all available options.
+
+## Discreet information updates
+
+We've made a few updates to the discreet information API to make it more versatile.
+
+### API tweaks
+
+1. Removed `id_text` and `id_badge` as they didn't really look good. Use `id` instead.
+2. The `timestamps_badge` was removed
+3. New `:created_at` and `:updated_at` types which show the timestamps as a key-value pair.
+4. `label` is now `text`
+5. Renamed `url_target` to `target`
+6. `as` can be `icon`, `text`, `badge`, `key_value`
+7. `key_value` has `key` and `value` options
