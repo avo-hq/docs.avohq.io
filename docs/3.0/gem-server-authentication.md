@@ -188,7 +188,7 @@ RAILS_GROUPS=avo BUNDLE_WITH=avo bundle install
 
 ```ruby
 # Gemfile
-gem 'avo',
+gem 'avo'
 
 group :avo, optional: true do
   source "https://packager.dev/avo-hq/" do
