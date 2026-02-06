@@ -326,10 +326,10 @@ field :name, as: :text, default: 'John'
 field :level, as: :select, options: { 'Beginner': :beginner, 'Advanced': :advanced }, default: -> { Time.now.hour < 12 ? 'advanced' : 'beginner' }
 ```
 
-## Help text
+<Option name="`help`">
 
 Sometimes you will need some extra text to explain better what the field is used for. You can achieve that by using the `help` method.
-The value can be either text or HTML.
+The value can be either text or HTML and is displayed only on the <Edit /> view (use [`label_help`](#label_help) option to display it on all views).
 
 ```ruby
 # using the text value
@@ -339,7 +339,26 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css', help: "This ena
 field :password, as: :password, help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
 ```
 
-<Image src="/assets/img/fields-reference/help-text.png" width="954" height="271" alt="Help text" />
+<Image src="/assets/img/fields-reference/help-text.png" width="954" height="271" alt="Help text" />## Help text
+
+</Option>
+
+<Option name="`label_help`">
+
+The `label_help` option allows you to add a help text below the label of a field on every view.
+
+```ruby
+# using the text value
+field :custom_css, as: :code, theme: 'dracula', language: 'css', label_help: "This enables you to edit the user's custom styles."
+
+# using HTML value
+field :password, as: :password, label_help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
+```
+
+<!-- TODO: add image -->
+<!-- <Image src="/assets/img/fields-reference/help-text.png" width="954" height="271" alt="Help text" /> -->
+
+</Option>
 
 ## Nullable
 
