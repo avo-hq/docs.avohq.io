@@ -19,7 +19,7 @@ The bulk destroy action is particularly useful when you need to:
 
 ```ruby
 # app/avo/actions/bulk_destroy.rb
-class Avo::Actions::BulkDestroy < Avo::BaseActionAdd commentMore actions
+class Avo::Actions::BulkDestroy < Avo::BaseAction
   self.name = "Bulk Destroy"
   self.message = -> {
     tag.div do
