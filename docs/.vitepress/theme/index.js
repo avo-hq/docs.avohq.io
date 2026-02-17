@@ -70,7 +70,8 @@ export default {
   Layout() {
     return h(DefaultTheme.Layout, null, {
       "layout-top": () => h(TopBarWrapper),
-      "doc-before": () => [h(PageHeader), h(CopyPageButton)],
+      "doc-before": () => h(PageHeader),
+      "aside-outline-before": () => h(CopyPageButton),
       "aside-outline-after": () => h(AsideOutlineAfter),
     })
   },

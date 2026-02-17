@@ -224,6 +224,7 @@ const config = {
             { text: "Global Search", link: "/4.0/search/global-search.html" },
             { text: "Localization (I18n)", link: "/4.0/i18n.html" },
             { text: "Branding", link: "/4.0/branding.html" },
+            { text: "User Preferences", link: "/4.0/user-preferences.html" },
             { text: "Routing", link: "/4.0/routing.html" },
             { text: "Multitenancy", link: "/4.0/multitenancy.html" },
             {
@@ -285,6 +286,12 @@ const config = {
           text: "Audit Logging",
           items: [
             { text: "Overview", link: "/4.0/audit-logging/" },
+          ],
+        },
+        {
+          text: "Notifications",
+          items: [
+            { text: "Overview", link: "/4.0/notifications.html" },
           ],
         },
         {
