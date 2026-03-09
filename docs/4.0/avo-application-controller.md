@@ -10,7 +10,7 @@ When you need to do that, you may feel the need to override it with your own ver
 # Copied from Avo to `app/controllers/avo/application_controller.rb`
 module Avo
   class ApplicationController < ::ActionController::Base
-    include Pagy::Backend
+    include Pagy::Method
     include Avo::ApplicationHelper
     include Avo::UrlHelpers
 
