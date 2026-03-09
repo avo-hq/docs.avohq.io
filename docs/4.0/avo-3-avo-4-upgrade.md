@@ -303,7 +303,6 @@ end
 If you configured any resource pagination using the `size` option, update your pagination option from `size` to `slots`.
 
 ```ruby
-# Before
 self.pagination = -> do
   {
     size: ... # [!code --]
