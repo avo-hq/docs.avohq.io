@@ -300,38 +300,19 @@ end
 
 ### Replace `size` with `slots`
 
-If you configured resource pagination in Avo 3, update your pagination option from `size` to `slots`.
+If you configured any resource pagination using the `size` option, update your pagination option from `size` to `slots`.
 
 ```ruby
 # Before
 self.pagination = -> do
   {
-    type: :default,
-    size: [1, 2, 2, 1]
-  }
-end
-
-# After
-self.pagination = -> do
-  {
-    type: :default,
-    slots: 9
+    size: ... # [!code --]
+    slots: ... # [!code ++]
   }
 end
 ```
 
-For `:countless` pagination with no numeric page links:
-
-```ruby
-self.pagination = -> do
-  {
-    type: :countless,
-    slots: 0
-  }
-end
-```
-
-Check the [pagination documentation](./pagination.md) for more details.
+Check the <a href="./resources.html#slots">slots documentation</a> for more details.
 
 ## Breadcrumbs
 
