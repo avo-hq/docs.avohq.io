@@ -11,21 +11,19 @@ One common task you need to do is organize your sidebar resources into menus. Yo
 
 When you start with Avo, you'll get an auto-generated sidebar by default. That sidebar will contain all your resources, dashboards, and custom tools. To customize that menu, you have to add the `main_menu` key to your initializer.
 
-```ruby{3-22}
+```ruby{3-20}
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.main_menu = -> {
-    section "Resources", icon: "heroicons/outline/academic-cap" do
-      group "Academia" do
-        resource :course
-        resource :course_link
-      end
-
-      group "Blog", collapsable: true, collapsed: true do
-        dashboard :dashy
-
-        resource :post
-        resource :comment
+    section "Resources", icon: "tabler/outline/building-store", collapsable: false do
+      group "Company", collapsable: true do
+        resource :projects, path: "/admin/resources/projects" do
+          link "First project", active: :inclusive, path: "/admin/resources/projects/1"
+          link "Second project", active: :inclusive, path: "/admin/resources/projects/2"
+        end
+        resource :team, icon: "heroicons/outline/user-group"
+        resource :team_membership
+        resource :reviews, icon: "heroicons/outline/star"
       end
     end
 
@@ -37,57 +35,16 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/menu-editor/main.jpg" width="250" height="448" alt="Avo main menu" />
+<Image src="/assets/img/menu-editor/v4/main.png" width="250" height="350" alt="Avo main menu" />
 
 For now, Avo supports editing only two menus, `main_menu` and `profile_menu`. However, that might change in the future by allowing you to write custom menus for other parts of your app.
 
-```ruby
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.main_menu = -> {
-    section I18n.t("avo.dashboards"), icon: "dashboards" do
-      dashboard :dashy, visible: -> { true }
-      dashboard :sales, visible: -> { true }
-
-      group "All dashboards", visible: false do
-        all_dashboards
-      end
-    end
-
-    section "Resources", icon: "heroicons/outline/academic-cap" do
-      group "Academia" do
-        resource :course
-        resource :course_link
-      end
-
-      group "Blog" do
-        resource :posts
-        resource :comments
-      end
-
-      group "Other" do
-        resource :fish
-      end
-    end
-
-    section "Tools", icon: "heroicons/outline/finger-print" do
-      all_tools
-    end
-
-    group do
-      link_to "Avo", path: "https://avohq.io"
-      link_to "Google", path: "https://google.com", target: :_blank
-    end
-  }
-  config.profile_menu = -> {
-    link_to "Profile", path: "/profile", icon: "user-circle"
-  }
-end
-```
-
 ## Menu item types
 
-A few menu item types are supported `link_to`, `section`, `group`, `resource`, and `dashboard`. There are a few helpers too, like `all_resources`, `all_dashboards`, and `all_tools`.
+A few menu item types are supported: `link_to`, `section`, `group`, `resource`, `dashboard`, and `subitems`. There are a few helpers too, like `all_resources`, `all_dashboards`, and `all_tools`.
+
+The recommended hierarchy is `section → group → resource → subitem`. Sections are the top-level containers rendered with an icon header in the sidebar.
+<!-- here add the short details about the rest of the cases-->
 
 <Option name="`link_to`">
 
@@ -96,8 +53,6 @@ A few menu item types are supported `link_to`, `section`, `group`, `resource`, a
 ```ruby
 link_to "Google", path: "https://google.com", target: :_blank
 ```
-
-<Image src="/assets/img/menu-editor/external-link.jpg" width="254" height="155" alt="Avo menu editor" />
 
 When you add the `target: :_blank` option, a tiny external link icon will be displayed.
 
@@ -154,8 +109,6 @@ resource :posts
 resource "Avo::Resources::Comments"
 ```
 
-<Image src="/assets/img/menu-editor/resource.jpg" width="252" height="177" alt="Avo menu editor" />
-
 You can also change the label for the `resource` items to something else.
 
 ```ruby
@@ -173,6 +126,42 @@ resource :users, params: -> do
 end
 ```
 
+### Subitems
+
+You can add sub-links beneath a resource by passing a block. These appear as child items under the resource link in the sidebar and are useful for linking to filtered views, specific records, or nested paths.
+
+```ruby
+resource :projects, path: "/admin/resources/projects" do
+  link "First project", active: :inclusive, path: "/admin/resources/projects/1"
+  link "Second project", active: :inclusive, path: "/admin/resources/projects/2"
+end
+```
+
+The `active` option controls when the sub-link is highlighted as active:
+- `:inclusive` — the link is active when the current path starts with the given `path` (useful for nested routes)
+- `:exclusive` — the link is active only on an exact path match (default)
+
+</Option>
+
+<Option name="`subitems`">
+
+`subitems` is an optional wrapper you can use inside a `resource` block to make the sub-links more explicit and readable. It is functionally equivalent to writing links directly in the block. Note that `subitems` and the `link` items within it do not support the `icon` option.
+
+```ruby
+# These two are equivalent
+resource :projects do
+  link "New project", path: "/admin/resources/projects/new"
+  link "All projects", path: "/admin/resources/projects"
+end
+
+resource :projects do
+  subitems do
+    link "New project", path: "/admin/resources/projects/new"
+    link "All projects", path: "/admin/resources/projects"
+  end
+end
+```
+
 </Option>
 
 <Option name="`dashboard`">
@@ -184,8 +173,6 @@ dashboard :dashy
 dashboard "Sales"
 ```
 
-<Image src="/assets/img/menu-editor/dashboard.jpg" width="256" height="212" alt="Avo menu editor" />
-
 You can also change the label for the `dashboard` items to something else.
 
 ```ruby
@@ -196,32 +183,47 @@ dashboard :dashy, label: "Dashy Dashboard"
 
 <Option name="`section`">
 
-Sections are the big categories in which you can group your menu items. They take `name` and `icon` options.
+Sections are the **top-level containers** in the sidebar. They are rendered with a prominent header that includes an `icon` and a `name`. Sections are intended to group related `group`s and items at the highest level of the menu.
 
 ```ruby
 section "Resources", icon: "heroicons/outline/academic-cap" do
-  resource :course
-  resource :course_link
+  group "Academia", collapsable: true do
+    resource :course
+    resource :course_link
+  end
+
+  group "Blog", collapsable: true, collapsed: true do
+    resource :posts
+    resource :comments
+  end
 end
 ```
 
-<Image src="/assets/img/menu-editor/section.jpg" width="255" height="207" alt="Avo menu editor" />
+You can also place items directly inside a section without a group:
+
+```ruby
+section "Tools", icon: "heroicons/outline/finger-print" do
+  all_tools
+end
+```
 
 </Option>
 
 <Option name="`group`">
 
-Groups are smaller categories where you can bring together your items.
+Groups are **sub-categories** nested inside sections. They render as a collapsable label and are used to cluster related items within a section. Groups support `collapsable` and `collapsed` options. Note that groups do not support the `icon` option.
 
 ```ruby
-group "Blog" do
-  resource :posts
-  resource :categories
-  resource :comments
+section "Resources", icon: "heroicons/outline/academic-cap" do
+  group "Blog", collapsable: true, collapsed: true do
+    resource :posts
+    resource :categories
+    resource :comments
+  end
 end
 ```
 
-<Image src="/assets/img/menu-editor/group.jpg" width="252" height="205" alt="Avo menu editor" />
+Groups can also be placed at the top level without a parent section, but the recommended structure is to nest them inside sections.
 
 </Option>
 
@@ -236,7 +238,7 @@ Renders all resources, except those explicitly excluded.
 
 ```ruby
 section "App", icon: "heroicons/outline/beaker" do
-  group "Resources", icon: "resources" do
+  group "Resources" do
     all_resources except: [:users, :orders]
   end
 end
@@ -257,7 +259,7 @@ Renders all dashboards, except those explicitly excluded.
 
 ```ruby
 section "App", icon: "heroicons/outline/beaker" do
-  group "Dashboards", icon: "dashboards" do
+  group "Dashboards" do
     all_dashboards except: [:sales, :analytics]
   end
 end
@@ -273,7 +275,7 @@ Renders all tools.
 
 ```ruby
 section "App", icon: "heroicons/outline/beaker" do
-  group "All tools", icon: "tools" do
+  group "All tools" do
     all_tools
   end
 end
@@ -285,15 +287,15 @@ end
 
 ```ruby
 section "App", icon: "heroicons/outline/beaker" do
-  group "Dashboards", icon: "dashboards" do
+  group "Dashboards" do
     all_dashboards
   end
 
-  group "Resources", icon: "resources" do
+  group "Resources" do
     all_resources
   end
 
-  group "All tools", icon: "tools" do
+  group "All tools" do
     all_tools
   end
 end
@@ -303,7 +305,7 @@ end
 The `all_resources` helper is taking into account your [authorization](./authorization) rules, so make sure you have `def index?` enabled in your resource policy.
 :::
 
-<Image src="/assets/img/menu-editor/all-helpers.jpg" width="254" height="732" alt="Avo menu editor" />
+<Image src="/assets/img/menu-editor/v4/all-helpers.png" width="254" height="350" alt="Avo menu editor" />
 
 ## Item visibility
 
@@ -358,27 +360,29 @@ end
 
 ## Icons
 
-For [`Section`](#section)s, you can use icons to make them look better. You can use some local ones that we used throughout the app and all [heroicons](https://heroicons.com/) designed by [Steve Schoger](https://twitter.com/steveschoger). In addition, you can use the `solid` or `outline` versions. We used the `outline` version throughout the app.
+The `icon` option is supported on `section` and on individual menu items (`link_to`, `resource`, `dashboard`). It is not supported on `group` or `subitems` (including links within subitems).
+
+You can use icons from [Heroicons](https://heroicons.com/) (both `outline` and `solid` variants) or from [Tabler Icons](https://tabler.io/icons) (preferred in Avo 4).
 
 ```ruby
-section "Resources", icon: "heroicons/outline/academic-cap" do
-  resource :course
+section "Resources", icon: "heroicons/solid/academic-cap" do
+  group "Blog" do
+    resource :posts, icon: "heroicons/outline/academic-cap"
+  end
 end
 
 section "Resources", icon: "heroicons/solid/finger-print" do
-  resource :course
+  resource :course, icon: "heroicons/outline/finger-print"
 end
 
-section "Resources", icon: "heroicons/outline/adjustments" do
-  resource :course
+section "Resources", icon: "heroicons/solid/adjustments" do
+  resource :course, icon: "heroicons/outline/adjustments"
 end
 ```
 
-<Image src="/assets/img/menu-editor/icons.jpg" width="253" height="328" alt="Avo menu editor" />
+### Icons on resource, dashboard, and link_to
 
-### Icons on resource, dashboard, and link_to items
-
-You can add icons to other menu items like `resource`, `dashboard`, and `link_to`.
+In addition to sections, you can add icons to `resource`, `dashboard`, and `link_to` items.
 
 ```ruby
 link_to "Avo", "https://avohq.io", icon: "globe"
@@ -386,25 +390,29 @@ link_to "Avo", "https://avohq.io", icon: "globe"
 
 ## Collapsable sections and groups
 
-When you have a lot of items they can take up a lot of vertical space. You can choose to make those sidebar sections collapsable by you or your users.
+Both `section` and `group` support the `collapsable` option. When enabled, an arrow icon is added to indicate the item can be collapsed. The collapsed/expanded state is stored in the browser's Local Storage and remembered across page loads.
 
 ```ruby
-section "Resources", icon: "resources", collapsable: true do
-  resource :course
+section "Resources", icon: "heroicons/outline/academic-cap", collapsable: true do
+  group "Blog", collapsable: true do
+    resource :posts
+    resource :comments
+  end
 end
 ```
 
 <Image src="/assets/img/menu-editor/collapsable.jpg" width="250" height="182" alt="Avo menu editor" />
 
-That will add the arrow icon next to the section to indicate it's collapsable. So when your users collapse and expand it, their choice will be stored in Local Storage and remembered in that browser.
-
 ### Default collapsed state
 
-You can however, set a default collapsed state using the `collapsed` option.
+You can set a default collapsed state using the `collapsed` option. This only takes effect the first time a user visits — once they have a stored preference, that preference takes priority.
 
 ```ruby
-section "Resources", icon: "resources", collapsable: true, collapsed: true do
-  resource :course
+section "Resources", icon: "heroicons/outline/academic-cap", collapsable: true, collapsed: true do
+  group "Blog", collapsable: true, collapsed: true do
+    resource :posts
+    resource :comments
+  end
 end
 ```
 

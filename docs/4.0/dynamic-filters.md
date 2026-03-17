@@ -126,6 +126,25 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_adm
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[created_at][lte][]=2024-07-02%2012%3A00), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L50)
 </Option>
 
+<Option name="Date time">
+
+Same as **Date** (same conditions and visuals), but the picker also enables time selection.
+
+```ruby
+dynamic_filter :created_at, type: :date_time
+```
+
+</Option>
+
+<Option name="Time">
+
+Same as **Date** (same conditions and visuals), but the picker is time-only (no calendar).
+
+```ruby
+dynamic_filter :published_at, type: :time
+```
+</Option>
+
 <Option name="Number">
 
 ### Conditions
@@ -410,6 +429,8 @@ Computed from field using [`field_to_filter` method](#field-to-filter-matching).
 
 - [`:boolean`](#boolean)<br>
 - [`:date`](#date)<br>
+- [`:date_time`](#date-time) (same behavior as Date, with time enabled)<br>
+- [`:time`](#time) (same behavior as Date, time-only picker)<br>
 - [`:number`](#number)<br>
 - [`:select`](#select)<br>
 - [`:text`](#text)<br>

@@ -975,14 +975,14 @@ This is especially beneficial for large datasets, where displaying the total num
 self.pagination = -> do
   {
     type: :default,
-    size: [1, 2, 2, 1],
+    slots: 9,
   }
 end
 
 # Or as hash:
 self.pagination = {
   type: :default,
-  size: [1, 2, 2, 1],
+  slots: 9,
 }
 ```
 
@@ -998,17 +998,15 @@ The exposed pagination setting above have the default value for each key.
 
 `:default`
 
-### `size`<br><br>
+### `slots`<br><br>
 
 #### Possible values
 
-[Pagy docs - Control the page links](https://ddnexus.github.io/pagy/docs/how-to/#control-the-page-links)
+[Pagy docs - Control the page links](https://ddnexus.github.io/pagy/toolbox/helpers/series_nav/#options)
 
 #### Default
 
-`[1, 2, 2, 1]` - before <Version version="3.11.5" />
-
-`9` - <VersionReq version="3.11.5" />
+`9`
 
 ### Examples
 
@@ -1018,7 +1016,7 @@ The exposed pagination setting above have the default value for each key.
 self.pagination = -> do
   {
     type: :default,
-    size: [1, 2, 2, 1],
+    slots: 9,
   }
 end
 ```
@@ -1045,7 +1043,7 @@ end
 self.pagination = -> do
   {
     type: :countless,
-    size: []
+    slots: 0
   }
 end
 ```
