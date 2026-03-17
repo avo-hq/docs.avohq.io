@@ -460,3 +460,7 @@ The current `description` option is used for the card description under the titl
 ## Added `sidebar_toggle_visible` configuration option
 
 More info on the [Toggle the sidebar button visibility](./customization.html#toggle-the-sidebar-button-visibility) section.
+
+## Added `self.description` option to actions
+
+More info on the [Description option](./actions/customization.html#description) section.

@@ -44,6 +44,24 @@ end
 
 </Option>
 
+<Option name="`description`" headingSize=3>
+
+The `description` option adds a short description displayed below the action's name in the modal header. This helps users understand what the action does before confirming.
+
+```ruby{3,5-8}
+# app/avo/actions/release_fish.rb
+class Avo::Actions::ReleaseFish < Avo::BaseAction
+  self.description = "Release the fish back into the ocean"
+
+  # Or as a block
+  self.description = -> {
+    record.present? ? "Release #{record.name} back into the ocean" : "Release fish back into the ocean"
+  }
+end
+```
+
+</Option>
+
 <Option name="`message`" headingSize=3>
 
 The `message` option is used to change the action's confirmation message.
