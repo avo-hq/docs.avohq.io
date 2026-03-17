@@ -283,6 +283,12 @@ const config = {
           ],
         },
         {
+          text: "MCP (Model Context Protocol)",
+          items: [
+            { text: "Overview", link: "/4.0/mcp.html" },
+          ],
+        },
+        {
           text: "Audit Logging",
           items: [
             { text: "Overview", link: "/4.0/audit-logging/" },
@@ -320,6 +326,7 @@ const config = {
             { text: "Select All", link: "/4.0/select-all.html" },
             { text: "Icons", link: "/4.0/icons.html" },
             { text: "Reserved model names and routes", link: "/4.0/internal-model-names.html" },
+            { text: "Rails engines and path helpers", link: "/4.0/rails-engines-paths.html" },
             {
               text: "Native Avo components",
               collapsed: true,
