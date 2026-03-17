@@ -165,42 +165,7 @@ You can access the context data with `::Avo::Current.context` object.
 
 ## Breadcrumbs
 
-By default, Avo ships with breadcrumbs enabled.
-
-<Image src="/assets/img/customization/breadcrumbs.jpg" width="618" height="297" alt="Avo breadcrumbs" />
-
-You may disable them using the `display_breadcrumbs` configuration option.
-
-```ruby{2}
-Avo.configure do |config|
-  config.display_breadcrumbs = false
-end
-```
-
-The first item on the breadcrumb is **Home** with the `root_path` URL. You can customize that using the `set_initial_breadcrumbs` block.
-
-```ruby{2-5}
-Avo.configure do |config|
-  config.set_initial_breadcrumbs do
-    add_breadcrumb "Casa", root_path
-    add_breadcrumb "Something else", something_other_path
-  end
-end
-```
-
-Avo uses the [breadcrumbs_on_rails](https://github.com/weppos/breadcrumbs_on_rails) gem under the hood.
-
-### Breadcrumbs for custom pages
-
-You can add breadcrumbs to custom pages in the controller action.
-
-```ruby{3}
-class Avo::ToolsController < Avo::ApplicationController
-  def custom_tool
-    add_breadcrumb "Custom tool"
-  end
-end
-```
+This section has moved to the [Breadcrumbs](./breadcrumbs.md) page.
 
 ## Toggle the sidebar button visibility
 
