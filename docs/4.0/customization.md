@@ -160,6 +160,7 @@ It's recommended you don't store your current user here but using the [`current_
 You can access the context data with `::Avo::Current.context` object.
 
 ## Eject
+
 [This section has moved.](./eject-views)
 
 ## Breadcrumbs
@@ -200,6 +201,20 @@ class Avo::ToolsController < Avo::ApplicationController
   end
 end
 ```
+
+## Toggle the sidebar button visibility
+
+By default, Avo displays a toggle button in the navbar that allows users to collapse and expand the sidebar on desktop. You can hide this button using the `sidebar_toggle_visible` configuration option. On mobile, the sidebar toggle is always visible regardless of this setting.
+
+```ruby{2}
+Avo.configure do |config|
+  config.sidebar_toggle_visible = false
+end
+```
+
+When set to `false`, the sidebar will remain permanently open on desktop and users won't be able to collapse it.
+
+<Image src="/assets/img/customization/sidebar-toggle-visible.gif" width="643" height="800" alt="Sidebar toggle button" />
 
 ## Page titles
 
@@ -336,6 +351,7 @@ This is very useful when you use something like `friendly` gem, custom `to_param
 The following example shows how you can update the `to_param` (to use the post name) method on the `User` model to use a custom attribute and then update the `Avo::Resources::User` so it knows how to search for that model.
 
 ::: code-group
+
 ```ruby [app/avo/resources/post.rb]
 class Avo::Resource::Post < Avo::BaseResource
   self.find_record_method = -> {
@@ -365,11 +381,13 @@ class Post < ApplicationRecord
   end
 end
 ```
+
 :::
 
 #### Using the `friendly` gem
 
 ::: code-group
+
 ```ruby [app/avo/resources/user.rb]
 class Avo::Resources::User < Avo::BaseResource
   self.find_record_method = -> {
@@ -390,6 +408,7 @@ class User < ApplicationRecord
   friendly_id :name, use: :slugged
 end
 ```
+
 :::
 
 #### Using `prefixed_ids` gem
@@ -470,11 +489,13 @@ config.logger = -> {
 In order to implement some features like route-level Multitenancy we exposed an API to add to Avo's `default_url_options` method.
 
 ::: code-group
+
 ```ruby [config/initializers/avo.rb]{2}
 Avo.configure do |config|
   config.default_url_options = [:account_id]
 end
 ```
+
 ```ruby [app/config/routes.rb]{3}
 Rails.application.routes.draw do
   # Use to test out route-based multitenancy
@@ -483,9 +504,11 @@ Rails.application.routes.draw do
   end
 end
 ```
+
 :::
 
 Now, when you visit `https://example.org/account/adrian/avo`, the `account_id` param is `adrian` and it will be appended to all path helpers.
+
 </Option>
 
 <Option name="`turbo`">
@@ -503,6 +526,7 @@ Supported options with default values:
     }
   end
 ```
+
 </Option>
 
 <Option name="`pagination`">
@@ -526,6 +550,7 @@ end
 This will make all your application's tables countless keeping the size key / value as the default one.
 
 Verify all possible options [here](resources#self_pagination).
+
 </Option>
 
 <Option name="`click_row_to_view_record`">
@@ -642,6 +667,7 @@ For detailed guidance, refer to the [Rails session store configuration](https://
 ---
 
 By adopting the `persistence` configuration with a suitable session store, you can ensure a seamless user experience.
+
 </Option>
 
 <Option name="`alert_dismiss_time`">

@@ -389,7 +389,6 @@ self.grid_view = {
 #### Migration steps
 
 1. **Replace flat badge properties** with a `badge` hash:
-
    - `badge_label` → `badge: { label: ... }`
    - `badge_color` → `badge: { color: ... }`
    - `badge_title` → `badge: { title: ... }`
@@ -415,3 +414,32 @@ We've made a few updates to the discreet information API to make it more versati
 5. Renamed `url_target` to `target`
 6. `as` can be `icon`, `text`, `badge`, `key_value`
 7. `key_value` has `key` and `value` options
+
+## Removed `cluser` in favor of `width`
+
+<!-- TODO: -->
+
+- removed `compact` and `short` options from the field wrapper. The fields react better
+- avo configuration has new `use_stacked_fields` option to enable the global use of the `stacked` field option
+- fields now have the `width` option
+
+## Map view tweaks
+
+- `layout` changed to `map.position` and now reflects the actual map position on the page (`:top`, `:right`, `:bottom`, `:left`)
+
+## Added `label_help` option
+
+This option allows you to add a help text to the label of a field on <Show /> and <Edit /> views.
+
+<RelatedList>
+<RelatedItem href="./field-options.html#label_help">Label help option</RelatedItem>
+</RelatedList>
+
+## Cards `description` option renamed to `discreet_description`
+
+The old `description` option was renamed to `discreet_description`
+The current `description` option is used for the card description under the title.
+
+## Added `sidebar_toggle_visible` configuration option
+
+More info on the [Toggle the sidebar button visibility](./customization.html#toggle-the-sidebar-button-visibility) section.
