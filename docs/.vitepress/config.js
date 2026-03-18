@@ -661,10 +661,13 @@ const config = {
       ],
     },
 
-    algolia: {
-      apiKey: "ee35d4018f0bd7cf035aa4cd29cf7c86",
-      appId: "3TLBFY0IWW",
-      indexName: "avohq",
+    search: {
+      provider: 'algolia',
+      options: {
+        apiKey: "ee35d4018f0bd7cf035aa4cd29cf7c86",
+        appId: "3TLBFY0IWW",
+        indexName: "avohq",
+      },
     },
   },
 }
