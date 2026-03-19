@@ -55,6 +55,12 @@ The page where you can create a new resource.
 
 </Option>
 
+<Option name="`Single`">
+
+`:single` is an alias for the `Show`, `Edit`, and `New` views. So everything except the `Index` view.
+
+</Option>
+
 ## Preview
 
 The fields marked with `show_on :preview`, will be show in the [preview field](./fields/preview) popup.
