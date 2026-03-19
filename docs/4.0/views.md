@@ -45,7 +45,7 @@ The page where you can create a new resource.
 
 <Option name="`Display`">
 
-`:display` is an alias for the the `Index` and `Show` views where you can display records and their details.
+`:display` is an alias for the `Index` and `Show` views where you can display records and their details.
 
 </Option>
 
