@@ -105,22 +105,69 @@ end
 
 ## Container width
 
-```ruby{2-3}
+Control how wide Avo's main content area is. The default keeps index views in a large constrained container and show/form views in a narrower one.
+
+```ruby
+# config/initializers/avo.rb
 Avo.configure do |config|
-  config.full_width_index_view = false
-  config.full_width_container = false
+  # Apply one width to all views
+  config.container_width = :full
+
+  # Or target specific views with a hash
+  config.container_width = { index: :full }
 end
 ```
 
-Avo's default main content is constrained to a regular [Tailwind CSS container](https://tailwindcss.com/docs/container). If you have a lot of content or prefer to display it full-width, you have two options.
+### Width options
 
-### Display the `Index` view full-width
+| Value    | Behaviour                                   |
+| -------- | ------------------------------------------- |
+| `:large` | Constrained container (default for index)   |
+| `:small` | Narrow container (default for show / forms) |
+| `:full`  | Full viewport width                         |
 
-Using `full_width_index_view: true` tells Avo to display the **Index** view full-width.
+### Hash keys
 
-### Display all views full-width
+Pass a hash to override specific views. Both individual view keys and group aliases are supported.
 
-Using `full_width_container: true` tells Avo to display all views full-width.
+**Individual view keys:** `:index`, `:show`, `:new`, `:edit`, `:create`, `:update`
+
+**Group aliases:**
+
+| Alias      | Expands to                                     |
+| ---------- | ---------------------------------------------- |
+| `:forms`   | `:new`, `:edit`, `:create`, `:update`          |
+| `:display` | `:index`, `:show`                              |
+| `:single`  | `:show`, `:new`, `:edit`, `:create`, `:update` |
+
+When a specific key and a group alias target the same view, the specific key wins.
+
+### Examples
+
+```ruby
+# All views full-width
+config.container_width = :full
+
+# Only the index is full-width; show and forms keep their defaults
+config.container_width = { index: :full }
+
+# All single-record views full-width; index stays large
+config.container_width = { single: :full }
+
+# Forms full-width, show and index keep defaults
+config.container_width = { forms: :full }
+
+# Mix: single full-width, but show overridden back to small
+config.container_width = { single: :full, show: :small }
+```
+
+### Upgrading from `full_width_container` / `full_width_index_view`
+
+| Old | New |
+| --- | --- |
+| `config.full_width_container = true` | `config.container_width = :full` |
+| `config.full_width_container = false` | Remove the line (default is correct) |
+| `config.full_width_index_view = true` | `config.container_width = { index: :full }` |
 
 ## Cache resources on the `Index` view
 
@@ -180,6 +227,38 @@ end
 When set to `false`, the sidebar will remain permanently open on desktop and users won't be able to collapse it.
 
 <Image src="/assets/img/customization/sidebar-toggle-visible.gif" width="643" height="800" alt="Sidebar toggle button" />
+
+## Body classes
+
+You can add custom CSS classes to Avo's `<body>` tag using the `body_classes` configuration option. This is useful for applying global styles, theme variations, or targeting specific layouts with CSS.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.body_classes = "custom-theme compact-layout"
+end
+```
+
+You can also pass an array:
+
+```ruby
+Avo.configure do |config|
+  config.body_classes = ["custom-theme", "compact-layout"]
+end
+```
+
+For dynamic classes, use a block. It's evaluated with Avo's `ExecutionContext`, so you have access to `current_user`, `request`, `params`, and other context methods.
+
+```ruby
+Avo.configure do |config|
+  config.body_classes = -> {
+    classes = []
+    classes << "admin-mode" if current_user&.admin?
+    classes << "dark-preference" if request.cookies["theme"] == "dark"
+    classes
+  }
+end
+```
 
 ## Page titles
 
