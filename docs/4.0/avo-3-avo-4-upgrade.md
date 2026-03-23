@@ -296,6 +296,18 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
+## Nested association forms
+
+If you use the `nested` option on **`has_many`**, **`has_one`**, or **`has_and_belongs_to_many`** fields (nested association forms on <New /> and <Edit />), you must add the **`avo-nested`** gem in Avo 4. The feature is no longer bundled in the `avo-advanced` gem.
+
+Add the gem to your `Gemfile` with the same `https://packager.dev/avo-hq/` source and authentication you use for other private Avo gems, then run `bundle install`:
+
+```ruby
+gem "avo-nested", source: "https://packager.dev/avo-hq/"
+```
+
+See [Gem server authentication](./gem-server-authentication) if you need to configure `BUNDLE_PACKAGER__DEV`. Full usage of the `nested` option is documented under [Nested in Forms](./associations/has_many#nested-in-forms) on the association field pages.
+
 ## Pagination
 
 ### Replace `size` with `slots`
