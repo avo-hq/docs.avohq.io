@@ -12,6 +12,8 @@ It's important to set the `inverse_of` as often as possible to your model's asso
  - [Has many through](./associations/has_many#has-many-through)
  - [Has and belongs to many](./associations/has_and_belongs_to_many)
 
+[Nested association forms](./associations/has_many#nested-in-forms) (the `nested` option on those fields) require the **`avo-nested`** gem in addition to your usual Avo gems. Use the same source and credentials as for your other private Avo gems; see [Gem server authentication](./gem-server-authentication).
+
 ## Single Table Inheritance (STI)
 
 When you have models that share behavior and fields with STI, Rails will cast the model as the final class no matter how you query it.
