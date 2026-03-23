@@ -283,6 +283,8 @@ tab title: "User information" do // [!code ++]
     field :name, as: :text
   end
 end
+```
+
 ## Components
 
 ### Renamed view type components
