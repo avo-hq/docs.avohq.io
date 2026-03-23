@@ -490,3 +490,9 @@ More info on the [Toggle the sidebar button visibility](./customization.html#tog
 ## Added `self.description` option to actions
 
 More info on the [Description option](./actions/customization.html#description) section.
+
+## Added `self.icon` option to resources
+
+More info on the [Icon option](./resources.html#selficon) section.
+
+<!-- TODO: Move all the Added things to a different section -->

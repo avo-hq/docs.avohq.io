@@ -1176,3 +1176,15 @@ end
 ```
 
 <Image src="/assets/img/cards_on_resource.png" width="2520" height="1258" alt="Cards on resources - Avo for Rails" />
+
+<Option name="`self.icon`">
+
+You can set the icon of the resource by using the `self.icon` option. This icon will be displayed on the sidebar.
+
+```ruby
+class Avo::Resources::User < Avo::BaseResource
+  self.icon = "tabler/outline/user"
+end
+```
+
+</Option>

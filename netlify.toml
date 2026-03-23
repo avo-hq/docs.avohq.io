@@ -1,39 +1,39 @@
 # temporary until we set up a proper navigation for the LLMs
 [[redirects]]
-  from = "/llms.txt"
-  to = "/4.0/llms-full.txt"
-  status = 301
-  force = false
+from = "/llms.txt"
+to = "/4.0/llms-full.txt"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/llms-full.txt"
-  to = "/4.0/llms-full.txt"
-  status = 301
-  force = false
+from = "/llms-full.txt"
+to = "/4.0/llms-full.txt"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/4.0/editor.html"
-  to = "/4.0/llm-support.html"
-  status = 301
-  force = false
+from = "/4.0/editor.html"
+to = "/4.0/llm-support.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/3.0/recipes.html"
-  to = "/3.0/guides.html"
-  status = 301
-  force = false
+from = "/3.0/recipes.html"
+to = "/3.0/guides.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/3.0/localization.html"
-  to = "/3.0/i18n.html"
-  status = 301
-  force = false
+from = "/3.0/localization.html"
+to = "/3.0/i18n.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/3.0/localization"
-  to = "/3.0/i18n"
-  status = 301
-  force = false
+from = "/3.0/localization"
+to = "/3.0/i18n"
+status = 301
+force = false
 
 # [[redirects]]
 #   from = "/3.0/:dir/:page.*"
@@ -42,40 +42,40 @@
 #   force = false
 
 [[redirects]]
-  from = "/3.0/*.md"
-  to = "/3.0/:splat"
-  status = 301
-  force = false
+from = "/3.0/*.md"
+to = "/3.0/:splat"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/3.0/fields/*.md"
-  to = "/3.0/fields/:splat"
-  status = 301
-  force = false
+from = "/3.0/fields/*.md"
+to = "/3.0/fields/:splat"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/3.0/recipes/*"
-  to = "/3.0/guides/:splat"
-  status = 301
-  force = false
+from = "/3.0/recipes/*"
+to = "/3.0/guides/:splat"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/3.0/gemfile-environment-variables.html"
-  to = "/3.0/gem-server-authentication.html"
-  status = 301
-  force = false
+from = "/3.0/gemfile-environment-variables.html"
+to = "/3.0/gem-server-authentication.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/3.0/localization-scope.html"
-  to = "/3.0/multi-language-urls.html"
-  status = 301
-  force = false
+from = "/3.0/localization-scope.html"
+to = "/3.0/multi-language-urls.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/3.0/actions.html"
-  to = "/3.0/actions/overview.html"
-  status = 301
-  force = false
+from = "/3.0/actions.html"
+to = "/3.0/actions/overview.html"
+status = 301
+force = false
 
 # Redirects for 2.0 versions
 # -------------------------
@@ -87,178 +87,178 @@
 #   force = false
 
 [[redirects]]
-  from = "/2.0/*.md"
-  to = "/2.0/:splat"
-  status = 301
-  force = false
+from = "/2.0/*.md"
+to = "/2.0/:splat"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/2.0/fields/*.md"
-  to = "/2.0/fields/:splat"
-  status = 301
-  force = false
+from = "/2.0/fields/*.md"
+to = "/2.0/fields/:splat"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/2.0/stimulus-controllers.html"
-  to = "/2.0/custom-fields.html#use-pre-built-stimulus-controllers"
-  status = 301
-  force = false
+from = "/2.0/stimulus-controllers.html"
+to = "/2.0/custom-fields.html#use-pre-built-stimulus-controllers"
+status = 301
+force = false
 
 # Redirects for old versions
 # -------------------------
 
 [[redirects]]
-  from = "/1.0/*"
-  to = "https://v1-docs.avohq.io/1.0/:splat"
-  status = 301
-  force = false
+from = "/1.0/*"
+to = "https://v1-docs.avohq.io/1.0/:splat"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/0.1/*"
-  to = "https://v1-docs.avohq.io/0.4.x/:splat"
-  status = 301
-  force = false
+from = "/0.1/*"
+to = "https://v1-docs.avohq.io/0.4.x/:splat"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/0.4.x/*"
-  to = "https://v1-docs.avohq.io/0.4.x/:splat"
-  status = 301
-  force = false
+from = "/0.4.x/*"
+to = "https://v1-docs.avohq.io/0.4.x/:splat"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/0.5.x/*"
-  to = "https://v1-docs.avohq.io/0.5.x/:splat"
-  status = 301
-  force = false
+from = "/0.5.x/*"
+to = "https://v1-docs.avohq.io/0.5.x/:splat"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/0.x/*"
-  to = "https://v1-docs.avohq.io/0.4.x/:splat"
-  status = 301
-  force = false
+from = "/0.x/*"
+to = "https://v1-docs.avohq.io/0.4.x/:splat"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/1.0/fields-reference.html"
-  to = "https://v1-docs.avohq.io/1.0/field-options.html"
-  status = 301
-  force = false
+from = "/1.0/fields-reference.html"
+to = "https://v1-docs.avohq.io/1.0/field-options.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/search.html"
-  to = "/3.0/search.html"
-  status = 301
-  force = false
+from = "/search.html"
+to = "/3.0/search.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/licensing.html"
-  to = "/3.0/licensing.html"
-  status = 301
-  force = false
+from = "/licensing.html"
+to = "/3.0/licensing.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/associations/belongs_to.html"
-  to = "/3.0/associations/belongs_to.html"
-  status = 301
-  force = false
+from = "/associations/belongs_to.html"
+to = "/3.0/associations/belongs_to.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/fields/gravatar.html"
-  to = "/3.0/fields/gravatar.html"
-  status = 301
-  force = false
+from = "/fields/gravatar.html"
+to = "/3.0/fields/gravatar.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/eject-views.html"
-  to = "/3.0/eject-views.html"
-  status = 301
-  force = false
+from = "/eject-views.html"
+to = "/3.0/eject-views.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/associations/has_many.html"
-  to = "/3.0/associations/has_many.html"
-  status = 301
-  force = false
+from = "/associations/has_many.html"
+to = "/3.0/associations/has_many.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/fields/textarea.html"
-  to = "/3.0/fields/textarea.html"
-  status = 301
-  force = false
+from = "/fields/textarea.html"
+to = "/3.0/fields/textarea.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/fields/select.html"
-  to = "/3.0/fields/select.html"
-  status = 301
-  force = false
+from = "/fields/select.html"
+to = "/3.0/fields/select.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/fields/file.html"
-  to = "/3.0/fields/file.html"
-  status = 301
-  force = false
+from = "/fields/file.html"
+to = "/3.0/fields/file.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/fields/boolean_group.html"
-  to = "/3.0/fields/boolean_group.html"
-  status = 301
-  force = false
+from = "/fields/boolean_group.html"
+to = "/3.0/fields/boolean_group.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/fields/trix.html"
-  to = "/3.0/fields/trix.html"
-  status = 301
-  force = false
+from = "/fields/trix.html"
+to = "/3.0/fields/trix.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/custom-tools.html"
-  to = "/3.0/custom-tools.html"
-  status = 301
-  force = false
+from = "/custom-tools.html"
+to = "/3.0/custom-tools.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/authorization.html"
-  to = "/3.0/authorization.html"
-  status = 301
-  force = false
+from = "/authorization.html"
+to = "/3.0/authorization.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/resources.html"
-  to = "/3.0/resources.html"
-  status = 301
-  force = false
+from = "/resources.html"
+to = "/3.0/resources.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/resource-tools.html"
-  to = "/3.0/resource-tools.html"
-  status = 301
-  force = false
+from = "/resource-tools.html"
+to = "/3.0/resource-tools.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/faq.html"
-  to = "/3.0/faq.html"
-  status = 301
-  force = false
+from = "/faq.html"
+to = "/3.0/faq.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/fields/boolean.html"
-  to = "/3.0/fields/boolean.html"
-  status = 301
-  force = false
+from = "/fields/boolean.html"
+to = "/3.0/fields/boolean.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/fields/markdown.html"
-  to = "/3.0/fields/markdown.html"
-  status = 301
-  force = false
+from = "/fields/markdown.html"
+to = "/3.0/fields/markdown.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/authentication.html"
-  to = "/3.0/authentication.html"
-  status = 301
-  force = false
+from = "/authentication.html"
+to = "/3.0/authentication.html"
+status = 301
+force = false
 
 [[redirects]]
-  from = "/installation.html"
-  to = "/3.0/installation.html"
-  status = 301
-  force = false
+from = "/installation.html"
+to = "/3.0/installation.html"
+status = 301
+force = false
