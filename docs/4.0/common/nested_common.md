@@ -10,6 +10,15 @@ You can use ["Show on edit screens"](#show-on-edit-screens) to make the `{{ $fro
 
 To enable nested creation for the `{{ $frontmatter.field_type }}` field, allowing it to be created and / or edited alongside its parent record within the same form, use the `nested` option which is a hash with configurable option.
 
+:::info The `avo-nested` gem
+Nested association forms are provided by the **`avo-nested`** gem. Add it to your `Gemfile` using the same private gem source as your other Avo paid gems:
+
+```ruby
+gem "avo-nested", source: "https://packager.dev/avo-hq/"
+```
+
+Run `bundle install`. If you have not set up packager.dev access yet, see [Gem server authentication](./../gem-server-authentication.html).
+:::
 
 Keep in mind that this will display the field’s resource as it appears in the edit view.
 
