@@ -19,7 +19,7 @@ class Avo::Resources::User < Avo::BaseResource
     field :email, as: :text, name: "User Email", required: true
 
     tabs do
-      tab "User information", description: "Some information about this user" do
+      tab title: "User information", description: "Some information about this user" do
         panel do
           field :first_name, as: :text, required: true, placeholder: "John"
           field :last_name, as: :text, required: true, placeholder: "Doe"
@@ -40,7 +40,7 @@ end
 
 To use tabs, you need to open a `tabs` group block. Next, you add your `tab` block where you add fields and panels like you're used to on resource root. Most fields like `text`, `number`, `gravatar`, `date`, etc. need to be placed in a `panel`. However, the `has_one`, `has_many`, and `has_and_belongs_to_many` have their own panels, and they don't require a `panel` or a `tab`.
 
-The tab `name` is mandatory is what will be displayed on the tab switcher. The tab `description` is what will be displayed in the tooltip on hover.
+The tab `title` is mandatory and is what will be displayed on the tab switcher. The tab `description` is what will be displayed in the tooltip on hover.
 
 <Image src="/assets/img/tabs-and-panels/tab-name-description.png" width="640" height="211" alt="Avo tab name and description" />
 
@@ -78,8 +78,6 @@ Check [this recipe](guides/tabs-counter-indicator.html) on how to enhance your t
 
 ## Visibility control
 
-<VersionReq version="3.10.10" />
-
 Both `tabs` and individual `tab` components support a `visible` option that allows you to dynamically control their visibility based on certain conditions. For example, you might want to hide a tab if the user doesn't have the necessary permissions to view its content.
 
 <Option name="`visible`">
@@ -90,13 +88,13 @@ The `visible` option allows you to control the visibility of either a group of t
 
 ```ruby
 tabs visible: -> { resource.record.enabled? } do
-  tab name: "General Information" do
+  tab title: "General Information" do
     panel do
       field :name, as: :text
       field :email, as: :text
     end
   end
-  tab "Admin Information", visible: -> { current_user.is_admin? } do
+  tab title: "Admin Information", visible: -> { current_user.is_admin? } do
     panel do
       field :role, as: :text
       field :permissions, as: :text
@@ -114,8 +112,6 @@ In this example:
 
 <Option name="`title`">
 
-<VersionReq version="3.15.0" />
-
 The `title` option enables you to specify a label for the entire group of tabs. This title serves as an overarching descriptor for the collection, providing context regarding the purpose or content of the tabs.
 
 You can define the title of a tabs group by passing it as an argument to the `tabs` block. The value should be a string that succinctly encapsulates the theme or purpose of the tabs.
@@ -129,8 +125,6 @@ end
 </Option>
 
 <Option name="`description`">
-
-<VersionReq version="3.15.0" />
 
 The `description` option allows you to provide an auxiliary explanation or detailed note for the entire group of tabs. This can be used to elaborate on the purpose of the tabs or provide additional guidance.
 
@@ -146,13 +140,11 @@ end
 
 <Option name="`lazy_load`">
 
-<VersionReq version="3.17.0" />
-
 The `lazy_load` option enables deferred loading of tab content, improving performance by fetching data only when the tab is clicked. By default, `lazy_load` is set to `false`, ensuring that all tabs load immediately. However, in form views, this option is automatically disabled to prevent data loss during form submission.
 
 ```ruby{2}
 tabs do
-  tab "Address", lazy_load: true do
+  tab title: "Address", lazy_load: true do
     # ...
   end
 end
