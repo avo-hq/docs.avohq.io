@@ -273,25 +273,8 @@ end
 
 ### `tab` title in keyword arguments
 
-The `tab` title is now given as a keyword argument to the `tab` method.
+The `tab` now takes a `title` keyword argument instead of the first positional argument.
 
-```ruby
-# before
-tab "User information" do
-  panel do
-    field :id, as: :id
-    field :name, as: :text
-  end
-end
-
-# after
-tab title: "User information" do
-  panel do
-    field :id, as: :id
-    field :name, as: :text
-  end
-end
-```
 
 ## Components
 
