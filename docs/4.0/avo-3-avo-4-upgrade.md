@@ -275,7 +275,14 @@ end
 
 The `tab` now takes a `title` keyword argument instead of the first positional argument.
 
-
+```ruby
+tab "User information" do // [!code --]
+tab title: "User information" do // [!code ++]
+  panel do
+    field :id, as: :id
+    field :name, as: :text
+  end
+end
 ## Components
 
 ### Renamed view type components
