@@ -8,7 +8,7 @@ features:
   - title: Simplest file uploads you've ever seen
     details: Amazingly easy, single or multi-file integration with ActiveStorage.
     icon: 🖇
-    image: 'active-storage.png'
+    image: "active-storage.png"
     url: https://docs.avohq.io/2.0/fields/file
   - title: Multi-tenancy ready
     details: Scope out your data as much as you need it
@@ -21,7 +21,7 @@ features:
   - title: Fantastic CRUD UI
     details: Create a flexible CRUD interface in no time. No more copy-pasting view and controller files around.
     icon: 📋
-    image: 'resource-management.png'
+    image: "resource-management.png"
     url: https://docs.avohq.io/2.0/resources.html
   - title: Stimulus JS integration
     details: Create interactive experiences for your users
@@ -47,21 +47,21 @@ features:
   - title: Built with Hotwire
     details: Avo is running Hotwire under the hood.
     icon: ⚡️
-    image: 'code-driven-configuration.png'
+    image: "code-driven-configuration.png"
   - title: Advanced Search
     details: Quickly query one or more resources at once.
     icon: 🔎
-    image: 'resource-management.png'
+    image: "resource-management.png"
     url: https://docs.avohq.io/2.0/search.html
   - title: Actions
     details: Run custom actions to one or more of your resources with as little as pressing a button 💪
     icon: ✴️
-    image: 'actions.png'
+    image: "actions.png"
     url: https://docs.avohq.io/2.0/actions.html
   - title: Filters
     details: Write your own custom filters to quickly segment your data.
     icon: 🫗
-    image: 'filters.png'
+    image: "filters.png"
     url: https://docs.avohq.io/2.0/filters.html
   - title: On-premise
     details: Your data on your servers. Avo installs side-by-side with your app.
@@ -73,7 +73,7 @@ features:
   - title: Grid view
     details: Beautiful card layout to showcase your content.
     icon: 🎞
-    image: 'grid-view.png'
+    image: "grid-view.png"
     url: https://docs.avohq.io/2.0/grid-view.html
   - title: Custom fields
     details: No worries if we missed a field you need. Generate a custom field in a jiffy.
@@ -107,11 +107,11 @@ hero:
       text: 🔧 Technical support
       link: /3.0/technical-support.html
     - theme: alt
-      text: 📤 Upgrade guide
-      link: /3.0/upgrade
+      text: 📤 Avo 4 Upgrade guide
+      link: /4.0/avo-3-avo-4-upgrade.html
     - theme: brand
-      text: 🤖 LLM support
-      link: /3.0/llm-support.html
+      text: 🤖 Agentic engineering
+      link: /4.0/agentic-engineering.html
     # - theme: alt
     #   text: 🚀 Upgrade from Avo 2 to Avo 3
     #   link: /3.0/avo-2-avo-3-upgrade.html
