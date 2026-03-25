@@ -465,7 +465,7 @@ We've made a few updates to the discreet information API to make it more versati
 6. `as` can be `icon`, `text`, `badge`, `key_value`
 7. `key_value` has `key` and `value` options
 
-## Removed `cluser` in favor of `width`
+## Removed `cluser` (or its alias `row`) in favor of `width`
 
 <!-- TODO: -->
 
