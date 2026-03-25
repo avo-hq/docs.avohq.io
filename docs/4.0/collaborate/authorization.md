@@ -54,7 +54,7 @@ class ProjectPolicy < ApplicationPolicy
     return true if current_user.admin?
 
     # Only allow destroying message entries, not action entries
-    record.is_a?(Avo::Collaborate::Comment) && record.author == current_user
+    record.is_a?(Avo::Collaboration::Comment) && record.author == current_user
   end
 end
 ```
