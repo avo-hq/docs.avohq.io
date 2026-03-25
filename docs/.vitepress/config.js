@@ -315,17 +315,12 @@ const config = {
           ],
         },
         {
-          text: "Internals and Extending",
+          text: "Internals",
           collapsed: true,
           items: [
             { text: "Overview", link: "/4.0/internals.html" },
             { text: "Testing", link: "/4.0/testing.html" },
-            {
-              text: "Keyboard Shortcuts",
-              items: [
-                { text: "Overview", link: "/4.0/keyboard-shortcuts.html" },
-              ],
-            },
+            { text: "Keyboard Shortcuts", link: "/4.0/keyboard-shortcuts.html" },
             { text: "<code>Avo::Current</code>", link: "/4.0/avo-current.html" },
             { text: "<code>Avo::ExecutionContext</code>", link: "/4.0/execution-context.html" },
             { text: "<code>Avo::Services::EncryptionService</code>", link: "/4.0/encryption-service.html" },
@@ -342,15 +337,16 @@ const config = {
                 { text: "Field wrappers", link: "/4.0/field-wrappers.html" },
               ],
             },
-            {
-              text: "Extending",
-              collapsed: true,
-              items: [
-                { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
-                { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
-                { text: "Plugins", link: "/4.0/plugins.html" },
-              ],
-            },
+          ],
+        },
+        {
+          text: "Extending",
+          collapsed: true,
+          items: [
+            { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
+            { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
+            { text: "Plugins", link: "/4.0/plugins.html" },
+            { text: "Custom view types", link: "/4.0/custom-view-types.html" },
           ],
         },
         // {

@@ -66,11 +66,17 @@ These shortcuts are always available, regardless of the current page.
 
 ### Action modal
 
-| Keys                                                       | Action                            |
-| ---------------------------------------------------------- | --------------------------------- |
-| <kbd>Cmd</kbd>+<kbd>↵</kbd> / <kbd>Ctrl</kbd>+<kbd>↵</kbd> | Run the action                    |
-| <kbd>Esc</kbd>                                             | Cancel / close the modal          |
-| <kbd>↑</kbd> / <kbd>↓</kbd>                                | Navigate options inside the modal |
+| Keys                                                       | Action                   |
+| ---------------------------------------------------------- | ------------------------ |
+| <kbd>Cmd</kbd>+<kbd>↵</kbd> / <kbd>Ctrl</kbd>+<kbd>↵</kbd> | Run the action           |
+| <kbd>Esc</kbd>                                             | Cancel / close the modal |
+
+### Confirmation modal
+
+| Keys                        | Action                            |
+| --------------------------- | --------------------------------- |
+| <kbd>Esc</kbd>              | Cancel / close the modal          |
+| <kbd>↑</kbd> / <kbd>↓</kbd> | Navigate options inside the modal |
 
 ## Some shortcuts are hidden in association panels
 
