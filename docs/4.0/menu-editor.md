@@ -388,6 +388,36 @@ In addition to sections, you can add icons to `resource`, `dashboard`, and `link
 link_to "Avo", "https://avohq.io", icon: "globe"
 ```
 
+## Keyboard shortcuts on menu items
+
+Any menu item — `resource`, `link`, or `dashboard` — accepts a `hotkey:` option. When set, Avo renders a `<kbd>` badge next to the label and registers the key binding so users can jump straight to that item from anywhere in the admin panel.
+
+```ruby
+Avo.configure do |config|
+  config.main_menu = -> {
+    section "Content", icon: "tabler/outline/files" do
+      resource :post, hotkey: "g p"
+      resource :category, hotkey: "g c"
+      link "Analytics", path: "/avo/analytics", hotkey: "g a"
+    end
+  }
+end
+```
+
+The hotkey string follows [@github/hotkey](https://github.com/github/hotkey) syntax. Use space-separated keys for sequences (e.g. `"g p"` means press <kbd>g</kbd> then <kbd>p</kbd>).
+
+For `resource` items you can also set the hotkey on the resource class itself, which acts as a fallback when no `hotkey:` is passed to the menu item:
+
+```ruby
+class Avo::Resources::Post < Avo::BaseResource
+  self.hotkey = "g p"
+end
+```
+
+<RelatedList>
+  <RelatedItem href="./keyboard-shortcuts.html">Keyboard shortcuts — full reference for built-in shortcuts and patterns</RelatedItem>
+</RelatedList>
+
 ## Collapsable sections and groups
 
 Both `section` and `group` support the `collapsable` option. When enabled, an arrow icon is added to indicate the item can be collapsed. The collapsed/expanded state is stored in the browser's Local Storage and remembered across page loads.
