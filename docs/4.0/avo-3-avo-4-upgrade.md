@@ -28,9 +28,11 @@ Avo 4 requires a valid v4 license key. Your v3 license key won't work with Avo 4
 
 ## Get started with Avo 4
 
-Assuming you are upgrading your Avo 3 app, you need to do two things:
+Assuming you are upgrading your Avo 3 app, you need to do three things:
 
-1. Upgrade the Avo gems
+1. Enroll to the Avo 4 beta program by going to [avohq.io/try-4](https://avohq.io/try-4).
+
+2. Upgrade the Avo gems
 
 This means updating your `Gemfile` to target the beta version of Avo and running the bundle update on the gems you are using `avo`, `avo-pro`, `avo-advanced`, and all other `avo` gems you are using to use a version greater than or equal to `4.0.0.beta`.
 See what other gems you might have such as `avo-nested`, `avo-rhino_field`, etc. because they need to be updated too.
@@ -68,8 +70,10 @@ gem "avo-rhino_field", ">= 4.0.0.beta"
 
 ```bash
 # some or all of these
-bundle update avo avo-advanced avo-nested avo-http_resource avo-dynamic_filters avo-pro avo-menu avo-dashboards avo-rhino_field
+bundle update avo avo-advanced avo-nested avo-http_resource avo-dynamic_filters avo-pro avo-menu avo-dashboards avo-collaboration avo-forms avo-kanban avo-api avo-http_resource avo-reactive_fields avo-rhino_field
 ```
+
+3. Go through this guide to upgrade your app to Avo 4.
 
 ### Icons
 
