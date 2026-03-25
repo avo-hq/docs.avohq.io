@@ -1,8 +1,11 @@
 import fs from 'fs'
 import path from 'path'
-import {
-  capitalize, snakeCase, trim,
-} from 'lodash'
+import { fileURLToPath } from 'url'
+import lodash from 'lodash'
+
+const { capitalize, snakeCase, trim } = lodash
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const humanize = (str) => capitalize(trim(snakeCase(str).replace(/_id$/, '').replace(/_/g, ' ')))
 

@@ -1,4 +1,4 @@
-import { getFiles } from "./getFiles"
+import { getFiles } from "./getFiles.js"
 
 const fieldsMenuItems2 = getFiles('fields', '2.0')
 
