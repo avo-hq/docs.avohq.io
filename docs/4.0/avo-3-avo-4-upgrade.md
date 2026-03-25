@@ -4,6 +4,10 @@ outline: [2, 3]
 
 # Upgrade guide
 
+:::info Stay up to date
+The up-to-date status of all the gems is available at [github.com/avo-hq/avo/issues/4349](https://github.com/avo-hq/avo/issues/4349)
+:::
+
 The upgrade process from Avo 3 to Avo 4 contains several important improvements and changes.
 
 We've made these changes to improve consistency and usability of the API and we've added some new features.
