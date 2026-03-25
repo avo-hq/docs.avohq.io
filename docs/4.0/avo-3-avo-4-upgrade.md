@@ -49,12 +49,18 @@ source "https://packager.dev/avo-hq/" do
   # all or some of these
   gem "avo-pro", ">= 4.0.0.beta"
   gem "avo-advanced", ">= 4.0.0.beta"
-  gem "avo-nested", ">= 4.0.0.beta"
   gem "avo-http_resource", ">= 4.0.0.beta"
   gem "avo-dynamic_filters", ">= 4.0.0.beta"
   gem "avo-pro", ">= 4.0.0.beta"
   gem "avo-menu", ">= 4.0.0.beta"
+  gem "avo-nested", ">= 4.0.0.beta"
   gem "avo-dashboards", ">= 4.0.0.beta"
+  gem "avo-collaboration", ">= 4.0.0.beta"
+  gem "avo-forms", ">= 4.0.0.beta"
+  gem "avo-kanban", ">= 4.0.0.beta"
+  gem "avo-api", ">= 4.0.0.beta"
+  gem "avo-http_resource", ">= 4.0.0.beta"
+  gem "avo-reactive_fields", ">= 4.0.0.beta"
 end
 
 gem "avo-rhino_field", ">= 4.0.0.beta"
