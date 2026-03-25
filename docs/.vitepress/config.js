@@ -320,6 +320,12 @@ const config = {
           items: [
             { text: "Overview", link: "/4.0/internals.html" },
             { text: "Testing", link: "/4.0/testing.html" },
+            {
+              text: "Keyboard Shortcuts",
+              items: [
+                { text: "Overview", link: "/4.0/keyboard-shortcuts.html" },
+              ],
+            },
             { text: "<code>Avo::Current</code>", link: "/4.0/avo-current.html" },
             { text: "<code>Avo::ExecutionContext</code>", link: "/4.0/execution-context.html" },
             { text: "<code>Avo::Services::EncryptionService</code>", link: "/4.0/encryption-service.html" },

@@ -682,6 +682,24 @@ You'll have to use your own logic in the [`visible`](./menu-editor#item-visibili
 
 </Option>
 
+<Option name="`self.hotkey`">
+
+Set a keyboard shortcut for this resource so users can jump to its index page from anywhere in the admin panel. The binding is used automatically when the resource appears in the sidebar via the auto-generated menu or the [menu editor](./menu-editor).
+
+```ruby{2}
+class Avo::Resources::Post < Avo::BaseResource
+  self.hotkey = "g p"
+end
+```
+
+The value follows [@github/hotkey](https://github.com/github/hotkey) syntax — space-separate keys for sequences (`"g p"` = press <kbd>g</kbd> then <kbd>p</kbd>).
+
+<RelatedList>
+  <RelatedItem href="./keyboard-shortcuts.html">Keyboard shortcuts — full reference for built-in shortcuts and patterns</RelatedItem>
+</RelatedList>
+
+</Option>
+
 <Option name="`config.buttons_on_form_footers`">
 
 If you have a lot of fields on a resource, that form might get pretty tall. So it would be useful to have the `Save` button in the footer of that form.
