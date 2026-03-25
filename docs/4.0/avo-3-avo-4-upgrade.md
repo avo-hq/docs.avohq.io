@@ -26,12 +26,56 @@ Depending on how you use Avo you might not need to do all the steps.
 Avo 4 requires a valid v4 license key. Your v3 license key won't work with Avo 4. Please upgrade your license at [avohq.io/pricing](https://avohq.io/pricing).
 ::: -->
 
+## Get started with Avo 4
+
+Assuming you are upgrading your Avo 3 app, you need to do two things:
+
+1. Upgrade the Avo gems
+
+This means updating your `Gemfile` to target the beta version of Avo and running the bundle update on the gems you are using `avo`, `avo-pro`, `avo-advanced`, and all other `avo` gems you are using to use a version greater than or equal to `4.0.0.beta`.
+See what other gems you might have such as `avo-nested`, `avo-rhino_field`, etc. because they need to be updated too.
+
+```ruby
+# in your Gemfile
+
+# before
+gem "avo"
+gem "avo-advanced", source: "https://packager.dev/avo-hq/"
+
+# after
+gem "avo", ">= 4.0.0.beta"
+
+source "https://packager.dev/avo-hq/" do
+  # all or some of these
+  gem "avo-pro", ">= 4.0.0.beta"
+  gem "avo-advanced", ">= 4.0.0.beta"
+  gem "avo-nested", ">= 4.0.0.beta"
+  gem "avo-http_resource", ">= 4.0.0.beta"
+  gem "avo-dynamic_filters", ">= 4.0.0.beta"
+  gem "avo-pro", ">= 4.0.0.beta"
+  gem "avo-menu", ">= 4.0.0.beta"
+  gem "avo-dashboards", ">= 4.0.0.beta"
+end
+
+gem "avo-rhino_field", ">= 4.0.0.beta"
+```
+
+```bash
+# some or all of these
+bundle update avo avo-advanced avo-nested avo-http_resource avo-dynamic_filters avo-pro avo-menu avo-dashboards avo-rhino_field
+```
+
 ### Icons
 
 We started using the Tabler icons instead of the Heroicons.
 They are provided by the [`avo-icons`](https://github.com/avo-hq/avo-icons) gem and you can quickly search for them using the [tabler icon search](https://tabler.io/icons).
 
 Try to use the Tabler icons instead of the Heroicons moving forward.
+
+If you used any of our icons (eg: `avo/resources`), you should update them to use the new Tabler icons.
+Check this PR with changes in the icons: https://github.com/avo-hq/avo/pull/4342/changes
+
+If you see some areas which look "exploded" in the app, it's because some icons are missing and you should update them.
 
 ### Avatars and initials
 
@@ -258,6 +302,35 @@ class Avo::Resources::User < Avo::BaseResource
     end
   end
 end
+```
+
+#### Renamed `Avo::PanelComponent` to `Avo::UI::PanelComponent`
+
+If you used the panel component in custom HTML partials you should update the import to use the new name.
+The `Avo::PanelComponent` has been renamed to `Avo::UI::PanelComponent`.
+
+```erb
+<%= render Avo::PanelComponent.new(title: "User information") do |c| %> <!-- [!code --] -->
+<%= render Avo::UI::PanelComponent.new(title: "User information") do |c| %> <!-- [!code ++] -->
+  <% c.with_body do %>
+    <%= render Avo::Fields::IdField.new(record: record) %>
+    <%= render Avo::Fields::TextField.new(record: record, field: :name) %>
+  <% end %>
+<% end %>
+```
+
+#### Renamed `with_tools` slot to `with_controls`
+
+The `with_tools` slot has been renamed to `with_controls`.
+
+```erb
+<%= render Avo::UI::PanelComponent.new(title: "User information") do |c| %>
+  <% c.with_tools do %> <!-- [!code --] -->
+  <% c.with_controls do %> <!-- [!code ++] -->
+    <%= render Avo::Fields::IdField.new(record: record) %>
+    <%= render Avo::Fields::TextField.new(record: record, field: :name) %>
+  <% end %>
+<% end %>
 ```
 
 ### `panel` title in keyword arguments
