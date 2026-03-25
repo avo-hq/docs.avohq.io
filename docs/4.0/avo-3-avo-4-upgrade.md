@@ -483,6 +483,20 @@ This option allows you to add a help text to the label of a field on <Show /> an
 The old `description` option was renamed to `discreet_description`
 The current `description` option is used for the card description under the title.
 
+## Removed `config.full_width_index_view` configuration for `config.container_width`
+
+The `config.full_width_index_view` configuration has been removed in favor of the `config.container_width` configuration.
+
+```ruby
+# Before
+config.full_width_index_view = true
+
+# After
+config.container_width = { index: :full }
+```
+
+More info on the [Container width](./customization.html#container-width) section.
+
 ## Added `sidebar_toggle_visible` configuration option
 
 More info on the [Toggle the sidebar button visibility](./customization.html#toggle-the-sidebar-button-visibility) section.
@@ -496,3 +510,15 @@ More info on the [Description option](./actions/customization.html#description) 
 More info on the [Icon option](./resources.html#selficon) section.
 
 <!-- TODO: Move all the Added things to a different section -->
+
+## Added `view.single?` method
+
+The `view.single?` method has been added to the view object.
+
+```ruby
+if view.single?
+  # Code for the "show", "edit", and "new" views
+end
+```
+
+More info on the [View object](./views.html) section.
