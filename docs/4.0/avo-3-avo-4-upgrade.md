@@ -10,6 +10,13 @@ We've made these changes to improve consistency and usability of the API and we'
 Here's what you need to know to upgrade your Avo 3 application to Avo 4.
 
 Take these steps one by one in order to upgrade your app.
+You can follow it yourself or let your LLM do the heavy lifting:
+
+```
+Use this guide to upgrade this Avo 3 app to Avo 4.
+Take it step by step and produce a markdown doc (avo-3-to-4-upgrade.md) with each chapter as an item, checking them off as you go.
+https://docs.avohq.io/4.0/avo-3-avo-4-upgrade.html
+```
 
 Depending on how you use Avo you might not need to do all the steps.
 
