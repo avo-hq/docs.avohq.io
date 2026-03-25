@@ -282,12 +282,12 @@ const config = {
             { text: "Authorization", link: "/4.0/collaborate/authorization.html" },
           ],
         },
-        {
-          text: "MCP (Model Context Protocol)",
-          items: [
-            { text: "Overview", link: "/4.0/mcp.html" },
-          ],
-        },
+        // {
+        //   text: "MCP (Model Context Protocol)",
+        //   items: [
+        //     { text: "Overview", link: "/4.0/mcp.html" },
+        //   ],
+        // },
         {
           text: "Audit Logging",
           items: [
