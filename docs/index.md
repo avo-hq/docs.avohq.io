@@ -103,15 +103,15 @@ hero:
     - theme: alt
       text: ⭐️ Star on GitHub
       link: https://github.com/avo-hq/avo
+    # - theme: alt
+    #   text: 🔧 Technical support
+    #   link: /3.0/technical-support.html
     - theme: alt
-      text: 🔧 Technical support
-      link: /3.0/technical-support.html
-    - theme: alt
-      text: 📤 Avo 4 Upgrade guide
-      link: /4.0/avo-3-avo-4-upgrade.html
-    - theme: brand
       text: 🤖 Agentic engineering
       link: /4.0/agentic-engineering.html
+    - theme: brand
+      text: 📤 Avo 4 Upgrade guide
+      link: /4.0/avo-3-avo-4-upgrade.html
     # - theme: alt
     #   text: 🚀 Upgrade from Avo 2 to Avo 3
     #   link: /3.0/avo-2-avo-3-upgrade.html
