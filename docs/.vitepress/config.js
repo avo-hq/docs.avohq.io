@@ -1,6 +1,6 @@
-import { getFiles } from "./getFiles"
-import sidebar20 from "./sidebar-2.0"
-import sidebar30 from "./sidebar-3.0"
+import { getFiles } from "./getFiles.js"
+import sidebar20 from "./sidebar-2.0.js"
+import sidebar30 from "./sidebar-3.0.js"
 
 const fieldsMenuItems4 = getFiles('fields', '4.0')
 
