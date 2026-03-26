@@ -47,6 +47,11 @@ These shortcuts are always available, regardless of the current page.
 | <kbd>A</kbd>                | Open the actions menu           |
 | <kbd>↑</kbd> / <kbd>↓</kbd> | Navigate table rows             |
 | <kbd>↵</kbd>                | Open the focused row            |
+| <kbd>Space</kbd>            | Select / deselect row           |
+| <kbd>Esc</kbd>              | Unfocus the current selection   |
+| <kbd>V</kbd> <kbd>T</kbd>   | Switch to table view            |
+| <kbd>V</kbd> <kbd>G</kbd>   | Switch to grid view             |
+| <kbd>V</kbd> <kbd>M</kbd>   | Switch to map view              |
 
 ### Show view
 
@@ -73,10 +78,10 @@ These shortcuts are always available, regardless of the current page.
 
 ### Confirmation modal
 
-| Keys                        | Action                            |
-| --------------------------- | --------------------------------- |
-| <kbd>Esc</kbd>              | Cancel / close the modal          |
-| <kbd>↑</kbd> / <kbd>↓</kbd> | Navigate options inside the modal |
+| Keys                                | Action                   |
+| ----------------------------------- | ------------------------ |
+| <kbd>Esc</kbd>                      | Cancel / close the modal |
+| <kbd>Comma</kbd> + <kbd>Enter</kbd> | Run the action           |
 
 ## Some shortcuts are hidden in association panels
 
