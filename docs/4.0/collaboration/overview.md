@@ -2,7 +2,7 @@
 license: add_on
 add_on: collaboration_feature
 betaStatus: Beta
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Collaboration
@@ -12,21 +12,25 @@ Keep your team in sync with built-in comments and status updates. No more scatte
 ## Installation
 
 1. **Add gem:** Add the following to your Gemfile:
+
    ```ruby
    gem "avo-collaboration", source: "https://packager.dev/avo-hq"
    ```
 
 2. **Bundle:** Run bundle install:
+
    ```bash
    bundle
    ```
 
 3. **Install migrations:** Generate the required database migrations:
+
    ```bash
    rails avo_collaboration:install:migrations
    ```
 
 4. **Run migrations:** Apply the migrations to your database:
+
    ```bash
    rails db:migrate
    ```
@@ -36,7 +40,6 @@ Keep your team in sync with built-in comments and status updates. No more scatte
 6. **Add timeline:** Include the collaboration timeline in your resource using `collaboration_timeline`.
 
 7. **Configure permissions:** Add the [required authorization methods](https://docs.avohq.io/3.0/collaborate/authorization.html) to your resource policies.
-
 
 <Option name="self.collaboration">
 
@@ -71,12 +74,14 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-### `author`
+<Option name="author">
 
 - **`current_author`**: A lambda that returns the current user/author object
 - **`name_property`**: The property on the author object that contains their display name
 
-### `watchers`
+</Option>
+
+<Option name="watchers">
 
 Watchers monitor changes to specific properties and can generate automatic timeline entries when those properties change.
 
@@ -108,6 +113,8 @@ When your translation messages contain HTML markup (as shown in the example abov
 
 </Option>
 
+</Option>
+
 <Option name="collaboration_timeline">
 
 The `collaboration_timeline` method renders the collaboration timeline component at the specific position where it's defined within your resource's fields.
@@ -131,6 +138,7 @@ end
 ```
 
 This DSL method will display the collaboration timeline (showing comments, status updates, and property changes) wherever you place it in your resource definition. You can position it among your other fields to control where the timeline appears in your resource's layout.
+
 </Option>
 
 ## Customizing collaboration models for your business logic
