@@ -280,8 +280,8 @@ const config = {
         {
           text: "Collaboration",
           items: [
-            { text: "Overview", link: "/4.0/collaborate/overview.html" },
-            { text: "Authorization", link: "/4.0/collaborate/authorization.html" },
+            { text: "Overview", link: "/4.0/collaboration/overview.html" },
+            { text: "Authorization", link: "/4.0/collaboration/authorization.html" },
           ],
         },
         // {
