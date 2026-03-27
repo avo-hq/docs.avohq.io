@@ -264,8 +264,7 @@ field :name, as: :text, placeholder: 'John Doe'
 ## Required
 To indicate that a field is mandatory, you can utilize the `required` option, which adds an asterisk to the field as a visual cue.
 
-Avo automatically examines each field to determine if the associated attribute requires a mandatory presence. If it does, Avo appends the asterisk to signify its mandatory status. It's important to note that this option is purely cosmetic and does not incorporate any validation logic into your model. You will need to manually include the validation logic yourself, such as (`validates :name, presence: true`).
-
+Avo automatically examines each field to determine if the associated attribute requires a mandatory presence. If it does, Avo appends the asterisk to signify its mandatory status. You will still need to include the validation logic in your model yourself (e.g., `validates :name, presence: true`), but Avo will also **disable the Save button** until all required fields have values, providing immediate client-side feedback.
 
 ```ruby
 field :name, as: :text, required: true
@@ -280,6 +279,14 @@ You may use a block as well. It will be executed in the `Avo::ExecutionContext` 
 ```ruby
 field :name, as: :text, required: -> { view == :new } # make the field required only on the new view and not on edit
 ```
+
+### Client-side enforcement
+
+On **new** and **edit** forms, Avo disables the Save button until every field marked as `required` has a non-empty value. This works across all field types including text, select, belongs_to, tags, trix, and other complex fields.
+
+The validation runs automatically on page load and whenever a field value changes. The Save button becomes enabled as soon as all required fields are filled in, and becomes disabled again if any required field is cleared.
+
+This is a **client-side convenience only**. Server-side model validations remain the authoritative check. Always pair `required: true` with the corresponding model validation (e.g., `validates :name, presence: true`).
 
 ## Disabled
 
