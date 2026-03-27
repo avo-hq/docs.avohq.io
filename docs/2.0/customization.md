@@ -76,6 +76,7 @@ That will render all `id` fields in the **Index** view as a link to that resourc
 <img :src="('/assets/img/fields-reference/as-link-to-resource.jpg')" alt="As link to resource" class="border mb-4" />
 
 ## Resource controls on the left side
+
 <DemoVideo demo-video="https://youtu.be/MfryUtcXqvU?t=706" />
 
 By default, the resource controls are located on the right side of the record rows, which might be hidden if there are a lot of columns. You might want to move the controls to the left side in that situation using the `resource_controls_placement` option.
@@ -85,7 +86,6 @@ Avo.configure do |config|
   config.resource_controls_placement = :left
 end
 ```
-
 
 <img :src="('/assets/img/customization/resource-controls-left.jpg')" alt="Resource controls on the left side" class="border mb-4" />
 
@@ -153,17 +153,16 @@ If you want to change one of Avo's built-in views, you can eject it, update it a
 
 We prepared a few templates to make it.
 
-`bin/rails generate avo:eject :logo` will eject the `_logo.html.erb` partial.
+`bin/rails generate avo:eject :head` will eject the `_head.html.erb` partial.
 
 ```
-▶ bin/rails generate avo:eject :logo
+▶ bin/rails generate avo:eject :head
 Running via Spring preloader in process 20947
-      create  app/views/avo/logo/_logo.html.erb
+      create  app/views/avo/partials/_head.html.erb
 ```
 
 A list of prepared templates:
 
-- `:logo` ➡️ &nbsp; `app/views/avo/partials/_logo.html.erb`
 - `:head` ➡️ &nbsp; `app/views/avo/partials/_head.html.erb`
 - `:header` ➡️ &nbsp; `app/views/avo/partials/_header.html.erb`
 - `:footer` ➡️ &nbsp; `app/views/avo/partials/_footer.html.erb`
@@ -352,6 +351,7 @@ end
 ```
 
 ## Custom query scopes
+
 You may want to change Avo's queries to add sorting or use gems like [friendly](https://github.com/norman/friendly_id).
 You can do that using `resolve_query_scope` for multiple records and `resolve_find_scope` when fetching one record.
 
@@ -374,12 +374,14 @@ The `resolve_find_scope` method is deprecated in favor of `find_record_method` (
 :::
 
 :::details If you're following the `friendly_id` example, you must also add the `friendly_id` configuration to the model definition.
+
 ```ruby
 class User < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
 end
 ```
+
 :::
 
 ### Custom find method for `Show` and `Edit` pages
@@ -393,6 +395,7 @@ This is very useful when you use something like `friendly` gem, custom `to_param
 The following example shows how you can update the `to_param` (to use the post name) method on the `User` model to use a custom attribute and then update the `UserResource` so it knows how to search for that model.
 
 ::: code-group
+
 ```ruby [app/avo/resources/user_resource.rb]
 class PostResource < Avo::BaseResource
   self.find_record_method = ->(model_class:, id:, params:) do
@@ -416,11 +419,13 @@ class Post < ApplicationRecord
   end
 end
 ```
+
 :::
 
 #### Using the `friendly` gem
 
 ::: code-group
+
 ```ruby [app/avo/resources/user_resource.rb]
 class UserResource < Avo::BaseResource
   self.find_record_method = ->(model_class:, id:, params:) do
@@ -437,6 +442,7 @@ class User < ApplicationRecord
   friendly_id :name, use: :slugged
 end
 ```
+
 :::
 
 #### Using `prefixed_ids` gem
@@ -506,4 +512,3 @@ end
 ```
 
 ![](/assets/img/customization/skip_show_view.gif)
-

@@ -14,17 +14,16 @@ Utilize the `--partial` option when you intend to extract certain partial
 
 We prepared a few templates to make it easier for you.
 
-`bin/rails generate avo:eject --partial :logo` will eject the `_logo.html.erb` partial.
+`bin/rails generate avo:eject --partial :head` will eject the `_head.html.erb` partial.
 
 ```
-▶ bin/rails generate avo:eject --partial :logo
+▶ bin/rails generate avo:eject --partial :head
 Running via Spring preloader in process 20947
-      create  app/views/avo/logo/_logo.html.erb
+      create  app/views/avo/partials/_head.html.erb
 ```
 
 A list of prepared templates:
 
-- `:logo` ➡️ &nbsp; `app/views/avo/partials/_logo.html.erb`
 - `:head` ➡️ &nbsp; `app/views/avo/partials/_head.html.erb`
 - `:header` ➡️ &nbsp; `app/views/avo/partials/_header.html.erb`
 - `:scripts` ➡️ &nbsp; `app/views/avo/partials/_scripts.html.erb`
@@ -50,6 +49,7 @@ You can eject any partial from Avo using the partial path.
 ▶ bin/rails generate avo:eject --partial app/views/layouts/avo/application.html.erb
       create  app/views/layouts/avo/application.html.erb
 ```
+
 </Option>
 
 <Option name="`--component`">
@@ -59,6 +59,7 @@ You can eject any view component from Avo using the `--component` option.
 ```bash
 $ bin/rails generate avo:eject --component Avo::Index::TableRowComponent
 ```
+
 or
 
 ```bash
@@ -66,10 +67,12 @@ $ bin/rails generate avo:eject --component avo/index/table_row_component
 ```
 
 Have the same output:
+
 ```bash
 create  app/components/avo/index/table_row_component.rb
 create  app/components/avo/index/table_row_component.html.erb
 ```
+
 </Option>
 
 <Option name="`--field-components`">
@@ -105,7 +108,6 @@ While utilizing the `--field-components` option, you can selectively extract a s
 
 </Option>
 
-
 <Option name="`--scope`">
 
 When you opt to eject a view component that exists under `Avo::Views` or a field component under `Avo::Fields` namespace, for example the `Avo::Views::ResourceIndexComponent` or `Avo::Fields::TextField::ShowComponent` you can employ the `--scope` option to specify the namespace that should be adopted by the ejected component, extending from `Avo::Views` / `Avo::Fields`.
@@ -132,6 +134,7 @@ class Avo::Fields::Admins::TextField::ShowComponent < Avo::Fields::ShowComponent
 `--scope users_admins` -> `Avo::Views::UsersAdmins::ResourceIndexComponent`<br>
 `--scope users/admins` -> `Avo::Views::Users::Admins::ResourceIndexComponent`
 :::
+
 </Option>
 
 <Option name="`--controller`">
