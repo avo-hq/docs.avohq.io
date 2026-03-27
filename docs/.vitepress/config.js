@@ -169,7 +169,9 @@ const config = {
             {
               text: "Layout",
               collapsed: true,
+              link: '/4.0/fields-layout.html',
               items: [
+                { text: "Overview", link: "/4.0/fields-layout.html" },
                 { text: "Header", link: "/4.0/resource-header.html" },
                 { text: "Panels", link: "/4.0/resource-panels.html" },
                 { text: "Sidebars", link: "/4.0/resource-sidebar.html" },
