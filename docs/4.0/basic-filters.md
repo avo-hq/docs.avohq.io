@@ -18,8 +18,6 @@ Each filter is configured in a class with a few dedicated [methods and options](
 self.name = "User names filter"
 ```
 
-<VersionReq version="3.14.0" />
-
 ```ruby
 self.name = -> { I18n.t("avo.filter.name") }
 ```
@@ -27,22 +25,6 @@ Within this block, you gain access to all attributes of [`Avo::ExecutionContext`
 
 </Option>
 
-<Option name="`self.button_label`">
-
-The value of `self.button_label` is the label displayed on the button that applies the filter.
-
-```ruby
-self.button_label = "Filter by user names"
-```
-
-<VersionReq version="3.14.0" />
-
-```ruby
-self.button_label = -> { I18n.t("avo.filter.button_label") }
-```
-Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `arguments`.
-
-</Option>
 
 <Option name="`self.visible`">
 
@@ -124,9 +106,11 @@ end
 
 ## Filter types
 
-Avo has several types of filters available [Boolean filter](#Boolean%20Filter), [Select filter](#Select%20Filter), [Multiple select filter](#Multiple%20select%20filter), [Text filter](#Text%20Filter) and since version <Version version="3.11.8" /> [Date time filter](#Date%20time%20Filter).
+Avo has several types of filters available [Boolean filter](#Boolean%20Filter), [Select filter](#Select%20Filter), [Multiple select filter](#Multiple%20select%20filter), [Text filter](#Text%20Filter) and [Date time filter](#Date%20time%20Filter).
 
-<Image src="/assets/img/filters.png" width="404" height="727" alt="Avo filters" />
+The filters panel opens as a popover with a header, a list of filters, and a footer with a global **Apply Filters** button. Clicking **Apply Filters** submits all deferred filter values at once. **Select** and **Boolean** filters are exceptions — they apply immediately when a value changes. The **Text** filter also applies immediately when you press Enter.
+
+<Image src="/assets/img/4_0/filters/filters.png" width="404" height="727" alt="Avo filters" />
 
 ### Filter values
 
@@ -353,7 +337,7 @@ class Avo::Filters::PostStatus < Avo::Filters::MultipleSelectFilter
 end
 ```
 
-<Image src="/assets/img/multiple-select-filter.png" width="404" height="310" alt="Avo multiple select filter" />
+<Image src="/assets/img/4_0/filters/multiple-select-filter.png" width="404" height="210" alt="Avo multiple select filter" />
 
 ### Dynamic options
 
@@ -396,7 +380,6 @@ rails generate avo:filter name --type text
 ```ruby
 class Avo::Filters::Name < Avo::Filters::TextFilter
   self.name = "Name filter"
-  self.button_label = "Filter by name"
 
   # `value` comes as text
   # Eg: 'avo'
@@ -413,9 +396,7 @@ end
 
 <Option name="Date time Filter">
 
-<VersionReq version="3.11.8" />
-
-The ideal filter for date selection. This filter allows you to generate a date input, with options to include time selection and even a range selection mode. Customizable to suit your specific needs.
+The ideal filter for date selection. This filter renders a readonly text input — clicking it opens a native popover calendar powered by [flatpickr](https://flatpickr.js.org). It supports time selection and range selection mode, and is fully customizable.
 
 :::warning Timezone Handling
 This filter sends the selected value exactly as selected, without any timezone adjustments. If you need to apply timezone conversion or adjustments, please ensure to handle it during the [`apply`](#apply) method.
@@ -518,7 +499,6 @@ This filter uses [flatpickr](https://flatpickr.js.org) as the date and time pick
 
 class Avo::Filters::StartingAt < Avo::Filters::DateTimeFilter
   self.name = "The starting at filter"
-  self.button_label = "Filter by start time"
   self.empty_message = "Search by start time"
   self.type = :time
   self.mode = :single
@@ -652,7 +632,7 @@ class Avo::Filters::CourseCity < Avo::Filters::BooleanFilter
 end
 ```
 
-<Image src="/assets/img/filters/dynamic-options.png" width="688" height="1042" alt="Avo filters" />
+<Image src="/assets/img/4_0/filters/dynamic-options.png" width="688" height="1042" alt="Avo filters" />
 
 The `countries` method above will check if the `Avo::Filters::CourseCountryFilter` has anything selected. If so, get the names of the chosen ones. This way, you show only the cities from the selected countries and not all of them.
 
@@ -770,8 +750,6 @@ end
 Besides checking if the countries filter is populated (`applied_filters["Avo::Filters::CourseCountryFilter"].present?`), we also want to allow the user to customize the cities filter further, so we need to check if the user has added a value to that filter (`applied_filters["Avo::Filters::CourseCountryFilter"].blank?`).
 If these conditions are true, the country filter has a value, and the user hasn't selected any values from the cities filter, we can react to it and set a value as the default one.
 
-<Image src="/assets/img/filters/dynamic-options.gif" width="528" height="800" alt="Avo filters" />
-
 Of course, you can modify the logic and return all kinds of values based on your needs.
 
 ## Empty message text
@@ -779,8 +757,6 @@ Of course, you can modify the logic and return all kinds of values based on your
 <DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=347" />
 
 There might be times when you will want to show a message to the user when you're not returning any options. You may customize that message using the `empty_message` option.
-
-<Image src="/assets/img/filters/empty-message.gif" width="528" height="800" alt="Avo filters" />
 
 ```ruby{4}
 # app/avo/filters/course_city.rb
@@ -844,7 +820,6 @@ Now, the arguments can be accessed inside `Avo::Filters::NameFilter` ***`apply` 
 ```ruby{4-6,8-14}
 class Avo::Filters::Name < Avo::Filters::TextFilter
   self.name = "Name filter"
-  self.button_label = "Filter by name"
   self.visible = -> do
     arguments[:case_insensitive]
   end
