@@ -32,6 +32,12 @@ Avo 4 requires a valid v4 license key. Your v3 license key won't work with Avo 4
 
 ## Get started with Avo 4
 
+:::info Beta access and private gems
+During the Avo 4 open beta, you can try **all** Avo gems (including Pro, Advanced, and other private gems) **regardless of your subscription tier**, including on Community. See [Avo 4 status and feedback #4349](https://github.com/avo-hq/avo/issues/4349) for the latest. Once Avo 4 pricing is finalized, you will need an appropriate paid license to keep using paid gems.
+
+Private beta gems are still served from `packager.dev`. After you enroll at [avohq.io/try-4](https://avohq.io/try-4), your licenses (including Community) include a **Gem Server Token** on your [license page](https://v3.avohq.io/licenses). Configure Bundler with that token so `bundle install` can download private gems. Follow [Gem server authentication](./gem-server-authentication).
+:::
+
 Assuming you are upgrading your Avo 3 app, you need to do three things:
 
 1. Enroll to the Avo 4 beta program by going to [avohq.io/try-4](https://avohq.io/try-4).
