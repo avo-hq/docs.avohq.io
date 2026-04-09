@@ -77,6 +77,10 @@ gem "avo-rhino_field", ">= 4.0.0.beta"
 bundle update avo avo-advanced avo-nested avo-http_resource avo-dynamic_filters avo-pro avo-menu avo-dashboards avo-collaboration avo-forms avo-kanban avo-api avo-http_resource avo-reactive_fields avo-rhino_field
 ```
 
+:::info
+You can check each gem version on [avohq.io/gems](https://avohq.io/gems).
+:::
+
 3. Go through this guide to upgrade your app to Avo 4.
 
 ### Icons
