@@ -137,6 +137,10 @@ If you configure `results_count` by specifying it in the resource file then that
 
 </Option>
 
+## Branching the query by surface
+
+The same `search[:query]` proc fires for the navbar global palette, the resource-index search bar, and the association picker. If you want different scopes per surface, branch on the `search_type` local — see [Branching by surface](./resource-search#branching-by-surface-search-type).
+
 <Option name="`display_count`">
 
 By default, Avo displays the search results count for each resource in the global search. Example: "Users (8 of 21)". You can avoid counting the number of results by configuring the `display_count` option
