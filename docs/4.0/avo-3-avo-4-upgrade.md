@@ -148,6 +148,47 @@ The global search now includes a comprehensive results page:
 - **Show all results page**: A dedicated page that displays all matching results without the limit restriction
 - **Seamless transition**: Easy access from the search dropdown to view comprehensive results
 
+### Searchable association picker
+
+The picker that opens for searchable `belongs_to` / `polymorphic` / `has_many` attach fields has been rewritten in the same spirit as the global search — the Algolia autocomplete plugin is gone, replaced by a Stimulus + Hotwire dropdown owned by Avo.
+
+Customer-facing API stays compatible:
+
+- `searchable: true` on a belongs_to / has_many — same as before.
+- `self.search = { query: ..., results_count: ..., item: ... }` on the target resource — same keys, same semantics.
+
+What's new in 4.x:
+
+- **Field-level configuration**: `searchable: { query:, suggestions:, limit:, enabled: }` on the field configures the picker for one specific field. `query:`, `suggestions:`, `limit:` override the target resource's defaults; `enabled:` is field-only and gates whether the picker renders at all (vs. a regular `<select>`). See the [`searchable`](./associations/belongs_to#searchable-belongs-to) option.
+- **`suggestions:`** — a new **picker-only** key. Configurable on `self.search` (resource-wide picker default) or on a field's `searchable: { ... }` hash (per-picker override). Controls records shown when the picker is opened without typing. **The navbar palette and resource-index search bar do not consume this key** — they show empty / the listing on blank input. See [Default suggestions on focus](./search/resource-search#default-suggestions-on-focus).
+- **`search_type` local** — your `query:` proc can now branch on whether the request came from the navbar, the resource-index, or the picker. See [Branching by surface](./search/resource-search#branching-by-surface-search-type).
+- **`enabled:` accepts a proc** — gate the picker visibility per request (e.g. admins only).
+
+#### Breaking changes
+
+##### `suggestions:` is now explicit-only
+
+In Avo 3, opening a searchable picker without typing showed a default list of records (`query_scope.order(<primary_key>: :desc)` — newest first) regardless of whether you'd configured `suggestions:`.
+
+In Avo 4, that implicit fallback is **gone**. If `:suggestions` is not configured on the target resource (or the field), the picker's focus-empty dropdown shows nothing — typing then fires the `query:` proc as usual.
+
+To restore the old "newest first" behaviour, configure `suggestions:` explicitly. For a single picker, set it at the field level:
+
+```ruby
+field :user, as: :belongs_to, searchable: {
+  suggestions: -> { query.order(created_at: :desc) }
+}
+```
+
+To restore it for every picker pointing at the same resource, configure it at the resource level instead:
+
+```ruby
+self.search = {
+  query: -> { ... },
+  suggestions: -> { query.order(created_at: :desc) }
+}
+```
+
 #### Breaking changes and migration notes
 
 <br>

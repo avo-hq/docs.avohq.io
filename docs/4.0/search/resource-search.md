@@ -33,6 +33,60 @@ In this block, you may configure the search however strict or loose you need it.
 If you're using ransack version 4 and up you must add `ransackable_attributes` and maybe more to your model in order for it to work. Read more about it [here](https://activerecord-hackery.github.io/ransack/going-further/other-notes/#authorization-allowlistingdenylisting).
 :::
 
+## Branching by surface — `search_type`
+
+Pickers and the navbar may want different scopes against the same resource. Branch on `search_type`:
+
+```ruby
+class Avo::Resources::User < Avo::BaseResource
+  self.search = {
+    query: -> {
+      case search_type
+      when :global      # navbar ⌘K — widest, includes email
+        query.ransack(first_name_cont: q, last_name_cont: q, email_cont: q, m: "or").result(distinct: false)
+      when :resource    # index search bar — name only
+        query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false)
+      when :association # picker — tightest
+        query.ransack(first_name_cont: q).result(distinct: false)
+      end
+    }
+  }
+end
+```
+
+If you don't need surface-specific behavior, ignore the local and write a single query that runs on every surface.
+
+## Default suggestions on focus
+
+<LicenseReq license="pro" />
+
+When a [searchable picker](./../associations/belongs_to#searchable-belongs-to) is opened without typing, you can configure the records to show via `suggestions:`. The most common form is per-picker, on the field:
+
+```ruby
+field :user, as: :belongs_to, searchable: {
+  suggestions: -> { query.order(created_at: :desc) }
+}
+```
+
+The picker calls this proc whenever the user focuses an empty input. The proc has the same locals as `query:` (including `parent_record` for picker context). If `:suggestions` is not configured, the picker's dropdown stays closed on focus — it only opens once the user types and results come back.
+
+:::info
+`suggestions:` only fires on the **association picker** (`:association`). The navbar palette returns no results on a blank query, and the resource-index search bar shows the regular index listing.
+:::
+
+#### Resource-level fallback
+
+Configure `self.search[:suggestions]` if you want the same suggestions for every picker pointing at this resource. Field-level `searchable: { suggestions: ... }` always wins per-picker.
+
+```ruby
+class Avo::Resources::Post < Avo::BaseResource
+  self.search = {
+    query: -> { query.ransack(name_cont: q, m: "or").result(distinct: false) },
+    suggestions: -> { query.order(created_at: :desc) }
+  }
+end
+```
+
 ## Authorize search
 
 Search is authorized in policy files using the [`search?`](./../authorization#search) method.

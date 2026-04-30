@@ -187,8 +187,8 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/associations/searchable-closed.jpg" width="1232" height="184" alt="Belongs to searchable" />
-<Image src="/assets/img/associations/searchable-open.jpg" width="1556" height="1272" alt="Belongs to searchable" />
+<Image src="/assets/img/4_0/associations/searchable-closed.png" width="632" height="44" alt="Belongs to searchable" />
+<Image src="/assets/img/4_0/associations/searchable-open.png" width="1256" height="352" alt="Belongs to searchable" />
 
 `searchable` works with `polymorphic` `belongs_to` associations too.
 

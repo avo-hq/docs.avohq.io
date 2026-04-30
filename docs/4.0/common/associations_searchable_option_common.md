@@ -5,7 +5,7 @@
   <DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
 </div>
 
-Turns the attach field/modal from a `select` input to a searchable experience
+Turns the attach field/modal from a `select` input to a searchable picker.
 
 ```ruby{5}
 class Avo::Resources::CourseLink < Avo::BaseResource
@@ -18,7 +18,7 @@ end
 ```
 
 :::warning
-  Avo uses the **resource search feature** behind the scenes, so **make sure the target resource has the [`search_query`](./../search/resource-search) option configured**.
+  Avo uses the **resource search feature** behind the scenes, so **make sure the target resource has the [`search[:query]`](./../search/resource-search) option configured**.
 :::
 
 ```ruby{3-7}
@@ -32,11 +32,25 @@ class Avo::Resources::CourseLink < Avo::BaseResource
 end
 ```
 
-#### Default
+### Per-picker overrides (hash form)
 
-`false`
+You can pass a hash to `searchable:` instead of `true` to override the target resource's defaults for that one picker. The hash accepts four keys, all optional:
 
-#### Possible values
+```ruby
+field :user,
+  as: :belongs_to,
+  searchable: {
+    query: -> { query.ransack(first_name_cont: q).result(distinct: false) },  # tighter scope than the User resource's default
+    suggestions: -> { query.where.not(id: parent_record&.user_id).order(created_at: :desc) },  # focus-empty defaults
+    limit: 5,                                                                  # cap results
+    enabled: -> { current_user.admin? }                                        # gate visibility
+  }
+```
 
-`true`, `false`
+| Key | Purpose | Falls back to |
+|---|---|---|
+| `query:` | Filter when the user types | Target resource's `self.search[:query]` |
+| `suggestions:` | Records to show on focus-empty (picker only — see [resource search](./../search/resource-search)) | Target resource's `self.search[:suggestions]` |
+| `limit:` | Max rows to display | Resource `results_count` → `Avo.configuration.search_results_count` |
+| `enabled:` | Whether the picker is searchable for this request | `true` |
 </Option>
