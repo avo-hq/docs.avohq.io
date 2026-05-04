@@ -1,65 +1,105 @@
 # TailwindCSS integration
 
-We use TailwindCSS 3.0 with the JIT engine to style Avo, so on release we only pack the used Tailwind classes in our final css file. That's why, when you want to style your custom content (tools, resource tools, fields, or ejected partials), you won't have access to all of Tailwind's utility classes. It's a feature, not a bug. It's a performance optimization.
 
-But there's an easy way to overcome that. You can add your own TailwindCSS process to watch for your the utility classes you use.
+:::info
+This integration is especially useful when you style UI extension points with custom CSS or Tailwind classes, like [custom pages](./custom-tools.md) and [custom fields](./custom-fields.md), where classes may not exist in the precompiled Avo bundle.
 
-In versions prior to Avo 3, we maintained separate pre-compiled assets and provided a way to inject your Tailwind CSS assets into Avo's application. This often led to stylesheet conflicts. Now, we've improved integration by compiling a single stylesheet during the build process. If you want to add Tailwind configurations to Avo, your application will compile Avo's assets alongside your own in one build.
+<b>This integration is built for Tailwind CSS 4.</b>
+:::
 
-```bash
-bin/rails generate avo:tailwindcss:install
+Avo ships with precompiled styles that are easy to use and work out of the box, so most apps do not need to care about extra build steps.
+
+
+When Avo detects `tailwindcss-ruby`, it automatically enables this integration and builds an app-level Avo stylesheet with zero (or close to zero) configuration.
+
+
+If you have `tailwindcss-ruby` installed (or `tailwindcss-rails`, which depends on `tailwindcss-ruby`) but you do **not** use custom Tailwind/CSS classes in custom tools, ejected components, custom fields, or other extended UI areas, you can opt out and keep using only Avo's precompiled styles.
+
+When enabled, this integration compiles a stylesheet that includes:
+
+- Avo core styles
+- loaded Avo plugin styles
+- your host app Avo styles from `app/assets/stylesheets/avo/**/*.css`
+- utility classes discovered in your app and Avo/plugin sources
+
+The output file is:
+
+`app/assets/builds/avo/application.css`
+
+This integration writes to the same logical Avo stylesheet path (`avo/application`) so your app always loads one stylesheet entrypoint.
+
+## Auto-enable behavior
+
+Add `tailwindcss-ruby` to your app:
+
+```ruby
+gem "tailwindcss-ruby"
 ```
 
-That command will:
+Once present, Avo will:
 
-- install `tailwindcss-rails` gem if you haven't installed it yet;
-- generate Avo's tailwind config.js `config/avo/tailwind.config.js`
-- generate tailwind `base`, `components` and `utilities` under `app/assets/stylesheets/avo/tailwind` directory (workaround to import avo's base css after tailwind's base)
-- create a custom `app/assets/stylesheets/avo/tailwind.css` file where you can further customize your Avo space;
-- generate or enhance your `Procfile.dev` with the required compile `yarn avo:tailwindcss --watch` command, as per default `tailwindcss-rails` practices;
-- add the build script to your `package.json`. **Ensure a `package.json` file is present;`yarn init` will generate one if your project doesn't have one**.
-- add the following code to your `Rakefile`:
+- auto-build in development
+- hook into `assets:precompile` in production
+
+:::tip
+We highly recommend running this integration through `bin/dev` with a `Procfile.dev` watcher process:
+
+```bash
+web: bin/rails server -p 3000
+avo_css: bin/rails avo:tailwindcss:watch
+```
+
+This keeps your Avo Tailwind build running in parallel with the Rails server, so style changes are compiled automatically while you work without extra manual steps.
+:::
+
+## Add your custom Avo styles
+
+Add your Avo-specific stylesheets under `app/assets/stylesheets/avo/`.
+
+Every CSS file in this path is included in the final `avo/application.css` build.
+
+For example:
+
+```css
+/* app/assets/stylesheets/avo/buttons.css */
+@layer components {
+  .avo-btn-highlight {
+    @apply px-3 py-2 rounded-md bg-indigo-600 text-white;
+  }
+}
+```
+
+## Disable integration (opt-out)
+
+If your app has `tailwindcss-ruby` (directly or via `tailwindcss-rails`) but you do not need Avo custom utility coverage, disable the integration in your initializer:
+
 ```ruby
-# When running `rake assets:precompile` this is the order of events:
-# 1 - Task `avo:yarn_install`
-# 2 - Task `avo:sym_link`
-# 3 - Cmd  `yarn avo:tailwindcss`
-# 4 - Task `assets:precompile`
-Rake::Task["assets:precompile"].enhance(["avo:sym_link"])
-Rake::Task["avo:sym_link"].enhance(["avo:yarn_install"])
-Rake::Task["avo:sym_link"].enhance do
-  `yarn avo:tailwindcss`
+Avo.configure do |config|
+  config.tailwindcss_integration_enabled = false
 end
 ```
 
-Now, instead of running `bin/rails server`, you can run that Procfile with `bin/dev`.
+Default is `true`.
 
-:::info
-You mileage may vary when running these tasks depending with your setup. The gist is that you need to run `yarn avo:tailwindcss` on deploy0time to compile the css file and `yarn avo:tailwindcss --watch` to watch for changes in development.
-:::
+The default is intentionally `true` to preserve the zero-configuration experience: if your app has `tailwindcss-ruby` and you start adding classes/styles in custom Avo UI extension points, this integration should just work without you needing to think about setup details.
 
-Inside `app/assets/stylesheets/avo` you'll have a new `tailwind.css` file that's waiting for you to customize. The default `config/avo/tailwind.config.js` file should have the proper paths set up for purging and should be ready to go. Notice that it utilizes an preset that we manage, that preset is essential to build all avo's styles.
+## Debugging
 
-```css
-@import 'tailwindcss/base';
-/* Have all of Avo's custom and plugins styles available. */
-@import '../../../../tmp/avo/avo.base.css';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+If classes are missing from `avo/application.css`, check these files first:
 
-/*
+- input file generated by Avo: `tmp/avo/avo.tailwind.input.css`
+- output file generated by Tailwind: `app/assets/builds/avo/application.css`
 
-@layer components {
-  .btn-primary {
-    @apply py-2 px-4 bg-blue-200;
-  }
-}
+How it works, in short:
 
-*/
-```
+- Avo generates `tmp/avo/avo.tailwind.input.css` on each build/watch cycle.
+- That input file imports Avo/plugin `application.css` files and your host styles from `app/assets/stylesheets/avo/**/*.css`.
+- It also adds `@source` entries for Avo, loaded plugins, and your app so Tailwind can discover utility classes from templates and code.
+- Tailwind then compiles everything into `app/assets/builds/avo/application.css`.
 
-:::warning Avo Task Dependencies
-You must ensure that the `avo:sym_link` and `avo:yarn_install` tasks are executed before building the Avo assets.
+Quick checks:
 
-These tasks are responsible for creating various symbolic links within the `tmp/avo` directory and installing necessary Node modules within Avo's path. These modules are essential for utilizing the Avo Tailwind preset. And the symbolic links are essentials for purging all Avo's tailwind classes.
-:::
+- confirm the integration is enabled (`config.tailwindcss_integration_enabled = true`);
+- ensure `tailwindcss-ruby` is installed (directly or via `tailwindcss-rails`);
+- verify your custom styles are under `app/assets/stylesheets/avo/`;
+- run with the watcher (`bin/dev`) so changes are rebuilt continuously.
