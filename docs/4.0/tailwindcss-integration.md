@@ -20,7 +20,7 @@ When enabled, this integration compiles a stylesheet that includes:
 - Avo core styles
 - loaded Avo plugin styles
 - your host app Avo styles from `app/assets/stylesheets/avo/**/*.css`
-- utility classes discovered in your app and Avo/plugin sources
+- utility classes discovered under your Rails `app/` directory (configurable; see below), plus Avo and plugin sources
 
 The output file is:
 
@@ -83,6 +83,31 @@ Default is `true`.
 
 The default is intentionally `true` to preserve the zero-configuration experience: if your app has `tailwindcss-ruby` and you start adding classes/styles in custom Avo UI extension points, this integration should just work without you needing to think about setup details.
 
+## Host content scan paths (`tailwindcss_content_sources`)
+
+Avo writes Tailwind v4 `@source` directives into `tmp/avo/avo.tailwind.input.css` so the compiler can see utility classes used in templates and Ruby/HTML. **By default**, the host-side scan is limited to `Rails.root.join("app")` (the usual Rails tree: views, components, `app/avo` resources, and similar).
+
+That keeps discovery focused on application code and avoids scanning unrelated directories under the project root.
+
+Configure extra roots (or override the list entirely) in `config/initializers/avo.rb`:
+
+```ruby
+Avo.configure do |config|
+  config.tailwindcss_content_sources = [
+    Rails.root.join("app"),
+    Rails.root.join("lib", "components")
+  ]
+end
+```
+
+Each entry may be an **absolute** path or a path **relative to** `Rails.root`. Directories that do not exist are skipped.
+
+To include the **entire project root** in the host scan (everything under `Rails.root`), set:
+
+```ruby
+config.tailwindcss_content_sources = [Rails.root]
+```
+
 ## Debugging
 
 If classes are missing from `avo/application.css`, check these files first:
@@ -94,7 +119,7 @@ How it works, in short:
 
 - Avo generates `tmp/avo/avo.tailwind.input.css` on each build/watch cycle.
 - That input file imports Avo/plugin `application.css` files and your host styles from `app/assets/stylesheets/avo/**/*.css`.
-- It also adds `@source` entries for Avo, loaded plugins, and your app so Tailwind can discover utility classes from templates and code.
+- It also adds `@source` entries for Avo, loaded plugins, and your configured host directories (default: `Rails.root.join("app")`) so Tailwind can discover utility classes from templates and code.
 - Tailwind then compiles everything into `app/assets/builds/avo/application.css`.
 
 Quick checks:
