@@ -169,7 +169,9 @@ const config = {
             {
               text: "Layout",
               collapsed: true,
+              link: '/4.0/fields-layout.html',
               items: [
+                { text: "Overview", link: "/4.0/fields-layout.html" },
                 { text: "Header", link: "/4.0/resource-header.html" },
                 { text: "Panels", link: "/4.0/resource-panels.html" },
                 { text: "Sidebars", link: "/4.0/resource-sidebar.html" },
@@ -278,8 +280,8 @@ const config = {
         {
           text: "Collaboration",
           items: [
-            { text: "Overview", link: "/4.0/collaborate/overview.html" },
-            { text: "Authorization", link: "/4.0/collaborate/authorization.html" },
+            { text: "Overview", link: "/4.0/collaboration/overview.html" },
+            { text: "Authorization", link: "/4.0/collaboration/authorization.html" },
           ],
         },
         // {
