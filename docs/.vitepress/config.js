@@ -80,7 +80,7 @@ const config = {
     ],
     footer: {
       message: '',
-      copyright: 'Copyright © 2020-present Adrian Marin'
+      copyright: `Copyright © 2020–${new Date().getFullYear()} Adrian Marin`
     },
     nav: [
       { text: "Home", link: "/" },
