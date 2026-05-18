@@ -21,12 +21,13 @@ The global search shows a limited number of quick results in the dropdown, with 
 
 Use the `global_search` configuration to enable/disable the feature and control related options.
 
-```ruby{3-6}
+```ruby{3-7}
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.global_search = {
     enabled: true,
     navigation_section: true,
+    search_on_type: true,
   }
 end
 ```
@@ -44,6 +45,22 @@ Avo.configure do |config|
   }
 end
 ```
+
+<Option name="`search_on_type`">
+
+By default, Avo runs the search as you type in the global search input. Set `search_on_type: false` to disable this behavior — the dropdown still opens on focus or <kbd>Cmd</kbd> + <kbd>K</kbd>, but typing no longer triggers a search. The user must press <kbd>Enter</kbd> to run the search and navigate to the dedicated results page.
+
+```ruby{5}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.global_search = {
+    enabled: true,
+    search_on_type: false,
+  }
+end
+```
+
+</Option>
 
 <Option name="`item`">
 
