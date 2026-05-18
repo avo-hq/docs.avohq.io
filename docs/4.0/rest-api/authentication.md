@@ -84,8 +84,9 @@ module Avo
       module V1
         class UsersController < BaseResourcesController
           def setup_authentication
-            api_key = request.headers['Authorization']&.sub(/^ApiKey /, '')
-            unless ApiKey.active.exists?(key: api_key)
+            expected_api_key = ENV.fetch("API_KEY")
+            provided_api_key = request.headers['Authorization']&.sub(/^ApiKey /, '')
+            unless ActiveSupport::SecurityUtils.secure_compare(provided_api_key, expected_api_key)
               raise Avo::Api::AuthenticationError
             end
           end
