@@ -225,7 +225,6 @@ const config = {
             { text: "Resource Search", link: "/4.0/search/resource-search.html" },
             { text: "Global Search", link: "/4.0/search/global-search.html" },
             { text: "Localization (I18n)", link: "/4.0/i18n.html" },
-            { text: "Branding", link: "/4.0/branding.html" },
             { text: "Appearance", link: "/4.0/appearance.html" },
             { text: "User Preferences", link: "/4.0/user-preferences.html" },
             { text: "Routing", link: "/4.0/routing.html" },
