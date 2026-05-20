@@ -389,6 +389,81 @@ tab title: "User information" do # [!code ++]
 end
 ```
 
+## Branding renamed to Appearance
+
+`config.branding` has been replaced with `config.appearance`. The configuration key was renamed, the `colors:` hash was removed, and the CSS custom properties were renamed. A number of new options (color scheme switching, accent/neutral pickers, database persistence, dark-mode assets) come with it — see the [Appearance documentation](./appearance.html) for the full API.
+
+If you didn't customize `config.branding`, no action is required.
+
+### Rename the configuration key
+
+```ruby
+config.branding = {     # [!code --]
+config.appearance = {   # [!code ++]
+  logo: "my_company/logo.png",
+  logomark: "my_company/logomark.png",
+  favicon: "my_company/favicon.ico",
+  placeholder: "my_company/placeholder.svg",
+  chart_colors: ["#0B8AE2", "#34C683"]
+}
+```
+
+`logo`, `logomark`, `favicon`, `placeholder` and `chart_colors` behave the same.
+
+### `colors:` hash removed
+
+The flat `colors:` hash is gone. The palette is now split into independent **neutral** and **accent** surfaces — each set via a preset symbol or a full custom palette. See [Neutral palette](./appearance.html#neutral-palette) and [Accent palette](./appearance.html#accent-palette).
+
+Most apps that used `colors:` were only tinting the primary accent — the simplest replacement is to pick a preset accent:
+
+```ruby
+config.branding = {
+  colors: {                     # [!code --]
+    100 => "#CEE7F8",           # [!code --]
+    400 => "#399EE5",           # [!code --]
+    500 => "#0886DE",           # [!code --]
+    600 => "#066BB2"            # [!code --]
+  }                             # [!code --]
+}
+
+config.appearance = {
+  accent: :blue # [!code ++]
+}
+```
+
+#### Bringing your exact colors back
+
+If you want the same hex values you had in `colors:`, configure `accent_colors:` instead. The three-token shape replaces the flat shade hash, and a single palette covers both light and dark mode:
+
+```ruby
+config.appearance = {
+  accent: :brand,
+  accent_colors: {
+    color:      "#0886DE", # main accent — was the old `500`
+    content:    "#066BB2", # subtle/hover — was the old `600`
+    foreground: "#FFFFFF"  # text on accent backgrounds
+  }
+}
+```
+
+The old `background:` value (page background) is now driven by `neutral_colors:` instead — set the full 12-shade palette via [Custom neutral palette](./appearance.html#custom-neutral-palette) if you need that level of control.
+
+See the [Appearance documentation](./appearance.html) for the full API.
+
+### CSS custom properties renamed
+
+If you wrote custom CSS that referenced Avo's brand variables, update the names:
+
+| Avo 3                                | Avo 4                     |
+| ------------------------------------ | ------------------------- |
+| `--avo-color-application-background` | `--color-background`      |
+| `--avo-color-primary-100`            | `--color-avo-neutral-100` |
+| `--avo-color-primary-400`            | `--color-avo-neutral-400` |
+| `--avo-color-primary-500`            | `--color-avo-neutral-500` |
+| `--avo-color-primary-600`            | `--color-avo-neutral-600` |
+
+Values are no longer RGB triplets — they are full CSS colors (`oklch(...)`, `#hex`, `rgb(...)`, `hsl(...)`). Avo 4 also introduces additional design tokens beyond the ones listed above (`--color-foreground`, `--color-primary`, `--color-secondary`, `--color-tertiary`, `--color-content`, `--color-content-secondary`, `--color-accent`, `--color-accent-content`, `--color-accent-foreground`) — inspect Avo's `variables.css` for the full set.
+
 ## Components
 
 ### Renamed view type components
