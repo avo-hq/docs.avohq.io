@@ -637,17 +637,109 @@ We've made a few updates to the discreet information API to make it more versati
 6. `as` can be `icon`, `text`, `badge`, `key_value`
 7. `key_value` has `key` and `value` options
 
-## Removed `cluser` (or its alias `row`) in favor of `width`
+## Removed `cluster` (and its alias `row`) in favor of `width`
 
-<!-- TODO: -->
+The `cluster` DSL method (and its alias `row`) has been removed. Previously you wrapped fields in a `cluster do ... end` block to place them side-by-side. Now every field has a `width` option and Avo lays them out together automatically — adjacent fields with a `width` below `100` will sit on the same row.
 
-- removed `compact` and `short` options from the field wrapper. The fields react better
-- avo configuration has new `use_stacked_fields` option to enable the global use of the `stacked` field option
-- fields now have the `width` option
+### Replace `cluster` / `row` with `width`
+
+```ruby
+# Avo 3
+cluster do
+  field :company, stacked: true do
+    "TechCorp Inc."
+  end
+  field :department, stacked: true do
+    "Research & Development"
+  end
+end
+
+# Avo 4
+field :company, width: 50 do
+  "TechCorp Inc."
+end
+field :department, width: 50 do
+  "Research & Development"
+end
+```
+
+The same applies to `row`, which was just an alias for `cluster`:
+
+```ruby
+# Avo 3
+row do
+  field :street_address, stacked: true
+  field :city, stacked: true
+end
+
+# Avo 4
+field :street_address, width: 50
+field :city, width: 50
+```
+
+### Supported `width` values
+
+`width` is given as a percentage. The supported values are `25`, `33`, `50`, `66`, `75`, and `100` (the default).
+
+| `width` | Class    | Approx. fraction |
+| ------- | -------- | ---------------- |
+| `25`    | `w-1/4`  | ¼                |
+| `33`    | `w-1/3`  | ⅓                |
+| `50`    | `w-1/2`  | ½                |
+| `66`    | `w-2/3`  | ⅔                |
+| `75`    | `w-3/4`  | ¾                |
+| `100`   | `w-full` | full row         |
+
+Setting any `width` below `100` automatically marks the field as `stacked: true`, so you no longer need to repeat `stacked: true` next to a custom width.
+
+If you used `cluster divider: true` to draw a divider between clustered fields, drop the option — the divider is no longer needed in the new layout.
+
+### Removed field wrapper options
+
+The `compact` and `short` props have been removed from `Avo::FieldWrapperComponent`. Fields now adapt to their context automatically, so no replacement is needed. If you had custom components that passed `compact:` or `short:` into the wrapper, remove those arguments.
+
+### New `use_stacked_fields` configuration
+
+A new global configuration toggles the stacked layout across every field in the app:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.use_stacked_fields = true # default: false
+end
+```
+
+When set to `true`, fields render with the stacked layout by default without needing `stacked: true` on each one. You can still override per field.
 
 ## Map view tweaks
 
-- `layout` changed to `map.position` and now reflects the actual map position on the page (`:top`, `:right`, `:bottom`, `:left`)
+The map view positioning option was reworked so it reflects the position of the **map** instead of the position of the table.
+
+- The configuration key moved from `table.layout` to `map.position`.
+- Allowed values stay the same (`:top`, `:right`, `:bottom`, `:left`) but the semantic flipped — you now describe where the map sits, not where the table sits.
+
+```ruby
+self.map_view = {
+  table: {
+    visible: true,
+    layout: :bottom  # [!code --]
+  },
+  map: {                # [!code ++]
+    position: :top      # [!code ++]
+  }                     # [!code ++]
+}
+```
+
+Translation between the old and new keys:
+
+| Avo 3 (`table.layout`) | Avo 4 (`map.position`) |
+| ---------------------- | ---------------------- |
+| `:bottom`              | `:top`                 |
+| `:top`                 | `:bottom`              |
+| `:left`                | `:right`               |
+| `:right`               | `:left`                |
+
+The default map style is now `mapbox://styles/mapbox/light-v11` and the default height is `26rem` when the map is positioned vertically. You can still override these via `mapkick_options`.
 
 ## Added `label_help` option
 
