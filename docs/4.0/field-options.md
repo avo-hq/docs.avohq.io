@@ -360,6 +360,36 @@ field :password, as: :password, label_help: 'You may verify the password strengt
 
 </Option>
 
+## Width
+
+The `width` option controls how much horizontal space a field takes inside its parent panel or card. Use it to place multiple fields on the same row — adjacent fields with a `width` below `100` sit side by side.
+
+```ruby
+field :first_name, width: 50
+field :last_name,  width: 50
+```
+
+`width` is a percentage. Supported values:
+
+| `width` | Approx. fraction |
+| ------- | ---------------- |
+| `25`    | ¼                |
+| `33`    | ⅓                |
+| `50`    | ½                |
+| `66`    | ⅔                |
+| `75`    | ¾                |
+| `100`   | full row (default) |
+
+Setting any `width` below `100` automatically marks the field as [`stacked`](#stacked-layout) — the label moves above the value so the field fits the narrower column. You don't need to pass `stacked: true` yourself, but you can still combine the two if you want a stacked field at full width.
+
+```ruby
+field :company,    width: 50 do "TechCorp Inc." end
+field :department, width: 50 do "Research & Development" end
+field :years_of_experience do "7 Years" end # full width
+```
+
+`width` replaces the `cluster` / `row` DSL from Avo 3. See the [upgrade guide](./avo-3-avo-4-upgrade#removed-cluster-and-its-alias-row-in-favor-of-width) for migration details.
+
 ## Nullable
 
 When a user uses the **Save** button, Avo stores the value for each field in the database. However, there are cases where you may prefer to explicitly instruct Avo to store a `NULL` value in the database row when the field is empty. You do that by using the `nullable` option, which converts `nil` and empty values to `NULL`.
