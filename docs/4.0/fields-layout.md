@@ -105,6 +105,17 @@ Avo.configure do |config|
 end
 ```
 
+## Multi-column rows with `width`
+
+To place multiple fields on the same row, pass a `width` percentage to each one. Adjacent fields with a `width` below `100` sit side by side.
+
+```ruby
+field :first_name, width: 50
+field :last_name,  width: 50
+```
+
+Supported values are `25`, `33`, `50`, `66`, `75`, and `100` (default). See [`width` in field options](./field-options#width) for the full reference.
+
 ## Layout reference
 
 | Page                                | What it covers                                                            |
