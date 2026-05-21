@@ -14,7 +14,7 @@ You can add three types of cards to your parent: `partial`, `metric`, and `chart
 
 ## Base settings
 
-All cards have some standard settings like `id`, which must be unique, `label` and `description`. The `label` will be the title of your card, and `description` will show a tiny question mark icon on the bottom right with a tooltip with that description.
+All cards have some standard settings like `id`, which must be unique, `label`, `description`, and `discreet_description`. The `label` is the title of your card, the `description` is a subtitle rendered below the title, and the `discreet_description` shows a tiny info icon at the bottom-right of the card with a tooltip containing the text.
 
 Each card has its own `cols` and `rows` settings to control the width and height of the card inside the parent's grid. They can have values from `1` to `6`.
 
@@ -22,11 +22,12 @@ All this settings can be called as an lambda.
 
 The lambda will be executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent`, `resource`, `dashboard` and `card`.
 
-```ruby{2-7}
+```ruby{2-8}
 class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = "users_metric"
   self.label = -> { "Users count" }
   self.description = -> { "Users description" }
+  self.discreet_description = -> { "How this number is calculated" }
   self.cols = 1
   self.rows = 1
   self.display_header = true
@@ -35,7 +36,54 @@ end
 
 <Image src="/assets/img/dashboards/users_metric.jpg" width="331" height="170" alt="Avo Metric Card" />
 
+### `description`
+
+Renders directly under the card's title as a subtitle. Use it when the extra context is always relevant and should be visible at a glance.
+
+```ruby
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.label = "Users count"
+  self.description = "Across all teams and workspaces"
+end
+```
+
+### `discreet_description`
+
+Renders a small info icon in the bottom-right corner of the card. Hovering it shows a tooltip with the text. Use it for secondary context that would otherwise clutter the card — methodology notes, data source disclaimers, definitions, etc.
+
+```ruby
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.label = "Users count"
+  self.discreet_description = "Counts only active, non-deleted users created in the selected range."
+end
+```
+
+Both options accept a lambda evaluated through [`Avo::ExecutionContext`](execution-context), with access to `parent`, `resource`, `dashboard`, `card`, `arguments` and `params`:
+
+```ruby
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.discreet_description = -> { "Computed at #{Time.current.to_fs(:short)}" }
+end
+```
+
+You can also override either option per-registration on the parent dashboard or resource:
+
+```ruby
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
+  def cards
+    card Avo::Cards::UsersMetric,
+      description: "Signups this week",
+      discreet_description: "Includes invited users who have not yet confirmed."
+  end
+end
+```
+
+:::info Renamed in Avo 4
+In Avo 3, the tooltip behavior described above was attached to `description`. In Avo 4, `description` is now the visible subtitle and the tooltip lives on the new `discreet_description` option. See the [upgrade guide](./avo-3-avo-4-upgrade#cards-description-option-renamed-to-discreet-description) for migration details.
+:::
+
 ## Ranges
+
 #### Control the aggregation using ranges
 
 You may also want to give the user the ability to query data in different ranges. You can control what's passed in the dropdown using the' ranges' attribute. The array passed here will be parsed and displayed on the card. All integers are transformed to days, and other string variables will be passed as they are.
@@ -84,6 +132,7 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.display_header = false
 end
 ```
+
 <Image src="/assets/img/dashboards/map_card.jpg" width="653" height="602" alt="Avo Map card" />
 
 ## Format
@@ -105,7 +154,6 @@ end
 ```
 
 <Image src="/assets/img/3_0/cards/amount_raised_without_format.png" width="296" height="196" alt="amount raised without format" />
-
 
 Example with format:
 
@@ -295,7 +343,6 @@ class Avo::Cards::ExampleAreaChart < Avo::Cards::ChartkickCard
 end
 ```
 
-
 `chartkick_options` can also be declared when registering the card:
 
 ```ruby
@@ -341,6 +388,7 @@ class Avo::Cards::ExampleCustomPartial < Avo::Cards::PartialCard
   # self.display_header = true
 end
 ```
+
 <Image src="/assets/img/dashboards/custom_partial_card.jpg" width="330" height="598" alt="Custom partial card" />
 
 You can embed a piece of content from another app using an iframe. You can hide the header using the `self.display_header = false` option. That will render the embedded content flush to the container.
@@ -359,7 +407,14 @@ end
 
 ```html
 <!-- app/views/avo/cards/_map_card.html.erb -->
-<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d17991.835132857846!2d-73.98926852562143!3d40.742050491245955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sro!4v1647079626880!5m2!1sen!2sro" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+<iframe
+  src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d17991.835132857846!2d-73.98926852562143!3d40.742050491245955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sro!4v1647079626880!5m2!1sen!2sro"
+  width="100%"
+  height="100%"
+  style="border:0;"
+  allowfullscreen=""
+  loading="lazy"
+></iframe>
 ```
 
 <Image src="/assets/img/dashboards/map_card.jpg" width="653" height="602" alt="Avo Map card" />
@@ -396,6 +451,7 @@ end
 You may also control the visibility from the parent class.
 
 :::code-group
+
 ```ruby [On Dashboards]
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   def cards
@@ -411,6 +467,7 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
+
 :::
 
 ## Dividers
@@ -418,6 +475,7 @@ end
 You may want to separate the cards. You can use dividers to do that.
 
 <!-- :::code-group -->
+
 ```ruby [On Dashboards]
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   def cards
@@ -430,6 +488,7 @@ class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   end
 end
 ```
+
 <!-- ```ruby [On Resources]
 class Avo::Resources::User < Avo::BaseResource
   def cards
@@ -448,7 +507,6 @@ end
 
 Dividers can be a simple line between your cards or have some text on them that you control using the `label` option.
 When you don't want to show the line, you can enable the `invisible` option, which adds the divider but does not display a border or label.
-
 
 ## Dividers visibility
 
@@ -474,12 +532,12 @@ Similar to view-specific field methods like `index_fields` and `show_fields`, re
 
 ### Resolution order by view
 
-| View | Specific method | Context fallback | Final fallback |
-| --- | --- | --- | --- |
-| Index | `index_cards` | `display_cards` | `cards` |
-| Show | `show_cards` | `display_cards` | `cards` |
-| New | `new_cards` | `form_cards` | `cards` |
-| Edit | `edit_cards` | `form_cards` | `cards` |
+| View  | Specific method | Context fallback | Final fallback |
+| ----- | --------------- | ---------------- | -------------- |
+| Index | `index_cards`   | `display_cards`  | `cards`        |
+| Show  | `show_cards`    | `display_cards`  | `cards`        |
+| New   | `new_cards`     | `form_cards`     | `cards`        |
+| Edit  | `edit_cards`    | `form_cards`     | `cards`        |
 
 Avo picks the first method available in the order listed above for the current view.
 
