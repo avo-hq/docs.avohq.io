@@ -1,7 +1,7 @@
 ---
 license: add_on
-betaStatus: Beta
-outline: [2,3]
+betaStatus: Not yet released
+outline: [2, 3]
 ---
 
 # Notifications
@@ -42,6 +42,7 @@ bin/rails generate avo:notifications install
 ```
 
 This creates:
+
 - A migration for the `avo_notifications` table
 - A migration to add `avo_notifications_last_read_at` to your users table
 - An initializer at `config/initializers/avo_notifications.rb`
@@ -101,15 +102,15 @@ Avo::Notifications.send( # [!code focus]
 ) # [!code focus]
 ```
 
-| Parameter  | Required | Description                                                  |
-| ---------- | -------- | ------------------------------------------------------------ |
-| `title`    | Yes      | Notification title (max 255 characters)                      |
-| `to`       | No       | Recipient user. Omit for a global notification               |
-| `body`     | No       | Longer description text                                      |
-| `level`    | No       | Severity: `:info`, `:success`, `:warning`, `:error` (default `:info`) |
-| `url`      | No       | URL to navigate to when the notification title is clicked    |
-| `sender`   | No       | The user who sent the notification                           |
-| `buttons`  | No       | Array of action buttons (max 3)                              |
+| Parameter | Required | Description                                                           |
+| --------- | -------- | --------------------------------------------------------------------- |
+| `title`   | Yes      | Notification title (max 255 characters)                               |
+| `to`      | No       | Recipient user. Omit for a global notification                        |
+| `body`    | No       | Longer description text                                               |
+| `level`   | No       | Severity: `:info`, `:success`, `:warning`, `:error` (default `:info`) |
+| `url`     | No       | URL to navigate to when the notification title is clicked             |
+| `sender`  | No       | The user who sent the notification                                    |
+| `buttons` | No       | Array of action buttons (max 3)                                       |
 
 ### Targeted vs global notifications
 
@@ -134,12 +135,12 @@ Avo::Notifications.send(
 
 Each notification has a level that controls its icon and color in the UI:
 
-| Level      | Icon                | Color  |
-| ---------- | ------------------- | ------ |
-| `:info`    | Info circle (blue)  | Blue   |
-| `:success` | Check circle (green)| Green  |
-| `:warning` | Alert triangle      | Amber  |
-| `:error`   | Alert circle (red)  | Red    |
+| Level      | Icon                 | Color |
+| ---------- | -------------------- | ----- |
+| `:info`    | Info circle (blue)   | Blue  |
+| `:success` | Check circle (green) | Green |
+| `:warning` | Alert triangle       | Amber |
+| `:error`   | Alert circle (red)   | Red   |
 
 ### Adding action buttons
 
