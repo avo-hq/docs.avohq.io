@@ -768,6 +768,30 @@ config.container_width = { index: :full }
 
 More info on the [Container width](./customization.html#container-width) section.
 
+## Dynamic filters bar is now always expanded
+
+The dynamic filters bar is now permanently visible on resource index pages. The show/hide toggle button is gone, and so are the `button_label` and `always_expanded` settings that used to control it.
+
+To upgrade, remove this block from your `config/initializers/avo.rb`:
+
+```ruby
+if defined?(Avo::DynamicFilters)              # [!code --]
+  Avo::DynamicFilters.configure do |config|   # [!code --]
+    config.button_label = "Advanced filters"  # [!code --]
+    config.always_expanded = true             # [!code --]
+  end                                         # [!code --]
+end                                           # [!code --]
+```
+
+If you don't, the app won't boot. Depending on which line Ruby hits first, you'll see one of:
+
+```
+NoMethodError: undefined method 'button_label=' for an instance of Avo::DynamicFilters::Configuration
+NoMethodError: undefined method 'always_expanded=' for an instance of Avo::DynamicFilters::Configuration
+```
+
+More info on the [Dynamic filters](./dynamic-filters) page.
+
 ## Added `sidebar_toggle_visible` configuration option
 
 More info on the [Toggle the sidebar button visibility](./customization.html#toggle-the-sidebar-button-visibility) section.

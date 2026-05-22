@@ -280,33 +280,6 @@ Check how to do a more advanced configuration on the [custom dynamic filters](#c
 
 </Option>
 
-## Options
-
-You can have a few customization options available that you can add in your `avo.rb` initializer file.
-
-```ruby
-Avo.configure do |config|
-  # Other Avo configurations
-end
-
-if defined?(Avo::DynamicFilters)
-  Avo::DynamicFilters.configure do |config|
-    config.button_label = "Advanced filters"
-    config.always_expanded = true
-  end
-end
-```
-
-<Option name="`button_label`">
-
-This will change the label on the expand label.
-</Option>
-
-<Option name="`always_expanded`">
-
-You may opt-in to have them always expanded and have the button hidden.
-</Option>
-
 ## Field to filter matching
 On versions **lower** than <Version version="3.10.0" /> the filters are not configurable so each field will have a dedicated filter type. Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
 
@@ -333,9 +306,7 @@ end
 
 ## Caveats
 
-At some point we'll integrate the [Basic filters](./basic-filters) into the dynamic filters bar. Until then, if you have both basic and dynamic filters on your resource you'll have two `Filters` buttons on your <Index /> view.
-
-To mitigate that you can toggle the `always_expanded` option to true.
+[Basic filters](./basic-filters) and dynamic filters are independent UIs. If a resource declares both, the basic `Filters` button sits in the toolbar while the dynamic filters bar stays expanded above the table.
 
 ## Custom Dynamic Filters
 
