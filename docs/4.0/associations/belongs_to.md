@@ -205,6 +205,8 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
+The [hash form](#searchable) (`searchable: { query:, suggestions:, limit:, enabled: }`) also works on polymorphic `belongs_to` — the same overrides apply to whichever type the user has selected, since the picker re-renders on type-switch and re-runs the proc against the active target resource.
+
 :::info
 Avo uses the [resource search feature](./../search/resource-search) behind the scenes, so **make sure the target resource has the `query` option configured inside the `search` block**.
 :::
