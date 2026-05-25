@@ -75,7 +75,7 @@ source "https://packager.dev/avo-hq/" do
   gem "avo-reactive_fields", ">= 4.0.0.beta"
 end
 
-gem "avo-rhino_field", ">= 4.0.0.beta"
+gem "avo-rhino_field", ">= 0.5.1"
 ```
 
 ```bash
