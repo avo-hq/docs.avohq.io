@@ -164,31 +164,6 @@ What's new in 4.x:
 - **`search_type` local** — your `query:` proc can now branch on whether the request came from the navbar, the resource-index, or the picker. See [Branching by surface](./search/resource-search#branching-by-surface-search-type).
 - **`enabled:` accepts a proc** — gate the picker visibility per request (e.g. admins only).
 
-#### Breaking changes
-
-##### `suggestions:` is now explicit-only
-
-In Avo 3, opening a searchable picker without typing showed a default list of records (`query_scope.order(<primary_key>: :desc)` — newest first) regardless of whether you'd configured `suggestions:`.
-
-In Avo 4, that implicit fallback is **gone**. If `:suggestions` is not configured on the target resource (or the field), the picker's focus-empty dropdown shows nothing — typing then fires the `query:` proc as usual.
-
-To restore the old "newest first" behaviour, configure `suggestions:` explicitly. For a single picker, set it at the field level:
-
-```ruby
-field :user, as: :belongs_to, searchable: {
-  suggestions: -> { query.order(created_at: :desc) }
-}
-```
-
-To restore it for every picker pointing at the same resource, configure it at the resource level instead:
-
-```ruby
-self.search = {
-  query: -> { ... },
-  suggestions: -> { query.order(created_at: :desc) }
-}
-```
-
 #### Breaking changes and migration notes
 
 <br>

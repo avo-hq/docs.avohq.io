@@ -68,7 +68,7 @@ field :user, as: :belongs_to, searchable: {
 }
 ```
 
-The picker calls this proc whenever the user focuses an empty input. The proc has the same locals as `query:` (including `parent_record` for picker context). If `:suggestions` is not configured, the picker's dropdown stays closed on focus — it only opens once the user types and results come back.
+The picker calls this proc whenever the user focuses an empty input. The proc has the same locals as `query:` (including `parent_record` for picker context). If `:suggestions` is not configured (neither on the field nor on the target resource), the picker falls back to the resource's `query_scope` ordered by id descending — the most recent records the user has access to.
 
 :::info
 `suggestions:` only fires on the **association picker** (`:association`). The navbar palette returns no results on a blank query, and the resource-index search bar shows the regular index listing.

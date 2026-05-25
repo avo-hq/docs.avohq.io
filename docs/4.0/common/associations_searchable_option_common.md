@@ -53,4 +53,8 @@ field :user,
 | `suggestions:` | Records to show on focus-empty (picker only — see [resource search](./../search/resource-search)) | Target resource's `self.search[:suggestions]` |
 | `limit:` | Max rows to display | Resource `results_count` → `Avo.configuration.search_results_count` |
 | `enabled:` | Whether the picker is searchable for this request | `true` |
+
+:::info Why `limit:` here and `results_count:` on the resource?
+Same concept, two names. `results_count` has been the resource-level key since Avo 3 and stays for backwards compatibility. `limit:` reads more naturally inside the field-level `searchable: { ... }` hash. If both are set, the field-level `limit:` wins for that picker.
+:::
 </Option>
