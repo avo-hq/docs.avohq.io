@@ -343,6 +343,21 @@ The `Avo::PanelComponent` has been renamed to `Avo::UI::PanelComponent`.
 <% end %>
 ```
 
+##### PanelComponent does not automatically render the content inside a card
+
+The PanelComponent does not automatically render the content inside a card. So if you don't render a card inside the panel, you should use the `with_card` slot instead of the `with_body` slot.
+
+```erb
+<%= render Avo::PanelComponent.new(title: "User information") do |c| %> <!-- [!code --] -->
+<%= render Avo::UI::PanelComponent.new(title: "User information") do |c| %> <!-- [!code ++] -->
+  <% c.with_body do %> <!-- [!code --] -->
+  <% c.with_card do %> <!-- [!code ++] -->
+    <%= render Avo::Fields::IdField.new(record: record) %>
+    <%= render Avo::Fields::TextField.new(record: record, field: :name) %>
+  <% end %>
+<% end %>
+```
+
 #### Renamed `with_tools` slot to `with_controls`
 
 The `with_tools` slot has been renamed to `with_controls`.
