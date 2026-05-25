@@ -290,11 +290,11 @@ The column name is up to you — `load_settings` and `save_settings` just need t
 
 ## Switcher layout
 
-`layout` controls how the appearance switcher renders in the top navbar.
+`picker_layout` controls how the appearance switcher renders in the top navbar.
 
 ```ruby
 config.appearance = {
-  layout: :inline # :inline (default) or :dropdown
+  picker_layout: :inline # :inline (default) or :dropdown
 }
 ```
 
@@ -344,7 +344,7 @@ Avo.configure do |config|
     lock: [:scheme],
 
     # Switcher layout
-    layout: :inline,
+    picker_layout: :inline,
 
     # Chart colors
     chart_colors: ["#0B8AE2", "#34C683", "#FFBE4F", "#FF7676"],
@@ -382,7 +382,7 @@ end
 | `persistence`    | `:cookie` `:database`      | `:cookie`            | Where unlocked user picks are stored                       |
 | `load_settings`  | Proc                       | `nil`                | Block returning a Hash of saved settings (database mode)   |
 | `save_settings`  | Proc                       | `nil`                | Block called with a partial `settings` Hash (database mode) |
-| `layout`         | `:inline` `:dropdown`      | `:inline`            | Navbar switcher layout                                     |
+| `picker_layout`  | `:inline` `:dropdown`      | `:inline`            | Navbar switcher layout                                     |
 | `logo`           | String                     | `"avo/logo.png"`     | Desktop logo path                                          |
 | `logo_dark`      | String                     | `nil`                | Desktop logo for dark mode                                 |
 | `logomark`       | String                     | `"avo/logomark.png"` | Compact logo path                                          |
