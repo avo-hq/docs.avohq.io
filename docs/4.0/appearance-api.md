@@ -209,13 +209,13 @@ A value not listed in `lock:` is treated as a default — users can override it 
 
 </Option>
 
-<Option name="`layout`">
+<Option name="`picker_layout`">
 
 Layout of the appearance switcher in the top navbar.
 
 ```ruby
 config.appearance = {
-  layout: :inline # :inline | :dropdown
+  picker_layout: :inline # :inline | :dropdown
 }
 ```
 
