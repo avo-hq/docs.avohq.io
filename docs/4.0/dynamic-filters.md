@@ -292,7 +292,7 @@ end
 if defined?(Avo::DynamicFilters)
   Avo::DynamicFilters.configure do |config|
     config.button_label = "Advanced filters"
-    config.always_expanded = true
+    config.always_expanded = false
   end
 end
 ```
@@ -304,7 +304,19 @@ This will change the label on the expand label.
 
 <Option name="`always_expanded`">
 
-You may opt-in to have them always expanded and have the button hidden.
+Controls whether the dynamic filters bar starts expanded on page load.
+
+**Default:** `true` — the filters bar is always shown expanded and the toggle button is hidden.
+
+If you'd prefer the bar to start collapsed (with a toggle button the user clicks to expand it), set the option to `false` in your `config/initializers/avo.rb`:
+
+```ruby
+if defined?(Avo::DynamicFilters)
+  Avo::DynamicFilters.configure do |config|
+    config.always_expanded = false
+  end
+end
+```
 </Option>
 
 ## Field to filter matching
@@ -333,9 +345,9 @@ end
 
 ## Caveats
 
-At some point we'll integrate the [Basic filters](./basic-filters) into the dynamic filters bar. Until then, if you have both basic and dynamic filters on your resource you'll have two `Filters` buttons on your <Index /> view.
+At some point we'll integrate the [Basic filters](./basic-filters) into the dynamic filters bar. Until then, if you have both basic and dynamic filters on a resource **and** you've set `always_expanded = false`, you'll see two `Filters` buttons on the <Index /> view.
 
-To mitigate that you can toggle the `always_expanded` option to true.
+The default (`always_expanded = true`) avoids this since the dynamic filters bar is shown directly without its own toggle button.
 
 ## Custom Dynamic Filters
 
