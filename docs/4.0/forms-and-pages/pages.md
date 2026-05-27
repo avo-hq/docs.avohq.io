@@ -302,8 +302,8 @@ Avo.configure do |config|
     end
 
     section "Configuration", icon: "cog" do
-      page Avo::Pages::Settings, icon: "adjustments"
-      page Avo::Pages::SystemHealth, icon: "heart"
+      page "Avo::Pages::Settings", icon: "adjustments"
+      page "Avo::Pages::SystemHealth", icon: "heart"
 
       # Or
 

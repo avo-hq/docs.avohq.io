@@ -41,7 +41,7 @@ For now, Avo supports editing only two menus, `main_menu` and `profile_menu`. Ho
 
 ## Menu item types
 
-A few menu item types are supported: `link_to`, `section`, `group`, `resource`, `dashboard`, and `subitems`. There are a few helpers too, like `all_resources`, `all_dashboards`, and `all_tools`.
+A few menu item types are supported: `link_to`, `section`, `group`, `resource`, `dashboard`, `page`, and `subitems`. There are a few helpers too, like `all_resources`, `all_dashboards`, `all_pages`, and `all_tools`.
 
 The recommended hierarchy is `section → group → resource → subitem`. Sections are the top-level containers rendered with an icon header in the sidebar.
 <!-- here add the short details about the rest of the cases-->
@@ -181,6 +181,37 @@ dashboard :dashy, label: "Dashy Dashboard"
 
 </Option>
 
+<Option name="`page`">
+
+Similar to `resource` and `dashboard`, `page` adds a link to one of your [pages](./forms-and-pages/pages.html). Pass the page's class name as a **String**:
+
+```ruby
+page "Avo::Pages::Settings"
+page "Avo::Pages::SystemHealth"
+```
+
+:::info Use the String form
+Reference the page by its class name in quotes, not the bare constant. The String is resolved when the menu renders, so the page class isn't autoloaded while your initializer is parsed — which is what prevents boot and reload errors. The bare constant still works, but the String form is recommended.
+:::
+
+The label defaults to the page's `navigation_label` (falling back to its `title`). You can override it:
+
+```ruby
+page "Avo::Pages::Settings", label: "App configuration"
+```
+
+Like other menu items, `page` accepts the `icon`, `hotkey`, `data`, and `visible` options.
+
+```ruby
+page "Avo::Pages::Settings", icon: "tabler/outline/adjustments", hotkey: "g s"
+```
+
+:::info
+Pages are provided by the [`avo-forms`](./forms-and-pages/overview.html) addon. The `page` and `all_pages` helpers are only available when it is installed.
+:::
+
+</Option>
+
 <Option name="`section`">
 
 Sections are the **top-level containers** in the sidebar. They are rendered with a prominent header that includes an `icon` and a `name`. Sections are intended to group related `group`s and items at the highest level of the menu.
@@ -266,6 +297,22 @@ end
 ```
 
 In this example, all dashboards will be rendered except `Avo::Resources::Sales` and `Avo::Resources::Analytics`.
+
+</Option>
+
+<Option name="`all_pages`">
+
+Renders all your main [pages](./forms-and-pages/pages.html).
+
+#### Example:
+
+```ruby
+section "Configuration", icon: "tabler/outline/settings" do
+  all_pages
+end
+```
+
+Only main pages are added to the menu — sub-pages are reached through their parent page's own navigation.
 
 </Option>
 
@@ -360,7 +407,7 @@ end
 
 ## Icons
 
-The `icon` option is supported on `section` and on individual menu items (`link_to`, `resource`, `dashboard`). It is not supported on `group` or `subitems` (including links within subitems).
+The `icon` option is supported on `section` and on individual menu items (`link_to`, `resource`, `dashboard`, `page`). It is not supported on `group` or `subitems` (including links within subitems).
 
 You can use icons from [Heroicons](https://heroicons.com/) (both `outline` and `solid` variants) or from [Tabler Icons](https://tabler.io/icons) (preferred in Avo 4).
 
