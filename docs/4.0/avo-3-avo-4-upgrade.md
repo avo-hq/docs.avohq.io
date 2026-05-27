@@ -808,3 +808,19 @@ end
 ```
 
 More info on the [View object](./views.html) section.
+
+## Dynamic Filters `always_expanded` default changed to `true`
+
+In Avo 3 the dynamic filters bar was collapsed by default behind a toggle button. In Avo 4 the default for `Avo::DynamicFilters.configuration.always_expanded` was flipped from `false` to `true`, so the filters bar is now shown expanded out of the box and the toggle button is hidden.
+
+If you want to restore the previous behavior (collapsed by default, with a toggle button), set the option to `false` explicitly in your `config/initializers/avo.rb`:
+
+```ruby
+if defined?(Avo::DynamicFilters)
+  Avo::DynamicFilters.configure do |config|
+    config.always_expanded = false
+  end
+end
+```
+
+More info on the [`always_expanded` option](./dynamic-filters.html#always_expanded) section.
