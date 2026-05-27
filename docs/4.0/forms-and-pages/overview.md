@@ -111,7 +111,7 @@ end
 Avo.configure do |config|
   config.main_menu = -> {
     section "Configuration", icon: "cog" do
-      page Avo::Pages::Settings, icon: "adjustments"
+      page "Avo::Pages::Settings", icon: "adjustments"
     end
   }
 end
