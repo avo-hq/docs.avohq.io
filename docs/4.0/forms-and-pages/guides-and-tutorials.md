@@ -1,8 +1,9 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=forms
 add_on: forms_feature
 betaStatus: Beta
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Guides and Tutorials
@@ -59,8 +60,6 @@ Or render it in a custom component:
 <%= render Avo::Forms::UserProfiles.component %>
 ```
 
-
-
 ### Approach 2: Inline Form Definitions
 
 You can define forms directly within page classes using the page's namespace.
@@ -116,8 +115,8 @@ Instead of creating separate page files for every form, you can use virtual page
 # app/avo/pages/settings.rb
 class Avo::Pages::Settings < Avo::Forms::Core::Page
   def navigation
-    # Virtual page that renders a single form
-    page form: Avo::Forms::UserProfiles
+    # Form shown directly in the navigation
+    form Avo::Forms::UserProfiles
 
     # Virtual page with multiple forms
     page "Integrations",
@@ -130,6 +129,7 @@ end
 ```
 
 **Virtual pages are ideal when:**
+
 - You have simple forms that don't need dedicated page files
 - You want to group related forms together without file proliferation
 - You're building settings or configuration interfaces with many small forms

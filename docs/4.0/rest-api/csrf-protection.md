@@ -1,8 +1,9 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=json-api
 add_on: avo-api
 betaStatus: Alpha
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # CSRF Protection in Avo API
@@ -42,6 +43,7 @@ This approach makes the CSRF protection easily configurable and overridable.
 You can override the `setup_csrf_protection` method in your controllers that inherit from `Avo::Api::Resources::V1::ResourcesController` to customize CSRF handling:
 
 ### Example 1: Change CSRF protection method
+
 ```ruby{7-9}
 # app/controllers/avo/api/resources/v1/users_controller.rb
 module Avo
@@ -60,6 +62,7 @@ end
 ```
 
 ### Example 2: Disable CSRF protection entirely
+
 ```ruby{7-9}
 # app/controllers/avo/api/resources/v1/users_controller.rb
 module Avo

@@ -1,8 +1,9 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=json-api
 add_on: avo-api
 betaStatus: Alpha
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # REST API
@@ -27,6 +28,7 @@ rails generate avo_api:install
 ```
 
 This generator will:
+
 - Generate individual controllers for all your existing Avo resources
 - Export a customizable `BaseResourcesController` to your app directory
 - Provide examples for authentication, authorization, and customization
@@ -214,6 +216,7 @@ Content-Type: application/json
 ### Examples
 
 **Basic Creation:**
+
 ```bash
 curl -X POST /api/resources/v1/teams \
   -H "Content-Type: application/json" \
@@ -226,6 +229,7 @@ curl -X POST /api/resources/v1/teams \
 ```
 
 **With Associations:**
+
 ```bash
 curl -X POST /api/resources/v1/teams \
   -H "Content-Type: application/json" \
@@ -239,6 +243,7 @@ curl -X POST /api/resources/v1/teams \
 ```
 
 **Response (Success - 201 Created):**
+
 ```json
 {
   "record": {
@@ -252,6 +257,7 @@ curl -X POST /api/resources/v1/teams \
 ```
 
 **Response (Error - 422 Unprocessable Entity):**
+
 ```json
 {
   "errors": {
@@ -267,6 +273,7 @@ curl -X POST /api/resources/v1/teams \
 Different field types accept different data formats:
 
 **Text/String Fields:**
+
 ```json
 {
   "name": "Team Name",
@@ -275,6 +282,7 @@ Different field types accept different data formats:
 ```
 
 **Number Fields:**
+
 ```json
 {
   "count": 42,
@@ -283,6 +291,7 @@ Different field types accept different data formats:
 ```
 
 **Boolean Fields:**
+
 ```json
 {
   "active": true,
@@ -291,6 +300,7 @@ Different field types accept different data formats:
 ```
 
 **Date/DateTime Fields:**
+
 ```json
 {
   "created_at": "2024-01-15T10:30:00Z",
@@ -299,6 +309,7 @@ Different field types accept different data formats:
 ```
 
 **Belongs To Associations:**
+
 ```json
 {
   "admin_id": 5,
@@ -327,6 +338,7 @@ Content-Type: application/json
 ### Examples
 
 **Partial Update (PATCH):**
+
 ```bash
 curl -X PATCH /api/resources/v1/teams/1 \
   -H "Content-Type: application/json" \
@@ -338,6 +350,7 @@ curl -X PATCH /api/resources/v1/teams/1 \
 ```
 
 **Full Update (PUT):**
+
 ```bash
 curl -X PUT /api/resources/v1/teams/1 \
   -H "Content-Type: application/json" \
@@ -351,6 +364,7 @@ curl -X PUT /api/resources/v1/teams/1 \
 ```
 
 **Response (Success - 200 OK):**
+
 ```json
 {
   "record": {
@@ -381,6 +395,7 @@ curl -X DELETE /api/resources/v1/teams/1
 ```
 
 **Response (Success - 200 OK):**
+
 ```json
 {
   "message": "Team deleted successfully"
@@ -388,6 +403,7 @@ curl -X DELETE /api/resources/v1/teams/1
 ```
 
 **Response (Error - 422 Unprocessable Entity):**
+
 ```json
 {
   "errors": ["Cannot delete team with active projects"],
@@ -418,6 +434,7 @@ GET /api/resources/v1/teams?page=2&per_page=10&sort_by=name&sort_direction=asc
 Different field types are serialized appropriately:
 
 ### Belongs To Fields
+
 ```json
 {
   "admin": {
@@ -428,6 +445,7 @@ Different field types are serialized appropriately:
 ```
 
 ### Has Many/Has One Fields
+
 ```json
 {
   "team_members": {
@@ -437,6 +455,7 @@ Different field types are serialized appropriately:
 ```
 
 ### File Fields
+
 ```json
 {
   "avatar": {
@@ -454,6 +473,7 @@ Different field types are serialized appropriately:
 
 :::warning 🚧 Work In Progress
 :::
+
 <!--
 If you need to customize the API behavior, you can generate a custom controller:
 
@@ -504,6 +524,7 @@ end
 
 :::warning 🚧 Work In Progress
 :::
+
 <!--
 If you're accessing the API from a web application, you may need to configure CORS. Add the `rack-cors` gem to your Gemfile and configure it:
 

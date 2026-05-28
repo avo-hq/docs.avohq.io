@@ -8,12 +8,6 @@ But, even the best of us get stuck at some point and you might need a nudge in t
 1. [Self-help](#self-help)
 1. [Help from the official team](#official-support)
 
-<!-- 1. [Free support](#free-support)
-1. [Free chat support Thursday](#free-chat-support-thursday)
-2. [Demo apps](#demo-apps)
-3. [Paid support](#paid-support) -->
-
-
 ## Open Source Software Support
 
 Avo's Open Source Software (OSS) support primarily revolves around assisting users with issues related to the Avo and other Avo libraries. This involves troubleshooting and providing solutions for problems originating from Avo or its related subcomponents.
@@ -64,7 +58,7 @@ We use Algolia DocSearch so you can quickly find what you're looking for.
 
 #### 📚 Guides and FAQ page
 
-We compiled a list of helpful [guides](./../3.0/guides.html) from ourselves and the community and a few [FAQ](./../3.0/faq.html) items for you to check out.
+We compiled a list of helpful [guides](./../4.0/guides.html) from ourselves and the community and a few [FAQ](./../4.0/faq.html) items for you to check out.
 
 </div>
 
@@ -119,7 +113,7 @@ It also features websockets integration for live commenting on tickets alongside
 
 You sometimes need help from the authors. There are a few ways to do that.
 
-<Option name="1. Thursday is community day">
+<Option name="1. We hang around on Discord">
 
 We know that sometimes you just need to ask a quick question and a chat is the best place for that.
 From our experience, few quick questions are actually quick. Most of the times the answer is "it depends", and we need more information about the problem.
@@ -129,22 +123,12 @@ The Discord server has a few channels marked `#avo-2`, `#avo-3`, `#resources`, `
 Due to the nature of how time-consuming it is, we can't offer free tech support.
 We are lucky that other community members have experience and pitch in from time to time.
 
-On Thursday we'll be present on the Discord server where we can answer your questions.
-
 </Option>
 
 <Option name="2. Paid support">
-
-<!-- Due to the nature of how time-consuming support is, we can't treat each issue the same or allocate the same amount of time.
-The policy is that if it's something simple that we can figure on the spot we will happily answer. If it's something we can reproduce really quick, we will do it and answer the inquiry. -->
-
-<!-- But there are times when we can't reproduce it quickly and more information is needed. That's when we'll ask you to provide a reproduction repository where we can troubleshoot the issue on our local machines quickly by (preferably) just running the app and going through a few provided steps. -->
-
-<!-- When none of the above can be run and the case requires pair programming sessions, we can offer those as a separate paid service. -->
-
 The paid support chat comes in different flavours.
 
-If you'd like to know more about that, see our standard plans [here](https://avohq.io/support) or reach out to us on [email](mailto:adrian@avohq.io?subject=I'd%20like%20to%20know%20more%20about%20your%20Tech%20Support%20plans&body=Hi%2C%0D%0A%0D%0AMy%20name%20is%20...%2C%20I%20represent%20...%2C%20and%20I'd%20like%20to%20know%20...).
+If you'd like to know more about that, see our plans [here](https://avohq.io/support) or reach out to us on [email](mailto:hi@avohq.io?subject=I'd%20like%20to%20know%20more%20about%20your%20Tech%20Support%20plans&body=Hi%2C%0D%0A%0D%0AMy%20name%20is%20...%2C%20I%20represent%20...%2C%20and%20I'd%20like%20to%20know%20...).
 
 </Option>
 

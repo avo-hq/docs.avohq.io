@@ -1,5 +1,7 @@
 ---
-betaStatus: Alpha
+betaStatus: Open Beta
+license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=http_resource
 outline: deep
 ---
 
@@ -99,12 +101,12 @@ The `http_adapter` hash provides a clean, organized way to configure all HTTP-re
 
 Here's a brief reference for the main configuration options within the `http_adapter` hash:
 
-| Option              | Description                                                                 |
-|---------------------|-----------------------------------------------------------------------------|
-| `parse_collection`  | Proc that returns the array of records                                      |
-| `parse_record`      | Proc that returns a single record                                           |
-| `parse_count`       | Proc that returns the total number of records                              |
-| `model_class_eval`  | Optional: proc to define extra model behavior, often used for `to_param`   |
+| Option             | Description                                                              |
+| ------------------ | ------------------------------------------------------------------------ |
+| `parse_collection` | Proc that returns the array of records                                   |
+| `parse_record`     | Proc that returns a single record                                        |
+| `parse_count`      | Proc that returns the total number of records                            |
+| `model_class_eval` | Optional: proc to define extra model behavior, often used for `to_param` |
 
 All HTTP Resource response options accept a **proc** (i.e., a lambda or block). These procs are executed in a rich runtime context that gives you full access to the HTTP response and metadata around the request.
 
@@ -120,11 +122,11 @@ This contextual access empowers you to define your resource’s behavior with a 
 
 Here's a brief reference for the main request options within the `http_adapter` hash:
 
-| Option              | Description                                                                 |
-|---------------------|-----------------------------------------------------------------------------|
-| `endpoint`          | Base URL for the external API                                               |
-| `headers`           | Optional: custom headers to send with the request                          |
-| `query_params`      | Proc returning a Hash merged into the request query (sorting/filters)       |
+| Option         | Description                                                           |
+| -------------- | --------------------------------------------------------------------- |
+| `endpoint`     | Base URL for the external API                                         |
+| `headers`      | Optional: custom headers to send with the request                     |
+| `query_params` | Proc returning a Hash merged into the request query (sorting/filters) |
 
 All HTTP Resource request options accept a **proc** (i.e., a lambda or block). These procs are executed in a rich runtime context that gives you access to attributes of [`Avo::ExecutionContext`](execution-context), including controller `params` when available (useful to map UI sorting/filtering to API query parameters).
 
@@ -173,7 +175,6 @@ If your external API requires additional parameters, or conditional logic, you c
 - You can determine if the operation is a **create** or an **update** by inspecting the `action_name`, which will be `"create"` or `"update"` respectively.
 
 ### Example Override
-
 
 ```ruby
 # app/controllers/avo/authors_controller.rb

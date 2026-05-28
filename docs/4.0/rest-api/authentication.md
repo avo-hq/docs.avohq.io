@@ -1,8 +1,9 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=json-api
 add_on: avo-api
 betaStatus: Alpha
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Authentication
@@ -74,6 +75,7 @@ end
 ```
 
 ### Example 2: API Key Authentication
+
 Most suitable for server-to-server communication:
 
 ```ruby{7-12}
@@ -98,6 +100,7 @@ end
 ```
 
 ### Example 3: HTTP Basic Authentication
+
 For more sophisticated token-based auth:
 
 ```ruby{7-16}
@@ -136,6 +139,7 @@ When authentication fails, the API returns a standardized JSON error response:
 ```
 
 The response includes:
+
 - **Status Code**: 401 Unauthorized
 - **Content-Type**: application/json
 - **Body**: JSON object with error message

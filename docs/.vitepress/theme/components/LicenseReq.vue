@@ -6,6 +6,7 @@ const props = defineProps({
   title: String,
   size: String,
   add_on: String,
+  add_on_link: String,
 });
 const license = computed(() => props.license || "community");
 const size = computed(() => props.size || "sm");
@@ -30,7 +31,11 @@ const labels = {
   custom: "Custom",
   add_on: "Add-on",
 };
+console.log(props);
 const href = computed(() => {
+  if (props.add_on_link) {
+    return props.add_on_link;
+  }
   if (props.add_on) {
     return links.add_on_blank + props.add_on;
   }
@@ -40,12 +45,8 @@ const label = computed(() => labels[license.value]);
 </script>
 
 <template>
-  <a
-    :href="href"
-    target="_blank"
-    :title="title"
-    class="inline-flex items-center rounded !no-underline leading-none !text-white"
-    :class="{
+  <a :href="href" target="_blank" :title="title"
+    class="inline-flex items-center rounded !no-underline leading-none !text-white" :class="{
       'bg-green-500 hover:bg-green-600': license == 'community',
       'bg-blue-500 hover:bg-blue-600': license == 'pro',
       'bg-violet-500 hover:bg-violet-600': license == 'advanced',
@@ -56,8 +57,7 @@ const label = computed(() => labels[license.value]);
       'bg-yellow-300 hover:bg-yellow-400 !text-black': license == 'enterprise',
       'text-xs px-1 py-px': size == 'xs',
       'text-sm px-2 py-1': size == 'sm',
-    }"
-  >
+    }">
     <CheckBadgeIcon class="h-4 inline mr-1" /> License: {{ label }}
   </a>
 </template>

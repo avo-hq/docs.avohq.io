@@ -1,7 +1,7 @@
 ---
 license: pro
 outline: [2, 3]
-api: ./appearance-api.html
+api_docs: ./appearance-api.html
 ---
 
 # Appearance
@@ -317,6 +317,58 @@ config.appearance = {
 Chart colors are forwarded directly to Chart.js, so they must be hex values.
 :::
 
+## CSS customization
+
+Some colors are not set in `config.appearance`. It doesn't make sense to pass them through Ruby.
+
+Override the CSS variables below to change things like the top navbar background, sidebar background, the border between the sidebar and main content and more.
+
+### Available variables
+
+| Variable                      | Default                        | Description                                                                                                                                        |
+| ----------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--color-navbar-background`   | `var(--color-avo-neutral-900)` | Background color of the top navbar. Defaults to a dark neutral so the navbar reads as a distinct bar. Override (here or in `.dark`) to recolor it. |
+| `--navbar-notch-enabled`      | `true`                         | Whether the inverted corner arches under the navbar render. Set to `false` to hide them — handy when the navbar and content share a background.    |
+| `--navbar-notch-radius`       | `1rem`                         | Radius of the main content panel's rounded top corners (and the navbar arches that fill them). Set to `0` to flatten the corners.                  |
+| `--color-sidebar-background`  | `var(--color-background)`      | Background color of the sidebar. Defaults to the page background in light mode and a subtly tinted surface in dark; resolves per-scheme.           |
+| `--color-main-content-background` | `var(--color-primary)`     | Background of the main content panel (and the breadcrumb bar, which blends into it). Defaults to the primary surface; resolves per-scheme.         |
+| `--color-main-content-border` | `var(--border-color)`          | Color of the border between the sidebar and the main content panel. Tracks the shared app border color by default; override to restyle just it.    |
+
+:::info
+`--navbar-notch-enabled` is a boolean (`true` / `false`), read via a CSS style query rather than a raw `display` value. On browsers without style-query support the arches simply stay visible.
+:::
+
+### Applying overrides
+
+In order to apply your overrides, [eject](./eject-views.html#prepared-templates) the `:head` partial and add a `<style>` block in `app/views/avo/partials/_head.html.erb`. Avo renders that partial after its bundled stylesheets, so your variables take precedence.
+
+```bash
+bin/rails generate avo:eject --partial :head
+```
+
+```erb
+<%# app/views/avo/partials/_head.html.erb — append in the file %>
+<style>
+  :root {
+    --color-navbar-background: #1e3a5f;
+    --navbar-notch-enabled: false;
+    --navbar-notch-radius: 0;
+    --color-sidebar-background: #f5f7fa;
+    --color-main-content-background: #ffffff;
+    --color-main-content-border: #d6dbe2;
+  }
+
+  .dark {
+    --color-navbar-background: #0b1a2b;
+    --color-sidebar-background: #11161c;
+    --color-main-content-background: #161b22;
+    --color-main-content-border: #2a3441;
+  }
+</style>
+```
+
+Set light-mode values on `:root` and dark-mode-specific values on `.dark` when you need them to differ.
+
 ## Full example
 
 ```ruby
@@ -369,25 +421,25 @@ end
 
 ## Options reference
 
-| Option           | Type                       | Default              | Description                                                |
-| ---------------- | -------------------------- | -------------------- | ---------------------------------------------------------- |
-| `scheme`         | `:auto` `:light` `:dark`   | `:auto`              | Default color scheme                                       |
-| `neutral`        | Symbol                     | `nil`                | Default neutral preset                                     |
-| `accent`         | Symbol                     | `nil`                | Default accent preset                                      |
-| `neutral_colors` | Hash of 12 shades          | `nil`                | Full 12-shade brand neutral override                       |
-| `accent_colors`  | Hash of 3 tokens           | `nil`                | Three-token brand accent override                          |
-| `neutrals`       | Array of Strings           | All built-in presets | Subset of neutrals exposed to the picker                   |
-| `accents`        | Array of Strings           | All built-in presets | Subset of accents exposed to the picker                    |
-| `lock`           | Array of Symbols           | `[]`                 | Any of `:scheme`, `:neutral`, `:accent`                    |
-| `persistence`    | `:cookie` `:database`      | `:cookie`            | Where unlocked user picks are stored                       |
-| `load_settings`  | Proc                       | `nil`                | Block returning a Hash of saved settings (database mode)   |
-| `save_settings`  | Proc                       | `nil`                | Block called with a partial `settings` Hash (database mode) |
-| `picker_layout`  | `:inline` `:dropdown`      | `:inline`            | Navbar switcher layout                                     |
-| `logo`           | String                     | `"avo/logo.png"`     | Desktop logo path                                          |
-| `logo_dark`      | String                     | `nil`                | Desktop logo for dark mode                                 |
-| `logomark`       | String                     | `"avo/logomark.png"` | Compact logo path                                          |
-| `logomark_dark`  | String                     | `nil`                | Compact logo for dark mode                                 |
-| `favicon`        | String                     | `"avo/favicon.ico"`  | Favicon path                                               |
-| `favicon_dark`   | String                     | `"avo/favicon-dark.ico"` | Favicon for dark mode                                  |
-| `placeholder`    | String                     | `"avo/placeholder.svg"` | Missing image placeholder                              |
-| `chart_colors`   | Array of hex Strings       | 10 default colors    | Colors used in dashboard charts                            |
+| Option           | Type                     | Default                  | Description                                                 |
+| ---------------- | ------------------------ | ------------------------ | ----------------------------------------------------------- |
+| `scheme`         | `:auto` `:light` `:dark` | `:auto`                  | Default color scheme                                        |
+| `neutral`        | Symbol                   | `nil`                    | Default neutral preset                                      |
+| `accent`         | Symbol                   | `nil`                    | Default accent preset                                       |
+| `neutral_colors` | Hash of 12 shades        | `nil`                    | Full 12-shade brand neutral override                        |
+| `accent_colors`  | Hash of 3 tokens         | `nil`                    | Three-token brand accent override                           |
+| `neutrals`       | Array of Strings         | All built-in presets     | Subset of neutrals exposed to the picker                    |
+| `accents`        | Array of Strings         | All built-in presets     | Subset of accents exposed to the picker                     |
+| `lock`           | Array of Symbols         | `[]`                     | Any of `:scheme`, `:neutral`, `:accent`                     |
+| `persistence`    | `:cookie` `:database`    | `:cookie`                | Where unlocked user picks are stored                        |
+| `load_settings`  | Proc                     | `nil`                    | Block returning a Hash of saved settings (database mode)    |
+| `save_settings`  | Proc                     | `nil`                    | Block called with a partial `settings` Hash (database mode) |
+| `picker_layout`  | `:inline` `:dropdown`    | `:inline`                | Navbar switcher layout                                      |
+| `logo`           | String                   | `"avo/logo.png"`         | Desktop logo path                                           |
+| `logo_dark`      | String                   | `nil`                    | Desktop logo for dark mode                                  |
+| `logomark`       | String                   | `"avo/logomark.png"`     | Compact logo path                                           |
+| `logomark_dark`  | String                   | `nil`                    | Compact logo for dark mode                                  |
+| `favicon`        | String                   | `"avo/favicon.ico"`      | Favicon path                                                |
+| `favicon_dark`   | String                   | `"avo/favicon-dark.ico"` | Favicon for dark mode                                       |
+| `placeholder`    | String                   | `"avo/placeholder.svg"`  | Missing image placeholder                                   |
+| `chart_colors`   | Array of hex Strings     | 10 default colors        | Colors used in dashboard charts                             |
