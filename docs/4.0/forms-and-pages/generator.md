@@ -53,8 +53,8 @@ class Avo::Pages::YourPageName < Avo::Forms::Core::Page
     # Class-based page
     # page Avo::Pages::AnySubPageClass
 
-    # Virtual page with form, this page will be displayed in the navigation menu and when the user clicks on it, it will display the form.
-    # page form: Avo::Forms::AnyFormClass
+    # Form shown directly in the navigation menu — clicking it displays the form.
+    # form Avo::Forms::AnyFormClass
 
     # Virtual page with custom content, this page will be displayed in the navigation menu and when the user clicks on it, it will display the custom content.
     # page "Custom Page",

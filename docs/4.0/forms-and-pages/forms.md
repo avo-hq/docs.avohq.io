@@ -1,8 +1,9 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=forms
 add_on: forms_feature
 betaStatus: Beta
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Forms
@@ -12,6 +13,7 @@ Avo provide a powerful way to build custom forms for your interface. Unlike reso
 ## Overview
 
 Forms in Avo are designed to:
+
 - Handle custom data processing and workflows
 - Manage application settings and configurations
 - Provide standalone forms not tied to specific models
@@ -87,6 +89,10 @@ end
 
 </Option>
 
+:::info Form header
+When a form is rendered on a [page](./pages.html), its `title` and `description` appear as a header above the fields. You can hide this header for a specific placement with the [`show_header` option](./pages.html) on the page's `form` declaration.
+:::
+
 ## Form Methods
 
 <Option name="def fields" headingSize=3>
@@ -144,6 +150,7 @@ If we build a heavy DSL for the `handle` method like we do for actions, it and m
 If you have any feedback, please share it with us.
 
 Right now the only pre-defined methods available in the controller are:
+
 - `default_response` - Standard redirect back turbo stream response
 
 ```ruby{3-8}

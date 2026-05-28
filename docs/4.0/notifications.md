@@ -1,14 +1,15 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=notifications
 betaStatus: Not yet released
 outline: [2, 3]
 ---
 
 # Notifications
 
-Avo Notifications is an in-app notification system for your Avo admin panel. It lets you send targeted or global notifications to your admin users, complete with action buttons, severity levels, and optional real-time delivery via ActionCable.
+Avo Notifications is an in-app notification system for your Avo admin panel. It lets you send notifications to one user, several users, or everyone, complete with action buttons, severity levels, and optional real-time delivery via ActionCable.
 
-Notifications appear in a bell icon dropdown in the navbar and can also be browsed through a full Avo resource page with scopes, filters, and bulk actions.
+Notifications appear in a bell icon dropdown in the navbar and can also be browsed through a full Avo resource page with scopes and bulk actions.
 
 ## Requirements
 
@@ -18,7 +19,7 @@ Notifications appear in a bell icon dropdown in the navbar and can also be brows
 ## Installation
 
 :::info
-Follow these steps in order. The installer generates migrations, an initializer, and an Avo resource for you.
+Follow these steps in order. The installer generates a migration, an initializer, and an Avo resource for you.
 :::
 
 ### 1. Install the gem
@@ -43,10 +44,10 @@ bin/rails generate avo:notifications install
 
 This creates:
 
-- A migration for the `avo_notifications` table
-- A migration to add `avo_notifications_last_read_at` to your users table
+- A migration for the `avo_notifications_notifications` table
 - An initializer at `config/initializers/avo_notifications.rb`
-- An Avo resource for managing notifications
+- An Avo resource at `app/avo/resources/avo_notification.rb`
+- A controller at `app/controllers/avo/avo_notifications_controller.rb`
 
 ### 3. Run migrations
 
@@ -102,45 +103,71 @@ Avo::Notifications.send( # [!code focus]
 ) # [!code focus]
 ```
 
-| Parameter | Required | Description                                                           |
-| --------- | -------- | --------------------------------------------------------------------- |
-| `title`   | Yes      | Notification title (max 255 characters)                               |
-| `to`      | No       | Recipient user. Omit for a global notification                        |
-| `body`    | No       | Longer description text                                               |
-| `level`   | No       | Severity: `:info`, `:success`, `:warning`, `:error` (default `:info`) |
-| `url`     | No       | URL to navigate to when the notification title is clicked             |
-| `sender`  | No       | The user who sent the notification                                    |
-| `buttons` | No       | Array of action buttons (max 3)                                       |
+| Parameter           | Required | Description                                                             |
+| ------------------- | -------- | ----------------------------------------------------------------------- |
+| `to`                | Yes      | Recipient(s): a record, an Array of records, or `:all` (every user)     |
+| `title`             | Yes      | Notification title (max 255 characters)                                 |
+| `body`              | No       | Longer description text                                                 |
+| `level`             | No       | Severity: `:info`, `:success`, `:warning`, `:error` (default `:info`)   |
+| `notification_type` | No       | Freeform label shown as a tag on the row (e.g. `"mention"`, `"system"`) |
+| `url`               | No       | URL to navigate to when the notification title is clicked               |
+| `sender`            | No       | The user who sent the notification (used for attribution)               |
+| `buttons`           | No       | Array of action buttons (max 3)                                         |
 
-### Targeted vs global notifications
+### Who receives a notification
 
-**Targeted** notifications are sent to a specific user by passing the `to:` parameter. **Global** notifications omit `to:` and are visible to all admin users.
+Every notification belongs to a single recipient — there are no shared "global" rows. To reach more than one user, the `to:` argument fans out into one row per recipient, so read, saved, and done state are always tracked per user.
 
 ```ruby
-# Targeted — only this user sees it
+# A single user — returns the notification
 Avo::Notifications.send(
   to: @user,
   title: "Your export is ready",
   level: :success
 )
 
-# Global — all admin users see it
+# Several users — one row per recipient, returns an Array
 Avo::Notifications.send(
+  to: User.where(admin: true),
+  title: "New signup spike",
+  level: :info
+)
+
+# Every user — fans out to one row per user, returns an Array
+Avo::Notifications.send(
+  to: :all,
   title: "System maintenance tonight at 10 PM",
   level: :warning
 )
 ```
 
+:::warning
+A blank `to:` raises an error — notifications must be addressed. Pass a record, an Array, or `:all`.
+:::
+
 ### Notification levels
 
 Each notification has a level that controls its icon and color in the UI:
 
-| Level      | Icon                 | Color |
-| ---------- | -------------------- | ----- |
-| `:info`    | Info circle (blue)   | Blue  |
-| `:success` | Check circle (green) | Green |
-| `:warning` | Alert triangle       | Amber |
-| `:error`   | Alert circle (red)   | Red   |
+| Level      | Icon           | Color |
+| ---------- | -------------- | ----- |
+| `:info`    | Info circle    | Blue  |
+| `:success` | Circle check   | Green |
+| `:warning` | Alert triangle | Amber |
+| `:error`   | Alert circle   | Red   |
+
+### Notification type
+
+Pass `notification_type:` to tag a notification with a freeform category. The tag is rendered as a small label on the row, which is handy for distinguishing kinds of notifications at a glance (e.g. `"mention"`, `"system"`, `"billing"`).
+
+```ruby
+Avo::Notifications.send(
+  to: @user,
+  title: "You were mentioned in a comment",
+  notification_type: "mention", # [!code focus]
+  level: :info
+)
+```
 
 ### Adding action buttons
 
@@ -228,22 +255,42 @@ class ProcessExportJob < ApplicationJob
 end
 ```
 
+## Notification states
+
+Each notification carries three independent states, all tracked per recipient:
+
+| State           | Column              | What it does                                                                                                    |
+| --------------- | ------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Read/unread** | `read_at`           | Unread notifications drive the bell badge count.                                                                |
+| **Saved**       | `saved_at`          | "Save for later" bookmarks a notification — it keeps a marker and appears under the Saved scope.                |
+| **Done**        | `marked_as_done_at` | Archives a notification out of the inbox (and the badge). Still reachable under the Done scope, and reversible. |
+
+The **inbox** — the main view used by the bell dropdown and the resource's default scope — is every notification that isn't done, newest first.
+
 ## Reading notifications
 
 ### Query methods
 
 ```ruby
-# Get notifications for a user (targeted + global), newest first
+# The inbox for a user (not-done notifications), newest first
 Avo::Notifications.for_user(user, limit: 10)
 
-# Count unread notifications
+# Count unread notifications (drives the bell badge)
 Avo::Notifications.unread_count(user)
 
-# Mark a single notification as read
-Avo::Notifications.mark_as_read(notification, user: current_user)
+# Per-notification state changes
+Avo::Notifications.mark_as_read(notification)
+Avo::Notifications.mark_as_unread(notification)
+Avo::Notifications.save_for_later(notification)
+Avo::Notifications.unsave(notification)
+Avo::Notifications.mark_as_done(notification)
+Avo::Notifications.mark_as_undone(notification)
 
-# Mark all notifications as read for a user
+# Mark a user's whole unread inbox as read
 Avo::Notifications.mark_all_as_read(user)
+
+# Delete expired notifications (also available as a rake task)
+Avo::Notifications.cleanup_expired!
 ```
 
 ### User model methods
@@ -252,42 +299,37 @@ After including the `HasNotifications` concern, your User model gains these meth
 
 ```ruby
 user.unread_avo_notifications_count
-# => 5
+# => 5 — unread notifications in the inbox (done ones are excluded)
 
 user.mark_all_avo_notifications_read!
-# Marks all targeted notifications as read and updates avo_notifications_last_read_at
+# Marks the user's unread inbox as read
 
 user.avo_notification_unread?(notification)
-# => true/false — works for both targeted and global notifications
+# => true/false
 ```
 
 :::info
-**How read state works:** Targeted notifications track read state via a `read_at` timestamp on the notification itself. Global notifications are considered "read" if they were created before the user's `avo_notifications_last_read_at` timestamp.
+**How read state works:** read state is tracked per notification via a `read_at` timestamp. Because each recipient has their own row, marking one user's copy read never affects another's. "Done" notifications are archived out of the inbox and excluded from the unread count, but remain available under the Done scope.
 :::
 
 ## Bell component
 
 The bell icon automatically appears in your Avo navbar when the gem is installed. It shows:
 
-- A bell icon with an unread count badge (hidden when all notifications are read)
-- A dropdown panel with the most recent notifications (limited by `dropdown_limit`)
+- A bell icon with an unread count badge (hidden when the inbox has no unread notifications)
+- A dropdown panel with the most recent inbox notifications (limited by `dropdown_limit`)
 - A "Mark all as read" link when there are unread notifications
 - A "View all notifications" link to the full notification resource
 
-No additional configuration is needed — the component renders automatically for logged-in users.
+Each row reveals quick actions on hover — **mark as read/unread**, **save for later**, and **mark as done** — and a saved notification keeps its bookmark visible even when you're not hovering. No additional configuration is needed; the component renders automatically for logged-in users.
 
 ## Real-time delivery
 
-When `config.realtime = true` (the default), notifications are broadcast via ActionCable using Turbo Streams. The bell dropdown updates automatically without a page refresh.
+When `config.realtime = true` (the default), each new notification is pushed to its recipient over ActionCable as a Turbo Stream, so the bell updates without a page refresh.
 
 ### How it works
 
-Two ActionCable streams are used:
-
-- **Personal stream** — delivers targeted notifications to the specific recipient
-- **Global stream** (`avo_notifications:global`) — delivers global notifications to all connected users
-
-The Stimulus controller `notifications-cable` handles subscribing to both streams and processing incoming Turbo Stream messages.
+Each user subscribes to their own stream through `Avo::Notifications::NotificationChannel` (`stream_for current_user`), and a notification is broadcast only to its recipient — there is no shared global stream. The `notifications-cable` Stimulus controller subscribes on page load and renders incoming Turbo Stream messages.
 
 ### ActionCable setup
 
@@ -308,23 +350,23 @@ If ActionCable is not available or not configured, real-time delivery is silentl
 
 ## Notification resource
 
-The installer generates an Avo resource at `app/avo/resources/avo_notification.rb` that gives you a full management interface for notifications.
+The installer generates an Avo resource at `app/avo/resources/avo_notification.rb` that gives you a full management interface for notifications. By default it's scoped to the current user and hidden from the sidebar.
 
 ### Scopes
 
-- **All** — every notification for the current user
-- **Unread** — only unread notifications
-- **Read** — only read notifications
+- **Inbox** _(default)_ — the main view: everything that isn't archived (not done)
+- **Unread** — unread notifications only
+- **Read** — read notifications only
+- **Saved** — bookmarked ("save for later") notifications
+- **Done** — archived notifications
 
-### Filter
-
-- **Level** — filter by notification level (info, success, warning, error)
+Done notifications are archived out of every scope except **Done**.
 
 ### Bulk actions
 
-- **Mark as read** — marks selected notifications as read
-- **Mark as unread** — clears the read state on targeted notifications
-- **Delete** — permanently removes selected notifications
+- **Mark as read** / **Mark as unread**
+- **Save** / **Unsave**
+- **Mark as done** / **Mark as undone**
 
 :::info
 The notification resource has `visible_on_sidebar = false` by default. Notifications are accessed through the bell dropdown's "View all" link. You can change this in the generated resource if you prefer sidebar access.
@@ -332,13 +374,13 @@ The notification resource has `visible_on_sidebar = false` by default. Notificat
 
 ## Cleanup
 
-Over time, expired notifications accumulate in the database. Use the built-in rake task to clean them up:
+Every notification is created with an `expires_at` derived from the `ttl` configuration. Over time, expired notifications accumulate in the database — use the built-in rake task to clean them up:
 
 ```bash
 bin/rails avo_notifications:cleanup
 ```
 
-This deletes all notifications past their expiry date (based on the `expires_at` column, which is set from the `ttl` configuration when a notification is created).
+This deletes all notifications past their `expires_at`.
 
 **Recommended:** schedule this as a daily cron job:
 

@@ -1,8 +1,9 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=json-api
 add_on: avo-api
 betaStatus: Alpha
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Avo API Controller Generators
@@ -24,12 +25,14 @@ rails generate avo_api:controllers
 ```
 
 **What it does:**
+
 - Automatically discovers all existing Avo resources in your application
 - Creates individual controllers for each resource
 - Places them in `app/controllers/avo/api/resources/v1/`
 - Each controller inherits from `BaseResourcesController`
 
 **Example output:**
+
 ```
   ✓ Created UsersController
   ✓ Created PostsController
@@ -50,9 +53,11 @@ rails generate avo_api:controller ResourceName
 ```
 
 **Parameters:**
+
 - `ResourceName` - The name of the resource (e.g., User, Post, BlogPost, ProductCategory)
 
 **Examples:**
+
 ```bash
 rails generate avo_api:controller User
 rails generate avo_api:controller Post
@@ -61,6 +66,7 @@ rails generate avo_api:controller ProductCategory
 ```
 
 **Example output:**
+
 ```
       create  app/controllers/avo/api/resources/v1/users_controller.rb
 Created UsersController at app/controllers/avo/api/resources/v1/users_controller.rb
@@ -100,17 +106,18 @@ end
 
 The generators follow Rails naming conventions:
 
-| Avo Resource | Generated Controller |
-|---------------|---------------------|
-| `Avo::Resources::User` | `Avo::Api::Resources::V1::UsersController` |
-| `Avo::Resources::Post` | `Avo::Api::Resources::V1::PostsController` |
-| `Avo::Resources::Comment` | `Avo::Api::Resources::V1::CommentsController` |
-| `Avo::Resources::BlogPost` | `Avo::Api::Resources::V1::BlogPostsController` |
+| Avo Resource                      | Generated Controller                                   |
+| --------------------------------- | ------------------------------------------------------ |
+| `Avo::Resources::User`            | `Avo::Api::Resources::V1::UsersController`             |
+| `Avo::Resources::Post`            | `Avo::Api::Resources::V1::PostsController`             |
+| `Avo::Resources::Comment`         | `Avo::Api::Resources::V1::CommentsController`          |
+| `Avo::Resources::BlogPost`        | `Avo::Api::Resources::V1::BlogPostsController`         |
 | `Avo::Resources::ProductCategory` | `Avo::Api::Resources::V1::ProductCategoriesController` |
 
 ## File Locations
 
 Generated controllers are placed in:
+
 ```
 app/controllers/avo/api/resources/v1/
 ├── users_controller.rb
@@ -200,6 +207,7 @@ end
 The `BaseResourcesController` provides these methods that you can override:
 
 ### CRUD Actions
+
 - `index` - List resources
 - `show` - Show single resource
 - `create` - Create new resource
@@ -207,6 +215,7 @@ The `BaseResourcesController` provides these methods that you can override:
 - `destroy` - Delete resource
 
 ### Success/Failure Callbacks
+
 - `create_success_action` - Called after successful creation
 - `create_fail_action` - Called after failed creation
 - `update_success_action` - Called after successful update
@@ -215,6 +224,7 @@ The `BaseResourcesController` provides these methods that you can override:
 - `destroy_fail_action` - Called after failed deletion
 
 ### Serialization Methods
+
 - `serialize_records(resources, view)` - Serialize multiple records
 - `serialize_record(resource, view)` - Serialize single record
 - `serialize_field_value(field)` - Serialize individual field
