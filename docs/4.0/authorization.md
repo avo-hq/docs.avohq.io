@@ -69,15 +69,19 @@ When setting `show?` to `false`, the user will not see the show icon on the reso
 
 </Option>
 
-<Option name="`create?`">
+<Option name="`new?`">
 
-The `create?` method will prevent the users from creating a resource. That will also apply to the `Create new {model}` button on the <Index />, the `Save` button on the `/new` page, and `Create new {model}` button on the association `Show` page.
+The `new?` method controls whether the user can open the creation flow. It applies to the `Create new {model}` button on the <Index /> page and the `Create new {model}` button on association <Show /> pages.
+
+When the user visits the `/new` page, Avo authorizes with `new?` again (without raising an exception on failure).
 
 </Option>
 
-<Option name="`new?`">
+<Option name="`create?`">
 
-The `new?` method will control whether the users can save the new resource. You can also access the `record` variable with the form values pre-filled.
+The `create?` method controls whether the user can persist a new record. It applies to the `Save` button on the `/new` page and association create actions.
+
+Avo intentionally checks `create?` only when saving, so your policy can access the `record` variable with the form values pre-filled.
 
 </Option>
 
@@ -521,8 +525,49 @@ end
 
 ## Custom authorization clients
 
-:::info
-Check out the [Pundit client](https://github.com/avo-hq/avo/blob/main/lib/avo/services/authorization_clients/pundit_client.rb) for reference.
+Pundit is the default client, but you can plug in any authorization library (for example [Action Policy](https://github.com/palkan/action_policy)) by implementing a small adapter class.
+
+:::info Reference implementation
+The Pundit adapter examples below follow the same contract as Avo's built-in `:pundit` client. Community examples for Action Policy are available in [this issue](https://github.com/avo-hq/avo/issues/1922).
+:::
+
+### How Avo uses your client
+
+Your client is a thin adapter between Avo and your authorization library. Avo calls three methods on it:
+
+#### `policy(user, record)`
+
+Finds the policy for a model class or record. Avo calls this before running authorization checks — for example to resolve `EquipmentPolicy` for the `Equipment` model or a specific record.
+
+```ruby
+policy(user, Equipment)        # => EquipmentPolicy instance
+policy(user, equipment_record) # => EquipmentPolicy instance
+```
+
+---
+
+#### `authorize(user, record, action, policy_class:, raise_exception:, **kwargs)`
+
+Checks whether the user can perform an action — for example `"index?"`, `"new?"`, or `"create?"`.
+
+Avo calls this for sidebar items, buttons, menu visibility, and controller requests. The `raise_exception` keyword tells Avo how to handle a denial:
+
+- **UI visibility checks** (sidebar, buttons, menu) — Avo passes `raise_exception: false`. Your client should still **raise** on denial. Avo catches the exception and returns `false` to hide the element.
+- **Controller requests** — Avo omits `raise_exception`. Your client should raise on denial and Avo will show the unauthorized page.
+
+---
+
+#### `apply_policy(user, model, policy_class:)`
+
+Scopes a query to records the user is allowed to see. Avo calls this on <Index />, <Show />, and <Edit /> views to filter the underlying query — for example returning only published posts for non-admin users.
+
+:::tip Menu editor
+You can call `authorize` yourself in the [menu editor](./menu-editor#authorization) `visible` block. It delegates to the same client configured in `config.authorization_client`.
+
+```ruby
+authorize current_user, Team, "index?", raise_exception: false
+```
+
 :::
 
 ### Change the authorization client
@@ -536,76 +581,158 @@ When you create your own client, pass the class name.
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.authorization_client = 'Services::AuthorizationClients::CustomClient'
+  config.authorization_client = "Avo::ActionPolicyAuthorizationClient"
 end
 ```
 
 ### Client methods
 
-Each authorization client must expose a few methods.
+Each authorization client must expose four methods. **All method signatures must accept keyword arguments you do not use** (for example `raise_exception:` and `policy_class:`). If your `authorize` method does not accept these keywords, Ruby will raise an `ArgumentError`. When that happens inside a UI visibility check, Avo may treat the action as unauthorized without a clear error message.
 
-<Option name="`authorize`">
+:::warning Raise on denial — do not return `false`
+When authorization fails, your client's `authorize` method **must raise an exception**. Avo does not use the return value of `authorize`.
 
-Receives the `user`, `record`, `action`, and optionally, the `policy_class` (you may want to use custom policy classes for some resources).
+When Avo passes `raise_exception: false`, it still expects your client to raise on denial. Avo catches the exception and returns `false` to the caller. If your client returns `false` instead of raising, Avo will treat the action as **authorized**.
+
+This is how the built-in Pundit client works — `Pundit.authorize` always raises `Pundit::NotAuthorizedError` when access is denied.
+:::
+
+#### `authorize`
+
+Receives the `user`, `record`, `action`, and optionally `policy_class`, `raise_exception`, and other keyword arguments. Map authorization failures to `Avo::NotAuthorizedError` and missing policies to `Avo::NoPolicyError`.
 
 ```ruby
 # Pundit example
-def authorize(user, record, action, policy_class: nil)
+def authorize(user, record, action, policy_class: nil, **)
   Pundit.authorize(user, record, action, policy_class: policy_class)
 rescue Pundit::NotDefinedError => error
-  raise NoPolicyError.new error.message
+  raise Avo::NoPolicyError, error.message
 rescue Pundit::NotAuthorizedError => error
-  raise NotAuthorizedError.new error.message
+  raise Avo::NotAuthorizedError, error.message
 end
 ```
 
-</Option>
-<Option name="`policy`">
+---
 
-Receives the `user` and `record` and returns the policy to use.
+#### `policy`
+
+Receives the `user` and `record` and returns the policy instance to use. Return `nil` when no policy exists.
 
 ```ruby
-def policy(user, record)
+def policy(user, record, **)
   Pundit.policy(user, record)
 end
 ```
 
-</Option>
-<Option name="`policy!`">
+---
 
-Receives the `user` and `record` and returns the policy to use. It will raise an error if no policy is found.
+#### `policy!`
+
+Receives the `user` and `record` and returns the policy instance. Raise `Avo::NoPolicyError` when no policy is found.
 
 ```ruby
-def policy!(user, record)
+def policy!(user, record, **)
   Pundit.policy!(user, record)
 rescue Pundit::NotDefinedError => error
-  raise NoPolicyError.new error.message
+  raise Avo::NoPolicyError, error.message
 end
 ```
 
-</Option>
-<Option name="`apply_policy`">
+---
 
-Receives the `user`, `record`, and optionally, the policy class to use. It will apply a scope to a query.
+#### `apply_policy`
+
+Receives the `user`, the query to scope (usually an Active Record relation or model class), and optionally the policy class to use.
 
 ```ruby
-def apply_policy(user, model, policy_class: nil)
-  # Try and figure out the scope from a given policy or auto-detected one
+def apply_policy(user, model, policy_class: nil, **)
   scope_from_policy_class = scope_for_policy_class(policy_class)
 
-  # If we discover one use it.
-  # Else fallback to pundit.
   if scope_from_policy_class.present?
     scope_from_policy_class.new(user, model).resolve
   else
     Pundit.policy_scope!(user, model)
   end
 rescue Pundit::NotDefinedError => error
-  raise NoPolicyError.new error.message
+  raise Avo::NoPolicyError, error.message
 end
 ```
 
-</Option>
+### Action Policy example
+
+Here is a complete Action Policy client that follows Avo's contract:
+
+```ruby
+# app/services/avo/action_policy_authorization_client.rb
+module Avo
+  class ActionPolicyAuthorizationClient
+    include ::ActionPolicy::Behaviour
+
+    authorize :user
+    attr_accessor :user
+
+    def authorize(user, record, action, policy_class: nil, **)
+      return if policy(user, record).nil?
+
+      self.user = user
+      authorize!(record, to: action, with: policy_class)
+    rescue ActionPolicy::Unauthorized => error
+      raise Avo::NotAuthorizedError, error.message
+    end
+
+    def policy(user, record, **)
+      policy!(user, record)
+    rescue Avo::NoPolicyError
+      nil
+    end
+
+    def policy!(user, record, **)
+      self.user = user
+      policy_for(record:)
+    rescue ActionPolicy::NotFound => error
+      raise Avo::NoPolicyError, error.message
+    end
+
+    def apply_policy(user, model, policy_class: nil, **)
+      policy = if policy_class.present?
+        policy_class.new(model, user:)
+      else
+        policy!(user, model)
+      end
+
+      policy.apply_scope(model, type: :active_record_relation)
+    end
+  end
+end
+```
+
+Place your policies under the `Avo` namespace (for example `Avo::EquipmentPolicy`) or configure Action Policy's lookup to match your app.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.authorization_client = "Avo::ActionPolicyAuthorizationClient"
+end
+```
+
+```ruby
+# app/policies/avo/equipment_policy.rb
+module Avo
+  class EquipmentPolicy < ApplicationPolicy
+    def index?
+      true
+    end
+
+    def new?
+      user.admin?
+    end
+
+    def create?
+      user.admin?
+    end
+  end
+end
+```
 
 ## Explicit authorization
 
