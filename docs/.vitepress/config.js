@@ -214,7 +214,7 @@ const config = {
             { text: "Global Search", link: "/4.0/search/global-search.html" },
             { text: "Localization (I18n)", link: "/4.0/i18n.html" },
             { text: "Appearance", link: "/4.0/appearance.html" },
-            { text: "User Preferences", link: "/4.0/user-preferences.html" },
+            // { text: "User Preferences", link: "/4.0/user-preferences.html" },
             { text: "Routing", link: "/4.0/routing.html" },
             { text: "Multitenancy", link: "/4.0/multitenancy.html" },
             { text: "Breadcrumbs", link: "/4.0/breadcrumbs.html" },
