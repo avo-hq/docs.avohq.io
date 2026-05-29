@@ -1,36 +1,19 @@
 <Option name="`searchable`">
 
-<div class="space-x-2">
-  <LicenseReq license="pro" />
-  <DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
-</div>
+<LicenseReq license="pro" />
 
-Turns the attach field/modal from a `select` input to a searchable experience
+Turns the attach field/modal from a `<select>` into a search-as-you-type picker.
 
-```ruby{5}
+```ruby{4}
 class Avo::Resources::CourseLink < Avo::BaseResource
   def fields
     field :links,
-      as: :has_many,
       searchable: true
   end
 end
 ```
 
-:::warning
-  Avo uses the **resource search feature** behind the scenes, so **make sure the target resource has the [`search_query`](./../search/resource-search) option configured**.
-:::
-
-```ruby{3-7}
-# app/avo/resources/course_link.rb
-class Avo::Resources::CourseLink < Avo::BaseResource
-  self.search = {
-    query: -> {
-      query.ransack(id_eq: q, link_cont: q, m: "or").result(distinct: false)
-    }
-  }
-end
-```
+See [Searchable associations](./../associations/searchable) for setup requirements, the hash form (`searchable: { query:, suggestions:, limit:, enabled: }`), proc locals, and precedence rules.
 
 #### Default
 
@@ -38,5 +21,5 @@ end
 
 #### Possible values
 
-`true`, `false`
+`true`, `false`, `Hash`
 </Option>

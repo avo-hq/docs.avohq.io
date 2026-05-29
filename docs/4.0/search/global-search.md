@@ -64,35 +64,29 @@ end
 
 <Option name="`item`">
 
-The `item` configuration is used to configure the item displayed in the search results. It is a hash with the following options:
+<!-- @include: ./../common/search_item_common.md-->
+
+#### `path`
+
+Global search results are clickable, so the `item` hash accepts an extra `path` key that controls where a result links to. It defaults to the record's show page.
 
 | Option | Description | Default | Possible Values |
 |--------|-------------|---------|-----------------|
-| `title` | The title of the search result | [Resource title](./../resources.html#self_title) | Any string |
-| `description` | The description of the search result | `nil` | Any string |
-| `image_url` | The URL of the image to display in the search result | `nil` | Any valid URL |
-| `image_format` | The format of the image to display in the search result | `:square` | `:square`, `:rounded`, `:circle` |
-| `path` | The path to redirect to when clicking the search result | Record's show page | Any valid path |
+| `path` | The path to navigate to when clicking the result | Record's show page | Any valid path |
 
-### Example with all configurations
-
-```ruby{5-13}
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.search = {
-    query: -> { query.ransack(name_cont: q, body_cont: q, m: "or").result(distinct: false) },
-    item: -> do
-      {
-        title: "[#{record.id}] #{record.name}",
-        description: record.truncated_body,
-        image_url: main_app.url_for(record.cover_photo),
-        image_format: :rounded,
-        path: avo.resources_post_path(record, custom: "search")
-      }
-    end
-  }
-end
+```ruby{5}
+self.search = {
+  query: -> { query.ransack(name_cont: q, m: "or").result(distinct: false) },
+  item: -> do
+    {
+      title: record.name,
+      path: avo.resources_post_path(record, custom: "search")
+    }
+  end
+}
 ```
+
+`path` only applies to global search. The [searchable association picker](./../associations/searchable) ignores it — it selects a record into the form rather than navigating.
 
 </Option>
 
@@ -185,26 +179,7 @@ end
 
 </Option>
 
-## Scope out global or resource searches
-
-You may want to perform different searches on the `global` search from the `resource` search. You may use the `params[:global]` flag to figure that out.
-
-```ruby{5-11}
-# app/avo/resources/order.rb
-class Avo::Resources::Order < Avo::BaseResource
-  self.search = {
-    query: -> {
-      if params[:global]
-        # Perform global search
-        query.ransack(id_eq: q, m: "or").result(distinct: false)
-      else
-        # Perform resource search
-        query.ransack(id_eq: q, details_cont: q, m: "or").result(distinct: false)
-      end
-    }
-  }
-end
-```
+<!-- @include: ./../common/search_type_common.md-->
 
 ## Custom search provider
 

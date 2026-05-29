@@ -26,8 +26,6 @@ field :projects, as: :has_many
 <!-- @include: ./../common/associations_hide_filter_button_option_common.md-->
 <!-- @include: ./../common/associations_link_to_child_resource_common.md-->
 
-<!-- @include: ./../common/search_query_scope_common.md-->
-
 
 <Option name="`linkable`">
 

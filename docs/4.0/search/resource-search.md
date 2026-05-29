@@ -33,6 +33,8 @@ In this block, you may configure the search however strict or loose you need it.
 If you're using ransack version 4 and up you must add `ransackable_attributes` and maybe more to your model in order for it to work. Read more about it [here](https://activerecord-hackery.github.io/ransack/going-further/other-notes/#authorization-allowlistingdenylisting).
 :::
 
+<!-- @include: ./../common/search_type_common.md-->
+
 ## Authorize search
 
 Search is authorized in policy files using the [`search?`](./../authorization#search) method.
