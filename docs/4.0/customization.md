@@ -8,6 +8,8 @@ feedbackId: 836
 
 On the main navbar next to the logo, Avo generates a link to the homepage of your app. The label for the link is usually computed from your Rails app name. You can customize that however, you want using `config.app_name = 'Avocadelicious'`.
 
+To replace that single link with a list of links (docs, support, etc.), see [Header menu](./header-menu.html).
+
 The `app_name` option is also callable using a block. This is useful if you want to reference a `I18n.t` method or something more dynamic.
 
 ```ruby

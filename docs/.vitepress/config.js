@@ -210,6 +210,7 @@ const config = {
             { text: "Eject views", link: "/4.0/eject-views.html" },
             { text: "Custom view types", link: "/4.0/custom-view-types.html" },
             { text: "Menu editor", link: "/4.0/menu-editor.html" },
+            { text: "Header menu", link: "/4.0/header-menu.html" },
             { text: "Resource Search", link: "/4.0/search/resource-search.html" },
             { text: "Global Search", link: "/4.0/search/global-search.html" },
             { text: "Localization (I18n)", link: "/4.0/i18n.html" },
