@@ -533,7 +533,7 @@ The Pundit adapter examples below follow the same contract as Avo's built-in `:p
 
 ### How Avo uses your client
 
-Your client is a thin adapter between Avo and your authorization library. Avo calls three methods on it:
+Your client is a thin adapter between Avo and your authorization library. Avo calls four methods on it:
 
 #### `policy(user, record)`
 
@@ -588,6 +588,10 @@ end
 ### Client methods
 
 Each authorization client must expose four methods. **All method signatures must accept keyword arguments you do not use** (for example `raise_exception:` and `policy_class:`). If your `authorize` method does not accept these keywords, Ruby will raise an `ArgumentError`. When that happens inside a UI visibility check, Avo may treat the action as unauthorized without a clear error message.
+
+:::info Accept extra keywords (and ignore them)
+Your client should accept extra keyword arguments (usually via `**`) for forward compatibility. For example, Avo may pass `raise_exception:` for UI checks and other keys (like `resource_class:`) for logging. Your client should generally **ignore** these flags and focus on raising the correct Avo errors on missing policy / denial.
+:::
 
 :::warning Raise on denial — do not return `false`
 When authorization fails, your client's `authorize` method **must raise an exception**. Avo does not use the return value of `authorize`.
@@ -672,8 +676,6 @@ module Avo
     attr_accessor :user
 
     def authorize(user, record, action, policy_class: nil, **)
-      return if policy(user, record).nil?
-
       self.user = user
       authorize!(record, to: action, with: policy_class)
     rescue ActionPolicy::Unauthorized => error
