@@ -388,8 +388,6 @@ field :department, width: 50 do "Research & Development" end
 field :years_of_experience do "7 Years" end # full width
 ```
 
-`width` replaces the `cluster` / `row` DSL from Avo 3. See the [upgrade guide](./avo-3-avo-4-upgrade#removed-cluster-and-its-alias-row-in-favor-of-width) for migration details.
-
 ## Nullable
 
 When a user uses the **Save** button, Avo stores the value for each field in the database. However, there are cases where you may prefer to explicitly instruct Avo to store a `NULL` value in the database row when the field is empty. You do that by using the `nullable` option, which converts `nil` and empty values to `NULL`.
