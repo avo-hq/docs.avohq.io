@@ -740,12 +740,6 @@ end
 
 <Option name="`explicit_authorization`">
 
-:::warning Option Renamed
-In versions between <Version version="3.13.4" /> and <Version version="3.13.6" />, this option is named `implicit_authorization`.
-:::
-
-<VersionReq version="3.13.4" />
-
 This option gives you control over how missing policy classes or methods are handled during authorization checks in your Avo application.
 
 ### Possible values
@@ -775,9 +769,7 @@ This option gives you control over how missing policy classes or methods are han
 
 ### Default
 
-- For **new applications** (starting from Avo `3.13.4`) the default value for `explicit_authorization` is `true`. This provides a more secure out-of-the-box experience by ensuring actions without explicit authorization are denied.
-
-- For **existing applications** upgrading to `3.13.4` or later the default value for `explicit_authorization` remains `false` to preserve backward compatibility. Existing applications will retain the permissive behavior unless explicitly changed.
+The default value is `true`. Actions without an explicit policy class or method are denied by default.
 
 ### Configuration:
 
@@ -830,18 +822,6 @@ end
    ```
 
    - **Result**: In this case, missing methods like `index?` will allow access to the `index` action by default.
-
-### Migration Recommendations:
-
-- **For applications after from Avo `3.13.4`**
-
-  It is recommended to leave `explicit_authorization` set to `true`, ensuring all actions must be explicitly authorized to prevent unintentional access.
-
-- **For applications before from Avo `3.13.4`**
-
-      - If upgrading from an earlier version, carefully review your policies before enabling `explicit_authorization`. Missing policy methods that were previously allowing access will now deny access unless explicitly defined.
-
-      - It’s recommended to disable [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) in production, though it's not mandatory. When `explicit_authorization` is set to `true`, the default behavior is to deny access for actions without a defined policy. In this case, it’s often better to show an unauthorized message to users rather than raise an error. However, keeping [`raise_error_on_missing_policy`](authorization.html#raise-errors-when-policies-are-missing) enabled in development can be helpful for identifying missing policy classes.
 
 </Option>
 
