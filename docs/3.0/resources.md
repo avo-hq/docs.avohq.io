@@ -158,9 +158,11 @@ rails generate avo:all_resources
 
 ### What it does
 
-1. Scans your `app/models` directory for all model files
-2. Excludes `ApplicationRecord` from the generation process
-3. For each model found, it:
+1. Scans your `app/models` directory for model files
+2. Includes only classes that inherit from `ActiveRecord::Base` (database-backed models)
+3. Excludes abstract classes (e.g. `ApplicationRecord`)
+4. Skips non-model files (concerns, POROs, `Current`, form objects)
+5. For each match, it:
    - Generates a corresponding Avo resource using the `avo:resource` generator
    - Handles errors gracefully, printing error messages if generation fails for any model
 
