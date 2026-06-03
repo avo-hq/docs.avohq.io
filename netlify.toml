@@ -18,6 +18,18 @@ status = 301
 force = false
 
 [[redirects]]
+from = "/4.0/resource-clusters.html"
+to = "/4.0/fields-layout#multi-column-rows-with-width"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/resource-clusters"
+to = "/4.0/fields-layout#multi-column-rows-with-width"
+status = 301
+force = false
+
+[[redirects]]
 from = "/3.0/recipes.html"
 to = "/3.0/guides.html"
 status = 301
