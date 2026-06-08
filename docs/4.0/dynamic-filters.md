@@ -155,7 +155,8 @@ dynamic_filter :published_at, type: :time
  - `>=` (greater than or equal to)
  - `<` (lower than)
  - `<=` (lower than or equal to)
- - Is within - Is null
+ - Is within
+ - Is null
  - Is not null
 
 ```ruby
