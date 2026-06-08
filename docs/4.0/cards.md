@@ -78,10 +78,6 @@ class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
 end
 ```
 
-:::info Renamed in Avo 4
-In Avo 3, the tooltip behavior described above was attached to `description`. In Avo 4, `description` is now the visible subtitle and the tooltip lives on the new `discreet_description` option. See the [upgrade guide](./avo-3-avo-4-upgrade#cards-description-option-renamed-to-discreet-description) for migration details.
-:::
-
 ## Ranges
 
 #### Control the aggregation using ranges
