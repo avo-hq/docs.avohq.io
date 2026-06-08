@@ -943,15 +943,9 @@ end
 
 </Option>
 
-<Option name="`self.controls_placement`">
+### Modify controls placement and appearance
 
-:::warning
-`controls_placement` option is **obsolete**.
-
-Check [row controls configuration on table view](table-view.html#resource-configuration) instead.
-:::
-
-</Option>
+Configure where row controls appear on the <Index /> view — placement, floating behavior, and hover visibility — using `row_controls_config`. See [row controls configuration on table view](table-view.html#resource-configuration).
 
 <Option name="`self.pagination`">
 

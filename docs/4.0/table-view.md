@@ -5,14 +5,6 @@ The table view is the default way to display resources in Avo. It provides a pow
 <Image src="/assets/img/table-view.png" width="1919" height="1122" alt="Table view" />
 
 ## Row controls configuration
-:::info
-The configuration options for row controls depend on the version of Avo you are using.
-
-**If you are using a version earlier than **, refer to the following pages for guidance:
-
-- [How to adjust resource controls globally for all resources](customization.html#resource-controls-on-the-left-or-both-sides)
-- [Customize the placement of controls for individual resources](resources.html#self.controls_placement)
-:::
 
 By default, resource controls are positioned on the right side of record rows. However, if the table contains many columns, these controls may become obscured. In such cases, you may prefer to move the controls to the left side for better visibility.
 
