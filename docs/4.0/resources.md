@@ -800,32 +800,19 @@ end
 
 <Option name="`self.components`">
 
-By default, for each view we render an component:
+By default, for each view we render a component:
 
 [Index](views.html#Index) -> `Avo::Views::ResourceIndexComponent`<br>
 [Show](views.html#Show) -> `Avo::Views::ResourceShowComponent`<br>
 [New](views.html#New), [Edit](views.html#Edit) -> `Avo::Views::ResourceEditComponent`
 
-It's possible to change this behavior by using the `self.components` resource option.
+Use the `self.components` resource option to swap any of these for your own classes. Keys must be strings that match the original component class name.
 
 ```ruby
 self.components = {
-  resource_index_component: Avo::Views::Users::ResourceIndexComponent,
-  resource_show_component: "Avo::Views::Users::ResourceShowComponent",
-  resource_edit_component: "Avo::Views::Users::ResourceEditComponent",
-  resource_new_component: Avo::Views::Users::ResourceEditComponent
-}
-```
-
-more components can be replaced. From this version, keys must be strings that match the original component with the exception of those from the snippet above.
-
-Here is a list of all the supported customizable components:
-
-```ruby
-self.components = {
-  "Avo::Views::ResourceIndexComponent": Avo::Custom::ResourceIndexComponent,
-  "Avo::Views::ResourceShowComponent": "Avo::Custom::ResourceShowComponent",
-  "Avo::Views::ResourceEditComponent": "Avo::Custom::ResourceEditComponent",
+  "Avo::Views::ResourceIndexComponent": Avo::Views::Users::ResourceIndexComponent,
+  "Avo::Views::ResourceShowComponent": "Avo::Views::Users::ResourceShowComponent",
+  "Avo::Views::ResourceEditComponent": "Avo::Views::Users::ResourceEditComponent",
   "Avo::Index::GridItemComponent": "Avo::Custom::GridItemComponent",
   "Avo::ViewTypes::MapComponent": "Avo::Custom::MapComponent",
   "Avo::ViewTypes::TableComponent": "Avo::Custom::TableComponent",
@@ -834,7 +821,7 @@ self.components = {
 }
 ```
 
-A resource configured with the example above will start using the declared components instead the default ones.
+A resource configured with the example above will start using the declared components instead of the default ones.
 
 :::warning
 The custom view components must ensure that their initializers are configured to receive all the arguments passed during the rendering of a component. You can verify this in our codebase through the following files:
@@ -858,7 +845,7 @@ Example:
 
 ```ruby
 self.components = {
-  resource_index_component: Avo::MyDir::Views::ResourceIndexComponent
+  "Avo::Views::ResourceIndexComponent": Avo::MyDir::Views::ResourceIndexComponent
 }
 ```
 
