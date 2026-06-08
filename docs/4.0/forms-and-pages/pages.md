@@ -1,7 +1,8 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=forms
 betaStatus: Beta
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Pages
@@ -17,7 +18,6 @@ Pages are organized in a hierarchical structure that follows a specific pattern:
 1. **Main Pages**
 
    Example: `Avo::Pages::Settings`
-
    - Always 1 level deep in the namespace
    - Act as containers for related sub-pages
    - Have a navigation entry on the left sidebar menu (if `self.menu_entry` is `true`)
@@ -26,7 +26,6 @@ Pages are organized in a hierarchical structure that follows a specific pattern:
 2. **Sub-Pages**
 
    Example: `Avo::Pages::Settings::General`, `Avo::Pages::Settings::Notifications`
-
    - Always 2 or more levels deep in the namespace
    - Contain the actual forms and content
    - Are accessible through the parent page's navigation
@@ -59,6 +58,7 @@ class Avo::Pages::Settings < Avo::Forms::Core::Page
   self.title = "Application Settings"
 end
 ```
+
 </Option>
 
 <Option name="self.description" headingSize=3>
@@ -79,6 +79,7 @@ end
 Customizes the label displayed in the Avo menu entry and page sidebar menu entry.
 
 **Default behavior:**
+
 - If `navigation_label` is not set, it defaults to the `title`
 - If `title` is not set, it takes the last namespace from the class and humanizes it
 
@@ -93,11 +94,9 @@ This is particularly useful when you want different text in navigation menus tha
 
 </Option>
 
-
 ## Page Methods
 
 <Option name="def navigation" headingSize=3>
-
 
 Define sub-pages that belong to this page. This method is used to register child pages and configure their relationship to the parent.
 
@@ -118,7 +117,7 @@ end
 
 <Option name="page" headingSize=3>
 
-This method is used to register sub pages that belong to this page. The `page` method supports three different types of declarations:
+This method is used to register sub pages that belong to this page. The `page` method supports two different types of declarations:
 
 #### 1. Class-based pages (backed by a file)
 
@@ -133,20 +132,7 @@ class Avo::Pages::Settings < Avo::Forms::Core::Page
 end
 ```
 
-#### 2. Virtual pages that render a form
-
-Create a "virtual" page that directly renders a form without requiring a separate page file. If title and description are not provided, the page will use the form's title and description.
-
-```ruby
-# app/avo/pages/settings.rb
-class Avo::Pages::Settings < Avo::Forms::Core::Page
-  def navigation
-    page form: Avo::Forms::Profiles # [!code focus]
-  end
-end
-```
-
-#### 3. Virtual pages with custom content
+#### 2. Virtual pages with custom content
 
 Create a "virtual" page with a custom title and content block that can contain multiple forms.
 
@@ -160,6 +146,17 @@ class Avo::Pages::Settings < Avo::Forms::Core::Page
         form Avo::Forms::General # [!code focus]
         form Avo::Forms::Integrations # [!code focus]
       end # [!code focus]
+  end
+end
+```
+
+To show a single form directly in the navigation — without a dedicated page file — use the [`form`](#form) method inside `navigation`:
+
+```ruby
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  def navigation
+    form Avo::Forms::Profiles # [!code focus]
   end
 end
 ```
@@ -183,7 +180,7 @@ Marks a page as the default one to display when the main page is accessed. Avail
 class Avo::Pages::Settings < Avo::Forms::Core::Page
   def navigation
     page Avo::Pages::Settings::General, default: true # [!code focus]
-    page form: Avo::Forms::Profiles
+    form Avo::Forms::Profiles
     page "Custom Settings",
       content: -> { form Avo::Forms::Custom },
       default: false
@@ -213,13 +210,15 @@ end
 ```
 
 You can define multiple forms on a single page, and they will be displayed in the order you declare them.
+
 </Option>
 
 <Option name="form" headingSize=3>
 
-This method is used to register forms that should be displayed on this page.
+Registers a form by its class. `form` works in two places:
 
-It expects the form class as the first argument.
+- Inside **`content`**, it renders the form on the page (multiple forms stack in declaration order).
+- Inside **`navigation`**, it adds the form as a navigation entry — clicking it shows the form directly, under the current page, without a dedicated page file. The navigation label and header default to the form's `title` and `description`.
 
 ```ruby
 # app/avo/pages/settings/general.rb
@@ -231,6 +230,37 @@ class Avo::Pages::Settings::General < Avo::Forms::Core::Page
 end
 ```
 
+```ruby
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  def navigation
+    form Avo::Forms::Settings::ProfileSettings # [!code focus]
+  end
+end
+```
+
+**Options**
+
+<div class="pl-8">
+
+#### `show_header`
+
+Whether to render the form's header — its [`title`](./forms.html) and [`description`](./forms.html) shown above the fields — for this placement.
+
+**Default value**: `true`
+
+**Possible values**: `true` or `false`
+
+```ruby
+# app/avo/pages/settings/general.rb
+class Avo::Pages::Settings::General < Avo::Forms::Core::Page
+  def content
+    form Avo::Forms::Settings::AppSettings, show_header: false # [!code focus]
+  end
+end
+```
+
+</div>
 
 </Option>
 
@@ -248,7 +278,7 @@ class Avo::Pages::Settings < Avo::Forms::Core::Page
 
   def navigation
     page Avo::Pages::Settings::General, default: true
-    page form: Avo::Forms::UserProfiles
+    form Avo::Forms::UserProfiles
     page "Integrations",
       content: -> do
         form Avo::Forms::Settings::SlackIntegration
@@ -302,8 +332,8 @@ Avo.configure do |config|
     end
 
     section "Configuration", icon: "cog" do
-      page Avo::Pages::Settings, icon: "adjustments"
-      page Avo::Pages::SystemHealth, icon: "heart"
+      page "Avo::Pages::Settings", icon: "adjustments"
+      page "Avo::Pages::SystemHealth", icon: "heart"
 
       # Or
 
@@ -312,7 +342,6 @@ Avo.configure do |config|
   }
 end
 ```
-
 
 ## Best Practices
 
@@ -325,6 +354,7 @@ end
 **Customize navigation labels**: Use `navigation_label` to provide concise, menu-friendly names that may differ from your page titles, especially for long or technical titles.
 
 **Choose the right page type**:
+
 - Use **class-based pages** for complex pages with custom logic or multiple forms
 - Use **virtual pages with forms** for simple, single-form pages to reduce file clutter
 - Use **virtual pages with custom content** for organizing multiple related forms without creating separate page files

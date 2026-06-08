@@ -1,8 +1,9 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=forms
 add_on: forms_feature
 betaStatus: Beta
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Forms
@@ -12,6 +13,7 @@ Avo provide a powerful way to build custom forms for your interface. Unlike reso
 ## Overview
 
 Forms in Avo are designed to:
+
 - Handle custom data processing and workflows
 - Manage application settings and configurations
 - Provide standalone forms not tied to specific models
@@ -87,14 +89,18 @@ end
 
 </Option>
 
+:::info Form header
+When a form is rendered on a [page](./pages.html), its `title` and `description` appear as a header above the fields. You can hide this header for a specific placement with the [`show_header` option](./pages.html) on the page's `form` declaration.
+:::
+
 ## Form Methods
 
 <Option name="def fields" headingSize=3>
 
-Define the structure and fields of your form. This method uses the same field syntax as Avo resources and actions, supporting all field types, [panels](./../resource-panels.html), [clusters](./../resource-clusters.html), and layout components.
+Define the structure and fields of your form. This method uses the same field syntax as Avo resources and actions, supporting all field types, [panels and cards](./../resource-panels.html), and layout components.
 
 :::tip
-When using `panel` to group fields, you **must** use the `main_panel` for one of the panels where you want to display the save button.
+Group related fields with `card` or [`panel`](./../resource-panels.html). Both take their title and description as keyword arguments: `card title: "...", description: "..."`.
 :::
 
 ```ruby{3-5}
@@ -144,6 +150,7 @@ If we build a heavy DSL for the `handle` method like we do for actions, it and m
 If you have any feedback, please share it with us.
 
 Right now the only pre-defined methods available in the controller are:
+
 - `default_response` - Standard redirect back turbo stream response
 
 ```ruby{3-8}
@@ -177,29 +184,33 @@ def fields
 end
 ```
 
-### Panels and Organization
+### Cards and Panels
+
+Group related fields with `card` or `panel`. Both accept `title:` and `description:` keyword arguments.
 
 ```ruby
 def fields
-  main_panel "Personal Information" do
+  card title: "Personal Information" do
     field :first_name, as: :text
     field :last_name, as: :text
     field :email, as: :text
   end
 
-  panel "Preferences", description: "Customize your experience" do
+  panel title: "Preferences", description: "Customize your experience" do
     field :theme, as: :select, options: { light: "Light", dark: "Dark" }
     field :notifications, as: :boolean
   end
 end
 ```
 
-### Clusters for Inline Layout
+### Inline Layout
+
+Use the `width` field option to place fields side by side. `with_options` applies it to a group of fields at once.
 
 ```ruby
 def fields
-  main_panel do
-    cluster do
+  card do
+    with_options width: 50 do
       field :first_name, as: :text
       field :last_name, as: :text
     end
@@ -292,19 +303,17 @@ class Avo::Forms::ProfileSettings < Avo::Forms::Core::Form
   self.description = "Update your personal information"
 
   def fields
-    main_panel do
-      cluster do
-        with_options stacked: true, record: Avo::Current.user do
-          field :first_name, as: :text, required: true
-          field :last_name, as: :text, required: true
-        end
+    card do
+      with_options width: 50, record: Avo::Current.user do
+        field :first_name, as: :text, required: true
+        field :last_name, as: :text, required: true
       end
 
       field :email, as: :text, required: true, record: Avo::Current.user
       field :phone, as: :text, record: Avo::Current.user
     end
 
-    panel "Preferences" do
+    panel title: "Preferences" do
       field :theme, as: :select,
             options: { light: "Light", dark: "Dark", auto: "Auto" },
             default: "auto"
@@ -339,7 +348,7 @@ class Avo::Forms::AppSettings < Avo::Forms::Core::Form
   self.description = "Configure global application settings"
 
   def fields
-    main_panel do
+    card do
       field :app_name, as: :text,
             default: -> { Rails.application.class.module_parent_name },
             required: true
@@ -349,7 +358,7 @@ class Avo::Forms::AppSettings < Avo::Forms::Core::Form
       field :maintenance_mode, as: :boolean, default: false
     end
 
-    panel "Email Configuration" do
+    panel title: "Email Configuration" do
       field :support_email, as: :text,
             default: "support@yourapp.com",
             required: true
@@ -358,7 +367,7 @@ class Avo::Forms::AppSettings < Avo::Forms::Core::Form
             required: true
     end
 
-    panel "Feature Flags" do
+    panel title: "Feature Flags" do
       field :enable_registrations, as: :boolean, default: true
       field :enable_api_access, as: :boolean, default: false
       field :max_file_upload_size, as: :number,
@@ -404,7 +413,7 @@ class Avo::Forms::DataImport < Avo::Forms::Core::Form
   self.description = "Upload and import data from CSV files"
 
   def fields
-    main_panel do
+    card do
       field :import_type, as: :select,
             options: {
               users: "Users",
@@ -420,7 +429,7 @@ class Avo::Forms::DataImport < Avo::Forms::Core::Form
             help_text: "Skip the first row if it contains headers"
     end
 
-    panel "Import Options" do
+    panel title: "Import Options" do
       field :update_existing, as: :boolean,
             default: false,
             help_text: "Update existing records if found"

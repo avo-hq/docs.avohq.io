@@ -1,7 +1,8 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=kanban-boards
 betaStatus: Beta
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Kanban boards
@@ -9,7 +10,6 @@ outline: [2,3]
 :::warning
 The feature and docs are both work in progress. Please read the `info` sections below.
 :::
-
 
 Having a kanban board is a great way to organize your work and keep track of your records.
 
@@ -32,28 +32,31 @@ Some of these requirements might change over time.
 To install the `avo-kanban` gem, follow the steps below:
 
 1. Add the following line to your Gemfile:
-    ```ruby
-    gem "avo-kanban", source: "https://packager.dev/avo-hq/"
-    ```
+
+   ```ruby
+   gem "avo-kanban", source: "https://packager.dev/avo-hq/"
+   ```
 
 2. Run the `bundle install` command to install the gem:
-    ```bash
-    bundle install
-    ```
+
+   ```bash
+   bundle install
+   ```
 
 3. Generate the necessary resources and controllers by running:
-    ```bash
-    rails generate avo:kanban install
-    ```
 
-    This command will create pre-configured resources and controllers for managing boards, columns, and items in your application. You can further customize the generated code to suit your needs.
+   ```bash
+   rails generate avo:kanban install
+   ```
 
-    This command will also generate the item's partial and a migration.
+   This command will create pre-configured resources and controllers for managing boards, columns, and items in your application. You can further customize the generated code to suit your needs.
+
+   This command will also generate the item's partial and a migration.
 
 4. Run the migration to apply the database changes:
-    ```bash
-    rails db:migrate
-    ```
+   ```bash
+   rails db:migrate
+   ```
 
 ## DB schema
 
@@ -94,11 +97,11 @@ When an item is added to the a column it will update the property on the record 
 ## How does it work?
 
 <!-- Let's take a look -->
+
 Each board updates one `property` on the `record`, and each column represents a `value`.
 The record is the actual record from the database (User, Project, To Do, etc.).
 
 Let's say we are replicating the GitHub Projects boards.
-
 
 ### `Board` and `Column`s
 
@@ -195,6 +198,7 @@ The `item` is the `Avo::Kanban::Item` and the `record` is the actual record from
 This section assumes that you have already set up [authorization](authorization.html) in your application using Pundit.
 
 1. Generate a policy for the `Board` resource by running:
+
 ```bash
 rails generate pundit:policy board
 ```
@@ -211,14 +215,14 @@ You can control access to various parts of the Kanban board by defining the foll
 
   Controls the "Edit board" button on the board itself.
   :::warning
-    Also controls the ability to edit the board in the resource view.
+  Also controls the ability to edit the board in the resource view.
   :::
 
 - `add_item?`
 
   Controls the visibility of the "Add item" button on the board, which allows users to add new items to a column.
   :::warning
-    Doesn't impact the ability to add items via the bottom of each column.
+  Doesn't impact the ability to add items via the bottom of each column.
   :::
 
 ## Customizing kanban models for your business logic

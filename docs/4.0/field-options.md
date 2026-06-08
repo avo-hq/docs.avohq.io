@@ -388,8 +388,6 @@ field :department, width: 50 do "Research & Development" end
 field :years_of_experience do "7 Years" end # full width
 ```
 
-`width` replaces the `cluster` / `row` DSL from Avo 3. See the [upgrade guide](./avo-3-avo-4-upgrade#removed-cluster-and-its-alias-row-in-favor-of-width) for migration details.
-
 ## Nullable
 
 When a user uses the **Save** button, Avo stores the value for each field in the database. However, there are cases where you may prefer to explicitly instruct Avo to store a `NULL` value in the database row when the field is empty. You do that by using the `nullable` option, which converts `nil` and empty values to `NULL`.
@@ -641,6 +639,8 @@ The `copyable` option is available for text-based fields such as `:text`, `:text
 
 The `react_on` option enables dynamic reactivity for a field when changes occur elsewhere in the form. When a specified field changes, the current field is re-evaluated, and the `@record` object is refreshed with the latest form values.
 
+This feature is provided by the **`avo-reactive_fields`** add-on. Add the gem to your app before using `react_on` (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#gems) for the `packager.dev` source).
+
 :::tip
 To retrieve the original value of a field before it was changed, use the [`*_was`](https://api.rubyonrails.org/classes/ActiveModel/Dirty.html#method-i-2A_was) methods.
 
@@ -663,7 +663,12 @@ You can configure the field to react to:
 - Multiple fields: `[:field_one, :field_two]`
 - All fields in the form: `:all`
 
-#### Example
+#### When updates run
+
+- **Selects and checkboxes** — the dependent field updates on `change` (when the value is committed).
+- **Text fields and textareas** — the dependent field updates while typing, using a debounced `input` handler (about 300ms after the last keystroke), so you do not need to blur the field first.
+
+#### Example: dependent select
 
 In the example below, the `city` field is set to react whenever the `country` select field is changed. This ensures that the available city options are always relevant to the selected country.
 
@@ -683,5 +688,30 @@ class Avo::Resources::Course < Avo::BaseResource
   end
 end
 ```
+
+#### Example: slug from name
+
+Pair `react_on` with [`format_using`](#format_using) to re-compute a derived value whenever another field changes—for example, a slug from the course name.
+
+While the user types in **name** (for example `Hello World`), **slug** updates to `hello_world` after a short pause. Each further change to **name** re-runs the formatter so **slug** always reflects the current name.
+
+On each reactive request, `@record` is hydrated from the submitted form params, so `format_using` always sees the latest **name**—even before save:
+
+```ruby
+# app/avo/resources/course.rb
+class Avo::Resources::Course < Avo::BaseResource
+  def fields
+    field :name
+
+    field :slug,
+      react_on: :name,
+      format_using: -> { @record.name&.downcase&.gsub(" ", "_") }
+  end
+end
+```
+
+- `react_on: :name` re-renders the **slug** field when **name** changes.
+- Avo submits the form in the background and streams an updated slug field component.
+- `format_using` runs in that context with the latest form values.
 
 </Option>

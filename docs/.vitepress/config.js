@@ -111,15 +111,6 @@ const config = {
             { text: "🤖 Agentic engineering", link: "/4.0/agentic-engineering.html" },
           ]
         },
-        // {
-        //   text: "Getting started",
-        //   items: [
-        //     {text: "Intro", link: "/4.0/index.html"},
-        //     {text: "Avo, Rails & Hotwire", link: "/4.0/rails-and-hotwire.html"},
-        //     {text: "Licensing", link: "/4.0/licensing"},
-        //     // {text: "Upgrade guide", link: "/4.0/upgrade.html"},
-        //   ],
-        // },
         {
           text: "Configuration",
           items: [
@@ -143,10 +134,9 @@ const config = {
             { text: "Customizable controls", link: "/4.0/customizable-controls.html" },
             { text: "Avatar", link: "/4.0/avatar.html" },
             { text: "Cover", link: "/4.0/cover.html" },
-
             {
               text: "Views",
-              collapsed: true,
+              collapsed: false,
               items: [
                 { text: "Overview", link: "/4.0/views.html" },
                 { text: "Table view", link: "/4.0/table-view.html" },
@@ -154,9 +144,7 @@ const config = {
                 { text: "Map view", link: "/4.0/map-view.html" },
               ],
             },
-
             { text: "Controller configuration", link: "/4.0/controllers.html" },
-            { text: "Breadcrumbs", link: "/4.0/breadcrumbs.html" },
           ]
         },
         {
@@ -212,7 +200,7 @@ const config = {
           text: "Filters",
           items: [
             { text: "Overview", link: "/4.0/filters.html" },
-            { text: "Basic Filters", link: "/4.0/basic-filters.html" },
+            { text: "Standard Filters", link: "/4.0/basic-filters.html" },
             { text: "Dynamic Filters", link: "/4.0/dynamic-filters.html" },
           ],
         },
@@ -223,16 +211,18 @@ const config = {
             { text: "Eject views", link: "/4.0/eject-views.html" },
             { text: "Custom view types", link: "/4.0/custom-view-types.html" },
             { text: "Menu editor", link: "/4.0/menu-editor.html" },
+            { text: "Header menu", link: "/4.0/header-menu.html" },
             { text: "Resource Search", link: "/4.0/search/resource-search.html" },
             { text: "Global Search", link: "/4.0/search/global-search.html" },
             { text: "Localization (I18n)", link: "/4.0/i18n.html" },
             { text: "Appearance", link: "/4.0/appearance.html" },
-            { text: "User Preferences", link: "/4.0/user-preferences.html" },
+            // { text: "User Preferences", link: "/4.0/user-preferences.html" },
             { text: "Routing", link: "/4.0/routing.html" },
             { text: "Multitenancy", link: "/4.0/multitenancy.html" },
+            { text: "Breadcrumbs", link: "/4.0/breadcrumbs.html" },
             {
               text: "Custom content",
-              collapsed: true,
+              collapsed: false,
               items: [
                 { text: "Custom views", link: "/4.0/custom-tools.html" },
                 { text: "Custom fields", link: "/4.0/custom-fields.html" },
@@ -245,46 +235,6 @@ const config = {
             },
           ],
         },
-        {
-          text: "Dashboards and cards",
-          items: [
-            { text: "Dashboards", link: "/4.0/dashboards.html" },
-            { text: "Cards", link: "/4.0/cards.html" },
-          ],
-        },
-        {
-          text: "Kanban board",
-          items: [
-            { text: "Overview", link: "/4.0/kanban-boards.html" },
-          ],
-        },
-        {
-          text: "Forms and pages",
-          items: [
-            { text: "Overview", link: "/4.0/forms-and-pages/overview.html" },
-            { text: "Generators", link: "/4.0/forms-and-pages/generator.html" },
-            { text: "Pages", link: "/4.0/forms-and-pages/pages.html" },
-            { text: "Forms", link: "/4.0/forms-and-pages/forms.html" },
-            { text: "Guides and Tutorials", link: "/4.0/forms-and-pages/guides-and-tutorials.html" },
-          ],
-        },
-        {
-          text: "REST API",
-          items: [
-            { text: "Overview", link: "/4.0/rest-api/" },
-            { text: "Mount", link: "/4.0/rest-api/mount.html" },
-            { text: "Generators", link: "/4.0/rest-api/generators.html" },
-            { text: "CSRF Protection", link: "/4.0/rest-api/csrf-protection.html" },
-            { text: "Authentication", link: "/4.0/rest-api/authentication.html" },
-          ],
-        },
-        {
-          text: "Collaboration",
-          items: [
-            { text: "Overview", link: "/4.0/collaboration/overview.html" },
-            { text: "Authorization", link: "/4.0/collaboration/authorization.html" },
-          ],
-        },
         // {
         //   text: "MCP (Model Context Protocol)",
         //   items: [
@@ -292,26 +242,58 @@ const config = {
         //   ],
         // },
         {
-          text: "Audit Logging",
+          text: "Add-ons",
           items: [
-            { text: "Overview", link: "/4.0/audit-logging/" },
-          ],
-        },
-        {
-          text: "Notifications",
-          items: [
-            { text: "Overview", link: "/4.0/notifications.html" },
-          ],
-        },
-        {
-          text: "Media Library",
-          items: [
-            { text: "Overview", link: "/4.0/media-library.html" },
+            { text: "Notifications", link: "/4.0/notifications.html" },
+            { text: "Media Library", link: "/4.0/media-library.html" },
+            { text: "Audit Logging", link: "/4.0/audit-logging/" },
+            {
+              text: "Dashboards and cards",
+              link: "/4.0/dashboards.html",
+              items: [
+                { text: "Dashboards", link: "/4.0/dashboards.html" },
+                { text: "Cards", link: "/4.0/cards.html" },
+              ],
+            },
+            {
+              text: "Kanban board",
+              link: "/4.0/kanban-boards.html",
+            },
+            {
+              text: "Forms and pages",
+              link: "/4.0/forms-and-pages/overview.html",
+              items: [
+                { text: "Overview", link: "/4.0/forms-and-pages/overview.html" },
+                { text: "Generators", link: "/4.0/forms-and-pages/generator.html" },
+                { text: "Pages", link: "/4.0/forms-and-pages/pages.html" },
+                { text: "Forms", link: "/4.0/forms-and-pages/forms.html" },
+                { text: "Guides and Tutorials", link: "/4.0/forms-and-pages/guides-and-tutorials.html" },
+              ],
+            },
+            {
+              text: "REST API",
+              link: "/4.0/rest-api/",
+              items: [
+                { text: "Overview", link: "/4.0/rest-api/" },
+                { text: "Mount", link: "/4.0/rest-api/mount.html" },
+                { text: "Generators", link: "/4.0/rest-api/generators.html" },
+                { text: "CSRF Protection", link: "/4.0/rest-api/csrf-protection.html" },
+                { text: "Authentication", link: "/4.0/rest-api/authentication.html" },
+              ],
+            },
+            {
+              text: "Collaboration",
+              link: "/4.0/collaboration/overview.html",
+              items: [
+                { text: "Overview", link: "/4.0/collaboration/overview.html" },
+                { text: "Authorization", link: "/4.0/collaboration/authorization.html" },
+              ],
+            },
           ]
         },
         {
           text: "Performance",
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: "Cache", link: "/4.0/cache.html" },
             { text: "Views", link: "/4.0/views-performance.html" },
@@ -319,7 +301,7 @@ const config = {
         },
         {
           text: "Internals",
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: "Overview", link: "/4.0/internals.html" },
             { text: "Testing", link: "/4.0/testing.html" },
@@ -344,7 +326,7 @@ const config = {
         },
         {
           text: "Extending",
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
             { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },

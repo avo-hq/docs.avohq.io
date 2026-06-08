@@ -1,8 +1,9 @@
 ---
 license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=json-api
 add_on: avo-api
 betaStatus: Alpha
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Mount Avo API
@@ -38,6 +39,7 @@ end
 ```
 
 **Incorrect setups:**
+
 ```ruby
 # config/routes.rb
 Rails.application.routes.draw do
@@ -62,6 +64,7 @@ Rails.application.routes.draw do
   mount_avo_api  # This breaks API token authentication
 end
 ```
+
 :::
 
 ## Basic Usage
@@ -112,6 +115,7 @@ mount_avo_api at: "/custom/api/path"
 ```
 
 **Parameters:**
+
 - `at:` - String specifying where to mount the API (default: `"api"`)
 
 ### Additional Mount Options
@@ -123,6 +127,7 @@ mount_avo_api at: "/api", via: [:get, :post], constraints: { subdomain: "api" }
 ```
 
 **Common options:**
+
 - `via:` - Restrict HTTP methods
 - `constraints:` - Add routing constraints
 - `defaults:` - Set default parameters
@@ -200,7 +205,6 @@ Rails.application.routes.draw do
 end
 
 ```
-
 
 ### API with Custom Constraints
 
