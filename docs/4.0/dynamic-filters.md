@@ -449,10 +449,6 @@ Computed from field using [`field_to_filter` method](#field-to-filter-matching).
 
 <Option name="`query`">
 
-:::info
-The default filtering system is no longer applied when a `query` is specified on a dynamic filter.
-:::
-
 Customize filter's query
 
 ##### Default value
