@@ -191,8 +191,6 @@ actions_list include: [Avo::Actions::ExportSelection, Avo::Actions::PublishPost]
 
 <Option name="`list`">
 
-<VersionReq version="3.13" />
-
 A dropdown that displays all the specified actions and links.
 
 #### Supported options
@@ -213,11 +211,7 @@ end
 <Image src="/assets/img/resources/customizable-controls/custom_list.png" width="404" height="256" alt="Custom list opened" />
 
 
-Within the `list` block, the only permitted elements are `link_to` and `action`. For both `link_to` and `action`, you can include an optional `icon` parameter.
-
-:::info
-<VersionReq version="3.14.1" /> [`divider`](actions/registration.html#divider) is also permitted within the `list` block.
-:::
+Within the `list` block, the permitted elements are `link_to`, `action`, and [`divider`](actions/registration.html#divider). For both `link_to` and `action`, you can include an optional `icon` parameter.
 
 In addition to the `icon`, the `link_to` element can accept additional parameters such as `target: :_blank` or `rel: "noopener"`, or any other extra arguments you may want to provide for the link. These extra arguments help define specific behaviors for the link, like opening it in a new tab or ensuring security best practices are followed.
 
@@ -259,33 +253,6 @@ action Avo::Actions::PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 ```
 
 </Option>
-
-:::warning WARNING (**NOT** applicable for versions greater than <Version version="3.10.7" />)
-
-When you use the `action` helper in any customizable block it will act only as a shortcut to display the action button, it will not also register it to the resource.
-
-You must manually register it with the `action` declaration.
-
-```ruby{6-8,13-15}
-class Avo::Resources::Fish < Avo::BaseResource
-  self.title = :name
-
-  self.show_controls = -> do
-    # In order to use it here
-    action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, arguments: {
-      action_on_show_controls: "Will use this arguments"
-    }
-  end
-
-  # 👇 Also declare it here 👇
-  def actions
-    action Avo::Actions::ReleaseFish, arguments: {
-      action_from_list: "Will use this arguments"
-    }
-  end
-end
-```
-:::
 
 <Option name="`default_controls`">
 

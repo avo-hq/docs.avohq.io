@@ -1,5 +1,4 @@
 ---
-version: '1.0'
 license: community
 ---
 
@@ -46,8 +45,6 @@ The output value must be a supported [`options_for_select`](https://apidock.com/
 </Option>
 
 <Option name="`grouped_options`">
-
-<VersionReq version="3.22.0" />
 
 When you need to organize your select options into groups, you can use `grouped_options` instead of `options`. This creates optgroups in the select field, making it easier for users to navigate large sets of options.
 
@@ -177,8 +174,6 @@ end
 </Option>
 
 <Option name="`multiple`">
-
-<VersionReq version="3.17.3" />
 
 If it's set to `false` (default), it will only allow selecting a single option from the list.
 

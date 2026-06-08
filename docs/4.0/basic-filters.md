@@ -18,8 +18,6 @@ Each filter is configured in a class with a few dedicated [methods and options](
 self.name = "User names filter"
 ```
 
-<VersionReq version="3.14.0" />
-
 ```ruby
 self.name = -> { I18n.t("avo.filter.name") }
 ```
@@ -34,8 +32,6 @@ The value of `self.button_label` is the label displayed on the button that appli
 ```ruby
 self.button_label = "Filter by user names"
 ```
-
-<VersionReq version="3.14.0" />
 
 ```ruby
 self.button_label = -> { I18n.t("avo.filter.button_label") }
@@ -124,7 +120,7 @@ end
 
 ## Filter types
 
-Avo has several types of filters available [Boolean filter](#Boolean%20Filter), [Select filter](#Select%20Filter), [Multiple select filter](#Multiple%20select%20filter), [Text filter](#Text%20Filter) and since version <Version version="3.11.8" /> [Date time filter](#Date%20time%20Filter).
+Avo has several types of filters available [Boolean filter](#Boolean%20Filter), [Select filter](#Select%20Filter), [Multiple select filter](#Multiple%20select%20filter), [Text filter](#Text%20Filter) and [Date time filter](#Date%20time%20Filter).
 
 <Image src="/assets/img/filters.png" width="404" height="727" alt="Avo filters" />
 
@@ -412,8 +408,6 @@ end
 </Option>
 
 <Option name="Date time Filter">
-
-<VersionReq version="3.11.8" />
 
 The ideal filter for date selection. This filter allows you to generate a date input, with options to include time selection and even a range selection mode. Customizable to suit your specific needs.
 

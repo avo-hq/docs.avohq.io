@@ -1,7 +1,6 @@
 ---
 feedbackId: 833
 license: pro
-version: '2.0'
 ---
 
 # Dashboards
@@ -154,8 +153,6 @@ end
 
 ## Dashboards authorization
 
-<VersionReq version="2.22" />
-
 You can set authorization rules for dashboards using the `authorize` block.
 
 ```ruby{3-6}
@@ -176,7 +173,7 @@ end
 self.name = "Dashy"
 ```
 
-<VersionReq version="3.14.2" /> `self.name` can be configured using a Proc.
+`self.name` can be configured using a Proc.
 
 ```ruby
 self.name = -> { I18n.t("avo.dashboards.dashy.name") }

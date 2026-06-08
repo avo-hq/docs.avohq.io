@@ -1,7 +1,6 @@
 ---
-# license:
-betaStatus: Alpha 🧪 (experimental)
-outline: [2,3]
+betaStatus: "Alpha 🧪 (experimental)"
+outline: [2, 3]
 ---
 
 # Avo::Meta

@@ -1,7 +1,6 @@
 ---
-version: '1.0'
 license: community
-field_type: 'belongs_to'
+field_type: belongs_to
 ---
 
 # Belongs to
@@ -98,7 +97,9 @@ Controls the creation link visibility on forms.
 #### Possible values
 
 `true`, `false`
-:::warning Since version <Version version="3.10.2" />, the target resource policy takes precedence over this option.
+:::warning
+The target resource policy takes precedence over this option.
+
 `field :user, as: :belongs_to, can_create: true`
 
 In this example, even if the `can_create` option is set to `true`, if the `UserPolicy` responds with `false` to the `create?` method, the creation link will **NOT** be visible.

@@ -1,5 +1,4 @@
 ---
-version: '1.0'
 license: community
 ---
 
@@ -68,8 +67,6 @@ Any string value.
 </Option>
 
 <Option name="`reorder_text`">
-
-<VersionReq version="3.14.0" />
 
 Set a custom label for the tooltip on the reorder by drag-and-drop row button.
 

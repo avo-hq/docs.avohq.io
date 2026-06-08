@@ -1,5 +1,4 @@
 ---
-version: '1.0'
 license: community
 demo: https://trix.avodemo.com/
 ---
@@ -108,8 +107,6 @@ Trix integrates seamlessly with Action Text. It will automatically work with Act
 We prepared a [demo](https://trix.avodemo.com/) to showcase Trix's abilities to work with Action Text and Active Storage.
 
 ## Javascript Alert Messages
-
-<VersionReq version="3.13.8" />
 
 You can customize the javascript alert messages for various actions in the Trix editor. Below are the default messages that can be translated or modified:
 
