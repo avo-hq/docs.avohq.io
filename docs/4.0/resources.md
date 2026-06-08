@@ -186,7 +186,7 @@ class Avo::Resources::Post < Avo::BaseResource
     field :id, as: :id
     field :name, as: :text, required: true
     field :body, as: :trix, placeholder: "Add the post body here", always_show: false
-    field :cover_photo, as: :file, is_image: true, link_to_record: true
+    field :cover_photo, as: :file, link_to_record: true
     field :is_featured, as: :boolean
 
     field :is_published, as: :boolean do

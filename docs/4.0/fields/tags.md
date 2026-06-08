@@ -286,42 +286,12 @@ end
 :::
 
 :::info
-When using the `fetch_labels_from` pattern, on the <Show /> and <Index /> views you will see the `id` of those options instead of the label.
+When using the `fetch_values_from` pattern, on the <Show /> and <Index /> views you will see the `id` of those options instead of the label.
 That is expected, because you are storing the `id`s in the database and the field can't know what labels those `id`s have.
 
-To mitigate that use the `fetch_labels` option.
+To mitigate that use the [`format_using`](tags#format_using) option.
 :::
 
-</Option>
-
-<Option name="`fetch_labels`">
-
-:::warning
-Deprecated since <Version version="3.10" /> in favor of [`format_using`](tags#format_using)
-:::
-
-The `fetch_labels` option allows you to pass an array of custom strings to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.
-
-```ruby{4-6}
-field :skills,
-  as: :tags,
-  fetch_values_from: "/avo/resources/skills/skills_for_user",
-  fetch_labels: -> {
-    Skill.where(id: record.skills).pluck(:name)
-  }
-```
-
-In the above example, `fetch_labels` is a lambda that retrieves the names of the skills stored in the record's `skills` property.
-
-When you use `fetch_labels`, Avo passes the current `resource` and `record` as arguments to the lambda function. This gives you access to the hydrated resource and the current record.
-
-#### Default
-
-Avo's default behavior on tags
-
-#### Possible values
-
-- Array of strings
 </Option>
 
 <Option name="`format_using`" since="3.10">
