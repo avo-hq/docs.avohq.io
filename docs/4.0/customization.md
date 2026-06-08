@@ -641,7 +641,7 @@ end
 
 The message `There are more records available.` is shown when the limit is reached. To localize the message you can use `I18n.translate("avo.more_records_available")`.
 
-Using [searchable](./associations/belongs_to.html#searchable) is recommended for listing unlimited records with better performance and user experience.
+Using [searchable](./associations/searchable.html) is recommended for listing unlimited records with better performance and user experience.
 
 <Image src="/assets/img/customization/associations-lookup-list-limit.png" width="2466" height="1098" alt="Associations lookup list limit configuration" />
 </Option>

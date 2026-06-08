@@ -1,5 +1,6 @@
 ---
 license: pro
+search_item_path: true
 ---
 
 # Global Search
@@ -64,17 +65,9 @@ end
 
 <Option name="`item`">
 
-The `item` configuration is used to configure the item displayed in the search results. It is a hash with the following options:
+Configures how each result row renders in the palette. It's a hash with the following keys:
 
-| Option | Description | Default | Possible Values |
-|--------|-------------|---------|-----------------|
-| `title` | The title of the search result | [Resource title](./../resources.html#self_title) | Any string |
-| `description` | The description of the search result | `nil` | Any string |
-| `image_url` | The URL of the image to display in the search result | `nil` | Any valid URL |
-| `image_format` | The format of the image to display in the search result | `:square` | `:square`, `:rounded`, `:circle` |
-| `path` | The path to redirect to when clicking the search result | Record's show page | Any valid path |
-
-### Example with all configurations
+<!-- @include: ./../common/search_item_keys_common.md-->
 
 ```ruby{5-13}
 # app/avo/resources/post.rb
@@ -115,44 +108,7 @@ end
 ```
 </Option>
 
-<Option name="`results_count`">
-
-By default, Avo displays 8 search results for each resource in the global search. You can change the number of results displayed by configuring the `search_results_count` option:
-
-```ruby{3}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.search_results_count = 16
-end
-```
-
-You can also change the number of results displayed on individual resources:
-
-```ruby{4}
-# app/avo/resources/user.rb
-class Avo::Resources::User < Avo::BaseResource
-  self.search = {
-    results_count: 5
-    query: -> {
-      # ...
-    },
-  }
-end
-```
-
-You can also assign a lambda to dynamically set the value. Inside that block you have access to all attributes of the [`Avo::ExecutionContext`](./../execution-context).
-
-```ruby{3}
-class Avo::Resources::User < Avo::BaseResource
-  self.search = {
-    results_count: -> { user.admin? ? 30 : 10 }
-  }
-end
-```
-
-If you configure `results_count` by specifying it in the resource file then that number takes precedence over the global [`search_results_count`](#search_results_count) for that resource.
-
-</Option>
+<!-- @include: ./../common/search_limit_common.md-->
 
 <Option name="`display_count`">
 
@@ -185,26 +141,7 @@ end
 
 </Option>
 
-## Scope out global or resource searches
-
-You may want to perform different searches on the `global` search from the `resource` search. You may use the `params[:global]` flag to figure that out.
-
-```ruby{5-11}
-# app/avo/resources/order.rb
-class Avo::Resources::Order < Avo::BaseResource
-  self.search = {
-    query: -> {
-      if params[:global]
-        # Perform global search
-        query.ransack(id_eq: q, m: "or").result(distinct: false)
-      else
-        # Perform resource search
-        query.ransack(id_eq: q, details_cont: q, m: "or").result(distinct: false)
-      end
-    }
-  }
-end
-```
+<!-- @include: ./../common/search_type_common.md-->
 
 ## Custom search provider
 

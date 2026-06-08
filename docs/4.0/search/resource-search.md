@@ -33,6 +33,8 @@ In this block, you may configure the search however strict or loose you need it.
 If you're using ransack version 4 and up you must add `ransackable_attributes` and maybe more to your model in order for it to work. Read more about it [here](https://activerecord-hackery.github.io/ransack/going-further/other-notes/#authorization-allowlistingdenylisting).
 :::
 
+<!-- @include: ./../common/search_type_common.md-->
+
 ## Authorize search
 
 Search is authorized in policy files using the [`search?`](./../authorization#search) method.
@@ -109,3 +111,5 @@ end
 In the above example, ransack is used to search for `Application` records based on various attributes of the associated `Client`, such as `client_email_cont` and `client_phone_number_cont`. The joins method is used to join the applications table with the clients table to perform the search efficiently.
 
 This approach allows for flexible searching within associations, enabling you to find records based on related model attributes.
+
+<!-- @include: ./../common/search_limit_common.md-->
