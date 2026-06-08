@@ -273,7 +273,9 @@ Contained in will not work when using the `acts-as-taggable-on` gem.
 Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[skills][array_contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L46)
 
 :::info
-The source code uses custom dynamic filters DSL available Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
+The source code uses the custom dynamic filters DSL.
+
+Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
 :::
 
 </Option>
