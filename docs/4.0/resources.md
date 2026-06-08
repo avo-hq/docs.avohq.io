@@ -622,7 +622,9 @@ end
 
 Find out more on the [grid view documentation page](grid-view).
 
-`default_view_type` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource` and `view`. Example:
+`default_view_type` can be configured using a Proc.
+
+Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource` and `view`.
 
 ```ruby
 class Avo::Resources::Post < Avo::BaseResource

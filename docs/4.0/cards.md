@@ -248,9 +248,9 @@ end
 
 <br>
 
-`prefix` and `suffix` became callable options.
+`prefix` and `suffix` can be configured using a Proc.
 
-The blocks are executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent`.
+Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent`.
 
 ```ruby{3,4}
 class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
