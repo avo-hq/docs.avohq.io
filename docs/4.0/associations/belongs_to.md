@@ -168,68 +168,6 @@ end
 
 <Image src="/assets/img/associations/polymorphic_help.jpg" width="1616" height="370" alt="Belongs to ploymorphic help" />
 
-## Searchable `belongs_to`
-
-<DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
-
-There might be the case that you have a lot of records for the parent resource, and a simple dropdown won't cut it. This is where you can use the `searchable` option to get a better search experience for that resource.
-
-```ruby{8}
-class Avo::Resources::Comment < Avo::BaseResource
-  self.title = :id
-
-  def fields
-    field :id, as: :id
-    field :body, as: :textarea
-
-    field :user, as: :belongs_to, searchable: true
-  end
-end
-```
-
-<Image src="/assets/img/associations/searchable-closed.jpg" width="1232" height="184" alt="Belongs to searchable" />
-<Image src="/assets/img/associations/searchable-open.jpg" width="1556" height="1272" alt="Belongs to searchable" />
-
-`searchable` works with `polymorphic` `belongs_to` associations too.
-
-```ruby{8}
-class Avo::Resources::Comment < Avo::BaseResource
-  self.title = :id
-
-  def fields
-    field :id, as: :id
-    field :body, as: :textarea
-
-    field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project], searchable: true
-  end
-end
-```
-
-:::info
-Avo uses the [resource search feature](./../search/resource-search) behind the scenes, so **make sure the target resource has the `query` option configured inside the `search` block**.
-:::
-
-
-```ruby
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.search = {
-    query: -> {
-      query.ransack(id_eq: q, name_cont: q, body_cont: q, m: "or").result(distinct: false)
-    }
-  }
-end
-
-# app/avo/resources/project.rb
-class Avo::Resources::Project < Avo::BaseResource
-  self.search = {
-    query: -> {
-      query.ransack(id_eq: q, name_cont: q, country_cont: q, m: "or").result(distinct: false)
-    }
-  }
-end
-```
-
 ## Belongs to attach scope
 
 <DemoVideo demo-video="https://youtu.be/Eex8CiinQZ8?t=6" />

@@ -150,6 +150,17 @@ The global search now includes a comprehensive results page:
 
 #### Breaking changes and migration notes
 
+##### Search result limits simplified
+
+`self.search[:results_count]` has been removed to reduce Avo-specific DSL where plain Rails already covers the need — use `.limit()` on the relation inside your `query:` proc instead of a separate results-count option.
+
+Use one of these instead:
+
+- **Global default**: `config.search_results_count = 16` in `config/initializers/avo.rb`
+- **Per-resource**: `.limit(N)` inside the `query:` proc
+
+A user-applied `.limit()` on a relation always takes precedence over the global default. Custom search providers that return an `Array` are never auto-capped — slice with `.first(N)` in your proc if needed.
+
 <br>
 
 ##### Avo Pro mount point removal
@@ -218,6 +229,36 @@ class Avo::Resources::User < Avo::BaseResource
     result_path: -> { avo.resources_user_path(record) } # [!code --]
   }
 end
+```
+
+##### Use `search_type` instead of `params[:global]` / `params[:via_association]`
+
+Avo 4 injects a `search_type` local into every `self.search[:query]` proc, with one of three values depending on which surface triggered the search:
+
+| `search_type` | Surface                                | v3 detection                                |
+|---------------|----------------------------------------|---------------------------------------------|
+| `:global`     | Navbar ⌘K palette                      | `params[:global]`                           |
+| `:resource`   | Resource-index search bar              | Falsey `params[:global]` (no `via_association`) |
+| `:association`| Searchable association picker          | `params[:via_association] == 'has_many'`    |
+
+`params[:via_association]` has been removed. The v4 picker no longer sets it, which means any `if params[:via_association] == 'has_many'` branch will silently fall through to `else`. There's no error, just the wrong scope applied. This branch must be migrated.
+
+`params[:global]` still works but is superseded. It can't distinguish `:resource` from `:association`, so `search_type` is the preferred option going forward.
+
+```ruby
+self.search = {
+  query: -> {
+    if params[:global]                            # [!code --]
+    if search_type == :global                     # [!code ++]
+      query.ransack(id_eq: q, m: "or").result(distinct: false)
+    elsif params[:via_association] == 'has_many' # [!code --]
+    elsif search_type == :association             # [!code ++]
+      query.ransack(name_cont: q).result.order(name: :asc)
+    else # :resource
+      query.ransack(id_eq: q, details_cont: q, m: "or").result(distinct: false)
+    end
+  }
+}
 ```
 
 ## Actions
@@ -515,6 +556,12 @@ gem "avo-nested", source: "https://packager.dev/avo-hq/"
 ```
 
 See [Gem server authentication](./gem-server-authentication) if you need to configure `BUNDLE_PACKAGER__DEV`. Full usage of the `nested` option is documented under [Nested in Forms](./associations/has_many#nested-in-forms) on the association field pages.
+
+## Searchable association picker rewritten without Algolia
+
+The searchable association picker was rewritten in Avo 4 using Hotwire (Stimulus + server-rendered HTML) instead of the Algolia autocomplete widget bundled in v3.
+
+If you customized the v3 picker via CSS targeting Algolia's class names (`.aa-Input`, `.aa-Panel`, etc.), those selectors no longer match anything — the v4 picker uses Avo's own markup, and the Algolia stylesheet is no longer bundled.
 
 ## Pagination
 

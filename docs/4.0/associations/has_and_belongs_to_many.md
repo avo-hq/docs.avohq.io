@@ -24,19 +24,8 @@ field :users, as: :has_and_belongs_to_many
 <!-- @include: ./../common/associations_hide_search_input_option_common.md-->
 <!-- @include: ./../common/associations_hide_filter_button_option_common.md-->
 
-<!-- @include: ./../common/search_query_scope_common.md-->
 <!-- @include: ./../common/show_on_edit_common.md-->
 <!-- @include: ./../common/nested_common.md-->
-
-### Searchable `has_and_belongs_to_many`
-
-<div class="flex gap-2 mt-2">
-  <VersionReq version="1.25" />
-  <LicenseReq license="pro" title="Searchable associations are available as a pro feature" />
-</div>
-
-
-Similar to [`belongs_to`](./belongs_to#searchable-belongs-to), the `has_many` associations support the `searchable` option.
 
 <!-- @include: ./../common/scopes_common.md-->
 <!-- @include: ./../common/show_hide_buttons_common.md-->
