@@ -17,7 +17,7 @@ A `query` source must be defined, in one of two places:
 - `self.search = { query: ... }` on the target resource — shared by every searchable picker that points at it, or
 - a `query:` proc inside the field's `searchable: { ... }` hash — scoped to that single picker.
 
-If neither is present, the picker stays empty in both modes: typing returns nothing, and `suggestions:` is never consulted.
+If neither is present, the picker stays empty.
 
 ## Boolean form
 
@@ -46,9 +46,12 @@ class Avo::Resources::Review < Avo::BaseResource
       as: :belongs_to,
       searchable: {
         query: -> {
-          query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false).limit(5)
+          if q.blank?
+            query.where(role: :reviewer).order(created_at: :desc).limit(5)
+          else
+            query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false).limit(5)
+          end
         },
-        suggestions: -> { query.where(role: :reviewer).order(created_at: :desc) },
         enabled: -> { current_user.admin? }
       }
   end
@@ -57,25 +60,37 @@ end
 
 ### `query:`
 
-Runs while the user is typing. The records it returns fill the dropdown. If set, it takes precedence over the target resource's `self.search[:query]`. Add `.limit(N)` in the proc to cap results for this picker; otherwise Avo applies `config.search_results_count`.
+Runs whenever the picker needs results — while the user is typing **and** when the picker opens with no input. If set, it takes precedence over the target resource's `self.search[:query]`. Add `.limit(N)` in the proc to cap results for this picker; otherwise Avo applies `config.search_results_count`.
 
 ```ruby
 query: -> { query.ransack(name_cont: q).result(distinct: false) }
 ```
 
-### `suggestions:`
+### Default rows when the picker opens
 
-Runs when the picker is opened **without** any typed input. The records it returns fill the dropdown. If set, it takes precedence over the target resource's `self.search[:suggestions]`.
+When the picker opens with no typed input, `q` is blank. Branch on `q.blank?` inside the same `query:` proc to return default rows:
 
 ```ruby
-suggestions: -> { query.where(active: true).order(created_at: :desc) }
+# Resource-level
+self.search = {
+  query: -> {
+    q.blank? ? query.order(created_at: :desc) : query.ransack(name_cont: q).result(distinct: false)
+  }
+}
 ```
 
-**Default when omitted:** provided a [query source exists](#requirements), the picker shows the latest records from the target resource's `index_query` (its base index scope), ordered by id descending — it is **not** empty. With no query source at all, the picker stays empty and `suggestions:` is never consulted.
+```ruby
+# Field-level override
+field :user, as: :belongs_to, searchable: {
+  query: -> {
+    q.blank? ? query.where(active: true).order(created_at: :desc) : query.ransack(name_cont: q).result(distinct: false)
+  }
+}
+```
 
-:::info
-`suggestions:` only fires on the **association picker** (`:association`). The navbar palette returns no results on a blank query, and the resource-index search bar shows the regular index listing.
-:::
+Use `q.blank?` (stripped string), not `params[:q].blank?`. Only the association picker sends a blank `q`; global search ignores blank input. If you need different behavior per surface, see [`search_type`](./../common/search_type_common).
+
+If your `query:` proc does not handle `q.blank?`, the picker stays empty when opened with no input.
 
 ### `enabled:`
 
@@ -131,12 +146,17 @@ field :reviewable,
   polymorphic_as: :reviewable,
   types: [::Post, ::Project],
   searchable: {
-    suggestions: -> {
-      klass = query.respond_to?(:klass) ? query.klass : query
-      if parent_record&.persisted? && parent_record.reviewable_type == klass.name
-        query.where.not(id: parent_record.reviewable_id)
+    query: -> {
+      if q.blank?
+        klass = query.respond_to?(:klass) ? query.klass : query
+        scoped = if parent_record&.persisted? && parent_record.reviewable_type == klass.name
+          query.where.not(id: parent_record.reviewable_id)
+        else
+          query
+        end
+        scoped.order(created_at: :desc)
       else
-        query
+        query.ransack(name_cont: q).result(distinct: false)
       end
     }
   }
@@ -157,7 +177,6 @@ Each row in the picker is rendered from the target resource's `self.search[:item
 A field-level hash key always overrides the equivalent setting on the target resource:
 
 - `searchable: { query: }` overrides `self.search[:query]`
-- `searchable: { suggestions: }` overrides `self.search[:suggestions]`
 
 Result limits follow the same rules as [resource search](./../search/resource-search#limiting-results): a `.limit()` in the `query:` proc wins; otherwise Avo applies `config.search_results_count` (default `8`).
 
@@ -165,7 +184,7 @@ One resource's `self.search[:query]` is shared by every searchable picker pointi
 
 ## What you can use inside the procs
 
-**Inside `query:` and `suggestions:`**
+**Inside `query:`**
 
 | Local             | What it is                                                                                              |
 | ----------------- | ------------------------------------------------------------------------------------------------------- |
@@ -187,13 +206,14 @@ One resource's `self.search[:query]` is shared by every searchable picker pointi
 `parent_record` can be `nil` on create forms (no parent has been persisted yet). Guard with `&.`:
 
 ```ruby
-suggestions: -> { query.where.not(id: parent_record&.id).order(created_at: :desc) }
+query: -> {
+  q.blank? ? query.where.not(id: parent_record&.id).order(created_at: :desc) : query.ransack(name_cont: q).result(distinct: false)
+}
 ```
 
 ## Options reference
 
 | Option        | Type            | Default                                                                                       | Description                                                                   |
 | ------------- | --------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `query`       | Proc            | resource's `self.search[:query]`                                                              | Filters records while the user is typing                                      |
-| `suggestions` | Proc            | resource's `self.search[:suggestions]`, else latest records from `index_query` by id desc     | Records shown when the picker opens with no input                             |
+| `query`       | Proc            | resource's `self.search[:query]`                                                              | Filters records while typing; use `q.blank?` for default rows when the picker opens |
 | `enabled`     | Boolean or Proc | `true`                                                                                        | Gates whether the searchable widget renders; `false` falls back to `<select>` |

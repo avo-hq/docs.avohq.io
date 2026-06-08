@@ -42,9 +42,12 @@ class Avo::Resources::Review < Avo::BaseResource
       as: :belongs_to,
       searchable: {
         query: -> {
-          query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false)
+          if q.blank?
+            query.where(role: :reviewer).order(created_at: :desc)
+          else
+            query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false)
+          end
         },
-        suggestions: -> { query.where(role: :reviewer).order(created_at: :desc) },
         enabled: -> { current_user.admin? }
       }
   end
@@ -118,78 +121,6 @@ end
 ```
 
 :::
-
-</Option>
-
-<Option name="`suggestions`">
-
-Proc that returns records when the picker opens with no typed input.
-
-::: code-group
-
-```ruby [On the field]
-field :user, as: :belongs_to, searchable: {
-  suggestions: -> { query.where(active: true).order(created_at: :desc) }
-}
-```
-
-```ruby [On the resource]
-self.search = {
-  suggestions: -> { query.where(active: true).order(created_at: :desc) }
-}
-```
-
-:::
-
-- **Type:** Proc / Lambda
-- **Default:** `nil` — falls back to `self.search[:suggestions]`, else `index_query.order(id: :desc)`
-- **Precedence:** field-level overrides resource-level
-- **Locals:** `q`, `query`, `params`, `parent_record`, `parent_resource`
-
-#### Polymorphic fields
-
-One proc runs for every declared type — branch on `query.klass` when the suggestions need to differ per type.
-
-::: code-group
-
-```ruby [Boolean form]
-# Each target resource defines its own self.search[:suggestions]
-class Avo::Resources::Post < Avo::BaseResource
-  self.search = {
-    query: -> { query.ransack(body_cont: q).result(distinct: false) },
-    suggestions: -> { query.order(created_at: :desc) }
-  }
-end
-
-class Avo::Resources::Project < Avo::BaseResource
-  self.search = {
-    query: -> { query.ransack(name_cont: q).result(distinct: false) },
-    suggestions: -> { query.where(active: true).order(created_at: :desc) }
-  }
-end
-```
-
-```ruby [Hash form]
-class Avo::Resources::Comment < Avo::BaseResource
-  def fields
-    field :commentable,
-      as: :belongs_to,
-      polymorphic_as: :commentable,
-      types: [::Post, ::Project],
-      searchable: {
-        suggestions: -> {
-          case query.klass.name
-          when "Post"    then query.order(created_at: :desc)
-          when "Project" then query.where(active: true).order(created_at: :desc)
-          end
-        }
-      }
-  end
-end
-```
-
-:::
-- **Surface:** fires only on the association picker; navbar palette returns no results on blank input; resource-index search bar shows the regular index listing
 
 </Option>
 

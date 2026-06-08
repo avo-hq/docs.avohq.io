@@ -563,6 +563,27 @@ The searchable association picker was rewritten in Avo 4 using Hotwire (Stimulus
 
 If you customized the v3 picker via CSS targeting Algolia's class names (`.aa-Input`, `.aa-Panel`, etc.), those selectors no longer match anything — the v4 picker uses Avo's own markup, and the Algolia stylesheet is no longer bundled.
 
+### Removed `suggestions:` DSL
+
+The association-only `suggestions:` key has been removed from `self.search` and `searchable: { ... }`. Default picker rows (when the picker opens with no typed input) are now handled inside the same `query:` proc using `q.blank?`.
+
+```ruby
+# Before
+self.search = {
+  query: -> { query.ransack(name_cont: q).result(distinct: false) },
+  suggestions: -> { query.order(created_at: :desc) } # [!code --]
+}
+
+# After
+self.search = {
+  query: -> {
+    q.blank? ? query.order(created_at: :desc) : query.ransack(name_cont: q).result(distinct: false) # [!code ++]
+  }
+}
+```
+
+See [Searchable associations](./associations/searchable) for field-level examples and `parent_record` usage.
+
 ## Pagination
 
 ### Replace `size` with `slots`
