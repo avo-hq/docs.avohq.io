@@ -350,11 +350,11 @@ In the above example, ransack is used to search for `Application` records based 
 
 This approach allows for flexible searching within associations, enabling you to find records based on related model attributes.
 
-## Limiting results
+## Results count
 
 <VersionReq version="3.11" />
 
-By default, Avo displays 8 search results whenever you search. Change the global default with `config.search_results_count`:
+By default, Avo displays 8 search results whenever you search. You can change the number of results displayed by configuring the `search_results_count` option:
 
 ```ruby
 Avo.configure do |config|
@@ -362,18 +362,25 @@ Avo.configure do |config|
 end
 ```
 
-Override per resource by adding `.limit()` in the `query:` proc. A user-applied limit always takes precedence over the global default:
+You can also change the number of results displayed on individual resources:
 
-```ruby{4-6}
+```ruby{3}
 class Avo::Resources::User < Avo::BaseResource
   self.search = {
-    query: -> {
-      query.ransack(name_cont: q).result(distinct: false).limit(5)
-    }
+    results_count: 5
+    query: -> {},
   }
 end
 ```
 
-:::info Custom array search providers
-If your `query:` proc returns an `Array` of hashes, Avo does **not** auto-cap the results. Slice in your proc with `.first(N)` if you need a limit.
-:::
+You can also assign a lambda to dynamically set the value.
+
+```ruby{3}
+class Avo::Resources::User < Avo::BaseResource
+  self.search = {
+    results_count: -> { user.admin? ? 30 : 10 }
+  }
+end
+```
+
+If you configure `results_count` by specifying it in the resource file then that number takes precedence over the global [`search_results_count`](#results-count) for that resource.
