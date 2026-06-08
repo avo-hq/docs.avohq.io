@@ -88,8 +88,6 @@ field :user, as: :belongs_to, searchable: {
 }
 ```
 
-Use `q.blank?` (stripped string), not `params[:q].blank?`.
-
 If your `query:` proc does not handle `q.blank?`, the picker stays empty when opened with no input.
 
 ### `enabled:`
