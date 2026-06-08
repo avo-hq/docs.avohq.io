@@ -615,7 +615,9 @@ Using [searchable](./associations/searchable.html) is recommended for listing un
 
 <Option name="`persistence`">
 
-### Persistent UI State Configuration #### Overview
+### Persistent UI State Configuration
+
+#### Overview
 
 The `persistence` configuration enables retention of specific UI settings, such as pagination and static filters, across user interactions.
 
