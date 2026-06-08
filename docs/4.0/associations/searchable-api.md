@@ -45,7 +45,6 @@ class Avo::Resources::Review < Avo::BaseResource
           query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false)
         },
         suggestions: -> { query.where(role: :reviewer).order(created_at: :desc) },
-        limit: 5,
         enabled: -> { current_user.admin? }
       }
   end
@@ -79,7 +78,7 @@ self.search = {
 - **Type:** Proc / Lambda
 - **Default:** `nil` — falls back to `self.search[:query]`. If neither is set, the picker stays empty.
 - **Precedence:** field-level overrides resource-level
-- **Cap:** results capped at the configured `limit`
+- **Cap:** add `.limit(N)` in the proc to cap this picker; otherwise Avo applies `config.search_results_count`. A user-applied `.limit()` always wins.
 - **Locals:** `q`, `query`, `params`, `parent_record`, `parent_resource`
 
 #### Polymorphic fields
@@ -145,7 +144,6 @@ self.search = {
 - **Type:** Proc / Lambda
 - **Default:** `nil` — falls back to `self.search[:suggestions]`, else `index_query.order(id: :desc)`
 - **Precedence:** field-level overrides resource-level
-- **Cap:** results capped at the configured `limit`
 - **Locals:** `q`, `query`, `params`, `parent_record`, `parent_resource`
 
 #### Polymorphic fields
@@ -192,37 +190,6 @@ end
 
 :::
 - **Surface:** fires only on the association picker; navbar palette returns no results on blank input; resource-index search bar shows the regular index listing
-
-</Option>
-
-<Option name="`limit`">
-
-Caps how many results the picker returns.
-
-::: code-group
-
-```ruby [On the field]
-field :user, as: :belongs_to, searchable: {
-  limit: 5
-}
-```
-
-```ruby [On the resource]
-self.search = {
-  results_count: 5
-}
-```
-
-:::
-
-::: info Different key names
-The field-level key is `limit`; the resource-level equivalent is `results_count`. Both accept the same value types.
-:::
-
-- **Type:** Integer, or Proc / Lambda returning an Integer
-- **Default:** `nil` — falls back to `self.search[:results_count]`, else `Avo.configuration.search_results_count` (`8`)
-- **Precedence:** field-level overrides resource-level `self.search[:results_count]`
-- **Locals:** `params` (only when used as a Proc / Lambda)
 
 </Option>
 

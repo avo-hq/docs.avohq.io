@@ -13,7 +13,7 @@ class Avo::Resources::CourseLink < Avo::BaseResource
 end
 ```
 
-See [Searchable associations](./../associations/searchable) for setup requirements, the hash form (`searchable: { query:, suggestions:, limit:, enabled: }`), proc locals, and precedence rules.
+See [Searchable associations](./../associations/searchable) for setup requirements, the hash form (`searchable: { query:, suggestions:, enabled: }`), proc locals, and precedence rules.
 
 #### Default
 

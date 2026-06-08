@@ -46,10 +46,9 @@ class Avo::Resources::Review < Avo::BaseResource
       as: :belongs_to,
       searchable: {
         query: -> {
-          query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false)
+          query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false).limit(5)
         },
         suggestions: -> { query.where(role: :reviewer).order(created_at: :desc) },
-        limit: 5,
         enabled: -> { current_user.admin? }
       }
   end
@@ -58,7 +57,7 @@ end
 
 ### `query:`
 
-Runs while the user is typing. The records it returns fill the dropdown, capped at the configured limit. If set, it takes precedence over the target resource's `self.search[:query]`.
+Runs while the user is typing. The records it returns fill the dropdown. If set, it takes precedence over the target resource's `self.search[:query]`. Add `.limit(N)` in the proc to cap results for this picker; otherwise Avo applies `config.search_results_count`.
 
 ```ruby
 query: -> { query.ransack(name_cont: q).result(distinct: false) }
@@ -66,7 +65,7 @@ query: -> { query.ransack(name_cont: q).result(distinct: false) }
 
 ### `suggestions:`
 
-Runs when the picker is opened **without** any typed input. The records it returns fill the dropdown, capped at the configured limit. If set, it takes precedence over the target resource's `self.search[:suggestions]`.
+Runs when the picker is opened **without** any typed input. The records it returns fill the dropdown. If set, it takes precedence over the target resource's `self.search[:suggestions]`.
 
 ```ruby
 suggestions: -> { query.where(active: true).order(created_at: :desc) }
@@ -77,18 +76,6 @@ suggestions: -> { query.where(active: true).order(created_at: :desc) }
 :::info
 `suggestions:` only fires on the **association picker** (`:association`). The navbar palette returns no results on a blank query, and the resource-index search bar shows the regular index listing.
 :::
-
-### `limit:`
-
-Number or proc. Caps how many results a single picker returns. Overrides the target resource's `self.search[:results_count]` for this field.
-
-```ruby{1,3}
-limit: 5
-# or
-limit: -> { params[:context] == "popover" ? 3 : 10 }
-```
-
-When neither `limit:` (field) nor `results_count:` (resource) is set, Avo falls back to `Avo.configuration.search_results_count` (default `8`).
 
 ### `enabled:`
 
@@ -144,7 +131,6 @@ field :reviewable,
   polymorphic_as: :reviewable,
   types: [::Post, ::Project],
   searchable: {
-    limit: 3,
     suggestions: -> {
       klass = query.respond_to?(:klass) ? query.klass : query
       if parent_record&.persisted? && parent_record.reviewable_type == klass.name
@@ -172,7 +158,8 @@ A field-level hash key always overrides the equivalent setting on the target res
 
 - `searchable: { query: }` overrides `self.search[:query]`
 - `searchable: { suggestions: }` overrides `self.search[:suggestions]`
-- `searchable: { limit: }` overrides `self.search[:results_count]`, which in turn overrides `Avo.configuration.search_results_count` (default `8`)
+
+Result limits follow the same rules as [resource search](./../search/resource-search#limiting-results): a `.limit()` in the `query:` proc wins; otherwise Avo applies `config.search_results_count` (default `8`).
 
 One resource's `self.search[:query]` is shared by every searchable picker pointing at it. If a single picker needs a different scope than the others, override it at the field level with `searchable: { query: ... }`.
 
@@ -209,5 +196,4 @@ suggestions: -> { query.where.not(id: parent_record&.id).order(created_at: :desc
 | ------------- | --------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `query`       | Proc            | resource's `self.search[:query]`                                                              | Filters records while the user is typing                                      |
 | `suggestions` | Proc            | resource's `self.search[:suggestions]`, else latest records from `index_query` by id desc     | Records shown when the picker opens with no input                             |
-| `limit`       | Integer or Proc | resource's `self.search[:results_count]`, else `Avo.configuration.search_results_count` (`8`) | Caps how many results the picker returns                                      |
 | `enabled`     | Boolean or Proc | `true`                                                                                        | Gates whether the searchable widget renders; `false` falls back to `<select>` |

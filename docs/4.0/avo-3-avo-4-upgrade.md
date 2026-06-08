@@ -150,6 +150,17 @@ The global search now includes a comprehensive results page:
 
 #### Breaking changes and migration notes
 
+##### Search result limits simplified
+
+`self.search[:results_count]` has been removed to reduce Avo-specific DSL where plain Rails already covers the need — use `.limit()` on the relation inside your `query:` proc instead of a separate results-count option.
+
+Use one of these instead:
+
+- **Global default**: `config.search_results_count = 16` in `config/initializers/avo.rb`
+- **Per-resource**: `.limit(N)` inside the `query:` proc
+
+A user-applied `.limit()` on a relation always takes precedence over the global default. Custom search providers that return an `Array` are never auto-capped — slice with `.first(N)` in your proc if needed.
+
 <br>
 
 ##### Avo Pro mount point removal

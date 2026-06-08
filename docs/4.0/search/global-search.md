@@ -109,9 +109,9 @@ end
 ```
 </Option>
 
-<Option name="`results_count`">
+## Limiting results
 
-By default, Avo displays 8 search results for each resource in the global search. You can change the number of results displayed by configuring the `search_results_count` option:
+By default, Avo displays 8 search results in the global search dropdown. Change the global default in your initializer:
 
 ```ruby{3}
 # config/initializers/avo.rb
@@ -120,33 +120,33 @@ Avo.configure do |config|
 end
 ```
 
-You can also change the number of results displayed on individual resources:
+To limit results for a specific resource, add `.limit()` inside the `query:` proc. A user-applied limit always takes precedence over the global default:
 
-```ruby{4}
-# app/avo/resources/user.rb
+```ruby{4-6}
 class Avo::Resources::User < Avo::BaseResource
   self.search = {
-    results_count: 5
     query: -> {
-      # ...
-    },
+      query.ransack(name_cont: q).result(distinct: false).limit(5)
+    }
   }
 end
 ```
 
-You can also assign a lambda to dynamically set the value. Inside that block you have access to all attributes of the [`Avo::ExecutionContext`](./../execution-context).
+Dynamic limits work too — the `query:` block has access to all [`Avo::ExecutionContext`](./../execution-context) locals:
 
-```ruby{3}
+```ruby{3-5}
 class Avo::Resources::User < Avo::BaseResource
   self.search = {
-    results_count: -> { user.admin? ? 30 : 10 }
+    query: -> {
+      query.ransack(name_cont: q).result(distinct: false).limit(user.admin? ? 30 : 10)
+    }
   }
 end
 ```
 
-If you configure `results_count` by specifying it in the resource file then that number takes precedence over the global [`search_results_count`](#search_results_count) for that resource.
-
-</Option>
+:::info Custom array search providers
+If your `query:` proc returns an `Array` of hashes (instead of an ActiveRecord relation), Avo does **not** auto-cap the results. Slice in your proc with `.first(N)` or `.take(N)` if you need a limit.
+:::
 
 <Option name="`display_count`">
 
