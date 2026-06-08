@@ -1,5 +1,6 @@
 ---
 license: pro
+search_item_path: true
 ---
 
 # Global Search
@@ -64,29 +65,27 @@ end
 
 <Option name="`item`">
 
-<!-- @include: ./../common/search_item_common.md-->
+Configures how each result row renders in the palette. It's a hash with the following keys:
 
-#### `path`
+<!-- @include: ./../common/search_item_keys_common.md-->
 
-Global search results are clickable, so the `item` hash accepts an extra `path` key that controls where a result links to. It defaults to the record's show page.
-
-| Option | Description | Default | Possible Values |
-|--------|-------------|---------|-----------------|
-| `path` | The path to navigate to when clicking the result | Record's show page | Any valid path |
-
-```ruby{5}
-self.search = {
-  query: -> { query.ransack(name_cont: q, m: "or").result(distinct: false) },
-  item: -> do
-    {
-      title: record.name,
-      path: avo.resources_post_path(record, custom: "search")
-    }
-  end
-}
+```ruby{5-13}
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.search = {
+    query: -> { query.ransack(name_cont: q, body_cont: q, m: "or").result(distinct: false) },
+    item: -> do
+      {
+        title: "[#{record.id}] #{record.name}",
+        description: record.truncated_body,
+        image_url: main_app.url_for(record.cover_photo),
+        image_format: :rounded,
+        path: avo.resources_post_path(record, custom: "search")
+      }
+    end
+  }
+end
 ```
-
-`path` only applies to global search. The [searchable association picker](./../associations/searchable) ignores it — it selects a record into the form rather than navigating.
 
 </Option>
 
@@ -109,44 +108,7 @@ end
 ```
 </Option>
 
-## Limiting results
-
-By default, Avo displays 8 search results in the global search dropdown. Change the global default in your initializer:
-
-```ruby{3}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.search_results_count = 16
-end
-```
-
-To limit results for a specific resource, add `.limit()` inside the `query:` proc. A user-applied limit always takes precedence over the global default:
-
-```ruby{4-6}
-class Avo::Resources::User < Avo::BaseResource
-  self.search = {
-    query: -> {
-      query.ransack(name_cont: q).result(distinct: false).limit(5)
-    }
-  }
-end
-```
-
-Dynamic limits work too — the `query:` block has access to all [`Avo::ExecutionContext`](./../execution-context) locals:
-
-```ruby{3-5}
-class Avo::Resources::User < Avo::BaseResource
-  self.search = {
-    query: -> {
-      query.ransack(name_cont: q).result(distinct: false).limit(user.admin? ? 30 : 10)
-    }
-  }
-end
-```
-
-:::info Custom array search providers
-If your `query:` proc returns an `Array` of hashes (instead of an ActiveRecord relation), Avo does **not** auto-cap the results. Slice in your proc with `.first(N)` or `.take(N)` if you need a limit.
-:::
+<!-- @include: ./../common/search_limit_common.md-->
 
 <Option name="`display_count`">
 

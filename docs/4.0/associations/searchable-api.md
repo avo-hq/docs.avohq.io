@@ -6,47 +6,61 @@ guide: ./searchable.html
 
 # Searchable associations API
 
-`searchable` accepts either a boolean or a Hash of options.
+Per-option reference for `searchable`. For task-oriented documentation, see the [Searchable associations guide](./searchable.html).
 
-::: code-group
+| Form | Value | Behavior |
+| ---- | ----- | -------- |
+| Boolean | `true` | Searchable picker using the target resource's [`self.search`](./../search/resource-search.html#enable-search-for-a-resource) |
+| Boolean | `false` | Standard `<select>` |
+| Hash | `{ query:, item:, enabled: }` | Per-field overrides |
 
-```ruby{7} [Boolean form]
-# Opts in with the target resource's self.search[:query].
+## Boolean form
 
-# app/avo/resources/review.rb
-class Avo::Resources::Review < Avo::BaseResource
+Pass `searchable: true` on the association field. The picker reads `query:` and `item:` from the **target resource's** [`self.search`](./../search/resource-search.html#enable-search-for-a-resource) hash. Nothing is configured on the field itself.
+
+If the target resource has no [`self.search[:query]`](./../search/resource-search.html#enable-search-for-a-resource), the picker stays empty. If it has no [`self.search[:item]`](./../search/global-search.html#item), rows fall back to the resource title.
+
+```ruby{4}
+# app/avo/resources/course.rb
+class Avo::Resources::Course < Avo::BaseResource
   def fields
-    field :id, as: :id
-    field :user, as: :belongs_to, searchable: true
+    field :links, as: :has_many, searchable: true
   end
 end
+```
 
-# app/avo/resources/user.rb
-class Avo::Resources::User < Avo::BaseResource
+```ruby{2-12}
+# app/avo/resources/link.rb
+class Avo::Resources::Link < Avo::BaseResource
   self.search = {
     query: -> {
-      query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false)
+      query.ransack(title_cont: q).result(distinct: false)
+    },
+    item: -> {
+      {title: record.title, description: record.url}
     }
   }
 end
 ```
 
-```ruby{9-16} [Hash form]
-# Overrides any of the resource defaults per field.
+The `links` field on `Avo::Resources::Course` uses both procs from `Avo::Resources::Link`.
 
+## Hash form
+
+Pass a hash when a single picker needs different `query:`, `item:`, or `enabled:` behavior than the target resource provides.
+
+```ruby{6-14}
 # app/avo/resources/review.rb
 class Avo::Resources::Review < Avo::BaseResource
   def fields
-    field :id, as: :id
     field :user,
       as: :belongs_to,
       searchable: {
         query: -> {
-          if q.blank?
-            query.where(role: :reviewer).order(created_at: :desc)
-          else
-            query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false)
-          end
+          query.ransack(name_cont: q).result(distinct: false)
+        },
+        item: -> {
+          {title: "Reviewer: #{record.first_name}", description: record.email}
         },
         enabled: -> { current_user.admin? }
       }
@@ -54,54 +68,38 @@ class Avo::Resources::Review < Avo::BaseResource
 end
 ```
 
-:::
-
-## Search behavior
+## Options
 
 <Option name="`query`">
 
 Proc that filters records as the user types.
 
-::: code-group
-
-```ruby [On the field]
-field :user, as: :belongs_to, searchable: {
-  query: -> { query.ransack(name_cont: q).result(distinct: false) }
-}
-```
-
-```ruby [On the resource]
-self.search = {
-  query: -> { query.ransack(name_cont: q).result(distinct: false) }
-}
-```
-
-:::
-
 - **Type:** Proc / Lambda
-- **Default:** `nil` — falls back to `self.search[:query]`. If neither is set, the picker stays empty.
+- **Where:** `searchable: { query: }` on the field, or [`self.search[:query]`](./../search/resource-search.html#enable-search-for-a-resource) on the target resource
+- **Default:** `nil` — falls back to [`self.search[:query]`](./../search/resource-search.html#enable-search-for-a-resource). If neither is set, the picker stays empty.
 - **Precedence:** field-level overrides resource-level
-- **Cap:** add `.limit(N)` in the proc to cap this picker; otherwise Avo applies `config.search_results_count`. A user-applied `.limit()` always wins.
-- **Locals:** `q`, `query`, `params`, `parent_record`, `parent_resource`
+- **Cap:** same rules as [Limiting results](./../search/resource-search.html#limiting-results)
+- **Locals:** `q`, `query`, `params`, `search_type`, `parent_record`, `parent_resource`
+
+`parent_record` can be `nil` on create forms. Guard with `&.` when referencing it.
+
+```ruby{5}
+# app/avo/resources/review.rb
+class Avo::Resources::Review < Avo::BaseResource
+  def fields
+    field :user, as: :belongs_to, searchable: {
+      query: -> { query.ransack(name_cont: q).result(distinct: false) }
+    }
+  end
+end
+```
 
 #### Polymorphic fields
 
-One proc runs for every declared type — branch on `query.klass` when the search needs to differ per type.
+One proc runs for every declared type. Branch on `query.klass` when the search needs to differ per type.
 
-::: code-group
-
-```ruby [Boolean form]
-# Each target resource defines its own self.search[:query]
-class Avo::Resources::Post < Avo::BaseResource
-  self.search = { query: -> { query.ransack(body_cont: q).result(distinct: false) } }
-end
-
-class Avo::Resources::Project < Avo::BaseResource
-  self.search = { query: -> { query.ransack(name_cont: q).result(distinct: false) } }
-end
-```
-
-```ruby [Hash form]
+```ruby{9-14}
+# app/avo/resources/comment.rb
 class Avo::Resources::Comment < Avo::BaseResource
   def fields
     field :commentable,
@@ -120,7 +118,37 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-:::
+</Option>
+
+<Option name="`item`">
+
+Proc that renders each row in the picker dropdown.
+
+- **Type:** Proc / Lambda
+- **Where:** `searchable: { item: }` on the field, or [`self.search[:item]`](./../search/global-search.html#item) on the target resource
+- **Default:** `nil` — falls back to [`self.search[:item]`](./../search/global-search.html#item), then the resource title
+- **Precedence:** field-level overrides resource-level
+- **Locals:** `record`, `resource`
+
+Return value keys:
+
+<!-- @include: ./../common/search_item_keys_common.md-->
+
+```ruby{5-10}
+# app/avo/resources/review.rb
+class Avo::Resources::Review < Avo::BaseResource
+  def fields
+    field :user, as: :belongs_to, searchable: {
+      item: -> do
+        {
+          title: "Reviewer: #{record.first_name}", 
+          description: record.email
+        }
+      end
+    }
+  end
+end
+```
 
 </Option>
 
@@ -128,38 +156,21 @@ end
 
 Toggles whether the picker renders as a searchable widget.
 
-```ruby
-searchable: {
-  enabled: -> { current_user.admin? }
-}
-```
-
 - **Type:** Boolean, or Proc / Lambda returning a Boolean
+- **Where:** `searchable: { enabled: }` on the field
 - **Default:** `true` (when omitted)
 - **Falsy:** field renders the standard `<select>` instead
 - **Locals:** `record`, `resource`, `current_user`
 
-</Option>
-
-## Customize the search results
-
-<Option name="`item`">
-
-Customize the search results.
-
-```ruby
-# app/avo/resources/user.rb
-class Avo::Resources::User < Avo::BaseResource
-  self.search = {
-    item: -> do
-      {
-        title: "[#{record.id}] #{record.name}",
-        description: record.email,
-        image_url: main_app.url_for(record.avatar),
-        image_format: :rounded
-      }
-    end
-  }
+```ruby{5}
+# app/avo/resources/review.rb
+class Avo::Resources::Review < Avo::BaseResource
+  def fields
+    field :user, as: :belongs_to, searchable: {
+      enabled: -> { current_user.admin? }
+    }
+  end
 end
 ```
+
 </Option>
