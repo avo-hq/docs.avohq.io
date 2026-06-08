@@ -421,10 +421,6 @@ You can add this property on [`id`](./fields/id.html), [`text`](./fields/text.ht
 
 Optionally you can enable the global config `id_links_to_resource`. More on that on the [id links to resource docs page](./customization.html#id-links-to-resource).
 
-**Related:**
- - [ID links to resource](./customization#id-links-to-resource)
- - [Modify controls placement and appearance](./customization#modify-controls-placement-and-appearance)
-
 ## Align text on Index view
 
 It's customary on tables to align numbers to the right. You can do that using the `html` option.
