@@ -295,8 +295,6 @@ field :name, as: :text, disabled: true
 
 ### Disabled as a block
 
-<VersionReq version="2.14" class="mt-2" />
-
 You may use a block as well. It will be executed in the `Avo::ExecutionContext` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
 
 ```ruby
@@ -568,7 +566,7 @@ The chart provides a visual representation of data distribution, making it easie
 
 Allows to specify the target attribute on the model for each field. By default the target attribute is the field's id.
 
-<!-- <VersionReq version="3.6.2" /> -->
+<!-- -->
 
 Usage example:
 
@@ -588,7 +586,7 @@ field :secondary_field_for_status,
 
 This handy option enables you to send arbitrary information to the field. It's especially useful when you're building your own [custom fields](./custom-fields) or you are using [custom components](#components) for the built-in fields.
 
-<!-- <VersionReq version="3.10" /> -->
+<!-- -->
 
 Usage example:
 
@@ -621,8 +619,6 @@ Within your field template you can now access the `@field.meta` attribute.
 
 <Option name="`copyable`">
 
-<VersionReq version="3.15.6" class="mt-2" />
-
 The `copyable` option enables users to copy the field's value to their clipboard. When set to `true`, a clipboard icon appears when hovering over the field value, allowing easy copying. This feature can be particularly useful for fields such as unique identifiers, URLs, or other text-based content that users may frequently need to copy.
 
 ```ruby
@@ -634,8 +630,6 @@ The `copyable` option is available for text-based fields such as `:text`, `:text
 </Option>
 
 <Option name="`react_on`">
-
-<VersionReq version="4.0" class="mt-2" />
 
 The `react_on` option enables dynamic reactivity for a field when changes occur elsewhere in the form. When a specified field changes, the current field is re-evaluated, and the `@record` object is refreshed with the latest form values.
 

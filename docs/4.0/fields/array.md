@@ -1,8 +1,7 @@
 ---
-version: '3.16.2'
 license: community
 betaStatus: beta
-demoVideo: https://youtu.be/wnWvzQyyo6A?t=1030
+demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1030"
 ---
 
 # Array

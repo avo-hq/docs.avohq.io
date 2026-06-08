@@ -264,8 +264,6 @@ end
 
 <Option name="`close_modal`" headingSize=3>
 
-<VersionReq version="3.3.0" class="mt-4" />
-
 This type of response becomes useful when you are working with a form and need to execute an action without redirecting, ensuring that the form remains filled as it is.
 
 `close_modal` will flash all the messages gathered by [action responses](#action-responses) and will close the modal using turbo streams keeping the page still.
@@ -303,8 +301,6 @@ end
 </Option>
 
 <Option name="`navigate_to_action`" headingSize=3>
-
-<VersionReq version="3.4.2" class="mt-4" />
 
 You may want to redirect to another action. Here's an example of how to create a multi-step process, passing arguments from one action to another.
 In this example the initial action prompts the user to select the fields they wish to update, and in the subsequent action, the chosen fields will be accessible for updating.
@@ -356,8 +352,6 @@ You can see this multi-step process in action by visiting the [avodemo](https://
 
 <Option name="`append_to_response`" headingSize=3>
 
-<VersionReq version="3.10.3" class="mt-4" />
-
 Avo action responses are in the `turbo_stream` format. You can use the `append_to_response` method to append additional turbo stream responses to the default response.
 
 ```ruby{5-7}
@@ -394,8 +388,6 @@ append_to_response -> {
 </Option>
 
 <Option name="`reload_records`" headingSize=3>
-
-<VersionReq version="3.14.0" class="my-4" />
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/6b9ae6a3968c447f98ac4f9a161fe781?sid=17f08010-6a56-4e8c-8b80-692424327b55" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 

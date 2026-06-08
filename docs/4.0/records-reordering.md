@@ -1,7 +1,6 @@
 ---
-version: "1.24.2"
 license: pro
-demoVideo: https://www.youtube.com/watch?v=LEALfPiyfRk
+demoVideo: "https://www.youtube.com/watch?v=LEALfPiyfRk"
 ---
 
 # Records ordering
@@ -120,8 +119,6 @@ end
 ```
 
 ## Reorder using drag and drop
-
-<BetaStatus label="Beta"></BetaStatus>
 
 Sometimes just picking up a record and dropping it in the position that you'd like it to be. That's exactly what this feature does.
 

@@ -1,6 +1,6 @@
 ---
 license: community
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Generating a custom component for a field

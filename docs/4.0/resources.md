@@ -393,7 +393,7 @@ This means that other resources that are not declared in this array will not sho
 
 ## Extending `Avo::BaseResource`
 
-<VersionReq version="3.10.7" /> we have restructured the `Avo::BaseResource` to enhance user customization capabilities. The existing functionality has been moved to a new base class `Avo::Resources::Base`, and `Avo::BaseResource` is now left empty for user overrides. This allows users to easily add custom methods that all of their resources will inherit, without having to modify the internal base class.
+we have restructured the `Avo::BaseResource` to enhance user customization capabilities. The existing functionality has been moved to a new base class `Avo::Resources::Base`, and `Avo::BaseResource` is now left empty for user overrides. This allows users to easily add custom methods that all of their resources will inherit, without having to modify the internal base class.
 
 ### How to Customize `Avo::BaseResource`
 
@@ -592,7 +592,6 @@ end
 
 <Option name="`self.confirm_on_save`">
 
-<VersionReq version="3.10.10" />
 If you would like to ask for confirmation when saving a resource you can do so by setting `confirm_on_save` to `true`.
 
 That will help add friction to the saving process, avoiding human error.
@@ -623,7 +622,7 @@ end
 
 Find out more on the [grid view documentation page](grid-view).
 
-<VersionReq version="3.5.6" /> `default_view_type` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource` and `view`. Example:
+`default_view_type` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource` and `view`. Example:
 
 ```ruby
 class Avo::Resources::Post < Avo::BaseResource
@@ -818,7 +817,7 @@ self.components = {
 }
 ```
 
-<VersionReq version="3.11.8" /> more components can be replaced. From this version, keys must be strings that match the original component with the exception of those from the snippet above.
+more components can be replaced. From this version, keys must be strings that match the original component with the exception of those from the snippet above.
 
 Here is a list of all the supported customizable components:
 
@@ -892,8 +891,6 @@ end
 
 <Option name="`self.default_sort_column`">
 
-<VersionReq version="3.10.7" />
-
 By default, Avo sorts records on the <Index /> view by the `created_at` attribute. However, you can customize this behavior using the `default_sort_column` option in your resource file.
 
 #### Default
@@ -938,8 +935,6 @@ end
 
 <Option name="`self.default_sort_direction`">
 
-<VersionReq version="3.11.5" />
-
 By default, Avo sorts records in descending order of the [default sort column](./resources#self.default_sort_column). However, you can customize this using the `self.default_sort_direction` option in your resource file.
 
 #### Default
@@ -963,10 +958,8 @@ end
 
 <Option name="`self.controls_placement`">
 
-<VersionReq version="3.13.7" />
-
 :::warning
-<VersionReq version="3.16.3" /> `controls_placement` option is **obsolete**.
+`controls_placement` option is **obsolete**.
 
 Check [row controls configuration on table view](table-view.html#resource-configuration) instead
 :::
@@ -1133,8 +1126,6 @@ end
 
 <Option name="`self.external_link`">
 
-<VersionReq version="3.15.6" />
-
 <br>
 <br>
 
@@ -1163,8 +1154,6 @@ When this option is configured, Avo will display an external link button for the
 </Option>
 
 <Option name="`self.discreet_information`">
-
-<VersionReq version="3.17" />
 
 Oftern we want to show some information about records without adding another field. `discreet_information` does exactly that 🙌
 

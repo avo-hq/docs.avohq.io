@@ -1,9 +1,8 @@
 ---
-version: '1.0'
 license: community
-field_type: 'date_time'
-default_format: 'yyyy-LL-dd TT'
-default_picker_format: 'Y-m-d H:i:S'
+field_type: date_time
+default_format: "yyyy-LL-dd TT"
+default_picker_format: "Y-m-d H:i:S"
 ---
 
 # DateTime

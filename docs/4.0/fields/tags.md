@@ -1,6 +1,5 @@
 ---
 license: community
-version: '2.6.0'
 demoVideo: https://youtu.be/DKKSjNUvuBA
 ---
 
@@ -19,9 +18,7 @@ field :skills, as: :tags
 <Option name="`suggestions`">
 
 :::warning
-**This warning no longer applies** <VersionReq version="3.11.8" />
-
-If you're using this field as `filterable`, dynamic filters are not yet picking these suggestions.
+**This warning no longer applies** If you're using this field as `filterable`, dynamic filters are not yet picking these suggestions.
 
 Please use the custom dynamic filters [suggestions](../dynamic-filters#suggestions) option to specify filter suggestions.
 :::
@@ -297,8 +294,7 @@ To mitigate that use the [`format_using`](tags#format_using) option.
 <Option name="`format_using`" since="3.10">
 
 :::info
-Since <Version version="3.10" />
-:::
+Since :::
 
 The `format_using` option allows you to pass an array of custom strings or hashes to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.
 

@@ -1,5 +1,4 @@
 ---
-version: '3.17.0'
 license: community
 ---
 

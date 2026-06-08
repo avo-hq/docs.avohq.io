@@ -155,8 +155,7 @@ dynamic_filter :published_at, type: :time
  - `>=` (greater than or equal to)
  - `<` (lower than)
  - `<=` (lower than or equal to)
- - Is within <VersionReq version="3.10.11"/>
- - Is null
+ - Is within - Is null
  - Is not null
 
 ```ruby
@@ -273,9 +272,7 @@ Contained in will not work when using the `acts-as-taggable-on` gem.
 Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[skills][array_contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L46)
 
 :::info
-The source code uses custom dynamic filters DSL available <VersionReq version="3.10.0" />
-
-Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
+The source code uses custom dynamic filters DSL available Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
 :::
 
 </Option>
@@ -320,9 +317,9 @@ end
 </Option>
 
 ## Field to filter matching
-On versions **lower** than <Version version="3.10.0" /> the filters are not configurable so each field will have a dedicated filter type. Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
+On versions **lower** than the filters are not configurable so each field will have a dedicated filter type. Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
 
-Field-to-filter matching in versions **lower** than <Version version="3.10.0" />:
+Field-to-filter matching in versions **lower** than :
 
 ```ruby
 def field_to_filter(type)
@@ -351,10 +348,7 @@ The default (`always_expanded = true`) avoids this since the dynamic filters bar
 
 ## Custom Dynamic Filters
 
-<BetaStatus label="Beta" />
-<VersionReq version="3.10.0" />
-
-Dynamic filters are great but strict, as each field creates a specific filter type, each with its own icon and query. The query remains static, targeting only that particular field. Since version <Version version="3.10" />, dynamic filters have become customizable and, even better, can be declared without being bound to a field.
+Dynamic filters are great but strict, as each field creates a specific filter type, each with its own icon and query. The query remains static, targeting only that particular field. Custom dynamic filters can be declared and, even better, can be declared without being bound to a field.
 
 There are two ways to define custom dynamic filters: the field's `filterable` option and the `dynamic_filter` method.
 
@@ -452,7 +446,7 @@ Computed from field using [`field_to_filter` method](#field-to-filter-matching).
 <Option name="`query`">
 
 :::info
-<VersionReq version="3.11.8" /> the default filtering system is no longer applied when a `query` is specified on a dynamic filter.
+The default filtering system is no longer applied when a `query` is specified on a dynamic filter.
 :::
 
 Customize filter's query
@@ -630,7 +624,7 @@ Suggestions work on filters that provide text input, enhancing the user experien
 `nil`
 
 :::info
-<VersionReq version="3.11.8" /> on `tags` fields the `suggestions` are fetched from the field.
+on `tags` fields the `suggestions` are fetched from the field.
 :::
 
 #### Possible values
@@ -653,7 +647,7 @@ dynamic_filter :first_name,
 
 - Proc that returns an array of strings
 
-<VersionReq version="3.15.1" /> when the filter is applied to an association, the `parent_record` becomes accessible within the `suggestions` block.
+when the filter is applied to an association, the `parent_record` becomes accessible within the `suggestions` block.
 
 ```ruby {6,12}
 # Using field's filterable option
@@ -672,7 +666,6 @@ dynamic_filter :first_name,
 
 
 - Array of hashes with the keys `value`, `label` and optionally an `avatar`
-<VersionReq version="3.11.8" />
 :::warning Applicable only to filters with type tags.
 :::
 
@@ -743,8 +736,6 @@ dynamic_filter :tags,
 </Option>
 
 <Option name="`fetch_values_from`">
-
-<VersionReq version="3.13" />
 
 :::warning
 This option is compatible **only** with `tags` filters.
@@ -844,8 +835,6 @@ end
 </Option>
 
 <Option name="`options`">
-
-<VersionReq version="3.10.10" />
 
 Customize the options **for select type filters**. **This is available only for select type filters** and determines the options visible in the select dropdown.
 
@@ -1001,8 +990,6 @@ field :is_capital,
 </Option>
 
 <Option name="`humanized_condition`">
-
-<VersionReq version="3.24.0" />
 
 Allows you to customize how filter conditions are displayed in the filter's pill interface by providing humanized, user-friendly representations of the internal filter conditions.
 

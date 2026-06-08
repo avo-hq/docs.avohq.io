@@ -1,7 +1,6 @@
 ---
-version: "3.17.0"
 betaStatus: Alpha
-demoVideo: https://youtu.be/wnWvzQyyo6A?t=1698
+demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1698"
 ---
 
 # Media Library

@@ -1,8 +1,6 @@
 ---
 license: community
-next:
-  text: 'Field options'
-  link: '/3.0/field-options'
+next: {"text" => "Field options", "link" => "/3.0/field-options"}
 ---
 
 # HTML attributes

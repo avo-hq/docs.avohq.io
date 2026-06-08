@@ -1,6 +1,5 @@
 ---
 feedbackId: 839
-version: unreleased
 license: pro
 ---
 
@@ -86,7 +85,7 @@ You may also want to give the user the ability to query data in different ranges
 
 You can also set a default range using the `initial_range` attribute.
 
-The ranges have been changed a bit since **version 2.8**. The parameter you pass to the `range` option will be directly passed to the [`options_for_select`](https://apidock.com/rails/v5.2.3/ActionView/Helpers/FormOptionsHelper/options_for_select) helper, so it behaves more like a regular `select_tag`.
+The parameter you pass to the `range` option will be directly passed to the [`options_for_select`](https://apidock.com/rails/v5.2.3/ActionView/Helpers/FormOptionsHelper/options_for_select) helper, so it behaves more like a regular `select_tag`.
 
 ```ruby{4-15}
 class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
@@ -249,7 +248,7 @@ end
 
 <br>
 
-<VersionReq version="3.13" /> `prefix` and `suffix` became callable options.
+`prefix` and `suffix` became callable options.
 
 The blocks are executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent`.
 
@@ -323,7 +322,6 @@ If you'd like to use [Groupdate](https://github.com/ankane/groupdate), [Hightop]
 
 `chart.js` is supported for the time being. So if you need support for other types, please reach out or post a PR (🙏 PRs are much appreciated).
 
-<VersionReq version="3.6.1" />
 `self.chartkick_options` accepts callable blocks:
 ```ruby
 class Avo::Cards::ExampleAreaChart < Avo::Cards::ChartkickCard
@@ -417,8 +415,6 @@ end
 
 ## Cards visibility
 
-<VersionReq version="2.28" />
-
 It's common to show the same card to multiple types of users (admins, regular users). In that scenario you might want to hide some cards for the regular users and show them just to the admins.
 
 You can use the `visible` option to do that. It can be a `boolean` or a `block` where you can access the `params`, `current_user`, `context`, `parent`, and `card` object.
@@ -505,8 +501,6 @@ Dividers can be a simple line between your cards or have some text on them that 
 When you don't want to show the line, you can enable the `invisible` option, which adds the divider but does not display a border or label.
 
 ## Dividers visibility
-
-<VersionReq version="2.28" />
 
 You might want to conditionally show/hide a divider based on a few factors. You can do that using the `visible` option.
 

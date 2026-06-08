@@ -1,9 +1,8 @@
 ---
-outline: [2,3]
-version: "3.17.0"
+outline: [2, 3]
 license: community
 betaStatus: Beta
-demoVideo: https://youtu.be/wnWvzQyyo6A?t=1475
+demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1475"
 ---
 
 # Field Discovery

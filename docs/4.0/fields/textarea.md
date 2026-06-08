@@ -1,7 +1,6 @@
 ---
-version: '1.0'
 license: community
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Textarea

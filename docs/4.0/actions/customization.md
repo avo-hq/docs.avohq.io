@@ -4,7 +4,6 @@ feedbackId: 837
 outline: deep
 ---
 
-
 # Customization
 
 Actions can be customized in several ways to enhance the user experience. You can modify the action's display name, confirmation message, button labels, and confirmation behavior between other things.
@@ -237,8 +236,6 @@ The block will be executed within the [`Avo::ExecutionContext`](./../execution-c
 </Option>
 
 <Option name="`close_modal_on_backdrop_click`" headingSize=3>
-
-<VersionReq version="3.14.0" class="mt-4" />
 
 By default, action modals use a dynamic backdrop.
 

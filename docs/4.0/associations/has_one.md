@@ -1,7 +1,6 @@
 ---
-version: '1.0'
 license: community
-field_type: 'has_one'
+field_type: has_one
 ---
 
 :::warning

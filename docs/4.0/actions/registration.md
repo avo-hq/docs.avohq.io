@@ -76,8 +76,6 @@ end
 
 <Option name="`icon`" headingSize="3">
 
-<VersionReq version="3.5.6" class="mt-4" />
-
 The `icon` option lets you specify the icon to display next to the action in the dropdown menu. Avo supports [Heroicons](https://heroicons.com) by default.
 
 Here's an example of how you can define actions with icons:
@@ -96,8 +94,6 @@ end
 ---
 
 ## `divider`
-
-<VersionReq version="3.5.6" class="mt-4" />
 
 Action dividers allow you to organize and separate actions into logical groups, improving the overall layout and usability.
 This will create a visual separator in the actions dropdown menu, helping you group related actions together.

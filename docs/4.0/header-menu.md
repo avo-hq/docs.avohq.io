@@ -1,7 +1,6 @@
 ---
 license: pro
 outline: [2, 3]
-version: "4.0"
 ---
 
 # Header menu
