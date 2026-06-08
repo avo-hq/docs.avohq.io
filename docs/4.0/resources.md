@@ -945,7 +945,9 @@ end
 
 ### Modify controls placement and appearance
 
-Configure where row controls appear on the <Index /> view — placement, floating behavior, and hover visibility — using `row_controls_config`. See [row controls configuration on table view](table-view.html#resource-configuration).
+<!-- @include: ./common/row_controls_config_common.md-->
+
+See [row controls configuration on table view](table-view.html#resource-configuration).
 
 <Option name="`self.pagination`">
 
