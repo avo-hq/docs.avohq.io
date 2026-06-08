@@ -566,8 +566,6 @@ The chart provides a visual representation of data distribution, making it easie
 
 Allows to specify the target attribute on the model for each field. By default the target attribute is the field's id.
 
-<!-- -->
-
 Usage example:
 
 ```ruby
@@ -585,8 +583,6 @@ field :secondary_field_for_status,
 <Option name="`meta`">
 
 This handy option enables you to send arbitrary information to the field. It's especially useful when you're building your own [custom fields](./custom-fields) or you are using [custom components](#components) for the built-in fields.
-
-<!-- -->
 
 Usage example:
 
