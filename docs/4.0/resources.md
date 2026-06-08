@@ -948,21 +948,8 @@ end
 :::warning
 `controls_placement` option is **obsolete**.
 
-Check [row controls configuration on table view](table-view.html#resource-configuration) instead
+Check [row controls configuration on table view](table-view.html#resource-configuration) instead.
 :::
-
-By default, Avo renders action controls according to the `controls_placement` configuration, which is set to `right` by default. This value can be customized for each individual resource.
-
-#### Possible values
-
-Either `:left`, `:right` or `:both`
-
-```ruby{3}
-# app/avo/resources/task.rb
-class Avo::Resources::Task < Avo::BaseResource
-  self.controls_placement = :both
-end
-```
 
 </Option>
 
