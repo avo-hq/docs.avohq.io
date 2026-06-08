@@ -46,11 +46,7 @@ class Avo::Resources::Review < Avo::BaseResource
       as: :belongs_to,
       searchable: {
         query: -> {
-          if q.blank?
-            query.where(role: :reviewer).order(created_at: :desc).limit(5)
-          else
-            query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false).limit(5)
-          end
+          query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false).limit(5)
         },
         enabled: -> { current_user.admin? }
       }
@@ -60,15 +56,23 @@ end
 
 ### `query:`
 
-Runs whenever the picker needs results — while the user is typing **and** when the picker opens with no input. If set, it takes precedence over the target resource's `self.search[:query]`. Add `.limit(N)` in the proc to cap results for this picker; otherwise Avo applies `config.search_results_count`.
+Runs while the user is typing. The records it returns fill the dropdown. If set, it takes precedence over the target resource's `self.search[:query]`. Add `.limit(N)` in the proc to cap results for this picker; otherwise Avo applies `config.search_results_count`.
 
 ```ruby
 query: -> { query.ransack(name_cont: q).result(distinct: false) }
 ```
 
-### Default rows when the picker opens
+### `enabled:`
 
-When the picker opens with no typed input, `q` is blank. Branch on `q.blank?` inside the same `query:` proc to return default rows:
+Boolean or proc. Determines whether the picker uses the searchable widget. If it evaluates to false, the field falls back to the standard `<select>`. Handy for gradual rollouts or role-based gating.
+
+```ruby
+enabled: -> { current_user.admin? }
+```
+
+## Default options
+
+When the picker opens with no typed input, `q` is blank. Use the same `query:` proc and branch on `q.blank?` to return default rows — for example, recently created records or a curated shortlist.
 
 ```ruby
 # Resource-level
@@ -89,14 +93,6 @@ field :user, as: :belongs_to, searchable: {
 ```
 
 If your `query:` proc does not handle `q.blank?`, the picker stays empty when opened with no input.
-
-### `enabled:`
-
-Boolean or proc. Determines whether the picker uses the searchable widget. If it evaluates to false, the field falls back to the standard `<select>`. Handy for gradual rollouts or role-based gating.
-
-```ruby
-enabled: -> { current_user.admin? }
-```
 
 ## Polymorphic `belongs_to`
 
@@ -145,16 +141,9 @@ field :reviewable,
   types: [::Post, ::Project],
   searchable: {
     query: -> {
-      if q.blank?
-        klass = query.respond_to?(:klass) ? query.klass : query
-        scoped = if parent_record&.persisted? && parent_record.reviewable_type == klass.name
-          query.where.not(id: parent_record.reviewable_id)
-        else
-          query
-        end
-        scoped.order(created_at: :desc)
-      else
-        query.ransack(name_cont: q).result(distinct: false)
+      case query.klass.name
+      when "Post"    then query.ransack(body_cont: q).result(distinct: false)
+      when "Project" then query.ransack(name_cont: q).result(distinct: false)
       end
     }
   }
@@ -201,17 +190,11 @@ One resource's `self.search[:query]` is shared by every searchable picker pointi
 | `resource`     | the Avo resource instance                                     |
 | `current_user` | `Avo::Current.user`                                           |
 
-`parent_record` can be `nil` on create forms (no parent has been persisted yet). Guard with `&.`:
-
-```ruby
-query: -> {
-  q.blank? ? query.where.not(id: parent_record&.id).order(created_at: :desc) : query.ransack(name_cont: q).result(distinct: false)
-}
-```
+`parent_record` can be `nil` on create forms (no parent has been persisted yet). Guard with `&.` when referencing it inside your `query:` proc.
 
 ## Options reference
 
 | Option        | Type            | Default                                                                                       | Description                                                                   |
 | ------------- | --------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `query`       | Proc            | resource's `self.search[:query]`                                                              | Filters records while typing; use `q.blank?` for default rows when the picker opens |
+| `query`       | Proc            | resource's `self.search[:query]`                                                              | Filters records while the user is typing                                        |
 | `enabled`     | Boolean or Proc | `true`                                                                                        | Gates whether the searchable widget renders; `false` falls back to `<select>` |
