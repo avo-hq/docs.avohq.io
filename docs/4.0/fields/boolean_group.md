@@ -73,24 +73,7 @@ The output value must be a hash as described above.
 
 ## Updates
 
-Before version Avo would override the whole attribute with only the payload sent from the client.
-
-```json
-// Before update.
-{
-  "feature_enabled": true,
-  "another_feature_enabled": false,
-  "something_else": "some_value" // this will disappear
-}
-
-// After update.
-{
-  "feature_enabled": true,
-  "another_feature_enabled": false,
-}
-```
-
-will only update the keys that you send from the client.
+Avo only updates the keys that you send from the client. Other keys in the stored hash are left unchanged.
 
 ```json
 // Before update.
