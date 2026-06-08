@@ -320,9 +320,8 @@ end
 </Option>
 
 ## Field to filter matching
-On versions **lower** than the filters are not configurable so each field will have a dedicated filter type. Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
 
-Field-to-filter matching in versions **lower** than :
+By default, each `filterable` field gets a dedicated filter type based on its field type. Avo maps field types to filter types automatically:
 
 ```ruby
 def field_to_filter(type)
@@ -343,6 +342,8 @@ def field_to_filter(type)
 end
 ```
 
+For more control over labels, icons, queries, and conditions, use [custom dynamic filters](#custom-dynamic-filters).
+
 ## Caveats
 
 At some point we'll integrate the [Basic filters](./basic-filters) into the dynamic filters bar. Until then, if you have both basic and dynamic filters on a resource **and** you've set `always_expanded = false`, you'll see two `Filters` buttons on the <Index /> view.
@@ -351,7 +352,7 @@ The default (`always_expanded = true`) avoids this since the dynamic filters bar
 
 ## Custom Dynamic Filters
 
-Dynamic filters are great but strict, as each field creates a specific filter type, each with its own icon and query. The query remains static, targeting only that particular field. Custom dynamic filters can be declared and, even better, can be declared without being bound to a field.
+Dynamic filters are great but strict, as each field creates a specific filter type, each with its own icon and query. The query remains static, targeting only that particular field. Custom dynamic filters can be declared without being bound to a field.
 
 There are two ways to define custom dynamic filters: the field's `filterable` option and the `dynamic_filter` method.
 
