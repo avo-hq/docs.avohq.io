@@ -1,5 +1,4 @@
 ---
-version: '1.0'
 license: community
 ---
 
@@ -12,8 +11,6 @@ field :password, as: :password
 ```
 
 #### Revealable
-
-<VersionReq version="3.13.7" class="mt-2" />
 
 You can set the `revealable` to true to show an "eye" icon that toggles the password between hidden or visible.
 

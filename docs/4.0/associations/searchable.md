@@ -1,12 +1,11 @@
 ---
 license: pro
 outline: [2, 3]
-api_docs: ./searchable-api.html
+api_docs: "./searchable-api.html"
+demoVideo: https://youtu.be/KLI_sVTPX-Q
 ---
 
 # Searchable associations
-
-<DemoVideo demo-video="https://youtu.be/KLI_sVTPX-Q" />
 
 When a target resource has too many records for a simple dropdown, `searchable` replaces the association field's `<select>` (and the attach modal's record picker) with a search-as-you-type input backed by your own query.
 

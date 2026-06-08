@@ -1,7 +1,6 @@
 ---
-version: '2.30'
 license: community
-betaStatus: Open beta
+betaStatus: "Open beta"
 ---
 
 # Location
@@ -56,8 +55,6 @@ This will also render the <Edit /> view with two separate fields to edit the coo
 
 <Option name="`mapkick_options`">
 
-<VersionReq version="3.16.2" />
-
 The `mapkick_options` option allows you to customize the appearance and behavior of the map.
 
 Using this option, you can provide a hash of configuration settings supported by the Mapkick gem, such as specifying the map style, enabling or disabling controls, or adding additional customizations.
@@ -103,8 +100,6 @@ By using `mapkick_options`, you can tailor the map's look and functionality to s
 </Option>
 
 <Option name="`static`">
-
-<VersionReq version="3.16.2" />
 
 The `static` option enables the rendering of a static map leveraging the power of the [mapkick-static](https://github.com/ankane/mapkick-static) gem.
 

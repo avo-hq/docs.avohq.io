@@ -1,7 +1,5 @@
 <Option name="`searchable`">
 
-<LicenseReq license="pro" />
-
 Turns the attach field/modal from a `<select>` into a search-as-you-type picker.
 
 ```ruby{4}

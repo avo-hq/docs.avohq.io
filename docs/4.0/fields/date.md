@@ -1,8 +1,7 @@
 ---
-version: '1.0'
 license: community
-default_format: 'yyyy-LL-dd'
-default_picker_format: 'Y-m-d'
+default_format: yyyy-LL-dd
+default_picker_format: Y-m-d
 ---
 
 # Date

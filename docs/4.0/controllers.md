@@ -1,5 +1,5 @@
 ---
-demoVideo: https://youtu.be/peKt90XhdOg?t=11
+demoVideo: "https://youtu.be/peKt90XhdOg?t=11"
 ---
 
 # Resource controllers

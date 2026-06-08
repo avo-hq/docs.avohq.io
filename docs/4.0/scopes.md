@@ -1,6 +1,6 @@
 ---
 license: advanced
-outline: [2,3]
+outline: [2, 3]
 ---
 
 # Scopes
@@ -48,8 +48,6 @@ end
 ```
 
 <Option name="`default`" headingSize="3">
-
-<VersionReq version="3.11" class="mt-4" />
 
 The `default` option lets you select a default scope that is applied when you
 navigate to the resources page.

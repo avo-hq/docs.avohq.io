@@ -75,35 +75,11 @@ That will render all `id` fields in the **Index** view as a link to that resourc
 
 <Image src="/assets/img/fields-reference/as-link-to-resource.jpg" width="694" height="166" alt="As link to resource" />
 
-## Resource controls on the left or both sides
+## Modify controls placement and appearance
 
-:::warning
-<VersionReq version="3.16.3" /> `resource_controls_placement` option is **obsolete**.
+<!-- @include: ./common/row_controls_config_common.md-->
 
-Check [row controls configuration on table view](table-view.html#global-configuration) instead
-:::
-
-<DemoVideo demo-video="https://youtu.be/MfryUtcXqvU?t=706" />
-
-By default, the resource controls are located on the right side of the record rows, which might be hidden if there are a lot of columns. You might want to move the controls to the left side in that situation using the `resource_controls_placement` option.
-
-```ruby{3}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.resource_controls_placement = :left
-end
-```
-
-<Image src="/assets/img/customization/resource-controls-left.jpg" width="1206" height="920" alt="Resource controls on the left side" />
-
-<VersionReq version="3.13.7" class="mt-2" /> You're able to render the controls on both sides
-
-```ruby{3}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.resource_controls_placement = :both
-end
-```
+See [row controls configuration on table view](table-view.html#global-configuration).
 
 ## Container width
 
@@ -287,8 +263,6 @@ end
 ```
 
 ### Use a lambda function for the home_path
-
-<VersionReq version="2.8.0" class="mt-2" />
 
 You can also use a lambda function to define that path.
 
@@ -489,11 +463,6 @@ Please follow [this](authentication.html#customise-the-sign-out-link) guide in [
 
 ## Skip show view
 
-<div class="space-x-2">
-  <VersionReq version="2.16" />
-  <BetaStatus label="Public beta"></BetaStatus>
-</div>
-
 In the CRUD interface Avo adds the <Show /> view by default. This means that when your users will see the view icon to go to that detail page and they will be redirected to the <Show /> page when doing certain tasks (update a record, run an action, etc.).
 
 You might not want that behavior and you might not use the <Show /> view at all and prefer to skip that and just use the <Edit /> view.
@@ -627,8 +596,6 @@ end
 
 <Option name="`associations_lookup_list_limit`">
 
-<VersionReq version="3.14.1" />
-
 By default, there is a limit of a 1000 records per query when listing the association options. This limit ensures that the page will not crash due to large collections.
 Use `associations_lookup_list_limit` configuration to change the limit value.
 
@@ -648,7 +615,7 @@ Using [searchable](./associations/searchable.html) is recommended for listing un
 
 <Option name="`persistence`">
 
-### Persistent UI State Configuration <VersionReq version="3.15.4" />
+### Persistent UI State Configuration
 
 #### Overview
 

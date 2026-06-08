@@ -158,7 +158,6 @@ end
 
 <Option name="`visible`">
 
-<VersionReq version="3.10.7" />
 The `visible` option allows you to dynamically control the visibility of a panel and all its children based on certain conditions.
 
 This option is particularly useful when you need to show or hide entire sections of your resource at once without having to do it for each field.

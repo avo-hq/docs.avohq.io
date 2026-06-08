@@ -2,7 +2,6 @@
 feedbackId: 831
 demoVideo: https://youtu.be/VMvG-j1Vxio
 license: pro
-version: "2.3.0"
 ---
 
 # Menu editor
@@ -375,8 +374,6 @@ end
 ```
 
 ## Add `data` attributes to items
-
-<VersionReq version="2.16" />
 
 You may want to add special data attributes to some items and you can do that using the `data` option. For example you may add `data: {turbo: false}` to make a regular request for a link.
 

@@ -393,8 +393,6 @@ This means that other resources that are not declared in this array will not sho
 
 ## Extending `Avo::BaseResource`
 
-<VersionReq version="3.10.7" /> we have restructured the `Avo::BaseResource` to enhance user customization capabilities. The existing functionality has been moved to a new base class `Avo::Resources::Base`, and `Avo::BaseResource` is now left empty for user overrides. This allows users to easily add custom methods that all of their resources will inherit, without having to modify the internal base class.
-
 ### How to Customize `Avo::BaseResource`
 
 You can customize `Avo::BaseResource` by creating your own version in your application. This custom resource can include methods and logic that you want all your resources to inherit. Here's an example to illustrate how you can do this:
@@ -592,7 +590,6 @@ end
 
 <Option name="`self.confirm_on_save`">
 
-<VersionReq version="3.10.10" />
 If you would like to ask for confirmation when saving a resource you can do so by setting `confirm_on_save` to `true`.
 
 That will help add friction to the saving process, avoiding human error.
@@ -623,7 +620,9 @@ end
 
 Find out more on the [grid view documentation page](grid-view).
 
-<VersionReq version="3.5.6" /> `default_view_type` become callable. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource` and `view`. Example:
+`default_view_type` can be configured using a Proc.
+
+Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource` and `view`.
 
 ```ruby
 class Avo::Resources::Post < Avo::BaseResource
@@ -801,32 +800,19 @@ end
 
 <Option name="`self.components`">
 
-By default, for each view we render an component:
+By default, for each view we render a component:
 
 [Index](views.html#Index) -> `Avo::Views::ResourceIndexComponent`<br>
 [Show](views.html#Show) -> `Avo::Views::ResourceShowComponent`<br>
 [New](views.html#New), [Edit](views.html#Edit) -> `Avo::Views::ResourceEditComponent`
 
-It's possible to change this behavior by using the `self.components` resource option.
+Use the `self.components` resource option to swap any of these for your own classes. Keys must be strings that match the original component class name.
 
 ```ruby
 self.components = {
-  resource_index_component: Avo::Views::Users::ResourceIndexComponent,
-  resource_show_component: "Avo::Views::Users::ResourceShowComponent",
-  resource_edit_component: "Avo::Views::Users::ResourceEditComponent",
-  resource_new_component: Avo::Views::Users::ResourceEditComponent
-}
-```
-
-<VersionReq version="3.11.8" /> more components can be replaced. From this version, keys must be strings that match the original component with the exception of those from the snippet above.
-
-Here is a list of all the supported customizable components:
-
-```ruby
-self.components = {
-  "Avo::Views::ResourceIndexComponent": Avo::Custom::ResourceIndexComponent,
-  "Avo::Views::ResourceShowComponent": "Avo::Custom::ResourceShowComponent",
-  "Avo::Views::ResourceEditComponent": "Avo::Custom::ResourceEditComponent",
+  "Avo::Views::ResourceIndexComponent": Avo::Views::Users::ResourceIndexComponent,
+  "Avo::Views::ResourceShowComponent": "Avo::Views::Users::ResourceShowComponent",
+  "Avo::Views::ResourceEditComponent": "Avo::Views::Users::ResourceEditComponent",
   "Avo::Index::GridItemComponent": "Avo::Custom::GridItemComponent",
   "Avo::ViewTypes::MapComponent": "Avo::Custom::MapComponent",
   "Avo::ViewTypes::TableComponent": "Avo::Custom::TableComponent",
@@ -835,7 +821,7 @@ self.components = {
 }
 ```
 
-A resource configured with the example above will start using the declared components instead the default ones.
+A resource configured with the example above will start using the declared components instead of the default ones.
 
 :::warning
 The custom view components must ensure that their initializers are configured to receive all the arguments passed during the rendering of a component. You can verify this in our codebase through the following files:
@@ -859,7 +845,7 @@ Example:
 
 ```ruby
 self.components = {
-  resource_index_component: Avo::MyDir::Views::ResourceIndexComponent
+  "Avo::Views::ResourceIndexComponent": Avo::MyDir::Views::ResourceIndexComponent
 }
 ```
 
@@ -891,8 +877,6 @@ end
 </Option>
 
 <Option name="`self.default_sort_column`">
-
-<VersionReq version="3.10.7" />
 
 By default, Avo sorts records on the <Index /> view by the `created_at` attribute. However, you can customize this behavior using the `default_sort_column` option in your resource file.
 
@@ -938,8 +922,6 @@ end
 
 <Option name="`self.default_sort_direction`">
 
-<VersionReq version="3.11.5" />
-
 By default, Avo sorts records in descending order of the [default sort column](./resources#self.default_sort_column). However, you can customize this using the `self.default_sort_direction` option in your resource file.
 
 #### Default
@@ -961,30 +943,11 @@ end
 
 </Option>
 
-<Option name="`self.controls_placement`">
+### Modify controls placement and appearance
 
-<VersionReq version="3.13.7" />
+<!-- @include: ./common/row_controls_config_common.md-->
 
-:::warning
-<VersionReq version="3.16.3" /> `controls_placement` option is **obsolete**.
-
-Check [row controls configuration on table view](table-view.html#resource-configuration) instead
-:::
-
-By default, Avo renders action controls according to the `controls_placement` configuration, which is set to `right` by default. This value can be customized for each individual resource.
-
-#### Possible values
-
-Either `:left`, `:right` or `:both`
-
-```ruby{3}
-# app/avo/resources/task.rb
-class Avo::Resources::Task < Avo::BaseResource
-  self.controls_placement = :both
-end
-```
-
-</Option>
+See [row controls configuration on table view](table-view.html#resource-configuration).
 
 <Option name="`self.pagination`">
 
@@ -1133,8 +1096,6 @@ end
 
 <Option name="`self.external_link`">
 
-<VersionReq version="3.15.6" />
-
 <br>
 <br>
 
@@ -1163,8 +1124,6 @@ When this option is configured, Avo will display an external link button for the
 </Option>
 
 <Option name="`self.discreet_information`">
-
-<VersionReq version="3.17" />
 
 Oftern we want to show some information about records without adding another field. `discreet_information` does exactly that 🙌
 

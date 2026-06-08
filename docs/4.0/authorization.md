@@ -129,8 +129,6 @@ Controls whether the user can see the [resource search input](./search/resource-
 
 <Option name="`preview?`">
 
-<VersionReq version="3.18.0" />
-
 Controls access to the preview endpoint, which is triggered by the [preview field](./record-previews.html).
 
 :::info
@@ -267,8 +265,6 @@ end
 
 Now, whatever action you take for one comment, it will be available for the `edit_comments?` method in `PostPolicy`.
 
-<VersionReq version="2.31" />
-
 From version 2.31 we introduced a concern that removes the duplication and helps you apply the same rules to associations. You should include `Avo::Pro::Concerns::PolicyHelpers` in the `ApplicationPolicy` for it to be applied to all policy classes.
 
 `PolicyHelpers` allows you to use the method `inherit_association_from_policy`. This method takes two arguments; `association_name` and the policy file you want to be used as a template.
@@ -312,8 +308,6 @@ def view_comments?
   CommentPolicy.new(user, record).index?
 end
 
-# Since Version 3.10.0
-
 def attach_comments?
   CommentPolicy.new(user, record).attach?
 end
@@ -334,8 +328,6 @@ end
 ```
 
 ## Attachments
-
-<VersionReq version="2.28" />
 
 When working with files, it may be necessary to establish policies that determine whether users can `upload`, `download` or `delete` files. Fortunately, Avo simplifies this process by providing a straightforward naming schema for these policies.
 
@@ -484,7 +476,6 @@ Now, you'll have to provide a policy for each resource you have in your app, thu
 
 ## Logs
 
-<VersionReq version="3.11.7" />
 [Developers](authentication.html#_2-developer-user) have the ability to monitor any unauthorized actions. When a [developer user](authentication.html#_2-developer-user) makes a request that triggers an unauthorized action, a log entry similar to the following will be generated:
 
 In development each log entry provides details about the policy class, the action attempted, the global id of the user who made the request, and the global id of the record involved:
@@ -509,8 +500,6 @@ web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
 ```
 
 ## Custom policies
-
-<VersionReq version="2.17" />
 
 By default, Avo will infer the policy from the model of the resource object. If you wish to use a different policy for a given resource, you can specify it directly in the resource using the `authorization_policy` option.
 

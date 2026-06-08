@@ -17,8 +17,6 @@ field :cover_video, as: :file, accept: "image/*"
 
 <Option name="`direct_upload`">
 
-<LicenseReq license="pro" />
-
 If you have large files and don't want to overload the server with uploads, you can use the `direct_upload` feature, which will upload the file directly to your cloud provider.
 
 ```ruby

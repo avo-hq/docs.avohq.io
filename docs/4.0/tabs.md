@@ -1,9 +1,8 @@
 ---
 feedbackId: 1073
-version: '2.10'
 license: pro
-demoVideo: https://youtu.be/B1Y-Z-R-Ys8?t=175
-betaStatus: Open beta
+demoVideo: "https://youtu.be/B1Y-Z-R-Ys8?t=175"
+betaStatus: "Open beta"
 ---
 
 # Tabs

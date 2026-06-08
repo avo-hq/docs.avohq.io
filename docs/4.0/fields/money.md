@@ -1,5 +1,4 @@
 ---
-version: '3.6'
 license: community
 BetaStatus: Beta
 ---

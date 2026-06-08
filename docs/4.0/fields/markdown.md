@@ -1,8 +1,7 @@
 ---
-version: '3.17.0'
 license: community
 betaStatus: Beta
-demoVideo: https://youtu.be/wnWvzQyyo6A?t=2128
+demoVideo: "https://youtu.be/wnWvzQyyo6A?t=2128"
 ---
 
 # Markdown

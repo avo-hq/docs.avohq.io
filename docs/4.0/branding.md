@@ -1,5 +1,5 @@
 ---
-title: Branding (moved to Appearance)
+title: "Branding (moved to Appearance)"
 ---
 
 # Branding has moved

@@ -1,9 +1,8 @@
 ---
-version: '2.18'
 license: community
-field_type: 'time'
-default_format: 'TT'
-default_picker_format: 'H:i:S'
+field_type: time
+default_format: TT
+default_picker_format: H:i:S
 ---
 
 # Time

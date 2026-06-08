@@ -61,9 +61,7 @@ This is the configuration for the adjacent table. You can set the visibility to 
 
 <Option name="`extra_markers`">
 
-Available since version <Version version="3.10.3" />
-
-Allow to define extra markers. The `extra_markers` block is executed in the [`ExecutionContext`](./execution-context) and should return an array of hashes.
+Allows you to define extra markers. The `extra_markers` block is executed in the [`ExecutionContext`](./execution-context) and should return an array of hashes.
 
 For each extra marker, you can specify a label, tooltip, and color.
 

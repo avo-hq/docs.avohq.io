@@ -18,7 +18,6 @@ The query might include various filters, sorting parameters, and other custom el
 - **Efficiency**: This approach allows the system to accurately and efficiently reconstruct the original query when the action is executed, ensuring that all relevant records are included.
 
 :::warning
-<VersionReq version="3.12.0" />
 If an error occurs during the serialization process, the "Select All" feature is automatically disabled. This safeguard ensures that the page will not crash because of a coding error.
 We listed a few reasons on why it might crash below.
 :::
