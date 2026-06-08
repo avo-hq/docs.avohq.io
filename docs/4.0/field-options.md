@@ -423,7 +423,7 @@ Optionally you can enable the global config `id_links_to_resource`. More on that
 
 **Related:**
  - [ID links to resource](./customization#id-links-to-resource)
- - [Resource controls on the left side](./customization#resource-controls-on-the-left-side)
+ - [Modify controls placement and appearance](./customization#modify-controls-placement-and-appearance)
 
 ## Align text on Index view
 
