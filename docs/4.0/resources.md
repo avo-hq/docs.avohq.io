@@ -393,8 +393,6 @@ This means that other resources that are not declared in this array will not sho
 
 ## Extending `Avo::BaseResource`
 
-we have restructured the `Avo::BaseResource` to enhance user customization capabilities. The existing functionality has been moved to a new base class `Avo::Resources::Base`, and `Avo::BaseResource` is now left empty for user overrides. This allows users to easily add custom methods that all of their resources will inherit, without having to modify the internal base class.
-
 ### How to Customize `Avo::BaseResource`
 
 You can customize `Avo::BaseResource` by creating your own version in your application. This custom resource can include methods and logic that you want all your resources to inherit. Here's an example to illustrate how you can do this:
