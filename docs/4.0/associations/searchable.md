@@ -88,7 +88,7 @@ field :user, as: :belongs_to, searchable: {
 }
 ```
 
-Use `q.blank?` (stripped string), not `params[:q].blank?`. Only the association picker sends a blank `q`; global search ignores blank input. If you need different behavior per surface, see [`search_type`](./../common/search_type_common).
+Use `q.blank?` (stripped string), not `params[:q].blank?`.
 
 If your `query:` proc does not handle `q.blank?`, the picker stays empty when opened with no input.
 
