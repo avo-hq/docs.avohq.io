@@ -352,7 +352,7 @@ The default (`always_expanded = true`) avoids this since the dynamic filters bar
 
 ## Custom Dynamic Filters
 
-Dynamic filters are great but strict, as each field creates a specific filter type, each with its own icon and query. The query remains static, targeting only that particular field. Custom dynamic filters can be declared without being bound to a field.
+Dynamic filters are great but strict, as each field creates a specific filter type, each with its own icon and query. The query remains static, targeting only that particular field. Dynamic filters are customizable and, even better, can be declared without being bound to a field.
 
 There are two ways to define custom dynamic filters: the field's `filterable` option and the `dynamic_filter` method.
 
