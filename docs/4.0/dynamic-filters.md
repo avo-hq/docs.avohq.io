@@ -624,7 +624,7 @@ Suggestions work on filters that provide text input, enhancing the user experien
 `nil`
 
 :::info
-on `tags` fields the `suggestions` are fetched from the field.
+On `tags` fields, suggestions are fetched from the field.
 :::
 
 #### Possible values
@@ -647,7 +647,7 @@ dynamic_filter :first_name,
 
 - Proc that returns an array of strings
 
-when the filter is applied to an association, the `parent_record` becomes accessible within the `suggestions` block.
+  When the filter is applied to an association, the `parent_record` becomes accessible within the `suggestions` block.
 
 ```ruby {6,12}
 # Using field's filterable option
