@@ -1,6 +1,6 @@
 ---
 license: add_on
-add_on_link: "https://avohq.io/pricing-4?add_ons[]=kanban-boards"
+add_on_link: https://avohq.io/pricing-4?add_ons[]=kanban-boards
 betaStatus: Beta
 outline: [2, 3]
 ---
@@ -197,19 +197,36 @@ The `item` is the `Avo::Kanban::Item` and the `record` is the actual record from
 
 This section assumes that you have already set up [authorization](authorization.html) in your application using Pundit.
 
-1. Generate a policy for the `Board` resource by running:
+The kanban board is backed by the `Avo::Kanban::Board` model, so its policy must be namespaced to match: `Avo::Kanban::BoardPolicy`, in `app/policies/avo/kanban/board_policy.rb`.
 
-```bash
-rails generate pundit:policy board
+```ruby
+# app/policies/avo/kanban/board_policy.rb
+class Avo::Kanban::BoardPolicy < ApplicationPolicy
+  def show? = true
+  def edit? = true
+  def add_column? = true
+  def add_item? = true
+  def manage_column? = true
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve
+      scope.all
+    end
+  end
+end
 ```
+
+:::info
+Each method maps to an `authorize_action(:action)` call in the board's controllers and components, which resolves to the matching `action?` predicate. Methods you don't define fall back to your `ApplicationPolicy`.
+:::
 
 ### Authorization Methods
 
-You can control access to various parts of the Kanban board by defining the following methods in your `BoardPolicy`:
+You can control access to various parts of the Kanban board by defining the following methods in your `Avo::Kanban::BoardPolicy`:
 
-- `manage_column?`
+- `show?`
 
-  Controls the visibility of the three-dot menu on each column (used for column management).
+  Controls access to the board page itself. When this returns `false` the board can't be visited.
 
 - `edit?`
 
@@ -218,12 +235,17 @@ You can control access to various parts of the Kanban board by defining the foll
   Also controls the ability to edit the board in the resource view.
   :::
 
+- `add_column?`
+
+  Controls the "Add column" button on the board and guards the `add_column` action that creates a new column.
+
 - `add_item?`
 
-  Controls the visibility of the "Add item" button on the board, which allows users to add new items to a column.
-  :::warning
-  Doesn't impact the ability to add items via the bottom of each column.
-  :::
+  Controls the visibility of every "Add a card" button — on the board header, on each column header, and at the bottom of each column.
+
+- `manage_column?`
+
+  Controls the visibility of the three-dot menu on each column (remove column, remove all items, and column settings).
 
 ## Customizing kanban models for your business logic
 

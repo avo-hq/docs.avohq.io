@@ -317,6 +317,7 @@ const config = {
               text: "Native Avo components",
               collapsed: true,
               items: [
+                { text: "<code>Avo::ButtonComponent</code>", link: "/4.0/native-components/avo-button-component.html" },
                 { text: "<code>Avo::PanelComponent</code>", link: "/4.0/native-components/avo-panel-component.html" },
                 { text: "Native field components", link: "/4.0/native-field-components.html" },
                 { text: "Field wrappers", link: "/4.0/field-wrappers.html" },
