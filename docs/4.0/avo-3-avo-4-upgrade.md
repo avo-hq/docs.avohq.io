@@ -345,7 +345,10 @@ The `Avo::PanelComponent` has been renamed to `Avo::UI::PanelComponent`.
 
 ##### PanelComponent does not automatically render the content inside a card
 
-The PanelComponent does not automatically render the content inside a card. So if you don't render a card inside the panel, you should use the `with_card` slot instead of the `with_body` slot.
+The PanelComponent does not automatically render the content inside a card. Choose the slot based on whether you render your own card:
+
+- **`with_card`** — the panel adds a card (border, background, padding) around your content. Use it when you don't render your own card.
+- **`with_body`** — no card, just your content. Use it when your content already includes its own card, otherwise you get a card inside a card.
 
 ```erb
 <%= render Avo::PanelComponent.new(title: "User information") do |c| %> <!-- [!code --] -->
@@ -354,6 +357,35 @@ The PanelComponent does not automatically render the content inside a card. So i
   <% c.with_card do %> <!-- [!code ++] -->
     <%= render Avo::Fields::IdField.new(record: record) %>
     <%= render Avo::Fields::TextField.new(record: record, field: :name) %>
+  <% end %>
+<% end %>
+```
+
+##### Always wrap a list of fields in `ui.description_list`
+
+When the content is a **list of fields**, wrap it in `ui.description_list` (the `Avo::DescriptionListComponent` Avo uses internally). This is required — the `with_card` slot is a flex column, so fields dropped straight into it shrink to half their width and lose their dividers. `ui.description_list` makes them full-width and adds the dividers.
+
+```erb
+<%= render Avo::UI::PanelComponent.new(title: "User information") do |c| %>
+  <% c.with_card do %>
+    <%= render ui.description_list do %> <!-- [!code ++] -->
+      <%= render Avo::Fields::IdField.new(record: record) %>
+      <%= render Avo::Fields::TextField.new(record: record, field: :name) %>
+    <% end %> <!-- [!code ++] -->
+  <% end %>
+<% end %>
+```
+
+#### Removed the `field_container` view helper
+
+The `field_container` helper has been removed. It grouped fields in custom tool and partial views. Replace every use with `ui.description_list` — the v4 component for the same job (see the section above for why a plain `<div>` is not a safe replacement).
+
+```erb
+<% c.with_card do %>
+  <%= field_container do %> <!-- [!code --] -->
+  <%= render ui.description_list do %> <!-- [!code ++] -->
+    <%= avo_edit_field :name, as: :text, form: form %>
+    <%= avo_edit_field :population, as: :number, form: form %>
   <% end %>
 <% end %>
 ```
