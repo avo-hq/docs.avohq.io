@@ -20,6 +20,19 @@ pre code span.line:not(:last-child) {
   min-height: 1.5rem;
 }
 
+/* Version note shown in the DocSearch results modal (resultsFooterComponent). */
+/* The modal is teleported to <body>, so this rule must be global, not scoped. */
+.vp-docsearch-version-note {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--vp-c-text-2);
+  border-top: 1px solid var(--vp-c-divider);
+}
+.vp-docsearch-version-note strong {
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+}
+
 .aspect-ratio-box {
   height: 0;
   overflow: hidden;

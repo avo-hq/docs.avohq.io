@@ -84,11 +84,12 @@ const config = {
     },
     nav: [
       { text: "Home", link: "/" },
-      { text: "Docs", link: "/3.0/index.html" },
-      { text: "Guides and Videos", link: "/3.0/guides.html" },
-      { text: "FAQ", link: "/3.0/faq.html" },
+      { text: "Docs", link: "/4.0/index.html" },
+      { text: "Guides", link: "/4.0/guides.html" },
+      { text: "FAQ", link: "/4.0/faq.html" },
       { text: "Team", link: "/team.html" },
       { text: "Releases", link: "https://avohq.io/releases" },
+      { text: "Gems versions", link: "https://avohq.io/gems" },
       { text: "Blog", link: "https://avohq.io/blog" },
       {
         text: "Version", items: [
@@ -350,6 +351,66 @@ const config = {
         apiKey: "ee35d4018f0bd7cf035aa4cd29cf7c86",
         appId: "3TLBFY0IWW",
         indexName: "avohq",
+        // Scope search results to the docs version the reader is currently on:
+        // on /4.0/* only `version:4.0` records are returned, on /3.0/* only 3.0,
+        // etc. The version is read from the live pathname inside `search`, so it
+        // follows client-side navigation without re-initializing DocSearch.
+        // Pages without a version prefix (home, /team) stay unfiltered and search
+        // across every version.
+        //
+        // Requires the Algolia index to carry a `version` facet
+        // (`filterOnly(version)` in the crawler's attributesForFaceting).
+        //
+        // NOTE: VitePress serializes this function to the client and rehydrates it
+        // with `new Function`, so it must be fully self-contained — no imports and
+        // no closure variables. Only browser globals and its arguments are available.
+        transformSearchClient(searchClient) {
+          const originalSearch = searchClient.search.bind(searchClient)
+
+          return Object.assign({}, searchClient, {
+            search(args, requestOptions) {
+              const match = typeof window !== 'undefined'
+                ? window.location.pathname.match(/^\/(\d+\.\d+)\//)
+                : null
+
+              if (match) {
+                const versionFilter = 'version:' + match[1]
+                const withFilter = function (request) {
+                  // Only scope our docs index; leave any other index (e.g. Ask AI) untouched.
+                  if (!request || request.indexName !== 'avohq') return request
+                  const existing = request.facetFilters
+                  let facetFilters
+                  if (!existing) facetFilters = [versionFilter]
+                  else if (Array.isArray(existing)) facetFilters = existing.concat([versionFilter])
+                  else facetFilters = [existing, versionFilter]
+                  return Object.assign({}, request, { facetFilters })
+                }
+
+                if (args && Array.isArray(args.requests)) {
+                  args = Object.assign({}, args, { requests: args.requests.map(withFilter) })
+                } else if (Array.isArray(args)) {
+                  args = args.map(withFilter)
+                }
+              }
+
+              return originalSearch(args, requestOptions)
+            }
+          })
+        },
+        // Show which docs version the results are scoped to, inside the search
+        // modal. Renders on each search and reads the live pathname, so it stays
+        // correct after client-side navigation. Hidden on unversioned pages
+        // (home, /team), where search spans all versions.
+        // Same serialization rules as transformSearchClient: keep it self-contained.
+        resultsFooterComponent(props, helpers) {
+          const html = helpers && helpers.html
+          if (!html) return null
+          const match = typeof window !== 'undefined'
+            ? window.location.pathname.match(/^\/(\d+)\.\d+\//)
+            : null
+          if (!match) return null
+          return html`<div class="vp-docsearch-version-note">Searching <strong>v${match[1]}</strong> docs</div>`
+        },
       },
     },
   },
