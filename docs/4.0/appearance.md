@@ -321,21 +321,102 @@ Chart colors are forwarded directly to Chart.js, so they must be hex values.
 
 Some colors are not set in `config.appearance`. It doesn't make sense to pass them through Ruby.
 
-Override the CSS variables below to change things like the top navbar background, sidebar background, the border between the sidebar and main content and more.
+Override the CSS variables below to change things like the top navbar palette, sidebar background, the border between the sidebar and main content and more.
 
 ### Available variables
 
-| Variable                      | Default                        | Description                                                                                                                                        |
-| ----------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--color-navbar-background`   | `var(--color-avo-neutral-900)` | Background color of the top navbar. Defaults to a dark neutral so the navbar reads as a distinct bar. Override (here or in `.dark`) to recolor it. |
-| `--navbar-notch-enabled`      | `true`                         | Whether the inverted corner arches under the navbar render. Set to `false` to hide them — handy when the navbar and content share a background.    |
-| `--navbar-notch-radius`       | `1rem`                         | Radius of the main content panel's rounded top corners (and the navbar arches that fill them). Set to `0` to flatten the corners.                  |
-| `--color-sidebar-background`  | `var(--color-background)`      | Background color of the sidebar. Defaults to the page background in light mode and a subtly tinted surface in dark; resolves per-scheme.           |
-| `--color-main-content-background` | `var(--color-primary)`     | Background of the main content panel (and the breadcrumb bar, which blends into it). Defaults to the primary surface; resolves per-scheme.         |
-| `--color-main-content-border` | `var(--border-color)`          | Color of the border between the sidebar and the main content panel. Tracks the shared app border color by default; override to restyle just it.    |
+| Variable                          | Default                        | Description                                                                                                                                            |
+| --------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `--color-navbar-background`       | `var(--color-avo-neutral-900)` | Global source for the top navbar background. Kept for compatibility. For full navbar palette changes, prefer the scoped `.top-navbar` variables below. |
+| `--navbar-notch-enabled`          | `true`                         | Whether the inverted corner arches under the navbar render. Set to `false` to hide them when the navbar and content share a background.                |
+| `--navbar-notch-radius`           | `1rem`                         | Radius of the navbar arches that fill the content panel's top corners. Set to `0` to flatten them.                                                     |
+| `--main-content-radius`           | `var(--navbar-notch-radius)`   | Radius of the main content panel's top corners. Defaults to the notch radius so the panel and the navbar arches stay aligned; override to differ.       |
+| `--color-sidebar-background`      | `var(--color-background)`      | Global source for the sidebar background. Kept for compatibility. For full sidebar palette changes, prefer the scoped `.avo-sidebar` variables below.   |
+| `--color-main-content-background` | `var(--color-primary)`         | Background of the main content panel and the breadcrumb bar, which blends into it. Defaults to the primary surface; resolves per-scheme.               |
+| `--color-main-content-border`     | `var(--border-color)`          | Color of the border between the sidebar and the main content panel. Tracks the shared app border color by default; override to restyle just it.        |
+
+### Top navbar variables
+
+The top navbar exposes a scoped palette contract on `.top-navbar`. Override these variables on `.top-navbar` so the navbar can change without leaking those colors into dropdown panels, popovers, or the main content.
+
+| Variable                                           | Default                          | Description                                                                                           |
+| -------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `--top-navbar-background`                          | `var(--color-navbar-background)` | Background color of the top navbar.                                                                   |
+| `--top-navbar-content`                             | `var(--color-avo-neutral-300)`   | Text and icon color for navbar links and icon buttons.                                                |
+| `--top-navbar-content-hover`                       | `var(--color-avo-neutral-50)`    | Text and icon color for hovered navbar links and icon buttons.                                        |
+| `--top-navbar-control-background`                  | `var(--color-avo-neutral-800)`   | Background for navbar controls such as search, picker trigger, and hovered sidebar toggle.            |
+| `--top-navbar-control-background-hover`            | `var(--color-avo-neutral-700)`   | Hover background for navbar controls.                                                                 |
+| `--top-navbar-control-border`                      | `var(--color-avo-neutral-700)`   | Border color for navbar controls.                                                                     |
+| `--top-navbar-control-content`                     | `var(--color-avo-neutral-50)`    | Main text color inside navbar controls, such as the search input value.                               |
+| `--top-navbar-control-muted`                       | `var(--color-avo-neutral-400)`   | Muted text and icon color inside navbar controls, such as placeholders and search icons.              |
+| `--top-navbar-control-shortcut-background`         | `var(--color-avo-neutral-700)`   | Background for shortcut badges inside navbar controls.                                                |
+| `--top-navbar-control-shortcut-border`             | `var(--color-avo-neutral-600)`   | Border color for shortcut badges inside navbar controls.                                              |
+| `--top-navbar-control-shortcut-content`            | `var(--color-avo-neutral-200)`   | Text color for shortcut badges inside navbar controls.                                                |
+| `--top-navbar-active-background`                   | `var(--color-avo-neutral-950)`   | Background for active inline appearance switcher buttons.                                             |
+| `--top-navbar-active-content`                      | `var(--color-avo-neutral-50)`    | Text and icon color for active inline appearance switcher buttons.                                    |
+| `--top-navbar-start-notch-align-with-main-content` | `false`                          | Set to `true` to move the start notch to the `.main-content` start edge for a different rounded look. |
 
 :::info
 `--navbar-notch-enabled` is a boolean (`true` / `false`), read via a CSS style query rather than a raw `display` value. On browsers without style-query support the arches simply stay visible.
+
+`--top-navbar-start-notch-align-with-main-content` is also a boolean (`true` / `false`) read via a CSS style query. On browsers without style-query support, the start notch keeps its default viewport edge position.
+:::
+
+### Sidebar variables
+
+The sidebar exposes a scoped palette contract on `.avo-sidebar`, mirroring the top navbar. Override these on `.avo-sidebar` to recolor the sidebar without affecting the rest of the app. The defaults keep the sidebar tied to Avo's semantic surface and text tokens, so they track the chosen scheme automatically.
+
+| Variable                            | Default                                                       | Description                                                                                  |
+| ----------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `--sidebar-background`              | `var(--color-sidebar-background)`                             | Sidebar background color.                                                                    |
+| `--sidebar-border`                  | `var(--color-tertiary)`                                       | Border between the sidebar and the rest of the layout (mobile/`lg` edge border).             |
+| `--sidebar-content`                 | `var(--color-content)`                                        | Main text color for active links, profile title, and status link.                           |
+| `--sidebar-content-secondary`       | `var(--color-content-secondary)`                              | Muted text color for section headers, idle links, subitems, and hints.                      |
+| `--sidebar-link-hover-background`   | `color-mix(in oklab, var(--color-secondary), var(--color-content) 2%)` | Background of a hovered sidebar link.                                              |
+| `--sidebar-link-active-background`  | `color-mix(in oklab, var(--color-secondary), var(--color-content) 5%)` | Background of the active sidebar link and the submenu bar/L-shape indicators.     |
+| `--sidebar-focus-background`        | `var(--color-primary)`                                        | Background applied to focus-visible sidebar headers, groups, and links.                      |
+| `--sidebar-profile-avatar-background` | `linear-gradient(...)` over `var(--color-tertiary)`         | Background of the profile avatar wrapper.                                                    |
+| `--sidebar-profile-avatar-border`   | `var(--color-tertiary)`                                       | Border around the profile avatar wrapper.                                                    |
+| `--sidebar-profile-avatar-content`  | `var(--color-foreground)`                                     | Color of the profile avatar initials.                                                        |
+| `--sidebar-status-border`           | `var(--border-color)`                                         | Border for the sidebar status section and its link.                                          |
+
+### Table variables
+
+The index table reads its row hover and selection backgrounds from two variables. Override them to recolor the affordances you see when hovering a row or selecting one via the row checkboxes. The defaults are derived from the primary surface mixed with a little content color, so they track the chosen scheme automatically.
+
+| Variable                     | Default                                                        | Description                                                                 |
+| ---------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `--color-table-row-hover`    | `color-mix(in oklab, var(--color-primary), var(--color-content) 5%)`  | Background of a hovered table row, and of selected rows.            |
+| `--color-table-row-selected` | `color-mix(in oklab, var(--color-primary), var(--color-content) 12%)` | Background used for the shift-range highlight while selecting rows. |
+
+### Focus ring variables
+
+Avo draws a single, unified focus ring on every keyboard-focused element via `:focus-visible`. Override these variables to restyle every focus ring at once instead of touching individual components.
+
+| Variable                       | Default                                                       | Description                                                                                                                                                  |
+| ------------------------------ | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--focus-outline`              | `var(--focus-outline-width) solid var(--focus-outline-color)` | Ready-to-use `outline` shorthand composed from the width and color below. This is the value applied to focused elements.                                    |
+| `--focus-outline-color`        | `var(--color-info)`                                           | Color of the focus ring. Defaults to the `info` semantic color, so it resolves automatically per scheme (light/dark).                                       |
+| `--focus-outline-width`        | `2px`                                                         | Thickness of the focus ring.                                                                                                                                |
+| `--focus-outline-offset`       | `1px`                                                         | Gap between the element and its focus ring, used in the common case where the ring is drawn outside the element's bounds.                                    |
+| `--focus-outline-offset-inset` | `-2px`                                                        | Negative offset for elements that must draw the ring *inside* their bounds (sidebar items, dropdowns, pagination, etc.) so it isn't clipped by an overflow boundary. |
+
+:::info
+The focus ring also reacts to user accessibility settings: it thickens and switches to `currentColor` under `prefers-contrast: more`, and uses the system `Highlight` color under Windows High Contrast Mode (`forced-colors: active`). Those overrides win over your custom values by design.
+:::
+
+### Motion speed variables
+
+Avo keeps the timing of small UI motions on three shared "speed" knobs so animations and transitions stay consistent and can be tuned in one place. Components reference these via `var(--speed-*)` rather than hardcoding their own durations (for example, the key/value field's row add and remove animations use `--speed-moderate`).
+
+| Variable          | Default | Description                                                                       |
+| ----------------- | ------- | -------------------------------------------------------------------------------- |
+| `--speed-fast`     | `90ms`  | Snappy state flips — color, opacity, and fill swaps that shouldn't feel delayed. |
+| `--speed-moderate` | `150ms` | Motion that travels or transforms — scale, slide, and pop animations.            |
+| `--speed-slow`     | `200ms` | Larger or more deliberate transitions — panels and overlays.                     |
+
+:::info
+Set `--speed-fast`, `--speed-moderate`, and `--speed-slow` to `0ms` to effectively disable Avo's motion globally. Avo already drops these animations automatically when the visitor's system requests `prefers-reduced-motion: reduce`.
 :::
 
 ### Applying overrides
@@ -347,7 +428,7 @@ bin/rails generate avo:eject --partial :head
 ```
 
 ```erb
-<%# app/views/avo/partials/_head.html.erb — append in the file %>
+<%# app/views/avo/partials/_head.html.erb - append in the file %>
 <style>
   :root {
     --color-navbar-background: #1e3a5f;
@@ -356,6 +437,39 @@ bin/rails generate avo:eject --partial :head
     --color-sidebar-background: #f5f7fa;
     --color-main-content-background: #ffffff;
     --color-main-content-border: #d6dbe2;
+    --color-table-row-hover: #eef4fb;
+    --color-table-row-selected: #dbe5f0;
+  }
+
+  .top-navbar {
+    --top-navbar-background: var(--color-navbar-background);
+    --top-navbar-content: #dbeafe;
+    --top-navbar-content-hover: #ffffff;
+    --top-navbar-control-background: #16324f;
+    --top-navbar-control-background-hover: #25476c;
+    --top-navbar-control-border: #31597f;
+    --top-navbar-control-content: #ffffff;
+    --top-navbar-control-muted: #9fc1df;
+    --top-navbar-control-shortcut-background: #25476c;
+    --top-navbar-control-shortcut-border: #42698f;
+    --top-navbar-control-shortcut-content: #dbeafe;
+    --top-navbar-active-background: #071426;
+    --top-navbar-active-content: #ffffff;
+    --top-navbar-start-notch-align-with-main-content: true;
+  }
+
+  .avo-sidebar {
+    --sidebar-background: #f5f7fa;
+    --sidebar-border: #d6dbe2;
+    --sidebar-content: #16324f;
+    --sidebar-content-secondary: #5b7089;
+    --sidebar-link-hover-background: #e8edf3;
+    --sidebar-link-active-background: #dbe5f0;
+    --sidebar-focus-background: #ffffff;
+    --sidebar-profile-avatar-background: #ffffff;
+    --sidebar-profile-avatar-border: #d6dbe2;
+    --sidebar-profile-avatar-content: #16324f;
+    --sidebar-status-border: #d6dbe2;
   }
 
   .dark {
@@ -363,6 +477,23 @@ bin/rails generate avo:eject --partial :head
     --color-sidebar-background: #11161c;
     --color-main-content-background: #161b22;
     --color-main-content-border: #2a3441;
+    --color-table-row-hover: #1b2531;
+    --color-table-row-selected: #243140;
+  }
+
+  .dark .top-navbar {
+    --top-navbar-control-background: #10243a;
+    --top-navbar-control-background-hover: #183555;
+    --top-navbar-control-border: #25476c;
+    --top-navbar-active-background: #020617;
+  }
+
+  .dark .avo-sidebar {
+    --sidebar-background: #11161c;
+    --sidebar-border: #2a3441;
+    --sidebar-link-hover-background: #1b2531;
+    --sidebar-link-active-background: #243140;
+    --sidebar-focus-background: #161b22;
   }
 </style>
 ```
