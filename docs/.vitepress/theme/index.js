@@ -6,6 +6,7 @@ import Version from "../theme/components/Version.vue"
 import DemoVideo from "../theme/components/DemoVideo.vue"
 import Demo from "../theme/components/Demo.vue"
 import TopBarWrapper from "../theme/components/TopBarWrapper.vue"
+import VersionBadge from "../theme/components/VersionBadge.vue"
 import PageHeader from "../theme/components/PageHeader.vue"
 import CopyPageButton from "../theme/components/CopyPageButton.vue"
 import AsideOutlineAfter from "../theme/components/AsideOutlineAfter.vue"
@@ -74,6 +75,7 @@ export default {
   Layout() {
     return h(DefaultTheme.Layout, null, {
       "layout-top": () => h(TopBarWrapper),
+      "nav-bar-title-after": () => h(VersionBadge),
       "doc-before": () => h(PageHeader),
       "aside-outline-before": () => h(CopyPageButton),
       "aside-outline-after": () => h(AsideOutlineAfter),
