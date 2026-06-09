@@ -374,7 +374,18 @@ When the content is a **list of fields**, wrap it in `ui.description_list` (the 
     <% end %> <!-- [!code ++] -->
   <% end %>
 <% end %>
-```
+
+<!-- or using the `.description-list` class -->
+
+
+<%= render Avo::UI::PanelComponent.new(title: "User information") do |c| %>
+  <% c.with_card do %>
+    <div class="description-list"> <!-- [!code ++] -->
+      <%= render Avo::Fields::IdField.new(record: record) %>
+      <%= render Avo::Fields::TextField.new(record: record, field: :name) %>
+    </div> <!-- [!code ++] -->
+  <% end %>
+<% end %>
 
 #### Removed the `field_container` view helper
 
