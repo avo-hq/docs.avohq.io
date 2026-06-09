@@ -130,6 +130,7 @@ Links to a previous page. The link is not a `history.back()` action. It's comput
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
+
 </Option>
 
 <Option name="`delete_button`">
@@ -139,6 +140,7 @@ Adds the appropriate destroy form. It will take into account your authorization 
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
+
 </Option>
 
 <Option name="`detach_button`">
@@ -148,6 +150,7 @@ Adds the appropriate detach form. It's visible only on the association (`has_one
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
+
 </Option>
 
 <Option name="`actions_list`">
@@ -187,6 +190,7 @@ actions_list include: Avo::Actions::DisableAccount
 # Or
 actions_list include: [Avo::Actions::ExportSelection, Avo::Actions::PublishPost]
 ```
+
 </Option>
 
 <Option name="`list`">
@@ -196,7 +200,6 @@ A dropdown that displays all the specified actions and links.
 #### Supported options
 
 `label`, `title`, `style`, `color` and `icon`
-
 
 #### Example
 
@@ -209,7 +212,6 @@ end
 ```
 
 <Image src="/assets/img/resources/customizable-controls/custom_list.png" width="404" height="256" alt="Custom list opened" />
-
 
 Within the `list` block, the permitted elements are `link_to`, `action`, and [`divider`](actions/registration.html#divider). For both `link_to` and `action`, you can include an optional `icon` parameter.
 
@@ -224,6 +226,7 @@ Links to the record edit page.
 #### Supported options
 
 `label`, `title`, `style`, `color`, and `icon`.
+
 </Option>
 
 <Option name="`link_to`">
@@ -233,6 +236,7 @@ Renders a link to a path set by you.
 #### Supported options
 
 `title`, `style`, `color`, `icon`, `target`, `data`, and `class`.
+
 </Option>
 
 <Option name="`action`">
@@ -282,6 +286,7 @@ Sets the tooltip for that control.
 #### Possible values
 
 Any string value.
+
 </Option>
 
 <Option name="`style`">
@@ -291,6 +296,7 @@ Sets the `style` attribute for the [`Avo::ButtonComponent`](https://github.com/a
 #### Possible values
 
 `:primary`, `:outline`, `:text`
+
 </Option>
 
 <Option name="`color`">
@@ -300,6 +306,7 @@ Sets the `color` attribute for the [`Avo::ButtonComponent`](https://github.com/a
 #### Possible values
 
 Can be any color of [Tailwind`s default color pallete](https://tailwindcss.com/docs/customizing-colors#default-color-palette) as a symbol.
+
 </Option>
 
 <Option name="`icon`">
@@ -309,6 +316,7 @@ Sets the icon for that button.
 #### Possible values
 
 Any [Heroicon](https://heroicons.com) you want. You must specify the style of the heroicon like so `heoricons/outline/academic-cap` or `heroicons/solid/adjustments`.
+
 </Option>
 
 <Option name="`target`">
@@ -318,6 +326,7 @@ Sets the target for that control. So whatever you pass here will be passed to th
 #### Possible values
 
 `:_blank`, `:_top`, `:_self`
+
 </Option>
 
 <Option name="`class`">
@@ -327,6 +336,7 @@ Sets the classes for that control.
 #### Possible values
 
 Any string value.
+
 </Option>
 
 ## Default values

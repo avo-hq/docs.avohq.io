@@ -99,7 +99,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /3.0/
+      link: /4.0/
     - theme: alt
       text: ⭐️ Star on GitHub
       link: https://github.com/avo-hq/avo
