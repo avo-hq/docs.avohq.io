@@ -914,3 +914,19 @@ end
 ```
 
 More info on the [`always_expanded` option](./dynamic-filters.html#always_expanded) section.
+
+## `explicit_authorization` default changed to `true`
+
+In Avo 3 the default for `config.explicit_authorization` was `false`, so an action whose policy class or method was missing fell back to being **authorized**. In Avo 4 the default was flipped to `true`, so any action without an explicit policy method is now **denied** by default.
+
+This is a safer default, but it can hide records, fields, or actions that were previously visible if your policies are incomplete. **Review your policies** to make sure every action you expect to be available has a corresponding policy method defined.
+
+If you want to restore the previous behavior, set the option back to `false` in your `config/initializers/avo.rb`:
+
+```ruby
+Avo.configure do |config|
+  config.explicit_authorization = false
+end
+```
+
+More info on the [`explicit_authorization` option](./authorization.html#explicit_authorization) section.
