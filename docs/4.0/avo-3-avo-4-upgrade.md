@@ -233,15 +233,18 @@ end
 
 ##### Use `search_type` instead of `params[:global]` / `params[:via_association]`
 
-Avo 4 injects a `search_type` local into every `self.search[:query]` proc, with one of three values depending on which surface triggered the search:
+Avo 4 injects a `search_type` local into every `self.search[:query]` proc, with one of four values depending on which surface triggered the search:
 
 | `search_type` | Surface                                | v3 detection                                |
 |---------------|----------------------------------------|---------------------------------------------|
 | `:global`     | Navbar ⌘K palette                      | `params[:global]`                           |
 | `:resource`   | Resource-index search bar              | Falsey `params[:global]` (no `via_association`) |
 | `:association`| Searchable association picker          | `params[:via_association] == 'has_many'`    |
+| `:kanban`     | Kanban board "add a card" picker       | `params[:for_kanban_board] == '1'`          |
 
 `params[:via_association]` has been removed. The v4 picker no longer sets it, which means any `if params[:via_association] == 'has_many'` branch will silently fall through to `else`. There's no error, just the wrong scope applied. This branch must be migrated.
+
+`params[:for_kanban_board]` has also been removed. The kanban picker no longer sets it, so any `if params[:for_kanban_board] == '1'` branch will silently fall through to `else`. Migrate it to `search_type == :kanban`.
 
 `params[:global]` still works but is superseded. It can't distinguish `:resource` from `:association`, so `search_type` is the preferred option going forward.
 
@@ -254,6 +257,9 @@ self.search = {
     elsif params[:via_association] == 'has_many' # [!code --]
     elsif search_type == :association             # [!code ++]
       query.ransack(name_cont: q).result.order(name: :asc)
+    elsif params[:for_kanban_board] == '1'        # [!code --]
+    elsif search_type == :kanban                  # [!code ++]
+      query.where(active: true).ransack(name_cont: q).result
     else # :resource
       query.ransack(id_eq: q, details_cont: q, m: "or").result(distinct: false)
     end
