@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --vp-home-hero-name-color: #0886DE;
-  --vp-c-brand-1: #0886DE;
-  --vp-c-brand-2: #089BDE;
-  --vp-button-brand-border:#6BB6EB;
-  --vp-button-brand-bg: #0886DE;
-  --vp-home-hero-name-color: #399EE5;
+  --vp-home-hero-name-color: #0886de;
+  --vp-c-brand-1: #0886de;
+  --vp-c-brand-2: #089bde;
+  --vp-button-brand-border: #6bb6eb;
+  --vp-button-brand-bg: #0886de;
+  --vp-home-hero-name-color: #399ee5;
 }
 
 p > img {
-  @apply border
+  @apply border;
 }
 
 /* Empty lines are not rendered without this tweak. */
@@ -45,4 +45,5 @@ pre code span.line:not(:last-child) {
   left: 0;
   width: 100%;
   height: 100%;
+  margin-top: 0 !important;
 }
