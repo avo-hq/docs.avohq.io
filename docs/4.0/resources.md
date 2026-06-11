@@ -483,6 +483,10 @@ You might want to display information about the current resource to your users. 
 `self.description` is rendered as HTML (`<%==`). Do not use direct user input or any value that users can edit — that can allow stored XSS attacks.
 :::
 
+:::info
+`self.description` is not displayed when the resource is rendered as an association (for example, in a `has_many` table on another resource's page). To show a description there, use the [`description` option on the association field](./associations/has_many#description).
+:::
+
 <Image src="/assets/img/resources/description.png" width="1272" height="216" alt="Avo message" />
 
 There are two ways of setting the description. The quick way as a `string` and the more customizable way as a `block`.
