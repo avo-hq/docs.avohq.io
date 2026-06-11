@@ -18,6 +18,7 @@ You can follow it yourself or let your LLM do the heavy lifting:
 
 ```
 Use this guide to upgrade this Avo 3 app to Avo 4.
+Before starting make sure that all of the step-by-step Avo 3 upgrades have been applied up to the version that you are upgrading from (https://docs.avohq.io/3.0/avo-2-avo-3-upgrade.html).
 Take it step by step and produce a markdown doc (avo-3-to-4-upgrade.md) with each chapter as an item, checking them off as you go.
 https://docs.avohq.io/4.0/avo-3-avo-4-upgrade.html
 ```
