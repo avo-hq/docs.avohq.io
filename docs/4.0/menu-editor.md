@@ -41,7 +41,7 @@ For now, Avo supports editing only two menus, `main_menu` and `profile_menu`. Ho
 
 ## Menu item types
 
-A few menu item types are supported: `link_to`, `section`, `group`, `resource`, `dashboard`, and `page`. There are a few helpers too, like `all_resources`, `all_dashboards`, `all_pages`, and `all_tools`.
+A few menu item types are supported: `link_to`, `section`, `group`, `resource`, `dashboard`, `page`, and `action`. There are a few helpers too, like `all_resources`, `all_dashboards`, `all_pages`, and `all_tools`.
 
 The recommended hierarchy is `section → group → resource → subitem`. Sections are the top-level containers rendered with an icon header in the sidebar.
 <!-- here add the short details about the rest of the cases-->
@@ -137,8 +137,9 @@ Sub-items can be any menu item type:
 - [`dashboard`](./dashboards.html)
 - [`page`](./forms-and-pages/pages.html)
 - [`board`](./kanban-boards.html)
+- [`action`](./actions/overview.html)
 
-A nested `resource`, `dashboard`, `page`, or `board` resolves its own URL automatically, so only `link_to` needs an explicit `path:`.
+A nested `resource`, `dashboard`, `page`, `board`, or `action` resolves its own URL automatically, so only `link_to` needs an explicit `path:`. A nested `action` also inherits its enclosing `resource`, so you don't repeat it.
 
 ```ruby
 # config/initializers/avo.rb
@@ -150,6 +151,7 @@ Avo.configure do |config|
       dashboard :sales                # nested dashboard
       page "Avo::Pages::Settings"     # nested page
       board 1                         # nested kanban board
+      action Avo::Actions::ExportData # nested action (inherits :projects)
     end
   }
 end
@@ -208,6 +210,74 @@ page "Avo::Pages::Settings", icon: "tabler/outline/adjustments", hotkey: "g s"
 :::info
 Pages are provided by the [`avo-forms`](./forms-and-pages/overview.html) addon. The `page` and `all_pages` helpers are only available when it is installed.
 :::
+
+</Option>
+
+<Option name="`action`">
+
+`action` adds a menu item that triggers one of your [actions](./actions/overview.html). Clicking it opens the action's modal, just like the per-resource **Actions** dropdown.
+
+```ruby
+# app/avo/actions/export_data.rb
+class Avo::Actions::ExportData < Avo::BaseAction
+  self.name = "Export data"
+  self.standalone = true # required to add it to the menu
+
+  def handle(fields:, **)
+    # ...generate and return the export
+  end
+end
+```
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    action Avo::Actions::ExportData, resource: :projects
+  }
+end
+```
+
+Because the menu has no selected record, only [**standalone** actions](./actions/generator.html) (`self.standalone = true`) can be added — actions that depend on selected records would run against nothing and are skipped (with a log warning).
+
+#### `resource`
+
+An action always lives under a resource's URL, so you must tell it which one. At the top level `resource:` is **required**; nested inside a `resource` block it is **inherited** from the enclosing resource (an explicit `resource:` still overrides it).
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    # Top level — resource: required
+    action Avo::Actions::ExportData, resource: :projects
+
+    # Nested — inherits :projects automatically
+    resource :projects do
+      action Avo::Actions::ExportData
+    end
+  }
+end
+```
+
+The label defaults to the action's `self.name`. Like other menu items, `action` accepts the `label`, `icon`, `data`, and `visible` options.
+
+```ruby
+# app/avo/actions/export_data.rb
+class Avo::Actions::ExportData < Avo::BaseAction
+  self.name = "Export data" # used as the menu label unless you override it
+  self.standalone = true
+end
+```
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    # `label` overrides "Export data"; `icon` is shown next to it
+    action Avo::Actions::ExportData, resource: :projects, label: "Export", icon: "tabler/outline/download"
+  }
+end
+```
 
 </Option>
 
