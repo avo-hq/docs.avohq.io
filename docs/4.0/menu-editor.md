@@ -2,6 +2,7 @@
 feedbackId: 831
 demoVideo: https://youtu.be/VMvG-j1Vxio
 license: pro
+outline: [2, 3]
 ---
 
 # Menu editor
@@ -16,7 +17,7 @@ Avo.configure do |config|
   config.main_menu = -> {
     section "Resources", icon: "tabler/outline/building-store", collapsable: false do
       group "Company", collapsable: true do
-        resource :projects, path: "/admin/resources/projects" do
+        resource :projects do
           link "First project", active: :inclusive, path: "/admin/resources/projects/1"
           link "Second project", active: :inclusive, path: "/admin/resources/projects/2"
         end
@@ -40,7 +41,7 @@ For now, Avo supports editing only two menus, `main_menu` and `profile_menu`. Ho
 
 ## Menu item types
 
-A few menu item types are supported: `link_to`, `section`, `group`, `resource`, `dashboard`, `page`, and `subitems`. There are a few helpers too, like `all_resources`, `all_dashboards`, `all_pages`, and `all_tools`.
+A few menu item types are supported: `link_to`, `section`, `group`, `resource`, `dashboard`, and `page`. There are a few helpers too, like `all_resources`, `all_dashboards`, `all_pages`, and `all_tools`.
 
 The recommended hierarchy is `section → group → resource → subitem`. Sections are the top-level containers rendered with an icon header in the sidebar.
 <!-- here add the short details about the rest of the cases-->
@@ -127,12 +128,30 @@ end
 
 ### Subitems
 
-You can add sub-links beneath a resource by passing a block. These appear as child items under the resource link in the sidebar and are useful for linking to filtered views, specific records, or nested paths.
+You can nest items beneath a `resource` by passing a block. They appear as child items under the resource link in the sidebar.
+
+Sub-items can be any menu item type:
+
+- [`link_to`](#menu-item-types)
+- [`resource`](./resources.html)
+- [`dashboard`](./dashboards.html)
+- [`page`](./forms-and-pages/pages.html)
+- [`board`](./kanban-boards.html)
+
+A nested `resource`, `dashboard`, `page`, or `board` resolves its own URL automatically, so only `link_to` needs an explicit `path:`.
 
 ```ruby
-resource :projects, path: "/admin/resources/projects" do
-  link "First project", active: :inclusive, path: "/admin/resources/projects/1"
-  link "Second project", active: :inclusive, path: "/admin/resources/projects/2"
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    resource :projects do
+      link_to "First project", path: "/admin/resources/projects/1"
+      resource :tasks                 # nested resource
+      dashboard :sales                # nested dashboard
+      page "Avo::Pages::Settings"     # nested page
+      board 1                         # nested kanban board
+    end
+  }
 end
 ```
 
@@ -140,26 +159,7 @@ The `active` option controls when the sub-link is highlighted as active:
 - `:inclusive` — the link is active when the current path starts with the given `path` (useful for nested routes)
 - `:exclusive` — the link is active only on an exact path match (default)
 
-</Option>
-
-<Option name="`subitems`">
-
-`subitems` is an optional wrapper you can use inside a `resource` block to make the sub-links more explicit and readable. It is functionally equivalent to writing links directly in the block. Note that `subitems` and the `link` items within it do not support the `icon` option.
-
-```ruby
-# These two are equivalent
-resource :projects do
-  link "New project", path: "/admin/resources/projects/new"
-  link "All projects", path: "/admin/resources/projects"
-end
-
-resource :projects do
-  subitems do
-    link "New project", path: "/admin/resources/projects/new"
-    link "All projects", path: "/admin/resources/projects"
-  end
-end
-```
+Sub-items don't render an `icon`. For readability you can optionally wrap them in a `subitems` block — it behaves identically to listing them directly.
 
 </Option>
 
