@@ -73,6 +73,8 @@ source "https://packager.dev/avo-hq/" do
   gem "avo-api", ">= 4.0.0.beta"
   gem "avo-http_resource", ">= 4.0.0.beta"
   gem "avo-reactive_fields", ">= 4.0.0.beta"
+  gem "avo-scopes", ">= 4.0.0.beta"
+  gem "avo-custom_controls", ">= 4.0.0.beta"
 end
 
 gem "avo-rhino_field", ">= 0.5.1"
@@ -587,6 +589,71 @@ class Avo::Resources::User < Avo::BaseResource
   }
 end
 ```
+
+## Resource scopes (`avo-scopes`)
+
+In Avo 4, [resource scopes](./scopes) were extracted from `avo-advanced` into a dedicated gem: **`avo-scopes`**.
+
+If you use scopes in your app, update the following.
+
+### Add the gem
+
+`avo-advanced` depends on `avo-scopes`, so you may already have it installed transitively. If you use scopes without `avo-advanced`, add the gem explicitly:
+
+```ruby
+source "https://packager.dev/avo-hq/" do
+  gem "avo-scopes", ">= 4.0.0.beta"
+end
+```
+
+During the Avo 4 beta the gem was briefly named `avo-resource_scopes`. If you added that name to your `Gemfile`, rename it:
+
+```ruby
+# before
+gem "avo-resource_scopes", source: "https://packager.dev/avo-hq/"
+
+# after
+gem "avo-scopes", source: "https://packager.dev/avo-hq/"
+```
+
+Then run `bundle install`.
+
+### Update the base scope class
+
+Every scope class under `app/avo/scopes/` must inherit from **`Avo::Scopes::BaseScope`**.
+
+| Before (Avo 3) | Before (early Avo 4 beta) | After |
+| --- | --- | --- |
+| `Avo::Advanced::Scopes::BaseScope` | `Avo::ResourceScopes::Scopes::BaseScope` | `Avo::Scopes::BaseScope` |
+
+```ruby
+# app/avo/scopes/admins.rb
+# before
+class Avo::Scopes::Admins < Avo::Advanced::Scopes::BaseScope
+
+# after
+class Avo::Scopes::Admins < Avo::Scopes::BaseScope
+```
+
+Search your app for any remaining references:
+
+```bash
+rg 'avo-resource_scopes|ResourceScopes|Advanced::Scopes::BaseScope' app/
+```
+
+The `bin/rails generate avo:scope` generator already targets `Avo::Scopes::BaseScope` in Avo 4 — you only need to update existing scope files.
+
+### Other changes
+
+| What | Before | After |
+| --- | --- | --- |
+| Gem name | `avo-resource_scopes` | `avo-scopes` |
+| Require (manual) | `require "avo/resource_scopes"` | `require "avo/scopes"` |
+| Plugin / license feature ID | `"avo-resource_scopes"` | `"avo-scopes"` |
+
+There are no backward-compatibility aliases for the old gem or plugin names — update all references.
+
+See [Scopes](./scopes) for usage documentation.
 
 ## Nested association forms
 
