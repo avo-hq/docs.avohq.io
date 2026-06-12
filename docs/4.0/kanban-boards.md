@@ -88,7 +88,26 @@ Similar we can change the column names and the value from the settings screen.
 ## Adding items to the board
 
 This is best done on the board. Under each column you'll find the new field. This will search throught the resources that you've selected in the configuration.
-It will use the `self.search[:query]` block to search for the records. It will send two `for_kanban_board` and `board_id` arguments to the block so you can customize the query.
+It will use the `self.search[:query]` block to search for the records. Alongside the usual `params` and `query`, the block receives these locals so you can customize the query for the board:
+
+- `search_type` — set to `:kanban` (the same contract the other search surfaces use: `:resource` for the index search bar, `:global` for the navbar palette, and `:association` for the association picker).
+- `q` — the stripped search term the user typed.
+
+```ruby
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  self.search = {
+    query: -> {
+      if search_type == :kanban
+        # tailor the scope for the board picker
+        query.where(active: true).ransack(name_cont: q).result
+      else
+        query.ransack(name_cont: q).result
+      end
+    }
+  }
+end
+```
 
 When an item is added to the a column, it will have an `Avo::Kanban::Item` record created for it. This `Item` record is responsible for keeping track of the board, column, position properties and more.
 
