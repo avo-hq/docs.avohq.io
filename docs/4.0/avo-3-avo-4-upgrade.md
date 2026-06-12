@@ -675,18 +675,6 @@ rg 'Advanced::Scopes::BaseScope' app/
 
 The `bin/rails generate avo:scope` generator already targets `Avo::Scopes::BaseScope` in Avo 4 — you only need to update existing scope files.
 
-#### Customizable controls
-
-If you reference control classes directly in custom code, update the namespace:
-
-| Avo 3 | Avo 4 |
-| --- | --- |
-| `Avo::Advanced::Resources::Controls::*` | `Avo::CustomControls::Resources::Controls::*` |
-
-```bash
-rg 'Advanced::Resources::Controls' app/
-```
-
 ## Nested association forms
 
 If you use the `nested` option on **`has_many`**, **`has_one`**, or **`has_and_belongs_to_many`** fields, add **`avo-nested`** as shown in the [Advanced features](#advanced-features) `Gemfile` diff above. See [Nested in Forms](./associations/has_many#nested-in-forms) on the association field pages.
