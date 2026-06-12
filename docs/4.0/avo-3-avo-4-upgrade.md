@@ -659,11 +659,8 @@ Every scope class under `app/avo/scopes/` must inherit from **`Avo::Scopes::Base
 
 ```ruby
 # app/avo/scopes/admins.rb
-# before
-class Avo::Scopes::Admins < Avo::Advanced::Scopes::BaseScope
-
-# after
-class Avo::Scopes::Admins < Avo::Scopes::BaseScope
+class Avo::Scopes::Admins < Avo::Advanced::Scopes::BaseScope # [!code --]
+class Avo::Scopes::Admins < Avo::Scopes::BaseScope # [!code ++]
 ```
 
 Search your app for any remaining references:
