@@ -603,7 +603,7 @@ In Avo 3, Pro and Advanced features were installed via `avo-pro` and `avo-advanc
 | --- | --- | --- |
 | [Dashboards](./dashboards) | `avo-dashboards` | [below](#dashboards-avo-dashboards) |
 | [Menu editor](./menu-editor) | `avo-menu` | [below](#menu-editor-avo-menu) |
-| [Global search](./search/global-search) | `avo-advanced_search` | [below](#global-search-avo-advanced_search) |
+| [Global search](./search/global-search), [searchable associations](./associations/searchable) | `avo-advanced_search` | [below](#global-search-and-searchable-associations-avo-advanced_search) |
 | [Authorization](./authorization) | `avo-authorization` | [below](#authorization-avo-authorization) |
 | [Record reordering](./records-reordering) | `avo-record_reordering` | [below](#record-reordering-avo-record_reordering) |
 
@@ -633,9 +633,9 @@ end
 
 Menu configuration stays the same. See [Menu editor](./menu-editor).
 
-#### Global search (`avo-advanced_search`)
+#### Global search and searchable associations (`avo-advanced_search`)
 
-In Avo 3, global search shipped inside `avo-pro`. In Avo 4, add **`avo-advanced_search`**:
+In Avo 3, global search and searchable association fields shipped inside `avo-pro`. In Avo 4, add **`avo-advanced_search`**:
 
 ```ruby
 source "https://packager.dev/avo-hq/" do
@@ -643,7 +643,7 @@ source "https://packager.dev/avo-hq/" do
 end
 ```
 
-Search configuration stays the same. If you have hardcoded search URLs, see [Avo Pro mount point removal](#avo-pro-mount-point-removal) above. See [Global search](./search/global-search).
+Search and `searchable: true` field configuration stay the same. If you have hardcoded search URLs, see [Avo Pro mount point removal](#avo-pro-mount-point-removal) above. See [Global search](./search/global-search) and [Searchable associations](./associations/searchable).
 
 #### Authorization (`avo-authorization`)
 
