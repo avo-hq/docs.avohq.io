@@ -58,23 +58,22 @@ gem "avo-advanced", source: "https://packager.dev/avo-hq/"
 gem "avo", ">= 4.0.0.beta"
 
 source "https://packager.dev/avo-hq/" do
-  # all or some of these
-  gem "avo-pro", ">= 4.0.0.beta"
-  gem "avo-advanced", ">= 4.0.0.beta"
-  gem "avo-http_resource", ">= 4.0.0.beta"
-  gem "avo-dynamic_filters", ">= 4.0.0.beta"
-  gem "avo-pro", ">= 4.0.0.beta"
-  gem "avo-menu", ">= 4.0.0.beta"
-  gem "avo-nested", ">= 4.0.0.beta"
+  # all or some of these — see "avo-pro and avo-advanced split into feature gems"
   gem "avo-dashboards", ">= 4.0.0.beta"
+  gem "avo-menu", ">= 4.0.0.beta"
+  gem "avo-advanced_search", ">= 4.0.0.beta"
+  gem "avo-authorization", ">= 4.0.0.beta"
+  gem "avo-record_reordering", ">= 4.0.0.beta"
+  gem "avo-scopes", ">= 4.0.0.beta"
+  gem "avo-custom_controls", ">= 4.0.0.beta"
+  gem "avo-dynamic_filters", ">= 4.0.0.beta"
+  gem "avo-nested", ">= 4.0.0.beta"
+  gem "avo-http_resource", ">= 4.0.0.beta"
   gem "avo-collaboration", ">= 4.0.0.beta"
   gem "avo-forms", ">= 4.0.0.beta"
   gem "avo-kanban", ">= 4.0.0.beta"
   gem "avo-api", ">= 4.0.0.beta"
-  gem "avo-http_resource", ">= 4.0.0.beta"
   gem "avo-reactive_fields", ">= 4.0.0.beta"
-  gem "avo-scopes", ">= 4.0.0.beta"
-  gem "avo-custom_controls", ">= 4.0.0.beta"
 end
 
 gem "avo-rhino_field", ">= 0.5.1"
@@ -82,7 +81,7 @@ gem "avo-rhino_field", ">= 0.5.1"
 
 ```bash
 # some or all of these
-bundle update avo avo-advanced avo-scopes avo-custom_controls avo-nested avo-http_resource avo-dynamic_filters avo-pro avo-menu avo-dashboards avo-collaboration avo-forms avo-kanban avo-api avo-http_resource avo-reactive_fields avo-rhino_field
+bundle update avo avo-dashboards avo-menu avo-advanced_search avo-authorization avo-record_reordering avo-scopes avo-custom_controls avo-dynamic_filters avo-nested avo-http_resource avo-collaboration avo-forms avo-kanban avo-api avo-reactive_fields avo-rhino_field
 ```
 
 :::info
@@ -590,11 +589,83 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-## `avo-advanced` split into feature gems
+## `avo-pro` and `avo-advanced` split into feature gems
 
-In Avo 3, many advanced features shipped inside the `avo-advanced` meta-gem. In Avo 4, each feature is a **standalone gem** you add to your `Gemfile`. `avo-advanced` is being phased out and **does not** bundle these features anymore.
+In Avo 3, Pro and Advanced features were installed via `avo-pro` and `avo-advanced`. In Avo 4, each feature is its own gem in your `Gemfile`. Both `avo-pro` and `avo-advanced` are being phased out — add only the gems for the features you use, then remove the bundle gems.
 
-Add only the gems for the features you use:
+### Pro features
+
+| Feature | Gem | Upgrade section |
+| --- | --- | --- |
+| [Dashboards](./dashboards) | `avo-dashboards` | [below](#dashboards-avo-dashboards) |
+| [Menu editor](./menu-editor) | `avo-menu` | [below](#menu-editor-avo-menu) |
+| [Global search](./search/global-search) | `avo-advanced_search` | [below](#global-search-avo-advanced_search) |
+| [Authorization](./authorization) | `avo-authorization` | [below](#authorization-avo-authorization) |
+| [Record reordering](./records-reordering) | `avo-record_reordering` | [below](#record-reordering-avo-record_reordering) |
+
+Once you have the individual gems you need, remove `avo-pro` from your `Gemfile`.
+
+#### Dashboards (`avo-dashboards`)
+
+In Avo 3, dashboards shipped inside `avo-pro`. In Avo 4, add **`avo-dashboards`**:
+
+```ruby
+source "https://packager.dev/avo-hq/" do
+  gem "avo-dashboards", ">= 4.0.0.beta"
+end
+```
+
+Dashboard definitions and cards stay the same. See [Dashboards](./dashboards).
+
+#### Menu editor (`avo-menu`)
+
+In Avo 3, the menu editor shipped inside `avo-pro`. In Avo 4, add **`avo-menu`**:
+
+```ruby
+source "https://packager.dev/avo-hq/" do
+  gem "avo-menu", ">= 4.0.0.beta"
+end
+```
+
+Menu configuration stays the same. See [Menu editor](./menu-editor).
+
+#### Global search (`avo-advanced_search`)
+
+In Avo 3, global search shipped inside `avo-pro`. In Avo 4, add **`avo-advanced_search`**:
+
+```ruby
+source "https://packager.dev/avo-hq/" do
+  gem "avo-advanced_search", ">= 4.0.0.beta"
+end
+```
+
+Search configuration stays the same. If you have hardcoded search URLs, see [Avo Pro mount point removal](#avo-pro-mount-point-removal) above. See [Global search](./search/global-search).
+
+#### Authorization (`avo-authorization`)
+
+In Avo 3, authorization shipped inside `avo-pro`. In Avo 4, add **`avo-authorization`**:
+
+```ruby
+source "https://packager.dev/avo-hq/" do
+  gem "avo-authorization", ">= 4.0.0.beta"
+end
+```
+
+Policies and `authorization` configuration stay the same. See [Authorization](./authorization).
+
+#### Record reordering (`avo-record_reordering`)
+
+In Avo 3, record reordering shipped inside `avo-pro`. In Avo 4, add **`avo-record_reordering`**:
+
+```ruby
+source "https://packager.dev/avo-hq/" do
+  gem "avo-record_reordering", ">= 4.0.0.beta"
+end
+```
+
+`ordering` configuration on resources stays the same. See [Records ordering](./records-reordering).
+
+### Advanced features
 
 | Feature | Gem | Upgrade section |
 | --- | --- | --- |
@@ -603,9 +674,9 @@ Add only the gems for the features you use:
 | [Dynamic filters](./dynamic-filters) | `avo-dynamic_filters` | [below](#dynamic-filters-avo-dynamic_filters) |
 | [Nested association forms](./associations/has_many#nested-in-forms) | `avo-nested` | [below](#nested-association-forms) |
 
-Once you have the individual gems you need, you can remove `avo-advanced` from your `Gemfile`.
+Once you have the individual gems you need, remove `avo-advanced` from your `Gemfile`.
 
-### Resource scopes (`avo-scopes`)
+#### Resource scopes (`avo-scopes`)
 
 In Avo 3, scopes shipped inside `avo-advanced`. In Avo 4, add **`avo-scopes`**:
 
@@ -634,11 +705,9 @@ rg 'Advanced::Scopes::BaseScope' app/
 
 The `bin/rails generate avo:scope` generator already targets `Avo::Scopes::BaseScope` in Avo 4 — you only need to update existing scope files.
 
-If you check license features in custom code, use the plugin ID **`"avo-scopes"`**.
-
 See [Scopes](./scopes) for usage documentation.
 
-### Customizable controls (`avo-custom_controls`)
+#### Customizable controls (`avo-custom_controls`)
 
 In Avo 3, customizable controls (`index_controls`, `show_controls`, `edit_controls`, `row_controls`) shipped inside `avo-advanced`. In Avo 4, add **`avo-custom_controls`**:
 
@@ -660,11 +729,9 @@ If you reference control classes directly in custom code, update the namespace:
 rg 'Advanced::Resources::Controls' app/
 ```
 
-If you check license features in custom code, use the plugin ID **`"avo-custom_controls"`**.
-
 See [Customizable controls](./customizable-controls) for usage documentation.
 
-### Dynamic filters (`avo-dynamic_filters`)
+#### Dynamic filters (`avo-dynamic_filters`)
 
 In Avo 3, dynamic filters shipped inside `avo-advanced`. In Avo 4, add **`avo-dynamic_filters`**:
 
@@ -674,9 +741,7 @@ source "https://packager.dev/avo-hq/" do
 end
 ```
 
-Filter definitions on resources and fields stay the same. If you check license features in custom code, use the plugin ID **`"avo-dynamic_filters"`**.
-
-See [Dynamic filters](./dynamic-filters) for usage documentation.
+Filter definitions on resources and fields stay the same. See [Dynamic filters](./dynamic-filters) for usage documentation.
 
 ## Nested association forms
 
