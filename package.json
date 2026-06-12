@@ -12,7 +12,7 @@
   },
   "scripts": {
     "dev": "vitepress dev docs --port 3011",
-    "build": "yarn generate-llms-txt all && vitepress build docs",
+    "build": "yarn generate-llms-txt all && NODE_OPTIONS=--max-old-space-size=4096 vitepress build docs",
     "serve": "vitepress serve docs",
     "generate-llms-txt": "node scripts/generate-llms-txt.js",
     "generate-llms-latest": "node scripts/generate-llms-txt.js latest",
