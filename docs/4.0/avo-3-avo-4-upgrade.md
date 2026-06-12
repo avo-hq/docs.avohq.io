@@ -82,6 +82,7 @@ gem "avo-rhino_field", ">= 0.5.1"
 Then run:
 
 ```bash
+bundle install
 bin/rails avo:update
 ```
 
