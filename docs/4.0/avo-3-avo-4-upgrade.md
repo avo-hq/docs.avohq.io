@@ -82,7 +82,7 @@ gem "avo-rhino_field", ">= 0.5.1"
 
 ```bash
 # some or all of these
-bundle update avo avo-advanced avo-nested avo-http_resource avo-dynamic_filters avo-pro avo-menu avo-dashboards avo-collaboration avo-forms avo-kanban avo-api avo-http_resource avo-reactive_fields avo-rhino_field
+bundle update avo avo-advanced avo-scopes avo-custom_controls avo-nested avo-http_resource avo-dynamic_filters avo-pro avo-menu avo-dashboards avo-collaboration avo-forms avo-kanban avo-api avo-http_resource avo-reactive_fields avo-rhino_field
 ```
 
 :::info
@@ -592,13 +592,11 @@ end
 
 ## Resource scopes (`avo-scopes`)
 
-In Avo 4, [resource scopes](./scopes) were extracted from `avo-advanced` into a dedicated gem: **`avo-scopes`**.
+In Avo 3, [resource scopes](./scopes) shipped inside `avo-advanced`. In Avo 4 they live in a dedicated gem: **`avo-scopes`**.
 
-If you use scopes in your app, update the following.
+`avo-advanced` is being phased out and **does not** include scopes. If you use scopes, you must add **`avo-scopes`** to your `Gemfile` — even if you still have `avo-advanced` installed for other features during the transition.
 
 ### Add the gem
-
-`avo-advanced` depends on `avo-scopes`, so you may already have it installed transitively. If you use scopes without `avo-advanced`, add the gem explicitly:
 
 ```ruby
 source "https://packager.dev/avo-hq/" do
