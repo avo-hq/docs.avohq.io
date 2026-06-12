@@ -592,25 +592,49 @@ end
 <Image src="/assets/img/3_0/customization/click-row-to-view-record.gif" width="" height="" alt="Click to view record in Avo" />
 </Option>
 
-## Associations lookup list limit
+## Associations
 
-<Option name="`associations_lookup_list_limit`">
+<Option name="`associations`">
 
-By default, there is a limit of a 1000 records per query when listing the association options. This limit ensures that the page will not crash due to large collections.
-Use `associations_lookup_list_limit` configuration to change the limit value.
+Global defaults for associations, grouped under a single namespace. You only need to set the keys you want to change — everything else falls back to the defaults shown below.
 
-```ruby{3}
+```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.associations_lookup_list_limit = 1000
+  config.associations = {
+    lookup_list_limit: 1000,
+    frames: {
+      loading: :lazy,           # :lazy or :manual — default render mode for association frames
+      auto_load_for: 15.minutes # manual memory window (0/nil to disable)
+    }
+  }
 end
 ```
+
+### `lookup_list_limit`
+
+By default, there is a limit of 1000 records per query when listing the association options. This limit ensures that the page will not crash due to large collections. Use `lookup_list_limit` to change the limit value.
 
 The message `There are more records available.` is shown when the limit is reached. To localize the message you can use `I18n.translate("avo.more_records_available")`.
 
 Using [searchable](./associations/searchable.html) is recommended for listing unlimited records with better performance and user experience.
 
 <Image src="/assets/img/customization/associations-lookup-list-limit.png" width="2466" height="1098" alt="Associations lookup list limit configuration" />
+
+### `frames`
+
+Controls how association turbo frames (`has_one`, `has_many`, `has_and_belongs_to_many`) load on the <Show /> page when a field doesn't set its own [`loading:`](./associations/has_many.html#loading) option.
+
+| Key | Default | Description |
+|---|---|---|
+| `loading` | `:lazy` | `:lazy` fetches the frame when it's revealed; `:manual` renders a placeholder with a **Load** button. |
+| `auto_load_for` | `15.minutes` | For manual frames, how long an opened frame is remembered before the placeholder returns. `0`/`nil` disables it. |
+
+A per-field [`loading:`](./associations/has_many.html#loading) always overrides these global defaults.
+
+:::info Backward compatibility
+The former `config.associations_lookup_list_limit = 1000` still works as an alias for `config.associations[:lookup_list_limit]`.
+:::
 </Option>
 
 <Option name="`persistence`">

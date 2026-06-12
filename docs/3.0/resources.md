@@ -36,6 +36,16 @@ class Avo::Resources::Car < Avo::BaseResource
 end
 ```
 
+The auto-generated controller will look like this:
+
+```ruby
+# app/controllers/avo/cars_controller.rb
+class Avo::CarsController < Avo::ResourcesController
+end
+```
+
+The Avo Resource should always be accompanied by a controller.
+
 This behavior can be omitted by using the argument `--skip-avo-resource`. For example if we want to generate a `Car` model but no Avo counterpart we should use the following command:
 
 ```bash
@@ -167,6 +177,7 @@ rails generate avo:all_resources
    - Handles errors gracefully, printing error messages if generation fails for any model
 
 This is particularly useful when:
+
 - Setting up Avo in an existing Rails application
 - Ensuring all your models have corresponding Avo resources
 
@@ -322,7 +333,6 @@ end
 
 Please read the detailed [views](./views.html) page.
 
-
 ## Extending `Avo::ResourcesController`
 
 You may need to execute additional actions on the `ResourcesController` before loading the Avo pages. You can create an `Avo::BaseResourcesController` and extend your resource controller from it.
@@ -347,6 +357,7 @@ You can't use `Avo::BaseController` and `Avo::ResourcesController` as **your bas
 When you generate a new resource or controller in Avo, it won't automatically inherit from the `Avo::BaseResourcesController`. However, you have two approaches to ensure that the new generated controllers inherit from a custom controller:
 
 ### `--parent-controller` option on the generators
+
 Both the `avo:controller` and `avo:resource` generators accept the `--parent-controller` option, which allows you to specify the controller from which the new controller should inherit. Here are examples of how to use it:
 
 ```bash
@@ -355,6 +366,7 @@ rails g avo:resource city --parent-controller Avo::BaseResourcesController
 ```
 
 ### `resource_parent_controller` configuration option
+
 You can configure the `resource_parent_controller` option in the `avo.rb` initializer. This option will be used to establish the inherited controller if the `--parent-controller` argument is not passed on the generators. Here's how you can do it:
 
 ```ruby
@@ -368,7 +380,6 @@ end
 ### Attach concerns to `Avo::BaseController`
 
 Alternatively you can use [this guide](https://avohq.io/blog/safely-extend-a-ruby-on-rails-controller) to attach methods, actions, and hooks to the main `Avo::BaseController` or `Avo::ApplicationController`.
-
 
 ## Manually registering resources
 
@@ -413,7 +424,6 @@ module Avo
   end
 end
 ```
-
 
 All your resources will now inherit from your custom `Avo::BaseResource`, allowing you to add common functionality across your admin interface. For instance, the above example ensures that all number fields in your resources will have their values cast to floats. You can add any other shared methods or customizations here, making it easier to maintain consistent behavior across all resources.
 
@@ -474,6 +484,7 @@ class Avo::Resources::Comment < Avo::BaseResource
   }
 end
 ```
+
 </Option>
 
 <Option name="`self.description`">
@@ -523,6 +534,7 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
+
 </Option>
 
 <Option name="`self.includes`">
@@ -547,6 +559,7 @@ We know, the array notation looks weird, but it works.
 <Option name="`self.single_includes`">
 
 `single_includes` works the same as `includes` but it's going to eager load the associations on the <Show /> and <Edit /> views only.
+
 </Option>
 
 <Option name="`self.attachments`">
@@ -554,6 +567,7 @@ We know, the array notation looks weird, but it works.
 Similar to how `includes` works, you can use `attachments` to eager load attachments on the `Index` view.
 
 :::code-group
+
 ```ruby{2-4} [app/models/post.rb]
 class Post < ApplicationRecord
   has_one_attached :cover_photo
@@ -567,6 +581,7 @@ class Avo::Resources::Post < Avo::BaseResource
   self.attachments = [:cover_photo, :audio, :attachments]
 end
 ```
+
 :::
 
 </Option>
@@ -672,6 +687,7 @@ This option is used in the **auto-generated menu**, not in the [menu editor](./m
 
 You'll have to use your own logic in the [`visible`](./menu-editor#item-visibility) block for that.
 :::
+
 </Option>
 
 <Option name="`config.buttons_on_form_footers`">
@@ -708,11 +724,10 @@ end
 
 You can go more granular and customize these paths or response more using controller methods.
 
- - [`after_create_path`](./controllers#after_create_path)
- - [`after_update_path`](./controllers#after_update_path)
- - [`after_destroy_path`](./controllers#after_destroy_path)
+- [`after_create_path`](./controllers#after_create_path)
+- [`after_update_path`](./controllers#after_update_path)
+- [`after_destroy_path`](./controllers#after_destroy_path)
 </Option>
-
 
 <Option name="`self.record_selector`">
 
@@ -740,6 +755,7 @@ class Avo::Resources::Person < Avo::BaseResource
   self.link_to_child_resource = true
 end
 ```
+
 </Option>
 
 <Option name="`self.keep_filters_panel_open`">
@@ -802,7 +818,6 @@ self.components = {
 }
 ```
 
-
 A resource configured with the example above will start using the declared components instead the default ones.
 
 :::warning
@@ -818,11 +833,12 @@ Creating a customized component for a view is most easily achieved by ejecting o
 Alternatively, there is another method which requires two additional manual steps. This involves crafting a personalized component by extracting an existing one and adjusting its namespace. Although changing the namespace is not mandatory, we strongly recommend it unless you intend for all resources to adopt the extracted component.
 
 Example:
+
 1. Execute the command `bin/rails generate avo:eject --component Avo::Views::ResourceIndexComponent` to eject the specified component.<br><br>
 2. Access the newly ejected file and adjust the namespace. You can create a fresh directory like `my_dir` and transfer the component to that directory.<br><br>
-2. You have the flexibility to establish multiple directories, just ensure that the class name corresponds to the path of the directories.<br><br>
-3. Update the class namespace in the file from `Avo::Views::ResourceIndexComponent` to `Avo::MyDir::Views::ResourceIndexComponent`.<br><br>
-4. You can now utilize the customized component in a resource.
+3. You have the flexibility to establish multiple directories, just ensure that the class name corresponds to the path of the directories.<br><br>
+4. Update the class namespace in the file from `Avo::Views::ResourceIndexComponent` to `Avo::MyDir::Views::ResourceIndexComponent`.<br><br>
+5. You can now utilize the customized component in a resource.
 
 ```ruby
 self.components = {
@@ -831,6 +847,7 @@ self.components = {
 ```
 
 This way you can choose the whatever namespace structure you want and you assure that the initializer is accepting the right arguments.
+
 </Option>
 
 <Option name="`self.index_query`">
@@ -838,6 +855,7 @@ This way you can choose the whatever namespace structure you want and you assure
 ### Unscoped queries on `Index`
 
 You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.
+
 ```ruby{2}
 class Project < ApplicationRecord
   default_scope { order(name: :asc) }
@@ -852,6 +870,7 @@ class Avo::Resources::Project < Avo::BaseResource
   self.index_query = -> { query.unscoped }
 end
 ```
+
 </Option>
 
 <Option name="`self.default_sort_column`">
@@ -892,10 +911,12 @@ class AddIndexOnUsersCreatedAt < ActiveRecord::Migration[7.1]
   end
 end
 ```
+
 :::
 
 **Related:**
-  - [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
+
+- [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
 </Option>
 
 <Option name="`self.default_sort_direction`">
@@ -975,22 +996,31 @@ self.pagination = {
 The exposed pagination setting above have the default value for each key.
 
 ### `type`<br><br>
-  #### Possible values
-  `:default`, `:countless`
-  #### Default
-  `:default`
 
+#### Possible values
+
+`:default`, `:countless`
+
+#### Default
+
+`:default`
 
 ### `size`<br><br>
-  #### Possible values
-  [Pagy docs - Control the page links](https://ddnexus.github.io/pagy/docs/how-to/#control-the-page-links)
-  #### Default
-  `[1, 2, 2, 1]` - before <Version version="3.11.5" />
 
-  `9` - <VersionReq version="3.11.5" />
+#### Possible values
+
+[Pagy docs - Control the page links](https://ddnexus.github.io/pagy/docs/how-to/#control-the-page-links)
+
+#### Default
+
+`[1, 2, 2, 1]` - before <Version version="3.11.5" />
+
+`9` - <VersionReq version="3.11.5" />
 
 ### Examples
+
 #### Default
+
 ```ruby
 self.pagination = -> do
   {
@@ -1017,6 +1047,7 @@ end
 <br><br>
 
 #### Countless and "pageless"
+
 ```ruby
 self.pagination = -> do
   {
@@ -1025,6 +1056,7 @@ self.pagination = -> do
   }
 end
 ```
+
 <Image src="/assets/img/resources/pagination/countless_empty_size.png" width="1029" height="62" alt="Countless pagination size empty" />
 </Option>
 
@@ -1081,6 +1113,7 @@ class Avo::Resources::User < Avo::BaseResource
   # fields, cards and more
 end
 ```
+
 </Option>
 
 <Option name="`self.external_link`">
@@ -1091,7 +1124,6 @@ end
 <br>
 
 <Image src="/assets/img/resources/external-link.png" width="1293" height="426" alt="External link demonstration" />
-
 
 It's often desirable to provide users with a link to the public path of a record outside of the Avo interface. The `external_link` option allows you to achieve this.
 
@@ -1124,7 +1156,6 @@ Oftern we want to show some information about records without adding another fie
 More information on [`discreet_information`](./discreet-information)
 
 </Option>
-
 
 ## Cards
 

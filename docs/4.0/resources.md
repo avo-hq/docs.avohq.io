@@ -36,6 +36,16 @@ class Avo::Resources::Car < Avo::BaseResource
 end
 ```
 
+The auto-generated controller will look like this:
+
+```ruby
+# app/controllers/avo/cars_controller.rb
+class Avo::CarsController < Avo::ResourcesController
+end
+```
+
+The Avo Resource should always be accompanied by a controller.
+
 This behavior can be omitted by using the argument `--skip-avo-resource`. For example if we want to generate a `Car` model but no Avo counterpart we should use the following command:
 
 ```bash

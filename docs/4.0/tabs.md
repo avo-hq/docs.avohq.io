@@ -150,3 +150,44 @@ end
 ```
 
 </Option>
+
+<Option name="`loading`">
+
+While `lazy_load` fetches a tab's content automatically when the tab is revealed, `loading: :manual` defers the fetch until the user explicitly asks for it. The tab renders a placeholder with a **Load** button and fetches nothing until clicked — useful for heavy tabs you don't want to load on every page view.
+
+```ruby{2}
+tabs do
+  tab title: "Orders", loading: :manual do
+    field :orders, as: :has_many
+  end
+end
+```
+
+Each manual tab gets its own **Load** button (per-tab gating). On click, the real tab content replaces the placeholder. If the request fails, an inline error with a **Retry** button is shown inside the frame.
+
+#### Possible values
+
+| Value | Behavior |
+|---|---|
+| `:manual` | Placeholder + **Load** button; fetches on click. Once opened, the tab is remembered for **15 minutes** by default (see [`auto_load_for`](#remembering-an-opened-tab)). |
+| `{ mode: :manual }` | Same as `:manual`. |
+| `{ mode: :manual, auto_load_for: 5.minutes }` | Manual with a custom sliding memory window — once opened, the tab auto-loads (no placeholder) on return visits for the given duration. |
+| `{ mode: :manual, auto_load_for: 0 }` | Manual with **no** memory — the placeholder returns on every visit (`0` or `nil` opts out). |
+| `:lazy` / `{ mode: :lazy }` | Native lazy loading (equivalent to `lazy_load: true`). |
+
+#### Remembering an opened tab
+
+Once the user opens a manual tab, Avo remembers it for **15 minutes** by default and auto-loads it (no placeholder) on return visits. Pass `auto_load_for` to change the window, or `auto_load_for: 0` (or `nil`) to opt out:
+
+```ruby
+tab title: "Orders", loading: { mode: :manual, auto_load_for: 5.minutes } do
+  field :orders, as: :has_many
+end
+```
+
+A short-lived cookie scoped per record + tab remembers the opened tab and slides the window forward on each return visit. Once it lapses, the placeholder + **Load** button return.
+
+:::info
+`loading: :manual` is purely additive — omitting it leaves every tab behaving exactly as before. Like `lazy_load`, manual loading is a <Show />-view concern and does not apply to form views.
+:::
+</Option>
