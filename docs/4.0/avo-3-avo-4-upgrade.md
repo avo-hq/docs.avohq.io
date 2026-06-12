@@ -428,6 +428,7 @@ When the content is a **list of fields**, wrap it in `ui.description_list` (the 
     </div> <!-- [!code ++] -->
   <% end %>
 <% end %>
+```
 
 #### Removed the `field_container` view helper
 
@@ -885,6 +886,91 @@ More info on the [Description option](./actions/customization.html#description) 
 ## Added `self.icon` option to resources
 
 More info on the [Icon option](./resources.html#selficon) section.
+
+## Added `loading: :manual` for on-demand associations and tabs
+
+Avo 4 adds a `loading:` option to **`has_many`**, **`has_one`**, and **`has_and_belongs_to_many`** association fields and to **tabs**. It introduces a third frame-loading mode — **`manual`** — alongside the existing eager and lazy behavior.
+
+A `manual` frame renders a placeholder with a **Load** button and fetches nothing until the user clicks it. It's handy for expensive associations or tabs (heavy queries, external APIs) that a user often doesn't need on every visit.
+
+```ruby
+# Associations
+field :orders, as: :has_many, loading: :manual
+field :invoice, as: :has_one, loading: :manual
+field :tags, as: :has_and_belongs_to_many, loading: :manual
+
+# Tabs — every manual tab gets its own Load button
+tab title: "Orders", loading: :manual do
+  field :orders, as: :has_many
+end
+```
+
+The option is **purely additive and opt-in** — omitting `loading:` keeps the exact behavior you have today. It applies on the <Show /> view only; <Edit /> and <New /> always render the full field/tab.
+
+:::warning Blocks that feed the placeholder still run on page load
+`manual` defers the framed **content**, not the placeholder. The placeholder (its title and `description:`) is rendered with the page, so any lambda/block that feeds it is evaluated on every page load — before the user clicks **Load**.
+
+A `description:` lambda that touches the database is therefore **not** deferred:
+
+```ruby
+field :posts, as: :has_many,
+  loading: :manual,
+  description: -> { "#{query.count} posts" } # `query.count` runs on page load
+```
+
+If you reached for `loading: :manual` to avoid a query until the frame is opened, keep the `description:` cheap (or drop it) — only the framed content is fetched on demand.
+:::
+
+### Remembering an opened frame with `auto_load_for`
+
+A manual frame **remembers** that the user opened it and skips the Load button on subsequent visits within a time window. This defaults to **15 minutes** — once the user clicks **Load**, returning to the page within the window auto-loads the frame with no button.
+
+Pass `auto_load_for` to change the window, or `0`/`nil` to opt out (placeholder returns on every visit):
+
+```ruby
+field :orders, as: :has_many, loading: { mode: :manual, auto_load_for: 5.minutes }
+field :orders, as: :has_many, loading: { mode: :manual, auto_load_for: 0 } # no memory
+```
+
+Avo stores a short-lived cookie (scoped per record + association/tab). While it's valid, returning to the page — a refresh, the back button, or following a link back — renders the frame as a normal auto-loading one, with no button. The window **slides**: each return resets the clock. When it lapses, the placeholder and Load button come back.
+
+`mode:` also accepts `:lazy` to render a native lazy frame (loads when scrolled into view):
+
+```ruby
+field :orders, as: :has_many, loading: { mode: :lazy }
+```
+
+## Added `config.associations` for global association defaults
+
+Avo 4 introduces a `config.associations` namespace that sets the defaults for all associations in one place:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.associations = {
+    lookup_list_limit: 1000,
+    frames: {
+      loading: :lazy,           # default render mode for has_one/has_many/habtm frames
+      auto_load_for: 15.minutes # default manual memory window
+    }
+  }
+end
+```
+
+A per-field `loading:` always overrides `frames.loading`. See [Customization → Associations](./customization.html#associations).
+
+### `config.associations_lookup_list_limit` moved into the namespace
+
+The lookup limit now lives at `config.associations[:lookup_list_limit]`. The old flat accessor still works as an alias, so existing initializers don't break:
+
+```ruby
+config.associations_lookup_list_limit = 1000   # [!code --]
+config.associations = {lookup_list_limit: 1000} # [!code ++]
+```
+
+### Association frames now default to lazy loading
+
+`frames.loading` defaults to `:lazy`, so top-level association frames load when revealed rather than eagerly on page load (associations inside tabs were already lazy). To restore eager loading, set `loading: :eager` — either per field, or globally via `config.associations = {frames: {loading: :eager}}`.
 
 <!-- TODO: Move all the Added things to a different section -->
 

@@ -13,4 +13,8 @@ Changes the text displayed under the association name.
 Any string or any zero arity lambda function.
 
 Within lambda, you have access to `query` and all attributes of [`Avo::ExecutionContext`](../execution-context).
+
+:::warning Evaluated on page load, even with `loading: :manual`
+The `description` lambda is evaluated to render the association header — including the **placeholder** shown for a `loading: :manual` association. So a lambda that touches the database (e.g. `-> { "#{query.count} posts" }`) runs on every page load, *before* the user clicks **Load**. If you reached for `loading: :manual` to defer that query, keep the `description` cheap (or omit it) — only the framed content is fetched on demand.
+:::
 </Option>
