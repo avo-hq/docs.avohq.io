@@ -21,7 +21,7 @@ bin/rails generate avo:scope admins
 
 ```ruby
 # app/avo/scopes/admins.rb
-class Avo::Scopes::Admins < Avo::Advanced::Scopes::BaseScope
+class Avo::Scopes::Admins < Avo::Scopes::BaseScope
   self.name = "Admins" # Name displayed on the scopes bar
   self.description = "Admins only" # This is the tooltip value
   self.scope = :admins # valid scope on the model you're using it
@@ -120,14 +120,14 @@ The `scoped_query` method can be used to compute and display the record count. P
 
 ```ruby{3}
 # app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Advanced::Scopes::BaseScope
+class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   self.name = "Even"
 end
 ```
 
 ```ruby{4}
 # app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Advanced::Scopes::BaseScope
+class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   # Please see the performance note above if you're using `scoped_query`
   self.name = -> { "Even (#{scoped_query.count})" }
 end
@@ -142,14 +142,14 @@ This value is going to be displayed when the user hovers over the scope.
 
 ```ruby{3}
 # app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Advanced::Scopes::BaseScope
+class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   self.description = "Only records that have an even ID."
 end
 ```
 
 ```ruby{3-5}
 # app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Advanced::Scopes::BaseScope
+class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   self.description = -> {
     "Only #{resource.name.downcase.pluralize} that have an even ID"
   }
@@ -167,7 +167,7 @@ You can use a symbol which will indicate the scope on that model or a proc which
 
 ```ruby{4}
 # app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Advanced::Scopes::BaseScope
+class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   # This will use the `even_id` scope from the model
   self.scope = :even_id
 end
@@ -175,7 +175,7 @@ end
 
 ```ruby{3}
 # app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Advanced::Scopes::BaseScope
+class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   self.scope = -> { query.where("#{resource.model_key}.id % 2 = ?", "0") }
 end
 ```
@@ -193,7 +193,7 @@ The `visible` option has additional access to `parent_record` and `parent_resour
 
 ```ruby{4}
 # app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Advanced::Scopes::BaseScope
+class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   # Only show this scope to admins
   self.visible = -> { current_user.admin? }
 end
@@ -205,7 +205,7 @@ end
 
 ```ruby
 # app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Advanced::Scopes::BaseScope
+class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   # Please see the performance note above if you're using `scoped_query`
   self.name = -> { "Even (#{scoped_query.count})" }
 
