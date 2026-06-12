@@ -4,8 +4,8 @@ outline: [2, 3]
 
 # Upgrade guide
 
-:::info Stay up to date
-The up-to-date status of all the gems is available at [github.com/avo-hq/avo/issues/4349](https://github.com/avo-hq/avo/issues/4349)
+:::info Subscribe to Avo 4
+Ensure you have an active Avo 4 subscription from https://avohq.io/pricing-4
 :::
 
 The upgrade process from Avo 3 to Avo 4 contains several important improvements and changes.
@@ -16,84 +16,107 @@ Here's what you need to know to upgrade your Avo 3 application to Avo 4.
 Take these steps one by one in order to upgrade your app.
 You can follow it yourself or let your LLM do the heavy lifting:
 
+## Upgrading using a coding agent
+
 ```
-Use this guide to upgrade this Avo 3 app to Avo 4.
-Before starting make sure that all of the step-by-step Avo 3 upgrades have been applied up to the version that you are upgrading from (https://docs.avohq.io/3.0/avo-2-avo-3-upgrade.html).
-Take it step by step and produce a markdown doc (avo-3-to-4-upgrade.md) with each chapter as an item, checking them off as you go.
-https://docs.avohq.io/4.0/avo-3-avo-4-upgrade.html
+Upgrade this Avo 3 app to Avo 4 using https://docs.avohq.io/4.0/avo-3-avo-4-upgrade.html as the source of truth. You may run shell commands (grep, bundle, the test suite, git) without asking each time — but ask before anything destructive or ambiguous.
+
+Setup
+- Confirm all incremental Avo 3 upgrades are applied up to the current version (https://docs.avohq.io/3.0/avo-2-avo-3-upgrade.html). If not, stop and tell me.
+- Create a new branch. Run the test suite to capture a baseline; if it's already red, stop and tell me.
+- Commit after each chapter, with the chapter name in the message.
+
+Inventory before editing
+- For each chapter, grep the codebase for the APIs it touches BEFORE changing anything (e.g. main_panel, no_confirmation, cluster/row, profile_photo, cover_photo, branding, with_tools, result_path, params[:via_association], `size:` in pagination, PanelComponent, the renamed view-type components, etc.).
+- Many chapters won't apply. Mark each APPLIES / NOT USED / NEEDS REVIEW. Never apply a change for an API the app doesn't use.
+
+Gems first
+- Update the Gemfile to >= 4.0.0 for `avo` and every `avo-*` gem in use (check for avo-nested, avo-rhino_field, avo-dynamic_filters, etc.), move private gems under the packager.dev source block, run bundle, and boot the app before touching app code.
+- Nested forms now need the separate avo-nested gem — add it if has_many/has_one/habtm use `nested`.
+
+Apply, per chapter
+- Make the change, boot the app, re-run tests. Prefer Rails route helpers over hardcoded paths.
+- When a chapter links a sub-page (appearance, global search, badge, etc.), fetch and follow it rather than guessing the new API.
+
+⚠️ Silent behavior changes — these pass tests but change runtime behavior, flag each explicitly:
+- `explicit_authorization` now defaults to true → actions/fields/records with a missing policy method are now DENIED. Audit policies.
+- Action `no_confirmation` → `confirmation`, default flipped (modal now shows by default).
+- `params[:via_association]` is gone → any `== 'has_many'` branch silently falls through to else. Migrate to `search_type`.
+- Dynamic filters `always_expanded` now defaults to true.
+
+Output
+- Produce avo-3-to-4-upgrade.md: one checklist item per chapter with status (applied / skipped / needs-review) and what changed.
+- End with "Manual verification needed" — things tests can't catch: missing/exploded icons (Heroicons→Tabler), avatar/cover rendering, custom CSS referencing old --avo-* variables or Algolia .aa-* selectors, appearance/branding visuals.
+
+Don't invent APIs — if the guide doesn't cover a case, stop and ask.
 ```
 
 Depending on how you use Avo you might not need to do all the steps.
 
-<!-- ## Upgrade from 3.x to 4.x
-
-:::info Ensure you have a valid license
-Avo 4 requires a valid v4 license key. Your v3 license key won't work with Avo 4. Please upgrade your license at [avohq.io/pricing](https://avohq.io/pricing).
-::: -->
-
 ## Get started with Avo 4
-
-:::info Beta access and private gems
-During the Avo 4 open beta, you can try **all** Avo gems (including Pro, Advanced, and other private gems) **regardless of your subscription tier**, including on Community. See [Avo 4 status and feedback #4349](https://github.com/avo-hq/avo/issues/4349) for the latest. Once Avo 4 pricing is finalized, you will need an appropriate paid license to keep using paid gems.
-
-Private beta gems are still served from `packager.dev`. After you enroll at [avohq.io/try-4](https://avohq.io/try-4), your licenses (including Community) include a **Gem Server Token** on your [license page](https://v3.avohq.io/licenses). Configure Bundler with that token so `bundle install` can download private gems. Follow [Gem server authentication](./gem-server-authentication).
-:::
 
 Assuming you are upgrading your Avo 3 app, you need to do three things:
 
-1. Enroll to the Avo 4 beta program by going to [avohq.io/try-4](https://avohq.io/try-4).
+1. Subscribe to Avo 4 [here](https://avohq.io/pricing-4).
 
-2. Upgrade the Avo gems
+2. Upgrade your Avo gems
 
-This means updating your `Gemfile` to target the beta version of Avo and running the bundle update on the gems you are using `avo`, `avo-pro`, `avo-advanced`, and all other `avo` gems you are using to use a version greater than or equal to `4.0.0.beta`.
+3. Use this guide to upgrade your app to Avo 4.
+
+### Upgrade your gems
+
+This means updating your `Gemfile` to target the Avo 4 version and running the bundle update on the gems you are using `avo`, `avo-pro`, `avo-advanced`, and all other `avo` gems you are using to use a version greater than or equal to `4.0.0`.
 See what other gems you might have such as `avo-nested`, `avo-rhino_field`, etc. because they need to be updated too.
 
 ```ruby
-# in your Gemfile
+# Gemfile
 
-# before
+# Before
 gem "avo"
 gem "avo-advanced", source: "https://packager.dev/avo-hq/"
 
-# after
-gem "avo", ">= 4.0.0.beta"
+# After
+gem "avo", ">= 4.0.0"
+
+# remove avo-pro and avo-advanced from the Gemfile
+gem "avo-pro", source: "https://packager.dev/avo-hq/" # [!code --]
+gem "avo-advanced", source: "https://packager.dev/avo-hq/" # [!code --]
 
 source "https://packager.dev/avo-hq/" do
-  # all or some of these — see "avo-pro and avo-advanced split into feature gems"
-  gem "avo-dashboards", ">= 4.0.0.beta"
-  gem "avo-menu", ">= 4.0.0.beta"
-  gem "avo-advanced_search", ">= 4.0.0.beta"
-  gem "avo-authorization", ">= 4.0.0.beta"
-  gem "avo-record_reordering", ">= 4.0.0.beta"
-  gem "avo-scopes", ">= 4.0.0.beta"
-  gem "avo-custom_controls", ">= 4.0.0.beta"
-  gem "avo-dynamic_filters", ">= 4.0.0.beta"
-  gem "avo-nested", ">= 4.0.0.beta"
-  gem "avo-http_resource", ">= 4.0.0.beta"
-  gem "avo-collaboration", ">= 4.0.0.beta"
-  gem "avo-forms", ">= 4.0.0.beta"
-  gem "avo-kanban", ">= 4.0.0.beta"
-  gem "avo-api", ">= 4.0.0.beta"
-  gem "avo-reactive_fields", ">= 4.0.0.beta"
+  # all or some of these
+  gem "avo-authorization", ">= 4.0.0"
+  gem "avo-advanced_search", ">= 4.0.0"
+  gem "avo-advanced_file_uploads", ">= 4.0.0"
+  gem "avo-record_reordering", ">= 4.0.0"
+  gem "avo-menu_editor", ">= 4.0.0"
+  gem "avo-menu", ">= 4.0.0"
+  gem "avo-dashboards", ">= 4.0.0"
+  gem "avo-http_resource", ">= 4.0.0"
+  gem "avo-dynamic_filters", ">= 4.0.0"
+  gem "avo-nested", ">= 4.0.0"
+  gem "avo-collaboration", ">= 4.0.0"
+  gem "avo-forms", ">= 4.0.0"
+  gem "avo-kanban", ">= 4.0.0"
+  gem "avo-api", ">= 4.0.0"
+  gem "avo-http_resource", ">= 4.0.0"
+  gem "avo-reactive_fields", ">= 4.0.0"
+  gem "avo-notifications", ">= 4.0.0"
 end
 
+# other gems
 gem "avo-rhino_field", ">= 0.5.1"
+gem "db_config"
 ```
-
-Then run:
 
 ```bash
 bundle install
+# this command will update all your Avo gems to the latest version
 bin/rails avo:update
 ```
-
-This inspects the Avo plugins installed in your app and runs `bundle update` for `avo` and each of them — for example `bundle update avo avo-dashboards avo-scopes ...` — so you do not need to list every gem yourself.
 
 :::info
 You can check each gem version on [avohq.io/gems](https://avohq.io/gems).
 :::
-
-3. Go through this guide to upgrade your app to Avo 4.
 
 ### Icons
 
@@ -241,12 +264,12 @@ end
 
 Avo 4 injects a `search_type` local into every `self.search[:query]` proc, with one of four values depending on which surface triggered the search:
 
-| `search_type` | Surface                                | v3 detection                                |
-|---------------|----------------------------------------|---------------------------------------------|
-| `:global`     | Navbar ⌘K palette                      | `params[:global]`                           |
-| `:resource`   | Resource-index search bar              | Falsey `params[:global]` (no `via_association`) |
-| `:association`| Searchable association picker          | `params[:via_association] == 'has_many'`    |
-| `:kanban`     | Kanban board "add a card" picker       | `params[:for_kanban_board] == '1'`          |
+| `search_type`  | Surface                          | v3 detection                                    |
+| -------------- | -------------------------------- | ----------------------------------------------- |
+| `:global`      | Navbar ⌘K palette                | `params[:global]`                               |
+| `:resource`    | Resource-index search bar        | Falsey `params[:global]` (no `via_association`) |
+| `:association` | Searchable association picker    | `params[:via_association] == 'has_many'`        |
+| `:kanban`      | Kanban board "add a card" picker | `params[:for_kanban_board] == '1'`              |
 
 `params[:via_association]` has been removed. The v4 picker no longer sets it, which means any `if params[:via_association] == 'has_many'` branch will silently fall through to `else`. There's no error, just the wrong scope applied. This branch must be migrated.
 
@@ -611,13 +634,13 @@ Add only the gems for the features you use.
 
 ### Pro features
 
-| Feature | Gem |
-| --- | --- |
-| [Dashboards](./dashboards) | `avo-dashboards` |
-| [Menu editor](./menu-editor) | `avo-menu` |
-| [Global search](./search/global-search), [searchable associations](./associations/searchable) | `avo-advanced_search` |
-| [Authorization](./authorization) | `avo-authorization` |
-| [Record reordering](./records-reordering) | `avo-record_reordering` |
+| Feature                                                                                       | Gem                     |
+| --------------------------------------------------------------------------------------------- | ----------------------- |
+| [Dashboards](./dashboards)                                                                    | `avo-dashboards`        |
+| [Menu editor](./menu-editor)                                                                  | `avo-menu`              |
+| [Global search](./search/global-search), [searchable associations](./associations/searchable) | `avo-advanced_search`   |
+| [Authorization](./authorization)                                                              | `avo-authorization`     |
+| [Record reordering](./records-reordering)                                                     | `avo-record_reordering` |
 
 If your `Gemfile` had `avo-pro`, remove it and add the gems for the features you use:
 
@@ -636,12 +659,12 @@ If you use global search and have hardcoded search URLs, see [Avo Pro mount poin
 
 ### Advanced features
 
-| Feature | Gem |
-| --- | --- |
-| [Resource scopes](./scopes) | `avo-scopes` |
-| [Customizable controls](./customizable-controls) | `avo-custom_controls` |
-| [Dynamic filters](./dynamic-filters) | `avo-dynamic_filters` |
-| [Nested association forms](./associations/has_many#nested-in-forms) | `avo-nested` |
+| Feature                                                             | Gem                   |
+| ------------------------------------------------------------------- | --------------------- |
+| [Resource scopes](./scopes)                                         | `avo-scopes`          |
+| [Customizable controls](./customizable-controls)                    | `avo-custom_controls` |
+| [Dynamic filters](./dynamic-filters)                                | `avo-dynamic_filters` |
+| [Nested association forms](./associations/has_many#nested-in-forms) | `avo-nested`          |
 
 If your `Gemfile` had `avo-advanced`, remove it and add the Pro and Advanced gems for the features you use:
 
