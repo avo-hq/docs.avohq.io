@@ -6,6 +6,10 @@ license: advanced
 
 <Image src="/assets/img/resources/customizable-controls/index.jpg" width="1020" height="469" alt="" />
 
+:::info Upgrading from Avo 3?
+Customizable controls ship in the standalone **`avo-custom_controls`** gem — `avo-advanced` no longer includes them. Add `avo-custom_controls` to your `Gemfile`. If you reference control classes directly, update `Avo::Advanced::Resources::Controls::*` to `Avo::CustomControls::Resources::Controls::*`. See the [upgrade guide](./avo-3-avo-4-upgrade#customizable-controls-avo-custom_controls).
+:::
+
 One of the things that we wanted to support from day one is customizable controls on resource pages, and now, Avo supports customizable controls on <Index />, <Show />, and <Edit /> views and for the table row.
 
 ## Default controls

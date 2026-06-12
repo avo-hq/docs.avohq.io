@@ -590,13 +590,24 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-## Resource scopes (`avo-scopes`)
+## `avo-advanced` split into feature gems
 
-In Avo 3, [resource scopes](./scopes) shipped inside `avo-advanced`. In Avo 4 they live in a dedicated gem: **`avo-scopes`**.
+In Avo 3, many advanced features shipped inside the `avo-advanced` meta-gem. In Avo 4, each feature is a **standalone gem** you add to your `Gemfile`. `avo-advanced` is being phased out and **does not** bundle these features anymore.
 
-`avo-advanced` is being phased out and **does not** include scopes. If you use scopes, you must add **`avo-scopes`** to your `Gemfile` — even if you still have `avo-advanced` installed for other features during the transition.
+Add only the gems for the features you use:
 
-### Add the gem
+| Feature | Gem | Upgrade section |
+| --- | --- | --- |
+| [Resource scopes](./scopes) | `avo-scopes` | [below](#resource-scopes-avo-scopes) |
+| [Customizable controls](./customizable-controls) | `avo-custom_controls` | [below](#customizable-controls-avo-custom_controls) |
+| [Dynamic filters](./dynamic-filters) | `avo-dynamic_filters` | [below](#dynamic-filters-avo-dynamic_filters) |
+| [Nested association forms](./associations/has_many#nested-in-forms) | `avo-nested` | [below](#nested-association-forms) |
+
+Once you have the individual gems you need, you can remove `avo-advanced` from your `Gemfile`.
+
+### Resource scopes (`avo-scopes`)
+
+In Avo 3, scopes shipped inside `avo-advanced`. In Avo 4, add **`avo-scopes`**:
 
 ```ruby
 source "https://packager.dev/avo-hq/" do
@@ -604,25 +615,7 @@ source "https://packager.dev/avo-hq/" do
 end
 ```
 
-During the Avo 4 beta the gem was briefly named `avo-resource_scopes`. If you added that name to your `Gemfile`, rename it:
-
-```ruby
-# before
-gem "avo-resource_scopes", source: "https://packager.dev/avo-hq/"
-
-# after
-gem "avo-scopes", source: "https://packager.dev/avo-hq/"
-```
-
-Then run `bundle install`.
-
-### Update the base scope class
-
-Every scope class under `app/avo/scopes/` must inherit from **`Avo::Scopes::BaseScope`**.
-
-| Before (Avo 3) | Before (early Avo 4 beta) | After |
-| --- | --- | --- |
-| `Avo::Advanced::Scopes::BaseScope` | `Avo::ResourceScopes::Scopes::BaseScope` | `Avo::Scopes::BaseScope` |
+Every scope class under `app/avo/scopes/` must inherit from **`Avo::Scopes::BaseScope`** instead of `Avo::Advanced::Scopes::BaseScope`:
 
 ```ruby
 # app/avo/scopes/admins.rb
@@ -636,26 +629,58 @@ class Avo::Scopes::Admins < Avo::Scopes::BaseScope
 Search your app for any remaining references:
 
 ```bash
-rg 'avo-resource_scopes|ResourceScopes|Advanced::Scopes::BaseScope' app/
+rg 'Advanced::Scopes::BaseScope' app/
 ```
 
 The `bin/rails generate avo:scope` generator already targets `Avo::Scopes::BaseScope` in Avo 4 — you only need to update existing scope files.
 
-### Other changes
-
-| What | Before | After |
-| --- | --- | --- |
-| Gem name | `avo-resource_scopes` | `avo-scopes` |
-| Require (manual) | `require "avo/resource_scopes"` | `require "avo/scopes"` |
-| Plugin / license feature ID | `"avo-resource_scopes"` | `"avo-scopes"` |
-
-There are no backward-compatibility aliases for the old gem or plugin names — update all references.
+If you check license features in custom code, use the plugin ID **`"avo-scopes"`**.
 
 See [Scopes](./scopes) for usage documentation.
 
+### Customizable controls (`avo-custom_controls`)
+
+In Avo 3, customizable controls (`index_controls`, `show_controls`, `edit_controls`, `row_controls`) shipped inside `avo-advanced`. In Avo 4, add **`avo-custom_controls`**:
+
+```ruby
+source "https://packager.dev/avo-hq/" do
+  gem "avo-custom_controls", ">= 4.0.0.beta"
+end
+```
+
+Resource DSL usage stays the same — no changes needed to `index_controls`, `show_controls`, `edit_controls`, or `row_controls` blocks.
+
+If you reference control classes directly in custom code, update the namespace:
+
+| Avo 3 | Avo 4 |
+| --- | --- |
+| `Avo::Advanced::Resources::Controls::*` | `Avo::CustomControls::Resources::Controls::*` |
+
+```bash
+rg 'Advanced::Resources::Controls' app/
+```
+
+If you check license features in custom code, use the plugin ID **`"avo-custom_controls"`**.
+
+See [Customizable controls](./customizable-controls) for usage documentation.
+
+### Dynamic filters (`avo-dynamic_filters`)
+
+In Avo 3, dynamic filters shipped inside `avo-advanced`. In Avo 4, add **`avo-dynamic_filters`**:
+
+```ruby
+source "https://packager.dev/avo-hq/" do
+  gem "avo-dynamic_filters", ">= 4.0.0.beta"
+end
+```
+
+Filter definitions on resources and fields stay the same. If you check license features in custom code, use the plugin ID **`"avo-dynamic_filters"`**.
+
+See [Dynamic filters](./dynamic-filters) for usage documentation.
+
 ## Nested association forms
 
-If you use the `nested` option on **`has_many`**, **`has_one`**, or **`has_and_belongs_to_many`** fields (nested association forms on <New /> and <Edit />), you must add the **`avo-nested`** gem in Avo 4. The feature is no longer bundled in the `avo-advanced` gem.
+If you use the `nested` option on **`has_many`**, **`has_one`**, or **`has_and_belongs_to_many`** fields (nested association forms on <New /> and <Edit />), you must add the **`avo-nested`** gem in Avo 4. The feature is no longer bundled in `avo-advanced`.
 
 Add the gem to your `Gemfile` with the same `https://packager.dev/avo-hq/` source and authentication you use for other private Avo gems, then run `bundle install`:
 

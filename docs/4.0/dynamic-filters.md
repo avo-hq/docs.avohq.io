@@ -5,6 +5,10 @@ license: advanced
 
 # Dynamic filters
 
+:::info Upgrading from Avo 3?
+Dynamic filters ship in the standalone **`avo-dynamic_filters`** gem — `avo-advanced` no longer includes them. Add `avo-dynamic_filters` to your `Gemfile`. See the [upgrade guide](./avo-3-avo-4-upgrade#dynamic-filters-avo-dynamic_filters).
+:::
+
 The Dynamic filters make it so easy to add multiple, composable, and dynamic filters to the <Index /> view.
 
 The first thing you need to do is add the `filterable: true` attribute to the fields you need to filter through. We use `ransack` behind the scenes so it's essential to configure the `ransackable_attributes` list to ensure that every filterable field is incorporated within it.
