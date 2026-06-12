@@ -88,8 +88,6 @@ bin/rails avo:update
 
 This inspects the Avo plugins installed in your app and runs `bundle update` for `avo` and each of them — for example `bundle update avo avo-dashboards avo-scopes ...` — so you do not need to list every gem yourself.
 
-If you use gems outside the Avo plugin manager (such as `avo-rhino_field`), update those separately with `bundle update`.
-
 :::info
 You can check each gem version on [avohq.io/gems](https://avohq.io/gems).
 :::
