@@ -595,7 +595,11 @@ end
 
 ## `avo-pro` and `avo-advanced` split into feature gems
 
-In Avo 3, Pro and Advanced features were installed via `avo-pro` and `avo-advanced`. In Avo 4, each feature is its own gem in your `Gemfile`. Both `avo-pro` and `avo-advanced` are being phased out — add only the gems for the features you use, then remove the bundle gems.
+In Avo 3, Pro and Advanced features were installed via `avo-pro` and `avo-advanced`. In Avo 4, each feature is its own gem in your `Gemfile`. Both `avo-pro` and `avo-advanced` are being phased out.
+
+In Avo 3, `avo-advanced` depended on `avo-pro`. If your `Gemfile` only listed `avo-advanced`, you still had dashboards, menu, search, and the other Pro features — they came in through that dependency. Replacing `avo-advanced` in Avo 4 means adding the Pro feature gems too, not only the Advanced ones.
+
+Add only the gems for the features you use.
 
 ### Pro features
 
@@ -607,7 +611,7 @@ In Avo 3, Pro and Advanced features were installed via `avo-pro` and `avo-advanc
 | [Authorization](./authorization) | `avo-authorization` |
 | [Record reordering](./records-reordering) | `avo-record_reordering` |
 
-Add the gems for the features you use and remove `avo-pro`:
+If your `Gemfile` had `avo-pro`, remove it and add the gems for the features you use:
 
 ```ruby
 source "https://packager.dev/avo-hq/" do
@@ -631,17 +635,24 @@ If you use global search and have hardcoded search URLs, see [Avo Pro mount poin
 | [Dynamic filters](./dynamic-filters) | `avo-dynamic_filters` |
 | [Nested association forms](./associations/has_many#nested-in-forms) | `avo-nested` |
 
-Add the gems for the features you use and remove `avo-advanced`:
+If your `Gemfile` had `avo-advanced`, remove it and add the Pro and Advanced gems for the features you use:
 
 ```ruby
 source "https://packager.dev/avo-hq/" do
   gem "avo-advanced", ">= 4.0.0.beta" # [!code --]
+  gem "avo-dashboards", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-menu", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-advanced_search", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-authorization", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-record_reordering", ">= 4.0.0.beta" # [!code ++]
   gem "avo-scopes", ">= 4.0.0.beta" # [!code ++]
   gem "avo-custom_controls", ">= 4.0.0.beta" # [!code ++]
   gem "avo-dynamic_filters", ">= 4.0.0.beta" # [!code ++]
   gem "avo-nested", ">= 4.0.0.beta" # [!code ++]
 end
 ```
+
+You do not need `avo-pro` if you are replacing `avo-advanced` — the Pro gems above are the ones you previously got through it. Remove any `++` lines for features you do not use.
 
 #### Resource scopes
 
