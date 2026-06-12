@@ -59,30 +59,35 @@ gem "avo-advanced", source: "https://packager.dev/avo-hq/"
 gem "avo", ">= 4.0.0.beta"
 
 source "https://packager.dev/avo-hq/" do
-  # all or some of these
-  gem "avo-pro", ">= 4.0.0.beta"
-  gem "avo-advanced", ">= 4.0.0.beta"
-  gem "avo-http_resource", ">= 4.0.0.beta"
-  gem "avo-dynamic_filters", ">= 4.0.0.beta"
-  gem "avo-pro", ">= 4.0.0.beta"
-  gem "avo-menu", ">= 4.0.0.beta"
-  gem "avo-nested", ">= 4.0.0.beta"
+  # all or some of these — see "avo-pro and avo-advanced split into feature gems"
   gem "avo-dashboards", ">= 4.0.0.beta"
+  gem "avo-menu", ">= 4.0.0.beta"
+  gem "avo-advanced_search", ">= 4.0.0.beta"
+  gem "avo-authorization", ">= 4.0.0.beta"
+  gem "avo-record_reordering", ">= 4.0.0.beta"
+  gem "avo-scopes", ">= 4.0.0.beta"
+  gem "avo-custom_controls", ">= 4.0.0.beta"
+  gem "avo-dynamic_filters", ">= 4.0.0.beta"
+  gem "avo-nested", ">= 4.0.0.beta"
+  gem "avo-http_resource", ">= 4.0.0.beta"
   gem "avo-collaboration", ">= 4.0.0.beta"
   gem "avo-forms", ">= 4.0.0.beta"
   gem "avo-kanban", ">= 4.0.0.beta"
   gem "avo-api", ">= 4.0.0.beta"
-  gem "avo-http_resource", ">= 4.0.0.beta"
   gem "avo-reactive_fields", ">= 4.0.0.beta"
 end
 
 gem "avo-rhino_field", ">= 0.5.1"
 ```
 
+Then run:
+
 ```bash
-# some or all of these
-bundle update avo avo-advanced avo-nested avo-http_resource avo-dynamic_filters avo-pro avo-menu avo-dashboards avo-collaboration avo-forms avo-kanban avo-api avo-http_resource avo-reactive_fields avo-rhino_field
+bundle install
+bin/rails avo:update
 ```
+
+This inspects the Avo plugins installed in your app and runs `bundle update` for `avo` and each of them — for example `bundle update avo avo-dashboards avo-scopes ...` — so you do not need to list every gem yourself.
 
 :::info
 You can check each gem version on [avohq.io/gems](https://avohq.io/gems).
@@ -589,17 +594,89 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-## Nested association forms
+## `avo-pro` and `avo-advanced` split into feature gems
 
-If you use the `nested` option on **`has_many`**, **`has_one`**, or **`has_and_belongs_to_many`** fields (nested association forms on <New /> and <Edit />), you must add the **`avo-nested`** gem in Avo 4. The feature is no longer bundled in the `avo-advanced` gem.
+In Avo 3, Pro and Advanced features were installed via `avo-pro` and `avo-advanced`. In Avo 4, each feature is its own gem in your `Gemfile`. Both `avo-pro` and `avo-advanced` are being phased out.
 
-Add the gem to your `Gemfile` with the same `https://packager.dev/avo-hq/` source and authentication you use for other private Avo gems, then run `bundle install`:
+In Avo 3, `avo-advanced` depended on `avo-pro`. If your `Gemfile` only listed `avo-advanced`, you still had dashboards, menu, search, and the other Pro features — they came in through that dependency. Replacing `avo-advanced` in Avo 4 means adding the Pro feature gems too, not only the Advanced ones.
+
+Add only the gems for the features you use.
+
+### Pro features
+
+| Feature | Gem |
+| --- | --- |
+| [Dashboards](./dashboards) | `avo-dashboards` |
+| [Menu editor](./menu-editor) | `avo-menu` |
+| [Global search](./search/global-search), [searchable associations](./associations/searchable) | `avo-advanced_search` |
+| [Authorization](./authorization) | `avo-authorization` |
+| [Record reordering](./records-reordering) | `avo-record_reordering` |
+
+If your `Gemfile` had `avo-pro`, remove it and add the gems for the features you use:
 
 ```ruby
-gem "avo-nested", source: "https://packager.dev/avo-hq/"
+source "https://packager.dev/avo-hq/" do
+  gem "avo-pro", ">= 4.0.0.beta" # [!code --]
+  gem "avo-dashboards", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-menu", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-advanced_search", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-authorization", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-record_reordering", ">= 4.0.0.beta" # [!code ++]
+end
 ```
 
-See [Gem server authentication](./gem-server-authentication) if you need to configure `BUNDLE_PACKAGER__DEV`. Full usage of the `nested` option is documented under [Nested in Forms](./associations/has_many#nested-in-forms) on the association field pages.
+If you use global search and have hardcoded search URLs, see [Avo Pro mount point removal](#avo-pro-mount-point-removal) above.
+
+### Advanced features
+
+| Feature | Gem |
+| --- | --- |
+| [Resource scopes](./scopes) | `avo-scopes` |
+| [Customizable controls](./customizable-controls) | `avo-custom_controls` |
+| [Dynamic filters](./dynamic-filters) | `avo-dynamic_filters` |
+| [Nested association forms](./associations/has_many#nested-in-forms) | `avo-nested` |
+
+If your `Gemfile` had `avo-advanced`, remove it and add the Pro and Advanced gems for the features you use:
+
+```ruby
+source "https://packager.dev/avo-hq/" do
+  gem "avo-advanced", ">= 4.0.0.beta" # [!code --]
+  gem "avo-dashboards", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-menu", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-advanced_search", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-authorization", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-record_reordering", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-scopes", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-custom_controls", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-dynamic_filters", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-nested", ">= 4.0.0.beta" # [!code ++]
+end
+```
+
+#### Resource scopes
+
+Every scope class under `app/avo/scopes/` must inherit from **`Avo::Scopes::BaseScope`** instead of `Avo::Advanced::Scopes::BaseScope`:
+
+```ruby
+# app/avo/scopes/admins.rb
+# before
+class Avo::Scopes::Admins < Avo::Advanced::Scopes::BaseScope
+
+# after
+class Avo::Scopes::Admins < Avo::Scopes::BaseScope
+```
+
+Search your app for any remaining references:
+
+```bash
+rg 'Advanced::Scopes::BaseScope' app/
+```
+
+The `bin/rails generate avo:scope` generator already targets `Avo::Scopes::BaseScope` in Avo 4 — you only need to update existing scope files.
+
+## Nested association forms
+
+If you use the `nested` option on **`has_many`**, **`has_one`**, or **`has_and_belongs_to_many`** fields, add **`avo-nested`** as shown in the [Advanced features](#advanced-features) `Gemfile` diff above. See [Nested in Forms](./associations/has_many#nested-in-forms) on the association field pages.
 
 ## Searchable association picker rewritten without Algolia
 
