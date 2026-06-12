@@ -11,10 +11,6 @@ outline: [2, 3]
 This section is a work in progress.
 :::
 
-:::info Upgrading from Avo 3?
-Resource scopes ship in the standalone **`avo-scopes`** gem — `avo-advanced` no longer includes them. Add `avo-scopes` to your `Gemfile`, and update scope classes from `Avo::Advanced::Scopes::BaseScope` to `Avo::Scopes::BaseScope`. See the [upgrade guide](./avo-3-avo-4-upgrade#resource-scopes-avo-scopes).
-:::
-
 Sometimes you might need to segment your data beyond just a few filters. You might have an `User` resource but you frequently need to see all the **Active users** or **Admin users**. You can use a filter for that or add a scope.
 
 ## Generating scopes
