@@ -652,8 +652,6 @@ source "https://packager.dev/avo-hq/" do
 end
 ```
 
-You do not need `avo-pro` if you are replacing `avo-advanced` — the Pro gems above are the ones you previously got through it. Remove any `++` lines for features you do not use.
-
 #### Resource scopes
 
 Every scope class under `app/avo/scopes/` must inherit from **`Avo::Scopes::BaseScope`** instead of `Avo::Advanced::Scopes::BaseScope`:
