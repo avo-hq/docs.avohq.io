@@ -79,10 +79,15 @@ end
 gem "avo-rhino_field", ">= 0.5.1"
 ```
 
+Then run:
+
 ```bash
-# some or all of these
-bundle update avo avo-dashboards avo-menu avo-advanced_search avo-authorization avo-record_reordering avo-scopes avo-custom_controls avo-dynamic_filters avo-nested avo-http_resource avo-collaboration avo-forms avo-kanban avo-api avo-reactive_fields avo-rhino_field
+bin/rails avo:update
 ```
+
+This inspects the Avo plugins installed in your app and runs `bundle update` for `avo` and each of them — for example `bundle update avo avo-dashboards avo-scopes ...` — so you do not need to list every gem yourself.
+
+If you use gems outside the Avo plugin manager (such as `avo-rhino_field`), update those separately with `bundle update`.
 
 :::info
 You can check each gem version on [avohq.io/gems](https://avohq.io/gems).
