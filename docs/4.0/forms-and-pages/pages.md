@@ -101,7 +101,7 @@ Sets the routing key — and therefore the URL segment — for the page. Pages a
 **Default behavior:**
 
 - Defaults to the class path under `Avo::Pages` — e.g. `Avo::Pages::Settings::General` becomes `settings/general`, served at `/avo/pages/settings/general`.
-- [Virtual pages](#page) (declared with a string title) default the `id` to their parameterized title — e.g. `page "Feedback"` becomes `feedback`, served at `/avo/pages/feedback`. Override it with the [`id` option](#page-options).
+- The same applies to [virtual pages](#page) declared with a string title: the title becomes a class nested under the parent, so an inline `page "Feedback"` inside `Avo::Pages::Settings` defaults to `settings/feedback`, served at `/avo/pages/settings/feedback`. Override it with the [`id` option](#page-options).
 
 Set it explicitly to decouple the URL from the class name — for example, to keep links stable when you rename a class:
 
@@ -216,7 +216,7 @@ end
 
 Sets the routing key — and URL segment — for a [virtual page](#page). See [`self.id`](#self.id) for the full behavior.
 
-**Default value**: the parameterized page title (e.g. `"Feedback"` → `feedback`)
+**Default value**: the class path under `Avo::Pages` (e.g. an inline `Feedback` page under `Avo::Pages::Settings` → `settings/feedback`)
 
 ```ruby
 # app/avo/pages/settings.rb
