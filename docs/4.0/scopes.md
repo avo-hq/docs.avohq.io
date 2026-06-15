@@ -5,7 +5,7 @@ outline: [2, 3]
 
 # Scopes
 
-<Image src="/assets/img/scopes.png" width="862" height="636" alt="" />
+<Image src="/assets/img/4_0/scopes/scopes.png" dark-src="/assets/img/4_0/scopes/scopes-dark.png" width="2360" height="600" alt="Scopes bar on a resource index" />
 
 :::warning
 This section is a work in progress.
