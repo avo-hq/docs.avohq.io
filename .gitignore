@@ -15,3 +15,8 @@ docs/public/3.0/llms-full.txt
 docs/public/4.0/llms-full.txt
 
 .claude/
+
+# TODO: to remove this after the tichet 1320 is done
+AVO-1320-context.md
+# AVO-1320 screenshot harness (scratch tooling)
+screenshot-harness/
