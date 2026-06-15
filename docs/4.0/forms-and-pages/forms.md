@@ -89,6 +89,25 @@ end
 
 </Option>
 
+<Option name="self.id" headingSize=3>
+
+Sets the routing key — and URL segment — for the form. Forms are submitted to `<root_path>/forms/<id>` and resolved by their `id` at request time, so no routes are declared manually.
+
+**Default behavior:** defaults to the class path under `Avo::Forms` — e.g. `Avo::Forms::Settings::Integrations` becomes `settings/integrations`. Override it to decouple the URL from the class name.
+
+```ruby{3}
+# app/avo/forms/app_settings.rb
+class Avo::Forms::AppSettings < Avo::Forms::Core::Form
+  self.id = :app_settings
+end
+```
+
+::: tip
+`id` must be unique across all forms, since it's how a submission is matched to a form.
+:::
+
+</Option>
+
 :::info Form header
 When a form is rendered on a [page](./pages.html), its `title` and `description` appear as a header above the fields. You can hide this header for a specific placement with the [`show_header` option](./pages.html) on the page's `form` declaration.
 :::
