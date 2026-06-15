@@ -94,6 +94,30 @@ This is particularly useful when you want different text in navigation menus tha
 
 </Option>
 
+<Option name="self.id" headingSize=3>
+
+Sets the routing key — and therefore the URL segment — for the page. Pages are served at `<root_path>/pages/<id>` and resolved by their `id` at request time, so you don't declare any routes manually.
+
+**Default behavior:**
+
+- Defaults to the class path under `Avo::Pages` — e.g. `Avo::Pages::Settings::General` becomes `settings/general`, served at `/avo/pages/settings/general`.
+- [Virtual pages](#page) (declared with a string title) default the `id` to their parameterized title — e.g. `page "Feedback"` becomes `feedback`, served at `/avo/pages/feedback`. Override it with the [`id` option](#page-options).
+
+Set it explicitly to decouple the URL from the class name — for example, to keep links stable when you rename a class:
+
+```ruby{3}
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  self.id = :app_settings
+end
+```
+
+::: tip
+`id` must be unique across all pages, since it's how a request is matched to a page.
+:::
+
+</Option>
+
 ## Page Methods
 
 <Option name="def navigation" headingSize=3>
@@ -184,6 +208,23 @@ class Avo::Pages::Settings < Avo::Forms::Core::Page
     page "Custom Settings",
       content: -> { form Avo::Forms::Custom },
       default: false
+  end
+end
+```
+
+#### `id`
+
+Sets the routing key — and URL segment — for a [virtual page](#page). See [`self.id`](#self.id) for the full behavior.
+
+**Default value**: the parameterized page title (e.g. `"Feedback"` → `feedback`)
+
+```ruby
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  def navigation
+    page "Feedback", # [!code focus]
+      id: :customer_feedback, # [!code focus]
+      content: -> { form Avo::Forms::Feedback }
   end
 end
 ```

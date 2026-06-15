@@ -124,7 +124,7 @@ Users can now navigate to **Settings → General** in the sidebar and submit the
 
 - **Pages** inherit from `Avo::Forms::Core::Page`. A **main page** (one namespace level deep, e.g. `Avo::Pages::Settings`) acts as a container and defines navigation. **Sub-pages** (deeper, e.g. `Avo::Pages::Settings::General`) define the actual content via `def content`.
 
-- **Routes** are generated dynamically at boot time from your form and page class definitions — no manual route declarations needed.
+- **Routes** are resolved dynamically at request time — no manual route declarations needed. Pages live at `<root_path>/pages/<id>` and forms at `<root_path>/forms/<id>`, where `id` defaults to the class path (e.g. `Avo::Pages::Settings::General` → `settings/general`) and can be overridden with [`self.id`](./pages.html#self.id).
 
 - **Rendering**: Pages render with a sidebar navigation listing all sub-pages. Each sub-page shows its title, description, and all registered forms in order.
 
