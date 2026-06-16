@@ -9,7 +9,7 @@ The `ProgressBar` field renders a `progress` element on `Index` and `Show` views
 ```ruby
 field :progress, as: :progress_bar
 ```
-<Image src="/assets/img/custom-fields/progress-index.jpg" width="764" height="212" alt="Progress bar custom field on index" />
+<Image src="/assets/img/4_0/fields/progress-index.png" dark-src="/assets/img/4_0/fields/progress-index-dark.png" width="288" height="144" alt="Progress bar custom field on index" />
 
 ## Options
 
@@ -70,4 +70,4 @@ field :progress,
   value_suffix: "%"
 ```
 
-<Image src="/assets/img/custom-fields/progress-edit.jpg" width="1144" height="182" alt="Progress bar custom field edit" />
+<Image src="/assets/img/4_0/fields/progress-edit.png" dark-src="/assets/img/4_0/fields/progress-edit-dark.png" width="951" height="58" alt="Progress bar custom field edit" />
