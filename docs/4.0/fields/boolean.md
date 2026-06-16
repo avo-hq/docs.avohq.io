@@ -6,7 +6,7 @@ license: community
 
 The `Boolean` field renders a `input[type="checkbox"]` on **Form** views and a nice green `check` icon/red `X` icon on the **Show** and **Index** views.
 
-<Image src="/assets/img/fields/boolean.jpg" width="790" height="356" alt="Boolean field" />
+<Image src="/assets/img/4_0/fields/boolean.png" dark-src="/assets/img/4_0/fields/boolean-dark.png" width="524" height="144" alt="Boolean field" />
 
 ```ruby
 field :is_published,
@@ -40,7 +40,7 @@ What should count as false. You can use `0`, `no`, or a different value.
 
 When `true`, `nil` values render as a gray minus-circle icon on **Show** and **Index** views instead of the default dash. This keeps the `nil` value intact while making it more visible.
 
-<Image src="/assets/img/fields/boolean_nil_as_indeterminate.png" width="265" height="200" alt="nil_as_indeterminate option" />
+<Image src="/assets/img/4_0/fields/boolean_nil_as_indeterminate.png" dark-src="/assets/img/4_0/fields/boolean_nil_as_indeterminate-dark.png" width="320" height="74" alt="nil_as_indeterminate option" />
 
 #### Default value
 
