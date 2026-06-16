@@ -63,7 +63,7 @@ Available presets: `:brand`, `:slate`, `:stone`, `:gray`, `:zinc`, `:neutral`, `
 - **Lockable:** yes — list `:neutral` in `lock:` to hide the picker
 
 :::warning Symbols only
-Passing a String or a Hash to `neutral:` raises an `ArgumentError`. Use [`neutral_colors:`](#neutral-colors) for full-color overrides.
+Passing a String or a Hash to `neutral:` raises an `ArgumentError`. Use [`neutral_colors:`](#neutral_colors) for full-color overrides.
 :::
 
 </Option>
@@ -87,7 +87,7 @@ Available presets: `:brand`, `:red`, `:orange`, `:amber`, `:yellow`, `:lime`, `:
 - **Lockable:** yes — list `:accent` in `lock:` to hide the picker
 
 :::warning Symbols only
-Passing a String or a Hash to `accent:` raises an `ArgumentError`. Use [`accent_colors:`](#accent-colors) for full-color overrides.
+Passing a String or a Hash to `accent:` raises an `ArgumentError`. Use [`accent_colors:`](#accent_colors) for full-color overrides.
 :::
 
 </Option>
@@ -288,7 +288,7 @@ save_settings: -> {
 - **Type:** Proc / Lambda
 - **Default:** `nil`
 - **Context:** evaluated in a controller context — `current_user` and other controller helpers are available
-- **Locals:** `settings` — partial Hash with whichever of `:color_scheme`, `:neutral`, `:accent` changed. Always merge into existing preferences rather than overwriting them.
+- **Locals:** `settings` — partial Hash with whichever of `:color_scheme`, `:neutral`, `:accent` changed. It contains only the changed keys, so callers merge it into existing preferences rather than overwriting them.
 
 You'll need a JSON or JSONB column on whichever model backs `current_user`:
 

@@ -28,6 +28,8 @@ Two reasons:
 
 So the split we care about is *guide vs. reference*, not *topic vs. topic*. Use `##`/`###` sections to organize a long page — reach for a second file only when a sub-topic is genuinely its own feature.
 
+**When a feature does span multiple pages, link them from the parent.** Some features are an umbrella over several variants that each have their own options — Views is the classic example: a general page about what views are and what `index`/`show`/`edit` do, plus separate pages for the custom view types (table view, grid view, map view) because each carries its own options. That's a fair reason to split. When you do, add a section at the **bottom of the overview page** that links to each sub-page and says in one line what's there and why you'd go: *"For the table view's column and styling options, see [Table view](./table-view.html)."* Don't make the sub-pages reachable only through the sidebar — point at them explicitly, and have each sub-page link back.
+
 ## What goes in the guide
 
 Write in plain English, the way you'd explain it to a colleague. Lead with what the feature is and a single realistic example, then organize by **task** (`## Logos`, `## Color scheme`, `## Persistence`), not by listing options one after another.
