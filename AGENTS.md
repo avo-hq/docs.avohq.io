@@ -1,6 +1,6 @@
 # AGENTS.md — writing Avo docs
 
-Operational rules for writing and editing documentation in this repo. Humans: the prose version is [`writing-docs.md`](./writing-docs.md). This file is the precise, copy-paste version — follow it exactly.
+Operational rules for writing and editing documentation in this repo. Humans: the prose version is [`writing-docs.md`](./docs/contributing/writing-docs.md) (published at `/contributing/writing-docs.html`). This file is the precise, copy-paste version — follow it exactly.
 
 The reference implementation for everything below is the pair
 [`docs/4.0/appearance.md`](./4.0/appearance.md) (guide) and
