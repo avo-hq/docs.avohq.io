@@ -342,7 +342,17 @@ const config = {
         // },
       ],
       "/3.0/": sidebar30,
-      "/2.0/": sidebar20
+      "/2.0/": sidebar20,
+      "/contributing/": [
+        {
+          text: "Contributing",
+          items: [
+            { text: "Overview", link: "/contributing/" },
+            { text: "Writing docs", link: "/contributing/writing-docs.html" },
+            { text: "Running the docs site", link: "/contributing/running-the-docs-site.html" },
+          ],
+        },
+      ],
     },
 
     search: {

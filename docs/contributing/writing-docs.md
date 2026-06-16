@@ -1,8 +1,13 @@
+---
+title: Writing Avo docs
+outline: [2, 3]
+---
+
 # Writing Avo docs
 
 How we document a feature. Read this before adding or editing a docs page.
 
-> For the agent-facing version of these rules (templates, checklists, exact frontmatter), see [`AGENTS.md`](./AGENTS.md). This page is the short, human version.
+> For the agent-facing version of these rules (templates, checklists, exact frontmatter), see [`AGENTS.md`](https://github.com/avo-hq/docs.avohq.io/blob/main/AGENTS.md) in the repo. This page is the short, human version.
 
 ## The two-page model
 
@@ -11,7 +16,7 @@ Most features that have real configuration get **two pages**:
 - **The guide** — `feature.md`. Task-oriented, plain English. Explains what the feature does and walks through how to do the common things, with code. It does **not** try to be exhaustive about every option and every value.
 - **The reference (API)** — `feature-api.md`. One entry per option, exhaustive: type, default, possible values, validation, gotchas. Organized by option, not by task.
 
-The canonical example is [`docs/4.0/appearance.md`](./4.0/appearance.md) (guide) and [`docs/4.0/appearance-api.md`](./4.0/appearance-api.md) (reference). When in doubt, copy their shape.
+The canonical example is [`appearance.md`](/4.0/appearance.html) (guide) and [`appearance-api.md`](/4.0/appearance-api.html) (reference). When in doubt, copy their shape.
 
 Why split? The two pages answer two different questions. The guide answers _"how do I customize the logo?"_ — a reader skims, finds the section, copies the snippet, leaves. The reference answers _"what exactly can `logo_dark` be, and what's the default?"_ — a reader looks up one option and wants the full truth about it. Cramming both into one page makes the guide bloated and the reference hard to scan.
 
@@ -32,7 +37,7 @@ So the split we care about is *guide vs. reference*, not *topic vs. topic*. Use 
 
 ## What goes in the guide
 
-Write in plain English, the way you'd explain it to a colleague. Lead with what the feature is and a single realistic example, then organize by **task** (`## Logos`, `## Color scheme`, `## Persistence`), not by listing options one after another.
+Write in plain English, the way you'd explain it to a colleague. Lead with what the feature is and a single realistic example, then organize by **task** (`## Customize the logo`, `## Set the default color scheme`, `## Persist picks across devices`), not by listing options one after another.
 
 ```ruby
 config.appearance = {
@@ -162,4 +167,4 @@ Skip it when there is no real file — a one-line shell command, a REPL session,
 
 - [Diátaxis](https://diataxis.fr/) — the guide/reference distinction we lean on.
 - [Rules for software tutorials](https://refactoringenglish.com/chapters/rules-for-software-tutorials/).
-- [`readme.md`](./readme.md) — running the docs site locally and component reference.
+- [`readme.md`](https://github.com/avo-hq/docs.avohq.io/blob/main/readme.md) — running the docs site locally and component reference.
