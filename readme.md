@@ -66,5 +66,7 @@ outline: deep # shows the h2's all the way to h6
 
 ## Write better docs
 
+Start with [`writing-docs.md`](./writing-docs.md) — how we structure a feature as a guide + reference (API) pair. Agents follow [`AGENTS.md`](./AGENTS.md).
+
 - [diataxis.fr/](https://diataxis.fr/)
 - [refactoringenglish.com/chapters/rules-for-software-tutorials/](https://refactoringenglish.com/chapters/rules-for-software-tutorials/)
