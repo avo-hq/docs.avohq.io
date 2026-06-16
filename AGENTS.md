@@ -24,16 +24,19 @@ Decision rule:
 
 Do not duplicate content between the two beyond a small shared enum table where it genuinely helps the narrative. The guide links to the reference for the full truth.
 
+**One page per feature.** Keep the whole feature on a single guide page and a single API page — organize sub-topics with `##`/`###` sections, not separate files. `appearance.md` covers logos, neutrals, accents, persistence, and CSS overrides on one page; it is not split into `appearance-logos.md`, `appearance-neutrals.md`, etc. The split that matters is *guide vs. reference*, never *topic vs. topic*. Reasons: related config reads better together, and a user can paste the entire page into an LLM and get the full picture of the feature in one shot — fanning it across files breaks that. Create a second file only when a sub-topic is genuinely a feature of its own.
+
 ## Guide page (`feature.md`)
 
 Rules:
 
 1. **Open with**: a one-paragraph description of what the feature is and does, then a single realistic code block showing the common case, then a note about defaults (what happens if the user configures nothing).
-2. **Organize by task** using `##` headings (`## Logos`, `## Persistence`), and `###` for sub-tasks (`### Dark mode logo`). Never structure the guide as a flat list of options.
-3. **Write in plain English.** Mention options conversationally ("provide `logo_dark` to render a different file in dark mode") without listing their type/default — that belongs in the reference.
+2. **Organize around the user's goal**, using `##` headings, and `###` for sub-tasks. Phrase headings as the thing the reader wants to accomplish, not the machinery — `## Customize the logo`, `## Persist picks across devices`, not just `## Logos` / `## Persistence`. The config is incidental to the goal. Never structure the guide as a flat list of options.
+3. **Write in plain English.** Mention options conversationally ("provide `logo_dark` to render a different file in dark mode") without listing their type/default — that belongs in the reference. Use conditional imperatives — "If you want cross-device persistence, switch to `:database`" — so a reader can scan for their case.
 4. **Show code only for common cases.** Do not enumerate every permutation.
-5. **Keep it skimmable.** A reader should solve their task without reading the whole page. Prefer short sections.
-6. Optionally end with a `## Full example` block (every option set at once) and/or an `## Options reference` summary table. See `appearance.md` for both.
+5. **Don't teach the internals.** A guide gives directions to a goal; it is not the place to explain how the feature works under the hood or to digress into background. State what to do, link out for the rest.
+6. **Keep it skimmable.** A reader should solve their task without reading the whole page. Prefer short sections.
+7. Optionally end with a `## Full example` block (every option set at once) and/or an `## Options reference` summary table. See `appearance.md` for both.
 
 Frontmatter:
 
@@ -50,8 +53,9 @@ api_docs: ./feature-api.html   # link to the reference; omit if guide-only
 Rules:
 
 1. **Intro**: one sentence stating this is the per-option reference, a link back to the guide, and the canonical config snippet showing where options go.
-2. **Group options** under `##` section headings (Theme selection, Custom palettes, Picker control, Assets, Charts…). Order sections from most- to least-commonly-touched.
-3. **One `<Option>` block per option.** Inside each:
+2. **Describe, don't instruct.** Reference is for *consulting*, not reading top-to-bottom. Keep the tone neutral and factual — state what each option is, its type, and its behavior. No step-by-step recipes, opinions, or "you should" — that's the guide's job. If you catch yourself writing how-to steps in an `<Option>`, move them to the guide and link.
+3. **Mirror the feature's structure.** Group options under `##` section headings (Theme selection, Custom palettes, Picker control, Assets, Charts…) that follow how the feature itself is organized, so a reader can navigate the docs and the config in parallel. Within that, order sections from most- to least-commonly-touched.
+4. **One `<Option>` block per option.** Inside each:
    - A short description (1–3 sentences).
    - A minimal `ruby` code block showing just that option.
    - For enums, a `| Value | Behavior |` table.
@@ -61,7 +65,7 @@ Rules:
      - `**Values:**` — allowed values when not obvious from the type.
      - `**Validation:**` — what raises and when (e.g. "raises `ArgumentError` if any shade is missing").
      - Any feature-specific flag (e.g. `**Lockable:** yes — ...`, `**Context:** evaluated in a controller context`, `**Locals:** ...`).
-4. Use `:::warning` / `:::info` callouts for sharp edges (type coercion, things forwarded verbatim to a third party, etc.).
+5. Use `:::warning` / `:::info` callouts for sharp edges (type coercion, things forwarded verbatim to a third party, etc.).
 
 `<Option>` template:
 
@@ -100,7 +104,7 @@ guide: ./feature.html   # link back to the guide
 The two pages link to each other through two frontmatter keys; `PageHeader.vue` renders a callout for each. Always set both directions:
 
 - Guide → `api_docs: ./feature-api.html` — URL of the reference page. Renders the "Looking for every option? See the full API reference →" callout.
-- Reference → `guide: ./feature.html` — URL of the guide page. Renders the "Task-oriented docs and worked examples → See the guides" callout.
+- Reference → `guide: ./feature.html` — URL of the guide page. Renders the "How-to guides and worked examples → See the guides" callout.
 
 The keys are exactly `api_docs` and `guide` (not `guide_docs`). The value is passed straight to the link `href` — use a relative `./feature.html`/`./feature-api.html`, though any URL works.
 
