@@ -21,7 +21,7 @@ end
 :::
 
 
-<Image src="/assets/img/fields/heading.png" width="821" height="230" alt="Heading field" />
+<Image src="/assets/img/4_0/fields/heading.png" dark-src="/assets/img/4_0/fields/heading-dark.png" width="560" height="132" alt="Heading field" />
 
 The `Heading` field displays a header that acts as a separation layer between different sections.
 
