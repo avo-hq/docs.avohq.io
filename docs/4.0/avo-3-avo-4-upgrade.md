@@ -87,7 +87,7 @@ source "https://packager.dev/avo-hq/" do
   gem "avo-authorization", ">= 4.0.0"
   gem "avo-advanced_search", ">= 4.0.0"
   gem "avo-advanced_file_uploads", ">= 4.0.0"
-  gem "avo-record_reordering", ">= 4.0.0"
+  gem "avo-records_reordering", ">= 4.0.0"
   gem "avo-menu_editor", ">= 4.0.0"
   gem "avo-menu", ">= 4.0.0"
   gem "avo-dashboards", ">= 4.0.0"
@@ -640,7 +640,7 @@ Add only the gems for the features you use.
 | [Menu editor](./menu-editor)                                                                  | `avo-menu`              |
 | [Global search](./search/global-search), [searchable associations](./associations/searchable) | `avo-advanced_search`   |
 | [Authorization](./authorization)                                                              | `avo-authorization`     |
-| [Record reordering](./records-reordering)                                                     | `avo-record_reordering` |
+| [Record reordering](./records-reordering)                                                     | `avo-records_reordering` |
 
 If your `Gemfile` had `avo-pro`, remove it and add the gems for the features you use:
 
@@ -651,7 +651,7 @@ source "https://packager.dev/avo-hq/" do
   gem "avo-menu", ">= 4.0.0.beta" # [!code ++]
   gem "avo-advanced_search", ">= 4.0.0.beta" # [!code ++]
   gem "avo-authorization", ">= 4.0.0.beta" # [!code ++]
-  gem "avo-record_reordering", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-records_reordering", ">= 4.0.0.beta" # [!code ++]
 end
 ```
 
@@ -675,7 +675,7 @@ source "https://packager.dev/avo-hq/" do
   gem "avo-menu", ">= 4.0.0.beta" # [!code ++]
   gem "avo-advanced_search", ">= 4.0.0.beta" # [!code ++]
   gem "avo-authorization", ">= 4.0.0.beta" # [!code ++]
-  gem "avo-record_reordering", ">= 4.0.0.beta" # [!code ++]
+  gem "avo-records_reordering", ">= 4.0.0.beta" # [!code ++]
   gem "avo-scopes", ">= 4.0.0.beta" # [!code ++]
   gem "avo-custom_controls", ">= 4.0.0.beta" # [!code ++]
   gem "avo-dynamic_filters", ">= 4.0.0.beta" # [!code ++]

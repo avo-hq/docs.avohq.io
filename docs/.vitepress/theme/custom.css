@@ -33,11 +33,42 @@ pre code span.line:not(:last-child) {
   font-weight: 600;
 }
 
+/* Structural only — applies to EVERY docs version (v2/v3/v4). Never add framing
+   here; that would touch v3. */
 .aspect-ratio-box {
   height: 0;
   overflow: hidden;
   background: white;
   position: relative;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+/* v4 ONLY — frame the curated screenshots (their assets live under /4_0/). v2/v3
+   images are untouched. p-3 (12px) mat between the image and a hairline border,
+   plus a soft shadow; image corners lightly rounded. */
+.aspect-ratio-box:has(img[src*="/4_0/"]) {
+  background: var(--vp-c-bg);
+  /* match the vertical rhythm of body paragraphs (1rem), so the gap around an
+     image equals the gap between paragraphs. */
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  /* center small images (those narrower than the content column); no effect on
+     full-width images, whose auto side-margins resolve to 0. */
+  margin-left: auto;
+  margin-right: auto;
+  border: 12px solid var(--vp-c-bg);
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 1px var(--vp-c-divider),
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 6px 16px -8px rgba(0, 0, 0, 0.10);
+}
+.aspect-ratio-box:has(img[src*="/4_0/"]) .aspect-ratio-box-inside {
+  border-radius: 4px;
+}
+/* Preview image right under the page title needs extra breathing room. */
+.vp-doc h1 + .aspect-ratio-box {
+  margin-top: 2.5rem;
 }
 .aspect-ratio-box-inside {
   position: absolute;
