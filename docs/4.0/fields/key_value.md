@@ -4,7 +4,7 @@ license: community
 
 # KeyValue
 
-<Image src="/assets/img/fields/key-value.jpg" width="1564" height="400" alt="KeyValue field" />
+<Image src="/assets/img/4_0/fields/key-value.png" dark-src="/assets/img/4_0/fields/key-value-dark.png" width="951" height="156" alt="KeyValue field" />
 
 The `KeyValue` field makes it easy to edit flat key-value pairs stored in `JSON` format in the database.
 
