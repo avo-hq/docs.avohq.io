@@ -12,13 +12,15 @@
   },
   "scripts": {
     "dev": "vitepress dev docs --port 3011",
-    "build": "yarn generate-llms-txt all && NODE_OPTIONS=--max-old-space-size=4096 vitepress build docs",
+    "build": "yarn generate-llms-txt all && yarn generate-docs-map all && NODE_OPTIONS=--max-old-space-size=4096 vitepress build docs",
     "serve": "vitepress serve docs",
     "generate-llms-txt": "node scripts/generate-llms-txt.js",
     "generate-llms-latest": "node scripts/generate-llms-txt.js latest",
     "generate-llms-all": "node scripts/generate-llms-txt.js all",
     "generate-llms-4": "node scripts/generate-llms-txt.js 4.0",
     "generate-llms-3": "node scripts/generate-llms-txt.js 3.0",
+    "generate-docs-map": "node scripts/generate-docs-map.js",
+    "generate-docs-map-all": "node scripts/generate-docs-map.js all",
     "test": "echo \"Tests not implemented yet\" && exit 0"
   },
   "bin": {

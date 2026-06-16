@@ -45,6 +45,7 @@ const DEFAULT_IGNORE_PATTERNS = [
   '**/node_modules/**', // Node modules
   '**/dist/**',      // Distribution directories
   '**/build/**',     // Build directories
+  '**/contributing/**', // Contributing docs — meta/unversioned, not product docs
   'upgrade.md'
   // Add more default patterns as needed
 ];
