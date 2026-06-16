@@ -13,6 +13,7 @@ The `appearance` configuration controls Avo's visual identity — logos, favicon
 Configure everything through `config.appearance` in `config/initializers/avo.rb`.
 
 ```ruby
+# config/initializers/avo.rb
 Avo.configure do |config|
   config.appearance = {
     logo: "my_company/logo.png",
@@ -26,11 +27,11 @@ end
 
 When `config.appearance` is omitted entirely, Avo ships with sensible defaults — the Avo logo, the built-in neutral and accent palettes, and an auto color scheme that follows the user's system preference.
 
-## Logos
+## Customize the logo
 
 ### Desktop logo
 
-`logo` is the main logo shown in the top navbar.
+[`logo`](./appearance-api.html#logo) is the main logo shown in the top navbar.
 
 ```ruby
 config.appearance = {
@@ -40,7 +41,7 @@ config.appearance = {
 
 ### Dark mode logo
 
-Provide `logo_dark` to render a different file when the user is in dark mode. When omitted, the light logo is used in both schemes.
+Provide [`logo_dark`](./appearance-api.html#logo_dark) to render a different file when the user is in dark mode. When omitted, the light logo is used in both schemes.
 
 ```ruby
 config.appearance = {
@@ -51,7 +52,7 @@ config.appearance = {
 
 ### Mobile logomark
 
-`logomark` is a compact, square mark used when the navbar collapses on smaller viewports. It also accepts a dark variant.
+[`logomark`](./appearance-api.html#logomark) is a compact, square mark used when the navbar collapses on smaller viewports. It also accepts a [dark variant](./appearance-api.html#logomark_dark).
 
 ```ruby
 config.appearance = {
@@ -62,7 +63,7 @@ config.appearance = {
 
 ### Favicon
 
-Override the favicon — and optionally provide a dark variant.
+Override the [`favicon`](./appearance-api.html#favicon) — and optionally provide a [dark variant](./appearance-api.html#favicon_dark).
 
 ```ruby
 config.appearance = {
@@ -73,7 +74,7 @@ config.appearance = {
 
 ### Placeholder image
 
-When a record has no cover image (e.g. in the grid view), Avo falls back to a placeholder. You can override it.
+When a record has no cover image (e.g. in the grid view), Avo falls back to a [`placeholder`](./appearance-api.html#placeholder). You can override it.
 
 ```ruby
 config.appearance = {
@@ -81,9 +82,9 @@ config.appearance = {
 }
 ```
 
-## Color scheme
+## Set the default color scheme
 
-`scheme` controls the default color mode.
+[`scheme`](./appearance-api.html#scheme) controls the default color mode.
 
 ```ruby
 config.appearance = {
@@ -99,13 +100,13 @@ config.appearance = {
 
 Unless the scheme is locked (see [Locking choices](#locking-choices)), users can change it themselves from the navbar switcher.
 
-## Neutral palette
+## Choose a neutral palette
 
 The neutral palette drives surfaces, borders, and chrome throughout the UI.
 
 ### Preset
 
-Pass a symbol to select one of the built-in neutrals.
+Pass a symbol to [`neutral`](./appearance-api.html#neutral) to select one of the built-in neutrals.
 
 ```ruby
 config.appearance = {
@@ -127,12 +128,12 @@ config.appearance = {
 | `:olive`   | Gray with green-yellow undertones  |
 
 :::warning Symbols only
-`neutral:` must be a Symbol — passing a String or a Hash raises an `ArgumentError`. Use [`neutral_colors:`](#custom-neutral-palette) for full-color overrides.
+`neutral:` must be a Symbol — passing a String or a Hash raises an `ArgumentError`. Use [`neutral_colors:`](./appearance-api.html#neutral_colors) for full-color overrides.
 :::
 
 ### Custom neutral palette
 
-To define your own brand neutral, pass `neutral_colors:` with all 12 shades. The same palette is applied in both light and dark mode (matching how the built-in `.neutral-theme-*` classes work — dark mode reuses the same scale but maps surfaces to different shades).
+To define your own brand neutral, pass `neutral_colors:` with all 12 shades. The same palette is applied in both light and dark mode.
 
 ```ruby
 config.appearance = {
@@ -158,13 +159,13 @@ Values are passed through verbatim. Any string a CSS custom property accepts wor
 
 `neutral: :brand` then selects your custom palette by default. Users can still pick another preset unless you lock the choice.
 
-## Accent palette
+## Choose an accent palette
 
 The accent palette drives interactive emphasis — primary buttons, links, focus states, selected rows.
 
 ### Preset
 
-Pass a symbol to pick a built-in accent.
+Pass a symbol to [`accent`](./appearance-api.html#accent) to pick a built-in accent.
 
 ```ruby
 config.appearance = {
@@ -175,7 +176,7 @@ config.appearance = {
 Available accents: `:brand`, `:red`, `:orange`, `:amber`, `:yellow`, `:lime`, `:green`, `:emerald`, `:teal`, `:cyan`, `:sky`, `:blue`, `:indigo`, `:violet`, `:purple`, `:fuchsia`, `:pink`, `:rose`.
 
 :::warning Symbols only
-`accent:` must be a Symbol. Use [`accent_colors:`](#custom-accent-palette) for full-color overrides.
+`accent:` must be a Symbol. Use [`accent_colors:`](./appearance-api.html#accent_colors) for full-color overrides.
 :::
 
 ### Custom accent palette
@@ -201,7 +202,7 @@ config.appearance = {
 
 ## Restricting picker options
 
-By default, the navbar picker exposes the full list of presets. To trim it down, pass `neutrals:` and/or `accents:`.
+By default, the navbar picker exposes the full list of presets. To trim it down, pass [`neutrals:`](./appearance-api.html#neutrals) and/or [`accents:`](./appearance-api.html#accents).
 
 ```ruby
 config.appearance = {
@@ -214,7 +215,7 @@ Only the listed entries appear in the picker. The default value (`neutral:` / `a
 
 ## Locking choices
 
-By default, users can change the scheme, neutral, and accent themselves. To force one or more values and hide their switchers, list them in `lock:`.
+By default, users can change the scheme, neutral, and accent themselves. To force one or more values and hide their switchers, list them in [`lock:`](./appearance-api.html#lock).
 
 ```ruby
 config.appearance = {
@@ -233,9 +234,9 @@ config.appearance = {
 
 A value not listed in `lock:` is treated as a **default** — users can override it.
 
-## Persistence
+## Persist picks across devices
 
-User picks are persisted across page loads. By default they go into a cookie; for cross-device persistence, switch to the database.
+User picks are persisted across page loads via the [`persistence`](./appearance-api.html#persistence) setting. By default they go into a cookie; for cross-device persistence, switch to the database.
 
 ### Cookie (default)
 
@@ -249,7 +250,7 @@ No setup required. Picks are stored in a cookie scoped to the Avo mount point.
 
 ### Database
 
-Switch to `:database` and provide `load_settings` and `save_settings` blocks. Both blocks are evaluated in a controller context, so `current_user` (and any helper you'd normally call from a controller) is available.
+Switch to `:database` and provide [`load_settings`](./appearance-api.html#load_settings) and [`save_settings`](./appearance-api.html#save_settings) blocks. Both blocks are evaluated in a controller context, so `current_user` (and any helper you'd normally call from a controller) is available.
 
 ```ruby
 config.appearance = {
@@ -288,9 +289,9 @@ end
 
 The column name is up to you — `load_settings` and `save_settings` just need to read and write the same place.
 
-## Switcher layout
+## Change the switcher layout
 
-`picker_layout` controls how the appearance switcher renders in the top navbar.
+[`picker_layout`](./appearance-api.html#picker_layout) controls how the appearance switcher renders in the top navbar.
 
 ```ruby
 config.appearance = {
@@ -303,9 +304,9 @@ config.appearance = {
 | `:inline`   | Renders inline on `lg` and up, auto-collapses to a dropdown on smaller screens |
 | `:dropdown` | Always renders as a compact dropdown                                           |
 
-## Chart colors
+## Customize chart colors
 
-Customize the colors used in dashboard charts by passing an array of hex values.
+Customize the colors used in dashboard charts with [`chart_colors`](./appearance-api.html#chart_colors) — pass an array of hex values.
 
 ```ruby
 config.appearance = {
@@ -330,8 +331,8 @@ Override the CSS variables below to change things like the top navbar palette, s
 | `--color-navbar-background`       | `var(--color-avo-neutral-900)` | Global source for the top navbar background. Kept for compatibility. For full navbar palette changes, prefer the scoped `.top-navbar` variables below. |
 | `--navbar-notch-enabled`          | `true`                         | Whether the inverted corner arches under the navbar render. Set to `false` to hide them when the navbar and content share a background.                |
 | `--navbar-notch-radius`           | `1rem`                         | Radius of the navbar arches that fill the content panel's top corners. Set to `0` to flatten them.                                                     |
-| `--main-content-radius`           | `var(--navbar-notch-radius)`   | Radius of the main content panel's top corners. Defaults to the notch radius so the panel and the navbar arches stay aligned; override to differ.       |
-| `--color-sidebar-background`      | `var(--color-background)`      | Global source for the sidebar background. Kept for compatibility. For full sidebar palette changes, prefer the scoped `.avo-sidebar` variables below.   |
+| `--main-content-radius`           | `var(--navbar-notch-radius)`   | Radius of the main content panel's top corners. Defaults to the notch radius so the panel and the navbar arches stay aligned; override to differ.      |
+| `--color-sidebar-background`      | `var(--color-background)`      | Global source for the sidebar background. Kept for compatibility. For full sidebar palette changes, prefer the scoped `.avo-sidebar` variables below.  |
 | `--color-main-content-background` | `var(--color-primary)`         | Background of the main content panel and the breadcrumb bar, which blends into it. Defaults to the primary surface; resolves per-scheme.               |
 | `--color-main-content-border`     | `var(--border-color)`          | Color of the border between the sidebar and the main content panel. Tracks the shared app border color by default; override to restyle just it.        |
 
@@ -366,26 +367,26 @@ The top navbar exposes a scoped palette contract on `.top-navbar`. Override thes
 
 The sidebar exposes a scoped palette contract on `.avo-sidebar`, mirroring the top navbar. Override these on `.avo-sidebar` to recolor the sidebar without affecting the rest of the app. The defaults keep the sidebar tied to Avo's semantic surface and text tokens, so they track the chosen scheme automatically.
 
-| Variable                            | Default                                                       | Description                                                                                  |
-| ----------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `--sidebar-background`              | `var(--color-sidebar-background)`                             | Sidebar background color.                                                                    |
-| `--sidebar-border`                  | `var(--color-tertiary)`                                       | Border between the sidebar and the rest of the layout (mobile/`lg` edge border).             |
-| `--sidebar-content`                 | `var(--color-content)`                                        | Main text color for active links, profile title, and status link.                           |
-| `--sidebar-content-secondary`       | `var(--color-content-secondary)`                              | Muted text color for section headers, idle links, subitems, and hints.                      |
-| `--sidebar-link-hover-background`   | `color-mix(in oklab, var(--color-secondary), var(--color-content) 2%)` | Background of a hovered sidebar link.                                              |
-| `--sidebar-link-active-background`  | `color-mix(in oklab, var(--color-secondary), var(--color-content) 5%)` | Background of the active sidebar link and the submenu bar/L-shape indicators.     |
-| `--sidebar-focus-background`        | `var(--color-primary)`                                        | Background applied to focus-visible sidebar headers, groups, and links.                      |
-| `--sidebar-profile-avatar-background` | `linear-gradient(...)` over `var(--color-tertiary)`         | Background of the profile avatar wrapper.                                                    |
-| `--sidebar-profile-avatar-border`   | `var(--color-tertiary)`                                       | Border around the profile avatar wrapper.                                                    |
-| `--sidebar-profile-avatar-content`  | `var(--color-foreground)`                                     | Color of the profile avatar initials.                                                        |
-| `--sidebar-status-border`           | `var(--border-color)`                                         | Border for the sidebar status section and its link.                                          |
+| Variable                              | Default                                                                | Description                                                                      |
+| ------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `--sidebar-background`                | `var(--color-sidebar-background)`                                      | Sidebar background color.                                                        |
+| `--sidebar-border`                    | `var(--color-tertiary)`                                                | Border between the sidebar and the rest of the layout (mobile/`lg` edge border). |
+| `--sidebar-content`                   | `var(--color-content)`                                                 | Main text color for active links, profile title, and status link.                |
+| `--sidebar-content-secondary`         | `var(--color-content-secondary)`                                       | Muted text color for section headers, idle links, subitems, and hints.           |
+| `--sidebar-link-hover-background`     | `color-mix(in oklab, var(--color-secondary), var(--color-content) 2%)` | Background of a hovered sidebar link.                                            |
+| `--sidebar-link-active-background`    | `color-mix(in oklab, var(--color-secondary), var(--color-content) 5%)` | Background of the active sidebar link and the submenu bar/L-shape indicators.    |
+| `--sidebar-focus-background`          | `var(--color-primary)`                                                 | Background applied to focus-visible sidebar headers, groups, and links.          |
+| `--sidebar-profile-avatar-background` | `linear-gradient(...)` over `var(--color-tertiary)`                    | Background of the profile avatar wrapper.                                        |
+| `--sidebar-profile-avatar-border`     | `var(--color-tertiary)`                                                | Border around the profile avatar wrapper.                                        |
+| `--sidebar-profile-avatar-content`    | `var(--color-foreground)`                                              | Color of the profile avatar initials.                                            |
+| `--sidebar-status-border`             | `var(--border-color)`                                                  | Border for the sidebar status section and its link.                              |
 
 ### Table variables
 
 The index table reads its row hover and selection backgrounds from two variables. Override them to recolor the affordances you see when hovering a row or selecting one via the row checkboxes. The defaults are derived from the primary surface mixed with a little content color, so they track the chosen scheme automatically.
 
-| Variable                     | Default                                                        | Description                                                                 |
-| ---------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Variable                     | Default                                                               | Description                                                         |
+| ---------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `--color-table-row-hover`    | `color-mix(in oklab, var(--color-primary), var(--color-content) 5%)`  | Background of a hovered table row, and of selected rows.            |
 | `--color-table-row-selected` | `color-mix(in oklab, var(--color-primary), var(--color-content) 12%)` | Background used for the shift-range highlight while selecting rows. |
 
@@ -393,13 +394,13 @@ The index table reads its row hover and selection backgrounds from two variables
 
 Avo draws a single, unified focus ring on every keyboard-focused element via `:focus-visible`. Override these variables to restyle every focus ring at once instead of touching individual components.
 
-| Variable                       | Default                                                       | Description                                                                                                                                                  |
-| ------------------------------ | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--focus-outline`              | `var(--focus-outline-width) solid var(--focus-outline-color)` | Ready-to-use `outline` shorthand composed from the width and color below. This is the value applied to focused elements.                                    |
-| `--focus-outline-color`        | `var(--color-info)`                                           | Color of the focus ring. Defaults to the `info` semantic color, so it resolves automatically per scheme (light/dark).                                       |
-| `--focus-outline-width`        | `2px`                                                         | Thickness of the focus ring.                                                                                                                                |
-| `--focus-outline-offset`       | `1px`                                                         | Gap between the element and its focus ring, used in the common case where the ring is drawn outside the element's bounds.                                    |
-| `--focus-outline-offset-inset` | `-2px`                                                        | Negative offset for elements that must draw the ring *inside* their bounds (sidebar items, dropdowns, pagination, etc.) so it isn't clipped by an overflow boundary. |
+| Variable                       | Default                                                       | Description                                                                                                                                                          |
+| ------------------------------ | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--focus-outline`              | `var(--focus-outline-width) solid var(--focus-outline-color)` | Ready-to-use `outline` shorthand composed from the width and color below. This is the value applied to focused elements.                                             |
+| `--focus-outline-color`        | `var(--color-info)`                                           | Color of the focus ring. Defaults to the `info` semantic color, so it resolves automatically per scheme (light/dark).                                                |
+| `--focus-outline-width`        | `2px`                                                         | Thickness of the focus ring.                                                                                                                                         |
+| `--focus-outline-offset`       | `1px`                                                         | Gap between the element and its focus ring, used in the common case where the ring is drawn outside the element's bounds.                                            |
+| `--focus-outline-offset-inset` | `-2px`                                                        | Negative offset for elements that must draw the ring _inside_ their bounds (sidebar items, dropdowns, pagination, etc.) so it isn't clipped by an overflow boundary. |
 
 :::info
 The focus ring also reacts to user accessibility settings: it thickens and switches to `currentColor` under `prefers-contrast: more`, and uses the system `Highlight` color under Windows High Contrast Mode (`forced-colors: active`). Those overrides win over your custom values by design.
@@ -409,8 +410,8 @@ The focus ring also reacts to user accessibility settings: it thickens and switc
 
 Avo keeps the timing of small UI motions on three shared "speed" knobs so animations and transitions stay consistent and can be tuned in one place. Components reference these via `var(--speed-*)` rather than hardcoding their own durations (for example, the key/value field's row add and remove animations use `--speed-moderate`).
 
-| Variable          | Default | Description                                                                       |
-| ----------------- | ------- | -------------------------------------------------------------------------------- |
+| Variable           | Default | Description                                                                      |
+| ------------------ | ------- | -------------------------------------------------------------------------------- |
 | `--speed-fast`     | `90ms`  | Snappy state flips — color, opacity, and fill swaps that shouldn't feel delayed. |
 | `--speed-moderate` | `150ms` | Motion that travels or transforms — scale, slide, and pop animations.            |
 | `--speed-slow`     | `200ms` | Larger or more deliberate transitions — panels and overlays.                     |
@@ -503,6 +504,7 @@ Set light-mode values on `:root` and dark-mode-specific values on `.dark` when y
 ## Full example
 
 ```ruby
+# config/initializers/avo.rb
 Avo.configure do |config|
   config.appearance = {
     # Assets

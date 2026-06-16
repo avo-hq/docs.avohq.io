@@ -26,6 +26,24 @@ Do not duplicate content between the two beyond a small shared enum table where 
 
 **One page per feature.** Keep the whole feature on a single guide page and a single API page — organize sub-topics with `##`/`###` sections, not separate files. `appearance.md` covers logos, neutrals, accents, persistence, and CSS overrides on one page; it is not split into `appearance-logos.md`, `appearance-neutrals.md`, etc. The split that matters is *guide vs. reference*, never *topic vs. topic*. Reasons: related config reads better together, and a user can paste the entire page into an LLM and get the full picture of the feature in one shot — fanning it across files breaks that. Create a second file only when a sub-topic is genuinely a feature of its own.
 
+**Exception — a feature with distinct variants that each carry their own options.** Some features are really an umbrella over several sub-features, each with a substantial, independent option set. Views are the canonical case: there's a general page covering what views are and what `index`/`show`/`edit` do in common, plus separate pages for each custom view type — table view, grid view, map view — because each has its own options. Give each variant its own page when it would otherwise bloat the overview or when its options stand on their own. When you do:
+
+- The overview page describes the shared concept and keeps only what's common.
+- At the **bottom of the overview page**, add a section that links to every sub-page and says, in one line each, what's there and when to go — e.g. *"For the table view's columns, ordering, and styling options, see [Table view](./table-view.html)."* Don't leave the sub-pages discoverable only through the sidebar.
+- Each sub-page links back to the overview (and follows the same guide/reference rules itself).
+
+Footer pattern for the overview page:
+
+```markdown
+## View types
+
+Each custom view type has its own options, documented on its own page:
+
+- [Table view](./table-view.html) — column selection, ordering, and row styling for the default index layout.
+- [Grid view](./grid-view.html) — card-based layout for image-heavy resources.
+- [Map view](./map-view.html) — plot records geographically.
+```
+
 ## Guide page (`feature.md`)
 
 Rules:

@@ -547,7 +547,7 @@ config.appearance = {   # [!code ++]
 
 ### `colors:` hash removed
 
-The flat `colors:` hash is gone. The palette is now split into independent **neutral** and **accent** surfaces — each set via a preset symbol or a full custom palette. See [Neutral palette](./appearance.html#neutral-palette) and [Accent palette](./appearance.html#accent-palette).
+The flat `colors:` hash is gone. The palette is now split into independent **neutral** and **accent** surfaces — each set via a preset symbol or a full custom palette. See [Neutral palette](./appearance.html#choose-a-neutral-palette) and [Accent palette](./appearance.html#choose-an-accent-palette).
 
 Most apps that used `colors:` were only tinting the primary accent — the simplest replacement is to pick a preset accent:
 
