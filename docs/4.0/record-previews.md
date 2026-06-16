@@ -29,4 +29,4 @@ class Avo::Resources::Team < Avo::BaseResource
   end
 end
 ```
-<Image src="/assets/img/3_0/record-previews/preview-field.png" width="1328" height="1000" alt="" />
+<Image src="/assets/img/4_0/record-previews/preview-field.png" dark-src="/assets/img/4_0/record-previews/preview-field-dark.png" width="336" height="156" alt="Record preview popover" />
