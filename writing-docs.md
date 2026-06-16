@@ -17,6 +17,17 @@ Why split? The two pages answer two different questions. The guide answers _"how
 
 Not every feature needs both. A small feature with one or two options can be a single guide page. Split once the option surface is big enough that the reference would clutter the narrative.
 
+### Prefer one page per feature
+
+Keep the whole feature on **one guide page and one API page** — don't fan its sub-topics out into separate files. Appearance covers logos, neutrals, accents, persistence, CSS overrides, and more, but it's still a single `appearance.md` with `##` sections, not `appearance-logos.md` + `appearance-neutrals.md` + …
+
+Two reasons:
+
+- **It reads better.** Related configuration lives together; the reader scrolls instead of hunting across pages.
+- **It's LLM-friendly.** A user can paste the entire guide (or the entire API page) into an LLM and it has the full picture of the feature in one shot. Splitting the same content across five pages breaks that.
+
+So the split we care about is *guide vs. reference*, not *topic vs. topic*. Use `##`/`###` sections to organize a long page — reach for a second file only when a sub-topic is genuinely its own feature.
+
 ## What goes in the guide
 
 Write in plain English, the way you'd explain it to a colleague. Lead with what the feature is and a single realistic example, then organize by **task** (`## Logos`, `## Color scheme`, `## Persistence`), not by listing options one after another.
@@ -29,8 +40,11 @@ config.appearance = {
 
 A few rules of thumb:
 
+- Frame sections around what the reader wants to accomplish, not the machinery. `## Customize the logo` beats `## Logos`; the config is incidental to the goal.
 - Show code for the common cases. Don't document every permutation — that's the reference's job.
 - It's fine to mention options conversationally ("provide `logo_dark` to render a different file in dark mode") without spelling out their type and default.
+- Reach for conditional imperatives — "If you want cross-device persistence, switch to `:database`" — so a reader can scan straight to their case.
+- Don't teach the internals. A guide gives directions to a goal; it's not the place to explain how the feature works under the hood. State what to do and link out for the rest.
 - Keep it skimmable. A reader should find the answer to their task without reading the whole page.
 - You can repeat a small enum table (e.g. the `:auto | :light | :dark` values) in the guide where it helps the narrative — but the authoritative list lives in the reference.
 
@@ -59,12 +73,14 @@ config.appearance = {
 
 Include whichever of these apply to the option: **Type**, **Default**, **Values** (or a table for enums), **Validation** (what raises and when), and any flags like "Lockable". Use `:::warning` / `:::info` callouts for sharp edges (e.g. "Symbols only — passing a String raises `ArgumentError`").
 
+The reference is for *consulting*, not reading cover to cover, so keep the tone neutral and factual: describe what each option is and how it behaves, don't instruct. Step-by-step recipes and "you should" advice belong in the guide. Group the options so their sections mirror how the feature itself is structured — the reader should be able to navigate the docs and the config side by side.
+
 ## Wiring the two pages together
 
 Cross-link them through two frontmatter keys — `PageHeader` turns each into a callout at the top of the page automatically.
 
 - **`api_docs:`** goes on the **guide**. Its value is the URL of the reference page. Renders a *"Looking for every option? See the full API reference →"* callout.
-- **`guide:`** goes on the **reference**. Its value is the URL of the guide page. Renders a *"Task-oriented docs and worked examples → See the guides"* callout.
+- **`guide:`** goes on the **reference**. Its value is the URL of the guide page. Renders a *"How-to guides and worked examples → See the guides"* callout.
 
 (The key is `guide`, not `guide_docs`.) The value is used verbatim as the link `href`, so a relative `./feature.html` is typical, but any URL works.
 

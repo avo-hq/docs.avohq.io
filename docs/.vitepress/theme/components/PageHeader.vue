@@ -52,7 +52,7 @@ const shouldHide = computed(() => [feedbackId, license, version, demoVideo, demo
       </svg>
     </div>
     <div class="api-docs-callout__body">
-      <span class="api-docs-callout__title">Task-oriented docs and worked examples</span>
+      <span class="api-docs-callout__title">How-to guides and worked examples</span>
       <span class="api-docs-callout__subtitle">See the guides &rarr;</span>
     </div>
   </a>
@@ -79,6 +79,9 @@ const shouldHide = computed(() => [feedbackId, license, version, demoVideo, demo
 }
 
 .api-docs-callout {
+  position: sticky;
+  top: calc(var(--vp-nav-height, 64px) + 0.5rem);
+  z-index: 10;
   display: flex;
   align-items: center;
   gap: 0.625rem;
@@ -86,14 +89,15 @@ const shouldHide = computed(() => [feedbackId, license, version, demoVideo, demo
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--vp-c-brand-1);
   border-radius: 0.375rem;
-  background-color: color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
+  /* Opaque background so page content doesn't bleed through while pinned. */
+  background-color: color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-bg));
   color: var(--vp-c-text-1) !important;
   text-decoration: none !important;
   transition: background-color 0.15s ease;
 }
 
 .api-docs-callout:hover {
-  background-color: color-mix(in srgb, var(--vp-c-brand-1) 14%, transparent);
+  background-color: color-mix(in srgb, var(--vp-c-brand-1) 14%, var(--vp-c-bg));
 }
 
 .api-docs-callout__icon {
