@@ -128,6 +128,11 @@ function buildDocsMap(version, sections) {
     `A map of every Avo ${version} documentation page and its headings, designed for easy navigation by LLMs.`
   );
   lines.push('');
+  lines.push(
+    `For the concise index, see [llms.txt](${SITE}/${version}/llms.txt). ` +
+      `For the full text of every page in one file, see [llms-full.txt](${SITE}/${version}/llms-full.txt).`
+  );
+  lines.push('');
   lines.push('> Auto-generated from the VitePress sidebar by `scripts/generate-docs-map.js`. Do not edit manually.');
   lines.push('');
   lines.push('## Document structure');
