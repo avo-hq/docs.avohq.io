@@ -4,7 +4,7 @@ license: community
 
 # Code
 
-<Image src="/assets/img/fields/code.jpg" width="1552" height="716" alt="Code field" />
+<Image src="/assets/img/4_0/fields/code.png" dark-src="/assets/img/4_0/fields/code-dark.png" width="951" height="100" alt="Code field" />
 
 The `Code` field generates a code editor using [codemirror](https://codemirror.net/) package. This field is hidden on **Index** view.
 
