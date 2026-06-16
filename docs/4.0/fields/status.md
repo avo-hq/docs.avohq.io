@@ -16,7 +16,7 @@ field :progress,
   success_when: [:done],
 ```
 
-<Image src="/assets/img/fields/status.png" width="276" height="452" alt="Status field" />
+<Image src="/assets/img/4_0/fields/status.png" dark-src="/assets/img/4_0/fields/status-dark.png" width="216" height="240" alt="Status field" />
 
 ## Options
 
