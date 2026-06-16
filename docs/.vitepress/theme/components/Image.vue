@@ -1,11 +1,15 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useData } from 'vitepress'
+
+const { isDark } = useData()
 
 const props = defineProps({
   width: String,
   height: String,
   alt: String,
   src: String,
+  darkSrc: String, // optional dark-theme variant; used when the docs are in dark mode
   size: String, // WIDTHxHEIGHT as a string
 })
 
@@ -24,7 +28,7 @@ const width = computed(() => parseInt(widthSize.value) || parseInt(props.width) 
 const height = computed(() => parseInt(heightSize.value) || parseInt(props.height) || 0)
 
 const alt = computed(() => props.alt || 'Avo')
-const src = computed(() => props.src || '')
+const src = computed(() => (isDark.value && props.darkSrc) ? props.darkSrc : (props.src || ''))
 const style = computed(() => {
   if (imageIsSmallerThanParent.value) {
     return `width: ${width.value}px; height: ${height.value}px;`
