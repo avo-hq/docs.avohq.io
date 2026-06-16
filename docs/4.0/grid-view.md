@@ -2,7 +2,7 @@
 
 Some resources are best displayed in a grid view. We can do that with Avo using a `cover_url`, a `title`, and a `body`.
 
-<Image src="/assets/img/grid-view.jpg" width="1312" height="1096" alt="Avo grid view" />
+<Image src="/assets/img/4_0/grid-view/grid-view.png" dark-src="/assets/img/4_0/grid-view/grid-view-dark.png" width="2360" height="1148" alt="Avo grid view" />
 
 ## Enable grid view
 
@@ -86,7 +86,7 @@ See [below](#grid-item-badge) a list of options you can configure for the badge.
 
 </Option>
 
-<Image src="/assets/img/view-switcher.png" width="822" height="153" alt="Avo view switcher" />
+<Image src="/assets/img/4_0/grid-view/view-switcher.png" dark-src="/assets/img/4_0/grid-view/view-switcher-dark.png" width="2360" height="116" alt="Avo view switcher" />
 
 ## Make grid the default view
 
@@ -144,7 +144,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/grid-html-option.png" width="1014" height="637" alt="Grid html option" />
+<Image src="/assets/img/4_0/grid-view/grid-html-option.png" dark-src="/assets/img/4_0/grid-view/grid-html-option-dark.png" width="2360" height="820" alt="Grid html option" />
 
 ## Grid Item Badge
 
