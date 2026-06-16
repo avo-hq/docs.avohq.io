@@ -14,6 +14,10 @@ docs/public/2.0/llms-full.txt
 docs/public/3.0/llms-full.txt
 docs/public/4.0/llms-full.txt
 
+# Generated on build by scripts/generate-docs-map.js
+docs/public/*/docs-map.md
+docs/public/*/llms.txt
+
 .claude/
 
 # TODO: to remove this after the tichet 1320 is done
