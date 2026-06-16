@@ -476,7 +476,12 @@ class GenerateLLMsTxtCLI {
               // Generate individual version output
               const versionOutputOptions = {
                 title: options.title ? `${options.title} - Version ${result.version}` : `Avo for Ruby on Rails Documentation - Version ${result.version}`,
-                description: options.description || `Generated from Avo documentation v${result.version} for LLM consumption`,
+                description: options.description || [
+                  `Generated from Avo documentation v${result.version} for LLM consumption.`,
+                  '',
+                  `Concise index: https://docs.avohq.io/${result.version}/llms.txt`,
+                  `Documentation map (every page with its headings): https://docs.avohq.io/${result.version}/docs-map.md`
+                ].join('\n'),
                 includeHeader: true,
                 includeTableOfContents: options.includeToc,
                 includeFooter: true,
