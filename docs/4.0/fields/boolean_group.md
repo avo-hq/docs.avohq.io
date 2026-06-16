@@ -4,7 +4,7 @@ license: community
 
 # Boolean Group
 
-<Image src="/assets/img/fields/boolean-group.jpg" width="645" height="275" alt="Boolean group field" />
+<Image src="/assets/img/4_0/fields/boolean-group.png" dark-src="/assets/img/4_0/fields/boolean-group-dark.png" width="560" height="152" alt="Boolean group field" />
 
 The `BooleanGroup` is used to update a `Hash` with `string` keys and `boolean` values in the database.
 
