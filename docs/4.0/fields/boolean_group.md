@@ -4,8 +4,6 @@ license: community
 
 # Boolean Group
 
-<Image src="/assets/img/fields/boolean-group.jpg" width="645" height="275" alt="Boolean group field" />
-
 The `BooleanGroup` is used to update a `Hash` with `string` keys and `boolean` values in the database.
 
 It's useful when you have something like a roles hash in your database.
@@ -35,7 +33,7 @@ field :roles,
   }
 ```
 
-
+<Image src="/assets/img/4_0/fields/boolean-group.png" dark-src="/assets/img/4_0/fields/boolean-group-dark.png" width="350" height="112" alt="Boolean group field on a form: the User roles group with Administrator and Manager checked and Writer unchecked" />
 
 <Option name="`options`">
 
