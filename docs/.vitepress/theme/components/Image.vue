@@ -31,7 +31,11 @@ const alt = computed(() => props.alt || 'Avo')
 const src = computed(() => (isDark.value && props.darkSrc) ? props.darkSrc : (props.src || ''))
 const style = computed(() => {
   if (imageIsSmallerThanParent.value) {
-    return `width: ${width.value}px; height: ${height.value}px;`
+    // content-box so the declared width/height describe the image area itself;
+    // the 12px mat border (4_0 framing) then sits OUTSIDE and can't distort the
+    // image's aspect ratio. (Default border-box would shrink the inner image
+    // unevenly, stretching wide/short shots like control bars.)
+    return `box-sizing: content-box; width: ${width.value}px; height: ${height.value}px;`
   }
   return `padding-bottom: calc(${height.value}/${width.value} * 100%);`
 })

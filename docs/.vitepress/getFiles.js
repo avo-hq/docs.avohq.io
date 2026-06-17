@@ -19,6 +19,7 @@ const getFiles = (directory, version) => {
   });
 
   return files
+    .filter(path => path.endsWith('.md'))
     .filter(path => path !== 'index.md')
     .filter(path => path !== 'common')
     .filter(path => !path.includes('_common.md'))

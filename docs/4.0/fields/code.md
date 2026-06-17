@@ -4,13 +4,13 @@ license: community
 
 # Code
 
-<Image src="/assets/img/fields/code.jpg" width="1552" height="716" alt="Code field" />
-
 The `Code` field generates a code editor using [codemirror](https://codemirror.net/) package. This field is hidden on **Index** view.
 
 ```ruby
 field :custom_css, as: :code, theme: 'dracula', language: 'css'
 ```
+
+<Image src="/assets/img/4_0/fields/code.png" dark-src="/assets/img/4_0/fields/code-dark.png" width="1940" height="222" alt="Code field" />
 
 ## Options
 
