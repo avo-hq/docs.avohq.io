@@ -4,41 +4,14 @@ add_on_link: "https://avohq.io/pricing-4?add_ons[]=forms"
 add_on: forms_feature
 betaStatus: Beta
 outline: [2, 3]
+api_docs: ./forms-api.html
 ---
 
 # Forms
 
-Avo provide a powerful way to build custom forms for your interface. Unlike resources that are tied to database models, forms are standalone components that can handle any kind of data processing, settings management, or custom workflows.
+Forms are standalone, model-agnostic screens for anything that isn't CRUD on a database record — application settings, user preferences, data imports, or any custom workflow. Unlike resources, a form isn't tied to a model: you declare its fields, and you decide what happens when it's submitted.
 
-## Overview
-
-Forms in Avo are designed to:
-
-- Handle custom data processing and workflows
-- Manage application settings and configurations
-- Provide standalone forms not tied to specific models
-- Integrate seamlessly with pages for organized interfaces
-- Support all Avo field types and layout components
-- Be rendered anywhere in the interface
-
-Forms are typically displayed on [Pages](./pages.html) and can be used for various purposes like user preferences, system settings, data imports, or any custom functionality your application requires.
-
-Forms can also be rendered as a standalone component anywhere in the interface. For example, you can render the general settings form in a tool by using the following code:
-
-```erb
-<%= render Avo::Forms::Settings::General.component %>
-```
-
-## Generating Forms
-
-The generator usage is documented in the [Generators](./generator.html#form-generator) page.
-
-## Form Structure
-
-Every form inherits from `Avo::Forms::Core::Form` and requires two main methods:
-
-1. **`def fields`** - Define the form structure and fields
-2. **`def handle`** - Process form submission and define response
+Every form is a class under `app/avo/forms/` that inherits from `Avo::Forms::Core::Form`, defines its fields, and handles its own submission:
 
 ```ruby
 # app/avo/forms/app_settings.rb
@@ -52,167 +25,44 @@ class Avo::Forms::AppSettings < Avo::Forms::Core::Form
   end
 
   def handle
-    # Process form data
     flash[:notice] = "Settings updated successfully"
     default_response
   end
 end
 ```
 
-## Form Configuration Options
+A form needs only two things to work: a [`fields`](./forms-api.html#fields) method describing what to show, and a [`handle`](./forms-api.html#handle) method describing what to do on submit. Everything else — title, description, routing — has a sensible default.
 
-Forms have several class attributes that customize their behavior and appearance.
+Forms are usually displayed on [Pages](./pages.html), but they can also be rendered [anywhere in the interface](#render-a-form-anywhere).
 
-<Option name="self.title" headingSize=3>
+## Generate a form
 
-Sets the display title for the form.
+Use the form generator to scaffold the class. Its usage is documented in the [Generators](./overview.html#form-generator) section.
 
-```ruby{3}
-# app/avo/forms/app_settings.rb
-class Avo::Forms::AppSettings < Avo::Forms::Core::Form
-  self.title = "Application Settings"
-end
-```
+## Build the form's fields
 
-</Option>
-
-<Option name="self.description" headingSize=3>
-
-Provides a description that appears below the form title.
-
-```ruby{3}
-# app/avo/forms/app_settings.rb
-class Avo::Forms::AppSettings < Avo::Forms::Core::Form
-  self.description = "Manage your application configurations"
-end
-```
-
-</Option>
-
-<Option name="self.id" headingSize=3>
-
-Sets the routing key — and URL segment — for the form. Forms are submitted to `<root_path>/forms/<id>` and resolved by their `id` at request time, so no routes are declared manually.
-
-**Default behavior:** defaults to the class path under `Avo::Forms` — e.g. `Avo::Forms::Settings::Integrations` becomes `settings/integrations`. Override it to decouple the URL from the class name.
-
-```ruby{3}
-# app/avo/forms/app_settings.rb
-class Avo::Forms::AppSettings < Avo::Forms::Core::Form
-  self.id = :app_settings
-end
-```
-
-::: tip
-`id` must be unique across all forms, since it's how a submission is matched to a form.
-:::
-
-</Option>
-
-:::info Form header
-When a form is rendered on a [page](./pages.html), its `title` and `description` appear as a header above the fields. You can hide this header for a specific placement with the [`show_header` option](./pages.html) on the page's `form` declaration.
-:::
-
-## Form Methods
-
-<Option name="def fields" headingSize=3>
-
-Define the structure and fields of your form. This method uses the same field syntax as Avo resources and actions, supporting all field types, [panels and cards](./../resource-panels.html), and layout components.
-
-:::tip
-Group related fields with `card` or [`panel`](./../resource-panels.html). Both take their title and description as keyword arguments: `card title: "...", description: "..."`.
-:::
-
-```ruby{3-5}
-# app/avo/forms/user_preferences.rb
-class Avo::Forms::UserPreferences < Avo::Forms::Core::Form
-  def fields
-    # Define form fields here
-  end
-end
-```
-
-</Option>
-
-<Option name="field" headingSize=3>
-
-Add individual fields to your form. Supports all Avo field types and options.
+Declare what the form shows inside [`fields`](./forms-api.html#fields), using the same [`field`](./forms-api.html#field) syntax as resources and actions. Every Avo field type and option works here.
 
 ```ruby
 # app/avo/forms/user_preferences.rb
 class Avo::Forms::UserPreferences < Avo::Forms::Core::Form
   def fields
-    field :email, as: :text, required: true # [!code focus]
-    field :notifications, as: :boolean, default: true # [!code focus]
-    field :theme, as: :select, options: { light: "Light", dark: "Dark" } # [!code focus]
+    field :email, as: :text, required: true
+    field :notifications, as: :boolean, default: true
+    field :theme, as: :select, options: { light: "Light", dark: "Dark" }
   end
 end
 ```
 
-**Field Options**
+### Group fields with cards and panels
 
-All standard Avo field options are supported
-
-</Option>
-
-<Option name="def handle" headingSize=3>
-
-Process form submission and define the response. This method is called when the form is submitted and receives form data through the `params` object.
-
-Currently, the `handle` method is executed in the context of the controller method that receives the form request. This means that you can use any of the methods available in the controller to process the form data. **This is something experimental and might change in the future.**
-
-This experiment is to see if by not building a heavy DSL for forms, we can make it easier to use and maintain.
-
-The main point is that since it is the controller method, everything is available and possible to the developer by using rails syntax.
-
-If we build a heavy DSL for the `handle` method like we do for actions, it and might feel restrictive to the developer in some cases.
-
-If you have any feedback, please share it with us.
-
-Right now the only pre-defined methods available in the controller are:
-
-- `default_response` - Standard redirect back turbo stream response
-
-```ruby{3-8}
-# app/avo/forms/user_preferences.rb
-class Avo::Forms::UserPreferences < Avo::Forms::Core::Form
-  def handle
-    # Process form data
-    # Access form data via params
-    # Set flash messages and redirect
-    default_response
-  end
-end
-```
-
-</Option>
-
-## Field Types and Layout
-
-Forms support all Avo field types and layout components:
-
-### Basic Fields
-
-```ruby
-def fields
-  field :name, as: :text
-  field :email, as: :text, required: true
-  field :age, as: :number
-  field :active, as: :boolean
-  field :bio, as: :textarea
-  field :role, as: :select, options: { admin: "Admin", user: "User" }
-end
-```
-
-### Cards and Panels
-
-Group related fields with `card` or `panel`. Both accept `title:` and `description:` keyword arguments.
+Wrap related fields in a `card` or [`panel`](./../resource-panels.html) to organize them. Both take `title:` and `description:` as keyword arguments.
 
 ```ruby
 def fields
   card title: "Personal Information" do
     field :first_name, as: :text
     field :last_name, as: :text
-    field :email, as: :text
   end
 
   panel title: "Preferences", description: "Customize your experience" do
@@ -222,9 +72,9 @@ def fields
 end
 ```
 
-### Inline Layout
+### Place fields side by side
 
-Use the `width` field option to place fields side by side. `with_options` applies it to a group of fields at once.
+Use the `width` field option to lay fields out inline. `with_options` applies it to a group at once.
 
 ```ruby
 def fields
@@ -237,9 +87,9 @@ def fields
 end
 ```
 
-### Working with Records
+### Prefill from a record
 
-You can bind form fields to existing records:
+Bind a field to an existing record to prefill its value. `with_options record:` binds a whole group.
 
 ```ruby
 def fields
@@ -249,116 +99,93 @@ def fields
 end
 ```
 
-## Form Submission Handling
+## Handle the submission
 
-### Processing Form Data
-
-```ruby
-def handle
-  # Access form parameters
-  app_name = params[:app_name]
-  maintenance_mode = params[:maintenance_mode]
-
-  # Update application settings
-  Rails.application.config.app_name = app_name
-  cookies[:maintenance_mode] = maintenance_mode
-
-  # Set success message
-  flash[:notice] = "Settings updated successfully"
-
-  # Return standard response
-  default_response
-end
-```
-
-### Flash Messages
+When the form is submitted, [`handle`](./forms-api.html#handle) runs. It executes in the controller's context, so the submitted data is in `params` and every controller helper — `current_user`, `flash`, `cookies`, `redirect_to` — is available. Call `default_response` to send the standard redirect-back response.
 
 ```ruby
 def handle
-  # Informative message
-  flash[:notice] = "Operation completed successfully"
-
-  # Error message
-  flash[:error] = "Something went wrong"
-
-  # Success with timeout
-  flash[:success] = { body: "Saved successfully", timeout: 3000 }
-
-  # Warning message without dismissing
-  flash[:warning] = { body: "Something went wrong", timeout: :forever }
-
-  default_response
-end
-```
-
-### Working with Models
-
-```ruby
-def handle
-  # Update current user
   current_user.update(params.permit(:first_name, :last_name, :email))
-
-  # Create new records
-  Post.create(title: params[:title], body: params[:body])
-
-  # Complex data processing
-  if params[:import_data]
-    ImportService.new(params[:file]).process
-  end
-
-  flash[:notice] = "Data processed successfully"
+  flash[:notice] = "Profile updated successfully"
   default_response
 end
 ```
 
-## Complete Examples
-
-### User Profile Settings Form
+Because it's plain controller code, you can do anything Rails can — update several models, kick off a background job, or branch on the input:
 
 ```ruby
-# app/avo/forms/profile_settings.rb
-class Avo::Forms::ProfileSettings < Avo::Forms::Core::Form
-  self.title = "Profile Settings"
-  self.description = "Update your personal information"
+def handle
+  ImportService.new(params[:file]).process if params[:import_data]
+  Post.create(title: params[:title], body: params[:body])
+  default_response
+end
+```
 
-  def fields
-    card do
-      with_options width: 50, record: Avo::Current.user do
-        field :first_name, as: :text, required: true
-        field :last_name, as: :text, required: true
-      end
+### Flash messages
 
-      field :email, as: :text, required: true, record: Avo::Current.user
-      field :phone, as: :text, record: Avo::Current.user
-    end
+Set a flash before returning to surface feedback. Pass a string for a simple message, or a Hash to control the timeout (`:forever` keeps it until dismissed).
 
-    panel title: "Preferences" do
-      field :theme, as: :select,
-            options: { light: "Light", dark: "Dark", auto: "Auto" },
-            default: "auto"
-      field :email_notifications, as: :boolean, default: true
-      field :timezone, as: :select, options: ActiveSupport::TimeZone.all.map { |tz| [tz.name, tz.name] }
-    end
+```ruby
+def handle
+  flash[:notice] = "Operation completed successfully"
+  flash[:error] = "Something went wrong"
+  flash[:success] = { body: "Saved successfully", timeout: 3000 }
+  flash[:warning] = { body: "Heads up", timeout: :forever }
+
+  default_response
+end
+```
+
+## Show a form on a page
+
+Forms become reachable in the UI by registering them on a [Page](./pages.html) — see the [Pages guide](./pages.html) for the navigation and content structure. When a form is shown on a page, its title and description render as a header above the fields; hide that header for a placement with `show_header: false` on the page's [`form`](./pages-api.html#form) declaration.
+
+## Render a form anywhere
+
+A form can also be dropped into any view as a standalone component via its `.component` method:
+
+```erb
+<%= render Avo::Forms::Settings::General.component %>
+```
+
+## Reusable vs. inline forms
+
+The generator gives each form its own file under `app/avo/forms/` — the default, and the right choice for anything you'll show on more than one page or render as a component. The class name is its public handle.
+
+For a form that only ever belongs to one page, you can define it inline, nested in the page class:
+
+```ruby
+# app/avo/pages/settings/integrations.rb
+class Avo::Pages::Settings::Integrations < Avo::Forms::Core::Page
+  self.title = "Integrations"
+
+  def content
+    form ApiConfiguration
   end
 
-  def handle
-    # Update user profile
-    current_user.update(params.permit(:first_name, :last_name, :email, :phone))
+  class ApiConfiguration < Avo::Forms::Core::Form
+    self.title = "API Configuration"
 
-    # Update preferences (assuming a preferences model)
-    current_user.preferences.update(
-      theme: params[:theme],
-      email_notifications: params[:email_notifications],
-      timezone: params[:timezone]
-    )
+    def fields
+      field :api_key, as: :text, required: true
+      field :webhook_url, as: :text
+    end
 
-    flash[:notice] = "Profile updated successfully"
-    default_response
+    def handle
+      flash[:success] = "API configuration updated"
+      default_response
+    end
   end
 end
 ```
 
-### Application Settings Form
+:::warning Nesting hides intent
+A nested `Avo::Pages::Settings::Integrations::ApiConfiguration` doesn't read as a form, which makes the code harder to navigate. Reach for inline definitions only for simple, page-specific forms — give a form its own file the moment you want to reuse it elsewhere.
+:::
+
+## Full example
+
+A complete settings form, grouping fields into panels and persisting them in `handle`:
 
 ```ruby
 # app/avo/forms/app_settings.rb
@@ -371,137 +198,39 @@ class Avo::Forms::AppSettings < Avo::Forms::Core::Form
       field :app_name, as: :text,
             default: -> { Rails.application.class.module_parent_name },
             required: true
-      field :app_url, as: :text,
-            default: -> { request.base_url },
-            placeholder: "https://yourapp.com"
+      field :app_url, as: :text, placeholder: "https://yourapp.com"
       field :maintenance_mode, as: :boolean, default: false
-    end
-
-    panel title: "Email Configuration" do
-      field :support_email, as: :text,
-            default: "support@yourapp.com",
-            required: true
-      field :from_email, as: :text,
-            default: "noreply@yourapp.com",
-            required: true
     end
 
     panel title: "Feature Flags" do
       field :enable_registrations, as: :boolean, default: true
-      field :enable_api_access, as: :boolean, default: false
-      field :max_file_upload_size, as: :number,
-            default: 10,
-            help_text: "Maximum file size in MB"
+      field :max_file_upload_size, as: :number, default: 10, help_text: "In MB"
     end
   end
 
   def handle
-    # Store in application configuration or settings model
-    settings = {
-      app_name: params[:app_name],
-      app_url: params[:app_url],
-      maintenance_mode: params[:maintenance_mode],
-      support_email: params[:support_email],
-      from_email: params[:from_email],
-      enable_registrations: params[:enable_registrations],
-      enable_api_access: params[:enable_api_access],
-      max_file_upload_size: params[:max_file_upload_size]
-    }
+    ApplicationSettings.update_all(
+      params.permit(:app_name, :app_url, :maintenance_mode,
+                    :enable_registrations, :max_file_upload_size)
+    )
 
-    # Update application settings (your implementation)
-    ApplicationSettings.update_all(settings)
-
-    # Or store in Rails credentials
-    # Rails.application.credentials.update(settings)
-
-    flash[:success] = {
-      body: "Application settings updated successfully",
-      timeout: 5000
-    }
+    flash[:success] = { body: "Application settings updated", timeout: 5000 }
     default_response
   end
 end
 ```
 
-### Data Import Form
+## Best practices
 
-```ruby
-# app/avo/forms/data_import.rb
-class Avo::Forms::DataImport < Avo::Forms::Core::Form
-  self.title = "Import Data"
-  self.description = "Upload and import data from CSV files"
+- **Keep each form focused** on one related set of functionality rather than doing everything at once.
+- **Group fields with panels** so long forms stay scannable.
+- **Validate and permit input** in `handle` before acting on it.
+- **Give feedback** with flash messages so users know the result.
+- **Wrap risky work in `begin`/`rescue`** and surface failures via `flash[:error]`.
+- **Offload long-running work** to a background job and tell the user it's processing.
 
-  def fields
-    card do
-      field :import_type, as: :select,
-            options: {
-              users: "Users",
-              products: "Products",
-              orders: "Orders"
-            },
-            required: true
-      field :csv_file, as: :file,
-            required: true,
-            help_text: "Select a CSV file to import"
-      field :skip_header_row, as: :boolean,
-            default: true,
-            help_text: "Skip the first row if it contains headers"
-    end
+## Related
 
-    panel title: "Import Options" do
-      field :update_existing, as: :boolean,
-            default: false,
-            help_text: "Update existing records if found"
-      field :send_notification, as: :boolean,
-            default: true,
-            help_text: "Send email notification when import completes"
-    end
-  end
-
-  def handle
-    import_type = params[:import_type]
-    csv_file = params[:csv_file]
-    options = {
-      skip_header_row: params[:skip_header_row],
-      update_existing: params[:update_existing]
-    }
-
-    # Process the import
-    begin
-      importer = DataImporter.new(import_type, csv_file, options)
-      result = importer.process
-
-      if params[:send_notification]
-        ImportNotificationMailer.import_completed(current_user, result).deliver_later
-      end
-
-      flash[:success] = {
-        body: "Import completed: #{result[:imported]} records imported, #{result[:skipped]} skipped",
-        timeout: 10000
-      }
-    rescue => e
-      flash[:error] = "Import failed: #{e.message}"
-    end
-
-    default_response
-  end
-end
-```
-
-## Best Practices
-
-**Keep forms focused**: Each form should handle a specific set of related functionality rather than trying to do everything.
-
-**Use descriptive titles and descriptions**: Help users understand what the form does and what data is expected.
-
-**Organize with panels**: Group related fields together using panels for better user experience.
-
-**Validate input**: Always validate and sanitize form input in your handle method.
-
-**Provide feedback**: Use flash messages to inform users about the results of their actions.
-
-**Handle errors gracefully**: Wrap potentially failing operations in begin/rescue blocks.
-
-**Use default values**: Provide sensible defaults for form fields when possible.
-
-**Consider async processing**: For long-running operations, consider using background jobs and provide appropriate feedback to users.
+- [Pages](./pages.html) — put this form in front of users by registering it on a page.
+- [Forms API](./forms-api.html) — the full reference for every form attribute and method.
+- [Overview](./overview.html) — installation, the generators, and a quick start.
