@@ -124,13 +124,82 @@ Users can now navigate to **Settings → General** in the sidebar and submit the
 
 - **Pages** inherit from `Avo::Forms::Core::Page`. A **main page** (one namespace level deep, e.g. `Avo::Pages::Settings`) acts as a container and defines navigation. **Sub-pages** (deeper, e.g. `Avo::Pages::Settings::General`) define the actual content via `def content`.
 
-- **Routes** are resolved dynamically at request time — no manual route declarations needed. Pages live at `<root_path>/pages/<id>` and forms at `<root_path>/forms/<id>`, where `id` defaults to the class path (e.g. `Avo::Pages::Settings::General` → `settings/general`) and can be overridden with [`self.id`](./pages.html#self.id).
+- **Routes** are resolved dynamically at request time — no manual route declarations needed. Pages live at `<root_path>/pages/<id>` and forms at `<root_path>/forms/<id>`, where `id` defaults to the class path (e.g. `Avo::Pages::Settings::General` → `settings/general`) and can be overridden with [`self.id`](./pages-api.html#self.id).
 
 - **Rendering**: Pages render with a sidebar navigation listing all sub-pages. Each sub-page shows its title, description, and all registered forms in order.
 
-## Next steps
+## Generators
 
-- [Forms](./forms.html) — field types, panels, record binding, flash messages, and full examples
-- [Pages](./pages.html) — hierarchy, virtual pages, navigation configuration, menu integration
-- [Generators](./generator.html) — all generator commands and generated file templates
-- [Guides & Tutorials](./guides-and-tutorials.html) — form organization strategies and page patterns
+Avo Forms ships generators for both building blocks. Use them to scaffold a class with the right structure, then fill in the fields, content, and navigation.
+
+### Form generator
+
+```bash
+rails generate avo:form your_form_name
+```
+
+Creates `app/avo/forms/your_form_name.rb`:
+
+```ruby
+# app/avo/forms/your_form_name.rb
+class Avo::Forms::YourFormName < Avo::Forms::Core::Form
+  self.title = "Your Form Name"
+  self.description = "Manage your your form name"
+
+  def fields
+    field :example, as: :text, default: "Hello World"
+  end
+
+  def handle
+    flash[:success] = { body: "Form submitted successfully", timeout: :forever }
+    flash[:notice] = params[:example]
+
+    default_response
+  end
+end
+```
+
+### Page generator
+
+```bash
+rails generate avo:page your_page_name
+```
+
+Creates `app/avo/pages/your_page_name.rb`, with commented examples of every navigation and content declaration:
+
+```ruby
+# app/avo/pages/your_page_name.rb
+class Avo::Pages::YourPageName < Avo::Forms::Core::Page
+  self.title = "Your Page Name"
+  self.description = "A page for your page name"
+  # self.navigation_label = "Your Page Name"
+
+  def content
+    # form Avo::Forms::AnyFormClass
+  end
+
+  def navigation
+    # Reference an existing page class:
+    # page Avo::Pages::AnySubPageClass
+
+    # Show a form directly in the navigation:
+    # form Avo::Forms::AnyFormClass
+
+    # Declare a virtual page inline with its content:
+    # page "Custom Page",
+    #   description: "A page for custom page",
+    #   content: -> { form Avo::Forms::SomeForm }
+  end
+end
+```
+
+To create a sub-page, generate the parent first and namespace the child under it — see [how pages are organized](./pages.html#how-pages-are-organized).
+
+:::warning Parsed once at boot
+`content` and `navigation` are evaluated a single time during application boot. Keep them static — no conditional or dynamic logic inside them.
+:::
+
+## Related
+
+- [Forms](./forms.html) — define a form's fields and handle its submission. Start here to build the inputs.
+- [Pages](./pages.html) — organize forms into a navigable hierarchy of main pages and sub-pages.
