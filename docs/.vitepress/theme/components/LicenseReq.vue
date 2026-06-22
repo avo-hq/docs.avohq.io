@@ -31,7 +31,6 @@ const labels = {
   custom: "Custom",
   add_on: "Add-on",
 };
-console.log(props);
 const href = computed(() => {
   if (props.add_on_link) {
     return props.add_on_link;

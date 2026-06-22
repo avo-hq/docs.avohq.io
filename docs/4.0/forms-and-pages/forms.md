@@ -1,6 +1,5 @@
 ---
 license: add_on
-add_on_link: "https://avohq.io/pricing-4?add_ons[]=forms"
 add_on: forms_feature
 betaStatus: Beta
 outline: [2, 3]
