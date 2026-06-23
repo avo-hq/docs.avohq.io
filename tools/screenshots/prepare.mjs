@@ -74,6 +74,21 @@ export const click = (selector) => async (page) => {
   await page.locator(selector).first().click();
 };
 
+// Render a native <select> as an OPEN listbox so all its <option>s are visible at once.
+// A native select's popup is OS-drawn and can't be screenshot, so to document a select's
+// CHOICES we expand the REAL element to size=N (a legitimate HTML rendering of the same
+// element — not a faked component): every option (e.g. currency codes) shows inline.
+export const openSelect = (selector) => async (page) => {
+  const el = page.locator(selector).first();
+  await el.scrollIntoViewIfNeeded();
+  await el.evaluate((s) => {
+    s.setAttribute("size", String(s.options.length));
+    s.style.width = "auto";
+    s.style.position = "relative";
+    s.style.zIndex = "50";
+  });
+};
+
 export const scrollTo = (selector) => async (page) => {
   await page.locator(selector).first().scrollIntoViewIfNeeded();
 };
@@ -88,4 +103,39 @@ export const hideUnder = (selector) => async (page) => {
 // Use sparingly — prefer a named primitive above.
 export const injectCSS = (css) => async (page) => {
   await page.addStyleTag({ content: css });
+};
+
+// Hide index-table rows by Avo `data-record-id` and sync the pagination count label.
+export const hideRecords = (...ids) => async (page) => {
+  const hidden = ids.map(String);
+  await page.addStyleTag({
+    content: hidden
+      .map((id) => `tr[data-record-id="${id}"] { display: none !important; }`)
+      .join("\n"),
+  });
+  await page.evaluate((hiddenIds) => {
+    const visible = [...document.querySelectorAll("table tbody tr[data-record-id]")].filter(
+      (row) => !hiddenIds.includes(row.dataset.recordId),
+    ).length;
+    const info = document.querySelector(".pagination__info span");
+    if (info) info.textContent = `${visible} records`;
+  }, hidden);
+};
+
+// Hide summarizable chart icons in index column headers (summary popover triggers).
+export const hideSummarizableIcons = async (page) => {
+  await page.addStyleTag({
+    content: `button[popovertarget^="summary-popover"] { display: none !important; }`,
+  });
+};
+
+// Hide index-table columns by Avo field id (header + body cells).
+export const hideIndexColumns = (...fieldIds) => async (page) => {
+  const selectors = fieldIds.flatMap((id) => [
+    `th[data-table-header-field-id="${id}"]`,
+    `td[data-field-id="${id}"]`,
+  ]);
+  await page.addStyleTag({
+    content: `${selectors.join(", ")} { display: none !important; }`,
+  });
 };
