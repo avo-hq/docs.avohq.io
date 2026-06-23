@@ -62,6 +62,25 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
    framing — is reproduced in CSS at full res. Keep CleanShot for one-off manual shots.
 3. **Playwright's bundled ffmpeg has no GIF muxer.** Don't record video→gif. Capture
    frame PNGs during the interaction and assemble with `magick -delay -loop -layers Optimize`.
+   **Capture GIF frames at retina (DPR 2), same as `capture.mjs` — and NEVER upscale.** A GIF
+   `clip` is in CSS px; at DPR 2 the frame PNG is 2× that. The killer mistake is setting the
+   output `width` LARGER than the captured CSS-px width (e.g. a 434px-wide popover clip captured
+   at DPR 1 = a 434px frame, then resized up to 760px): the enlargement pixelates the chart/table
+   into mush. Two safeguards, both in `record-gif.mjs`: capture with `deviceScaleFactor: 2`, and
+   resize with the `>` flag (`-resize ${width}x>`) so ImageMagick **only ever shrinks** — a 2×
+   frame downscaled to the display width is crisp; an upscaled small frame is not. Pick `width`
+   so the GIF displays near its captured CSS width (don't blow it up past it). (2026-06-22: the
+   summarizable GIF shipped pixelated because a 434px DPR-1 clip was upscaled to 760px; fixed by
+   DPR 2 + downscale-only.)
+3a. **To animate a chart/data demo, step a hover across each datapoint.** A GIF of a chart
+   (the `summarizable` distribution popover) reads best when it pauses on EACH segment in turn,
+   showing that segment's tooltip — `snap(hold)` per datapoint so each holds ~0.9–1.1s. Chart.js
+   renders to a `<canvas>`, so the slices are NOT DOM-selectable — you can't `.hover()` them.
+   Hover them **geometrically**: read the canvas `boundingBox()`, take the center, and for each
+   value move the mouse to a point at the slice's **mid-angle** on the ring
+   (`ang = (cumulative + v/2)/total * 2π − π/2` for a pie that starts at top and sweeps
+   clockwise; `r ≈ 0.3 × min(w,h)` lands inside the slice). Same idea for other canvas charts —
+   compute the on-canvas point, don't look for an element. (summarizable GIF, 2026-06-22.)
 4. **Capture real page padding, don't bake a border.** For breathing room, expand the
    clip into the actual page area (asymmetric top/bottom to dodge a table row above or
    the footer below) — a flat ImageMagick border looks stretched/fake. **Left/right
@@ -92,10 +111,60 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
      the **FULL pixel dims** (e.g. a 1200×720 capture → `width="1200" height="720"`).
    - **Small/centered:** set them to **HALF** the pixel size (logical/CSS size). Crisp at 2×,
      `margin:auto` centers it.
+9a. **Legibility = captured width ÷ column, NOT PNG sharpness.** A `display:"full"` image is
+    always shown at the ~688px content column regardless of its pixel size, so apparent
+    on-screen text size ≈ `688 ÷ (captured CSS width)`. A full-width index table is ~1125px
+    CSS at the default 1440 viewport (measured) → its text renders at ~0.6× — *crisp but too
+    small to read*. #9's "crisp because the source is larger" is about **sharpness**, not
+    legibility; the two are different. When the shot's value is *reading* text (column labels,
+    help strings, field values, a renamed header), keep the **captured CSS width ≲ ~900px** so
+    text lands near 1×. The index table is responsive and **tracks the viewport** (measured:
+    1440→1125px, 820→777px), so the primary lever is a **narrower viewport**
+    (`viewport: { width: 820–960 }`), combined with fewer columns (see #10a). Reserve full
+    ~1400px-wide captures for shots where the *structure*, not the text, is the point.
 
 ## Lessons — editorial rules (from review feedback)
 
-10. **Tables must show pagination.**
+10. **Tables must show pagination** — for table-AS-A-WHOLE shots. Single-column / single-option
+    shots scope down instead (see #10a).
+10a. **Scope the shot to what the prose references — RESHAPE the component, don't crop a slice.**
+    If the surrounding text is about ONE column / field / option (a `name:` label, `placeholder`,
+    `help`, `sortable`, a single field's formatter), the image must FOCUS on that one thing — NOT
+    a full multi-column table where the reader has to hunt for it across ID / Skills / Country /
+    City. Two failure modes a full-table capture causes, from one wrong choice:
+    - **Unfocused** — the relevant column is one of six; the subject is lost.
+    - **Unreadable** — a ~1125px+ table fit into the 688px column shrinks text to ~0.6× (#9a).
+    **Fix both at once by reshaping the real component, not by clipping it:**
+    1. Make a **minimal temp resource** that renders only the relevant fields (see #13) — e.g.
+       `id`, `name`, and the field in question (renamed to match the code's `name:`).
+    2. Set a **small `per_page`** (3–4) so the table is short with a real pager.
+    3. Set a **narrower viewport** (#9a, ~820–960px) so columns are tight and text lands near 1×.
+    4. Capture the **whole** table card. You get real native edges (true right border, rounded
+       corners, real pagination) — a vertical clip through columns risks a sliced mid-table edge
+       (#4) and an off look.
+    Full-table + pagination (#10) and "show the table FULLY, don't slice" (#4) apply to features
+    about the table AS A WHOLE — sorting *interaction*, pagination, index alignment,
+    `link_to_record` across a row, row layout. They do NOT mean "always show every column." For a
+    single-column/option feature the target is **~3 columns + a few middle rows**. Clip a slice
+    only as a fallback when the source genuinely can't be reshaped; then keep edges symmetric and
+    clean (#15c). (2026-06-22: `change-field-name` shipped as a 6-column 2824px table — unfocused
+    on its "Availability" header and shrunk to ~0.5× text; root cause was treating a rename-one-
+    column shot as a table-as-a-whole shot.)
+10b. **Every shot lives IN CONTEXT — capture the element inside its real container, never as a
+    lone fragment floating on bare mat.** The reader has to recognize *where in the Avo UI* this
+    thing lives. A field belongs in its **card**; a column/cell belongs in its **table**; a
+    control belongs in its **toolbar/panel**; a triggered overlay belongs over its **trigger**.
+    So the DEFAULT for any element shot is: show the element WITH the natural container around it
+    (the card border + a neighbor field, the table with a few columns + rows, the panel) so it
+    reads as a real screen, not a clipping. Stripping the container — transparent card, hidden
+    sibling rows, a single field on empty background — makes the subject look like it's "within
+    nothing" and is the main thing reviewers reject. This is the umbrella over the specific cases:
+    triggered components → keep the trigger context (15a); per-field form options → the native
+    card with a neighbor (15w); per-column/option table shots → reshape to ~3 columns + rows, not
+    a slice (10a). **The bare-element-on-mat fragment (15s) is a LAST RESORT** — only when the
+    element has no meaningful container OR the container would add pure noise (a lone icon/swatch);
+    even then, prefer keeping at least the container's own border. When in doubt, include MORE
+    context, not less.
 11. **Image goes *after* the code snippet** it illustrates, never before.
 12. **Crop sidebar/navbar for focused feature shots** (record_selector, keep_filters,
     mapping, grid). Keep the sidebar only where context matters (Cards — explicit).
@@ -140,6 +209,21 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     real ring renders. No `marks`/annotate, no chunky hand-drawn rectangle. Only fall back
     to a drawn mark when the element has no focus-visible style — and then keep it small and
     ring-like (tight pad), not a big box.
+15b′. **MANDATORY — if the subject is ONE small control / icon / indicator, the shot MUST mark
+    it. Framing, contrast, or "it's visually distinct" is NOT sufficient.** When the feature is a
+    single small element the reader would otherwise have to hunt for — a sort caret in a column
+    header, a toggle, a single icon-button, a state badge, the trigger that opens an overlay —
+    the image is NOT done until that element is explicitly marked. Required marker, in order:
+    1. **Native `:focus-visible` ring (preferred, 15b)** — if the element is focusable (an
+       `<a>`/`<button>`, e.g. a sortable column header link), `.focus()` it in `prepare` so Avo's
+       real ring frames it. No `marks` needed.
+    2. **Drawn highlight (15d, fallback)** — only if the element has no focus-visible style; keep
+       it small and ring-like (tight pad), via a `marks` entry, not a big box.
+    A reviewer must FAIL a single-control shot that carries no marker, even if the state is
+    technically visible. (2026-06-22: the `sortable` shot shipped with the active sort caret
+    unmarked — relying on "the caret differs from ID's neutral chevron + rows are sorted" — which
+    is exactly the insufficient-emphasis this rule forbids; fix = `.focus()` the sortable header
+    `<a>` for the native ring.)
 15c. **Crop tight to where the context actually is — no large empty regions.** A feature that
     occupies only one part of the screen (e.g. the scopes tab bar lives in the left ~300px)
     must NOT be shown at full table width with empty space on the right. Narrow the `clip` so
@@ -223,6 +307,17 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     while the card keeps its borders and the rows keep their height (so the popover still
     opens where it did).
 
+15j′. **But when the overlay is ABOUT the content beneath it, keep that content LIVE and
+    visible — don't blank it.** 15j's hide-underneath is only for *incidental* clutter the
+    floating element happens to cover. When the popover/overlay summarizes, derives from, or
+    points at the content below — e.g. the `summarizable` distribution popover, which charts the
+    very column it opens over — that underlying content IS the context (RULES 15a), and hiding it
+    guts the shot. Show the **real table with its rows visible** as the background and let the
+    popover open over it; frame the whole table + the open overlay together. Ask "is the stuff
+    underneath the subject's context, or just stuff in the way?" — context stays, clutter gets
+    `visibility:hidden`. (2026-06-22: the summarizable GIF was first shot with the table hidden /
+    card transparent → a popover floating on bare mat; corrected to the live table behind it.)
+
 ## Lessons — grids, dark mode, demo CSS, image placement
 
 > From reshooting the grid-view card images (hero, custom-html, badges).
@@ -281,7 +376,21 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
       and border) so no border shows at all.
     Landing partway (some edges in, some cut) is exactly what gets flagged as "still cut off."
 
-15s. **Let the docs frame BE the border.** `custom.css` already draws a border + shadow + mat
+15r′. **Judge border-completeness on the DARK variant — light mode hides a sliced card.** A
+    component's own card/panel/control border is usually near-white (`border-gray-200`), so on the
+    LIGHT PNG it's white-on-white against the mat and effectively invisible — a clip that slices the
+    card's TOP (or any) edge looks perfectly clean in light and reveals the cut only in DARK, where
+    the border contrasts. (Real bug: the `key_value` field shots cut the control card's top border;
+    the light PNG measured a tidy ~10px mat on all four sides and "passed", while the dark PNG plainly
+    showed the header row flush to the top edge with no top border or rounded corners.) So whenever
+    you check 15r/15u ("is any border sliced / is every edge mat?"), the DARK image is
+    AUTHORITATIVE: open it, and sample all four edges THERE, not on light. A light-only review is not
+    a review. This is the inverse of 15u's stray-hairline case — a stray border screams on dark, a
+    missing border hides on white; both are findings you can only make in dark.
+
+15s. **Let the docs frame BE the border.** (LAST RESORT — default to showing the real container,
+    10b; use this only for a genuine single-control fragment with no meaningful container.)
+    `custom.css` already draws a border + shadow + mat
     around every `/4_0/` image. So a compact "bordered widget" around one field/group does NOT
     need the app's own card border — crop tight to the content on plain background and the docs
     frame supplies the surrounding border (the clean 15r "no component border" path). Capture to
@@ -320,6 +429,80 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     `prepare` so trigger + dropdown read as one coherent, fully-contained unit (this is what makes
     the date-picker shot look like the legacy one). Three borders shown + one cut is always wrong.
 
+15w. **Produce the state with Avo's real DSL — don't hand-fake the look with injected CSS or
+    fabricated classes.** When a shot needs a field option (`disabled:`, `readonly:`, `stacked:`,
+    `link_to_record:`, multiple `key_value` pairs, etc.), set that option on a REAL field via the
+    DSL and let Avo render it natively. Do NOT reach for `injectCSS` to strip the card border,
+    `neutralizeBorders` + `visibility:hidden` to hide sibling rows, or hand-built CSS that
+    simulates the component — that produces a borderless fragment floating on mat that reads as
+    "cut off" and doesn't match what a real user sees. Instead **show the native form card WITH
+    its real border and the real separator between fields** (the docs frame, lesson 16, sits
+    OUTSIDE that card — both borders are fine and read as intentional). The A/B contrast pair
+    (a `readonly`/`disabled` field above a normal one) belongs in the SAME real card so its
+    native divider separates them. Reserve border-stripping for the genuinely single-control
+    fragment cases (15s/15t) — not for multi-row form shots, where the native card IS the frame.
+    Corollary for `key_value`/data-display widgets: populate **2–3 real pairs/rows** of data so
+    the control reads as a realistic example, not an empty stub.
+
+15x. **On Show / Form (New/Edit) card shots, the fields must FILL the card — no half-empty rows.**
+    Avo lays fields out on a grid; a field left at its default width occupies only the LEFT half of
+    its row, leaving an empty right half that reads as a broken/unbalanced card (e.g. a "First name"
+    or "Is writer" row with dead space to its right). Before capturing, set each demoed field's
+    `width` (via the DSL — RULES 15w) so every row is full across the card:
+    - **1 field on a row → `width: 100`** (the default full row) so it spans the whole card.
+    - **2 fields meant to share a row →** choose by the values' LENGTH:
+      - short values → **`width: 50` each**, sitting side by side and filling the row;
+      - long value(s) → keep them **`width: 100`** (each on its own full-width row, stacked) rather
+        than cramming a long value into a half column.
+    The goal is a card with no ragged empty halves — every row either one full-width field or two
+    balanced halves. (Note: any `width` below 100 auto-stacks the label above the value; see the
+    `width` field-option docs. This is composition for the screenshot, matching how a well-configured
+    real resource looks — pair it with 15w's "use the real DSL.")
+
+15y. **Show the WHOLE component, with all its controls — not a read-only or collapsed rendering
+    that hides parts of it.** An interactive field/component looks different (and more complete) on
+    the FORM (New/Edit) view than on Show: Show often renders a stripped, read-only projection that
+    omits the component's own affordances. Pick the view/state where the component is rendered in
+    FULL. (Real bug: the `key_value` shots were taken on Show, so they showed only the data table and
+    DROPPED the component's `+` add-row button in the header, and each row's drag handle + delete
+    (trash) button — the reader can't see how to add/remove/reorder pairs. The Form view shows all of
+    them.) Decide per shot: if the documented behavior is identical across views (e.g. field-wrapper
+    `inline`/`stacked` LAYOUT shows label-beside vs label-above on BOTH Show and Form), prefer the
+    Form view so the component is also shown complete — strictly more informative at no cost. Only
+    stay on Show when the doc is specifically about the read-only display. Ask before capturing: "are
+    any of this component's real controls missing from this view?" — if yes, you're shooting a
+    fragment, not the component. Pairs with 10b (real container) and 15t (shoot the view where the
+    widget frames cleanly).
+
+15z. **For a single field/component shot, give it its OWN card — wrap it in a dedicated `panel do
+    card do … end end` via the DSL — instead of cropping it out of the big panel and faking the
+    border.** This is now the PREFERRED path for any single-field/component image, on EITHER the
+    Show or the Form (New/Edit) view (pick the view per 15y). Avo's default resource panel is
+    full content-width, so a `selector`/`clip` on one field grabs a slice of that wide panel — you
+    then have to neutralize the wrapper hairline (15u) and let the docs frame stand in for the
+    border (15s), which produces a borderless fragment floating on mat that reads as "cut off."
+    Wrapping the demoed field in its OWN `panel`/`card` makes Avo render a real, content-sized card
+    that genuinely HUGS just that field — so the capture is a complete card with true borders and
+    rounded corners on all four sides, no neutralizing, no bare-mat fragment. Capture the card
+    element itself (probe its selector live) with a symmetric pad; the docs frame (lesson 16) sits
+    OUTSIDE it and both borders read as intentional. This SUPERSEDES the single-field workarounds:
+    it resolves 15t ("a full-width card can't hug one field" — now you make a card that does),
+    and demotes 15s/15u to legacy fallbacks for shots where you genuinely cannot author a card
+    (e.g. a non-resource overlay). Combine with 15y: on the Form view the field also renders its
+    full controls, so a dedicated Form-view card is the most complete single-field shot. (Origin:
+    the `key_value` `inline`/`stacked` layout shots were cropped out of the Project Show panel with
+    neutralized borders; reshot as a dedicated `panel`/`card` on the Form view so the whole
+    key_value component sits in a real, content-sized card.) Example temp edit:
+    ```ruby
+    panel do
+      card do
+        field :meta, as: :key_value, stacked: true do
+          { "environment" => "production", "region" => "eu-west", "tier" => "premium" }
+        end
+      end
+    end
+    ```
+
 ## Lessons — framing (CSS) & hygiene
 
 16. **Framing lives in CSS, scoped to v4** (`docs/.vitepress/theme/custom.css`,
@@ -328,6 +511,22 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     the `/4_0/` image path.
 17. **Apply changes into the docs immediately** — copy to `4_0/` + update `<Image>`
     dims; don't leave results in `out/`.
+17a. **REDO of an already-shipped image: `apply.mjs` won't fire — apply by hand.** `apply.mjs`
+    only matches a *placeholder* tag (one with NO `src`) by its `prompt`. It throws on anything
+    already resolved — a tag that already has a `src`, a tag with no `prompt` attribute, or one
+    pointing at a `.gif`. So for a re-shoot: copy `out/<id>.png` + `out/<id>-dark.png` over the
+    existing `4_0/…` assets yourself, then edit the EXISTING `<Image>` tag in place — update
+    `width`/`height` to the new PNG dims (read them: `node -e '…readUInt32BE(16/20)'` or
+    `magick identify`) and fix the `alt` if the shot changed. Leave the tag's `src`/`dark-src`
+    as-is (the asset paths didn't move). Everything stays unstaged.
+17b. **GIFs are first-class, but PNG-only tooling — wire them manually.** A shot may need to be a
+    `.gif` (an animation, e.g. `summarizable`). Ship BOTH a light `x.gif` and a dark `x-dark.gif`
+    (`record-gif.mjs` honours `AVO_COLOR_SCHEME=dark`) and wire them into the same
+    `<Image src="…/x.gif" dark-src="…/x-dark.gif" width height alt prompt>` — `Image.vue` swaps
+    src↔dark-src on theme exactly as for PNGs, and the `/4_0/` frame CSS targets the path so a GIF
+    is framed like any image. `apply.mjs` is PNG-only and will NOT handle a GIF — copy the two
+    `.gif`s into `4_0/…` and edit the tag by hand (17a). Converting a static PNG to a GIF orphans
+    the old `x.png`/`x-dark.png` — flag them for the user to delete.
 18. **Leave the repo clean.** Revert every temp edit (`git checkout` tracked,
     `git clean -f <path>` untracked). Never revert the user's own uncommitted changes
     (whatever they already had modified).

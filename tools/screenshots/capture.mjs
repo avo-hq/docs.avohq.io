@@ -60,7 +60,23 @@ async function captureSpec(context, spec) {
     // not a tacked-on border). pad is in CSS px: {x, y}.
     await target.scrollIntoViewIfNeeded();
     await page.waitForTimeout(150);
-    const b = await target.boundingBox();
+    let b = await target.boundingBox();
+    // Optional: span the clip to include a SECOND element (e.g. two stacked field rows).
+    // `clipFrom` is the top-left anchor, `selector` the bottom-right — the clip is the
+    // union of both boxes. Lets a shot frame a contrast pair without eyeballed pixel coords.
+    if (spec.clipFrom) {
+      const a = await page.locator(spec.clipFrom).first().boundingBox();
+      if (a) {
+        const x0 = Math.min(a.x, b.x);
+        const y0 = Math.min(a.y, b.y);
+        b = {
+          x: x0,
+          y: y0,
+          width: Math.max(a.x + a.width, b.x + b.width) - x0,
+          height: Math.max(a.y + a.height, b.y + b.height) - y0,
+        };
+      }
+    }
     // pad in CSS px: {x} both sides; vertical via {top, bottom} (or {y} for both).
     const px = spec.pad.x ?? 0;
     const top = spec.pad.top ?? spec.pad.y ?? 0;

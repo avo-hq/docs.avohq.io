@@ -100,8 +100,14 @@ image bytes, or rule-checking transcripts yourself — workers do that and retur
 > 1. Read `tools/screenshots/RULES.md` (framing lessons 1–20, 15a–15v).
 > 2. **View both PNGs** (Read tool renders images). Check:
 >    - It shows what the prompt asks for, with trigger context where relevant (15a).
+>    - The component is shown WHOLE — none of its real controls/affordances are missing (15y). A
+>      read-only Show projection that drops a field's add/delete/drag (or other) controls is a
+>      fragment; prefer the Form view that renders it complete unless the doc is about read-only display.
 >    - All four outer edges read as mat — no stray sidebar/wrapper border line (12, 15u, 19a).
 >    - No sliced card/table/control border; middle rows used, crop tight, no big empty space (4, 15i, 15r, 15v, 15c).
+>      **Judge "is any border sliced?" on the DARK PNG — a near-white card border is invisible on the
+>      light image, so a cut top/edge passes in light and only shows in dark (15r′). Sample all four
+>      edges of the dark image, not light.**
 >    - Any visible text matches the adjacent code's names/labels (13).
 >    - Legible in BOTH light and dark.
 > 3. **Return ONLY** `{ pass: true|false, reasons: ["…concrete defects to fix…"] }`. Do not edit anything.
