@@ -13,7 +13,7 @@ The `Trix` field renders a [WYSIWYG Editor](https://trix-editor.org/) and can be
 
 It supports [ActiveStorage](https://guides.rubyonrails.org/active_storage_overview.html) file attachments, [ActionText](https://guides.rubyonrails.org/action_text_overview.html), and seamlessly integrates with the [Media Library](./../media-library).
 
-<Image src="/assets/img/fields/trix.jpg" width="877" height="193" alt="Trix field" />
+<Image src="/assets/img/4_0/fields/trix/form.png" dark-src="/assets/img/4_0/fields/trix/form-dark.png" width="1520" height="588" alt="An Avo edit-form card with a Trix WYSIWYG editor showing the formatting toolbar above a text area with sample body content." prompt="trix editor on the edit form with toolbar and sample body content" />
 
 Trix field is hidden from the `Index` view.
 

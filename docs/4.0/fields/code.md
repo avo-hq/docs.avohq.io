@@ -10,7 +10,7 @@ The `Code` field generates a code editor using [codemirror](https://codemirror.n
 field :custom_css, as: :code, theme: 'dracula', language: 'css'
 ```
 
-<Image src="/assets/img/4_0/fields/code.png" dark-src="/assets/img/4_0/fields/code-dark.png" width="1940" height="222" alt="Code field" />
+<Image src="/assets/img/4_0/fields/code/index.png" dark-src="/assets/img/4_0/fields/code/index-dark.png" width="1520" height="614" alt="An Avo edit-form card containing a code field: a CodeMirror editor in the dracula dark theme with line-number gutter, showing syntax-highlighted CSS (a .user-card rule with display, padding, border-radius and background properties)." prompt="todo" />
 
 ## Options
 

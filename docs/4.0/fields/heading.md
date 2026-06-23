@@ -20,7 +20,7 @@ end
 ```
 :::
 
-<Image src="/assets/img/4_0/fields/heading.png" dark-src="/assets/img/4_0/fields/heading-dark.png" width="584" height="132" alt="Heading field" />
+<Image src="/assets/img/4_0/fields/heading/index.png" dark-src="/assets/img/4_0/fields/heading/index-dark.png" width="1520" height="802" alt="An Avo show-view card with two heading fields acting as section dividers: a 'User information' heading above First name, Last name and Email fields, then a 'Contact details' heading above Birthday and Membership fields." prompt="show page with heading fields separating User information and Contact details sections" />
 
 The `Heading` field displays a header that acts as a separation layer between different sections.
 
