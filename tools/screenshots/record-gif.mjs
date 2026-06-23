@@ -40,6 +40,7 @@ const EMAIL = process.env.AVO_ADMIN_EMAIL || "avo@cado.com";
 const PASSWORD = process.env.AVO_ADMIN_PASSWORD || "secreto";
 const SCHEME = process.env.AVO_COLOR_SCHEME === "dark" ? "dark" : "light";
 const SUFFIX = SCHEME === "dark" ? "-dark" : "";
+const DPR = Number(process.env.AVO_DPR || 2); // retina, like capture.mjs — a 1× capture upscaled to `width` pixelates (RULES 3)
 
 async function login(page) {
   await page.goto(`${BASE}${LOGIN_PATH}`, { waitUntil: "networkidle" });
@@ -63,7 +64,7 @@ export async function recordGif(spec) {
   const browser = await chromium.launch();
   const context = await browser.newContext({
     viewport: spec.viewport || { width: 1440, height: 900 },
-    deviceScaleFactor: 1,
+    deviceScaleFactor: DPR,
     colorScheme: SCHEME,
   });
   const page = await context.newPage();
@@ -84,7 +85,12 @@ export async function recordGif(spec) {
   await run("magick", [
     "-delay", String(spec.delay ?? 18), "-loop", "0",
     join(frames, "*.png"),
-    "-resize", `${spec.width ?? 900}x`, "-layers", "Optimize",
+    // `>` = only ever SHRINK: at DPR 2 the frames are 2× the clip, so we downscale to `width`
+    // (crisp) and never enlarge — upscaling a smaller capture pixelates the chart/table (RULES 3).
+    "-resize", `${spec.width ?? 900}x>`,
+    // No dithering: the 256-colour GIF palette otherwise speckles flat areas (the dark mat behind
+    // a popover) into visible grain that reads as a "blurred"/noisy background (RULES 3).
+    "-dither", "None", "-layers", "Optimize",
     gifOut,
   ]);
   console.log(`✓ GIF → out/${spec.id}${SUFFIX}.gif (${i} frames)`);
