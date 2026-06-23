@@ -14,7 +14,7 @@ field :is_published,
   false_value: 'no'
 ```
 
-<Image src="/assets/img/4_0/fields/boolean.png" dark-src="/assets/img/4_0/fields/boolean-dark.png" width="596" height="128" alt="Boolean field shown as a green check and a red X on the Index view" />
+<Image src="/assets/img/4_0/fields/boolean.png" dark-src="/assets/img/4_0/fields/boolean-dark.png" width="1520" height="382" alt="An Avo index table with ID, Name and Published columns — a green check and a red X in the Published column." prompt="Boolean field shown as a green check and a red X on the Index view" />
 
 ## Options
 
@@ -40,7 +40,7 @@ What should count as false. You can use `0`, `no`, or a different value.
 
 When `true`, `nil` values render as a gray minus-circle icon on **Show** and **Index** views instead of the default dash. This keeps the `nil` value intact while making it more visible.
 
-<Image src="/assets/img/4_0/fields/boolean_nil_as_indeterminate.png" dark-src="/assets/img/4_0/fields/boolean_nil_as_indeterminate-dark.png" width="268" height="69" alt="Boolean field with nil_as_indeterminate showing a gray minus-circle icon" />
+<Image src="/assets/img/4_0/fields/boolean_nil_as_indeterminate.png" dark-src="/assets/img/4_0/fields/boolean_nil_as_indeterminate-dark.png" width="1800" height="156" alt="Boolean field with nil_as_indeterminate showing a gray minus-circle icon" prompt="Boolean field with nil_as_indeterminate showing a gray minus-circle icon" />
 
 #### Default value
 

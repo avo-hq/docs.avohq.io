@@ -6,6 +6,8 @@ license: advanced
 
 One of the things that we wanted to support from day one is customizable controls on resource pages, and now, Avo supports customizable controls on <Index />, <Show />, and <Edit /> views and for the table row.
 
+<Image src="/assets/img/4_0/customizable-controls/panel.png" dark-src="/assets/img/4_0/customizable-controls/panel-dark.png" width="1976" height="564" alt="An Avo Show page panel with the record title and customizable controls highlighted in the header tools area, above a card listing the record fields." prompt="full show page panel with the customizable controls highlighted in the header tools area" />
+
 ## Default controls
 
 By default, Avo displays a few buttons (controls) for the user to use on the <Index />, <Show />, and <Edit /> views which you can override using the appropriate resource options.

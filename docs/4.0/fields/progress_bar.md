@@ -9,9 +9,7 @@ The `ProgressBar` field renders a `progress` element on `Index` and `Show` views
 ```ruby
 field :progress, as: :progress_bar
 ```
-<Image src="/assets/img/custom-fields/progress-index.jpg" width="764" height="212" alt="Progress bar custom field on index" />
-
-## Options
+<Image src="/assets/img/4_0/fields/progress_bar/index.png" dark-src="/assets/img/4_0/fields/progress_bar/index-dark.png" width="1776" height="758" alt="An Avo index table with ID, Name and Progress columns where each row shows a progress bar with its percentage value." prompt="progress bar on the index table" />
 
 <Option name="`max`">
 
@@ -70,4 +68,4 @@ field :progress,
   value_suffix: "%"
 ```
 
-<Image src="/assets/img/custom-fields/progress-edit.jpg" width="1144" height="182" alt="Progress bar custom field edit" />
+<Image src="/assets/img/4_0/fields/progress_bar/form.png" dark-src="/assets/img/4_0/fields/progress_bar/form-dark.png" width="1520" height="256" alt="An Avo edit-form card containing a progress_bar field showing the value above a range slider configured with max 150, step 10 and a percent suffix." prompt="progress bar slider with max, step and suffix on edit form" />
