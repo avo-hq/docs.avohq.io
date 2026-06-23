@@ -81,10 +81,18 @@ export const EXAMPLES = [
 export const SPECS = [
   // field-options "Change field name" — a boolean field whose Index column header shows the
   // custom label set via `name:` ("Availability"). RESHAPED to a single-column shot (RULES
-  // 9a/10a): temp-hid the Skills/Country/City index fields so only ID, Name and the renamed
+  // 9a/10a): temp-hid the Skills/Country/City/Links index fields so only ID, Name and the renamed
   // boolean "Availability" column remain, small per_page (4) + a narrow ~900px viewport so the
-  // header reads at ~1× — not a full wide table. Temp-renamed Course#has_skills to "Availability"
-  // to match the doc snippet (RULES 13). Sidebar closed + mat bg (RULES 12/19a).
+  // header reads at ~1× — not a full wide table. Temp-set Course#has_skills `name: "Availability"`
+  // to match the doc snippet (RULES 13). Sidebar closed + mat bg (RULES 12/19a). The "Availability"
+  // header is a non-sortable `<div>` (not focusable), so the native ring (15b) can't apply — mark
+  // the header TEXT extent with a drawn highlight styled like Avo's native :focus-visible ring
+  // (`style: "focus"` → thin 2px #60a5fa stroke, 2px pad, 3px radius). The header `<div>` is the
+  // full 222px column width (text left-aligned), so a `selector` ring on it would span the whole
+  // empty column — instead an explicit `box` in viewport CSS-px = the GLYPH extent measured via a
+  // DOM Range (RULES #5), probed live (probe-hdr.mjs) at this exact viewport + sidebar-closed
+  // state, so the ring HUGS just "Availability". capture.mjs offsets the box by the padded clip
+  // origin (element − pad) so the ring lands tight on the word, not pad-shifted up/left.
   {
     id: "field-options-change-field-name",
     path: "/avo/resources/courses?per_page=4",
@@ -93,10 +101,11 @@ export const SPECS = [
     prepare: compose(closeSidebar, matBg, hideKbd),
     selector: ".card",
     pad: { x: 10, y: 10 },
+    marks: [{ box: { x: 535, y: 289, width: 60, height: 16 }, type: "highlight", style: "focus" }],
     out: "docs/public/assets/img/4_0/field-options/change-field-name.png",
     display: "full",
-    alt: "An Avo index table with three columns — ID, Name and a boolean column whose header reads “Availability”, the custom label set via the field's name option.",
-    source: { file: "docs/4.0/field-options.md", prompt: "Index table column header showing a custom field name set via the name option" },
+    alt: "An Avo index table with three columns — ID, Name and a boolean column whose header reads “Availability”, the custom label set via the field's name option, highlighted.",
+    source: { file: "docs/4.0/field-options.md", prompt: "index with the column header Availability anotated" },
   },
 
   // field-options "Fields Formatter > format_using" — an `is_writer` text field on the User
@@ -348,61 +357,60 @@ export const SPECS = [
     source: { file: "docs/4.0/field-options.md", prompt: "Edit form showing a readonly text field" },
   },
 
-  // field-options "help" — same proven single-field-on-mat technique as disabled/readonly above.
-  // Temp edits (reverted after capture): Team model gets `attr_accessor :company_name` +
-  // `after_initialize` pre-fill (form-input pattern, no DB mutation); Team resource gets
-  // `field :company_name, as: :text, name: "Name", help: "This enables you to edit the user's custom
-  // styles."` at the top of the card. Avo renders the help string BELOW the input on Edit — the
-  // whole `.field-wrapper` (label + input + help line) is captured. Help text matches the adjacent
-  // doc snippet verbatim (RULES 13). Crop to the one field row on mat bg; neutralizeBorders +
-  // transparent card so the docs frame supplies the surround (RULES 15s/15u/15r); hide all other
-  // rows. Full display so the help line is legible. Sidebar closed + mat bg (RULES 12/19a).
+  // field-options "help" — RULES 15z: the help field gets its OWN dedicated `panel do card do … end
+  // end` so Avo renders a real, content-sized card that HUGS just that field (true borders + rounded
+  // corners on all four sides), instead of cropping a slice out of the big panel and neutralizing the
+  // wrapper hairline (the legacy bare-fragment-on-mat approach). On the EDIT view Avo renders the
+  // `help` string directly BELOW the input — so the captured card shows label + input + help line.
+  // Field is `custom_css` (matches the adjacent doc snippet's `field :custom_css … help: "This
+  // enables you to edit the user's custom styles."` verbatim — RULES 13); the help string is the
+  // exact doc text. Temp edits (reverted after capture): Team model gets `attr_accessor :custom_css`
+  // (form-input pattern, no DB mutation); Team resource gets a dedicated `panel do card do field
+  // :custom_css, as: :text, name: "Custom CSS", help: "…" end end` at the top of `fields`. Frame the
+  // WHOLE native card (`.card:has([data-field-id="custom_css"])`) with symmetric ≤10px pad — all four
+  // borders included (RULES 15r/15z fully-around). Full display so the help line is legible. Sidebar
+  // closed + mat bg (RULES 12/19a); hideKbd.
   {
     id: "field-options-help",
     path: "/avo/resources/teams/team_qrv5nD7RmjOqKtdWMwaXl8JQ/edit",
-    viewport: { width: 1440, height: 900 },
+    viewport: { width: 720, height: 900 },
     settle: 800,
-    prepare: compose(closeSidebar, matBg, hideKbd, neutralizeBorders, injectCSS(
-      `.card, .card__body { border-color: transparent !important; box-shadow: none !important; background: transparent !important; }
-       [data-field-id]:not([data-field-id="company_name"]) { visibility: hidden !important; }`,
-    )),
-    selector: '[data-field-id="company_name"]',
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card:has([data-field-id="custom_css"])',
     pad: { x: 10, y: 10 },
     out: "docs/public/assets/img/4_0/field-options/help.png",
     display: "full",
-    alt: "An Avo Edit form 'Name' text field with a line of help text shown directly below the input explaining what the field does.",
+    alt: "An Avo Edit form 'Custom CSS' text field with a line of help text shown directly below the input explaining what the field does.",
     source: { file: "docs/4.0/field-options.md", prompt: "Edit form field with help text shown below the input" },
   },
 
   // field-options "label_help" — distinct from plain `help` (sibling above, which renders BELOW the
   // INPUT on edit only). `label_help` renders the help string directly BELOW the field LABEL on every
   // view (the `.field-wrapper__label-help` line sits inside the label block, above the input). Shot on
-  // the Team EDIT form so label + label_help + input are grouped vertically and the "below the label"
-  // placement is unambiguous. Temp edit (reverted after capture): Team resource `name` field gets
-  // `required: false, stacked: true, label_help: "This enables you to edit the user's custom styles."`,
-  // matching the adjacent doc snippet verbatim (RULES 13). Two reasons for the extra options (both fix
-  // defects from the first take): `stacked: true` stacks the label ABOVE the input so the label block
-  // spans the full field width — without it the label sits in a fixed ~208px left column and the help
-  // string WRAPS to two lines; now it reads on ONE line. `required: false` suppresses the red presence
-  // asterisk (Team validates :name, presence: true) so the incidental "*" doesn't distract from the
-  // label_help line. The whole `.field-wrapper` (label + label_help line + input) is captured. Crop to
-  // the one field row on mat bg; neutralizeBorders + transparent card so the docs frame supplies the
-  // surround (RULES 15s/15u/15r); hide all other rows. Full display so the label + help line + input
-  // read clearly. Sidebar closed + mat bg (RULES 12/19a).
+  // the User EDIT form. Per RULES 15z the field is wrapped in its OWN dedicated `panel do card do … end
+  // end` so Avo renders a real, content-sized card that HUGS just this one field — a complete card with
+  // true borders + rounded corners on all four sides, no neutralizing / no bare-mat fragment. Temp edit
+  // (reverted after capture): the User resource gets a leading `panel/card` with
+  // `field :custom_css, as: :code, theme: "dracula", language: "css", label_help: "This enables you to
+  // edit the user's custom styles.", only_on: :edit` — matching the adjacent doc snippet verbatim
+  // (RULES 13: the code, the dracula theme, the css language, the label_help string). The original
+  // User `custom_css` field (which uses `help:`) is temp-hidden on edit so exactly ONE custom_css card
+  // exists on the page (unambiguous selector). Narrow viewport (720) so the card renders ~1× (RULES 9b)
+  // and the label stacks above its code editor — label → label_help line → editor read top-to-bottom,
+  // making the "below the label" placement unmistakable. Capture the whole card with symmetric ≤10px pad
+  // (RULES 15e/15z); the docs frame (lesson 16) sits OUTSIDE it. Full display so the label + help line +
+  // editor read clearly. Sidebar closed + mat bg (RULES 12/19a); hideKbd.
   {
     id: "field-options-label-help",
-    path: "/avo/resources/teams/team_N3yMR6D2roeJMi9j7ebGk1ad/edit",
-    viewport: { width: 1440, height: 900 },
-    settle: 800,
-    prepare: compose(closeSidebar, matBg, hideKbd, neutralizeBorders, injectCSS(
-      `.card, .card__body { border-color: transparent !important; box-shadow: none !important; background: transparent !important; }
-       [data-field-id]:not([data-field-id="name"]) { visibility: hidden !important; }`,
-    )),
-    selector: '[data-field-id="name"]',
+    path: "/avo/resources/teams/team_qrv5nD7RmjOqKtdWMwaXl8JQ/edit",
+    viewport: { width: 720, height: 900 },
+    settle: 1000,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card:has([data-field-id="custom_css"])',
     pad: { x: 10, y: 10 },
     out: "docs/public/assets/img/4_0/field-options/label-help.png",
     display: "full",
-    alt: "An Avo Edit form 'Name' text field with a line of help text shown directly below the field label explaining what the field does.",
+    alt: "An Avo Edit form 'Custom css' code field with a line of help text shown directly below the field label explaining what the field does.",
     source: { file: "docs/4.0/field-options.md", prompt: "Form field with label_help text shown below the field label" },
   },
 
@@ -510,21 +518,20 @@ export const SPECS = [
   // sibling rows need hiding and no card needs transparenting. `neutralizeBorders` drops only the
   // structural `.field-wrapper` hairline (RULES 15u) so the docs frame supplies the surround
   // (RULES 15s) while the `.key-value__table` keeps its OWN meaningful inner border, intact on all
-  // four sides (RULES 15r/15v). Sidebar closed + mat bg (RULES 12/19a). Viewport is the NARROWER
-  // 1100 (NOT the inline sibling's 1500): in the STACKED layout the `meta` field-wrapper is
-  // `--full-width` and spans the whole content column, so a wide viewport makes the value column so
-  // wide that the value-cell input boxes overflow and get sliced on their right edge (RULES 15v —
-  // key inputs render whole, value inputs cut off at the card edge with no right border). The
-  // inline sibling needs 1500 only because its control sits in the narrower right column; the
-  // stacked shot does NOT. At 1100 (probed): value-cell inputs end at x≈1042, the `.key-value__table`
-  // right border at x≈1055, the wrapper (capture selector) right edge at x≈1071, and wrapper+10px
-  // pad ≈1081 — all comfortably inside the 1100 viewport, so every value input renders WHOLE with
-  // all four borders and the symmetric pad isn't capped. Correctness (whole controls) wins over
-  // pair-width consistency with the inline sibling. Full display.
+  // four sides (RULES 15r/15v). Sidebar closed + mat bg (RULES 12/19a). Viewport is 1500 — the
+  // SAME as the inline sibling — because these two shots are a MATCHED PAIR (RULES 15q′): both must
+  // read at the IDENTICAL on-screen zoom so the reader compares label-beside vs label-above
+  // like-for-like. Both wrappers carry `field-wrapper--full-width`, so at the same viewport+sidebar
+  // state the captured `[data-field-id="meta"]` wrapper has the SAME width in both (only the height
+  // differs — stacked is genuinely taller, which is fine; only the WIDTH/zoom must match). At 1500
+  // with the sidebar CLOSED the content column is wider than the probe's sidebar-open 1500 (probe:
+  // wrapper x≈404 w≈950, table w≈918, value inputs end ~30px inside the table right edge), so the
+  // value-cell inputs render WHOLE with all four borders well inside the wrapper — no slicing
+  // (RULES 15v). Identical pixel width to the inline sibling (verified via `identify`); full display.
   {
     id: "field-options-stacked-stacked",
     path: "/avo/resources/projects/3",
-    viewport: { width: 1100, height: 1000 },
+    viewport: { width: 1500, height: 1000 },
     settle: 800,
     prepare: compose(closeSidebar, matBg, hideKbd, neutralizeBorders),
     selector: '[data-field-id="meta"]',
@@ -533,6 +540,38 @@ export const SPECS = [
     display: "full",
     alt: "An Avo show view key_value field in the stacked layout, with the field label “Meta” shown above a key/value control listing three pairs (environment: production, region: eu-west, tier: premium).",
     source: { file: "docs/4.0/field-options.md", prompt: "key_value field with the stacked layout, label above value" },
+  },
+
+  // field-options "`inline` layout (default)" — the SAME Project SHOW view `meta` key_value field as
+  // the stacked sibling above, but in Avo's DEFAULT (inline) field-wrapper layout, i.e. WITHOUT
+  // `stacked: true`. This shot is the matched PAIR of `field-options-stacked-stacked`: same Show view,
+  // same record (project 3), same selector/viewport/prepare/pad/display — the ONLY difference is the
+  // layout (inline here = label "Meta" BESIDE the key/value control; stacked there = label ABOVE).
+  // The section ("Stacked layout") documents the field-WRAPPER layout, not key_value editing controls,
+  // so the read-only Show projection is correct here and the two siblings must be like-for-like.
+  //
+  // Native DSL, no hardcoded pixel clip (RULES 15w): the `meta` field is temp-given a block returning
+  // 3 realistic pairs ({"environment"=>"production","region"=>"eu-west","tier"=>"premium"}) so the
+  // control reads as a real example with 3 rows — the SAME temp edit as the stacked sibling, minus
+  // `stacked: true` (inline is the default). We capture the real Meta field-wrapper element
+  // (`selector: '[data-field-id="meta"]'`) with a symmetric 10px pad (RULES 15e/15f); `neutralizeBorders`
+  // drops only the structural `.field-wrapper` hairline (RULES 15u) so the docs frame supplies the
+  // surround while the `.key-value__table` keeps its own meaningful inner border on all four sides.
+  // Sidebar closed + mat bg (RULES 12/19a); hideKbd. Viewport 1500 — the SAME as the stacked sibling
+  // so the matched PAIR reads at the IDENTICAL zoom (both wrappers are `--full-width`, so same
+  // viewport → same captured width → same on-screen scale). Full display.
+  {
+    id: "field-options-key-value-inline",
+    path: "/avo/resources/projects/3",
+    viewport: { width: 1500, height: 1000 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd, neutralizeBorders),
+    selector: '[data-field-id="meta"]',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/field-options/key-value-inline.png",
+    display: "full",
+    alt: "An Avo show view key_value field in the default inline layout, with the field label “Meta” shown beside a key/value control listing three pairs (environment: production, region: eu-west, tier: premium).",
+    source: { file: "docs/4.0/field-options.md", prompt: "show page key_value field with the default inline layout, label beside value" },
   },
 
   // summarizable — chart icon in a column header + the open summary distribution popover, in
@@ -559,6 +598,49 @@ export const SPECS = [
     display: "full",
     alt: "An Avo index table column header showing the summarizable chart icon, with the open summary popover charting the distribution of the column's values.",
     source: { file: "docs/4.0/field-options.md", prompt: "Index table header showing the summarizable chart icon and summary popover for a column" },
+  },
+
+  // native-components "Avo::PanelComponent" intro illustration — a single, complete Avo Show
+  // panel matching the ERB example: a panel HEADER (the bold record title + a one-line
+  // description directly beneath it + a primary button in the tools area on the right) above a
+  // BODY of a couple of fields. The Avo Show page renders exactly this: `.header`
+  // (data-component="avo/ui/panel_header_component" — title + description + `.header__controls`
+  // tools) sits above the `.panel` body card. We frame the WHOLE thing top-to-bottom by taking
+  // the UNION of the two stacked elements: `clipFrom: ".header"` (top anchor) → `selector:
+  // ".panel"` (bottom-right), + symmetric pad (capture.mjs's clipFrom union path). Product Show
+  // (id 4 = "Apple Watch") is the natural match for the ERB's @product. Temp edits to
+  // product.rb (reverted after capture): shortened `self.description` to one clean line ("Build
+  // apps 10x faster.") so the description reads as a single subtitle line under the title, and
+  // moved price/description(tiptap)/image to `only_on: :index` so the Show BODY is a short,
+  // clean three-field list (ID, Title, Category) — a small self-contained body like the legacy
+  // image. The header tools area natively carries Go back / Delete / Edit; injectCSS hides the
+  // two text-style controls (Go back + Delete) leaving only the PRIMARY accent button (Edit),
+  // matching the ERB's single primary "View product" button (RULES note: exact label needn't
+  // match — the point is a primary button in the tools slot). Sidebar closed + mat bg so the
+  // panel renders full-width and every frame edge is mat (RULES 12/19a); narrow ~1000px viewport
+  // keeps the panel content-sized and readable (RULES 9a). Whole component, all four borders of
+  // both header and body inside the clip — header + body as one well-formed panel (RULES 15r).
+  {
+    id: "panel-index",
+    path: "/avo/resources/products/4",
+    viewport: { width: 1000, height: 700 },
+    settle: 800,
+    prepare: compose(
+      closeSidebar,
+      matBg,
+      hideKbd,
+      injectCSS(".header__controls .button--style-text { display: none !important; }"),
+    ),
+    clipFrom: ".header",
+    selector: ".panel",
+    pad: { x: 10, y: 12 },
+    out: "docs/public/assets/img/4_0/avo-panel-component/index.png",
+    display: "full",
+    alt: "An Avo Show page rendered as a single PanelComponent: a panel header with the bold record title and a one-line description beneath it, a primary button in the tools area on the right, and a body listing a couple of fields.",
+    source: {
+      file: "docs/4.0/native-components/avo-panel-component.md",
+      prompt: "Avo Show page rendering a single PanelComponent that matches the ERB example above: a bold panel title 'Avo' with the description 'Build apps 10x faster' directly beneath it, a primary 'View product' button in the header tools area on the right, and a body section containing the heading 'Product information' and the line 'Style: shiny'. Capture the whole panel, header plus body.",
+    },
   },
 ];
 
