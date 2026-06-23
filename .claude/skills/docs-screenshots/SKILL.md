@@ -1,6 +1,6 @@
 ---
 name: docs-screenshots
-description: Generate or refresh Avo v4 docs screenshots from `<Image prompt>` placeholders. Use when the user asks to add/create/refresh screenshots for a docs page, a section, or all of docs/4.0 — anywhere a `<Image prompt="…">` placeholder needs to become a real light+dark image. Resolves each placeholder by capturing the live Avo demo app, verifies it against the framing rules, rewrites the tag, and stops with everything unstaged (no commit/push/PR).
+description: Generate or refresh Avo v4 docs screenshots (and animated GIFs) from `<Image prompt>` placeholders. Use when the user asks to add/create/refresh screenshots or GIFs for a docs page, a section, or all of docs/4.0 — anywhere a `<Image prompt="…">` placeholder needs to become a real light+dark asset. A placeholder with `kind="gif"` becomes an animated GIF; otherwise a static PNG. Resolves each placeholder by capturing the live Avo demo app, verifies it against the framing rules, rewrites the tag, and stops with everything unstaged (no commit/push/PR).
 ---
 
 # Docs screenshots — coordinator
@@ -19,15 +19,27 @@ image bytes, or rule-checking transcripts yourself — workers do that and retur
    a dir/glob, or nothing (all of `docs/4.0`).
 2. **Scan** (run directly — it's a grep, not a worker):
    `node tools/screenshots/scan.mjs <scope> [--section "…"]`, then read `tools/screenshots/out/worklist.json`.
-   If empty, report "no unresolved `<Image prompt>` placeholders found" and stop.
-3. **Per worklist item, STRICTLY IN SEQUENCE** (never parallel — all workers share the one
-   demo app and make temp DOM edits that would collide):
-   a. Dispatch a **Resolve worker** (brief below) with that item. Read its summary.
-   b. If it reports `unresolvable`, record the reason and move to the next item.
-   c. Dispatch a **Verify worker** (brief below) with the `id` + prompt. Read its verdict.
-   d. If `fail`, dispatch a **Fix worker** = the Resolve brief plus the verifier's reasons, then
-      re-verify. Bounded: **at most 3 attempts** total per image, then flag it and move on.
-   e. If `pass`, run `node tools/screenshots/apply.mjs <id>` (copies PNGs + rewrites the tag, unstaged).
+   If empty, report "no unresolved `<Image prompt>` placeholders found" and stop. Each item carries
+   `kind: "image" | "gif"` — a placeholder tagged `kind="gif"` wants an **animated GIF** (the
+   "GIF route" below) instead of a static PNG. Route each item by its `kind`.
+3. **Phased flow.** Only **capture touches the shared demo**, so only capture is serial.
+   Verify (reads PNGs) and apply (edits the docs repo) touch no shared state — fan them out.
+   a. **Capture — STRICTLY IN SEQUENCE** (never parallel: all Resolve workers share the one
+      demo app and make temp DOM edits that would collide). For each worklist item, dispatch a
+      **Resolve worker** (brief below) — pass the GIF addendum when `kind === "gif"` — and read
+      its summary. If it reports `unresolvable`, record the reason and drop it from the batch.
+   b. **Verify — IN PARALLEL.** Once every capture is done, dispatch all **Verify workers**
+      (brief below) in one batch (multiple Agent calls in a single message), each with an
+      `id` + prompt (+ `kind`). Collect their verdicts. **GIF caveat:** a verifier can only see
+      ONE static frame (the Read tool doesn't animate), so it judges framing only — it cannot
+      confirm the motion is right. Always flag passed GIFs in the final report as
+      "frame-verified, motion needs a human eye."
+   c. **Fix — back to serial.** For each `fail`, dispatch a **Fix worker** = the Resolve brief
+      plus the verifier's reasons (serial — it re-captures and touches the demo), then re-verify
+      that one image. Bounded: **at most 3 attempts** total per image, then flag it and move on.
+   d. **Apply — batch.** For every asset that passed, run `node tools/screenshots/apply.mjs <id>`
+      (copies the PNG **or GIF** pair + rewrites the tag, unstaged — apply.mjs reads the extension
+      from the spec's `out:` path, so it handles both).
 4. **Report** a table: each placeholder → applied / flagged (+reason). **STOP. Everything is
    unstaged** — never `git add`, commit, push, branch, or open a PR. Tell the user which files
    are new/modified so they can review and stage.
@@ -88,13 +100,42 @@ image bytes, or rule-checking transcripts yourself — workers do that and retur
 >    route, prepareUsed, tempEdits: "none"|"reverted", reason? }`.
 > Never commit/push. Never stage anything.
 
+### GIF route addendum (paste this INSTEAD of steps 4–5 when `kind === "gif"`)
+
+> The placeholder wants an **animated GIF**, not a still. The interaction is what matters, so the
+> prompt describes a sequence ("open the filter, pick a value, the table refilters"). Everything
+> else (login, frames, dark variant, ImageMagick assembly) is handled by `record-gif.mjs`.
+>
+> 4. Read `tools/screenshots/record-gif.mjs` (the spec shape + how `snap(hold)` emits frames) and
+>    study `GIF_EXAMPLE` + the existing entries in `GIF_SPECS` in `specs.mjs` as templates.
+>    Author a **GIF spec** and append it to the **`GIF_SPECS`** array (NOT `SPECS`). Shape:
+>    `{ id, path, viewport?, settle?, clip, width?, delay?, steps, out, alt, source:{file,prompt} }`
+>    - `id`: unique kebab slug. `out`: `docs/public/assets/img/4_0/<page>/<name>.gif` (`.gif`, not `.png`).
+>    - `clip`: the fixed `{x,y,width,height}` crop EVERY frame uses — probe it; never eyeball (RULES).
+>    - `steps: async (page, snap) => {…}`: drive the UI with Playwright; call `snap(hold)` at each
+>      state you want to show (`hold` = number of identical frames = how long to pause there).
+>      Do the same framing prep the still route does (`closeSidebar`, `matBg`, `hideKbd`) at the top
+>      of `steps` so all four edges read as mat and the component is shown whole.
+>    - `source.prompt` must equal the placeholder prompt EXACTLY (apply.mjs matches on it).
+> 5. Capture both themes:
+>    `node tools/screenshots/record-gif.mjs <id>` then
+>    `AVO_COLOR_SCHEME=dark node tools/screenshots/record-gif.mjs <id>`.
+>    Confirm `tools/screenshots/out/<id>.gif` and `<id>-dark.gif` exist. (Then steps 6–7 as above —
+>    revert temp edits, return the short summary; set `route: "gif"`.)
+> If the interaction can't be driven reliably (state unreachable, element never appears), flag it
+> `unresolvable` with a reason — never ship a misleading animation.
+
 ## Verify worker brief (paste into a SEPARATE, fresh Agent prompt)
 
 > You are an adversarial reviewer. Judge whether ONE captured screenshot is correct and obeys
 > the framing rules. Be skeptical — default to **fail** if unsure.
 >
-> **Input:** id=`{id}`, prompt=`{prompt}`, images = `tools/screenshots/out/{id}.png` and
-> `tools/screenshots/out/{id}-dark.png`.
+> **Input:** id=`{id}`, prompt=`{prompt}`, kind=`{kind}` ("image" | "gif"),
+> assets = `tools/screenshots/out/{id}.png` + `{id}-dark.png` (or `.gif` when kind=="gif").
+>
+> **GIF note:** when kind=="gif" the Read tool renders only ONE frame of the animation. Judge the
+> framing of that frame against all the rules below, but you CANNOT verify the motion/sequence —
+> say so in `reasons` and pass on framing alone unless the frame itself violates a rule.
 >
 > **Steps:**
 > 1. Read `tools/screenshots/RULES.md` (framing lessons 1–20, 15a–15v).
