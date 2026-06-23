@@ -122,6 +122,19 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     1440→1125px, 820→777px), so the primary lever is a **narrower viewport**
     (`viewport: { width: 820–960 }`), combined with fewer columns (see #10a). Reserve full
     ~1400px-wide captures for shots where the *structure*, not the text, is the point.
+9b. **A single-field FORM-CARD shot must use a NARROW viewport (~720–900), never the default
+    1440 — otherwise it ships zoomed-out as a slim letterbox strip.** On a New/Edit form the
+    layout is label-left / input-right across the FULL form width, so at viewport 1440 one
+    field's card renders ~980px CSS wide × ~100px tall (~9:1). Fit into the 688px column at
+    `display:"full"` that scales DOWN to ~0.7× — tiny text, a thin band (the "zoomed-out" look).
+    Narrowing the viewport fixes it two ways at once: (1) the card's CSS width drops toward the
+    ~688px column so it displays at ~1× ("zoomed in", legible per #9a), and (2) at a narrow
+    width Avo **stacks the label above the input**, so the card becomes a natural ~4:1–5:1 shape
+    instead of a strip. Target the cropped card's CSS width at **~640–720px** (probe it), keep
+    `display:"full"`. This is the form-card counterpart of #10a (which reshapes *tables*); same
+    root cause — a focused single-thing shot left at 1440. (2026-06-23: `field-options-help`
+    shipped at viewport 1440 → 1960×204 (~9.6:1) slim strip at ~0.7× text; re-shot at viewport
+    720 → card ~703px CSS, label stacked above input, 1440×284 (~5:1), displays ~1×.)
 
 ## Lessons — editorial rules (from review feedback)
 
@@ -240,6 +253,18 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     union rect of the first→last item) so the box hugs exactly the group, full edges inside
     the crop. `capture.mjs` records a `box` mark straight to the `.boxes.json` sidecar;
     annotate adds its usual ~12px pad.
+15d′. **A drawn highlight must mimic the native focus ring, not a chunky box — use
+    `style: "focus"`.** Whenever you fall back to a drawn `highlight` mark (per 15b/15b′ for a
+    non-focusable element, or 15d for a group), add `style: "focus"` to the mark. annotate then
+    renders a thin 2px stroke in `#60a5fa` (Avo `--color-info` / blue-400, the same color as the
+    real `:focus-visible` outline) with a tight ~2px pad and 3px radius — so the drawn mark reads
+    like the app's own ring, not a fat hand-drawn rectangle. The legacy chunky box (`#2563eb`,
+    6px pad, 8px radius) is the default only for backward compatibility; new shots should always
+    pass `style: "focus"`. Per-mark overrides exist if needed (`pad`, `stroke`, `radius`, `color`,
+    unscaled px). The mark's `selector`/`box` must hug the target TEXT tightly — annotate pads
+    from the recorded box, so a loose box floats the ring off the text (2026-06-23: the
+    `change-field-name` header ring first shipped as a chunky box, then floating high above the
+    word; fix = `style: "focus"` + a selector resolving to the header's inner text element).
 
 ## Lessons — UI-strip framing (control bars, toolbars, popovers, rows)
 
@@ -366,6 +391,20 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     read the prompt, capture per it + the framing rules, then replace it with a full
     `<Image src dark-src width height alt>`. Never ship a page with a placeholder left in.
 
+15q′. **READ THE PROMPT AND OBEY WHAT IT SAYS — the placeholder's wording is authoritative and
+    OVERRIDES framing defaults.** Before composing a spec, parse the prompt for explicit intent and
+    let it win over any "prefer X" lesson below. In particular the prompt may NAME A VIEW —
+    "**show** page", "**edit**/new form", "**index** table" — or a layout, state, or specific field;
+    when it does, capture THAT exact view/state, full stop. Do not "upgrade" to a different view
+    because a framing lesson says it's more complete (e.g. 15y's "prefer the Form view for
+    inline/stacked layout"): that preference applies ONLY when the prompt is silent on the view.
+    Also weigh the surrounding section + the SIBLING images: a matched pair (e.g. an `inline` shot
+    next to a `stacked` shot) must use the SAME view so the reader compares like-for-like — if the
+    sibling is a Show shot, yours is too. (Real bug: prompt said "show page key_value field … inline
+    layout"; the worker shot the Form view per 15y, contradicting both the explicit "show page" and
+    its Show-view `stacked` sibling. Reshot on Show.) Order of authority: explicit prompt wording →
+    section context + sibling consistency → generic framing defaults.
+
 15r. **A PARTIAL border reads as "cut off" — go fully-around OR fully-inside, never partway.**
     Framing a slice of a bordered component (card/panel/table) so SOME of its outer border shows
     while the rest is cut looks broken. (Real bug: a clip at x=364 while the card border sat at
@@ -469,7 +508,9 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     them.) Decide per shot: if the documented behavior is identical across views (e.g. field-wrapper
     `inline`/`stacked` LAYOUT shows label-beside vs label-above on BOTH Show and Form), prefer the
     Form view so the component is also shown complete — strictly more informative at no cost. Only
-    stay on Show when the doc is specifically about the read-only display. Ask before capturing: "are
+    stay on Show when the doc is specifically about the read-only display. **This "prefer Form"
+    default is overridden by 15q′: if the prompt explicitly names a view ("show page") or the
+    matched sibling image uses a particular view, honor that — the prompt wins over this preference.** Ask before capturing: "are
     any of this component's real controls missing from this view?" — if yes, you're shooting a
     fragment, not the component. Pairs with 10b (real container) and 15t (shoot the view where the
     widget frames cleanly).

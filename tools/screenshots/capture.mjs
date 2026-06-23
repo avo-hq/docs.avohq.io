@@ -55,6 +55,10 @@ async function captureSpec(context, spec) {
   await mkdir(dirname(pngPath), { recursive: true });
 
   const target = spec.selector ? page.locator(spec.selector).first() : null;
+  // The top-left of the captured image in viewport CSS-px. Marks are recorded relative to
+  // THIS (so the drawn box lands on the right pixels). For a padded selector capture the clip
+  // starts at (element − pad), NOT at the element box — set below so marks aren't pad-shifted.
+  let imageOrigin = null;
   if (target && spec.pad) {
     // Capture the element PLUS real surrounding page area (genuine breathing room,
     // not a tacked-on border). pad is in CSS px: {x, y}.
@@ -84,6 +88,7 @@ async function captureSpec(context, spec) {
     const vp = spec.viewport || { width: 1440, height: 900 };
     const x = Math.max(0, b.x - px);
     const y = Math.max(0, b.y - top);
+    imageOrigin = { x, y }; // image top-left = padded clip origin (element − pad)
     await page.screenshot({
       path: pngPath,
       clip: {
@@ -99,8 +104,11 @@ async function captureSpec(context, spec) {
     await page.screenshot({ path: pngPath, fullPage: !!spec.fullPage, clip: spec.clip });
   }
 
-  // Record mark-target boxes relative to the captured image's origin.
-  const originBox = target ? await target.boundingBox() : (spec.clip || { x: 0, y: 0 });
+  // Record mark-target boxes relative to the captured image's origin. For a padded selector
+  // capture the image starts at the padded clip origin (element − pad), not the element box —
+  // use `imageOrigin` so marks aren't shifted up/left by the pad. Plain selector capture starts
+  // at the element box; clip capture starts at the clip origin.
+  const originBox = imageOrigin || (target ? await target.boundingBox() : (spec.clip || { x: 0, y: 0 }));
   const boxes = [];
   for (const mark of spec.marks || []) {
     // A mark can target an element via `selector`, OR carry explicit viewport-relative

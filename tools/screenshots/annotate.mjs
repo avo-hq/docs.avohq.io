@@ -20,6 +20,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, "out");
 
 const ACCENT = "#2563eb"; // Avo blue
+const FOCUS_RING = "#60a5fa"; // Avo --color-info (blue-400) — matches the native :focus-visible ring
 const FONT = process.env.ANNOTATE_FONT || "/System/Library/Fonts/Supplemental/Arial Bold.ttf";
 const id = process.argv[2];
 if (!id) { console.error("Usage: node annotate.mjs <specId>"); process.exit(1); }
@@ -35,7 +36,16 @@ for (const m of marks) {
   const x1 = Math.round(m.x - pad), y1 = Math.round(m.y - pad);
   const x2 = Math.round(m.x + m.width + pad), y2 = Math.round(m.y + m.height + pad);
   if (m.type === "highlight") {
-    draw.push(`roundrectangle ${x1},${y1} ${x2},${y2} ${8 * s},${8 * s}`);
+    // `style: "focus"` mimics Avo's native :focus-visible ring — a thin (2px) blue-400
+    // outline hugging the element with a ~2px gap. Default keeps the legacy chunky box.
+    const focus = m.style === "focus";
+    const hpad = (m.pad ?? (focus ? 2 : 6)) * s;
+    const hsw = (m.stroke ?? (focus ? 2 : 3)) * s;
+    const hradius = (m.radius ?? (focus ? 3 : 8)) * s;
+    const hcolor = m.color ?? (focus ? FOCUS_RING : ACCENT);
+    const fx1 = Math.round(m.x - hpad), fy1 = Math.round(m.y - hpad);
+    const fx2 = Math.round(m.x + m.width + hpad), fy2 = Math.round(m.y + m.height + hpad);
+    draw.push({ rect: `roundrectangle ${fx1},${fy1} ${fx2},${fy2} ${hradius},${hradius}`, color: hcolor, strokeWidth: hsw });
   } else if (m.type === "badge") {
     const r = 16 * s, cx = x1, cy = y1;
     // circle then number drawn separately via -annotate
@@ -60,8 +70,12 @@ const src = join(OUT, `${id}${SUFFIX}.png`);
 const dst = join(OUT, `${id}${SUFFIX}.annotated.png`);
 const args = [src, "-strokewidth", String(sw), "-fill", "none", "-stroke", ACCENT];
 
-// rectangles first
-for (const d of draw) if (typeof d === "string") args.push("-draw", d);
+// rectangles first — each carries its own stroke color/width
+for (const d of draw) {
+  if (d.rect) args.push("-stroke", d.color, "-strokewidth", String(d.strokeWidth), "-draw", d.rect);
+}
+// restore defaults for arrows/badges below
+args.push("-stroke", ACCENT, "-strokewidth", String(sw));
 
 // arrows + badges
 for (const d of draw) {
