@@ -22,3 +22,4 @@ docs/public/*/llms.txt
 AVO-1320-context.md
 # AVO-1320 screenshot harness (scratch tooling)
 screenshot-harness/
+tools/screenshots/
