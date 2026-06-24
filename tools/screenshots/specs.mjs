@@ -19,7 +19,7 @@
 //
 // See RULES.md for every framing rule and prepare.mjs for the prepare-step primitives.
 
-import { compose, closeSidebar, matBg, hideKbd, neutralizeBorders, hover, focus, wait, injectCSS } from "./prepare.mjs";
+import { compose, closeSidebar, matBg, hideKbd, hideRecords, hideIndexColumns, neutralizeBorders, hover, focus, wait, injectCSS, openSelect, click, hideSummarizableIcons, scrollTo } from "./prepare.mjs";
 
 // ---- factories — stamp out repeated specs for a page (adapt the `out` subpath) -------
 
@@ -406,7 +406,7 @@ export const SPECS = [
     viewport: { width: 720, height: 900 },
     settle: 1000,
     prepare: compose(closeSidebar, matBg, hideKbd),
-    selector: '.card:has([data-field-id="custom_css"])',
+    selector: '.card:has([data-field-id="custom_css_label"])',
     pad: { x: 10, y: 10 },
     out: "docs/public/assets/img/4_0/field-options/label-help.png",
     display: "full",
@@ -642,11 +642,1023 @@ export const SPECS = [
       prompt: "Avo Show page rendering a single PanelComponent that matches the ERB example above: a bold panel title 'Avo' with the description 'Build apps 10x faster' directly beneath it, a primary 'View product' button in the header tools area on the right, and a body section containing the heading 'Product information' and the line 'Style: shiny'. Capture the whole panel, header plus body.",
     },
   },
+
+  // fields/boolean_group "Field declaration example" — the boolean_group `roles` field on the
+  // INDEX view (prompt: "use index page"). On index Avo renders a boolean_group as a "View"
+  // link (one per row) that opens a tippy popover listing each option with a checked/unchecked
+  // box — so the shot shows the index table AND that popover open over a MIDDLE row, with the
+  // View link FOCUSED for Avo's native :focus-visible ring (RULES 15a/15b/15b′ — a triggered
+  // overlay shown in its trigger context, the small control marked by the real ring). The
+  // popover labels read exactly Administrator / Manager / Writer, matching the doc snippet's
+  // `options:` hash, and the column header reads "User roles", matching its `name:` (RULES 13).
+  // RESHAPED per RULES 9a/10a: temp-trimmed the User resource's index `fields` to just ID, Name
+  // and the renamed "User roles" boolean_group (early `return` when `view.index?`), small
+  // ?per_page=4 + a narrow ~900px viewport so the 3-column table reads at ~1× — not the live
+  // 15-column User index. Capture the full table card (.card.relative.w-full) so all four
+  // borders + pagination are intact (RULES 4/10/20 — no sliced columns). The popover opens over
+  // row 3 (a MIDDLE row, never first/last — RULES 15i) whose roles are a real mix (manager +
+  // writer checked). The table beneath the popover IS the subject's context, so it stays LIVE
+  // and visible (RULES 15j′ — do NOT blank it). Sidebar closed + mat bg (RULES 12/19a); hideKbd.
+  {
+    id: "boolean-group-index",
+    path: "/avo/resources/users?per_page=4",
+    viewport: { width: 900, height: 760 },
+    settle: 800,
+    prepare: compose(
+      closeSidebar,
+      matBg,
+      hideKbd,
+      hover('table tbody tr:nth-child(3) [data-field-type="boolean_group"] [data-tippy-target="source"]'),
+      wait(1000),
+      focus('table tbody tr:nth-child(3) [data-field-type="boolean_group"] [data-tippy-target="source"]'),
+    ),
+    selector: ".card.relative.w-full",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/boolean_group/index.png",
+    display: "full",
+    alt: "An Avo index table with three columns — ID, Name and a “User roles” boolean_group column rendered as a “View” link per row — with the popover open over a middle row listing Administrator, Manager and Writer each with a checked or unchecked box.",
+    source: { file: "docs/4.0/fields/boolean_group.md", prompt: "use index page" },
+  },
+
+  // fields/boolean — Index view with Published column showing green check + red X (matches the
+  // doc's `field :is_published, as: :boolean, name: 'Published'` snippet). BooleanDemo resource
+  // (Post-backed) exposes id, name and a virtual `published` field with true_value/false_value;
+  // index_query limits to two rows with opposing values. Narrow 760px viewport (RULES 9b); sidebar
+  // closed + mat bg (RULES 12/19a). Clip probed from `.card` (x8 y192 w744 h126) + ~10px mat.
+  {
+    id: "boolean-index",
+    path: "/avo/resources/boolean_demos?per_page=4",
+    viewport: { width: 760, height: 700 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    clip: { x: 0, y: 182, width: 760, height: 191 },
+    out: "docs/public/assets/img/4_0/fields/boolean.png",
+    display: "full",
+    alt: "An Avo index table with ID, Name and Published columns — a green check and a red X in the Published column.",
+    source: { file: "docs/4.0/fields/boolean.md", prompt: "Boolean field shown as a green check and a red X on the Index view" },
+  },
+
+  // fields/boolean `nil_as_indeterminate` — Show view with a lone Verified field in its own card
+  // rendering the gray minus-circle icon for nil. BooleanDemo#verified uses nil_as_indeterminate: true
+  // and returns nil from a block. Clip probed from main .card (x8 y192 w744 h90) + ~10px mat.
+  {
+    id: "boolean-nil-indeterminate",
+    path: "/avo/resources/boolean_demos/1",
+    viewport: { width: 900, height: 700 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    clip: { x: 0, y: 142, width: 900, height: 78 },
+    out: "docs/public/assets/img/4_0/fields/boolean_nil_as_indeterminate.png",
+    display: "full",
+    alt: "Boolean field with nil_as_indeterminate showing a gray minus-circle icon",
+    source: { file: "docs/4.0/fields/boolean.md", prompt: "Boolean field with nil_as_indeterminate showing a gray minus-circle icon" },
+  },
+
+  // map-view — Cities index in map view: view switcher (table/map), Mapbox map with city
+  // markers and the adjacent index table (matches the Enable map view section). Sidebar closed
+  // + mat bg (RULES 12/19a); extra settle for Mapbox tiles. Whole `.index-map-view` + ≤10px pad.
+  {
+    id: "map-view-index",
+    path: "/avo/resources/cities?view_type=map&per_page=5",
+    viewport: { width: 1280, height: 900 },
+    settle: 1000,
+    prepare: compose(closeSidebar, matBg, hideKbd, wait(2800)),
+    selector: ".index-map-view",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/map-view/index.png",
+    display: "full",
+    alt: "The Cities resource in map view — the table/map view switcher, a Mapbox map with markers and the adjacent index table.",
+    source: { file: "docs/4.0/map-view.md", prompt: "map view on the Cities index with the view switcher, Mapbox map and adjacent table" },
+  },
+
+  // map-view extra_markers — MapViewExtraDemo centred on the doc's Açores marker (label + tooltip
+  // from the extra_markers snippet). One city record keeps the map view mounted; table hidden.
+  {
+    id: "map-view-extra-markers",
+    path: "/avo/resources/map_view_extra_demos?view_type=map",
+    viewport: { width: 1280, height: 900 },
+    settle: 1000,
+    prepare: compose(closeSidebar, matBg, hideKbd, wait(3500)),
+    selector: ".map-component",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/map-view/extra-markers.png",
+    display: "full",
+    alt: "A map view zoomed on the Azores showing an extra marker labelled Açores with tooltip São Miguel.",
+    source: { file: "docs/4.0/map-view.md", prompt: "map view extra marker with label Açores and tooltip São Miguel" },
+  },
+
+  // fields/avatar "index page" — the avatar field renders only on the Index view, showing
+  // each record's avatar (or initials) in a small square cell. RESHAPED to a focused 3-column
+  // table (RULES 10a/13): a minimal temp resource (AvatarDemo, backed by User) exposes only
+  // id, `field :avatar, as: :avatar` and name, with `self.avatar` sourcing each user's
+  // gravatar — so several rows show real avatar thumbnails matching the doc's bare
+  // `field :avatar, as: :avatar`. per_page=6 keeps the table short with pagination; narrow
+  // ~900px viewport (RULES 9a) keeps text ~1×. Sidebar closed + mat bg (RULES 12/19a); the
+  // whole wrapping card is captured with a symmetric ≤10px pad (RULES 15e/15f/20).
+  {
+    id: "avatar-index",
+    path: "/avo/resources/avatar_demos?per_page=6",
+    viewport: { width: 900, height: 700 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: ".card.relative.w-full",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/avatar/index.png",
+    display: "full",
+    alt: "An Avo index table with three columns — ID, an Avatar column showing each user's square avatar thumbnail, and Name — illustrating the avatar field rendered on the Index view.",
+    source: { file: "docs/4.0/fields/avatar.md", prompt: "index page" },
+  },
+
+  // fields/badge "all badge types per category" (placeholder under the H1) — the full badge
+  // palette, GROUPED into the two categories the docs name: a "Base colors" panel (red, orange,
+  // amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia,
+  // pink, rose — 17) and a "Semantic colors" panel (neutral, info, success, warning, danger — 5).
+  // Temp edit (Project resource, reverted): two `panel title: …` blocks of computed
+  // `field :…, as: :badge, name: "", only_on: :show, width: 33, options: {color => Label} do Label
+  // end` fields — each badge's value matches its own option key so every variant renders in its
+  // real color, with the color name shown INSIDE the pill; width:33 (a legitimate field prop, not a
+  // style hack) packs 3 badges per row so each panel reads as a tidy grid (RULES 15w — produced with
+  // the real DSL). The badges render at their GENUINE native Avo size — NO pill-sizing CSS. The only
+  // injected CSS hides the redundant per-badge field LABEL (.field-wrapper__label — layout, not
+  // faking the component); the color name stays inside the pill. The category panel HEADERS ("Base
+  // colors"/"Semantic colors") stay. Captured on the Project Show view, sidebar closed + mat bg
+  // (RULES 12/19a). The two `.panel` blocks (data-item-index 13/14, probed) are framed together via
+  // clipFrom (Base, top-left) + selector (Semantic, bottom-right) so BOTH category panels are wholly
+  // in shot with a symmetric ≤10px pad (RULES 15e/15f); both panels are full content-width cards with
+  // all four borders intact (RULES 15r, verified on dark). The real Avo BadgeField / BadgeComponent
+  // expose NO size/variant prop (only color, style: solid/subtle, icon — grepped the gem), so there
+  // is no genuine "larger badge" option to use. Prominence therefore comes ENTIRELY from FRAMING, not
+  // from inflating the component: a NARROW ~640px viewport shrinks the panels' CSS width so the same
+  // native badges fill more of the frame, and `display:"full"` makes the image fill the docs content
+  // column — so the natively-small badges render a little larger without any badge CSS. STRUCTURE
+  // shot (the whole palette at a glance).
+  {
+    id: "badge-types",
+    path: "/avo/resources/projects/36",
+    viewport: { width: 640, height: 2100 },
+    settle: 900,
+    prepare: compose(
+      closeSidebar, matBg, hideKbd,
+      injectCSS(`
+        .panel[data-item-index="13"] .field-wrapper__label,
+        .panel[data-item-index="14"] .field-wrapper__label { display: none !important; }
+        /* Each badge field-wrapper carries a per-row border-bottom divider. In the
+           under-populated final row (3-col grid, only 2 filled cells) the divider draws
+           under just the filled cells, leaving a half-line dangling mid-card. Removing the
+           row dividers (layout chrome, not the badge component) makes the palette read as a
+           clean grid of pills with nothing to dangle (RULES 15i'/15r). */
+        .panel[data-item-index="13"] .field-wrapper,
+        .panel[data-item-index="14"] .field-wrapper { border-bottom: none !important; }
+        /* The badge grid lays its field-wrappers in a flex-wrap row container
+           (.description-list, justify-content:normal → left-packed). Each wrapper is a
+           fixed 1/3 (w-1/3) cell, so full rows span the whole card and the under-populated
+           final row hugs the left. Make the row container a centered flex-wrap, then shrink
+           each cell to its pill so a row packs tightly and centers as a block. Probed
+           computed: with only width:auto the cell still measured pill+32px because
+           .field-wrapper__content carries 16px L/R padding (and a flex:1 1 0% content
+           that re-stretches) so the pill left-hugged inside a padded cell, making the row read
+           as edge-to-edge with uneven voids (the reviewer's "justify-between" look). The
+           decisive fix is to collapse that padding and the inner flex stretch so the cell width
+           EQUALS the pill width, then center the pill inside it. Now every cell is pill-tight,
+           the 14px column gap is the only spacing, and justify-content:center centers BOTH the
+           full rows and the short final rows. Layout chrome only; no change to badge
+           color/size/count. */
+        .panel[data-item-index="13"] .description-list,
+        .panel[data-item-index="14"] .description-list {
+          display: flex !important;
+          flex-wrap: wrap !important;
+          justify-content: center !important;
+          align-content: center !important;
+          gap: 10px 14px !important;
+        }
+        .panel[data-item-index="13"] .field-wrapper,
+        .panel[data-item-index="14"] .field-wrapper {
+          flex: 0 0 auto !important;
+          width: auto !important;
+          max-width: none !important;
+          min-width: 0 !important;
+          margin: 0 !important;
+          justify-content: center !important;
+        }
+        /* Collapse the cell's own padding + inner flex stretch so the cell hugs the pill
+           and the pill is centered within it (kills the left-hug / wide-void spread). */
+        .panel[data-item-index="13"] .field-wrapper .field-wrapper__content,
+        .panel[data-item-index="14"] .field-wrapper .field-wrapper__content {
+          flex: 0 0 auto !important;
+          width: auto !important;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          justify-content: center !important;
+        }
+        .panel[data-item-index="13"] .field-wrapper .field-wrapper__content-wrapper,
+        .panel[data-item-index="14"] .field-wrapper .field-wrapper__content-wrapper {
+          width: auto !important;
+        }
+      `),
+    ),
+    clipFrom: '.panel[data-item-index="13"]',
+    selector: '.panel[data-item-index="14"]',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/badge/types.png",
+    display: "full",
+    alt: "Two Avo panels showing every badge color the field can render at its native size, grouped by category: a “Base colors” panel with red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink and rose badge pills, and a “Semantic colors” panel with neutral, info, success, warning and danger badge pills — each pill labelled with its color name.",
+    source: { file: "docs/4.0/fields/badge.md", prompt: "all posible badges types split nice per categories no outside labels, the label should be inside the badge" },
+  },
+
+  // fields/checkbox_list "Field declaration example" (placeholder under the H1) — the
+  // checkbox_list field shown WHOLE on a FORM (Edit) view, matching the adjacent code
+  // (options built from real users with title/avatar_url/image_format/description +
+  // inline_search: true). The prompt asks for a "gif … into the form" but this pipeline ships
+  // STATIC light+dark PNGs, so we capture a representative form state of the complete component:
+  // the inline-search input above the scrollable checkbox list, each row an avatar (circle) +
+  // name + email description, with two options pre-checked (RULES 15y — show the whole
+  // interactive component with all its controls on the Form view, not a read-only Show
+  // projection). Per RULES 15z the field is wrapped in its OWN panel/card via a minimal temp
+  // resource (CheckboxListDemo, backed by ::User) so Avo renders a real content-sized card that
+  // HUGS just this field — true borders + rounded corners on all four sides, no border
+  // neutralizing, no bare-mat fragment. A narrow ~760px viewport (RULES 9b) keeps the card
+  // ~743px CSS so it displays ~1× and Avo STACKS the field below its "Team member" label
+  // (label-above), giving a natural card shape instead of a zoomed-out strip. Sidebar closed +
+  // mat bg (RULES 12/19a); hideKbd. Captured as the .card element with a symmetric ≤10px pad
+  // (RULES 15e/15f). Temp edits (the resource, its controller, and a User#team_member_ids
+  // accessor that pre-checks 2 options) are reverted after capture.
+  {
+    id: "checkbox-list-form",
+    path: "/avo/resources/checkbox_list_demos/1/edit",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: ".card",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/checkbox_list/form.png",
+    display: "full",
+    alt: "An Avo edit-form card containing a checkbox_list field: a search input labelled to filter the options sits above a scrollable list of team members, each row showing a circular avatar, the person's name and their email as a description, with two options checked.",
+    source: { file: "docs/4.0/fields/checkbox_list.md", prompt: "a gif with checkbox exemple into the form" },
+  },
+
+  // code — the doc's leading example is `field :custom_css, as: :code, theme: 'dracula',
+  // language: 'css'`, so the shot shows the CodeMirror editor on a FORM (Edit) view in the
+  // dracula theme with real CSS that highlights (selectors, properties, values colored) and the
+  // gutter line numbers — the field's interactive editor in full (RULES 15y), not a read-only
+  // Show projection. Per RULES 15z the field is wrapped in its OWN panel/card via a minimal temp
+  // resource (CodeDemo, backed by ::User) so Avo renders a real content-sized card that HUGS just
+  // this field — true borders + rounded corners on all four sides, no border neutralizing, no
+  // bare-mat fragment. The CSS content is prefilled via a temp User#after_initialize that sets
+  // custom_css ||= <css> (in-memory only, persists nothing; reverted after capture). A narrow
+  // ~760px viewport (RULES 9b) keeps the card ~743px CSS so it displays ~1× and Avo STACKS the
+  // editor below its "Custom css" label (label-above), a natural card shape not a zoomed-out
+  // strip. Sidebar closed + mat bg (RULES 12/19a); hideKbd. Captured as the .card element with a
+  // symmetric ≤10px pad (RULES 15e/15f). Temp edits (the resource, its controller, the model
+  // after_initialize) are reverted after capture.
+  {
+    id: "code-field-form",
+    path: "/avo/resources/code_demos/1/edit",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: ".card",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/code/index.png",
+    display: "full",
+    alt: "An Avo edit-form card containing a code field: a CodeMirror editor in the dracula dark theme with line-number gutter, showing syntax-highlighted CSS (a .user-card rule with display, padding, border-radius and background properties).",
+    source: { file: "docs/4.0/fields/code.md", prompt: "todo" },
+  },
+
+  // easy_mde — placeholder under the H1, prompt "from create page": the EasyMDE Markdown editor
+  // as rendered on a CREATE/NEW (form) view (RULES 15q′ — the prompt names the create page, so we
+  // capture exactly that). The shot shows the interactive editor in FULL (RULES 15y): its toolbar
+  // (bold/italic/heading/list/link/preview buttons) above the CodeMirror text area pre-filled with
+  // representative Markdown (a "Release notes" doc with headings, bold, a bullet list and a link),
+  // so the reader sees the field's real affordances rather than a read-only Show projection. Per
+  // RULES 15z the field is wrapped in its OWN panel/card via a minimal temp resource
+  // (EasyMdeDemo, backed by ::User) so Avo renders a real content-sized card that HUGS just this
+  // field — true borders + rounded corners on all four sides, no border neutralizing, no bare-mat
+  // fragment. The Markdown is pre-filled via a temp User#after_initialize that sets
+  // demo_markdown ||= <md> (in-memory only, persists nothing; reverted after capture). A narrow
+  // ~760px viewport (RULES 9b) keeps the card ~743px CSS so it displays ~1× and Avo STACKS the
+  // editor below its "Description" label (label-above), a natural card shape not a zoomed-out
+  // strip. Sidebar closed + mat bg (RULES 12/19a); hideKbd. Captured as the .card element with a
+  // symmetric ≤10px pad (RULES 15e/15f). Temp edits (the resource, its controller, the model
+  // accessor + after_initialize) are reverted after capture.
+  {
+    id: "easy-mde-form",
+    path: "/avo/resources/easy_mde_demos/new",
+    viewport: { width: 760, height: 1000 },
+    settle: 1200,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: ".card:not(.relative)",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/easy_mde/form.png",
+    display: "full",
+    alt: "An Avo create-form card containing an easy_mde field: the EasyMDE Markdown editor with its toolbar (bold, italic, heading, lists, link and preview controls) above a text area pre-filled with sample Markdown — a Release notes document with a heading, bold text, a bullet list and a link.",
+    source: { file: "docs/4.0/fields/easy_mde.md", prompt: "from create page" },
+  },
+
+  // files — view_type option, prompt "gif to see the difference between grid and list view types".
+  // The pipeline produces static PNGs, not GIFs (RULES #3), so instead of a fake animation we
+  // capture the files field in its visually-distinctive DEFAULT layout — the GRID view — with the
+  // view-type SWITCHER visible (the list/grid toggle at the card's top-right, grid active). That
+  // single static frame conveys the whole feature: the grid layout AND the control that flips it to
+  // list. The files (plural) field — the only one carrying view_type — lives on Project; the demo
+  // had ZERO attachments (PROCESS.md known limitation: a files field with nothing attached renders
+  // only an empty dropzone), so we temp-attach 4 real demo photos to Project #1 (reusing the
+  // Product image blob files) and PURGE them after capture, leaving demo data untouched. Per RULES
+  // 15z the field is wrapped in its OWN panel/card via a minimal temp edit to the Project resource
+  // (field :files, as: :files, name: "Documents") so Avo renders a real content-sized card that
+  // HUGS just the field — true borders + 12px rounded corners on all four sides, no neutralizing,
+  // no bare-mat fragment. At viewport 1100 the @container grid lands on 2 columns so the 4 photos
+  // fill a balanced 2×2 (RULES 15k/15l/15x — every tile fully visible, no ragged half-row). Sidebar
+  // closed + mat bg (RULES 12/19a); hideKbd hides the grid toggle's hotkey badge. Captured as the
+  // .card element with a symmetric ≤10px pad (RULES 15e/15f). Temp edits (resource card + the 4
+  // heading — placeholder under the H1, prompt "todo": the Heading field as it renders inside a
+  // Show card, acting as a visual SECTION DIVIDER between groups of fields. A lone heading in an
+  // empty card is meaningless (RULES 10b) — so the shot frames the heading WITH the fields it
+  // separates: a "User information" heading above First name / Last name / Email, then a second
+  // "Contact details" heading above Birthday / Membership, so the reader plainly sees it grouping
+  // and titling sections. The heading text "User information" matches the doc's adjacent code
+  // (`field :user_information, as: :heading` / label "user information", RULES 13). Per RULES 15z
+  // the section is wrapped in its OWN panel/card via a minimal temp resource (HeadingDemo, backed
+  // by ::User) so Avo renders a real content-sized card that HUGS just this group — true borders +
+  // rounded corners on all four sides, no border neutralizing, no bare-mat fragment. Show view
+  // (the heading renders on Show/Edit/Create; Show reads cleanest as a static section divider).
+  // Paired fields share a row at width:50 so no ragged half-rows (RULES 15x). A narrow ~760px
+  // viewport (RULES 9b) keeps the card ~743px CSS so it displays ~1×, label-above (stacked) fields.
+  // Sidebar closed + mat bg (RULES 12/19a); hideKbd. Captured as the heading's card element with a
+  // symmetric ≤10px pad (RULES 15e/15f). Temp edits (the resource + its controller) are reverted
+  // after capture.
+  {
+    id: "heading-field",
+    path: "/avo/resources/heading_demos/1",
+    viewport: { width: 760, height: 900 },
+    settle: 700,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: ".card:has([data-field-id='heading_user_information'])",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/heading/index.png",
+    display: "full",
+    alt: "An Avo show-view card with two heading fields acting as section dividers: a 'User information' heading above First name, Last name and Email fields, then a 'Contact details' heading above Birthday and Membership fields.",
+    source: { file: "docs/4.0/fields/heading.md", prompt: "show page with heading fields separating User information and Contact details sections" },
+  },
+
+  // fields/key_value "KeyValue" — the key_value field as rendered on the CREATE (New) form, the
+  // EDITABLE component with all its controls (RULES 15y: the Form view shows the `+` add-row button
+  // in the header plus each row's drag handle + delete (trash) button — the Show projection drops
+  // them). Prompt = "from create page", so the New form is mandated (RULES 15q′). Per RULES 15z the
+  // field gets its OWN dedicated `panel do card do field :meta, as: :key_value end end` (matching the
+  // doc snippet `field :meta, as: :key_value` verbatim, default labels Key/Value — RULES 13), so Avo
+  // renders a real, content-sized card that HUGS just this one field with true borders + rounded
+  // corners on all four sides (no neutralizing, no bare-mat fragment). Temp edits (reverted after
+  // capture): Project resource wraps :meta in that panel/card (replacing its rich custom-labelled
+  // field), and Project model gets `after_initialize { self.meta ||= {…} }` so the New form
+  // pre-populates 3 realistic rows (environment: production, region: eu-west, tier: premium) and the
+  // control reads as a real example, not an empty stub (RULES 15w). Capture the WHOLE card element
+  // (`.card:has([data-field-type="key_value"])`) with symmetric ≤10px pad (RULES 15e/15f/15r — all
+  // four borders included). Narrow viewport (1000) so the content-sized card displays near 1× at the
+  // ~688px content column (RULES 9a/9b). Sidebar closed + mat bg (RULES 12/19a); hideKbd. Full display.
+  {
+    id: "key-value-form",
+    path: "/avo/resources/projects/new",
+    viewport: { width: 1000, height: 1400 },
+    settle: 900,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card:has([data-field-type="key_value"])',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/key_value/index.png",
+    display: "full",
+    alt: "An Avo New (create) form card showing a KeyValue field with three editable key/value rows (environment: production, region: eu-west, tier: premium), each row with a drag handle and a delete button, plus an add-row button in the Key/Value header.",
+    source: { file: "docs/4.0/fields/key_value.md", prompt: "from create page" },
+  },
+
+  // location show map — Dashy dashboard `MapCard` partial card (`Avo::Cards::MapCard` on
+  // `/avo/dashboards/dashy`): Google Maps embed in a compact-header card titled "Map card", with
+  // "Open in Maps" and native map navigation controls. No Mapbox token needed (iframe). Scrolls
+  // the card into view; 900px viewport; sidebar closed + mat bg; hideKbd; settle for iframe paint.
+  {
+    id: "location-show-map",
+    path: "/avo/dashboards/dashy",
+    viewport: { width: 900, height: 900 },
+    settle: 2500,
+    prepare: compose(closeSidebar, matBg, hideKbd, scrollTo('.card:has(iframe)')),
+    selector: ".card:has(iframe)",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/location/show-map.png",
+    display: "full",
+    alt: "An Avo Map card on the Dashy dashboard showing an embedded Google Maps view of Manhattan with an Open in Maps link and map navigation controls.",
+    source: { file: "docs/4.0/fields/location.md", prompt: "page with navigation map" },
+  },
+
+  // location `stored_as` — the City EDIT form with `stored_as: [:latitude, :longitude]` so Avo
+  // renders two separate coordinate inputs (Latitude / Longitude) instead of one comma-joined field.
+  // Per RULES 15z the field is wrapped in its OWN panel/card on the City resource (edit-only card
+  // duplicate). No Mapbox token needed — the edit view shows the lat/long inputs without a map.
+  // Narrow 760px viewport (RULES 9b); sidebar closed + mat bg; hideKbd. Captured as the whole
+  // card with symmetric ≤10px pad. Temp edit to city.rb reverted after capture.
+  {
+    id: "location-stored-as",
+    path: "/avo/resources/cities/1/edit",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: ".card:has([data-field-id='coordinates'])",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/location/stored-as.png",
+    display: "full",
+    alt: "An Avo edit-form card showing a location field with stored_as configured: separate Latitude and Longitude text inputs side by side, prefilled with Paris coordinates.",
+    source: { file: "docs/4.0/fields/location.md", prompt: "todo" },
+  },
+
+  // money "Example on new" — prompt "on create page": the money field on the product NEW (create)
+  // form in its default closed state — amount input (0.00) beside the currency selector (USD),
+  // with all four currencies configured (EUR / USD / RON / PEN per the doc's `currencies:` line,
+  // RULES 13). Per RULES 15z the field is wrapped in its OWN panel/card via a temp edit to the
+  // Product resource (`:price` re-scoped `only_on: %i[new edit]` inside `panel do card do … end
+  // end`). A narrow ~760px viewport (RULES 9b) keeps the card ~743px CSS so it displays ~1× and
+  // Avo STACKS the field below its "Price" label. Sidebar closed + mat bg (RULES 12/19a); hideKbd.
+  // Captured as the .card element with a symmetric ≤10px pad (RULES 15e/15f). Temp edit reverted.
+  {
+    id: "money-create",
+    path: "/avo/resources/products/new",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card:has([data-field-type="money"])',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/money/form.png",
+    display: "full",
+    alt: "An Avo create-form card containing a money field: an amount input showing 0.00 beside a currency selector set to USD.",
+    source: { file: "docs/4.0/fields/money.md", prompt: "on create page" },
+  },
+
+  // money "Example on new" — the money field on the New (create) form with its CURRENCY
+  // SELECTOR showing the choices (prompt "gif with showing the dropdown selector"; the pipeline
+  // ships static PNGs, so one static frame of the open selector). The currency selector is a
+  // NATIVE <select> whose popup is OS-drawn and can't be screenshot, so per the openSelect
+  // primitive we expand the REAL element to size=N — a legitimate HTML rendering of the same
+  // element — so all four currency options (EUR / USD / RON / PEN, matching the doc's
+  // `currencies: %w[EUR USD RON PEN]`, RULES 13) show inline as a visible list right beside the
+  // amount input, in the field's trigger context (RULES 15a — the selector shown where it lives).
+  // Per RULES 15z the field is wrapped in its OWN panel/card via a temp edit to the Product
+  // resource (the existing `:price` money field re-scoped `only_on: %i[new edit]` inside a
+  // `panel do card do … end end`), so Avo renders a real content-sized card that HUGS just this
+  // field — true borders + rounded corners on all four sides, no neutralizing, no bare-mat
+  // fragment. A narrow ~760px viewport (RULES 9b) keeps the card ~743px CSS so it displays ~1×
+  // and Avo STACKS the field below its "Price" label. Sidebar closed + mat bg (RULES 12/19a);
+  // hideKbd. Captured as the .card element with a symmetric ≤10px pad (RULES 15e/15f). Temp edit
+  // reverted after capture.
+  {
+    id: "money-form-dropdown",
+    path: "/avo/resources/products/new",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd, openSelect("#product_price_currency"), wait(300)),
+    selector: '.card:has([data-field-type="money"])',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/money/form-dropdown.png",
+    display: "full",
+    alt: "An Avo create-form card containing a money field: an amount input beside a currency selector expanded to show all four choices — EUR, USD, RON and PEN — listed inline.",
+    source: { file: "docs/4.0/fields/money.md", prompt: "gif with showing the dropdown selector" },
+  },
+
+  // money "Example on show" — Price RON and Price USD in the main show card's description-list
+  // (label left, value right, row dividers — same layout as ID/Name on any Avo show page). Fields
+  // live at the top level of the Product resource in main.avodemo.com (not a nested panel). Captured
+  // as the card's description-list region with symmetric ≤10px pad. Viewport ≥900px for inline rows.
+  {
+    id: "money-show-inline",
+    path: "/avo/resources/products/1",
+    viewport: { width: 900, height: 900 },
+    settle: 700,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card:has([data-field-id="price_ron"])',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/money/show-inline.png",
+    display: "full",
+    alt: "An Avo show-view card with two money fields on separate lines: Price RON showing 1,499.00 Lei on the first row and Price USD showing $199.00 on the second.",
+    source: { file: "docs/4.0/fields/money.md", prompt: "show page with Price RON and Price USD on separate lines in the same card" },
+  },
+
+  // money "Example on show with currencies USD" (placeholder line 23, prompt "todo") — the money
+  // field on the Show view rendering a value in USD ($199.00). Per RULES 15z the field is wrapped
+  // in its OWN panel/card via a temp edit to the Product resource (a `panel do card do field
+  // :price, as: :money, only_on: :show do Money.new(199_00, "USD") end end`), so Avo renders a
+  // real content-sized card that HUGS just this field — true borders + rounded corners on all
+  // four sides, no neutralizing, no bare-mat fragment (RULES 15t resolved). The "Price" label
+  // matches the field name (RULES 13). A narrow ~760px viewport (RULES 9b) keeps the card ~743px
+  // CSS so it displays ~1×, label-above. Sidebar closed + mat bg (RULES 12/19a); hideKbd.
+  // Captured as the .card element with a symmetric ≤10px pad (RULES 15e/15f). Temp edit reverted.
+  {
+    id: "money-show-usd",
+    path: "/avo/resources/products/1",
+    viewport: { width: 760, height: 900 },
+    settle: 700,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card:has([data-field-id="price"])',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/money/show-usd.png",
+    display: "full",
+    alt: "An Avo show-view card containing a money field labelled Price, displaying the value $199.00 in US dollars.",
+    source: { file: "docs/4.0/fields/money.md", prompt: "on show page" },
+  },
+
+  // money "Example on show with currencies RON" (placeholder line 27, prompt "todo") — the SAME
+  // money field on the Show view rendering a value in RON (1,499.00 Lei), so the reader sees the
+  // field formatting a different currency than the USD sibling. Per RULES 15z the field is wrapped
+  // in its OWN panel/card via a temp edit to the Product resource (a `panel do card do field
+  // :price_ron, as: :money, name: "Price", only_on: :show do Money.new(1_499_00, "RON") end end`),
+  // so Avo renders a real content-sized card that HUGS just this field — true borders + rounded
+  // corners on all four sides. The "Price" label matches the field name (RULES 13). A narrow
+  // ~760px viewport (RULES 9b) keeps the card ~743px CSS so it displays ~1×, label-above. Sidebar
+  // closed + mat bg (RULES 12/19a); hideKbd. Captured as the .card element with a symmetric ≤10px
+  // pad (RULES 15e/15f). Temp edit reverted after capture.
+  {
+    id: "money-show-ron",
+    path: "/avo/resources/products/1",
+    viewport: { width: 760, height: 900 },
+    settle: 700,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card:has([data-field-id="price_ron"])',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/money/show-ron.png",
+    display: "full",
+    alt: "An Avo show-view card containing a money field labelled Price, displaying the value 1,499.00 Lei in Romanian leu (RON).",
+    source: { file: "docs/4.0/fields/money.md", prompt: "show view card with price displayed in RON" },
+  },
+
+  // money "Example on index" — the money field as it renders in the Index TABLE view, showing
+  // formatted prices per row (e.g. $199.00). SCOPED to ID, Title, Price (RULES 10a): records
+  // 5 and 6 hidden via hideRecords; image/category columns hidden via hideIndexColumns.
+  // Narrow ~900px viewport keeps the table at ~1× (RULES 9a). WHOLE table card captured
+  // (`.card.relative.w-full`) with footer intact (RULES 4/10/20). `view_type=table` forces
+  // the table view. Sidebar closed + mat bg (RULES 12/19a); hideKbd. Symmetric ≤10px pad.
+  {
+    id: "money-index",
+    path: "/avo/resources/products?view_type=table&per_page=6",
+    viewport: { width: 900, height: 700 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd, hideRecords(5, 6), hideIndexColumns("image", "category")),
+    selector: ".card.relative.w-full",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/money/index.png",
+    display: "full",
+    alt: "An Avo index table with three columns — ID, Title and Price — where the Price column shows each product's money field formatted as a currency value such as $199.00.",
+    source: { file: "docs/4.0/fields/money.md", prompt: "index table with ID, Title and Price columns" },
+  },
+
+  // progress_bar — index table with ID, Name and Progress columns showing the progress element
+  // per row (RULES 10a). Extra columns hidden via hideIndexColumns; sidebar closed + mat bg.
+  {
+    id: "progress-bar-index",
+    path: "/avo/resources/projects?view_type=table&per_page=6",
+    viewport: { width: 900, height: 700 },
+    settle: 800,
+    prepare: compose(
+      closeSidebar, matBg, hideKbd,
+      hideIndexColumns("stage", "status", "country", "users_required", "started_at", "files"),
+    ),
+    selector: ".card.relative.w-full",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/progress_bar/index.png",
+    display: "full",
+    alt: "An Avo index table with ID, Name and Progress columns where each row shows a progress bar with its percentage value.",
+    source: { file: "docs/4.0/fields/progress_bar.md", prompt: "progress bar on the index table" },
+  },
+
+  // progress_bar — edit-form slider with max:150, step:10, display_value and value_suffix: "%"
+  // matching the Examples block. ProgressBarDemo wraps the field in its own panel/card (RULES 15z).
+  {
+    id: "progress-bar-form",
+    path: "/avo/resources/progress_bar_demos/1/edit",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card[data-item-index="0"]',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/progress_bar/form.png",
+    display: "full",
+    alt: "An Avo edit-form card containing a progress_bar field showing the value above a range slider configured with max 150, step 10 and a percent suffix.",
+    source: { file: "docs/4.0/fields/progress_bar.md", prompt: "progress bar slider with max, step and suffix on edit form" },
+  },
+
+  // record_link — show-view card with a single record_link field linking to the related Post record.
+  {
+    id: "record-link-show",
+    path: "/avo/resources/record_link_demos/1",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card[data-item-index="0"]',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/record_link/show.png",
+    display: "full",
+    alt: "An Avo show-view card containing a record_link field that displays a clickable link to the related Post record.",
+    source: { file: "docs/4.0/fields/record_link.md", prompt: "record link field pointing to a related record" },
+  },
+
+  // table-view row_options — RowOptionsDemo index showing agent rows highlighted with
+  // `bg-blue-50 dark:bg-blue-950/40` via table_view row_options (matches the doc snippet).
+  // Temp demo files (reverted after capture): RowOptionsDemo resource + model fixture rows.
+  {
+    id: "table-view-row-options",
+    path: "/avo/resources/row_options_demos?view_type=table",
+    viewport: { width: 900, height: 700 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd, hideSummarizableIcons),
+    selector: ".card.relative.w-full",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/table-view/row-options.png",
+    display: "full",
+    alt: "An Avo index table with ID, Name and Role columns where rows with role agent are highlighted with a light blue background via table_view row_options, while customer rows use the default background.",
+    source: { file: "docs/4.0/table-view.md", prompt: "index table with agent rows highlighted using row_options class bg-blue-50" },
+  },
+
+  // status — StatusDemo index (ids 1–6) with ID, Name, Status and Stage (badge) columns. Fixture
+  // rows cover loading (running, pending), failed, success (done, success) and neutral (archived).
+  // No summarizable icons. Temp demo files reverted after capture.
+  {
+    id: "status-index",
+    path: "/avo/resources/status_demos?view_type=table",
+    viewport: { width: 900, height: 700 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd, hideSummarizableIcons),
+    selector: ".card.relative.w-full",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/status/index.png",
+    display: "full",
+    alt: "An Avo index table with ID, Name, Status and Stage columns where Status rows show loading, pending, failed, success and neutral indicators and Stage rows show colored badges.",
+    source: { file: "docs/4.0/fields/status.md", prompt: "index table with ID, Name and Status columns showing loading, failed, success and neutral status states" },
+  },
+
+  // time — TimeDemo edit form with the flatpickr time picker open (no calendar), matching the
+  // adjacent code's picker_format, format and time_24hr options.
+  {
+    id: "time-form-picker",
+    path: "/avo/resources/time_demos/1/edit",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    prepare: compose(
+      closeSidebar, matBg, hideKbd,
+      click('[data-field-id="starting_at"] input.form-control.input'),
+      wait(500),
+    ),
+    // Card (y≈192 h≈98) + flatpickr popup (y≈271 h≈40) + ~10px symmetric mat — no empty space below.
+    clip: { x: 0, y: 182, width: 760, height: 140 },
+    out: "docs/public/assets/img/4_0/fields/time/form-picker.png",
+    display: "full",
+    alt: "An Avo edit-form card containing a time field with the flatpickr time picker open, showing hours and minutes in 24-hour format without a calendar.",
+    source: { file: "docs/4.0/fields/time.md", prompt: "time field on the edit form with the flatpickr time picker open showing hours and minutes without a calendar" },
+  },
+
+  // rhino — RhinoDemo edit form: full card with the Rhino WYSIWYG toolbar and sample body content.
+  {
+    id: "rhino-form",
+    path: "/avo/resources/rhino_demos/1/edit",
+    viewport: { width: 760, height: 900 },
+    settle: 1200,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card[data-item-index="0"]',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/rhino/form.png",
+    display: "full",
+    alt: "An Avo edit-form card with a Rhino WYSIWYG editor showing the formatting toolbar above a text area with sample content.",
+    source: { file: "docs/4.0/fields/rhino.md", prompt: "GIF showing the options with exemple" },
+  },
+
+  // trix — TrixDemo edit form: full card with the Trix toolbar, attachment button, and sample body.
+  {
+    id: "trix-form",
+    path: "/avo/resources/trix_demos/1/edit",
+    viewport: { width: 760, height: 900 },
+    settle: 1200,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: '.card[data-item-index="0"]',
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/fields/trix/form.png",
+    display: "full",
+    alt: "An Avo edit-form card with a Trix WYSIWYG editor showing the formatting toolbar above a text area with sample body content.",
+    source: { file: "docs/4.0/fields/trix.md", prompt: "trix editor on the edit form with toolbar and sample body content" },
+  },
+
+  // customizable-controls — Fish Show page: full panel (header + body card) with the header
+  // tools area highlighted (show_controls: back, links, delete, actions, edit).
+  {
+    id: "customizable-controls-panel",
+    path: "/avo/resources/fish/1",
+    viewport: { width: 1000, height: 700 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    clipFrom: '.header[data-item-index="1"]',
+    selector: '.panel[data-item-index="2"]',
+    pad: { x: 10, y: 12 },
+    marks: [{ selector: '.header[data-item-index="1"] .header__controls', type: "highlight", style: "focus" }],
+    out: "docs/public/assets/img/4_0/customizable-controls/panel.png",
+    display: "full",
+    alt: "An Avo Show page panel with the record title and customizable controls highlighted in the header tools area, above a card listing the record fields.",
+    source: { file: "docs/4.0/customizable-controls.md", prompt: "full show page panel with the customizable controls highlighted in the header tools area" },
+  },
+
+  // customizable-controls — Fish index table row controls (row_controls): hover a row so the
+  // customized controls strip is visible, capture the .resource-controls group tight.
+  {
+    id: "customizable-controls-row",
+    path: "/avo/resources/fish?view_type=table&per_page=6",
+    viewport: { width: 1200, height: 900 },
+    settle: 800,
+    prepare: compose(
+      closeSidebar,
+      matBg,
+      hideKbd,
+      hover("table tbody tr:first-child"),
+      wait(600),
+    ),
+    selector: "table tbody tr:first-child .resource-controls",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/customizable-controls/row-controls.png",
+    display: "full",
+    alt: "An Avo index table row showing customized row controls: a Release action button, edit, show and delete icons, an Actions menu, and icon links.",
+    source: { file: "docs/4.0/customizable-controls.md", prompt: "customized row controls on an index table row" },
+  },
+
+  // map-view — Cities index in map view (view switcher + Mapbox map + table).
+  {
+    id: "map-view-index",
+    path: "/avo/resources/cities?view_type=map&per_page=5",
+    viewport: { width: 1440, height: 1200 },
+    settle: 3500,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: ".index-map-view",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/map-view/index.png",
+    display: "full",
+    alt: "The Cities index in map view with the view switcher, a Mapbox map showing record markers, and the adjacent records table.",
+    source: { file: "docs/4.0/map-view.md", prompt: "map view on the Cities index with the view switcher, Mapbox map and adjacent table" },
+  },
+
+  // map-view — extra_markers: green marker labeled Açores with tooltip São Miguel (Azores).
+  {
+    id: "map-view-extra-marker",
+    path: "/avo/resources/map_extra_marker_demos?view_type=map",
+    viewport: { width: 1440, height: 1200 },
+    settle: 4000,
+    prepare: compose(
+      closeSidebar,
+      matBg,
+      hideKbd,
+      async (page) => {
+        const map = page.locator(".mapboxgl-map").first();
+        await map.waitFor({ state: "visible", timeout: 15000 });
+        const box = await map.boundingBox();
+        if (box) {
+          await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        }
+        await wait(1000)(page);
+      },
+    ),
+    selector: ".map-component",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/map-view/extra-markers.png",
+    display: "full",
+    alt: "A Mapbox map zoomed on the Azores with a green extra marker labeled Açores and a tooltip reading São Miguel.",
+    source: { file: "docs/4.0/map-view.md", prompt: "map view extra marker with label Açores and tooltip São Miguel" },
+  },
+
+  // resource-panels — intro: full resource show page with app sidebar visible (v3-style overview).
+  {
+    id: "resource-panels-intro",
+    path: "/avo/resources/resource_panels_computed_demos/1",
+    viewport: { width: 1440, height: 900 },
+    settle: 800,
+    prepare: compose(
+      async (page) => {
+        await page.context().addCookies([
+          { name: "avo.sidebar.open", value: "1", url: new URL(page.url()).origin },
+        ]);
+        await page.reload({ waitUntil: "networkidle" });
+      },
+      hideKbd,
+    ),
+    clip: { x: 0, y: 0, width: 1440, height: 900 },
+    out: "docs/public/assets/img/4_0/resource-panels/panel.png",
+    display: "full",
+    alt: "An Avo resource show page with the sidebar navigation visible and a panel in the main content area listing record fields.",
+    source: { file: "docs/4.0/resource-panels.md", prompt: "Avo resource show page panel with header title and a body card listing record fields" },
+  },
+
+  // resource-panels — show page: record header (title + actions), root fields, named panel.
+  {
+    id: "resource-panels-root-and-panel",
+    path: "/avo/resources/user_panels_demos/2",
+    viewport: { width: 1000, height: 700 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg),
+    clipFrom: '.header[data-item-index="1"]',
+    selector: '.panel[data-item-index="3"]',
+    pad: { x: 10, y: 12 },
+    out: "docs/public/assets/img/4_0/resource-panels/root-and-panel.png",
+    display: "full",
+    alt: "An Avo show page with the record title and action buttons in the header, a main panel card with ID and User Email fields, and a named User information panel with First name, Last name, and Is active.",
+    source: { file: "docs/4.0/resource-panels.md", prompt: "User show page with root id and User Email fields plus a named User information panel with description, first name, last name, and Is active fields" },
+  },
+
+  // resource-panels — computed main panel with id, name, user, and type (example 1).
+  {
+    id: "resource-panels-computed-main",
+    path: "/avo/resources/resource_panels_computed_demos/1",
+    viewport: { width: 1000, height: 700 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    clipFrom: '.header[data-item-index="1"]',
+    selector: '.panel[data-item-index="2"]',
+    pad: { x: 10, y: 12 },
+    out: "docs/public/assets/img/4_0/resource-panels/computed-main.png",
+    display: "full",
+    alt: "An Avo show page with a single computed main panel containing ID, Name, User, and Type fields.",
+    source: { file: "docs/4.0/resource-panels.md", prompt: "Show page with a single computed main panel containing id, name, user, and type fields" },
+  },
+
+  // resource-panels — computed split: main panel (id, name), reviews has_many, panel (user, type).
+  {
+    id: "resource-panels-split",
+    path: "/avo/resources/resource_panels_split_demos/1",
+    viewport: { width: 1000, height: 900 },
+    settle: 800,
+    prepare: compose(
+      closeSidebar,
+      matBg,
+      hideKbd,
+      async (page) => {
+        await page.locator("#has_many_field_show_reviews[complete]").waitFor({ timeout: 15000 });
+        await wait(600)(page);
+      },
+    ),
+    clipFrom: '.panel[data-item-index="2"]',
+    selector: '.panel[data-item-index="4"]',
+    pad: { x: 10, y: 12 },
+    out: "docs/public/assets/img/4_0/resource-panels/split-panels.png",
+    display: "full",
+    alt: "An Avo show page with a computed main panel for ID and Name, a Reviews has_many association panel, and a second panel for User and Type.",
+    source: { file: "docs/4.0/resource-panels.md", prompt: "Show page with a computed main panel for id and name, a reviews has_many panel, and a simple panel for user and type fields" },
+  },
+
+  // resource-panels — manual order: user/type panel, reviews, then main panel (id, name).
+  {
+    id: "resource-panels-custom-order",
+    path: "/avo/resources/resource_panels_custom_order_demos/1",
+    viewport: { width: 1000, height: 900 },
+    settle: 800,
+    prepare: compose(
+      closeSidebar,
+      matBg,
+      hideKbd,
+      async (page) => {
+        await page.locator("#has_many_field_show_reviews[complete]").waitFor({ timeout: 15000 });
+        await wait(600)(page);
+      },
+    ),
+    clipFrom: '.panel[data-item-index="2"]',
+    selector: '.panel[data-item-index="4"]',
+    pad: { x: 10, y: 12 },
+    out: "docs/public/assets/img/4_0/resource-panels/custom-order.png",
+    display: "full",
+    alt: "An Avo show page with panels in custom order: User and Type first, a Reviews has_many panel, then the main panel with ID and Name.",
+    source: { file: "docs/4.0/resource-panels.md", prompt: "Show page with panels in custom order: user and type panel first, reviews has_many panel, then main panel with id and name" },
+  },
+
+  // resource-panels — index view shows only root/main_panel fields (id, email, name).
+  {
+    id: "resource-panels-index",
+    path: "/avo/resources/user_panels_demos?view_type=table&per_page=6",
+    viewport: { width: 1200, height: 900 },
+    settle: 800,
+    prepare: compose(closeSidebar, matBg, hideKbd),
+    selector: ".card.relative.w-full",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/resource-panels/index-view.png",
+    display: "full",
+    alt: "An Avo index table listing ID, User Email, and Name columns while panel-only fields stay off the index view.",
+    source: { file: "docs/4.0/resource-panels.md", prompt: "Users index table showing only root and main_panel fields with panel fields hidden" },
+  },
+
+  // tabs — TabsDemo show page matching the adjacent `tabs do` example: root id + User Email panel,
+  // tab switcher (User information, Teams, People, Spouses, Projects), and the active User
+  // information panel (first name, last name, Is active). clipFrom main panel through user-info
+  // panel so the tab bar sits between them (RULES 13/15e). Sidebar closed + mat bg (12/19a).
+  // `.tab-group` ships a dashed outer border in the product UI — hidden for docs (not the subject).
+  {
+    id: "tabs-show",
+    path: "/avo/resources/tabs_demos/2",
+    viewport: { width: 1100, height: 900 },
+    settle: 800,
+    prepare: compose(
+      closeSidebar,
+      matBg,
+      hideKbd,
+      injectCSS(
+        ".tab-group { border: none !important; outline: none !important; box-shadow: none !important; border-radius: 0 !important; width: 100% !important; margin-inline: 0 !important; padding: 0 !important; }",
+      ),
+    ),
+    clipFrom: ".panel[data-item-index=\"2\"]",
+    selector: ".panel[data-item-index=\"0\"]",
+    pad: { x: 10, y: 10 },
+    out: "docs/public/assets/img/4_0/tabs/show.png",
+    display: "full",
+    alt: "An Avo User show page with id and User Email in the main panel, a tab switcher listing User information, Teams, People, Spouses and Projects, and the User information panel showing first name, last name and the Is active boolean.",
+    source: {
+      file: "docs/4.0/tabs.md",
+      prompt:
+        "User show page with id and User Email in the main panel, tab switcher with User information Teams People Spouses and Projects tabs, and the User information panel showing first name last name and Is active",
+    },
+  },
+
+  // tabs — tab `description` tooltip on hover (User information → "Some information about this user").
+  // clipFrom the tippy box through the tablist — avoids a large top pad that clips the main panel border above.
+  {
+    id: "tabs-tab-description",
+    path: "/avo/resources/tabs_demos/2",
+    viewport: { width: 1100, height: 700 },
+    settle: 800,
+    prepare: compose(
+      closeSidebar,
+      matBg,
+      hideKbd,
+      injectCSS(
+        ".tab-group { border: none !important; outline: none !important; box-shadow: none !important; border-radius: 0 !important; width: 100% !important; margin-inline: 0 !important; padding: 0 !important; }",
+      ),
+      hover(".tabs__item[data-tabs-tab-name-param=\"User information\"]"),
+      wait(800),
+    ),
+    clipFrom: ".tippy-box",
+    selector: '[role="tablist"]',
+    pad: { x: 20, top: 0, bottom: 10 },
+    out: "docs/public/assets/img/4_0/tabs/tab-description.png",
+    display: "half",
+    alt: "The Avo tab switcher with the User information tab hovered, showing a tooltip with the description Some information about this user.",
+    source: {
+      file: "docs/4.0/tabs.md",
+      prompt: "Avo tab switcher with a tab label and its description tooltip visible on hover",
+    },
+  },
 ];
 
 // ---- GIF specs — animated demos; record-gif.mjs drives each spec's steps(page, snap) -------
 // Same idea as SPECS, for GIFs. Append a spec here when a shot must animate. Starts empty.
 export const GIF_SPECS = [
+  // money-currency-dropdown ("gif with showing the dropdown selector", placeholder money.md line 19,
+  // kind="gif") — the money field's currency selector on the product NEW form, animated: the closed
+  // state (amount input beside the currency picker), then the selector expanded to reveal all four
+  // currencies (EUR / USD / RON / PEN — matching the doc's `currencies: %w[EUR USD RON PEN]`, RULES
+  // 13), then the selection stepping down through each currency before settling. The native OS
+  // <select> popup renders OUTSIDE the page (not screenshot-able), so we expand the REAL element to
+  // size=N — a legitimate HTML rendering of the same element — so the options show inline as a
+  // visible list right beside the amount input, in the field's trigger context (RULES 15a). Per RULES
+  // 15z the field is wrapped in its OWN panel/card via a temp edit to the Product resource (`:price`
+  // re-scoped `only_on: %i[new edit]` inside a `panel do card do … end end`), so Avo renders a real
+  // content-sized card that HUGS just this field — true borders + rounded corners on all four sides,
+  // no neutralizing, no bare-mat fragment. A narrow 760px viewport (RULES 9b) keeps the card ~744px
+  // CSS so it displays ~1× and Avo STACKS the field below its "Price" label. Sidebar closed + mat bg
+  // (RULES 12/19a); hideKbd. Clip framed from the probed card box (closed x8 y384 w744 h98 → open
+  // h144 once expanded) + ~8px symmetric horizontal mat (card sits at x8, the page centres it) and
+  // ~10px vertical mat, sized to the OPEN (tallest) state so no frame edge slices the card. Temp
+  // edit reverted after capture.
+  {
+    id: "money-currency-dropdown",
+    path: "/avo/resources/products/new",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    clip: { x: 0, y: 374, width: 760, height: 164 },
+    width: 760,
+    delay: 22,
+    steps: async (page, snap) => {
+      await closeSidebar(page); // cookie + reload → content reflows full-width (RULES 12)
+      await matBg(page); // docs-mat bg + drop sidebar divider (RULES 19/19a)
+      await hideKbd(page);
+      await page.waitForTimeout(300);
+
+      const select = page.locator("#product_price_currency");
+      await select.scrollIntoViewIfNeeded();
+      await snap(7); // hold ~1.5s on the closed state — amount input + currency picker
+
+      // Expand the real <select> inline so all four currencies show as a visible list (RULES 15a:
+      // shown in the field's context). The native OS popup can't be captured, so we size it open.
+      await openSelect("#product_price_currency")(page);
+      await page.waitForTimeout(300);
+      await snap(7); // hold ~1.5s on the open list — EUR / USD / RON / PEN all visible
+
+      // Walk the selection down each currency so the highlighted option moves through the list.
+      for (const code of ["EUR", "USD", "RON", "PEN"]) {
+        await select.selectOption(code);
+        await page.waitForTimeout(180);
+        await snap(5); // pause ~1.1s on each highlighted currency
+      }
+
+      await select.selectOption("RON"); // settle on a non-default pick
+      await page.waitForTimeout(180);
+      await snap(8); // hold longer at the end on the chosen currency before the loop repeats
+    },
+    out: "docs/public/assets/img/4_0/fields/money/currency-dropdown.gif",
+    alt: "An Avo create-form card with a money field: an amount input beside a currency selector that expands to reveal all four choices — EUR, USD, RON and PEN — with the selection stepping through each one.",
+    source: { file: "docs/4.0/fields/money.md", prompt: "gif with showing the dropdown selector" },
+  },
+
   // summarizable — the REAL Projects index table stays visible as context (RULES 15a/10/4), with
   // the summary-distribution popover opened OVER it from the Status column header's chart icon, then
   // each pie segment hovered so its per-segment tooltip ("done: 5", "finalized: 5", …) shows in turn.
@@ -710,6 +1722,237 @@ export const GIF_SPECS = [
     },
     out: "docs/public/assets/img/4_0/field-options/summarizable.gif",
   },
+
+  // checkbox_list "a gif where we select multiple options" (placeholder checkbox_list.md line 28) —
+  // the checkbox_list field on the CheckboxListDemo edit form (matches the adjacent code:
+  // team_member_ids + inline_search + avatar/title/description options). Animated: start with
+  // none checked, then click three options one-by-one so the reader sees multi-select in action.
+  // Per RULES 15z the field sits in its OWN panel/card (CheckboxListDemo resource); options are
+  // capped at 6 users so the list fits without scrolling. Sidebar closed + mat bg (RULES 12/19a);
+  // hideKbd. Clip = probed card box (x9 y192 w743 h458) + ~10px symmetric mat (x0 y182 w760 h478).
+  {
+    id: "checkbox-list-select",
+    path: "/avo/resources/checkbox_list_demos/1/edit",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    clip: { x: 0, y: 182, width: 760, height: 478 },
+    width: 760,
+    delay: 20,
+    steps: async (page, snap) => {
+      await closeSidebar(page);
+      await matBg(page);
+      await hideKbd(page);
+      await page.waitForTimeout(300);
+
+      await page.locator('[data-field-type="checkbox_list"]').scrollIntoViewIfNeeded();
+      await snap(6); // ~1.2s — empty selection, search + list visible
+
+      const boxes = page.locator('.checkbox-list__row input[type="checkbox"]');
+      for (let i = 0; i < 3; i++) {
+        await boxes.nth(i).click();
+        await page.waitForTimeout(220);
+        await snap(5); // pause on each newly checked row
+      }
+
+      await snap(8); // hold longer on the three-selected end state
+    },
+    out: "docs/public/assets/img/4_0/fields/checkbox_list/select.gif",
+    alt: "An Avo edit-form card containing a checkbox_list field: an animation that checks three team members one after another from an initially empty selection.",
+    source: { file: "docs/4.0/fields/checkbox_list.md", prompt: "a gif where we select multiple options" },
+  },
+
+  // files view_type — toggle grid ↔ list on the Project show-view files card. Uses exactly TWO seed
+  // images (iphone / macbook). Clip spans grid→list reflow (card y shifts on toggle) with mat above
+  // grid and below list, staying clear of the Meta field.
+  {
+    id: "files-view-type",
+    path: "/avo/resources/projects/1",
+    viewport: { width: 1100, height: 1000 },
+    settle: 900,
+    clip: { x: 14, y: 517, width: 1072, height: 269 },
+    width: 1200,
+    delay: 20,
+    steps: async (page, snap) => {
+      await closeSidebar(page);
+      await matBg(page);
+      await hideKbd(page);
+      await page.waitForTimeout(300);
+      await page.evaluate(() => {
+        document.querySelector(".card:has([data-field-id='files'])")?.scrollIntoView({ block: "start" });
+      });
+      await page.waitForTimeout(300);
+      // Toggling grid↔list changes page height; the browser auto-scrolls (~39px) and the fixed
+      // clip loses the card. Pin scrollY after the initial framing and restore before every snap.
+      const scrollY = await page.evaluate(() => window.scrollY);
+      const lockScroll = async () => {
+        await page.evaluate((y) => window.scrollTo(0, y), scrollY);
+        await page.waitForTimeout(80);
+      };
+
+      await lockScroll();
+      await snap(6); // grid view (default)
+
+      await page.locator('a[data-control="view-type-toggle-list"]').click();
+      await page.waitForTimeout(500);
+      await lockScroll();
+      await snap(10); // list view — two rows + full card border
+
+      await page.locator('a[data-control="view-type-toggle-grid"]').click();
+      await page.waitForTimeout(400);
+      await lockScroll();
+      await snap(6); // back to grid
+    },
+    out: "docs/public/assets/img/4_0/fields/files/view-type.gif",
+    alt: "An Avo show-view card for a files field: an animation toggling between grid view (thumbnail tiles) and list view (file rows) using the view-type switcher.",
+    source: { file: "docs/4.0/fields/files.md", prompt: "gif to see the difference between grid and list view types" },
+  },
+
+  // markdown — Marksmith Write tab with prefilled example markdown, then Preview tab showing rendered
+  // HTML. Temp edit: project.rb wraps :description (name "Body") in its own panel/card with a
+  // `default:` of example markdown on the New form.
+  {
+    id: "markdown-field",
+    path: "/avo/resources/projects/new",
+    viewport: { width: 1000, height: 1400 },
+    settle: 900,
+    clip: { x: 6, y: 892, width: 988, height: 422 },
+    width: 1000,
+    delay: 20,
+    steps: async (page, snap) => {
+      await closeSidebar(page);
+      await matBg(page);
+      await hideKbd(page);
+      await page.waitForTimeout(300);
+      await page.locator(".card:has(.marksmith)").scrollIntoViewIfNeeded();
+      await snap(6); // Write tab with example markdown
+
+      await page.locator(".marksmith-preview-tab").click();
+      await page.waitForTimeout(700);
+      await snap(10); // Preview rendered
+
+      await page.locator(".marksmith-write-tab").click();
+      await page.waitForTimeout(300);
+      await snap(5);
+    },
+    out: "docs/public/assets/img/4_0/fields/markdown/markdown-field.gif",
+    alt: "An Avo New (create) form card showing the Markdown field powered by Marksmith: an animation switching from the Write tab (example markdown with heading, list, blockquote, link and code block) to the Preview tab showing the rendered HTML.",
+    source: { file: "docs/4.0/fields/markdown.md", prompt: "create a gif that will display how markdown is working with some exemples" },
+  },
+
+  // preview — hover the preview icon on the Teams index to reveal the preview popover (RULES 15a).
+  // Hide the dynamic-filters bar (Add filter / Reset filters). Clip includes the FULL index search
+  // + Filters/view-toggle row (y≈187) — the old y=205 top sliced those controls in half. Sized
+  // through pagination bottom + both hover popovers (row 3 y≈215, row 4 y≈262).
+  {
+    id: "preview-field",
+    path: "/avo/resources/teams?per_page=6",
+    viewport: { width: 900, height: 950 },
+    settle: 800,
+    clip: { x: 0, y: 167, width: 900, height: 438 },
+    width: 900,
+    delay: 20,
+    steps: async (page, snap) => {
+      await closeSidebar(page);
+      await matBg(page);
+      await hideKbd(page);
+      await injectCSS(".main-filters-panel { display: none !important; }")(page);
+      await page.waitForTimeout(300);
+      await snap(6);
+
+      const trigger = page.locator('table tbody tr:nth-child(3) [data-field-type="preview"] a');
+      await trigger.hover();
+      await page.waitForTimeout(400);
+      await trigger.focus();
+      await page.waitForTimeout(900);
+      await snap(12);
+
+      const trigger2 = page.locator('table tbody tr:nth-child(4) [data-field-type="preview"] a');
+      await trigger2.hover();
+      await trigger2.focus();
+      await page.waitForTimeout(900);
+      await snap(8);
+    },
+    out: "docs/public/assets/img/4_0/fields/preview/index.gif",
+    alt: "An Avo Teams index table where hovering the preview icon on a row opens a popup showing that record's preview fields.",
+    source: { file: "docs/4.0/fields/preview.md", prompt: "gif with the the preview" },
+  },
+
+  // radio — click through the three role options on the RadioDemo edit form (RULES 13: labels match doc).
+  // Clip frames the WHOLE card (probed x8 y192 w744 h142) + ~10px symmetric mat on all sides.
+  {
+    id: "radio-select",
+    path: "/avo/resources/radio_demos/1/edit",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    clip: { x: 0, y: 182, width: 760, height: 162 },
+    width: 760,
+    delay: 20,
+    steps: async (page, snap) => {
+      await closeSidebar(page);
+      await matBg(page);
+      await hideKbd(page);
+      await page.waitForTimeout(300);
+      await snap(6);
+
+      for (const label of ["Manager", "Writer", "Administrator"]) {
+        await page.locator(`[data-field-type="radio"] label:has-text("${label}")`).click();
+        await page.waitForTimeout(250);
+        await snap(6);
+      }
+      await snap(8);
+    },
+    out: "docs/public/assets/img/4_0/fields/radio/form.gif",
+    alt: "An Avo edit-form card with a radio field labelled User role, animating through Administrator, Manager and Writer options.",
+    source: { file: "docs/4.0/fields/radio.md", prompt: "GIF with select options" },
+  },
+
+  // tags — TagsDemo NEW form → pick one & two from suggestions → Save → Show with tags.
+  // Fresh framing (2026-06-23): probed `.panel-spacer` on create (x8 y104 w744 h477) so the
+  // clip includes the page header (title + Save) AND the full form card — dropdown opens over
+  // Category/Notes/Reference inside the card. Spacer fields also render on Show so the card keeps
+  // a similar height after save. Fixed clip on every frame: x0 y96 w760 h493 (+8px mat).
+  {
+    id: "tags-create-save",
+    path: "/avo/resources/tags_demos/new",
+    viewport: { width: 760, height: 900 },
+    settle: 800,
+    clip: { x: 0, y: 96, width: 760, height: 493 },
+    width: 760,
+    delay: 24,
+    steps: async (page, snap) => {
+      await closeSidebar(page);
+      await matBg(page);
+      await hideKbd(page);
+      await page.waitForTimeout(400);
+
+      const tagsField = page.locator('[data-field-id="tags"]');
+      const tagsInput = tagsField.locator(".tagify__input");
+
+      await tagsField.scrollIntoViewIfNeeded();
+      await snap(7); // create form — header + empty tags card
+
+      await tagsInput.click();
+      await page.waitForTimeout(500);
+      await snap(10); // suggestions dropdown open
+
+      await page.locator('.tagify__dropdown__item[label="one"]').click();
+      await page.waitForTimeout(400);
+      await snap(7); // first suggestion picked
+
+      await page.locator('.tagify__dropdown__item[label="two"]').click();
+      await page.waitForTimeout(400);
+      await snap(7); // both tags selected
+
+      await page.locator('[data-resource-edit-target="saveButton"]').click();
+      await page.waitForURL(/\/avo\/resources\/tags_demos\/\d+(?!\/edit)/, { timeout: 15000 });
+      await page.waitForLoadState("networkidle");
+      await page.waitForTimeout(700);
+      await snap(12); // saved tags on Show
+    },
+    out: "docs/public/assets/img/4_0/fields/tags/create-save.gif",
+    alt: "An Avo create form with a tags field: the animation opens the suggestions dropdown, picks one and two, saves the record, and shows the tags on the Show view.",
+    source: { file: "docs/4.0/fields/tags.md", prompt: "gif on the create form adding tags from suggestions and saving to see them on show" },
+  },
 ];
 
 // Example GIF spec (NOT in GIF_SPECS) — "filters panel stays open while results update".
@@ -736,3 +1979,56 @@ export const GIF_EXAMPLE = {
   },
   out: "docs/public/assets/img/4_0/filters/keep-filters-panel-open.gif",
 };
+
+// ---- NATIVE specs — headed + macOS screencapture; for OS-drawn widgets the headless page
+// screenshot can't see (native <select> dropdown popups). Driven by record-native.mjs. macOS-only.
+export const NATIVE_SPECS = [
+  // money currency picker — the REAL native <select> dropdown on the product new form. The popup
+  // is OS-drawn (outside the page surface), so we capture it via screencapture: open it, then
+  // arrow the highlight down through EUR → USD → RON → PEN. clip is computed from the field's live
+  // box plus a downward allowance for where the popup renders (its geometry isn't in the DOM).
+  {
+    id: "money-currency-native",
+    path: "/avo/resources/products/new",
+    viewport: { width: 1280, height: 900 },
+    settle: 700,
+    width: 900,
+    delay: 24,
+    prepare: async (page) => {
+      await closeSidebar(page); // content reflows full-width
+      await matBg(page); // docs mat background
+      await hideKbd(page);
+    },
+    // field row (label + amount + currency select) for context + ~150px below for the popup.
+    clip: async (page) => {
+      const f = await page.locator('[data-field-id="price"]').boundingBox();
+      return { x: Math.max(0, f.x - 10), y: Math.max(0, f.y - 10), width: f.width + 20, height: f.height + 150 };
+    },
+    steps: async (page, snap, os) => {
+      const select = page.locator("#product_price_currency");
+      await select.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(200);
+      await snap(6); // closed: amount input + "USD" picker with chevron (also caches the rect)
+
+      // A native <select> popup only opens on a genuine OS click (Chromium ignores synthetic
+      // Playwright/CDP events for this), so click it via cliclick. Once open it's modal — no
+      // page.evaluate beyond this point (the rect is already cached) and keys go via the OS too.
+      await os.click("#product_price_currency");
+      await page.waitForTimeout(550);
+      await snap(7); // open: EUR / USD / RON / PEN as the real macOS popup
+
+      // walk the highlight down each currency (OS keystrokes reach the open native popup)
+      for (let k = 0; k < 3; k++) {
+        await os.key("arrow-down");
+        await page.waitForTimeout(280);
+        await snap(5);
+      }
+      await os.key("return"); // commit the pick, popup closes
+      await page.waitForTimeout(300);
+      await snap(6); // closed again, showing the chosen currency
+    },
+    out: "docs/public/assets/img/4_0/fields/money/currency-dropdown.gif",
+    alt: "The money field's native currency dropdown open on the product form, stepping through EUR, USD, RON and PEN.",
+    source: { file: "docs/4.0/fields/money.md", prompt: "gif with showing the dropdown selector" },
+  },
+];
