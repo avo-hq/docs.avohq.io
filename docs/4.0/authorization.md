@@ -117,8 +117,6 @@ Controls whether the user can see the actions button on the <Index /> page.
 
 Controls whether the user can see the [records reordering](./records-reordering) buttons on the <Index /> page.
 
-<Image src="/assets/img/authorization/actions_button.jpg" width="1220" height="632" alt="Actions button" />
-
 </Option>
 
 <Option name="`search?`">
@@ -159,14 +157,14 @@ In the `Post` `has_many` `Comments` example, when you want to authorize `show_co
 
 Controls whether the `Attach comment` button is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
-<Image src="/assets/img/authorization/attach.jpg" width="1224" height="692" alt="" />
+<Image src="/assets/img/4_0/authorization/attach.png" dark-src="/assets/img/4_0/authorization/attach-dark.png" width="984" height="392" alt="" />
 
 </Option>
 <Option name="`detach_{association}?`">
 
 Controls whether the **detach button is available** on the associated record row on the <Index /> view. The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
-<Image src="/assets/img/authorization/detach.jpg" width="1224" height="692" alt="" />
+<Image src="/assets/img/4_0/authorization/detach.png" dark-src="/assets/img/4_0/authorization/detach-dark.png" width="984" height="392" alt="" />
 
 </Option>
 <Option name="`view_{association}?`">
@@ -182,7 +180,7 @@ Controls whether the **view button is visible** on the associated record row on 
 This **does not** control whether the user has access to that record. You control that using the Policy of that record (`PostPolicy.show?` in our example).
 :::
 
-<Image src="/assets/img/authorization/show.jpg" width="1224" height="692" alt="" />
+<Image src="/assets/img/4_0/authorization/show.png" dark-src="/assets/img/4_0/authorization/show-dark.png" width="984" height="392" alt="" />
 
 :::info Difference between `view_{association}?` and `show_{association}?`
 Let's take a `Post` `has_many` `Comment`s.
@@ -201,28 +199,28 @@ Controls whether the **edit button is visible** on the associated record row on 
 This **does not** control whether the user has access to that record's edit page. You control that using the Policy of that record (`PostPolicy.show?` in our example).
 :::
 
-<Image src="/assets/img/authorization/edit.jpg" width="1224" height="692" alt="" />
+<Image src="/assets/img/4_0/authorization/edit.png" dark-src="/assets/img/4_0/authorization/edit-dark.png" width="984" height="392" alt="" />
 </Option>
 
 <Option name="`create_{association}?`">
 
 Controls whether the `Create comment` button is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
-<Image src="/assets/img/authorization/create.jpg" width="1224" height="692" alt="" />
+<Image src="/assets/img/4_0/authorization/create.png" dark-src="/assets/img/4_0/authorization/create-dark.png" width="984" height="392" alt="" />
 
 </Option>
 <Option name="`destroy_{association}?`">
 
 Controls whether the **delete button is visible** on the associated record row on the <Index /> page.The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
-<Image src="/assets/img/authorization/destroy.jpg" width="1224" height="692" alt="" />
+<Image src="/assets/img/4_0/authorization/destroy.png" dark-src="/assets/img/4_0/authorization/destroy-dark.png" width="984" height="392" alt="" />
 
 </Option>
 <Option name="`act_on_{association}?`">
 
 Controls whether the `Actions` dropdown is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
-<Image src="/assets/img/authorization/actions.jpg" width="1224" height="692" alt="" />
+<Image src="/assets/img/4_0/authorization/actions.png" dark-src="/assets/img/4_0/authorization/actions-dark.png" width="984" height="392" alt="" />
 
 </Option>
 <Option name="`reorder_{association}?`">
@@ -336,8 +334,6 @@ Both the `record` and the `user` will be available for you to access.
 :::info Actions inherit attachment authorization
 These attachment authorization methods also apply to file fields in [actions](./actions/overview) that run on the resource using the same policy. For example, if you define `upload_file?` in `PostPolicy` and have an action on `Avo::Resources::Post` with `field :file, as: :file`, the same `upload_file?` policy method will be used to authorize the file upload in that action.
 :::
-
-<Image src="/assets/img/authorization/file_actions.png" width="472" height="93" alt="" />
 
 <Option name="`upload_{FIELD_ID}?`">
 
