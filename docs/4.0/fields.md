@@ -137,8 +137,6 @@ In the following example, the `is_available` field will render the label as *Is 
 field :is_available, as: :boolean
 ```
 
-<Image src="/assets/img/fields-reference/naming-convention.jpg" width="490" height="78" alt="Field naming convention" />
-
 :::info
 If having the fields stacked one on top of another is not the right layout, try the [resource-sidebar](./resource-sidebar).
 :::
@@ -177,6 +175,8 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
+
+<Image src="/assets/img/4_0/fields/complex-example.png" dark-src="/assets/img/4_0/fields/complex-example-dark.png" width="980" height="372" alt="User resource Show view with id, first and last name, email, active, cv and is_admin fields" />
 
 ## Field Types
 
