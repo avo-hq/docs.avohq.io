@@ -2,6 +2,7 @@
 feedbackId: 831
 demoVideo: https://youtu.be/VMvG-j1Vxio
 license: pro
+outline: [2, 3]
 ---
 
 # Menu editor
@@ -16,7 +17,7 @@ Avo.configure do |config|
   config.main_menu = -> {
     section "Resources", icon: "tabler/outline/building-store", collapsable: false do
       group "Company", collapsable: true do
-        resource :projects, path: "/admin/resources/projects" do
+        resource :projects do
           link "First project", active: :inclusive, path: "/admin/resources/projects/1"
           link "Second project", active: :inclusive, path: "/admin/resources/projects/2"
         end
@@ -40,7 +41,7 @@ For now, Avo supports editing only two menus, `main_menu` and `profile_menu`. Ho
 
 ## Menu item types
 
-A few menu item types are supported: `link_to`, `section`, `group`, `resource`, `dashboard`, `page`, and `subitems`. There are a few helpers too, like `all_resources`, `all_dashboards`, `all_pages`, and `all_tools`.
+A few menu item types are supported: `link_to`, `section`, `group`, `resource`, `dashboard`, `page`, and `action`. There are a few helpers too, like `all_resources`, `all_dashboards`, `all_pages`, and `all_tools`.
 
 The recommended hierarchy is `section → group → resource → subitem`. Sections are the top-level containers rendered with an icon header in the sidebar.
 <!-- here add the short details about the rest of the cases-->
@@ -127,12 +128,32 @@ end
 
 ### Subitems
 
-You can add sub-links beneath a resource by passing a block. These appear as child items under the resource link in the sidebar and are useful for linking to filtered views, specific records, or nested paths.
+You can nest items beneath a `resource` by passing a block. They appear as child items under the resource link in the sidebar.
+
+Sub-items can be any menu item type:
+
+- [`link_to`](#menu-item-types)
+- [`resource`](./resources.html)
+- [`dashboard`](./dashboards.html)
+- [`page`](./forms-and-pages/pages.html)
+- [`board`](./kanban-boards.html)
+- [`action`](./actions/overview.html)
+
+A nested `resource`, `dashboard`, `page`, `board`, or `action` resolves its own URL automatically, so only `link_to` needs an explicit `path:`. A nested `action` also inherits its enclosing `resource`, so you don't repeat it.
 
 ```ruby
-resource :projects, path: "/admin/resources/projects" do
-  link "First project", active: :inclusive, path: "/admin/resources/projects/1"
-  link "Second project", active: :inclusive, path: "/admin/resources/projects/2"
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    resource :projects do
+      link_to "First project", path: "/admin/resources/projects/1"
+      resource :tasks                 # nested resource
+      dashboard :sales                # nested dashboard
+      page "Avo::Pages::Settings"     # nested page
+      board 1                         # nested kanban board
+      action Avo::Actions::ExportData # nested action (inherits :projects)
+    end
+  }
 end
 ```
 
@@ -140,26 +161,7 @@ The `active` option controls when the sub-link is highlighted as active:
 - `:inclusive` — the link is active when the current path starts with the given `path` (useful for nested routes)
 - `:exclusive` — the link is active only on an exact path match (default)
 
-</Option>
-
-<Option name="`subitems`">
-
-`subitems` is an optional wrapper you can use inside a `resource` block to make the sub-links more explicit and readable. It is functionally equivalent to writing links directly in the block. Note that `subitems` and the `link` items within it do not support the `icon` option.
-
-```ruby
-# These two are equivalent
-resource :projects do
-  link "New project", path: "/admin/resources/projects/new"
-  link "All projects", path: "/admin/resources/projects"
-end
-
-resource :projects do
-  subitems do
-    link "New project", path: "/admin/resources/projects/new"
-    link "All projects", path: "/admin/resources/projects"
-  end
-end
-```
+Sub-items don't render an `icon`. For readability you can optionally wrap them in a `subitems` block — it behaves identically to listing them directly.
 
 </Option>
 
@@ -208,6 +210,74 @@ page "Avo::Pages::Settings", icon: "tabler/outline/adjustments", hotkey: "g s"
 :::info
 Pages are provided by the [`avo-forms`](./forms-and-pages/overview.html) addon. The `page` and `all_pages` helpers are only available when it is installed.
 :::
+
+</Option>
+
+<Option name="`action`">
+
+`action` adds a menu item that triggers one of your [actions](./actions/overview.html). Clicking it opens the action's modal, just like the per-resource **Actions** dropdown.
+
+```ruby
+# app/avo/actions/export_data.rb
+class Avo::Actions::ExportData < Avo::BaseAction
+  self.name = "Export data"
+  self.standalone = true # required to add it to the menu
+
+  def handle(fields:, **)
+    # ...generate and return the export
+  end
+end
+```
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    action Avo::Actions::ExportData, resource: :projects
+  }
+end
+```
+
+Because the menu has no selected record, only [**standalone** actions](./actions/generator.html) (`self.standalone = true`) can be added — actions that depend on selected records would run against nothing and are skipped (with a log warning).
+
+#### `resource`
+
+An action always lives under a resource's URL, so you must tell it which one. At the top level `resource:` is **required**; nested inside a `resource` block it is **inherited** from the enclosing resource (an explicit `resource:` still overrides it).
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    # Top level — resource: required
+    action Avo::Actions::ExportData, resource: :projects
+
+    # Nested — inherits :projects automatically
+    resource :projects do
+      action Avo::Actions::ExportData
+    end
+  }
+end
+```
+
+The label defaults to the action's `self.name`. Like other menu items, `action` accepts the `label`, `icon`, `data`, and `visible` options.
+
+```ruby
+# app/avo/actions/export_data.rb
+class Avo::Actions::ExportData < Avo::BaseAction
+  self.name = "Export data" # used as the menu label unless you override it
+  self.standalone = true
+end
+```
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    # `label` overrides "Export data"; `icon` is shown next to it
+    action Avo::Actions::ExportData, resource: :projects, label: "Export", icon: "tabler/outline/download"
+  }
+end
+```
 
 </Option>
 
