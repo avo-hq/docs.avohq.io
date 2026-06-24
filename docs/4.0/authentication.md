@@ -181,7 +181,7 @@ You can do that check yourself using the `Avo::Current.user_is_developer?`.
 Avo uses this role to display long backtraces on non-validation errors.
 Ex: on record save, you might call an API which by some reason errors out. Instead of just getting a generic "Something went wrong" error, the developer user will see the error message and backtrace
 
-<Image src="/assets/img/3_0/authentication/backtrace.png" alt="Backtrace alert" width="1602" height="780" />
+<Image src="/assets/img/4_0/authentication/backtrace.png" dark-src="/assets/img/4_0/authentication/backtrace-dark.png" alt="Backtrace alert" width="1060" height="484" />
 
 </Option>
 
