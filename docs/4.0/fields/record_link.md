@@ -44,7 +44,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/fields/record_link/record-link.png" width="876" height="160" alt="Record link field" />
+<Image src="/assets/img/4_0/fields/record_link/show.png" dark-src="/assets/img/4_0/fields/record_link/show-dark.png" width="1520" height="212" alt="An Avo show-view card containing a record_link field that displays a clickable link to the related Post record." prompt="record link field pointing to a related record" />
 
 ## Options
 

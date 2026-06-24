@@ -7,8 +7,6 @@ default_picker_format: "Y-m-d H:i:S"
 
 # DateTime
 
-<Image src="/assets/img/fields/date-time.jpg" width="712" height="416" alt="DateTime field" />
-
 The `DateTime` field is similar to the Date field with two new attributes. `time_24hr` tells flatpickr to use 24 hours format and `timezone` to tell it in what timezone to display the time. By default, it uses your browser's timezone.
 
 ```ruby
@@ -20,6 +18,8 @@ field :joined_at,
   time_24hr: true,
   timezone: "PST"
 ```
+
+<Image src="/assets/img/4_0/fields/date-time.png" dark-src="/assets/img/4_0/fields/date-time-dark.png" width="536" height="390" alt="DateTime field" />
 
 ## Options
 

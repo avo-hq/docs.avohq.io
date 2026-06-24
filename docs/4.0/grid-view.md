@@ -2,7 +2,7 @@
 
 Some resources are best displayed in a grid view. We can do that with Avo using a `cover_url`, a `title`, and a `body`.
 
-<Image src="/assets/img/grid-view.jpg" width="1312" height="1096" alt="Avo grid view" />
+<Image src="/assets/img/4_0/grid-view/grid-view.png" dark-src="/assets/img/4_0/grid-view/grid-view-dark.png" width="2808" height="2030" alt="Avo grid view" />
 
 ## Enable grid view
 
@@ -24,6 +24,8 @@ class Avo::Resources::Post < Avo::BaseResource
   }
 end
 ```
+
+<Image src="/assets/img/4_0/grid-view/view-switcher.png" dark-src="/assets/img/4_0/grid-view/view-switcher-dark.png" width="2310" height="108" alt="Avo view switcher" />
 
 ## Options
 
@@ -86,8 +88,6 @@ See [below](#grid-item-badge) a list of options you can configure for the badge.
 
 </Option>
 
-<Image src="/assets/img/view-switcher.png" width="822" height="153" alt="Avo view switcher" />
-
 ## Make grid the default view
 
 To make the grid the default way of viewing a resource **Index**, we have to use the `default_view_type` class attribute.
@@ -120,14 +120,14 @@ class Avo::Resources::Post < Avo::BaseResource
         title: {
           index: {
             wrapper: {
-              classes: "bg-blue-50 rounded-md p-2"
+              classes: "bg-blue-50 dark:bg-blue-900 rounded-md p-2"
             }
           }
         },
         body: {
           index: {
             wrapper: {
-              classes: "bg-gray-50 rounded-md p-1"
+              classes: "bg-gray-50 dark:bg-gray-800 rounded-md p-1"
             }
           }
         },
@@ -144,11 +144,11 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/grid-html-option.png" width="1014" height="637" alt="Grid html option" />
+<Image src="/assets/img/4_0/grid-view/grid-html-option.png" dark-src="/assets/img/4_0/grid-view/grid-html-option-dark.png" width="2142" height="656" alt="Grid html option" />
 
 ## Grid Item Badge
 
-<Image src="/assets/img/4_0/grid-view/grid-badge.png" size="2080 x910" alt="Avo Grid View Badge Element" />
+<Image src="/assets/img/4_0/grid-view/grid-badge.png" dark-src="/assets/img/4_0/grid-view/grid-badge-dark.png" width="2142" height="608" alt="Avo Grid View Badge Element" />
 
 You can display and customize a badge on top of your grid items. Badges are useful for showing status indicators, labels, or other visual cues that help users quickly identify important information about each item.
 
@@ -190,7 +190,7 @@ self.grid_view = {
 }
 ```
 
-<Image src="/assets/img/4_0/grid-view/badge-label.png" size="1022 x686" alt="Avo Grid View Badge Label" />
+<Image src="/assets/img/4_0/grid-view/badge-label.png" dark-src="/assets/img/4_0/grid-view/badge-label-dark.png" width="1074" height="608" alt="Avo Grid View Badge Label" />
 
 </Option>
 
@@ -261,7 +261,7 @@ self.grid_view = {
 }
 ```
 
-<Image src="/assets/img/4_0/grid-view/badge-title.png" size="1088x 740" alt="Avo Grid View Badge Title" />
+<Image src="/assets/img/4_0/grid-view/badge-title.png" dark-src="/assets/img/4_0/grid-view/badge-title-dark.png" width="1074" height="608" alt="Avo Grid View Badge Title" />
 
 </Option>
 
