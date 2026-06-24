@@ -4,19 +4,21 @@ license: community
 
 # Status
 
-Displays the status of a record in three ways; `loading`, `failed`, `success`, or `neutral`.
+The `Status` field renders a colored indicator on index and show views — `loading`, `failed`, `success`, or `neutral`.
 
-You may select the `loading`, `failed`, and `success` state values, and everything else will fall back to `neutral`.
+Map your values with [`failed_when`](#failed_when), [`loading_when`](#loading_when), and [`success_when`](#success_when). Anything not listed in those arrays falls back to `neutral`.
 
 ```ruby
-field :progress,
+field :status,
   as: :status,
-  failed_when: [:closed, :rejected, :failed],
-  loading_when: [:loading, :running, :waiting, "in progress"],
-  success_when: [:done],
+  failed_when: [:failed],
+  loading_when: [:running, :pending],
+  success_when: [:done, :success]
 ```
 
-<Image src="/assets/img/fields/status.png" width="276" height="452" alt="Status field" />
+Each row in the table uses one of these values. `archived` is not listed in any array, so it falls back to `neutral`.
+
+<Image src="/assets/img/4_0/fields/status/index.png" dark-src="/assets/img/4_0/fields/status/index-dark.png" width="1776" height="782" alt="An Avo index table with ID, Name, Status and Stage columns where Status rows show loading, pending, failed, success and neutral indicators and Stage rows show colored badges." prompt="index table with ID, Name and Status columns showing loading, failed, success and neutral status states" />
 
 ## Options
 

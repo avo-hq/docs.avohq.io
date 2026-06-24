@@ -1,0 +1,5 @@
+# Capture scratch — regenerates from specs.mjs + the scripts. Never committed.
+out/
+
+# Installed Playwright/ImageMagick deps.
+node_modules/

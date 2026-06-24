@@ -2,7 +2,7 @@
 
 The table view is the default way to display resources in Avo. It provides a powerful, tabular layout that supports searching, sorting, filtering, and pagination out of the box.
 
-<Image src="/assets/img/table-view.png" width="1919" height="1122" alt="Table view" />
+<Image src="/assets/img/4_0/table-view/table-view.png" dark-src="/assets/img/4_0/table-view/table-view-dark.png" width="2808" height="1208" alt="Table view" />
 
 ## Row controls configuration
 
@@ -124,6 +124,8 @@ class Avo::Resources::Message < Avo::BaseResource
   }
 end
 ```
+
+<Image src="/assets/img/4_0/table-view/row-options.png" dark-src="/assets/img/4_0/table-view/row-options-dark.png" width="1776" height="758" alt="An Avo index table with ID, Name and Role columns where rows with role agent are highlighted with a light blue background via table_view row_options, while customer rows use the default background." prompt="index table with agent rows highlighted using row_options class bg-blue-50" />
 
 The same configuration applies to both the main index and any `has_many` association table that lists this resource.
 
