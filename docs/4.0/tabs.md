@@ -35,13 +35,13 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/tabs-and-panels/tabs.png" width="1024" height="640" alt="Avo tabs" />
+<Image src="/assets/img/4_0/tabs/show.png" dark-src="/assets/img/4_0/tabs/show-dark.png" width="2144" height="780" alt="An Avo User show page with id and User Email in the main panel, a tab switcher listing User information, Teams, People, Spouses and Projects, and the User information panel showing first name, last name and the Is active boolean." prompt="User show page with id and User Email in the main panel, tab switcher with User information Teams People Spouses and Projects tabs, and the User information panel showing first name last name and Is active" />
 
 To use tabs, you need to open a `tabs` group block. Next, you add your `tab` block where you add fields and panels like you're used to on resource root. Most fields like `text`, `number`, `gravatar`, `date`, etc. need to be placed in a `panel`. However, the `has_one`, `has_many`, and `has_and_belongs_to_many` have their own panels, and they don't require a `panel` or a `tab`.
 
 The tab `title` is mandatory and is what will be displayed on the tab switcher. The tab `description` is what will be displayed in the tooltip on hover.
 
-<Image src="/assets/img/tabs-and-panels/tab-name-description.png" width="640" height="211" alt="Avo tab name and description" />
+<Image src="/assets/img/4_0/tabs/tab-description.png" dark-src="/assets/img/4_0/tabs/tab-description-dark.png" width="1100" height="84" alt="The Avo tab switcher with the User information tab hovered, showing a tooltip with the description Some information about this user." prompt="Avo tab switcher with a tab label and its description tooltip visible on hover" />
 
 ## Tabs on Show view
 

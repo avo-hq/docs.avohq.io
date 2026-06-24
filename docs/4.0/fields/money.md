@@ -16,21 +16,15 @@ You can explore the implementation of the money field in [avodemo](https://main.
 
 ### Example on new
 
-<Image src="/assets/img/money-field.png" width="1005" height="59" alt="" />
+<Image src="/assets/img/4_0/fields/money/form.png" dark-src="/assets/img/4_0/fields/money/form-dark.png" width="1520" height="236" alt="An Avo create-form card containing a money field: an amount input showing 0.00 beside a currency selector set to USD." prompt="on create page" />
 
-<Image src="/assets/img/money-field2.png" width="1005" height="123" alt="" />
+### Example on show
 
-### Example on show with currencies USD
-
-<Image src="/assets/img/money-field-show.png" width="689" height="54" alt="" />
-
-### Example on show with currencies RON
-
-<Image src="/assets/img/money-field-show-lei.png" width="689" height="55" alt="" />
+<Image src="/assets/img/4_0/fields/money/show-inline.png" dark-src="/assets/img/4_0/fields/money/show-inline-dark.png" width="1776" height="254" alt="An Avo show-view card using the standard description-list layout: Price RON showing 1,499.00 Lei and Price USD showing $199.00 on separate rows with label left and value right." prompt="show page with Price RON and Price USD on separate lines in the same card" />
 
 ### Example on index
 
-<Image src="/assets/img/money-field-index.png" width="208" height="299" alt="" />
+<Image src="/assets/img/4_0/fields/money/index.png" dark-src="/assets/img/4_0/fields/money/index-dark.png" width="1776" height="570" alt="An Avo index table with three columns — ID, Title and Price — where the Price column shows each product's money field formatted as a currency value such as $199.00." prompt="index table with ID, Title and Price columns" />
 
 ## Installation
 

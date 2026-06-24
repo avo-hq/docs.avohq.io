@@ -6,7 +6,7 @@ license: community
 
 The `Preview` field adds a tiny icon to each row on the <Index /> view that, when hovered, it will display a preview popup with more information regarding that record.
 
-<Image src="/assets/img/fields/preview/preview.gif" width="1200" height="750" alt="" />
+<Image src="/assets/img/4_0/fields/preview/index.gif" dark-src="/assets/img/4_0/fields/preview/index-dark.gif" width="900" height="438" alt="An Avo Teams index table where hovering the preview icon on a row opens a popup showing that record's preview fields." prompt="gif with the the preview" />
 
 ```ruby
 field :preview, as: :preview

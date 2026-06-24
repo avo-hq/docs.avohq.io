@@ -11,7 +11,7 @@ Adding a list of things to a record is something we need to do pretty frequently
 field :skills, as: :tags
 ```
 
-<Image src="/assets/img/fields/tags-field/basic.gif" width="786" height="436" alt="Avo tags field" />
+<Image src="/assets/img/4_0/fields/tags/create-save.gif" dark-src="/assets/img/4_0/fields/tags/create-save-dark.gif" width="760" height="493" alt="An Avo create form with a tags field: the animation opens the suggestions dropdown, picks one and two, saves the record, and shows the tags on the Show view." prompt="gif on the create form adding tags from suggestions and saving to see them on show" />
 
 ## Options
 
@@ -34,8 +34,6 @@ class Course < ApplicationRecord
   end
 end
 ```
-
-<Image src="/assets/img/fields/tags-field/suggestions.gif" width="786" height="436" alt="Avo tags field" />
 
 #### Default
 
@@ -85,8 +83,6 @@ field :skills,
   disallowed: ["not", "that"]
 ```
 
-<Image src="/assets/img/fields/tags-field/disallowed.gif" width="786" height="436" alt="Avo tags field" />
-
 #### Default
 
 `[]`
@@ -108,8 +104,6 @@ field :skills,
   enforce_suggestions: true
 ```
 
-<Image src="/assets/img/fields/tags-field/enforce_suggestions.gif" width="786" height="436" alt="Avo tags field" />
-
 <!-- @include: ./../common/default_boolean_false.md-->
 
 </Option>
@@ -124,8 +118,6 @@ field :skills,
   suggestions: %w(one two three),
   suggestions_max_items: 2
 ```
-
-<Image src="/assets/img/fields/tags-field/suggestions_max_items.gif" width="600" height="302" alt="Avo tags field - suggestions max items option" />
 
 #### Default
 
@@ -146,8 +138,6 @@ field :items,
   suggestions: -> { Post.tags_suggestions },
   close_on_select: true
 ```
-
-<Image src="/assets/img/fields/tags-field/close_on_select.gif" width="786" height="436" alt="Avo tags field" />
 
 <!-- @include: ./../common/default_boolean_false.md-->
 </Option>
@@ -174,8 +164,6 @@ field :skills,
   as: :tags,
   delimiters: [",", " "]
 ```
-
-<Image src="/assets/img/fields/tags-field/delimiters.gif" width="786" height="436" alt="Avo tags field" />
 
 #### Default
 
@@ -208,8 +196,6 @@ field :skills,
 
 Valid values are `nil` for array values and `select` for a single value.
 
-<Image src="/assets/img/fields/tags-field/mode-select.gif" width="800" height="666" alt="" />
-
 </Option>
 
 <Option name="`fetch_values_from`">
@@ -225,8 +211,6 @@ field :skills,
 ```
 
 When the user searches for a record, the field will perform a request to the server to fetch the records that match that query.
-
-<Image src="/assets/img/fields/tags-field/mode-select.gif" width="800" height="666" alt="" />
 
 <br>
 

@@ -4,15 +4,15 @@ license: advanced
 
 # Customizable controls
 
-<Image src="/assets/img/resources/customizable-controls/index.jpg" width="1020" height="469" alt="" />
-
 One of the things that we wanted to support from day one is customizable controls on resource pages, and now, Avo supports customizable controls on <Index />, <Show />, and <Edit /> views and for the table row.
+
+<Image src="/assets/img/4_0/customizable-controls/panel.png" dark-src="/assets/img/4_0/customizable-controls/panel-dark.png" width="1976" height="564" alt="An Avo Show page panel with the record title and customizable controls highlighted in the header tools area, above a card listing the record fields." prompt="full show page panel with the customizable controls highlighted in the header tools area" />
 
 ## Default controls
 
 By default, Avo displays a few buttons (controls) for the user to use on the <Index />, <Show />, and <Edit /> views which you can override using the appropriate resource options.
 
-<Image src="/assets/img/3_0/customizable-controls/default-controls.png" width="654" height="164" alt="" />
+<Image src="/assets/img/4_0/customizable-controls/default-controls.png" dark-src="/assets/img/4_0/customizable-controls/default-controls-dark.png" width="321" height="52" alt="" />
 
 ## Customize the controls
 
@@ -43,7 +43,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/3_0/customizable-controls/show-controls.png" width="1344" height="164" alt="" />
+<Image src="/assets/img/4_0/customizable-controls/show-controls.png" dark-src="/assets/img/4_0/customizable-controls/show-controls-dark.png" width="652" height="54" alt="" />
 </Option>
 
 <Option name="Edit page">
@@ -66,7 +66,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/3_0/customizable-controls/show-controls.png" width="1344" height="164" alt="" />
+<Image src="/assets/img/4_0/customizable-controls/edit-controls.png" dark-src="/assets/img/4_0/customizable-controls/edit-controls-dark.png" width="560" height="54" alt="" />
 </Option>
 
 <Option name="Index page">
@@ -87,7 +87,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/3_0/customizable-controls/index-controls.png" width="1300" height="164" alt="" />
+<Image src="/assets/img/4_0/customizable-controls/index-controls.png" dark-src="/assets/img/4_0/customizable-controls/index-controls-dark.png" width="646" height="52" alt="" />
 </Option>
 
 <Option name="Row controls">
@@ -114,7 +114,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/3_0/customizable-controls/row-controls.png" width="834" height="120" alt="" />
+<Image src="/assets/img/4_0/customizable-controls/row-controls.png" dark-src="/assets/img/4_0/customizable-controls/row-controls-dark.png" width="667" height="52" alt="" />
 </Option>
 
 ## Controls
@@ -211,7 +211,7 @@ list label: "Custom Index List", icon: "heroicons/outline/cube-transparent", sty
 end
 ```
 
-<Image src="/assets/img/resources/customizable-controls/custom_list.png" width="404" height="256" alt="Custom list opened" />
+<Image src="/assets/img/4_0/customizable-controls/custom_list.png" dark-src="/assets/img/4_0/customizable-controls/custom_list-dark.png" width="191" height="162" alt="Custom list opened" />
 
 Within the `list` block, the permitted elements are `link_to`, `action`, and [`divider`](actions/registration.html#divider). For both `link_to` and `action`, you can include an optional `icon` parameter.
 
@@ -271,7 +271,7 @@ self.show_controls = -> do
 end
 ```
 
-<Image src="/assets/img/3_0/customizable-controls/default_controls.png" alt="Default controls" width="884" height="140" />
+<Image src="/assets/img/4_0/customizable-controls/default_controls.png" dark-src="/assets/img/4_0/customizable-controls/default_controls-dark.png" alt="Default controls" width="321" height="52" />
 </Option>
 
 ## Control Options

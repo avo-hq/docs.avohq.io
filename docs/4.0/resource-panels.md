@@ -1,6 +1,6 @@
 # Resource panels
 <br>
-<Image src="/assets/img/tabs-and-panels/panel.png" width="1024" height="640" alt="Panel" />
+<Image src="/assets/img/4_0/resource-panels/panel.png" dark-src="/assets/img/4_0/resource-panels/panel-dark.png" width="1440" height="900" alt="An Avo resource show page with the sidebar navigation visible and a panel in the main content area listing record fields." prompt="Avo resource show page panel with header title and a body card listing record fields" />
 
 Panels are the backbone of Avo's display infrastructure. Most of the information that's on display is wrapped inside a panel. They help maintain a consistent design throughout Avo's pages. They are also available as a view component `Avo::PanelComponent` for custom tools, and you can make your own pages using it.
 
@@ -20,7 +20,7 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
-<Image src="/assets/img/tabs-and-panels/root-and-panel.png" width="1024" height="724" alt="Root fields and panel fields" />
+<Image src="/assets/img/4_0/resource-panels/root-and-panel.png" dark-src="/assets/img/4_0/resource-panels/root-and-panel-dark.png" width="1976" height="842" alt="An Avo show page with the record title and action buttons in the header, a main panel card with ID and User Email fields, and a named User information panel with First name, Last name, and Is active." prompt="User show page with root id and User Email fields plus a named User information panel with description, first name, last name, and Is active fields" />
 
 You can customize the panel `name` and panel `description`.
 
@@ -66,7 +66,7 @@ end
 
 On this example Avo figured out that a main panel was not declared and it computes one with all standalone fields.
 
-<Image src="/assets/img/resource-panels/1.png" width="1942" height="455" alt="" />
+<Image src="/assets/img/4_0/resource-panels/computed-main.png" dark-src="/assets/img/4_0/resource-panels/computed-main-dark.png" width="1976" height="554" alt="An Avo show page with a single computed main panel containing ID, Name, User, and Type fields." prompt="Show page with a single computed main panel containing id, name, user, and type fields" />
 
 <br>
 
@@ -104,7 +104,7 @@ end
 
 Since the field that has it owns panel was inserted between a bunch of standalone fields Avo will compute a main panel for the first batch of standalone fields (`id` and `name`) and will compute a simple panel for the remaining groups of standalone fields (`user` and `type`)
 
-<Image src="/assets/img/resource-panels/2.png" width="1956" height="885" alt="" />
+<Image src="/assets/img/4_0/resource-panels/split-panels.png" dark-src="/assets/img/4_0/resource-panels/split-panels-dark.png" width="1976" height="996" alt="An Avo show page with a computed main panel for ID and Name, a Reviews has_many association panel, and a second panel for User and Type." prompt="Show page with a computed main panel for id and name, a reviews has_many panel, and a simple panel for user and type fields" />
 
 <br>
 
@@ -126,7 +126,7 @@ def fields
 end
 ```
 
-<Image src="/assets/img/resource-panels/3.png" width="1917" height="875" alt="" />
+<Image src="/assets/img/4_0/resource-panels/custom-order.png" dark-src="/assets/img/4_0/resource-panels/custom-order-dark.png" width="1976" height="996" alt="An Avo show page with panels in custom order: User and Type first, a Reviews has_many panel, then the main panel with ID and Name." prompt="Show page with panels in custom order: user and type panel first, reviews has_many panel, then main panel with id and name" />
 
 By using the `main_panel` and `panel` method, you can manually customize the organization of fields within your resource, allowing for greater flexibility and control.
 
@@ -154,7 +154,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/tabs-and-panels/index-view.png" width="1024" height="724" alt="Index view" />
+<Image src="/assets/img/4_0/resource-panels/index-view.png" dark-src="/assets/img/4_0/resource-panels/index-view-dark.png" width="2344" height="758" alt="An Avo index table listing ID, User Email, and Name columns while panel-only fields stay off the index view." prompt="Users index table showing only root and main_panel fields with panel fields hidden" />
 
 <Option name="`visible`">
 

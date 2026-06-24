@@ -4,8 +4,6 @@ license: community
 
 # Checkbox List
 
-<Image src="/assets/img/fields/checkbox_list/checkbox_list_field.gif" width="800" height="546" alt="Checkbox List field" />
-
 The `CheckboxList` field renders a list of checkboxes for selecting multiple values from a finite set of options.
 
 Use it when the available options are already known and users should see the choices directly instead of opening a select.
@@ -26,6 +24,8 @@ field :team_member_ids,
   },
   inline_search: true
 ```
+
+<Image src="/assets/img/4_0/fields/checkbox_list/select.gif" dark-src="/assets/img/4_0/fields/checkbox_list/select-dark.gif" width="760" height="478" alt="An Avo edit-form card containing a checkbox_list field: an animation that checks three team members one after another from an initially empty selection." prompt="a gif where we select multiple options" />
 
 The field submits an array of selected option ids. This works well with Rails collection writers like `team_member_ids=`.
 
