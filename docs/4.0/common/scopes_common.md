@@ -27,7 +27,7 @@ end
 
 The `comments` query on the user `Index` page will have the `approved` scope attached.
 
-<Image src="/assets/img/associations/scope.jpg" width="1660" height="830" alt="Association scope" />
+<Image src="/assets/img/4_0/common/associations/scope.png" dark-src="/assets/img/4_0/common/associations/scope-dark.png" width="2144" height="696" alt="A has_many association panel showing a scoped subset of associated records" />
 
 With version 2.5.0, you'll also have access to the `parent` record so that you can use that to scope your associated models even better.
 
