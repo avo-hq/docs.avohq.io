@@ -129,6 +129,50 @@ export const hideSummarizableIcons = async (page) => {
   });
 };
 
+// --- avo-advanced dynamic-filters primitives -------------------------------
+// The dynamic-filters bar (above the index table) carries an "Add filter" dropdown.
+// Picking a field appends a filter PILL (the trigger) and opens its filter-card POPOVER —
+// a <dialog> with the field's condition <select>, a value input and an Apply button. These
+// primitives drive that flow so a spec can shoot any one filter type's card in context.
+
+// Open the "Add filter" dropdown and pick a field by its exact menu label (e.g. "Is active",
+// "First name", "Created at"). Leaves the new filter pill + its open popover on screen.
+export const addDynamicFilter = (label) => async (page) => {
+  await page.locator('[data-avo-filters-target="add-filter-button"]').first().click();
+  await page.waitForTimeout(500);
+  await page
+    .locator('a[href*="filter_param_id"]')
+    .filter({ hasText: new RegExp(`^\\s*${label}\\s*$`) })
+    .first()
+    .click();
+  await page.waitForTimeout(1300);
+};
+
+// Expand the filter card's condition <select> into an inline listbox (size=N) so every
+// condition option is visible at once — the legitimate "render the real native select as a
+// list" technique (same as openSelect; a native popup is OS-drawn and can't be screenshot).
+export const expandFilterConditions = async (page) => {
+  await page.evaluate(() => {
+    const s = document.querySelector('#condition_selector, select[data-control="condition"]');
+    if (s) {
+      s.setAttribute("size", String(s.options.length));
+      s.style.width = "auto";
+    }
+  });
+  await page.waitForTimeout(400);
+};
+
+// Open the date/date_time/time filter's flatpickr calendar inside the open popover.
+export const openFilterCalendar = async (page) => {
+  await page.evaluate(() => {
+    const inp = document.querySelector(
+      'dialog.dropdown-popover[open] input.flatpickr-input, dialog.dropdown-popover[open] input[data-control="value"], .filters__panel input.flatpickr-input, .filters__panel input[data-control="value"]',
+    );
+    if (inp && inp._flatpickr) inp._flatpickr.open();
+  });
+  await page.waitForTimeout(600);
+};
+
 // Hide index-table columns by Avo field id (header + body cells).
 export const hideIndexColumns = (...fieldIds) => async (page) => {
   const selectors = fieldIds.flatMap((id) => [
