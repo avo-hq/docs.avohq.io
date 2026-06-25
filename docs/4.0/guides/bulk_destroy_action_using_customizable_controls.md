@@ -13,7 +13,7 @@ The bulk destroy action is particularly useful when you need to:
 - Provide clear warnings about the irreversible nature of the action
 - Handle the deletion process with proper error handling
 
-<Image src="/assets/img/guides/bulk_destroy/bulk_destroy_image.png" width="1937" height="1031" alt="Bulk destroy action" />
+<Image src="/assets/img/4_0/guides/bulk_destroy/bulk_destroy_image.png" dark-src="/assets/img/4_0/guides/bulk_destroy/bulk_destroy_image-dark.png" width="1256" height="500" alt="An Avo Products index with four records selected and the customizable bulk-destroy control (red trash button) clicked, opening a confirmation modal that lists the records to be deleted and warns the action cannot be undone." />
 
 ## Bulk destroy action
 
