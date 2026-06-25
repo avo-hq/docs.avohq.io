@@ -2,7 +2,7 @@
 
 Changes the text displayed under the association name.
 
-<Image src="/assets/img/4_0/common/associations/description-option.png" dark-src="/assets/img/4_0/common/associations/description-option-dark.png" width="2140" height="790" alt="A has_many association panel with the description text shown under the association title" />
+<Image src="/assets/img/associations/description-option.jpg" width="702" height="198" alt="" />
 
 #### Default
 

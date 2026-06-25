@@ -29,5 +29,5 @@ In the above example, the reloadable will be visible if the current_user is an a
 #### ExecutionContext
 The reloadable block executes within the [`ExecutionContext`](./../execution-context), granting access to all default methods and attributes.
 
-<Image src="/assets/img/4_0/common/reloadable.png" dark-src="/assets/img/4_0/common/reloadable-dark.png" width="2140" height="132" alt="An association panel header with the reload icon (highlighted) next to the association title" />
+<Image src="/assets/img/reloadable.png" width="680" height="94" alt="Reloadable" />
 </Option>
