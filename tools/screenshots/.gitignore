@@ -3,3 +3,7 @@ out/
 
 # Installed Playwright/ImageMagick deps.
 node_modules/
+
+# One-off scratch probe scripts — written to inspect/position a single shot,
+# never reusable. Fold any lasting lesson into RULES.md/PROCESS.md instead.
+probe-*-tmp.mjs

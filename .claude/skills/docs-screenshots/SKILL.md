@@ -46,14 +46,21 @@ image bytes, or rule-checking transcripts yourself — workers do that and retur
 
 ## Hard rules (pass these into every worker)
 
-- **Read `tools/screenshots/RULES.md` first and obey ALL of it** — every lesson, not a subset:
-  capture approach (1–5), demo techniques (6–9), editorial (10–14, e.g. image-after-code,
-  match the code example), and the framing lessons (15, 15a–15v, 16–20).
-- **Before any temp demo edit, run `git -C gems/main.avodemo.com status`** and treat every
-  file that already has uncommitted changes as OFF-LIMITS — that's the user's work-in-progress,
-  and reverting it would destroy their changes. Only temp-edit otherwise-clean resource files,
-  then **revert every edit** (`git -C gems/main.avodemo.com checkout <file>`) so the demo shows
-  ONLY the user's pre-existing changes. Leave it at that clean baseline.
+- **Read `tools/screenshots/CHECKLIST.md` first and obey ALL of it** — the compact rulebook
+  covering every rule for the common case (setup, context, single-field, framing/sizing,
+  marking, border hygiene, editorial, apply, GIFs). Each line is tagged with the source `#ref`
+  in `RULES.md`; **open the full lesson in `RULES.md` only for an unusual shot or when a `#ref`
+  line doesn't fully answer your case** (developer overlays, canvas charts, native `<select>`
+  popups, odd width/border edge cases). Obeying the checklist = obeying the rules — it loses no
+  enforceable rule, just the long-form prose. Don't skip a line because it seems minor.
+- **The `main.avodemo.com` demo is disposable scratch space — don't track its state, move fast.**
+  Edit whatever you need (resource files, controllers, models, initializer, seeds), reuse whatever
+  already fits, and create resources/controllers/models from scratch when nothing does. You do NOT
+  need to preserve or restore the demo: no `git status` pre-check, no treating modified files as
+  off-limits, no reverting. Do what the shot needs and leave the demo as-is. (This freedom is ONLY
+  for the demo project — still never commit/push there, and never touch the docs repo beyond the
+  intended doc + asset changes.) Note: the initializer does not hot-reload, so restart the overmind
+  `web` process after editing it; resource/controller files hot-reload on their own.
 - **Capture light AND dark**, every image.
 - **Never commit / push / branch / PR.** Leave changes unstaged.
 - If a shot needs a UI state the demo can't reach (missing data, no Mapbox token, demo drift),
@@ -70,16 +77,19 @@ image bytes, or rule-checking transcripts yourself — workers do that and retur
 > (If this is a retry, also: previous verify failures = `{reasons}` — fix exactly these.)
 >
 > **Steps:**
-> 1. Read `tools/screenshots/RULES.md` (all framing lessons) and `tools/screenshots/PROCESS.md`.
+> 1. Read `tools/screenshots/CHECKLIST.md` (the compact rulebook — obey every line) and
+>    `tools/screenshots/PROCESS.md`. Open the matching lesson in `RULES.md` by its `#ref` only
+>    when a shot is unusual or a checklist line doesn't fully answer your case.
 > 2. Understand the feature from the prompt + section + adjacent code. Find where it lives in
 >    the demo: read the relevant `gems/main.avodemo.com/app/avo/resources/*.rb`, and use
 >    `node tools/screenshots/probe.mjs <path> [selector]` to inspect the live DOM and get exact
 >    selectors / bounding boxes. Never eyeball coordinates.
-> 3. If the state isn't visible by default, make the **smallest reversible** temp edit to a
->    demo resource to surface it — see PROCESS.md "Surfacing specific field / component states"
->    for the virtual-field method + the date_time / boolean_group / progress_bar / actions_list
->    tricks. FIRST run `git -C gems/main.avodemo.com status`; NEVER edit a file that already has
->    uncommitted changes (that's the user's WIP) — pick an otherwise-clean resource.
+> 3. If the state isn't visible by default, edit the demo to surface it — see PROCESS.md "Surfacing
+>    specific field / component states" for the virtual-field method + the date_time / boolean_group
+>    / progress_bar / actions_list tricks. The demo is disposable scratch space: edit any file, reuse
+>    what fits, or create a resource/controller/model from scratch — no `git status` check, no
+>    off-limits files. (Initializer edits need an overmind `web` restart; resource/controller files
+>    hot-reload.)
 > 4. Author a spec object and **append it to `tools/screenshots/specs.mjs`** (add it to the
 >    `SPECS` array). Shape:
 >    `{ id, path, viewport?, settle?, prepare?, selector|clip, pad?, marks?, out, display?, alt, source:{file,prompt} }`
@@ -94,10 +104,10 @@ image bytes, or rule-checking transcripts yourself — workers do that and retur
 >    `node tools/screenshots/capture.mjs <id>` then
 >    `AVO_COLOR_SCHEME=dark node tools/screenshots/capture.mjs <id>`. If the spec has `marks`,
 >    also run `annotate.mjs` (+ `ANNOTATE_DARK=1`).
-> 6. **Revert every temp demo edit** and confirm `git -C gems/main.avodemo.com status` shows only
->    the user's pre-existing files. Confirm `tools/screenshots/out/<id>.png` and `<id>-dark.png` exist.
+> 6. Leave the demo as-is — no need to revert your edits. Confirm `tools/screenshots/out/<id>.png`
+>    and `<id>-dark.png` exist.
 > 7. **Return ONLY a short summary** (no transcripts): `{ id, status: "resolved"|"unresolvable",
->    route, prepareUsed, tempEdits: "none"|"reverted", reason? }`.
+>    route, prepareUsed, demoEdits?: "<what you changed>", reason? }`.
 > Never commit/push. Never stage anything.
 
 ### GIF route addendum (paste this INSTEAD of steps 4–5 when `kind === "gif"`)
@@ -121,7 +131,7 @@ image bytes, or rule-checking transcripts yourself — workers do that and retur
 >    `node tools/screenshots/record-gif.mjs <id>` then
 >    `AVO_COLOR_SCHEME=dark node tools/screenshots/record-gif.mjs <id>`.
 >    Confirm `tools/screenshots/out/<id>.gif` and `<id>-dark.gif` exist. (Then steps 6–7 as above —
->    revert temp edits, return the short summary; set `route: "gif"`.)
+>    leave the demo as-is, return the short summary; set `route: "gif"`.)
 > If the interaction can't be driven reliably (state unreachable, element never appears), flag it
 > `unresolvable` with a reason — never ship a misleading animation.
 
@@ -138,7 +148,8 @@ image bytes, or rule-checking transcripts yourself — workers do that and retur
 > say so in `reasons` and pass on framing alone unless the frame itself violates a rule.
 >
 > **Steps:**
-> 1. Read `tools/screenshots/RULES.md` (framing lessons 1–20, 15a–15v).
+> 1. Read `tools/screenshots/CHECKLIST.md` (the compact rulebook — judge against every line).
+>    Open a lesson in `RULES.md` by its `#ref` only if a checklist line is ambiguous for this shot.
 > 2. **View both PNGs** (Read tool renders images). Check:
 >    - It shows what the prompt asks for, with trigger context where relevant (15a).
 >    - The component is shown WHOLE — none of its real controls/affordances are missing (15y). A

@@ -91,8 +91,8 @@ color scheme. Then per spec:
 node annotate.mjs <specId>
 ```
 
-Reads `out/<id>.png` + `out/<id>.boxes.json` and draws in one house style (Avo blue
-`#2563eb`) with ImageMagick → `out/<id>.annotated.png`:
+Reads `out/<id>.png` + `out/<id>.boxes.json` and draws in one house style (docs red
+`#ef4444`) with ImageMagick → `out/<id>.annotated.png`:
 - **highlight** → rounded-rect outline around the element
 - **badge** → numbered accent circle at its corner
 - **arrow** → accent arrow pointing at it from n/s/e/w

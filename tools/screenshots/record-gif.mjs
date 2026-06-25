@@ -13,8 +13,10 @@
 //   clip      { x, y, width, height }        the crop every frame uses
 //   width     output GIF width in px         (default 900; source is captured larger)
 //   delay     centiseconds per frame         (default 18)
-//   steps     async (page, snap) => {}       drive the UI; call snap(hold) to emit frames
-//                                            (hold = duplicate frames = pause on that state)
+//   marks?    same as capture.mjs — default marks for every snap(hold) unless overridden
+//   steps     async (page, snap) => {}       drive the UI; call snap(hold[, marks]) to emit frames
+//                                            marks: array → red-annotate that batch only;
+//                                            false → no annotation; omit → use spec.marks
 //   out?      "docs/public/assets/img/4_0/<page>/<name>.gif"  (destination; copy is manual)
 //
 // Usage:
@@ -29,6 +31,7 @@ import { realpathSync } from "node:fs";
 import { promisify } from "node:util";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { annotateImage, computeMarkBoxes } from "./annotate.mjs";
 
 const run = promisify(execFile);
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -73,10 +76,25 @@ export async function recordGif(spec) {
   await page.waitForTimeout(spec.settle ?? 700);
 
   let i = 0;
-  // snap(hold): emit `hold` identical frames (each frame = one GIF tick) to pause on a state.
-  const snap = async (hold = 1) => {
-    for (let h = 0; h < hold; h++)
-      await page.screenshot({ path: join(frames, String(i++).padStart(3, "0") + ".png"), clip: spec.clip });
+  let defaultMarkMeta = null;
+  // snap(hold[, marks[, clip]]): emit `hold` identical frames. Optional per-batch marks and clip.
+  const snap = async (hold = 1, marksForSnap = undefined, clipOverride = undefined) => {
+    const clip = clipOverride ?? spec.clip;
+    let meta = null;
+    if (marksForSnap === false) {
+      meta = null;
+    } else if (Array.isArray(marksForSnap) && marksForSnap.length) {
+      meta = await computeMarkBoxes(page, marksForSnap, clip, DPR);
+    } else if (marksForSnap === undefined && spec.marks?.length) {
+      if (!defaultMarkMeta) defaultMarkMeta = await computeMarkBoxes(page, spec.marks, spec.clip, DPR);
+      meta = defaultMarkMeta;
+    }
+    for (let h = 0; h < hold; h++) {
+      const framePath = join(frames, String(i++).padStart(3, "0") + ".png");
+      await page.screenshot({ path: framePath, clip });
+      if (meta?.marks?.length)
+        await annotateImage(framePath, framePath, meta);
+    }
   };
 
   await spec.steps(page, snap);
@@ -90,7 +108,7 @@ export async function recordGif(spec) {
     "-resize", `${spec.width ?? 900}x>`,
     // No dithering: the 256-colour GIF palette otherwise speckles flat areas (the dark mat behind
     // a popover) into visible grain that reads as a "blurred"/noisy background (RULES 3).
-    "-dither", "None", "-layers", "Optimize",
+    "-dither", "None", "-layers", "Optimize", "-coalesce",
     gifOut,
   ]);
   console.log(`✓ GIF → out/${spec.id}${SUFFIX}.gif (${i} frames)`);
