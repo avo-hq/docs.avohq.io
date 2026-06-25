@@ -61,5 +61,5 @@ class Avo::Actions::ExportCsv < Avo::BaseAction
 end
 ```
 
-<Image src="/assets/img/3_0/guides/export-to-csv/export-to-csv.gif" width="1024" height="640" alt="" />
+<Image src="/assets/img/4_0/guides/export-to-csv/export-to-csv.gif" dark-src="/assets/img/4_0/guides/export-to-csv/export-to-csv-dark.gif" width="1176" height="540" alt="An Avo Projects index where three records are selected, the Actions dropdown is opened, the Export csv action is chosen, and its confirmation modal is run to export the records to a CSV file." />
 
