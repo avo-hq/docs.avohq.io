@@ -44,7 +44,7 @@ class Avo::Dashboards::MyDashboard < Avo::Dashboards::BaseDashboard
 end
 ```
 
-<Image src="/assets/img/dashboards/dashboard.jpg" width="1262" height="1094" alt="Avo Dashboard" />
+<Image src="/assets/img/4_0/dashboards/dashboard.png" dark-src="/assets/img/4_0/dashboards/dashboard-dark.png" width="2880" height="1800" alt="An Avo dashboard named Dashy with the sidebar visible, showing a viewport of its card grid — metrics, charts (area, scatter, line, column, pie, bar), Percent done and Amount raised." prompt="a dashboard overview page with its cards" />
 
 ## Settings
 
