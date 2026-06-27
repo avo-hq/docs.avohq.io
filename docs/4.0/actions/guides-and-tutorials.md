@@ -28,7 +28,7 @@ end
 ```
 
 
-<Image src="/assets/img/actions/action_link.gif" width="684" height="391" alt="actions link demo" />
+<Image src="/assets/img/4_0/actions/action-link.gif" dark-src="/assets/img/4_0/actions/action-link-dark.gif" width="1104" height="509" alt="An Avo Cities index where a record's name is a clickable link; clicking it opens an Update action modal with a prefilled name field, which when run updates the row." />
 
 :::tip
 #### Generate an Action Link Without a Resource Instance
