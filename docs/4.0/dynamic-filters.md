@@ -86,10 +86,8 @@ For instance, in the text filter example above, the `Contains` condition and the
 }.invert
 ```
 
-<div class="flex justify-between items-start flex-wrap">
-  <Image src="/assets/img/dynamic_filter_boolean.png" width="241" height="176" alt="" />
-  <Image src="/assets/img/dynamic_filter_boolean2.png" width="241" height="192" alt="" />
-</div>
+<Image src="/assets/img/4_0/dynamic-filters/boolean.png" dark-src="/assets/img/4_0/dynamic-filters/boolean-dark.png" width="3268" height="1082" alt="Avo Users index: the Is active dynamic filter pill and open card showing the Is true condition and Apply button, zoomed in over a short three-row table with pagination." />
+
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_admin?][is_true][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L38)
 </Option>
@@ -118,10 +116,9 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_adm
 }.invert
 ```
 
-<div class="flex justify-between items-start flex-wrap">
-  <Image src="/assets/img/dynamic_filter_date3.png" width="340" height="500" alt="" />
-  <Image src="/assets/img/dynamic_filter_date2.png" width="244" height="213" alt="" />
-</div>
+<Image src="/assets/img/4_0/dynamic-filters/date3.png" dark-src="/assets/img/4_0/dynamic-filters/date3-dark.png" width="3268" height="2032" alt="Avo Teams index with a short three-row table: the Created at dynamic filter with flatpickr calendar and time picker open over the table." />
+
+
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[created_at][lte][]=2024-07-02%2012%3A00), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L50)
 </Option>
@@ -173,10 +170,8 @@ dynamic_filter :published_at, type: :time
 }.invert
 ```
 
-<div class="flex justify-between items-start flex-wrap">
-  <Image src="/assets/img/dynamic_filter_number.png" width="244" height="205" alt="" />
-  <Image src="/assets/img/dynamic_filter_number2.png" width="244" height="234" alt="" />
-</div>
+<Image src="/assets/img/4_0/dynamic-filters/number.png" dark-src="/assets/img/4_0/dynamic-filters/number-dark.png" width="3268" height="1082" alt="Avo Teams index with a short three-row table: the ID dynamic filter pill and open card over the table." />
+
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gte][]=2), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L27)
 </Option>
@@ -199,10 +194,8 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gt
 }.invert
 ```
 
-<div class="flex justify-between items-start flex-wrap">
-  <Image src="/assets/img/dynamic_filter_select.png" width="244" height="204" alt="" />
-  <Image src="/assets/img/dynamic_filter_select2.png" width="244" height="204" alt="" />
-</div>
+<Image src="/assets/img/4_0/dynamic-filters/select.png" dark-src="/assets/img/4_0/dynamic-filters/select-dark.png" width="3268" height="1082" alt="Avo Courses index with a short three-row table: the Country dynamic filter pill and open card over the table." />
+
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[country][is][]=USA), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L55)
 </Option>
@@ -237,10 +230,8 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[coun
 }.invert
 ```
 
-<div class="flex justify-between items-start flex-wrap">
-  <Image src="/assets/img/dynamic_filter_text.png" width="244" height="203" alt="" />
-  <Image src="/assets/img/dynamic_filter_text2.png" width="244" height="327" alt="" />
-</div>
+<Image src="/assets/img/4_0/dynamic-filters/text.png" dark-src="/assets/img/4_0/dynamic-filters/text-dark.png" width="3268" height="1082" alt="Avo Users index with a short three-row table: the First name dynamic filter pill and open card over the table." />
+
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_name][contains][]=Avo), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L33)
 </Option>
@@ -265,10 +256,8 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_
 :::warning
 Contained in will not work when using the `acts-as-taggable-on` gem.
 :::
-<div class="flex justify-between items-start flex-wrap">
-  <Image src="/assets/img/dynamic_filter_tags.png" width="244" height="204" alt="" />
-  <Image src="/assets/img/dynamic_filter_tags2.png" width="244" height="204" alt="" />
-</div>
+<Image src="/assets/img/4_0/dynamic-filters/tags.png" dark-src="/assets/img/4_0/dynamic-filters/tags-dark.png" width="3268" height="1082" alt="Avo Courses index with a short three-row table: the Skills dynamic filter pill and open card over the table." />
+
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[skills][array_contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L46)
 
