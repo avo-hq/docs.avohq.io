@@ -83,7 +83,7 @@ end
 
 The Media Library will seamlessly integrate with all the rich text editors.
 
-<Image src="/assets/img/3_0/media-library/media-library-rhino.gif" alt="Media Library with Rhino field" size="800x453" />
+<Image src="/assets/img/4_0/media-library/media-library-rhino.gif" dark-src="/assets/img/4_0/media-library/media-library-rhino-dark.gif" alt="Media Library with Rhino field" size="800x373" />
 
 ```ruby
 field :body, as: :trix
