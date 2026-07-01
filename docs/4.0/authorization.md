@@ -51,6 +51,57 @@ With this new policy, you may control what every type of user can do with Avo. T
 
 These methods control whether the resource appears on the sidebar, if the view/edit/destroy buttons are visible or if a user has access to those index/show/edit/create pages.
 
+Here's a full example of a policy file with all the methods Avo checks. Each one is described in detail below.
+
+```ruby
+# app/policies/post_policy.rb
+class PostPolicy < ApplicationPolicy
+  def index?
+    true
+  end
+
+  def show?
+    true
+  end
+
+  def new?
+    create?
+  end
+
+  def create?
+    user.admin?
+  end
+
+  def edit?
+    true
+  end
+
+  def update?
+    user.admin?
+  end
+
+  def destroy?
+    user.admin?
+  end
+
+  def act_on?
+    user.admin?
+  end
+
+  def reorder?
+    user.admin?
+  end
+
+  def search?
+    true
+  end
+
+  def preview?
+    true
+  end
+end
+```
+
 <Option name="index?">
 
 `index?` is used to display/hide the resources on the sidebar and restrict access to the resources **Index** view.
@@ -69,11 +120,15 @@ When setting `show?` to `false`, the user will not see the show icon on the reso
 
 </Option>
 
+<Image src="/assets/img/4_0/authorization/policy-show.png" dark-src="/assets/img/4_0/authorization/policy-show-dark.png" width="3150" height="1100" alt="An Avo Posts index table with the View (eye) icon in a row's action controls highlighted, the control the show? policy governs." prompt="View (eye) icon highlighted on a resource row on the Index view" />
+
 <Option name="`new?`">
 
 The `new?` method controls whether the user can open the creation flow. It applies to the `Create new {model}` button on the <Index /> page and the `Create new {model}` button on association <Show /> pages.
 
 When the user visits the `/new` page, Avo authorizes with `new?` again (without raising an exception on failure).
+
+<Image src="/assets/img/4_0/authorization/policy-new.png" dark-src="/assets/img/4_0/authorization/policy-new-dark.png" width="2032" height="834" alt="The Posts Index view with the “Create new post” button highlighted in the top-right of the header, illustrating the resource the Pundit new? policy controls." prompt="Create new post button highlighted on the Index view" />
 
 </Option>
 
@@ -83,17 +138,23 @@ The `create?` method controls whether the user can persist a new record. It appl
 
 Avo intentionally checks `create?` only when saving, so your policy can access the `record` variable with the form values pre-filled.
 
+<Image src="/assets/img/4_0/authorization/policy-create.png" dark-src="/assets/img/4_0/authorization/policy-create-dark.png" width="1960" height="988" alt="The Avo post create form, trimmed to the Name, Body and Status fields, with the Save button in the top-right action bar highlighted." prompt="Save button highlighted on the resource create form" />
+
 </Option>
 
 <Option name="`edit?`">
 
 `edit?` to `false` will hide the edit button on the resource row and prevent the user from seeing the edit view.
 
+<Image src="/assets/img/4_0/authorization/policy-edit.png" dark-src="/assets/img/4_0/authorization/policy-edit-dark.png" width="3150" height="1100" alt="An Avo Posts index table with the Edit (pencil) icon in a row's action controls highlighted, the control the edit? policy governs." prompt="Edit (pencil) icon highlighted on a resource row on the Index view" />
+
 </Option>
 
 <Option name="`update?`">
 
 `update?` to `false` will prevent the user from updating a resource. You can also access the `record` variable with the form values pre-filled.
+
+<Image src="/assets/img/4_0/authorization/policy-update.png" dark-src="/assets/img/4_0/authorization/policy-update-dark.png" width="1960" height="722" alt="The Avo resource edit form with the Save button highlighted, illustrating the Pundit update? policy that controls whether a user can save changes." prompt="Save button highlighted on the resource edit form" />
 
 </Option>
 
@@ -105,11 +166,15 @@ Avo intentionally checks `create?` only when saving, so your policy can access t
 These are per-resource and general settings. If you want to control the authorization per individual file, please see the [granular settings](#attachments).
 :::
 
+<Image src="/assets/img/4_0/authorization/policy-destroy.png" dark-src="/assets/img/4_0/authorization/policy-destroy-dark.png" width="3150" height="1100" alt="An Avo Posts index table with the Delete (trash) icon in a row's action controls highlighted, the control the destroy? policy governs." prompt="Delete (trash) icon highlighted on a resource row on the Index view" />
+
 </Option>
 
 <Option name="`act_on?`">
 
 Controls whether the user can see the actions button on the <Index /> page.
+
+<Image src="/assets/img/4_0/authorization/policy-act-on.png" dark-src="/assets/img/4_0/authorization/policy-act-on-dark.png" width="2032" height="850" alt="The Posts Index view with the “Actions” button highlighted in the header controls bar, illustrating the control the Pundit act_on? policy governs." prompt="Actions button highlighted on the Index view" />
 
 </Option>
 
@@ -117,11 +182,15 @@ Controls whether the user can see the actions button on the <Index /> page.
 
 Controls whether the user can see the [records reordering](./records-reordering) buttons on the <Index /> page.
 
+<Image src="/assets/img/4_0/authorization/policy-reorder.png" dark-src="/assets/img/4_0/authorization/policy-reorder-dark.png" width="2032" height="758" alt="An Avo Course links index table with a row's records reordering controls (drag handle and up, down, to-top, to-bottom arrows) highlighted, the controls the reorder? policy governs." prompt="Records reordering controls highlighted on the Index view" />
+
 </Option>
 
 <Option name="`search?`">
 
 Controls whether the user can see the [resource search input](./search/resource-search) on top of the <Index /> page.
+
+<Image src="/assets/img/4_0/authorization/policy-search.png" dark-src="/assets/img/4_0/authorization/policy-search-dark.png" width="2032" height="834" alt="The Posts Index view with the resource search input highlighted at the top of the page, illustrating the input the Pundit search? policy controls." prompt="Resource search input highlighted on the Index view" />
 
 </Option>
 
@@ -132,6 +201,8 @@ Controls access to the preview endpoint, which is triggered by the [preview fiel
 :::info
 This policy method does not control the visibility of the [preview field](./record-previews.html). It only manages authorization at the endpoint level. To hide the preview field, use the `visible` field option.
 :::
+
+<Image src="/assets/img/4_0/authorization/policy-preview.png" dark-src="/assets/img/4_0/authorization/policy-preview-dark.png" width="2032" height="758" alt="Preview field trigger highlighted on a team row in the Index view" prompt="Preview field trigger highlighted on a resource row on the Index view" />
 
 </Option>
 
@@ -157,14 +228,14 @@ In the `Post` `has_many` `Comments` example, when you want to authorize `show_co
 
 Controls whether the `Attach comment` button is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
-<Image src="/assets/img/4_0/authorization/attach.png" dark-src="/assets/img/4_0/authorization/attach-dark.png" width="984" height="392" alt="" />
+<Image src="/assets/img/4_0/authorization/attach.png" dark-src="/assets/img/4_0/authorization/attach-dark.png" width="2032" height="1010" alt="The Team members association Index view with the “Attach team member” button highlighted — the control the attach_{association}? policy governs." />
 
 </Option>
 <Option name="`detach_{association}?`">
 
 Controls whether the **detach button is available** on the associated record row on the <Index /> view. The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
-<Image src="/assets/img/4_0/authorization/detach.png" dark-src="/assets/img/4_0/authorization/detach-dark.png" width="984" height="392" alt="" />
+<Image src="/assets/img/4_0/authorization/detach.png" dark-src="/assets/img/4_0/authorization/detach-dark.png" width="2032" height="1010" alt="The Team members association Index view with the Detach (unlink) icon in an associated record row’s action controls highlighted, the control the detach_{association}? policy governs." />
 
 </Option>
 <Option name="`view_{association}?`">
@@ -180,7 +251,7 @@ Controls whether the **view button is visible** on the associated record row on 
 This **does not** control whether the user has access to that record. You control that using the Policy of that record (`PostPolicy.show?` in our example).
 :::
 
-<Image src="/assets/img/4_0/authorization/show.png" dark-src="/assets/img/4_0/authorization/show-dark.png" width="984" height="392" alt="" />
+<Image src="/assets/img/4_0/authorization/show.png" dark-src="/assets/img/4_0/authorization/show-dark.png" width="2032" height="1010" alt="The Team members association Index view with the View (eye) icon in an associated record row’s action controls highlighted, the control the show_{association}? policy governs." />
 
 :::info Difference between `view_{association}?` and `show_{association}?`
 Let's take a `Post` `has_many` `Comment`s.
@@ -199,33 +270,35 @@ Controls whether the **edit button is visible** on the associated record row on 
 This **does not** control whether the user has access to that record's edit page. You control that using the Policy of that record (`PostPolicy.show?` in our example).
 :::
 
-<Image src="/assets/img/4_0/authorization/edit.png" dark-src="/assets/img/4_0/authorization/edit-dark.png" width="984" height="392" alt="" />
+<Image src="/assets/img/4_0/authorization/edit.png" dark-src="/assets/img/4_0/authorization/edit-dark.png" width="2032" height="1010" alt="The Team members association Index view with the Edit (pencil) icon in an associated record row’s action controls highlighted, the control the edit_{association}? policy governs." />
 </Option>
 
 <Option name="`create_{association}?`">
 
 Controls whether the `Create comment` button is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
-<Image src="/assets/img/4_0/authorization/create.png" dark-src="/assets/img/4_0/authorization/create-dark.png" width="984" height="392" alt="" />
+<Image src="/assets/img/4_0/authorization/create.png" dark-src="/assets/img/4_0/authorization/create-dark.png" width="2032" height="1010" alt="The Team members association Index view with the “Create new team member” header button highlighted, the control the create_{association}? policy governs." />
 
 </Option>
 <Option name="`destroy_{association}?`">
 
 Controls whether the **delete button is visible** on the associated record row on the <Index /> page.The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
-<Image src="/assets/img/4_0/authorization/destroy.png" dark-src="/assets/img/4_0/authorization/destroy-dark.png" width="984" height="392" alt="" />
+<Image src="/assets/img/4_0/authorization/destroy.png" dark-src="/assets/img/4_0/authorization/destroy-dark.png" width="2032" height="1010" alt="The Team members association Index view with the Delete (trash) icon in an associated record row’s action controls highlighted, the control the destroy_{association}? policy governs." />
 
 </Option>
 <Option name="`act_on_{association}?`">
 
 Controls whether the `Actions` dropdown is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
-<Image src="/assets/img/4_0/authorization/actions.png" dark-src="/assets/img/4_0/authorization/actions-dark.png" width="984" height="392" alt="" />
+<Image src="/assets/img/4_0/authorization/actions.png" dark-src="/assets/img/4_0/authorization/actions-dark.png" width="2032" height="1010" alt="The Team members association Index view with the “Actions” header dropdown button highlighted, the control the act_on_{association}? policy governs." />
 
 </Option>
 <Option name="`reorder_{association}?`">
 
 Controls whether the user can see the [records reordering](./records-reordering) buttons on the `has_many` <Index /> page.
+
+<Image src="/assets/img/4_0/authorization/policy-reorder-assoc.png" dark-src="/assets/img/4_0/authorization/policy-reorder-assoc-dark.png" width="2032" height="680" alt="A Course links association Index (on the Course Show page) with a row's records-reordering controls (drag handle and up, down, to-top, to-bottom arrows) highlighted, the controls the reorder_{association}? policy governs." prompt="Records reordering controls highlighted on an associated record row on the association Index view" />
 
 </Option>
 
