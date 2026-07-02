@@ -135,11 +135,10 @@ end
 
 ## Render new lines for textarea fields
 
-**From version 2.8**
+The `textarea` field preserves line breaks on the **Show** view out of the box, including a **trailing empty line** when the saved value ends with a newline — the same line you see at the bottom of the Edit textarea. Avo wraps the value in a `whitespace-pre-line` container and renders a final `<br>` when the value ends with `\n`.
 
-When adding content using the `textarea` field, you might see that the newlines are not displayed on the `Show` view.
-
-```ruby{3}
+```ruby
+# app/avo/resources/comment.rb
 class Avo::Resources::Comment < Avo::BaseResource
   def fields
     field :body, as: :textarea
@@ -147,58 +146,32 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/faq/newline/edit.png" width="1560" height="1160" alt="Render new lines" />
-<Image src="/assets/img/faq/newline/default.png" width="1560" height="1160" alt="Render new lines" />
+### On Edit
 
-You can change how you display the information by using the `format_using` option.
+<Image src="/assets/img/4_0/faq/newline/edit.png" dark-src="/assets/img/4_0/faq/newline/edit-dark.png" width="1520" height="408" alt="A textarea Body field on the Edit form showing multi-line content with a trailing empty line after the last sentence" />
 
-### Use `simple_format`
+### On Show
 
-```ruby{6}
+<Image src="/assets/img/4_0/faq/newline/show.png" dark-src="/assets/img/4_0/faq/newline/show-dark.png" width="1520" height="372" alt="The same Body value on the Show view, including the trailing empty line after the last sentence" />
+
+
+
+### Add paragraph spacing with `simple_format`
+
+If you want blank lines between paragraphs turned into spaced `<p>` blocks instead of bare line breaks, use `format_using` with `simple_format`:
+
+```ruby
+# app/avo/resources/comment.rb
 class Avo::Resources::Comment < Avo::BaseResource
   def fields
     field :body,
       as: :textarea,
-      format_using: -> do
-        simple_format value
-      end
+      format_using: -> { simple_format value }
   end
 end
 ```
 
-<Image src="/assets/img/faq/newline/simple_format.png" width="1560" height="1160" alt="Render new lines" />
-
-### Use the `white-space: pre-line` style rule
-
-```ruby{6}
-class Avo::Resources::Comment < Avo::BaseResource
-  def fields
-    field :body,
-      as: :textarea,
-      format_using: -> do
-        content_tag(:div, style: 'white-space: pre-line') { value }
-      end
-    end
-end
-```
-
-<Image src="/assets/img/faq/newline/whitespace.png" width="1560" height="1160" alt="Render new lines" />
-
-### Use the `whitespace-pre-line` class
-
-```ruby{6}
-class Avo::Resources::Comment < Avo::BaseResource
-  def fields
-    field :body,
-      as: :textarea,
-      format_using: -> do
-        content_tag(:div, class: 'whitespace-pre-line') { value }
-      end
-  end
-end
-```
-
-<Image src="/assets/img/faq/newline/whitespace.png" width="1560" height="1160" alt="Render new lines" />
+<Image src="/assets/img/4_0/faq/newline/simple_format.png" dark-src="/assets/img/4_0/faq/newline/simple_format-dark.png" width="1520" height="412" alt="A Show view Body field rendered with simple_format, turning blank lines into spaced paragraphs" />
 
 ## Getting `No valid predicate for combinator` error when filtering
 
