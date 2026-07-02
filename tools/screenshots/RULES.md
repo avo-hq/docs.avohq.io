@@ -95,12 +95,13 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
 
 ## Lessons — demo app techniques (all reversible)
 
-6. **Resource files + controllers hot-reload** in dev → temp-edit a resource, capture,
-   `git checkout` to revert. New resource? add `Avo::XController < Avo::ResourcesController`
-   (routing is dynamic, controller hot-loads) — no server restart.
-7. **Initializer config does NOT hot-reload.** For a global like
-   `config.buttons_on_form_footers`, set `Avo.configuration.buttons_on_form_footers = true`
-   inside a **reloadable resource file's** class body at capture time, then revert.
+6. **Resource files + controllers hot-reload** in dev → just edit a resource and capture (no
+   restart, no revert — see #18). New resource? add `Avo::XController < Avo::ResourcesController`
+   (routing is dynamic, controller hot-loads).
+7. **Initializer config does NOT hot-reload.** Two options for a global like
+   `config.buttons_on_form_footers`: set it in the initializer and restart the overmind `web`
+   process, OR set `Avo.configuration.buttons_on_form_footers = true` inside a **reloadable resource
+   file's** class body at capture time (no restart).
 8. **`?per_page=6` (or 5)** keeps a table short so the full table + pagination fit a
    compact capture. It's a URL param — no config change needed.
 9. **Display width = full vs half pixel dims.** `Image.vue` compares `width` to the content
@@ -116,12 +117,14 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     on-screen text size ≈ `688 ÷ (captured CSS width)`. A full-width index table is ~1125px
     CSS at the default 1440 viewport (measured) → its text renders at ~0.6× — *crisp but too
     small to read*. #9's "crisp because the source is larger" is about **sharpness**, not
-    legibility; the two are different. When the shot's value is *reading* text (column labels,
-    help strings, field values, a renamed header), keep the **captured CSS width ≲ ~900px** so
-    text lands near 1×. The index table is responsive and **tracks the viewport** (measured:
-    1440→1125px, 820→777px), so the primary lever is a **narrower viewport**
+    legibility; the two are different. When the shot's value is *reading inline text* (table
+    column labels, help strings, field values, a renamed header), keep the **captured CSS width
+    ≲ ~900px** so text lands near 1×. The index table is responsive and **tracks the viewport**
+    (measured: 1440→1125px, 820→777px), so the primary lever is a **narrower viewport**
     (`viewport: { width: 820–960 }`), combined with fewer columns (see #10a). Reserve full
     ~1400px-wide captures for shots where the *structure*, not the text, is the point.
+    **This narrow-viewport lever does NOT apply to floating UI** (filter panels, popovers,
+    dropdowns, tippy overlays) — those use #9c instead.
 9b. **A single-field FORM-CARD shot must use a NARROW viewport (~720–900), never the default
     1440 — otherwise it ships zoomed-out as a slim letterbox strip.** On a New/Edit form the
     layout is label-left / input-right across the FULL form width, so at viewport 1440 one
@@ -135,6 +138,24 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     root cause — a focused single-thing shot left at 1440. (2026-06-23: `field-options-help`
     shipped at viewport 1440 → 1960×204 (~9.6:1) slim strip at ~0.7× text; re-shot at viewport
     720 → card ~703px CSS, label stacked above input, 1440×284 (~5:1), displays ~1×.)
+9c. **Floating UI (filters, popovers, dropdowns) = real app size at the standard viewport.**
+    A filter panel, dynamic-filter card, flatpickr popover, tippy overlay, or similar **floating**
+    element must appear in docs at the **same CSS size it has in a full-width browser** — not
+    blown up by a narrow viewport or by wiring `display:"full"` on a sub-column-sized crop.
+    This matches how the rest of the docs look (dynamic-filters, metric cards, control bars):
+    the component is **small and centered** in the column at 1:1, not edge-to-edge and oversized.
+    **Workflow:**
+    1. **Viewport 1440×900–1100** (sidebar closed per #12) — the standard docs viewport; layout
+       matches what users see at 100% screen width.
+    2. **Crop** to trigger + open panel/popover (#15a) with ≤10px symmetric pad (#15e/15f) — still
+       scope the *frame*, but do not shrink the viewport to enlarge the subject inside it.
+    3. **`display: "half"`** in the spec → markdown `width`/`height` = retina PNG dims ÷ 2 = the
+       component's real CSS size; `Image.vue` centers it at 1:1 (#15g). Same as dynamic-filters.
+    4. **GIFs:** capture at DPR 2 with a probed `clip`, set output `width` to the clip's **CSS
+       width** (not an upscaled display width) so the animation also lands at 1:1.
+    **Anti-pattern (what made basic-filters look "zoomed in"):** viewport 1200 + tight panel crop
+    + `display:"full"` with width ≈ the PNG pixel size but < the content column → the panel fills
+    ~90% of the column at ~2× its real app size. Fix: 1440 viewport + `display:"half"`.
 
 ## Lessons — editorial rules (from review feedback)
 
@@ -247,7 +268,7 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     When the thing to mark isn't a single focusable element (so 15b's native ring can't
     apply) and has no single narrow wrapper — e.g. the four scope tabs, whose only common
     ancestor `.tabs` is deceptively full content-width — use the drawn `highlight` mark
-    (`#2563eb`). Do NOT point it at the full-width container (the box becomes a wide thin bar
+    (`#ef4444`). Do NOT point it at the full-width container (the box becomes a wide thin bar
     across empty space). Instead use the harness's coordinate mark
     `marks: [{ box: { x, y, width, height }, type: "highlight" }]` (viewport CSS-px; probe the
     union rect of the first→last item) so the box hugs exactly the group, full edges inside
@@ -256,9 +277,9 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
 15d′. **A drawn highlight must mimic the native focus ring, not a chunky box — use
     `style: "focus"`.** Whenever you fall back to a drawn `highlight` mark (per 15b/15b′ for a
     non-focusable element, or 15d for a group), add `style: "focus"` to the mark. annotate then
-    renders a thin 2px stroke in `#60a5fa` (Avo `--color-info` / blue-400, the same color as the
-    real `:focus-visible` outline) with a tight ~2px pad and 3px radius — so the drawn mark reads
-    like the app's own ring, not a fat hand-drawn rectangle. The legacy chunky box (`#2563eb`,
+    renders a thin 2px stroke in `#f87171` (red-400) with a tight ~2px pad and 3px radius — so
+    the drawn mark reads like a crisp callout, not a fat hand-drawn rectangle. The legacy chunky
+    box (`#ef4444`, red-500,
     6px pad, 8px radius) is the default only for backward compatibility; new shots should always
     pass `style: "focus"`. Per-mark overrides exist if needed (`pad`, `stroke`, `radius`, `color`,
     unscaled px). The mark's `selector`/`box` must hug the target TEXT tightly — annotate pads
@@ -296,6 +317,8 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     mismatch, **measure** a shared element in both
     (`magick a.png -fuzz 18% -transparent 'rgb(r,g,b)' -alpha extract -threshold 1 -trim info:`)
     — if identical, it's a relative-width illusion; leave it.
+    **Also applies to floating UI** (filter panels, popovers, flatpickr) — see #9c; dynamic-filters
+    is the reference implementation.
 
 15h. **Measure with in-capture `marks`, not a standalone probe.** A separate probe can be in
     a different layout state than `capture.mjs` (sidebar open vs closed shifts right-aligned
@@ -568,9 +591,13 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     is framed like any image. `apply.mjs` is PNG-only and will NOT handle a GIF — copy the two
     `.gif`s into `4_0/…` and edit the tag by hand (17a). Converting a static PNG to a GIF orphans
     the old `x.png`/`x-dark.png` — flag them for the user to delete.
-18. **Leave the repo clean.** Revert every temp edit (`git checkout` tracked,
-    `git clean -f <path>` untracked). Never revert the user's own uncommitted changes
-    (whatever they already had modified).
+18. **Don't track the demo — move fast.** `main.avodemo.com` is disposable scratch space for
+    capturing shots: edit whatever you need (resources, controllers, models, initializer, seeds),
+    reuse whatever already fits, and create from scratch when nothing does. You do NOT need to
+    preserve or restore its state — no `git status` pre-check, no off-limits files, no reverting.
+    Do what the shot needs and leave the demo as-is. (Demo only — never commit/push there, and
+    never touch the docs repo beyond the intended doc + asset changes.) Initializer edits need an
+    overmind `web` restart; resource/controller files hot-reload.
 19. **When you isolate an element on a "clean" background, match the capture bg to the
     docs frame — don't expose the app's `<body>` colour.** To shoot just a fragment
     (e.g. the developer backtrace overlay) you hide the page (`body * { visibility:
