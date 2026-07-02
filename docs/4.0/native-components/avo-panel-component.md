@@ -1,193 +1,243 @@
-# `Avo::PanelComponent`
+# `Avo::UI::PanelComponent`
 
-The panel component is one of the most used components in Avo.
+The panel is one of the most used building blocks in Avo. It renders a titled
+container with an optional description, header controls, body, sidebar, and footer.
 
 ```erb
-<%= render Avo::PanelComponent.new(title: @product.name, description: @product.description) do |c| %>
-  <% c.with_tools do %>
-    <%= a_link(@product.link, icon: 'heroicons/solid/academic-cap', style: :primary, color: :primary) do %>
+<%= render Avo::UI::PanelComponent.new(title: @product.name, description: @product.description) do |panel| %>
+  <% panel.with_controls do %>
+    <%= a_link(@product.link, icon: "tabler/outline/eye", style: :primary, color: :primary) do %>
       View product
     <% end %>
   <% end %>
 
-  <% c.with_body do %>
-    <div class="flex flex-col p-4 min-h-24">
-      <div class="space-y-4">
-        <h3>Product information</h3>
+  <% panel.with_card do %>
+    <div class="flex flex-col p-4 min-h-24 space-y-4">
+      <h3>Product information</h3>
 
-        <p>Style: shiny</p>
-      </div>
+      <p>Style: shiny</p>
     </div>
   <% end %>
 <% end %>
 ```
 
-<Image src="/assets/img/native-components/avo-panel-component/index.jpg" width="773" height="276" alt="" />
+<Image src="/assets/img/4_0/avo-panel-component/index.png" dark-src="/assets/img/4_0/avo-panel-component/index-dark.png" width="1376" height="384" alt="Composed panel with title, description, a control button, and a card body" />
 
 ## Options
 
-All options are optional. You may render a panel without options.
+All options are optional. You may render a panel without any of them.
 
 ```erb
-<%= render Avo::PanelComponent.new do |c| %>
-  <% c.with_body do %>
+<%= render Avo::UI::PanelComponent.new do |panel| %>
+  <% panel.with_body do %>
     Something here.
   <% end %>
 <% end %>
 ```
 
-<Option name="`name`">
+<Option name="`title`">
 
-The name of the panel. It's displayed on the top under the breadcrumbs.
+The title of the panel, rendered at the top of the header.
 
 #### Type
 `String`
 
-<Image src="/assets/img/native-components/avo-panel-component/name.jpg" width="773" height="411" alt="" />
+<Image src="/assets/img/4_0/avo-panel-component/title.png" dark-src="/assets/img/4_0/avo-panel-component/title-dark.png" width="1376" height="244" alt="Panel header showing a title" />
 </Option>
 
 <Option name="`description`">
 
-Small text under the name that speaks a bit about what the panel does.
+A small line of text under the title that describes what the panel is about.
 
 #### Type
 `String`
 
-<Image src="/assets/img/native-components/avo-panel-component/description.jpg" width="773" height="533" alt="" />
+<Image src="/assets/img/4_0/avo-panel-component/description.png" dark-src="/assets/img/4_0/avo-panel-component/description-dark.png" width="1376" height="288" alt="Panel header with a title and a description line underneath" />
 </Option>
 
-<Option name="`classes`">
+<Option name="`class`">
 
-A list of classes that should be applied to the panel container.
-
-#### Type
-`String`
-
-<Image src="/assets/img/native-components/avo-panel-component/classes.jpg" width="773" height="533" alt="" />
-</Option>
-
-<Option name="`body_classes`">
-
-A list of classes that should be applied to the body of panel.
+A list of CSS classes applied to the panel container.
 
 #### Type
 `String`
 
-<Image src="/assets/img/native-components/avo-panel-component/body_classes.jpg" width="773" height="533" alt="" />
+```erb
+<%= render Avo::UI::PanelComponent.new(title: "Panel", class: "ring-2 ring-blue-500") do |panel| %>
+  <% panel.with_body do %>
+    Something here.
+  <% end %>
+<% end %>
+```
+
+<Image src="/assets/img/4_0/avo-panel-component/class.png" dark-src="/assets/img/4_0/avo-panel-component/class-dark.png" width="1376" height="276" alt="Panel with a custom class adding a blue ring around the container" />
 </Option>
 
 <Option name="`data`">
 
-A hash of data attributes to be forwarded to the panel container.
+A hash of `data-*` attributes forwarded to the panel container.
 
 #### Type
 `Hash`
-
-<Image src="/assets/img/native-components/avo-panel-component/classes.jpg" width="773" height="533" alt="" />
 </Option>
 
-<Option name="`display_breadcrumbs`">
+<Option name="`index`">
 
-Toggles the breadcrumbs visibility. You can't customize the breadcrumbs yet.
+The item index, forwarded to the container as a `data-item-index` attribute. Used
+when panels are rendered as part of a collection (for example the [Grid view](./../grid-view)).
+
+#### Type
+`Integer`
+</Option>
+
+<Option name="`content_focusable`">
+
+When `true`, the panel body becomes a keyboard focus anchor: focusing it lets the user
+`Tab` into the fields and `Shift+Tab` back to the header controls. Defaults to `false`.
 
 #### Type
 `Boolean`
-
-<Image src="/assets/img/native-components/avo-panel-component/display_breadcrumbs.jpg" width="773" height="720" alt="" />
 </Option>
 
 ## Slots
 
-The component has a few slots where you customize the content in certain areas.
+The component exposes a few slots where you customize the content of specific areas.
 
-<Option name="`tools`">
+<Option name="`header`">
 
-We created this slot as a place to put resource controls like the back, edit, delete, and detach buttons.
-This slot will collapse under the title and description when the screen resolution falls under `1024px`.
-
-The section is automatically aligned to the right using `justify-end` class.
+Replaces the default header (title, description and controls) with your own markup.
+Use it when you need full control over the top of the panel.
 
 ```erb
-<%= render Avo::PanelComponent.new(name: "Dashboard") do |c| %>
-  <% c.with_tools do %>
-    <%= a_link('/admin', icon: 'heroicons/solid/academic-cap', style: :primary) do %>
+<%= render Avo::UI::PanelComponent.new do |panel| %>
+  <% panel.with_header do %>
+    <%= render Avo::UI::PanelHeaderComponent.new(title: "Dashboard", description: "Everything at a glance") %>
+  <% end %>
+<% end %>
+```
+</Option>
+
+<Option name="`controls`">
+
+A place for panel controls such as back, edit, delete, and detach buttons. The
+controls are automatically aligned to the right of the header and collapse under the
+title and description on narrow screens.
+
+```erb
+<%= render Avo::UI::PanelComponent.new(title: "Dashboard") do |panel| %>
+  <% panel.with_controls do %>
+    <%= a_link("/admin", icon: "tabler/outline/external-link", style: :primary, color: :primary) do %>
       Admin
     <% end %>
   <% end %>
 <% end %>
 ```
 
-<Image src="/assets/img/native-components/avo-panel-component/tools-slot.jpg" width="1014" height="226" alt="" />
+<Image src="/assets/img/4_0/avo-panel-component/controls.png" dark-src="/assets/img/4_0/avo-panel-component/controls-dark.png" width="1376" height="128" alt="Panel header with a control button aligned to the right" />
+</Option>
+
+<Option name="`cover`">
+
+A full-width area rendered at the very top of the panel, above the header. Handy for
+a cover image or banner.
+
+```erb
+<%= render Avo::UI::PanelComponent.new(title: "Product") do |panel| %>
+  <% panel.with_cover do %>
+    <%= image_tag @product.cover_url, class: "w-full h-40 object-cover" %>
+  <% end %>
+<% end %>
+```
+
+<Image src="/assets/img/4_0/avo-panel-component/cover.png" dark-src="/assets/img/4_0/avo-panel-component/cover-dark.png" width="1376" height="556" alt="Panel with a cover banner across the top, a title, and a card body" />
 </Option>
 
 <Option name="`body`">
 
-This is one of the main slots of the component where the bulk of the content is displayed.
+The main slot of the component, where the bulk of the content is displayed flush in
+the panel (no card wrapper).
 
 ```erb{2-4}
-<%= render Avo::PanelComponent.new do |c| %>
-  <% c.with_body do %>
-    Something here.
+<%= render Avo::UI::PanelComponent.new(title: "Product information") do |panel| %>
+  <% panel.with_body do %>
+    <p>This content is rendered flush in the panel body. There is no card wrapping it, so it sits directly on the panel surface — use this slot when your content already brings its own card.</p>
   <% end %>
 <% end %>
 ```
 
-<Image src="/assets/img/native-components/avo-panel-component/body-slot.jpg" width="773" height="720" alt="" />
+<Image src="/assets/img/4_0/avo-panel-component/body.png" dark-src="/assets/img/4_0/avo-panel-component/body-dark.png" width="1881" height="208" alt="Panel with plain body content rendered flush, no inner card" />
 </Option>
 
-<Option name="`bare_content`">
+<Option name="`card`">
 
-Used when displaying the [Grid view](./../grid-view), it displays the data flush in the container and with no background.
+Wraps the content in a card automatically. Use this instead of `body` when you want
+the content to sit inside a bordered, padded card.
 
 ```erb{2-4}
-<%= render Avo::PanelComponent.new do |c| %>
-  <% c.with_bare_content do %>
+<%= render Avo::UI::PanelComponent.new do |panel| %>
+  <% panel.with_card do %>
     Something here.
   <% end %>
 <% end %>
 ```
 
-<Image src="/assets/img/native-components/avo-panel-component/grid-view.jpg" width="1312" height="1096" alt="" />
-</Option>
-
-<Option name="`footer_tools`">
-
-This is pretty much the same slot as `tools` but rendered under the `body` or `bare_content` slots.
-
-```erb{2-4}
-<%= render Avo::PanelComponent.new do |c| %>
-  <% c.with_footer_controls do %>
-    Something here.
-  <% end %>
-<% end %>
-```
-
-<Image src="/assets/img/native-components/avo-panel-component/footer-controls.jpg" width="1013" height="295" alt="" />
-</Option>
-
-<Option name="`footer`">
-
-The lowest available area at the end of the component.
-
-```erb{2-4}
-<%= render Avo::PanelComponent.new do |c| %>
-  <% c.with_footer do %>
-    Something here.
-  <% end %>
-<% end %>
-```
+<Image src="/assets/img/4_0/avo-panel-component/card.png" dark-src="/assets/img/4_0/avo-panel-component/card-dark.png" width="1376" height="244" alt="Panel whose content sits inside an automatically-wrapped bordered card" />
 </Option>
 
 <Option name="`sidebar`">
 
-The sidebar will conveniently show things in a smaller area on the right of the `body`.
+Shows content in a smaller area on the end side of the `body`.
 
 ```erb{2-4}
-<%= render Avo::PanelComponent.new do |c| %>
-  <% c.with_Sidebar do %>
+<%= render Avo::UI::PanelComponent.new(title: "Product") do |panel| %>
+  <% panel.with_card do %>
+    Main content here.
+  <% end %>
+
+  <% panel.with_sidebar do %>
     Something tiny here.
   <% end %>
 <% end %>
 ```
-<Image src="/assets/img/native-components/avo-panel-component/sidebar.png" width="2032" height="1294" alt="" />
+
+<Image src="/assets/img/4_0/avo-panel-component/sidebar.png" dark-src="/assets/img/4_0/avo-panel-component/sidebar-dark.png" width="1100" height="324" alt="Panel with a main card body on the start side and a narrower sidebar on the end side" />
+</Option>
+
+<Option name="`pre_bodies`">
+
+Content rendered between the header and the body. Can be used more than once; each
+entry is rendered in order.
+
+```erb
+<%= render Avo::UI::PanelComponent.new(title: "Product") do |panel| %>
+  <% panel.with_pre_body do %>
+    A notice above the body.
+  <% end %>
+
+  <% panel.with_card do %>
+    Main content here.
+  <% end %>
+<% end %>
+```
+
+<Image src="/assets/img/4_0/avo-panel-component/pre_bodies.png" dark-src="/assets/img/4_0/avo-panel-component/pre_bodies-dark.png" width="1376" height="364" alt="Panel with a pre-body notice strip between the header and the card body" />
+</Option>
+
+<Option name="`footer`">
+
+The lowest area of the component, rendered under the `body` or `card`.
+
+```erb{2-4}
+<%= render Avo::UI::PanelComponent.new(title: "Product") do |panel| %>
+  <% panel.with_card do %>
+    Main content here.
+  <% end %>
+
+  <% panel.with_footer do %>
+    Something at the bottom.
+  <% end %>
+<% end %>
+```
+
+<Image src="/assets/img/4_0/avo-panel-component/footer.png" dark-src="/assets/img/4_0/avo-panel-component/footer-dark.png" width="1376" height="332" alt="Panel with a card body and a footer area at the bottom" />
 </Option>
