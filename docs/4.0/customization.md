@@ -26,17 +26,19 @@ Your data-rich app might have a few fields where you reference `date`, `datetime
 
 There are a few customization options to change how resources are displayed in the **Index** view.
 
-### Resources per page
+### Per-page pagination
 
-You may customize how many resources you can view per page with `config.per_page = 24`.
+Set the default page size with `config.per_page` and the options in the per-page picker with `config.per_page_steps`.
 
-<Image src="/assets/img/resource-index/per-page-config.jpg" width="648" height="438" alt="Per page config" />
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.per_page = 4
+  config.per_page_steps = [4, 12, 24, 48]
+end
+```
 
-### Per page steps
-
-Similarly customize the per-page steps in the per-page picker with `config.per_page_steps = [12, 24, 48, 72]`.
-
-<Image src="/assets/img/resource-index/per-page-steps.jpg" width="628" height="422" alt="Per page config" />
+<Image src="/assets/img/4_0/customization/per-page-pagination.gif" dark-src="/assets/img/4_0/customization/per-page-pagination-dark.gif" width="888" height="280" alt="An Avo index table with four rows and a pagination bar; the per-page picker opens upward to list 4, 12, 24 and 48, then closes." prompt="index table with 4 rows and pagination bar; per-page picker opens listing 4, 12, 24, 48 then closes" />
 
 ### Resources via per page
 
@@ -46,17 +48,8 @@ For `has_many` associations you can control how many resources are visible in th
 
 The `ResourceIndex` component supports two view types `:table` and `:grid`. You can change that by `config.default_view_type = :table`. Read more on the [grid view configuration page](./grid-view.html).
 
-<div class="grid grid-flow-row sm:grid-flow-col sm:grid-cols-2 gap-2 w-full">
-  <div class="w-full">
-    <strong>Table view</strong>
-    <Image src="/assets/img/customization/table-view.png" width="2400" height="1500" alt="Table view" />
-  </div>
-  <div class="w-full">
-    <strong>Grid view</strong>
-    <Image src="/assets/img/customization/grid-view.jpg" width="1312" height="1096" alt="Grid view" />
-  </div>
-</div>
 
+<Image src="/assets/img/4_0/customization/view-type-table-grid.gif" dark-src="/assets/img/4_0/customization/view-type-table-grid-dark.gif" width="888" height="650" alt="An Avo Posts index with six records per page: the view switcher toggles between table rows and grid cards." prompt="Posts index with 4 per page; GIF toggling table and grid view with annotated view switcher" />
 ## ID links to resource
 
 On the **Index** view, each row has the controls component at the end, which allows the user to go to the **Show** and **Edit** views and delete that entry. If you have a long row and a not-so-wide display, it might not be easy to scroll to the right-most section to click the **Show** link.
@@ -73,7 +66,7 @@ end
 
 That will render all `id` fields in the **Index** view as a link to that resource.
 
-<Image src="/assets/img/fields-reference/as-link-to-resource.jpg" width="694" height="166" alt="As link to resource" />
+<Image src="/assets/img/4_0/customization/as-link-to-resource.png" dark-src="/assets/img/4_0/customization/as-link-to-resource-dark.png" width="1696" height="664" alt="An Avo index where each row's ID is rendered as a blue link to that record's show view, with a Name column." />
 
 ## Modify controls placement and appearance
 
@@ -204,7 +197,7 @@ end
 
 When set to `false`, the sidebar will remain permanently open on desktop and users won't be able to collapse it.
 
-<Image src="/assets/img/customization/sidebar-toggle-visible.gif" width="643" height="800" alt="Sidebar toggle button" />
+<Image src="/assets/img/4_0/customization/sidebar-toggle-hidden.png" dark-src="/assets/img/4_0/customization/sidebar-toggle-hidden-dark.png" width="2880" height="2360" alt="An Avo resource index on desktop with the sidebar permanently open and no toggle button in the navbar, because sidebar_toggle_visible is set to false." prompt="Full Avo resource index page with config.sidebar_toggle_visible = false: the sidebar is open on the left and the navbar at the top has NO collapse/expand toggle button next to the logo. Capture the entire page (sidebar + navbar + content) at a desktop width." />
 
 ## Body classes
 
@@ -475,7 +468,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/customization/skip_show_view.gif" width="1870" height="880" alt="" />
+<Image src="/assets/img/4_0/customization/skip_show_view.gif" dark-src="/assets/img/4_0/customization/skip_show_view-dark.gif" width="1170" height="428" alt="An Avo create form for a course: after saving, Avo redirects to the Edit view instead of Show when skip_show_view is enabled." />
 
 ## Logger
 
@@ -589,7 +582,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/3_0/customization/click-row-to-view-record.gif" width="" height="" alt="Click to view record in Avo" />
+<Image src="/assets/img/4_0/customization/click-row-to-view-record.gif" dark-src="/assets/img/4_0/customization/click-row-to-view-record-dark.gif" width="1170" height="528" alt="An Avo resource index where a row name cell is highlighted, clicked, and navigates to the record show view with panel and card DSL layout." />
 </Option>
 
 ## Associations
@@ -619,7 +612,12 @@ The message `There are more records available.` is shown when the limit is reach
 
 Using [searchable](./associations/searchable.html) is recommended for listing unlimited records with better performance and user experience.
 
-<Image src="/assets/img/customization/associations-lookup-list-limit.png" width="2466" height="1098" alt="Associations lookup list limit configuration" />
+<!-- REDO MANUALLY: this shot shows an open native browser <select> dropdown listing the
+     records + the disabled "There are more records available." option. Playwright cannot open
+    a native browser dropdown (the OS renders it outside the page), so the automated pipeline
+     can't capture it. Re-shoot by hand (CleanShot) in both light and dark and replace the two
+     assets, keeping the same filenames. -->
+<Image src="/assets/img/4_0/customization/associations-lookup-list-limit.png" dark-src="/assets/img/4_0/customization/associations-lookup-list-limit-dark.png" width="1952" height="820" alt="An Avo new form where a belongs_to user select lists five records followed by a disabled 'There are more records available.' message when the lookup list limit is reached." />
 
 ### `frames`
 
