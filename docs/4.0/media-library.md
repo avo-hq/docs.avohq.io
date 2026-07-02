@@ -5,7 +5,7 @@ demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1698"
 
 # Media Library
 
-<Image src="/assets/img/3_0/media-library/media-library.gif" alt="Media Library" size="800x453" />
+<Image src="/assets/img/4_0/media-library/media-library.gif" dark-src="/assets/img/4_0/media-library/media-library-dark.gif" alt="Media Library" size="800x402" />
 
 If you run an asset-intensive, having a place to view all those asses would be great. It's becoming easier with Avo and it's Media Library feature.
 
@@ -83,7 +83,7 @@ end
 
 The Media Library will seamlessly integrate with all the rich text editors.
 
-<Image src="/assets/img/3_0/media-library/media-library-rhino.gif" alt="Media Library with Rhino field" size="800x453" />
+<Image src="/assets/img/4_0/media-library/media-library-rhino.gif" dark-src="/assets/img/4_0/media-library/media-library-rhino-dark.gif" alt="Media Library with Rhino field" size="800x373" />
 
 ```ruby
 field :body, as: :trix
