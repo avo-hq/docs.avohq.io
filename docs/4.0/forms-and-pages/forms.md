@@ -56,7 +56,7 @@ end
 
 ### Group fields with cards and panels
 
-Wrap related fields in a `card` or [`panel`](./../resource-panels.html) to organize them. Both take `title:` and `description:` as keyword arguments.
+Wrap related fields in a `card` or [`panel`](./../fields-layout.html#group-fields-into-panels) to organize them. Both take `title:` and `description:` as keyword arguments.
 
 ```ruby
 def fields

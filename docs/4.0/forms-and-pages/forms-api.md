@@ -73,7 +73,7 @@ self.id = :app_settings
 
 <Option name="`fields`">
 
-Defines the form's structure. Uses the same field syntax as Avo resources and actions, so it supports every Avo field type, [panels and cards](./../resource-panels.html), and layout components.
+Defines the form's structure. Uses the same field syntax as Avo resources and actions, so it supports every Avo field type, [panels and cards](./../fields-layout.html#group-fields-into-panels), and layout components.
 
 ```ruby
 def fields
