@@ -2,7 +2,7 @@
 
 When a tab contains an association field you may want to show some counter indicator about how many records are on that particular tab. You can include that information inside tab's name.
 
-<Image src="/assets/img/3_0/guides/tabs-counter-indicator/tabs_counter.png" width="292" height="87" alt="" />
+<Image src="/assets/img/4_0/guides/tabs-counter-indicator/tabs_counter.png" dark-src="/assets/img/4_0/guides/tabs-counter-indicator/tabs_counter-dark.png" width="522" height="85" alt="A tabs switcher whose Teams and People labels show a grey record-count badge" />
 
 ```ruby{7,10,16-23}
 class Avo::Resources::User < Avo::BaseResource
