@@ -4,7 +4,7 @@ The "Select All" feature is designed to enable users to select all queried recor
 
 ## How does it work?
 
-<Image src="/assets/img/3_0/select_all.gif" width="687" height="289" alt="Select all demonstration" />
+<Image src="/assets/img/4_0/select-all/select-all.gif" dark-src="/assets/img/4_0/select-all/select-all-dark.gif" width="1152" height="600" alt="An Avo Projects index where checking the header Select all checkbox selects the page and offers a Select all matching link, which selects all 36 records across every page." prompt="selecting all records on an index including the select all across pages affordance" />
 
 When a user toggles the "Select all" checkbox, Avo will first check to see if there are more records than just those displayed on that page, and if there are, it will ask if the user if they want to select all the records or not.
 
