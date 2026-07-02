@@ -2,7 +2,6 @@
 license: pro
 outline: [2, 3]
 api_docs: "./searchable-api.html"
-demoVideo: https://youtu.be/KLI_sVTPX-Q
 ---
 
 # Searchable associations
@@ -41,7 +40,6 @@ On this example, the `links` field will use the `Avo::Resources::Link` resource'
 
 When you need more granular control over a single picker, pass a hash instead of `true`. Use it to override the target resource's `query:` or `item:` for that field, or to gate the picker with `enabled:`.
 
-
 ```ruby{5-14}
 # app/avo/resources/review.rb
 class Avo::Resources::Review < Avo::BaseResource
@@ -65,7 +63,6 @@ end
 
 Runs while the user is typing. The records it returns fill the dropdown. See [resource search](./../search/resource-search.html#enable-search-for-a-resource) for how to write the proc; the same rules apply here.
 
-
 ### `enabled:`
 
 Boolean or proc. Determines whether the picker uses the searchable widget. If it evaluates to false, the field falls back to the standard `<select>`. Handy for gradual rollouts or role-based gating.
@@ -73,7 +70,6 @@ Boolean or proc. Determines whether the picker uses the searchable widget. If it
 ### `item:`
 
 Configures how each row renders in the dropdown. See the [Searchable associations API](./searchable-api.html#item) for the available keys.
-
 
 ## Default options
 
