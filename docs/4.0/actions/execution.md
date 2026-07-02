@@ -145,7 +145,7 @@ class Avo::Actions::ToggleInactive < Avo::BaseAction
 end
 ```
 
-<Image src="/assets/img/4_0/alert/alert-response.png" width="746" height="432" alt="Avo notification types" />
+<Image src="/assets/img/4_0/alert/alert-response.png" dark-src="/assets/img/4_0/alert/alert-response-dark.png" width="468" height="260" alt="Avo action feedback notifications: success, info, warning, and error alerts stacked." />
 
 ## Response types
 
