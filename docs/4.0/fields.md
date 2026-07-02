@@ -138,7 +138,7 @@ field :is_available, as: :boolean
 ```
 
 :::info
-If having the fields stacked one on top of another is not the right layout, try the [resource-sidebar](./resource-sidebar).
+If having the fields stacked one on top of another is not the right layout, try the [sidebar](./fields-layout#move-compact-fields-to-a-sidebar).
 :::
 
 ### A more complex example

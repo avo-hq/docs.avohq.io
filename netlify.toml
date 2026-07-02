@@ -1,3 +1,28 @@
+# 4.0 layout pages consolidated into fields-layout + fields-layout-api
+[[redirects]]
+from = "/4.0/resource-header.html"
+to = "/4.0/fields-layout.html#place-the-header"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/resource-panels.html"
+to = "/4.0/fields-layout.html#group-fields-into-panels"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/resource-sidebar.html"
+to = "/4.0/fields-layout.html#move-compact-fields-to-a-sidebar"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/tabs.html"
+to = "/4.0/fields-layout.html#organize-fields-under-tabs"
+status = 301
+force = false
+
 # temporary until we set up a proper navigation for the LLMs
 [[redirects]]
 from = "/llms.txt"

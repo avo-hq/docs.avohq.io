@@ -155,18 +155,7 @@ const config = {
             { text: "Field options", link: "/4.0/field-options.html" },
             { text: "Field discovery", link: "/4.0/field-discovery.html" },
 
-            {
-              text: "Layout",
-              collapsed: true,
-              link: '/4.0/fields-layout.html',
-              items: [
-                { text: "Overview", link: "/4.0/fields-layout.html" },
-                { text: "Header", link: "/4.0/resource-header.html" },
-                { text: "Panels", link: "/4.0/resource-panels.html" },
-                { text: "Sidebars", link: "/4.0/resource-sidebar.html" },
-                { text: "Tabs", link: "/4.0/tabs.html" },
-              ],
-            },
+            { text: "Layout", link: "/4.0/fields-layout.html" },
             {
               text: "Field types",
               collapsed: true,
