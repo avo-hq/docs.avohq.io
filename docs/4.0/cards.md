@@ -33,7 +33,7 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
 end
 ```
 
-<Image src="/assets/img/dashboards/users_metric.jpg" width="331" height="170" alt="Avo Metric Card" />
+<Image src="/assets/img/4_0/cards/metric.png" dark-src="/assets/img/4_0/cards/metric-dark.png" width="353" height="182" alt="An Avo metric card titled “Users count” showing a large number with a range dropdown in its header." />
 
 ### `description`
 
@@ -128,7 +128,7 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
 end
 ```
 
-<Image src="/assets/img/dashboards/map_card.jpg" width="653" height="602" alt="Avo Map card" />
+<Image src="/assets/img/4_0/cards/map.png" dark-src="/assets/img/4_0/cards/map-dark.png" width="1428" height="1056" alt="An Avo partial card embedding a Google Maps view of Manhattan, rendered flush to the card edges because the card header is hidden." />
 
 ## Format
 
@@ -148,7 +148,7 @@ class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
 end
 ```
 
-<Image src="/assets/img/3_0/cards/amount_raised_without_format.png" width="296" height="196" alt="amount raised without format" />
+<Image src="/assets/img/4_0/cards/amount-raised-without-format.png" dark-src="/assets/img/4_0/cards/amount-raised-without-format-dark.png" width="353" height="162" alt="An Avo metric card titled “Amount raised” showing the value with a $ prefix and no formatting applied." />
 
 Example with format:
 
@@ -167,13 +167,13 @@ class Avo::Cards::AmountRaised < Avo::Cards::MetricCard
 end
 ```
 
-<Image src="/assets/img/3_0/cards/amount_raised_with_format.png" width="300" height="204" alt="amount raised with format" />
+<Image src="/assets/img/4_0/cards/amount-raised-with-format.png" dark-src="/assets/img/4_0/cards/amount-raised-with-format-dark.png" width="353" height="162" alt="An Avo metric card titled “Amount raised” showing the value formatted via number_to_social as a compact “9K” with a $ prefix." />
 
 ## Metric card
 
 The metric card is your friend when you only need to display a simple big number. To generate one run `bin/rails g avo:card users_metric --type metric`.
 
-<Image src="/assets/img/dashboards/users_metric.jpg" width="331" height="170" alt="Avo Metric" />
+<Image src="/assets/img/4_0/cards/metric.png" dark-src="/assets/img/4_0/cards/metric-dark.png" width="353" height="182" alt="An Avo metric card titled “Users count” showing a large number with a range dropdown in its header." />
 
 #### Calculate results
 
@@ -200,7 +200,7 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   #   "Year to date": "YTD",
   #   All: "ALL",
   # }
-  # self.prefix = '$'
+  # self.prefix = '~'
   # self.suffix = '%'
   # self.refresh_every = 10.minutes
 
@@ -239,12 +239,12 @@ Some metrics might want to add a `prefix` or a `suffix` to display the data bett
 ```ruby{3,4}
 class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = 'users_metric'
-  self.prefix = '$'
+  self.prefix = '~'
   self.suffix = '%'
 end
 ```
 
-<Image src="/assets/img/dashboards/prefix-suffix.jpg" width="651" height="168" alt="Avo Prefix & suffix" />
+<Image src="/assets/img/4_0/cards/prefix-suffix.png" dark-src="/assets/img/4_0/cards/prefix-suffix-dark.png" width="353" height="182" alt="An Avo metric card whose value is decorated with a ~ prefix and a % suffix." prompt="metric card with a prefix and suffix decorating the value" />
 
 <br>
 
@@ -304,7 +304,7 @@ class Avo::Cards::UserSignups < Avo::Cards::ChartkickCard
 end
 ```
 
-<Image src="/assets/img/dashboards/chartkick.jpg" width="650" height="169" alt="Chartkick card" />
+<Image src="/assets/img/4_0/cards/chartkick.png" dark-src="/assets/img/4_0/cards/chartkick-dark.png" width="1412" height="364" alt="An Avo chartkick card titled “User signups” rendering an area chart of signups over time." />
 
 ### Chart types
 
@@ -383,7 +383,7 @@ class Avo::Cards::ExampleCustomPartial < Avo::Cards::PartialCard
 end
 ```
 
-<Image src="/assets/img/dashboards/custom_partial_card.jpg" width="330" height="598" alt="Custom partial card" />
+<Image src="/assets/img/4_0/cards/custom-partial.png" dark-src="/assets/img/4_0/cards/custom-partial-dark.png" width="361" height="528" alt="A tall Avo partial card whose body is custom HTML loaded from a partial, with the description “This card has been loaded from a custom partial.”" />
 
 You can embed a piece of content from another app using an iframe. You can hide the header using the `self.display_header = false` option. That will render the embedded content flush to the container.
 
@@ -411,7 +411,7 @@ end
 ></iframe>
 ```
 
-<Image src="/assets/img/dashboards/map_card.jpg" width="653" height="602" alt="Avo Map card" />
+<Image src="/assets/img/4_0/cards/map.png" dark-src="/assets/img/4_0/cards/map-dark.png" width="1428" height="1056" alt="An Avo partial card embedding a Google Maps view of Manhattan, rendered flush to the card edges because the card header is hidden." />
 
 ## Cards visibility
 
@@ -495,7 +495,7 @@ end
 ```
 ::: -->
 
-<Image src="/assets/img/dashboards/divider.jpg" width="980" height="379" alt="Avo Dashboard Divider" />
+<Image src="/assets/img/4_0/cards/divider.png" dark-src="/assets/img/4_0/cards/divider-dark.png" width="2136" height="1446" alt="An Avo dashboard divider labelled “Custom partials” separating a row of chart cards above from the custom partial and map cards below, each shown in full." prompt="a labelled divider separating dashboard cards" />
 
 Dividers can be a simple line between your cards or have some text on them that you control using the `label` option.
 When you don't want to show the line, you can enable the `invisible` option, which adds the divider but does not display a border or label.
