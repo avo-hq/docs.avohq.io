@@ -30,7 +30,7 @@ import RecipesList from "../theme/components/RecipesList.vue"
 import CustomCode from "../theme/components/CustomCode.vue"
 import BrandingRedirect from "../theme/components/BrandingRedirect.vue"
 import RefactoredFromBranding from "../theme/components/RefactoredFromBranding.vue"
-import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline/index.js"
+import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline"
 import './custom.css'
 import {h} from "vue"
 
