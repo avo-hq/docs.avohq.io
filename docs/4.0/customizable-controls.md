@@ -4,15 +4,15 @@ license: advanced
 
 # Customizable controls
 
-<Image src="/assets/img/resources/customizable-controls/index.jpg" width="1020" height="469" alt="" />
-
 One of the things that we wanted to support from day one is customizable controls on resource pages, and now, Avo supports customizable controls on <Index />, <Show />, and <Edit /> views and for the table row.
+
+<Image src="/assets/img/4_0/customizable-controls/panel.png" dark-src="/assets/img/4_0/customizable-controls/panel-dark.png" width="1976" height="564" alt="An Avo Show page panel with the record title and customizable controls highlighted in the header tools area, above a card listing the record fields." prompt="full show page panel with the customizable controls highlighted in the header tools area" />
 
 ## Default controls
 
 By default, Avo displays a few buttons (controls) for the user to use on the <Index />, <Show />, and <Edit /> views which you can override using the appropriate resource options.
 
-<Image src="/assets/img/3_0/customizable-controls/default-controls.png" width="654" height="164" alt="" />
+<Image src="/assets/img/4_0/customizable-controls/default-controls.png" dark-src="/assets/img/4_0/customizable-controls/default-controls-dark.png" width="321" height="52" alt="The default show controls bar on an Avo resource show page header: a back button, a delete button, and an edit button." prompt="default show controls bar (back, delete, edit) on a resource show page header" />
 
 ## Customize the controls
 
@@ -43,7 +43,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/3_0/customizable-controls/show-controls.png" width="1344" height="164" alt="" />
+<Image src="/assets/img/4_0/customizable-controls/show-controls.png" dark-src="/assets/img/4_0/customizable-controls/show-controls-dark.png" width="543" height="54" alt="The customized show_controls bar on an Avo Fish show page header: a back button, Fish.com and Turbo demo links, a delete button, a fuchsia Release fish action, and an edit button." prompt="customized show_controls bar on the Fish show page header" />
 </Option>
 
 <Option name="Edit page">
@@ -66,7 +66,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/3_0/customizable-controls/show-controls.png" width="1344" height="164" alt="" />
+<Image src="/assets/img/4_0/customizable-controls/edit-controls.png" dark-src="/assets/img/4_0/customizable-controls/edit-controls-dark.png" width="452" height="54" alt="The customized edit_controls bar on an Avo Fish edit page header: a back button, a Fish.com link, a Runnables actions menu, a fuchsia Release fish action, and a Save Fish button." prompt="customized edit_controls bar on the Fish edit page header" />
 </Option>
 
 <Option name="Index page">
@@ -87,7 +87,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/3_0/customizable-controls/index-controls.png" width="1300" height="164" alt="" />
+<Image src="/assets/img/4_0/customizable-controls/index-controls.png" dark-src="/assets/img/4_0/customizable-controls/index-controls-dark.png" width="673" height="52" alt="The customized index_controls bar on an Avo Fish index page header: a Fish.com link, a Runnables actions menu, a Release fish action, an Attach one Fish button, and a Create a new and fresh Fish button." prompt="customized index_controls bar on the Fish index page header" />
 </Option>
 
 <Option name="Row controls">
@@ -114,7 +114,7 @@ class Avo::Resources::Fish < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/3_0/customizable-controls/row-controls.png" width="834" height="120" alt="" />
+<Image src="/assets/img/4_0/customizable-controls/row-controls.png" dark-src="/assets/img/4_0/customizable-controls/row-controls-dark.png" width="2344" height="758" alt="The Avo Fish index table with several rows; the customized row controls area on one middle row is highlighted in red, showing a Release action button, edit, show and delete icons, an Actions menu, and icon links." prompt="Fish index table showing a few rows with the customized row controls area on one row highlighted in red" />
 </Option>
 
 ## Controls
@@ -211,7 +211,7 @@ list label: "Custom Index List", icon: "heroicons/outline/cube-transparent", sty
 end
 ```
 
-<Image src="/assets/img/resources/customizable-controls/custom_list.png" width="404" height="256" alt="Custom list opened" />
+<Image src="/assets/img/4_0/customizable-controls/custom_list.png" dark-src="/assets/img/4_0/customizable-controls/custom_list-dark.png" width="314" height="162" alt="The custom `list` control open on an Avo Fish index page header: a &quot;Custom Index List&quot; dropdown button (highlighted) among the page controls, with its menu open showing Google and Fish.com links and a Dummy action, each with an icon." prompt="the list control dropdown opened showing its links and actions" />
 
 Within the `list` block, the permitted elements are `link_to`, `action`, and [`divider`](actions/registration.html#divider). For both `link_to` and `action`, you can include an optional `icon` parameter.
 
@@ -271,7 +271,7 @@ self.show_controls = -> do
 end
 ```
 
-<Image src="/assets/img/3_0/customizable-controls/default_controls.png" alt="Default controls" width="884" height="140" />
+<Image src="/assets/img/4_0/customizable-controls/default_controls.png" dark-src="/assets/img/4_0/customizable-controls/default_controls-dark.png" width="441" height="52" alt="A show controls bar with a custom &quot;View on site&quot; link prepended before the default back, delete, and edit controls." prompt="show controls bar with a custom link prepended before the default controls" />
 </Option>
 
 ## Control Options

@@ -31,19 +31,19 @@ class PhlexComponent < Phlex::HTML
 
   def view_template
     div class: "flex items-center px-6 py-4" do
-      span class: "font-semibold text-gray-500 text-sm w-64 uppercase" do
+      span class: "font-semibold text-gray-500 dark:text-gray-400 text-sm w-64 uppercase" do
         @field.name
       end
-      span class: "text-gray-900" do
+      span class: "text-gray-900 dark:text-white" do
         @field.value
       end
-      span class: "text-gray-300 mx-3" do
+      span class: "text-gray-300 dark:text-gray-600 mx-3" do
         "|"
       end
       span class: "mr-1" do
         "ℹ️"
       end
-      span class: "text-sm text-gray-500 italic" do
+      span class: "text-sm text-gray-500 dark:text-gray-400 italic" do
         "This is a unique course link. Share it with enrolled users."
       end
     end
@@ -75,7 +75,7 @@ class Avo::Resources::CourseLink < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/guides/phlex/phlex_component.png" width="1278" height="335" alt="Phlex component" />
+<Image src="/assets/img/guides/phlex/phlex_component.png" dark-src="/assets/img/guides/phlex/phlex_component-dark.png" width="1984" height="392" alt="Phlex component" />
 
 :::tip
 While this example uses a field, the same pattern applies to resources. You can use the [`components`](./../resources#self.components) option to customize the component for the `index`, `show`, `edit`, and `new` views.

@@ -55,7 +55,7 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/custom-fields/progress-show.jpg" width="1046" height="180" alt="Progress custom field" />
+<Image src="/assets/img/4_0/custom-fields/progress-show.png" dark-src="/assets/img/4_0/custom-fields/progress-show-dark.png" width="1360" height="200" alt="A progress_bar custom field on an Avo Show view, rendering a progress bar with the value 98% above it." />
 
 The generated view components are basic text fields for now.
 
@@ -258,7 +258,7 @@ No let's do something about those views. Let's add a progress bar to the `Index`
 <% end %>
 ```
 
-<Image src="/assets/img/custom-fields/progress-index.jpg" width="764" height="212" alt="Progress bar custom field on index" />
+<Image src="/assets/img/4_0/custom-fields/progress-index.png" dark-src="/assets/img/4_0/custom-fields/progress-index-dark.png" width="1520" height="570" alt="An Avo index table with ID, Name and Progress columns, where Progress renders a small progress bar with the value and a percent suffix." />
 
 For the `Edit` view, we're going to do something different. We'll implement a `range` input.
 
@@ -300,7 +300,7 @@ function updateValue(e) {
 </script>
 ```
 
-<Image src="/assets/img/custom-fields/progress-edit.jpg" width="1144" height="182" alt="Progress bar custom field edit" />
+<Image src="/assets/img/4_0/custom-fields/progress-edit.png" dark-src="/assets/img/4_0/custom-fields/progress-edit-dark.png" width="1280" height="256" alt="A progress_bar custom field on an Avo Edit form, rendered as a range slider with the current value and percent suffix shown above it." />
 
 ## Field assets
 
@@ -333,7 +333,7 @@ Avo ships with a few Stimulus controllers that help you build more dynamic field
 
 This controller allows you to hide your content and add a trigger to show it. You'll find it in the Trix field.
 
-<Image src="/assets/img/stimulus/hidden_input_trix.gif" width="1000" height="272" alt="Hidden input controller" />
+<Image src="/assets/img/4_0/stimulus/hidden_input_trix.gif" dark-src="/assets/img/4_0/stimulus/hidden_input_trix-dark.gif" width="1000" height="278" alt="A Trix field on an Avo Show view with long content collapsed behind a “More content” link that, when clicked, reveals the rich text." prompt="the Trix field hiding long content behind a more content link on show" />
 
 You should add the `:always_show` `attr_reader` and `@always_show` instance variables to your field.
 
@@ -377,7 +377,7 @@ Next, in your fields `Show` component, you need to do a few things.
 <% end %>
 ```
 
-<Image src="/assets/img/stimulus/hidden_input_color.gif" width="1000" height="76" alt="Hidden input controller" />
+<Image src="/assets/img/4_0/stimulus/hidden_input_color.gif" dark-src="/assets/img/4_0/stimulus/hidden_input_color-dark.gif" width="900" height="88" alt="A custom color field on an Avo Show view using the hidden-input controller: the Color label on the left and a Show content link on the right that, when clicked, reveals a colored swatch pill showing the hex value." prompt="the hidden input controller revealing a color swatch on show" />
 
 ### Non existing model field
 

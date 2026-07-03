@@ -14,4 +14,4 @@ resource :taggings
 resource :tags
 ```
 
-<Image src="/assets/img/3_0/guides/act-as-taggable-on-integration/act-as-taggable-on-integration.gif" width="1200" height="750" alt="" />
+<Image src="/assets/img/4_0/guides/act-as-taggable-on-integration/taggable-resources-tour.gif" dark-src="/assets/img/4_0/guides/act-as-taggable-on-integration/taggable-resources-tour-dark.gif" width="1170" height="540" alt="Browsing acts-as-taggable-on data as Avo resources: the Tags index opens a tag's details, the Taggings index lists the underlying tagging records (each linking a tag to the post it tags), and opening that post shows the tags on the record itself." />

@@ -1,0 +1,17 @@
+#!/bin/sh
+# Auto-applies the repo's .editorconfig rules to staged text files via eclint, then re-stages.
+# eclint reads .editorconfig itself — no hand-rolled rules here.
+
+files=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$files" ] && exit 0
+
+# eclint skips binary files on its own; run from repo root so node_modules/.bin resolves.
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+# Version managers aren't activated in git's non-interactive hook shell, so `node`
+# (needed by eclint's env-shebang) may be missing. Add their shims when present.
+for shims in "$HOME/.local/share/mise/shims" "$HOME/.asdf/shims"; do
+  [ -d "$shims" ] && PATH="$shims:$PATH"
+done
+echo "$files" | xargs ./node_modules/.bin/eclint fix || exit 1
+echo "$files" | xargs git add

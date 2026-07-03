@@ -57,6 +57,7 @@ If you're using heroku, you can set the environment variable using the following
 ```bash
 heroku config:set BUNDLE_PACKAGER__DEV=xxx
 ```
+
 </Option>
 
 <Option name="Hatchbox">
@@ -66,6 +67,7 @@ If you're using Hatchbox, you can set the environment variable in your apps "Env
 ```yaml
 BUNDLE_PACKAGER__DEV: xxx
 ```
+
 </Option>
 
 <Option name="GitHub Actions">
@@ -101,6 +103,7 @@ jobs:
     steps:
       # Testing and deployment steps
 ```
+
 </Option>
 
 <Option name="Docker and docker compose">
@@ -206,4 +209,13 @@ Frequently asked questions:
 If you're seeing this error `Retrying download gem from https://packager.dev/avo-hq/ due to error (1/4): Gem::RemoteFetcher::FetchError bad response Forbidden 403`, this probably means that bundler does not have access to the `BUNDLE_PACKAGER__DEV` environment variable.
 
 Please read the guides above on how to set that on your development machine and in deployment scenarios.
+
+</Option>
+
+<Option name="`Forbidden 403` in a sandboxed or cloud environment (Cursor Cloud)">
+
+If the token is set correctly but you still get a `403 Forbidden` inside a sandboxed or cloud environment (for example the Claude Code cloud environment, Cursor's background/cloud agents, or any setup with restricted network egress), the request to `packager.dev` is likely being blocked by a network allowlist rather than failing authentication.
+
+Add `packager.dev` to the environment's list of allowed hosts and run `bundle install` again.
+
 </Option>

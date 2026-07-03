@@ -83,4 +83,4 @@ end
     )
 ```
 
-<Image src="/assets/img/3_0/guides/use-markdown-in-help-attributes/result.png" width="1264" height="1790" alt="" />
+<Image src="/assets/img/4_0/guides/use-markdown-in-help-attributes/result.png" dark-src="/assets/img/4_0/guides/use-markdown-in-help-attributes/result-dark.png" width="1776" height="1464" alt="A markdown field on a form whose help text is rendered markdown — headings, bold paragraph, code block, inline code and a bullet list" />

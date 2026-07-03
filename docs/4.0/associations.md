@@ -63,4 +63,4 @@ You might want to change the name that appears on the association page. For exam
 
 You can customize that using [fields localization](i18n.html#localizing-fields).
 
-<Image src="/assets/img/associations/custom-label.jpg" width="1224" height="692" alt="Custom label" />
+<Image src="/assets/img/4_0/associations/associations-custom-label.png" dark-src="/assets/img/4_0/associations/associations-custom-label-dark.png" width="2144" height="1122" alt="An Avo has_many association page titled Members (a custom label via field localization) showing the full index table with attach and create actions, without the app header or sidebar." prompt="entier page without the header and sidebar and anotate the title" />
