@@ -162,7 +162,7 @@ You can do that check yourself using the `Avo::Current.user_is_admin?`.
 
 #### When does Avo check if the use is an admin (`is_admin?`)
 
-Avo doesn't use this setting momentarily but might in the future.
+Admin users can access the private **Avo Status** page at `/avo_private/status` (under your Avo mount path) and see the status link in the sidebar on production.
 
 </Option>
 
@@ -180,6 +180,8 @@ You can do that check yourself using the `Avo::Current.user_is_developer?`.
 
 Avo uses this role to display long backtraces on non-validation errors.
 Ex: on record save, you might call an API which by some reason errors out. Instead of just getting a generic "Something went wrong" error, the developer user will see the error message and backtrace
+
+Developer users can also access the private **Avo Status** page and see the status link in the sidebar on production (same access as [admin users](#1-admin-user)). In development, the status link is visible to everyone.
 
 <Image src="/assets/img/4_0/authentication/backtrace.png" dark-src="/assets/img/4_0/authentication/backtrace-dark.png" alt="Backtrace alert" width="1060" height="484" />
 
