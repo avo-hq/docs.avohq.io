@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useData } from 'vitepress'
+import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline'
 
 const { isDark } = useData()
 
@@ -37,19 +38,11 @@ const hasBothVariants = computed(() => !!props.src && !!props.darkSrc)
 const localDark = ref(null)
 const effectiveDark = computed(() => localDark.value === null ? isDark.value : localDark.value)
 
-const setLocalDark = (value) => {
-  localDark.value = value
-}
-
 const src = computed(() => (effectiveDark.value && props.darkSrc) ? props.darkSrc : (props.src || ''))
 
-// Recolor the mat/hairline to match a flipped image (frame reads these vars).
-const frameVars = computed(() => {
-  if (!hasBothVariants.value) return {}
-  return effectiveDark.value
-    ? { '--vp-c-bg': '#1b1b1f', '--vp-c-divider': '#2e2e32' }
-    : { '--vp-c-bg': '#ffffff', '--vp-c-divider': '#e2e2e3' }
-})
+// custom.css recolors the frame + switch off this attribute, so a flipped
+// image never shows a mismatched seam.
+const imageTheme = computed(() => hasBothVariants.value ? (effectiveDark.value ? 'dark' : 'light') : null)
 
 // A tag carrying a `prompt` but no image source yet is an unresolved screenshot
 // placeholder — the automated pipeline fills it in. Render a visible TODO box instead
@@ -90,39 +83,41 @@ const checkParentWidth = () => {
     <span class="image-prompt-placeholder__badge">📸 screenshot pending</span>
     <span class="image-prompt-placeholder__text">{{ prompt }}</span>
   </div>
-  <div v-else class="image-figure">
-    <!-- Switch above the image, never overlapping it. -->
-    <div v-if="hasBothVariants" class="image-toolbar">
-      <div class="image-theme-switch" role="group" aria-label="Preview this image in light or dark mode">
-        <button
-          type="button"
-          class="image-theme-switch__option"
-          :class="{ 'image-theme-switch__option--active': !effectiveDark }"
-          :aria-pressed="!effectiveDark"
-          @click="setLocalDark(false)"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-          </svg>
-          <span>Light</span>
-        </button>
-        <button
-          type="button"
-          class="image-theme-switch__option"
-          :class="{ 'image-theme-switch__option--active': effectiveDark }"
-          :aria-pressed="effectiveDark"
-          @click="setLocalDark(true)"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-          </svg>
-          <span>Dark</span>
-        </button>
-      </div>
-    </div>
-    <div class="aspect-ratio-box" :width="width" :height="height" :style="[style, frameVars]" ref="parent">
-      <img :src="src" :alt="alt" loading="lazy" class="aspect-ratio-box-inside">
+  <div
+    v-else
+    class="aspect-ratio-box"
+    :width="width"
+    :height="height"
+    :style="style"
+    :data-image-theme="imageTheme"
+    ref="parent"
+  >
+    <img :src="src" :alt="alt" loading="lazy" class="aspect-ratio-box-inside">
+    <!-- Overlaid on the image so it takes no vertical space; revealed on hover
+         (always visible, icons only, on touch devices). -->
+    <div v-if="hasBothVariants" class="image-theme-switch" role="group" aria-label="Preview this image in light or dark mode">
+      <button
+        type="button"
+        class="image-theme-switch__option"
+        :class="{ 'image-theme-switch__option--active': !effectiveDark }"
+        :aria-pressed="!effectiveDark"
+        aria-label="Light"
+        @click="localDark = false"
+      >
+        <SunIcon class="image-theme-switch__icon" />
+        <span class="image-theme-switch__label">Light</span>
+      </button>
+      <button
+        type="button"
+        class="image-theme-switch__option"
+        :class="{ 'image-theme-switch__option--active': effectiveDark }"
+        :aria-pressed="effectiveDark"
+        aria-label="Dark"
+        @click="localDark = true"
+      >
+        <MoonIcon class="image-theme-switch__icon" />
+        <span class="image-theme-switch__label">Dark</span>
+      </button>
     </div>
   </div>
 </template>
@@ -154,19 +149,53 @@ const checkParentWidth = () => {
   max-width: 42rem;
 }
 
-/* Per-image light/dark switch. */
-.image-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 8px;
-}
+/* Per-image light/dark switch, overlaid on the image's top-end corner. */
 .image-theme-switch {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  z-index: 1;
   display: inline-flex;
   gap: 2px;
   padding: 2px;
-  border: 1px solid var(--vp-c-border, rgba(0, 0, 0, 0.12));
+  /* No var() fallbacks here: the switch only renders inside a
+     [data-image-theme] frame, which always defines these (custom.css). */
+  border: 1px solid var(--vp-c-border);
   border-radius: 8px;
-  background: var(--vp-c-bg-soft, #f6f6f7);
+  background: var(--vp-c-bg-soft);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+/* Hover-capable devices on md+ (Tailwind md = 768px) viewports: keep the image
+   clean until pointed at (or focused via keyboard). */
+@media (hover: hover) and (min-width: 768px) {
+  .image-theme-switch {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .aspect-ratio-box:hover .image-theme-switch,
+  .image-theme-switch:focus-within {
+    opacity: 1;
+  }
+}
+/* Touch devices and sub-md viewports: always visible, compact (icons only),
+   and moved off the screenshot into the widened top mat (custom.css grows the
+   frame's top border to make room — its media query mirrors this one; keep
+   them in sync). Anchored to the image's top edge, so vertical placement
+   holds regardless of the mat's exact height — but the mat must still be
+   tall enough to contain the switch (see the clearance note in custom.css). */
+@media (hover: none), (max-width: 767px) {
+  .image-theme-switch__label {
+    display: none;
+  }
+  .image-theme-switch {
+    top: auto;
+    bottom: calc(100% + 9px);
+    inset-inline-end: 0;
+  }
+}
+.image-theme-switch__icon {
+  width: 15px;
+  height: 15px;
 }
 .image-theme-switch__option {
   display: inline-flex;
@@ -176,7 +205,7 @@ const checkParentWidth = () => {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: var(--vp-c-text-2, #60676f);
+  color: var(--vp-c-text-2);
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
@@ -184,12 +213,12 @@ const checkParentWidth = () => {
   transition: color 0.15s ease, background-color 0.15s ease;
 }
 .image-theme-switch__option:hover {
-  color: var(--vp-c-text-1, #1f2329);
+  color: var(--vp-c-text-1);
 }
 /* Active = shown mode. */
 .image-theme-switch__option--active {
-  background: var(--vp-c-bg, #fff);
-  color: var(--vp-c-brand-1, #3451b2);
+  background: var(--vp-c-bg);
+  color: var(--vp-c-brand-1);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 </style>
