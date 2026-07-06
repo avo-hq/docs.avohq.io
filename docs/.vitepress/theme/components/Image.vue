@@ -16,6 +16,7 @@ const props = defineProps({
 })
 
 const imageIsSmallerThanParent = ref(false)
+const parentWidth = ref(0)
 
 let widthSize = ref(null)
 let heightSize = ref(null)
@@ -36,7 +37,15 @@ const hasBothVariants = computed(() => !!props.src && !!props.darkSrc)
 
 // null = follow the page; true/false = pin this image.
 const localDark = ref(null)
-const effectiveDark = computed(() => localDark.value === null ? isDark.value : localDark.value)
+
+// Start light to match SSR, then follow the theme after mount — otherwise the
+// hydration mismatch leaves production images stuck on light.
+const mounted = ref(false)
+
+const effectiveDark = computed(() => {
+  if (localDark.value !== null) return localDark.value
+  return mounted.value ? isDark.value : false
+})
 
 const src = computed(() => (effectiveDark.value && props.darkSrc) ? props.darkSrc : (props.src || ''))
 
@@ -48,6 +57,18 @@ const imageTheme = computed(() => hasBothVariants.value ? (effectiveDark.value ?
 // placeholder — the automated pipeline fills it in. Render a visible TODO box instead
 // of a broken <img>. Once `src`/`dark-src` are set, `prompt` is ignored for rendering.
 const isPlaceholder = computed(() => !props.src && !props.darkSrc && !!props.prompt)
+
+// Rendered height in px: full-width images scale to the column (padding-bottom
+// ratio), smaller images render at their natural height. Used to decide when the
+// overlaid switch would crowd a short frame.
+const renderedHeight = computed(() => {
+  if (!width.value || !height.value) return 0
+  if (imageIsSmallerThanParent.value) return height.value
+  return parentWidth.value ? parentWidth.value * (height.value / width.value) : 0
+})
+// Below this, the ~28px switch overlaid inside the corner covers too much of the
+// image — pop it out above the frame on hover instead (see scoped CSS).
+const isShort = computed(() => hasBothVariants.value && renderedHeight.value > 0 && renderedHeight.value < 120)
 
 const style = computed(() => {
   if (imageIsSmallerThanParent.value) {
@@ -62,14 +83,15 @@ const style = computed(() => {
 const parent = ref(null)
 
 onMounted(() => {
+  mounted.value = true
   if (!isPlaceholder.value && parent.value) checkParentWidth()
 })
 
 const checkParentWidth = () => {
-  const parentWidth = parent.value.parentNode.getBoundingClientRect().width
-  const imageWidth = width
+  const measuredWidth = parent.value.parentNode.getBoundingClientRect().width
+  parentWidth.value = measuredWidth
 
-  imageIsSmallerThanParent.value = parentWidth > imageWidth.value
+  imageIsSmallerThanParent.value = measuredWidth > width.value
 }
 </script>
 
@@ -90,6 +112,7 @@ const checkParentWidth = () => {
     :height="height"
     :style="style"
     :data-image-theme="imageTheme"
+    :data-short="isShort ? '' : null"
     ref="parent"
   >
     <img :src="src" :alt="alt" loading="lazy" class="aspect-ratio-box-inside">
@@ -175,6 +198,19 @@ const checkParentWidth = () => {
   .aspect-ratio-box:hover .image-theme-switch,
   .image-theme-switch:focus-within {
     opacity: 1;
+  }
+  /* Short frames: the overlaid corner switch would cover too much of the image.
+     On hover, lift it out above the frame (overflow: visible lets it escape) and
+     float it over whatever sits above via a high z-index — no reserved space, so
+     idle short images stay clean. */
+  .aspect-ratio-box[data-short] {
+    overflow: visible;
+  }
+  .aspect-ratio-box[data-short] .image-theme-switch {
+    top: auto;
+    bottom: calc(100% + 9px);
+    inset-inline-end: 0;
+    z-index: 10;
   }
 }
 /* Touch devices and sub-md viewports: always visible, compact (icons only),
