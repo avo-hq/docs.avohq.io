@@ -21,8 +21,9 @@ You may use the component `Avo::Index::FieldWrapperComponent` or the helper `ind
 
 <Option name="`dash_if_blank`">
 
-This option renders a dash `—` if the content inside responds to true on the `blank?` method.
-In the example below, we'd like to show the field as a red checkmark even if the content is `nil`.
+Controls whether a dash `—` is rendered instead of the block's content.
+
+Avo decides this by checking `@field.value.blank?` — **not** whether the block passed to `index_field_wrapper` actually renders something. In the example below, we'd like to show a red cross icon instead of a dash even when `@field.value` is `nil`, so we pass `dash_if_blank: false`.
 
 #### Default
 
@@ -33,6 +34,11 @@ In the example below, we'd like to show the field as a red checkmark even if the
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
+
+:::warning
+Because the check runs against `@field.value` and not the block's rendered output, a block that renders real content is still discarded in favor of the dash whenever `@field.value` is blank. If you're building a custom field whose block can render meaningful content even when `@field.value` is blank, pass `dash_if_blank: false` explicitly, or your content will never show up.
+:::
+
 </Option>
 
 <Option name="`center_content`">
@@ -120,8 +126,9 @@ This space is rarely used and it's there just to fill some horizontal space so t
 
 <Option name="`dash_if_blank`">
 
-This option renders a dash `—` if the content inside responds to true on the `blank?` method.
-In the example below, we'd like to show the field as a red checkmark even if the content is `nil`.
+Controls whether a dash `—` is rendered instead of the block's content.
+
+Avo decides this by checking `@field.value.blank?` — **not** whether the block passed to `field_wrapper` actually renders something. In the example below, we'd like to show a red cross icon instead of a dash even when `@field.value` is `nil`, so we pass `dash_if_blank: false`.
 
 #### Default
 
@@ -132,6 +139,11 @@ In the example below, we'd like to show the field as a red checkmark even if the
   <%= render Avo::Fields::Common::BooleanCheckComponent.new checked: @field.value %>
 <% end %>
 ```
+
+:::warning
+Because the check runs against `@field.value` and not the block's rendered output, a block that renders real content is still discarded in favor of the dash whenever `@field.value` is blank. If you're building a custom field whose block can render meaningful content even when `@field.value` is blank, pass `dash_if_blank: false` explicitly, or your content will never show up.
+:::
+
 </Option>
 
 <Option name="`compact`">
