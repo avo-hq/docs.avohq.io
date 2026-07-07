@@ -808,6 +808,10 @@ There are scenarios where you wouldn't want to close the filters panel when you 
 
 More on this on the [`keep_filters_panel_open` resource option](./resources#self_keep_filters_panel_open).
 
+## Open a filter in your editor
+
+In the `development` environment, each filter's title in the filters panel shows a small `</>` icon that opens the filter's source file in your editor. See [Open a record in your editor](./customization.html#open-a-record-in-your-editor) for how it works and how to configure it for your editor.
+
 ## Filter arguments
 
 Filters can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
