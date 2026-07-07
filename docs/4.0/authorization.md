@@ -336,7 +336,7 @@ end
 
 Now, whatever action you take for one comment, it will be available for the `edit_comments?` method in `PostPolicy`.
 
-From version 2.31 we introduced a concern that removes the duplication and helps you apply the same rules to associations. You should include `Avo::Pro::Concerns::PolicyHelpers` in the `ApplicationPolicy` for it to be applied to all policy classes.
+There's a concern that removes the duplication and helps you apply the same rules to associations. You should include `Avo::Authorization::Concerns::PolicyHelpers` in the `ApplicationPolicy` for it to be applied to all policy classes.
 
 `PolicyHelpers` allows you to use the method `inherit_association_from_policy`. This method takes two arguments; `association_name` and the policy file you want to be used as a template.
 

@@ -663,6 +663,15 @@ end
 
 If you use global search and have hardcoded search URLs, see [Avo Pro mount point removal](#avo-pro-mount-point-removal) above.
 
+#### Policy helpers
+
+If you use [`inherit_association_from_policy`](./authorization#removing-duplication) in your policies, update the concern's namespace:
+
+```ruby
+include Avo::Pro::Concerns::PolicyHelpers # [!code --]
+include Avo::Authorization::Concerns::PolicyHelpers # [!code ++]
+```
+
 ### Advanced features
 
 | Feature                                                             | Gem                   |
