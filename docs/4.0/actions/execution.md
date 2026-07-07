@@ -42,6 +42,7 @@ The `handle` method is where you define what happens when your action is execute
 - `fields` Contains the values submitted through the action's form fields
 - `current_user` The currently authenticated user
 - `resource` The Avo resource instance that triggered the action
+- `request` The current `ActionDispatch::Request` object
 
 ```ruby{10-23}
 # app/avo/actions/toggle_inactive.rb
@@ -53,7 +54,7 @@ class Avo::Actions::ToggleInactive < Avo::BaseAction
     field :message, as: :textarea
   end
 
-  def handle(query:, fields:, current_user:, resource:, **args)
+  def handle(query:, fields:, current_user:, resource:, request:, **args)
     query.each do |record|
       # Toggle the inactive status
       record.update!(inactive: !record.inactive)
@@ -64,6 +65,8 @@ class Avo::Actions::ToggleInactive < Avo::BaseAction
         record.notify(fields[:message])
       end
     end
+
+    Rails.logger.info "Action triggered from #{request.path}"
 
     succeed "Successfully toggled status for #{query.count}"
   end
