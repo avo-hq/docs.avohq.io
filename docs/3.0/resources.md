@@ -329,6 +329,10 @@ class Avo::Resources::SuperDooperTrooperModel < Avo::BaseResource
 end
 ```
 
+:::tip Namespacing lands in Avo 4
+Avo 4 adds full support for namespaced resources — nest them in subdirectories that mirror your model namespace, get automatic model-class inference, and generate any nesting depth with `avo:resource`. Take a look at [namespaced resources](../4.0/resources.html#namespaced-resources) in the Avo 4 docs.
+:::
+
 ## Views
 
 Please read the detailed [views](./views.html) page.

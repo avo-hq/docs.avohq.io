@@ -10,6 +10,10 @@ Each `Resource` maps out one of your models. There can be multiple `Resource`s a
 
 All resources are located in the `app/avo/resources` directory. Unfortunately, `Resource`s can't be namespaced yet, so they all need to be in the root level of that directory.
 
+:::tip Namespacing lands in Avo 4
+Avo 4 adds full support for namespaced resources — nest them in subdirectories that mirror your model namespace, get automatic model-class inference, and generate any nesting depth with `avo:resource`. Take a look at [namespaced resources](../4.0/resources.html#namespaced-resources) in the Avo 4 docs.
+:::
+
 :::warning
 All resources from `app/avo/resources` are eager loaded on app boot-time to automatically have them available in your app.
 

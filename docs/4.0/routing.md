@@ -46,6 +46,10 @@ To guarantee that the `locale` scope is included in the `default_url_options`, y
 Check [this documentation section](customization.html#default_url_options) for details on how to configure `default_url_options` setting.
 :::
 
+## Namespaced resource routes
+
+A [namespaced resource](./resources.html#namespaced-resources) like `Avo::Resources::Galaxy::Planet` gets a slash-joined route path derived from its class name — `galaxy/planets` in this case. Avo generates and mounts these routes for you, so there's nothing to configure by hand.
+
 ## Add your own routes
 
 You may want to add your own routes inside Avo so you can access different custom actions that you might have set in the Avo resource controllers.
