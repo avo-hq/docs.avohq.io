@@ -10,7 +10,7 @@ Go to `https://yourapp.com/avo/avo_private/status`. If you mounted Avo under a d
 
 In order to see that page your user has to be an an admin in Avo. Follow [this guide](./authentication#user-roles) to mark your user as an admin.
 
-This should tell you if the license authenticated correctly, what is your used license key and what was the response from our checking server.
+This should tell you if the license authenticated correctly and what was the response from our checking server. The license key is hidden by default for security — set [`exclude_from_status`](./customization#exclude_from_status) to `[]` in your Avo initializer if you need to see it on the status page.
 
 ## Frequent issues
 

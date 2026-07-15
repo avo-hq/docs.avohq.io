@@ -68,6 +68,57 @@ That will render all `id` fields in the **Index** view as a link to that resourc
 
 <Image src="/assets/img/4_0/customization/as-link-to-resource.png" dark-src="/assets/img/4_0/customization/as-link-to-resource-dark.png" width="1696" height="664" alt="An Avo index where each row's ID is rendered as a blue link to that record's show view, with a Name column." />
 
+## Open a record in your editor
+
+In the `development` environment, Avo renders a small `</>` icon next to the things you build with Avo — resources, actions, filters, dashboards, cards, and forms. Clicking it opens that class's source file directly in your editor, so you can jump from the UI to the code that powers it. The icon is only rendered in `development` and never shows up in other environments.
+
+The link is built from `config.default_editor_url`, where `%{path}` is replaced with the absolute path of the source file.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.default_editor_url = "cursor://file/%{path}"
+end
+```
+
+The default targets [Cursor](https://cursor.com). To open files in a different editor, change the URL scheme, for example `vscode://file/%{path}` for VS Code or `subl://open?url=file://%{path}` for Sublime Text.
+
+### Resources
+
+The resource header shows the icon next to the resource's name, linking to the resource file (e.g. `app/avo/resources/project.rb`).
+
+<Image src="/assets/img/4_0/customization/open-in-editor-resource.png" dark-src="/assets/img/4_0/customization/open-in-editor-resource-dark.png" width="1776" height="172" alt="An Avo Projects index header in development, with a small code icon right after the resource name — it opens the resource's source file in your editor — highlighted with a red box." prompt="A resource Index view header in development showing the resource name with the small open-in-your-editor code icon right after it, with a red box annotation highlighting the icon" />
+
+### Actions
+
+When you run an action, the icon sits in the modal heading next to the action's name, linking to the action file.
+
+<Image src="/assets/img/4_0/customization/open-in-editor-action.png" dark-src="/assets/img/4_0/customization/open-in-editor-action-dark.png" width="2502" height="1158" alt="An Avo action confirmation modal open over the Posts index in development, its heading showing the action name with a small code icon next to it — it opens the action's source file in your editor — highlighted with a red box." prompt="An action confirmation modal open over the Index view, showing the action name in the modal heading with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
+
+### Filters
+
+Each filter in the filters panel shows the icon next to its name, linking to that filter's file.
+
+<Image src="/assets/img/4_0/customization/open-in-editor-filter.png" dark-src="/assets/img/4_0/customization/open-in-editor-filter-dark.png" width="308" height="319" alt="The Avo filters panel open on the Posts index in development, each filter name (Featured, Published) followed by a small code icon that opens the filter's source file in your editor, each icon highlighted with a red box." prompt="The filters panel open on an Index view in development, each filter name followed by the small open-in-your-editor code icon, with red box annotations highlighting the icons" />
+
+### Dashboards
+
+The dashboard header shows the icon next to the dashboard's name, linking to the dashboard file.
+
+<Image src="/assets/img/4_0/customization/open-in-editor-dashboard.png" dark-src="/assets/img/4_0/customization/open-in-editor-dashboard-dark.png" width="1776" height="132" alt="An Avo dashboard header in development, with a small code icon right after the dashboard title — it opens the dashboard's source file in your editor — highlighted with a red box." prompt="A dashboard page header in development showing the dashboard title with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
+
+### Cards
+
+Each card on a dashboard shows the icon next to its label, linking to that card's file.
+
+<Image src="/assets/img/4_0/customization/open-in-editor-card.png" dark-src="/assets/img/4_0/customization/open-in-editor-card-dark.png" width="470" height="178" alt="An Avo dashboard metric card in development, with a small code icon right after the card label — it opens the card's source file in your editor — highlighted with a red box." prompt="A dashboard card in development showing the card label with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
+
+### Forms
+
+If you use [Avo Forms](./forms-and-pages/forms), the form header shows the icon next to the form's title, linking to the form file.
+
+<Image src="/assets/img/4_0/customization/open-in-editor-form.png" dark-src="/assets/img/4_0/customization/open-in-editor-form-dark.png" width="1360" height="132" alt="An Avo Forms form header in development, with a small code icon right after the form title — it opens the form's source file in your editor — highlighted with a red box." prompt="An Avo Forms form page header in development showing the form title with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
+
 ## Modify controls placement and appearance
 
 <!-- @include: ./common/row_controls_config_common.md-->
@@ -751,11 +802,11 @@ end
 
 <Option name="`exclude_from_status`">
 
-Defines which status items to exclude from the status page (`/avo_private/status`). This is useful for hiding sensitive information like license keys from the status page.
+Defines which status items to exclude from the status page (`/avo_private/status`). By default, the license key is hidden for security reasons.
 
 ### Default value
 
-`[]`
+`["license_key"]`
 
 ### Possible values
 
@@ -766,18 +817,26 @@ An array of strings or a callable that returns an array of strings representing 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.exclude_from_status = ["license_key"]
+  # Hide additional items from the status page
+  config.exclude_from_status = ["license_key", "ip"]
 
   # OR using a callable
   config.exclude_from_status = -> do
-    ["license_key"]
+    ["license_key", "ip"]
   end
 end
 ```
 
-### Common use case
+### Show the license key
 
-The most common use case is to exclude the `license_key` from being displayed on the status page for security reasons.
+To display the license key on the status page, remove it from the exclusion list:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.exclude_from_status = []
+end
+```
 
 </Option>
 
