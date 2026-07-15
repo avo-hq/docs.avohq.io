@@ -89,7 +89,7 @@ const config = {
       { text: "FAQ", link: "/4.0/faq.html" },
       { text: "Team", link: "/team.html" },
       { text: "Releases", link: "https://avohq.io/releases" },
-      { text: "Gems versions", link: "https://avohq.io/gems" },
+      { text: "Gems", link: "https://avohq.io/gems" },
       { text: "Blog", link: "https://avohq.io/blog" },
       {
         text: "Version", items: [
