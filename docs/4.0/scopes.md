@@ -281,7 +281,7 @@ end
 
 <Option name="`counter.format`" headingSize="4">
 
-By default the count is rendered with `number_to_delimited` (e.g. `1,234`). A `format` block renders it however you like. It runs in the execution context — the count is available as `value` (the result of your `count` block, or the computed count when you don't set one), alongside `query`, `resource`, and `scope` — and can return any value (coerced to a string):
+By default the count is rendered with `number_to_delimited` (e.g. `1,234`). A `format` block renders it however you like. It runs in the execution context — the count is available as `value` (the result of your `count` block, or the computed count when you don't set one), alongside `query`, `resource`, and `scope`, where `query` is the same unfiltered base query used by `counter.count` — and can return any value (coerced to a string):
 
 ```ruby{5}
 # app/avo/scopes/active.rb
