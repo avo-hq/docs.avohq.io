@@ -143,6 +143,21 @@ Avo now uses the avatar and initials of a record or resource throughout the app.
 You set the avatar using the `avatar` configuration (ex-profile photo). The avatar will be used by Avo in multiple places in the app like the <Show /> and <Edit /> views, and the new breadcrumbs.
 In addition you can use the `avatar` field to display the avatar in the <Index /> view.
 
+## Allow the license check host in your test suite
+
+Avo 4 verifies your license through an outbound request to `clerk-1.avohq.io` (falling back to `clerk-2.avohq.io`), and this request runs in the `test` environment too. Avo 3 validated licenses differently and didn't make this request, so a suite that passed on Avo 3 can start failing right after the upgrade if it blocks outbound connections.
+
+If you disable network connections in tests (for example with WebMock or VCR `disable_net_connect!`), you'll see failures like `WebMock::NetConnectNotAllowedError: ... POST https://clerk-1.avohq.io/api/v4/licenses/check`. Add Avo's license check hosts to your allow list:
+
+```ruby
+WebMock.disable_net_connect!(
+  allow_localhost: true,
+  allow: ["clerk-1.avohq.io", "clerk-2.avohq.io"] # [!code ++]
+)
+```
+
+See [Testing → Allow the license check host in your test suite](./testing.html#allow-the-license-check-host-in-your-test-suite) for the full details, including the VCR equivalent.
+
 ## Search
 
 Avo 4 introduces significant improvements to the search functionality, with enhanced resource search and global search capabilities.
