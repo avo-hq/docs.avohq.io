@@ -2,7 +2,7 @@
 
 Some resources are best displayed in a grid view. We can do that with Avo using a `cover_url`, a `title`, and a `body`.
 
-<Image src="/assets/img/4_0/grid-view/grid-view.png" dark-src="/assets/img/4_0/grid-view/grid-view-dark.png" width="2808" height="2030" alt="Avo grid view" />
+<Image src="/assets/img/4_0/grid-view/grid-view.webp" dark-src="/assets/img/4_0/grid-view/grid-view-dark.webp" width="2808" height="2030" alt="Avo grid view" />
 
 ## Enable grid view
 
@@ -25,7 +25,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/grid-view/view-switcher.png" dark-src="/assets/img/4_0/grid-view/view-switcher-dark.png" width="2310" height="108" alt="Avo view switcher" />
+<Image src="/assets/img/4_0/grid-view/view-switcher.webp" dark-src="/assets/img/4_0/grid-view/view-switcher-dark.webp" width="2310" height="108" alt="Avo view switcher" />
 
 ## Options
 
@@ -144,11 +144,11 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/grid-view/grid-html-option.png" dark-src="/assets/img/4_0/grid-view/grid-html-option-dark.png" width="2142" height="656" alt="Grid html option" />
+<Image src="/assets/img/4_0/grid-view/grid-html-option.webp" dark-src="/assets/img/4_0/grid-view/grid-html-option-dark.webp" width="2142" height="656" alt="Grid html option" />
 
 ## Grid Item Badge
 
-<Image src="/assets/img/4_0/grid-view/grid-badge.png" dark-src="/assets/img/4_0/grid-view/grid-badge-dark.png" width="2142" height="608" alt="Avo Grid View Badge Element" />
+<Image src="/assets/img/4_0/grid-view/grid-badge.webp" dark-src="/assets/img/4_0/grid-view/grid-badge-dark.webp" width="2142" height="608" alt="Avo Grid View Badge Element" />
 
 You can display and customize a badge on top of your grid items. Badges are useful for showing status indicators, labels, or other visual cues that help users quickly identify important information about each item.
 
@@ -190,7 +190,7 @@ self.grid_view = {
 }
 ```
 
-<Image src="/assets/img/4_0/grid-view/badge-label.png" dark-src="/assets/img/4_0/grid-view/badge-label-dark.png" width="1074" height="608" alt="Avo Grid View Badge Label" />
+<Image src="/assets/img/4_0/grid-view/badge-label.webp" dark-src="/assets/img/4_0/grid-view/badge-label-dark.webp" width="1074" height="608" alt="Avo Grid View Badge Label" />
 
 </Option>
 
@@ -261,7 +261,7 @@ self.grid_view = {
 }
 ```
 
-<Image src="/assets/img/4_0/grid-view/badge-title.png" dark-src="/assets/img/4_0/grid-view/badge-title-dark.png" width="1074" height="608" alt="Avo Grid View Badge Title" />
+<Image src="/assets/img/4_0/grid-view/badge-title.webp" dark-src="/assets/img/4_0/grid-view/badge-title-dark.webp" width="1074" height="608" alt="Avo Grid View Badge Title" />
 
 </Option>
 

@@ -5,7 +5,7 @@ license: community
 
 # Boolean Group
 
-<img :src="('/assets/img/fields/boolean-group.jpg')" alt="Boolean group field" class="border mb-4" />
+<img :src="('/assets/img/fields/boolean-group.webp')" alt="Boolean group field" class="border mb-4" />
 
 The `BooleanGroup` is used to update a `Hash` with `string` keys and `boolean` values in the database.
 

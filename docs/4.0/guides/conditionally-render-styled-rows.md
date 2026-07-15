@@ -1,6 +1,6 @@
 # Conditionally render styled rows
 
-<Image src="/assets/img/4_0/guides/conditionally-render-styled-rows/conditionally-render-styled-rows.png" dark-src="/assets/img/4_0/guides/conditionally-render-styled-rows/conditionally-render-styled-rows-dark.png" width="1252" height="391" alt="An Avo Projects index where the even-id rows are rendered with a light-red background via a conditional CSS class, while the odd-id rows stay plain." />
+<Image src="/assets/img/4_0/guides/conditionally-render-styled-rows/conditionally-render-styled-rows.webp" dark-src="/assets/img/4_0/guides/conditionally-render-styled-rows/conditionally-render-styled-rows-dark.webp" width="1252" height="391" alt="An Avo Projects index where the even-id rows are rendered with a light-red background via a conditional CSS class, while the odd-id rows stay plain." />
 
 We've had [a request](https://discord.com/channels/740892036978442260/1197693313520771113) come in from a customer to style their soft-deleted records differently than the regular ones.
 

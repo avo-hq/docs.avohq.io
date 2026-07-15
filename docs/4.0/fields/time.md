@@ -21,7 +21,7 @@ field :starting_at,
   }
 ```
 
-<Image src="/assets/img/4_0/fields/time/form-picker.png" dark-src="/assets/img/4_0/fields/time/form-picker-dark.png" width="1520" height="280" alt="An Avo edit-form card containing a time field with the flatpickr time picker open, showing hours and minutes in 24-hour format without a calendar." prompt="time field on the edit form with the flatpickr time picker open showing hours and minutes without a calendar" />
+<Image src="/assets/img/4_0/fields/time/form-picker.webp" dark-src="/assets/img/4_0/fields/time/form-picker-dark.webp" width="1520" height="280" alt="An Avo edit-form card containing a time field with the flatpickr time picker open, showing hours and minutes in 24-hour format without a calendar." prompt="time field on the edit form with the flatpickr time picker open showing hours and minutes without a calendar" />
 
 ## Options
 

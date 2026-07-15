@@ -43,7 +43,7 @@ class MyDashboard < Avo::Dashboards::BaseDashboard
 end
 ```
 
-<img :src="('/assets/img/dashboards/dashboard.jpg')" alt="Avo Dashboard" class="border mb-4" />
+<img :src="('/assets/img/dashboards/dashboard.webp')" alt="Avo Dashboard" class="border mb-4" />
 
 ## Settings
 
@@ -74,7 +74,7 @@ class UsersMetric < Avo::Dashboards::MetricCard
 end
 ```
 
-<img :src="('/assets/img/dashboards/users_metric.jpg')" alt="Avo Dashboard Metric" class="border mb-4" />
+<img :src="('/assets/img/dashboards/users_metric.webp')" alt="Avo Dashboard Metric" class="border mb-4" />
 
 ### Control the aggregation using ranges
 
@@ -122,7 +122,7 @@ class UsersMetric < Avo::Dashboards::MetricCard
   self.display_header = false
 end
 ```
-<img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Dashboard Map card" class="border mb-4" />
+<img :src="('/assets/img/dashboards/map_card.webp')" alt="Avo Dashboard Map card" class="border mb-4" />
 
 ### Override card options from the dashboard
 
@@ -228,7 +228,7 @@ You can add three types of cards to your dashboard: `metric`, `chartkick`, and `
 
 The metric card is your friend when you only need to display a simple significant number on your dashboard. Generate one run `bin/rails g avo:card:metric users_metric`.
 
-<img :src="('/assets/img/dashboards/users_metric.jpg')" alt="Avo Dashboard Metric" class="border mb-4" />
+<img :src="('/assets/img/dashboards/users_metric.webp')" alt="Avo Dashboard Metric" class="border mb-4" />
 
 #### Calculate results
 
@@ -289,7 +289,7 @@ class UsersMetric < Avo::Dashboards::MetricCard
 end
 ```
 
-<img :src="('/assets/img/dashboards/prefix-suffix.jpg')" alt="Avo Dashboard Prefix & suffix" class="border mb-4" />
+<img :src="('/assets/img/dashboards/prefix-suffix.webp')" alt="Avo Dashboard Prefix & suffix" class="border mb-4" />
 
 ### Chartkick card
 
@@ -335,7 +335,7 @@ class UserSignups < Avo::Dashboards::ChartkickCard
 end
 ```
 
-<img :src="('/assets/img/dashboards/chartkick.jpg')" alt="Chartkick card" class="border mb-4" />
+<img :src="('/assets/img/dashboards/chartkick.webp')" alt="Chartkick card" class="border mb-4" />
 
 #### Chart types
 
@@ -367,7 +367,7 @@ class ExampleCustomPartial < Avo::Dashboards::PartialCard
   # self.display_header = true
 end
 ```
-<img :src="('/assets/img/dashboards/custom_partial_card.jpg')" alt="Custom partial card" class="border mb-4" />
+<img :src="('/assets/img/dashboards/custom_partial_card.webp')" alt="Custom partial card" class="border mb-4" />
 
 You may embed a piece of content from another app using an iframe. You can hide the header using the `self.display_header = false` option. That will render the embedded content flush to the container.
 
@@ -388,7 +388,7 @@ end
 <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d17991.835132857846!2d-73.98926852562143!3d40.742050491245955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sro!4v1647079626880!5m2!1sen!2sro" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
 ```
 
-<img :src="('/assets/img/dashboards/map_card.jpg')" alt="Avo Dashboard Map card" class="border mb-4" />
+<img :src="('/assets/img/dashboards/map_card.webp')" alt="Avo Dashboard Map card" class="border mb-4" />
 
 ## Dividers
 
@@ -416,7 +416,7 @@ class Dashy < Avo::Dashboards::BaseDashboard
 end
 ```
 
-<img :src="('/assets/img/dashboards/divider.jpg')" alt="Avo Dashboard Divider" class="border mb-4" />
+<img :src="('/assets/img/dashboards/divider.webp')" alt="Avo Dashboard Divider" class="border mb-4" />
 
 Dividers can be a simple line between your cards or have some text on them that you control using the `label` option.
 When you don't want to show the line, you can enable the `invisible` option, which adds the divider but does not display a border or label.

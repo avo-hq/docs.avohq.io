@@ -34,7 +34,7 @@ You can add use this option to make the association title clickable. That link w
 
 This feature doesn't go deeper than this. It just helps you see the association table easier in a separate page.
 
-<Image src="/assets/img/3_0/has_many/linkable.gif" width="1200" height="875" alt="" />
+<Image src="/assets/img/3_0/has_many/linkable.webm" width="1200" height="875" alt="" />
 </Option>
 
 ## Has Many Through
@@ -75,7 +75,7 @@ field :patrons,
 ```
 :::
 
-<Image src="/assets/img/3_0/has_many/attach-fields.gif" width="600" height="338" alt="" />
+<Image src="/assets/img/3_0/has_many/attach-fields.webm" width="600" height="338" alt="" />
 </Option>
 
 <!-- @include: ./../common/show_on_edit_common.md-->

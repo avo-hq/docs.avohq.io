@@ -12,7 +12,7 @@ Once your Avo resources reach a certain level of complexity, you might feel the 
 
 ## Panels
 
-<img :src="('/assets/img/tabs-and-panels/panel.png')" alt="Panel" class="border mb-4" />
+<img :src="('/assets/img/tabs-and-panels/panel.webp')" alt="Panel" class="border mb-4" />
 
 First, we should talk a bit about panels. They are the backbone of Avo's display infrastructure. Most of the information that's on display is wrapped inside a panel. They help to give Avo that uniform design on every page. They are also available as a view component `Avo::PanelComponent` for custom tools, and you can make your own pages using it.
 
@@ -30,7 +30,7 @@ class UserResource < Avo::BaseResource
   end
 end
 ```
-<img :src="('/assets/img/tabs-and-panels/root-and-panel.png')" alt="Root fields and panel fields" class="border mb-4" />
+<img :src="('/assets/img/tabs-and-panels/root-and-panel.webp')" alt="Root fields and panel fields" class="border mb-4" />
 
 You can customize the panel `name` and panel `description`.
 
@@ -56,7 +56,7 @@ class UserResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/tabs-and-panels/index-view.png')" alt="Index view" class="border mb-4" />
+<img :src="('/assets/img/tabs-and-panels/index-view.webp')" alt="Index view" class="border mb-4" />
 
 ## Tabs
 
@@ -84,13 +84,13 @@ class UserResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/tabs-and-panels/tabs.png')" alt="Avo tabs" class="border mb-4" />
+<img :src="('/assets/img/tabs-and-panels/tabs.webp')" alt="Avo tabs" class="border mb-4" />
 
 To use tabs, you need to open a `tabs` group block. Next, you add your `tab` block where you add fields and panels like you're used to on resource root. Most fields like `text`, `number`, `gravatar`, `date`, etc. need to be placed in a `panel`. However, the `has_one`, `has_many`, and `has_and_belongs_to_many` have their own panels, and they don't require a `panel` or a `tab`.
 
 The tab `name` is mandatory is what will be displayed on the tab switcher. The tab `description` is what will be displayed in the tooltip on hover.
 
-<img :src="('/assets/img/tabs-and-panels/tab-name-description.png')" alt="Avo tab name and description" class="border mb-4" />
+<img :src="('/assets/img/tabs-and-panels/tab-name-description.webp')" alt="Avo tab name and description" class="border mb-4" />
 
 ### Tabs on Show view
 
@@ -109,11 +109,11 @@ All visibility rules still apply on' Edit', meaning that `has_*` fields will be 
 
 When you have a lot of tabs in one group the tab switcher will overflow on the right-hand side. It will become scrollable to allow your users to get to the last tabs in the group.
 
-![](/assets/img/tabs-and-panels/scrollable-tabs.gif)
+![](/assets/img/tabs-and-panels/scrollable-tabs.webm)
 
 If you want to be able to see all your tabs in one group at a glance you may change the display to `:pills`. The pills will collapse and won't overflow off the page.
 
-![](/assets/img/tabs-and-panels/tabs-as-pills.gif)
+![](/assets/img/tabs-and-panels/tabs-as-pills.webm)
 
 ### Display all tabs as pills
 
@@ -138,7 +138,5 @@ end
 <!-- The panel has a few parts available -->
 
 
-<!-- <img :src="('/assets/img/tabs-and-panels/panel-top.png')" alt="Avo Panels" class="border mb-4" /> -->
-<!-- <img :src="('/assets/img/tabs-and-panels/panel-bottom.png')" alt="Avo Panels" class="border mb-4" /> -->
-
-
+<!-- <img :src="('/assets/img/tabs-and-panels/panel-top.webp')" alt="Avo Panels" class="border mb-4" /> -->
+<!-- <img :src="('/assets/img/tabs-and-panels/panel-bottom.webp')" alt="Avo Panels" class="border mb-4" /> -->

@@ -122,7 +122,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/resource-panels/root-and-panel.png" dark-src="/assets/img/4_0/resource-panels/root-and-panel-dark.png" width="1976" height="842" alt="An Avo show page with the record title and action buttons in the header, a main panel card with ID and User Email fields, and a named User information panel with First name, Last name, and Is active." prompt="User show page with root id and User Email fields plus a named User information panel with description, first name, last name, and Is active fields" />
+<Image src="/assets/img/4_0/resource-panels/root-and-panel.webp" dark-src="/assets/img/4_0/resource-panels/root-and-panel-dark.webp" width="1976" height="842" alt="An Avo show page with the record title and action buttons in the header, a main panel card with ID and User Email fields, and a named User information panel with First name, Last name, and Is active." prompt="User show page with root id and User Email fields plus a named User information panel with description, first name, last name, and Is active fields" />
 
 Set [`title`](./fields-layout-api.html#title) and [`description`](./fields-layout-api.html#description) to label a panel, and [`visible`](./fields-layout-api.html#visible) to show or hide a whole panel and its children at once. Use `card` blocks to section fields visually without opening a new panel.
 
@@ -139,7 +139,7 @@ def fields
 end
 ```
 
-<Image src="/assets/img/4_0/resource-panels/computed-main.png" dark-src="/assets/img/4_0/resource-panels/computed-main-dark.png" width="1976" height="554" alt="An Avo show page with a single computed main panel containing ID, Name, User, and Type fields." prompt="Show page with a single computed main panel containing id, name, user, and type fields" />
+<Image src="/assets/img/4_0/resource-panels/computed-main.webp" dark-src="/assets/img/4_0/resource-panels/computed-main-dark.webp" width="1976" height="554" alt="An Avo show page with a single computed main panel containing ID, Name, User, and Type fields." prompt="Show page with a single computed main panel containing id, name, user, and type fields" />
 
 Insert a field that owns its panel (like a `has_many`) between standalone fields and Avo splits them: the main panel holds the first batch, and each standalone group that follows becomes its own simple panel.
 
@@ -155,7 +155,7 @@ def fields
 end
 ```
 
-<Image src="/assets/img/4_0/resource-panels/split-panels.png" dark-src="/assets/img/4_0/resource-panels/split-panels-dark.png" width="1976" height="996" alt="An Avo show page with a computed main panel for ID and Name, a Reviews has_many association panel, and a second panel for User and Type." prompt="Show page with a computed main panel for id and name, a reviews has_many panel, and a simple panel for user and type fields" />
+<Image src="/assets/img/4_0/resource-panels/split-panels.webp" dark-src="/assets/img/4_0/resource-panels/split-panels-dark.webp" width="1976" height="996" alt="An Avo show page with a computed main panel for ID and Name, a Reviews has_many association panel, and a second panel for User and Type." prompt="Show page with a computed main panel for id and name, a reviews has_many panel, and a simple panel for user and type fields" />
 
 To group fields under your own titled container, add a `panel` block. Its fields render on **Show** and **Edit** but stay off the **Index** view.
 
@@ -210,7 +210,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/resource-sidebar/sidebar.png" dark-src="/assets/img/4_0/resource-sidebar/sidebar-dark.png" width="980" height="461" alt="Resource Show view with a main panel on the left and a sidebar on the right holding the avatar and Is active fields" />
+<Image src="/assets/img/4_0/resource-sidebar/sidebar.webp" dark-src="/assets/img/4_0/resource-sidebar/sidebar-dark.webp" width="980" height="461" alt="Resource Show view with a main panel on the left and a sidebar on the right holding the avatar and Is active fields" />
 
 Sidebar fields are always stacked — label above value — because the narrower column requires it. If you're rendering a custom tool inside a sidebar and don't want Avo's panel styling applied to it, set [`panel_wrapper: false`](./fields-layout-api.html#panel_wrapper).
 
@@ -241,7 +241,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/tabs/show.png" dark-src="/assets/img/4_0/tabs/show-dark.png" width="2144" height="780" alt="An Avo User show page with id and User Email in the main panel, a tab switcher listing User information, Teams, People, Spouses and Projects, and the User information panel showing first name, last name and the Is active boolean." prompt="User show page with id and User Email in the main panel, tab switcher with User information Teams People Spouses and Projects tabs, and the User information panel showing first name last name and Is active" />
+<Image src="/assets/img/4_0/tabs/show.webp" dark-src="/assets/img/4_0/tabs/show-dark.webp" width="2144" height="780" alt="An Avo User show page with id and User Email in the main panel, a tab switcher listing User information, Teams, People, Spouses and Projects, and the User information panel showing first name, last name and the Is active boolean." prompt="User show page with id and User Email in the main panel, tab switcher with User information Teams People Spouses and Projects tabs, and the User information panel showing first name last name and Is active" />
 
 The tab [`title`](./fields-layout-api.html#title) is mandatory and labels the switcher; the [`description`](./fields-layout-api.html#description) shows as a tooltip on hover. Both `tabs` groups and individual `tab`s accept a [`visible`](./fields-layout-api.html#visible) boolean or lambda, and the whole group takes its own `title` and `description`.
 

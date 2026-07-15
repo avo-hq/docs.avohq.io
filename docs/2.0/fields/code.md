@@ -5,7 +5,7 @@ license: community
 
 # Code
 
-<img :src="('/assets/img/fields/code.jpg')" alt="Code field" class="border mb-4" />
+<img :src="('/assets/img/fields/code.webp')" alt="Code field" class="border mb-4" />
 
 The `Code` field generates a code editor using [codemirror](https://codemirror.net/) package. This field is hidden on **Index** view.
 

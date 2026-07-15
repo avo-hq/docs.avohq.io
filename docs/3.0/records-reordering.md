@@ -39,7 +39,7 @@ The actions have access to `record`, `resource`, `options` (the `ordering` class
 
 That configuration will generate a button with a popover containing the ordering buttons.
 
-<Image src="/assets/img/resources/ordering_hover.jpg" width="1058" height="550" alt="Avo ordering" />
+<Image src="/assets/img/resources/ordering_hover.webp" width="1058" height="550" alt="Avo ordering" />
 
 ## Always show the order buttons
 
@@ -60,7 +60,7 @@ class Avo::Resources::CourseLink < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/resources/ordering_visible.jpg" width="1055" height="546" alt="Avo ordering" />
+<Image src="/assets/img/resources/ordering_visible.webp" width="1055" height="546" alt="Avo ordering" />
 
 ## Display the buttons in the `Index` view or association view
 

@@ -9,9 +9,9 @@ outline: deep
 When a user triggers an action in Avo, the following flow occurs:
 
 1. Record selection phase:
-   - This phase can be bypassed by setting `self.standalone = true`
-   - For bulk actions on the index page, Avo collects all the records selected by the user
-   - For actions on the show page [or row controls](./../customizable-controls.md#Row%20controls), Avo uses that record as the target of the action
+  - This phase can be bypassed by setting `self.standalone = true`
+  - For bulk actions on the index page, Avo collects all the records selected by the user
+  - For actions on the show page [or row controls](./../customizable-controls.md#Row%20controls), Avo uses that record as the target of the action
 
 2. The action is initiated by the user through the index page (bulk actions), show page (single record actions), [or resource controls (custom action buttons)](./../customizable-controls.md)
 
@@ -148,7 +148,7 @@ class Avo::Actions::ToggleInactive < Avo::BaseAction
 end
 ```
 
-<Image src="/assets/img/4_0/alert/alert-response.png" dark-src="/assets/img/4_0/alert/alert-response-dark.png" width="468" height="260" alt="Avo action feedback notifications: success, info, warning, and error alerts stacked." />
+<Image src="/assets/img/4_0/alert/alert-response.webp" dark-src="/assets/img/4_0/alert/alert-response-dark.webp" width="468" height="260" alt="Avo action feedback notifications: success, info, warning, and error alerts stacked." />
 
 ## Response types
 
