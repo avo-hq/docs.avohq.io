@@ -16,7 +16,7 @@ field :progress,
   loading_when: [:loading, :running, :waiting, "in progress"]
 ```
 
-<img :src="('/assets/img/fields/status.png')" alt="Status field" class="border mb-4" />
+<img :src="('/assets/img/fields/status.webp')" alt="Status field" class="border mb-4" />
 
 ## Options
 
@@ -43,5 +43,3 @@ Set the values for when the status is `loading`.
 
 `[:loading, :running, :waiting, "in progress"]` or an array with strings or symbols that indicate the `loading` state.
 </Option>
-
-

@@ -36,10 +36,10 @@ module MarkdownHelpText
 
     def list(contents, list_type)
       list_style = case list_type
-             when "ul" then "list-disc"
-             when "ol" then "list-decimal"
-             else "list-none"
-             end
+            when "ul" then "list-disc"
+            when "ol" then "list-decimal"
+            else "list-none"
+            end
       %(<#{list_type} class="ml-8 mb-2 #{list_style}">#{contents}</#{list_type}>)
     end
   end
@@ -83,4 +83,4 @@ end
     )
 ```
 
-<Image src="/assets/img/4_0/guides/use-markdown-in-help-attributes/result.png" dark-src="/assets/img/4_0/guides/use-markdown-in-help-attributes/result-dark.png" width="1776" height="1464" alt="A markdown field on a form whose help text is rendered markdown — headings, bold paragraph, code block, inline code and a bullet list" />
+<Image src="/assets/img/4_0/guides/use-markdown-in-help-attributes/result.webp" dark-src="/assets/img/4_0/guides/use-markdown-in-help-attributes/result-dark.webp" width="1776" height="1464" alt="A markdown field on a form whose help text is rendered markdown — headings, bold paragraph, code block, inline code and a bullet list" />

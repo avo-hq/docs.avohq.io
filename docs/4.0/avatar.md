@@ -8,7 +8,7 @@ It's common that a record has a visual representation. A user might have a heads
 
 The avatar will be visible in multiple places in the app like the <Show /> and <Edit /> views, and the new breadcrumbs.
 
-<Image src="/assets/img/4_0/avatar/avatar.png" dark-src="/assets/img/4_0/avatar/avatar-dark.png" alt="Record avatar on the Show view and in the breadcrumbs" width="2344" height="856" class="mt-8" />
+<Image src="/assets/img/4_0/avatar/avatar.webp" dark-src="/assets/img/4_0/avatar/avatar-dark.webp" alt="Record avatar on the Show view and in the breadcrumbs" width="2344" height="856" class="mt-8" />
 
 ## Configuration
 

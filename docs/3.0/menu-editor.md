@@ -37,7 +37,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/menu-editor/main.jpg" width="250" height="448" alt="Avo main menu" />
+<Image src="/assets/img/menu-editor/main.webp" width="250" height="448" alt="Avo main menu" />
 
 For now, Avo supports editing only two menus, `main_menu` and `profile_menu`. However, that might change in the future by allowing you to write custom menus for other parts of your app.
 
@@ -97,7 +97,7 @@ A few menu item types are supported `link_to`, `section`, `group`, `resource`, a
 link_to "Google", path: "https://google.com", target: :_blank
 ```
 
-<Image src="/assets/img/menu-editor/external-link.jpg" width="254" height="155" alt="Avo menu editor" />
+<Image src="/assets/img/menu-editor/external-link.webp" width="254" height="155" alt="Avo menu editor" />
 
 When you add the `target: :_blank` option, a tiny external link icon will be displayed.
 
@@ -154,7 +154,7 @@ resource :posts
 resource "Avo::Resources::Comments"
 ```
 
-<Image src="/assets/img/menu-editor/resource.jpg" width="252" height="177" alt="Avo menu editor" />
+<Image src="/assets/img/menu-editor/resource.webp" width="252" height="177" alt="Avo menu editor" />
 
 You can also change the label for the `resource` items to something else.
 
@@ -184,7 +184,7 @@ dashboard :dashy
 dashboard "Sales"
 ```
 
-<Image src="/assets/img/menu-editor/dashboard.jpg" width="256" height="212" alt="Avo menu editor" />
+<Image src="/assets/img/menu-editor/dashboard.webp" width="256" height="212" alt="Avo menu editor" />
 
 You can also change the label for the `dashboard` items to something else.
 
@@ -205,7 +205,7 @@ section "Resources", icon: "heroicons/outline/academic-cap" do
 end
 ```
 
-<Image src="/assets/img/menu-editor/section.jpg" width="255" height="207" alt="Avo menu editor" />
+<Image src="/assets/img/menu-editor/section.webp" width="255" height="207" alt="Avo menu editor" />
 
 </Option>
 
@@ -221,7 +221,7 @@ group "Blog" do
 end
 ```
 
-<Image src="/assets/img/menu-editor/group.jpg" width="252" height="205" alt="Avo menu editor" />
+<Image src="/assets/img/menu-editor/group.webp" width="252" height="205" alt="Avo menu editor" />
 
 </Option>
 
@@ -303,7 +303,7 @@ end
 The `all_resources` helper is taking into account your [authorization](./authorization) rules, so make sure you have `def index?` enabled in your resource policy.
 :::
 
-<Image src="/assets/img/menu-editor/all-helpers.jpg" width="254" height="732" alt="Avo menu editor" />
+<Image src="/assets/img/menu-editor/all-helpers.webp" width="254" height="732" alt="Avo menu editor" />
 
 ## Item visibility
 
@@ -374,7 +374,7 @@ section "Resources", icon: "heroicons/outline/adjustments" do
 end
 ```
 
-<Image src="/assets/img/menu-editor/icons.jpg" width="253" height="328" alt="Avo menu editor" />
+<Image src="/assets/img/menu-editor/icons.webp" width="253" height="328" alt="Avo menu editor" />
 
 ### Icons on resource, dashboard, and link_to items
 
@@ -394,7 +394,7 @@ section "Resources", icon: "resources", collapsable: true do
 end
 ```
 
-<Image src="/assets/img/menu-editor/collapsable.jpg" width="250" height="182" alt="Avo menu editor" />
+<Image src="/assets/img/menu-editor/collapsable.webp" width="250" height="182" alt="Avo menu editor" />
 
 That will add the arrow icon next to the section to indicate it's collapsable. So when your users collapse and expand it, their choice will be stored in Local Storage and remembered in that browser.
 
@@ -408,7 +408,7 @@ section "Resources", icon: "resources", collapsable: true, collapsed: true do
 end
 ```
 
-<Image src="/assets/img/menu-editor/collapsed.jpg" width="250" height="182" alt="Avo menu editor" />
+<Image src="/assets/img/menu-editor/collapsed.webp" width="250" height="182" alt="Avo menu editor" />
 
 You might want to allow your users to hide certain items from view.
 
@@ -449,7 +449,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/menu-editor/profile-menu.png" width="276" height="192" alt="Avo profile menu" />
+<Image src="/assets/img/menu-editor/profile-menu.webp" width="276" height="192" alt="Avo profile menu" />
 
 ## Forms in profile menu
 

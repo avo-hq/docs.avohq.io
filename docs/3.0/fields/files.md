@@ -20,7 +20,7 @@ field :documents, as: :files
 
 <Option name="`view_type`">
 
-<Image src="/assets/img/files_view_types.gif" width="1734" height="431" alt="" />
+<Image src="/assets/img/files_view_types.webm" width="1734" height="431" alt="" />
 
 Set the default `view_type`.
 

@@ -6,7 +6,7 @@ demoVideo: https://youtu.be/wnWvzQyyo6A?t=1698
 
 # Media Library
 
-<Image src="/assets/img/3_0/media-library/media-library.gif" alt="Media Library" size="800x453" />
+<Image src="/assets/img/3_0/media-library/media-library.webm" alt="Media Library" size="800x453" />
 
 If you run an asset-intensive, having a place to view all those asses would be great. It's becoming easier with Avo and it's Media Library feature.
 
@@ -84,7 +84,7 @@ end
 
 The Media Library will seamlessly integrate with all the rich text editors.
 
-<Image src="/assets/img/3_0/media-library/media-library-rhino.gif" alt="Media Library with Rhino field" size="800x453" />
+<Image src="/assets/img/3_0/media-library/media-library-rhino.webm" alt="Media Library with Rhino field" size="800x453" />
 
 ```ruby
 field :body, as: :trix
@@ -94,4 +94,3 @@ field :body, as: :markdown
 
 The editors will each have a button to open the Media Library modal.
 Once open, after the user selects the asset, it will be injected into the editor.
-

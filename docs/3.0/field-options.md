@@ -32,7 +32,7 @@ To customize the label, you can use the `name` property to pick a different labe
 field :is_available, as: :boolean, name: "Availability"
 ```
 
-<Image src="/assets/img/fields-reference/naming-convention-override.png" width="938" height="158" alt="Field naming convention override" />
+<Image src="/assets/img/fields-reference/naming-convention-override.webp" width="938" height="158" alt="Field naming convention override" />
 
 ## Showing / Hiding fields on different views
 
@@ -126,7 +126,7 @@ field :is_writer, as: :text, format_using: -> {
 
 This example snippet will make the `:is_writer` field generate `👍` or `👎` emojis instead of `1` or `0` values on display views and the values `1` or `0` on form views.
 
-<Image src="/assets/img/fields-reference/fields-formatter.png" width="943" height="156" alt="Fields formatter" />
+<Image src="/assets/img/fields-reference/fields-formatter.webp" width="943" height="156" alt="Fields formatter" />
 
 Another example:
 
@@ -165,7 +165,7 @@ Example on how to format a field in the index and show views:
 field :is_writer, format_display_using: -> { value.present? ? '👍' : '👎' }
 ```
 
-<Image src="/assets/img/fields-reference/fields-formatter.png" width="943" height="156" alt="Fields formatter" />
+<Image src="/assets/img/fields-reference/fields-formatter.webp" width="943" height="156" alt="Fields formatter" />
 
 </Option>
 
@@ -198,7 +198,7 @@ Add it to any field to make that column sortable in the <Index /> view.
 field :name, as: :text, sortable: true
 ```
 
-<Image src="/assets/img/fields-reference/sortable-fields.png" width="406" height="363" alt="Sortable fields" />
+<Image src="/assets/img/fields-reference/sortable-fields.webp" width="406" height="363" alt="Sortable fields" />
 
 **Related:**
   - [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
@@ -259,7 +259,7 @@ Some fields support the `placeholder` option, which will be passed to the inputs
 field :name, as: :text, placeholder: 'John Doe'
 ```
 
-<Image src="/assets/img/fields-reference/placeholder.png" width="946" height="160" alt="Placeholder option" />
+<Image src="/assets/img/fields-reference/placeholder.webp" width="946" height="160" alt="Placeholder option" />
 
 ## Required
 To indicate that a field is mandatory, you can utilize the `required` option, which adds an asterisk to the field as a visual cue.
@@ -271,7 +271,7 @@ Avo automatically examines each field to determine if the associated attribute r
 field :name, as: :text, required: true
 ```
 
-<Image src="/assets/img/fields-reference/required.png" width="949" height="156" alt="Required option" />
+<Image src="/assets/img/fields-reference/required.webp" width="949" height="156" alt="Required option" />
 
 <DemoVideo demo-video="https://youtu.be/peKt90XhdOg?t=937" />
 
@@ -290,7 +290,7 @@ When you need to prevent the user from editing a field, the `disabled` option wi
 field :name, as: :text, disabled: true
 ```
 
-<Image src="/assets/img/fields-reference/readonly.png" width="953" height="164" alt="Disabled option" />
+<Image src="/assets/img/fields-reference/readonly.webp" width="953" height="164" alt="Disabled option" />
 
 
 ### Disabled as a block
@@ -312,7 +312,7 @@ When you need to prevent the user from editing a field, the `readonly` option wi
 field :name, as: :text, readonly: true
 ```
 
-<Image src="/assets/img/fields-reference/readonly.png" width="953" height="164" alt="Readonly option" />
+<Image src="/assets/img/fields-reference/readonly.webp" width="953" height="164" alt="Readonly option" />
 
 ## Default Value
 
@@ -339,7 +339,7 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css', help: "This ena
 field :password, as: :password, help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
 ```
 
-<Image src="/assets/img/fields-reference/help-text.png" width="954" height="271" alt="Help text" />
+<Image src="/assets/img/fields-reference/help-text.webp" width="954" height="271" alt="Help text" />
 
 ## Nullable
 
@@ -370,7 +370,7 @@ field :name, as: :text, link_to_record: true
 field :email, as: :gravatar, link_to_record: true
 ```
 
-<Image src="/assets/img/fields-reference/as-link-to-resource.jpg" width="694" height="166" alt="As link to resource" />
+<Image src="/assets/img/fields-reference/as-link-to-resource.webp" width="694" height="166" alt="As link to resource" />
 
 You can add this property on [`id`](./fields/id.html), [`text`](./fields/text.html), and [`gravatar`](./fields/gravatar.html) fields.
 
@@ -390,7 +390,7 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/fields/index_text_align.jpg" width="632" height="476" alt="Index text align" />
+<Image src="/assets/img/fields/index_text_align.webp" width="632" height="476" alt="Index text align" />
 
 ## Stacked layout
 
@@ -402,11 +402,11 @@ field :meta, as: :key_value, stacked: true
 
 #### `inline` layout (default)
 
-<Image src="/assets/img/fields/field_wrapper_layout_inline.jpg" width="808" height="117" alt="" />
+<Image src="/assets/img/fields/field_wrapper_layout_inline.webp" width="808" height="117" alt="" />
 
 #### `stacked` layout
 
-<Image src="/assets/img/fields/field_wrapper_layout_stacked.jpg" width="815" height="179" alt="" />
+<Image src="/assets/img/fields/field_wrapper_layout_stacked.webp" width="815" height="179" alt="" />
 
 ## Global `stacked` layout
 
@@ -496,7 +496,7 @@ You may find more detailed information about the HTML attributes [here](./html.h
 
 <Option name="`summarizable`">
 
-<Image src="/assets/img/summarizable.png" width="554" height="347" alt="Field summarizable preview" />
+<Image src="/assets/img/summarizable.webp" width="554" height="347" alt="Field summarizable preview" />
 
 The `summarizable` option allows you to generate a visual summary of a column's data distribution. This feature provides a quick and intuitive overview of your dataset by displaying a chart within the table header.
 

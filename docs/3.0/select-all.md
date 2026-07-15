@@ -4,7 +4,7 @@ The "Select All" feature is designed to enable users to select all queried recor
 
 ## How does it work?
 
-<Image src="/assets/img/3_0/select_all.gif" width="687" height="289" alt="Select all demonstration" />
+<Image src="/assets/img/3_0/select_all.webm" width="687" height="289" alt="Select all demonstration" />
 
 When a user toggles the "Select all" checkbox, Avo will first check to see if there are more records than just those displayed on that page, and if there are, it will ask if the user if they want to select all the records or not.
 

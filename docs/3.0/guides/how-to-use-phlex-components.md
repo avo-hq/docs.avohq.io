@@ -75,7 +75,7 @@ class Avo::Resources::CourseLink < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/guides/phlex/phlex_component.png" width="1278" height="335" alt="Phlex component" />
+<Image src="/assets/img/guides/phlex/phlex_component.webp" width="1278" height="335" alt="Phlex component" />
 
 :::tip
 While this example uses a field, the same pattern applies to resources. You can use the [`components`](./../resources#self.components) option to customize the component for the `index`, `show`, `edit`, and `new` views.

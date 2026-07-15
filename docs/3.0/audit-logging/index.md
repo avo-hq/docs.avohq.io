@@ -199,7 +199,7 @@ But these activities aren't visible yet, right? Let's look at how to display the
 
 The `Avo::ResourceTools::Timeline` tool, provided by the `avo-audit_logging` gem, is designed for use in the sidebar. It offers a compact view of activities that have occurred on a specific resource, presenting them in a streamlined format:
 
-<Image src="/assets/img/3_0/audit-logging/sidebar-activities.png" width="1915" height="719" alt="Avo compact activities on sidebar image" />
+<Image src="/assets/img/3_0/audit-logging/sidebar-activities.webp" width="1915" height="719" alt="Avo compact activities on sidebar image" />
 
 ### Configuring the Sidebar for Activity Tracking
 
@@ -235,7 +235,7 @@ end # [!code focus]
 
 Hovering over an entry reveals the precise timestamp in UTC. Clicking on an entry navigates to a detailed page displaying the full payload.
 
-<Image src="/assets/img/3_0/audit-logging/hover-activities.png" width="657" height="284" alt="Hover on activity" />
+<Image src="/assets/img/3_0/audit-logging/hover-activities.webp" width="657" height="284" alt="Hover on activity" />
 
 ### Enabling Change Logs and Reverting Changes
 
@@ -256,7 +256,7 @@ end # [!code focus]
 
 Once enabled, the changelog will be visible, along with an action to revert changes.
 
-<Image src="/assets/img/3_0/audit-logging/activity-details.png" width="2010" height="1152" alt="Activity details page" />
+<Image src="/assets/img/3_0/audit-logging/activity-details.webp" width="2010" height="1152" alt="Activity details page" />
 
 ### Troubleshooting: Missing `changeset` Field
 
@@ -272,7 +272,7 @@ config.active_record.yaml_column_permitted_classes = [Symbol, Date, Time, Active
 
 We’ve already covered how to view all activity on a specific record. Now, let’s display a table within `Avo::Resources::User` to view all tracked activity for a particular user.
 
-<Image src="/assets/img/3_0/audit-logging/authored.png" width="1921" height="754" alt="Authored table image" />
+<Image src="/assets/img/3_0/audit-logging/authored.webp" width="1921" height="754" alt="Authored table image" />
 
 :::warning
 If you're using a model other than `User`, make sure you have already [configured the author models](#configure-author-models).

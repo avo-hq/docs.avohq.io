@@ -5,7 +5,7 @@ license: community
 
 # Rhino
 
-<Image src="/assets/img/fields/rhino/rhino-field.gif" alt="Rhino field" size="800x413" />
+<Image src="/assets/img/fields/rhino/rhino-field.webm" alt="Rhino field" size="800x413" />
 
 The wonderful [Rhino Editor](https://rhino-editor.vercel.app/) built by [Konnor Rogers](https://www.konnorrogers.com/) is available and fully integrated with Avo.
 

@@ -11,7 +11,7 @@ resources to be displayed to the map view they require a `coordinates` field, bu
 
 To enable map view for a resource, you need to add the `map_view` class attribute to a resource. That will add the view switcher to the <Index /> view.
 
-<Image src="/assets/img/4_0/map-view/index.png" dark-src="/assets/img/4_0/map-view/index-dark.png" width="2824" height="1742" alt="The Cities resource in map view — the table/map view switcher, a Mapbox map with markers and the adjacent index table." prompt="map view on the Cities index with the view switcher, Mapbox map and adjacent table" />
+<Image src="/assets/img/4_0/map-view/index.webp" dark-src="/assets/img/4_0/map-view/index-dark.webp" width="2824" height="1742" alt="The Cities resource in map view — the table/map view switcher, a Mapbox map with markers and the adjacent index table." prompt="map view on the Cities index with the view switcher, Mapbox map and adjacent table" />
 
 ```ruby
 class Avo::Resources::City < Avo::BaseResource
@@ -82,7 +82,7 @@ self.map_view = {
   # ...
 }
 ```
-<Image src="/assets/img/4_0/map-view/extra-markers.png" dark-src="/assets/img/4_0/map-view/extra-markers-dark.png" width="2504" height="872" alt="A map view zoomed on the Azores showing an extra marker labelled Açores with tooltip São Miguel." prompt="map view extra marker with label Açores and tooltip São Miguel" />
+<Image src="/assets/img/4_0/map-view/extra-markers.webp" dark-src="/assets/img/4_0/map-view/extra-markers-dark.webp" width="2504" height="872" alt="A map view zoomed on the Azores showing an extra marker labelled Açores with tooltip São Miguel." prompt="map view extra marker with label Açores and tooltip São Miguel" />
 </Option>
 
 ## Make it the default view

@@ -110,13 +110,13 @@ In this example, even if the `can_create` option is set to `true`, if the `UserP
 
 On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`self.title`](./../resources.html#setting-the-title-of-the-resource) value of the target resource.
 
-<Image src="/assets/img/4_0/associations/belongs-to-index.png" dark-src="/assets/img/4_0/associations/belongs-to-index-dark.png" width="1834" height="558" alt="Comments index table with ID and User columns, the User cell showing a belongs_to link to the associated record." />
+<Image src="/assets/img/4_0/associations/belongs-to-index.webp" dark-src="/assets/img/4_0/associations/belongs-to-index-dark.webp" width="1834" height="558" alt="Comments index table with ID and User columns, the User cell showing a belongs_to link to the associated record." />
 
-<Image src="/assets/img/4_0/associations/belongs-to-show.png" dark-src="/assets/img/4_0/associations/belongs-to-show-dark.png" width="1440" height="212" alt="Post show view with a User belongs_to field linking to the associated user record inside a complete card." />
+<Image src="/assets/img/4_0/associations/belongs-to-show.webp" dark-src="/assets/img/4_0/associations/belongs-to-show-dark.webp" width="1440" height="212" alt="Post show view with a User belongs_to field linking to the associated user record inside a complete card." />
 
 On the `Edit` and `New` views, Avo will generate a dropdown element with the available records where the user can change the associated model.
 
-<Image src="/assets/img/4_0/associations/belongs-to-edit.png" dark-src="/assets/img/4_0/associations/belongs-to-edit-dark.png" width="1440" height="284" alt="Post edit form with the User belongs_to dropdown showing available records inside a complete card." />
+<Image src="/assets/img/4_0/associations/belongs-to-edit.webp" dark-src="/assets/img/4_0/associations/belongs-to-edit-dark.webp" width="1440" height="284" alt="Post edit form with the User belongs_to dropdown showing available records inside a complete card." />
 
 ## Polymorphic `belongs_to`
 
@@ -167,7 +167,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/associations/polymorphic-help.png" dark-src="/assets/img/4_0/associations/polymorphic-help-dark.png" width="1440" height="1422" alt="New review form with a polymorphic Reviewable belongs_to field showing the type dropdown, record dropdown, polymorphic_help and help text inside a complete card." />
+<Image src="/assets/img/4_0/associations/polymorphic-help.webp" dark-src="/assets/img/4_0/associations/polymorphic-help-dark.webp" width="1440" height="1422" alt="New review form with a polymorphic Reviewable belongs_to field showing the type dropdown, record dropdown, polymorphic_help and help text inside a complete card." />
 
 ## Belongs to attach scope
 

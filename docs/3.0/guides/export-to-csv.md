@@ -61,5 +61,4 @@ class Avo::Actions::ExportCsv < Avo::BaseAction
 end
 ```
 
-<Image src="/assets/img/3_0/guides/export-to-csv/export-to-csv.gif" width="1024" height="640" alt="" />
-
+<Image src="/assets/img/3_0/guides/export-to-csv/export-to-csv.webm" width="1024" height="640" alt="" />

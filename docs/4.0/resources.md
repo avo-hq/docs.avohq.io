@@ -173,8 +173,8 @@ bin/rails generate avo:all_resources
 3. Excludes abstract classes (e.g. `ApplicationRecord`)
 4. Skips non-model files (concerns, POROs, `Current`, form objects)
 5. For each match, it:
-   - Generates a corresponding Avo resource using the `avo:resource` generator
-   - Handles errors gracefully, printing error messages if generation fails for any model
+  - Generates a corresponding Avo resource using the `avo:resource` generator
+  - Handles errors gracefully, printing error messages if generation fails for any model
 
 This is particularly useful when:
 
@@ -243,7 +243,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/resources/model-resource-mapping-1.png" dark-src="/assets/img/4_0/resources/model-resource-mapping-1-dark.png" width="2330" height="980" alt="" />
+<Image src="/assets/img/4_0/resources/model-resource-mapping-1.webp" dark-src="/assets/img/4_0/resources/model-resource-mapping-1-dark.webp" width="2330" height="980" alt="" />
 
 So when you click on the Users sidebar menu item, you get to the `Index` page where all the users will be displayed. The information displayed will be the gravatar image, the first and the last name.
 
@@ -299,7 +299,7 @@ class Avo::Resources::Team < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/resources/model-resource-mapping-2.png" dark-src="/assets/img/4_0/resources/model-resource-mapping-2-dark.png" width="2330" height="980" alt="" />
+<Image src="/assets/img/4_0/resources/model-resource-mapping-2.webp" dark-src="/assets/img/4_0/resources/model-resource-mapping-2-dark.webp" width="2330" height="980" alt="" />
 
 But now, if we visit the `Users` page, we will see the fields for the `TeamUser` resource instead of `User` resource, and that's because Avo fetches the resources in an alphabetical order, and `TeamUser` resource is before `User` resource. That's definitely not what we want.
 The same might happen if you reference the `User` in other associations throughout your resource files.
@@ -533,7 +533,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/resources/description.png" dark-src="/assets/img/4_0/resources/description-dark.png" width="2352" height="456" alt="Avo message" />
+<Image src="/assets/img/4_0/resources/description.webp" dark-src="/assets/img/4_0/resources/description-dark.webp" width="2352" height="456" alt="Avo message" />
 
 This is the quick way to set the label, and it will be displayed **on all pages**. If you want to restrict the message to custom views, use a lambda function.
 
@@ -641,7 +641,7 @@ end
 
 This option defaults to false
 
-<Image src="/assets/img/4_0/customization/confirm-on-save.png" dark-src="/assets/img/4_0/customization/confirm-on-save-dark.png" width="2880" height="1800" alt="Confirm on save" />
+<Image src="/assets/img/4_0/customization/confirm-on-save.webp" dark-src="/assets/img/4_0/customization/confirm-on-save-dark.webp" width="2880" height="1800" alt="Confirm on save" />
 
 </Option>
 
@@ -655,7 +655,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/resources/grid-view.png" dark-src="/assets/img/4_0/resources/grid-view-dark.png" width="2330" height="1290" alt="Avo grid view" />
+<Image src="/assets/img/4_0/resources/grid-view.webp" dark-src="/assets/img/4_0/resources/grid-view-dark.webp" width="2330" height="1290" alt="Avo grid view" />
 
 Find out more on the [grid view documentation page](grid-view).
 
@@ -757,7 +757,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/4_0/resources/buttons_on_footer.png" dark-src="/assets/img/4_0/resources/buttons_on_footer-dark.png" width="2310" height="1000" alt="Buttons on footer" />
+<Image src="/assets/img/4_0/resources/buttons_on_footer.webp" dark-src="/assets/img/4_0/resources/buttons_on_footer-dark.webp" width="2310" height="1000" alt="Buttons on footer" />
 
 </Option>
 
@@ -795,7 +795,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/resources/record_selector.png" dark-src="/assets/img/4_0/resources/record_selector-dark.png" width="2330" height="1090" alt="Hide the record selector." />
+<Image src="/assets/img/4_0/resources/record_selector.webp" dark-src="/assets/img/4_0/resources/record_selector-dark.webp" width="2330" height="1090" alt="Hide the record selector." />
 </Option>
 
 <Option name="`self.link_to_child_resource`">
@@ -834,7 +834,7 @@ class Avo::Resources::Course < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/filters/keep-filters-panel-open.gif" dark-src="/assets/img/4_0/filters/keep-filters-panel-open-dark.gif" width="900" height="408" alt="Avo filters" />
+<Image src="/assets/img/4_0/filters/keep-filters-panel-open.webm" dark-src="/assets/img/4_0/filters/keep-filters-panel-open-dark.webm" width="900" height="408" alt="Avo filters" />
 </Option>
 
 <Option name="`self.components`">
@@ -1047,7 +1047,7 @@ self.pagination = -> do
 end
 ```
 
-<Image src="/assets/img/4_0/resources/pagination/default.png" dark-src="/assets/img/4_0/resources/pagination/default-dark.png" width="2250" height="60" alt="Default pagination" />
+<Image src="/assets/img/4_0/resources/pagination/default.webp" dark-src="/assets/img/4_0/resources/pagination/default-dark.webp" width="2250" height="60" alt="Default pagination" />
 
 #### Countless
 
@@ -1059,7 +1059,7 @@ self.pagination = -> do
 end
 ```
 
-<Image src="/assets/img/4_0/resources/pagination/countless.png" dark-src="/assets/img/4_0/resources/pagination/countless-dark.png" width="2250" height="60" alt="Countless pagination" />
+<Image src="/assets/img/4_0/resources/pagination/countless.webp" dark-src="/assets/img/4_0/resources/pagination/countless-dark.webp" width="2250" height="60" alt="Countless pagination" />
 
 #### Countless and "pageless"
 
@@ -1072,7 +1072,7 @@ self.pagination = -> do
 end
 ```
 
-<Image src="/assets/img/4_0/resources/pagination/countless_empty_size.png" dark-src="/assets/img/4_0/resources/pagination/countless_empty_size-dark.png" width="2250" height="60" alt="Countless pagination size empty" />
+<Image src="/assets/img/4_0/resources/pagination/countless_empty_size.webp" dark-src="/assets/img/4_0/resources/pagination/countless_empty_size-dark.webp" width="2250" height="60" alt="Countless pagination size empty" />
 
 </Option>
 
@@ -1148,7 +1148,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/resources/external-link.png" dark-src="/assets/img/4_0/resources/external-link-dark.png" width="2264" height="264" alt="External link demonstration" />
+<Image src="/assets/img/4_0/resources/external-link.webp" dark-src="/assets/img/4_0/resources/external-link-dark.webp" width="2264" height="264" alt="External link demonstration" />
 
 The `self.external_link` lambda should return a string representing the URL of the record.
 
@@ -1193,7 +1193,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/resources/cards_on_resource.png" dark-src="/assets/img/4_0/resources/cards_on_resource-dark.png" width="2880" height="2070" alt="Cards on resources - Avo for Rails" />
+<Image src="/assets/img/4_0/resources/cards_on_resource.webp" dark-src="/assets/img/4_0/resources/cards_on_resource-dark.webp" width="2880" height="2070" alt="Cards on resources - Avo for Rails" />
 
 <Option name="`self.icon`">
 

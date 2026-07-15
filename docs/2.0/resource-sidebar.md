@@ -28,7 +28,7 @@ class UserResource < Avo::BaseResource
 end
 ```
 
-![](/assets/img/resource-sidebar/sidebar.jpg)
+![](/assets/img/resource-sidebar/sidebar.webp)
 
 :::info
 For this initial iteration you may use the `field` and `heading` helpers.

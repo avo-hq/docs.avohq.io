@@ -17,7 +17,7 @@ field :progress,
   success_when: [:done],
 ```
 
-<Image src="/assets/img/fields/status.png" width="276" height="452" alt="Status field" />
+<Image src="/assets/img/fields/status.webp" width="276" height="452" alt="Status field" />
 
 ## Options
 
@@ -72,5 +72,3 @@ Set the values for when the status is `neutral`.
 
 `[:holding, "waiting"]` or an array with strings or symbols that indicate a `neutral` state.
 </Option>
-
-

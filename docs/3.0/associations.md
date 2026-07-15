@@ -61,4 +61,4 @@ You might want to change the name that appears on the association page. For exam
 
 You can customize that using [fields localization](i18n.html#localizing-fields).
 
-<Image src="/assets/img/associations/custom-label.jpg" width="1224" height="692" alt="Custom label" />
+<Image src="/assets/img/associations/custom-label.webp" width="1224" height="692" alt="Custom label" />

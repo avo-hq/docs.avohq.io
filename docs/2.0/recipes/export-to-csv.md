@@ -40,5 +40,4 @@ class ExportCsv < Avo::BaseAction
 end
 ```
 
-![](/assets/img/recipes/export-to-csv/export-to-csv.gif)
-
+<Image src="/assets/img/recipes/export-to-csv/export-to-csv.webm" width="1024" height="640" alt="" />

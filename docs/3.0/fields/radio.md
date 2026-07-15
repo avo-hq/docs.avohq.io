@@ -5,7 +5,7 @@ license: community
 
 # Radio
 
-<Image src="/assets/img/fields/radio.png" width="425" height="87" alt="Radio field" />
+<Image src="/assets/img/fields/radio.webp" width="425" height="87" alt="Radio field" />
 
 The `Radio` field is used to render radio buttons. It's useful when only one value can be selected in a given options group.
 

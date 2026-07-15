@@ -4,7 +4,7 @@ Avo has a pretty advanced breadcrumbs system.
 
 It will use the resource avatar or initials to display the breadcrumb and context.
 
-<Image src="/assets/img/4_0/breadcrumbs/breadcrumbs.png" dark-src="/assets/img/4_0/breadcrumbs/breadcrumbs-dark.png" width="1112" height="208" alt="Breadcrumbs" />
+<Image src="/assets/img/4_0/breadcrumbs/breadcrumbs.webp" dark-src="/assets/img/4_0/breadcrumbs/breadcrumbs-dark.webp" width="1112" height="208" alt="Breadcrumbs" />
 
 It has minimal configuration options but you will have the oportunity to interact with it in a few places like the `avo.rb` config file or in the controller actions when you want to add breadcrumbs to a [custom tool](./custom-tools.html).
 

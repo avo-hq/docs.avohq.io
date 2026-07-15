@@ -37,7 +37,7 @@ Avo.configure do |config|
 end
 ```
 
-<img :src="('/assets/img/menu-editor/main.jpg')" alt="Avo main menu" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/main.webp')" alt="Avo main menu" class="border mb-4" />
 
 For now, Avo supports editing only two menus, `main_menu` and `profile_menu`. However, that might change in the future by allowing you to write custom menus for other parts of your app.
 
@@ -97,7 +97,7 @@ Link to is the menu item that the user will probably interact with the most. It 
 link_to "Google", path: "https://google.com", target: :_blank
 ```
 
-<img :src="('/assets/img/menu-editor/external-link.jpg')" alt="Avo menu editor" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/external-link.webp')" alt="Avo menu editor" class="border mb-4" />
 
 When you add the `target: :_blank` option, a tiny external link icon will be displayed.
 
@@ -112,7 +112,7 @@ resource :posts
 resource "CommentsResource"
 ```
 
-<img :src="('/assets/img/menu-editor/resource.jpg')" alt="Avo menu editor" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/resource.webp')" alt="Avo menu editor" class="border mb-4" />
 
 You can also change the label for the `resource` items to something else.
 
@@ -142,7 +142,7 @@ dashboard :dashy
 dashboard "Sales"
 ```
 
-<img :src="('/assets/img/menu-editor/dashboard.jpg')" alt="Avo menu editor" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/dashboard.webp')" alt="Avo menu editor" class="border mb-4" />
 
 You can also change the label for the `dashboard` items to something else.
 
@@ -163,7 +163,7 @@ section "Resources", icon: "heroicons/outline/academic-cap" do
 end
 ```
 
-<img :src="('/assets/img/menu-editor/section.jpg')" alt="Avo menu editor" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/section.webp')" alt="Avo menu editor" class="border mb-4" />
 
 </Option>
 
@@ -179,7 +179,7 @@ group "Blog" do
 end
 ```
 
-<img :src="('/assets/img/menu-editor/group.jpg')" alt="Avo menu editor" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/group.webp')" alt="Avo menu editor" class="border mb-4" />
 </Option>
 
 <Option name="`all_resources`">
@@ -243,7 +243,7 @@ end
 The `all_resources` helper is taking into account your [authorization](./authorization) rules, so make sure you have `def index?` enabled in your resource policy.
 :::
 
-<img :src="('/assets/img/menu-editor/all-helpers.jpg')" alt="Avo menu editor" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/all-helpers.webp')" alt="Avo menu editor" class="border mb-4" />
 
 ## Item visibility
 
@@ -314,7 +314,7 @@ section "Resources", icon: "heroicons/outline/adjustments" do
 end
 ```
 
-<img :src="('/assets/img/menu-editor/icons.jpg')" alt="Avo menu editor" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/icons.webp')" alt="Avo menu editor" class="border mb-4" />
 
 ### Icons on resource, dashboard, and link_to items
 
@@ -336,7 +336,7 @@ section "Resources", icon: "resources", collapsable: true do
 end
 ```
 
-<img :src="('/assets/img/menu-editor/collapsable.jpg')" alt="Avo menu editor" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/collapsable.webp')" alt="Avo menu editor" class="border mb-4" />
 
 That will add the arrow icon next to the section to indicate it's collapsable. So when your users collapse and expand it, their choice will be stored in Local Storage and remembered in that browser.
 
@@ -350,7 +350,7 @@ section "Resources", icon: "resources", collapsable: true, collapsed: true do
 end
 ```
 
-<img :src="('/assets/img/menu-editor/collapsed.jpg')" alt="Avo menu editor" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/collapsed.webp')" alt="Avo menu editor" class="border mb-4" />
 
 You might want to allow your users to hide certain items from view.
 
@@ -391,7 +391,7 @@ Avo.configure do |config|
 end
 ```
 
-<img :src="('/assets/img/menu-editor/profile-menu.png')" alt="Avo profile menu" class="border mb-4" />
+<img :src="('/assets/img/menu-editor/profile-menu.webp')" alt="Avo profile menu" class="border mb-4" />
 
 ## Forms in profile menu
 

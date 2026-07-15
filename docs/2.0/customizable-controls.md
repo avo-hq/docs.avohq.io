@@ -7,7 +7,7 @@ demoVideo: https://youtu.be/qUvMh7AkrlU
 
 # Customizable controls
 
-![](/assets/img/resources/customizable-controls/index.jpg)
+![](/assets/img/resources/customizable-controls/index.webp)
 
 One of the things that we wanted to support from day one is customizable controls on resource pages.
 

@@ -183,7 +183,7 @@ Ex: on record save, you might call an API which by some reason errors out. Inste
 
 Developer users can also access the private **Avo Status** page and see the status link in the sidebar on production (same access as [admin users](#1-admin-user)). In development, the status link is visible to everyone.
 
-<Image src="/assets/img/4_0/authentication/backtrace.png" dark-src="/assets/img/4_0/authentication/backtrace-dark.png" alt="Backtrace alert" width="1060" height="484" />
+<Image src="/assets/img/4_0/authentication/backtrace.webp" dark-src="/assets/img/4_0/authentication/backtrace-dark.webp" alt="Backtrace alert" width="1060" height="484" />
 
 </Option>
 

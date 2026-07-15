@@ -66,13 +66,13 @@ Any string.
 
 On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`@title`](./../resources.html#setting-the-title-of-the-resource) value.
 
-<img :src="('/assets/img/associations/belongs-to-index.jpg')" alt="Belongs to index" class="border mb-4" />
+<img :src="('/assets/img/associations/belongs-to-index.webp')" alt="Belongs to index" class="border mb-4" />
 
-<img :src="('/assets/img/associations/belongs-to-show.jpg')" alt="Belongs to show" class="border mb-4" />
+<img :src="('/assets/img/associations/belongs-to-show.webp')" alt="Belongs to show" class="border mb-4" />
 
 On the `Edit` and `New` views, Avo will generate a dropdown element with the available records where the user can change the associated model.
 
-<img :src="('/assets/img/associations/belongs-to-edit.jpg')" alt="Belongs to edit" class="border mb-4" />
+<img :src="('/assets/img/associations/belongs-to-edit.webp')" alt="Belongs to edit" class="border mb-4" />
 
 ## Polymorphic `belongs_to`
 
@@ -119,7 +119,7 @@ class CommentResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/associations/polymorphic_help.jpg')" alt="Belongs to ploymorphic help" class="border mb-4" />
+<img :src="('/assets/img/associations/polymorphic_help.webp')" alt="Belongs to ploymorphic help" class="border mb-4" />
 
 ## Searchable `belongs_to`
 
@@ -138,8 +138,8 @@ class CommentResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/associations/searchable-closed.jpg')" alt="Belongs to searchable" class="border mb-4" />
-<img :src="('/assets/img/associations/searchable-open.jpg')" alt="Belongs to searchable" class="border mb-4" />
+<img :src="('/assets/img/associations/searchable-closed.webp')" alt="Belongs to searchable" class="border mb-4" />
+<img :src="('/assets/img/associations/searchable-open.webp')" alt="Belongs to searchable" class="border mb-4" />
 
 `searchable` works with `polymorphic` `belongs_to` associations too.
 
