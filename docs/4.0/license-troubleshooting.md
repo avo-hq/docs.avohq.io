@@ -29,3 +29,20 @@ end
 In order to check that, use the status page described above.
 
 </Option>
+
+<Option name="License check blocked in the test suite">
+
+Avo 4 verifies the license through an outbound request to `clerk-1.avohq.io` (falling back to `clerk-2.avohq.io`). If your test suite disables outbound network connections (for example with WebMock or VCR `disable_net_connect!`), that request is blocked and unrelated tests fail with `WebMock::NetConnectNotAllowedError`.
+
+Add the license check hosts to your allow list:
+
+```ruby
+WebMock.disable_net_connect!(
+  allow_localhost: true,
+  allow: ["clerk-1.avohq.io", "clerk-2.avohq.io"]
+)
+```
+
+See [Testing → Allow the license check host in your test suite](./testing.html#allow-the-license-check-host-in-your-test-suite) for the full details.
+
+</Option>
