@@ -1,5 +1,11 @@
 # Display scope record count
 
+:::tip Use the built-in `counter` option
+Avo has a built-in [`counter`](../scopes.html#counter) scope option that renders the count badge for you, with `:lazy` and `:hover` loading to avoid slowing down the page. Prefer it over the manual approach below.
+:::
+
+The manual approach documented here still works when you need full control over the markup.
+
 The `name` and `description` scope options can be callable values and receive the `resource`, `scope` and `query` objects.
 
 The `query` object is the actual Active Record query (unscoped) that is made to fetch the records.
