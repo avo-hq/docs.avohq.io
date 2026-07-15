@@ -236,7 +236,7 @@ Controls when the count is fetched.
 | -------------------- | --------------------------------------------------------------------- |
 | `:eager` (or `true`) | Count is computed during the request and rendered inline.             |
 | `:lazy`              | Count loads in a deferred turbo-frame after the page paints.          |
-| `:hover`             | Count loads the first time the user hovers the scope, then is cached. |
+| `:hover`             | Same as `:lazy` — loads in a deferred turbo-frame after paint.        |
 
 ```ruby{3}
 # app/avo/scopes/active.rb
