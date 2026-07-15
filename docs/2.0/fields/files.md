@@ -19,7 +19,7 @@ field :documents, as: :files
 <!-- @include: ./../common/file_other_common.md-->
 
 <Option name="`view_type`">
-![](/assets/img/files_view_types.webm)
+<Image src="/assets/img/files_view_types.webm" width="1734" height="431" alt="" />
 
 Set the default `view_type`.
 

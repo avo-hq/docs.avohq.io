@@ -12,7 +12,7 @@ Adding a list of things to a record is something we need to do pretty frequently
 field :skills, as: :tags
 ```
 
-<img :src="('/assets/img/fields/tags-field/basic.webm')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/basic.webm" width="786" height="436" alt="Avo tags field" />
 
 ## Options
 
@@ -34,7 +34,7 @@ class Course < ApplicationRecord
 end
 ```
 
-<img :src="('/assets/img/fields/tags-field/suggestions.webm')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/suggestions.webm" width="786" height="436" alt="Avo tags field" />
 
 #### Default
 
@@ -83,7 +83,7 @@ field :skills,
   disallowed: ["not", "that"]
 ```
 
-<img :src="('/assets/img/fields/tags-field/disallowed.webm')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/disallowed.webm" width="786" height="436" alt="Avo tags field" />
 
 #### Default
 
@@ -104,7 +104,7 @@ field :skills,
   enforce_suggestions: true
 ```
 
-<img :src="('/assets/img/fields/tags-field/enforce_suggestions.webm')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/enforce_suggestions.webm" width="786" height="436" alt="Avo tags field" />
 
 <!-- @include: ./../common/default_boolean_false.md-->
 </Option>
@@ -119,7 +119,7 @@ field :skills,
   suggestions_max_items: 2
 ```
 
-<img :src="('/assets/img/fields/tags-field/suggestions_max_items.webm')" alt="Avo tags field - suggestions max items option" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/suggestions_max_items.webm" width="600" height="302" alt="Avo tags field - suggestions max items option" />
 
 #### Default
 
@@ -140,7 +140,7 @@ field :items,
   close_on_select: true
 ```
 
-<img :src="('/assets/img/fields/tags-field/close_on_select.webm')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/close_on_select.webm" width="786" height="436" alt="Avo tags field" />
 
 <!-- @include: ./../common/default_boolean_false.md-->
 </Option>
@@ -177,7 +177,7 @@ field :skills,
   delimiters: [",", " "]
 ```
 
-<img :src="('/assets/img/fields/tags-field/delimiters.webm')" alt="Avo tags field" class="border mb-4" />
+<Image src="/assets/img/fields/tags-field/delimiters.webm" width="786" height="436" alt="Avo tags field" />
 
 #### Default
 
@@ -210,7 +210,7 @@ field :skills,
 
 Valid values are `nil` for array values and `select` for a single value.
 
-![](/assets/img/fields/tags-field/mode-select.webm)
+<Image src="/assets/img/fields/tags-field/mode-select.webm" width="800" height="666" alt="" />
 
 </Option>
 
@@ -228,7 +228,7 @@ field :skills,
 
 When the user searches for a record, the field will perform a request to the server to fetch the records that match that query.
 
-![](/assets/img/fields/tags-field/mode-select.webm)
+<Image src="/assets/img/fields/tags-field/mode-select.webm" width="800" height="666" alt="" />
 
 #### Default
 

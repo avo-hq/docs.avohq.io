@@ -117,7 +117,7 @@ We want to make it easy to change the logo for your app, so we added the `logo` 
 
 The `logo` should be the "big" logo you want to display on the desktop version of your app, and `logomark` should be a squared-aspect image that Avo displays on the mobile version.
 
-![](/assets/img/branding/logomark.webm)
+<Image src="/assets/img/branding/logomark.webm" width="800" height="572" alt="" />
 
 ## Customize the missing image placeholder
 

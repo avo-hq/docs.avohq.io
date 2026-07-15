@@ -521,7 +521,7 @@ end
 Besides checking if the countries filter is populated (`applied_filters["CourseCountryFilter"].present?`), we also want to allow the user to customize the cities filter further, so we need to check if the user has added a value to that filter (`applied_filters["CourseCityFilter"].blank?`).
 If these conditions are true, the country filter has a value, and the user hasn't selected any values from the cities filter, we can react to it and set a value as the default one.
 
-<img :src="('/assets/img/filters/dynamic-options.webm')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters/dynamic-options.webm" width="528" height="800" alt="Avo filters" />
 
 Of course, you can modify the logic and return all kinds of values based on your needs.
 
@@ -531,7 +531,7 @@ Of course, you can modify the logic and return all kinds of values based on your
 
 There might be times when you will want to show a message to the user when you're not returning any options. You may customize that message using the `empty_message` option.
 
-<img :src="('/assets/img/filters/empty-message.webm')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters/empty-message.webm" width="528" height="800" alt="Avo filters" />
 
 ```ruby{4}
 # app/avo/filters/course_city_filter.rb
@@ -580,7 +580,7 @@ class CourseResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/filters/keep-filters-panel-open.webm')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters/keep-filters-panel-open.webm" width="449" height="800" alt="Avo filters" />
 
 ## Visibility
 

@@ -109,11 +109,11 @@ All visibility rules still apply on' Edit', meaning that `has_*` fields will be 
 
 When you have a lot of tabs in one group the tab switcher will overflow on the right-hand side. It will become scrollable to allow your users to get to the last tabs in the group.
 
-![](/assets/img/tabs-and-panels/scrollable-tabs.webm)
+<Image src="/assets/img/tabs-and-panels/scrollable-tabs.webm" width="800" height="156" alt="Scrollable tabs" />
 
 If you want to be able to see all your tabs in one group at a glance you may change the display to `:pills`. The pills will collapse and won't overflow off the page.
 
-![](/assets/img/tabs-and-panels/tabs-as-pills.webm)
+<Image src="/assets/img/tabs-and-panels/tabs-as-pills.webm" width="800" height="210" alt="Tabs as pills" />
 
 ### Display all tabs as pills
 
