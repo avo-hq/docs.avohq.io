@@ -263,7 +263,7 @@ Avo ships with a few Stimulus controllers that help you build more dynamic field
 
 This controller allows you to hide your content and add a trigger to show it. You'll find it in the Trix field.
 
-<img :src="('/assets/img/stimulus/hidden_input_trix.webm')" alt="Hidden input controller" class="border mb-4" />
+<Image src="/assets/img/stimulus/hidden_input_trix.webm" width="1000" height="272" alt="Hidden input controller" />
 
 You should add the `:always_show` `attr_reader` and `@always_show` instance variables to your field.
 
@@ -307,4 +307,4 @@ Next, in your fields `Show` component, you need to do a few things.
 <% end %>
 ```
 
-<img :src="('/assets/img/stimulus/hidden_input_color.webm')" alt="Hidden input controller" class="border mb-4" />
+<Image src="/assets/img/stimulus/hidden_input_color.webm" width="1000" height="76" alt="Hidden input controller" />

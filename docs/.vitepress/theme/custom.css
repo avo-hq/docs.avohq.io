@@ -34,7 +34,7 @@ pre code span.line:not(:last-child) {
 }
 
 /* Structural only — applies to EVERY docs version (v2/v3/v4). Never add framing
-   here; that would touch v3. */
+  here; that would touch v3. */
 .aspect-ratio-box {
   height: 0;
   overflow: hidden;
@@ -44,16 +44,17 @@ pre code span.line:not(:last-child) {
   margin-bottom: 1.5rem;
 }
 /* v4 ONLY — frame the curated screenshots (their assets live under /4_0/). v2/v3
-   images are untouched. p-3 (12px) mat between the image and a hairline border,
-   plus a soft shadow; image corners lightly rounded. */
-.aspect-ratio-box:has(img[src*="/4_0/"]) {
+  images are untouched. p-3 (12px) mat between the image and a hairline border,
+  plus a soft shadow; image corners lightly rounded. Image.vue renders motion
+  clips as <video>, so match .aspect-ratio-box-inside (not img alone). */
+.aspect-ratio-box:has(.aspect-ratio-box-inside[src*="/4_0/"]) {
   background: var(--vp-c-bg);
   /* match the vertical rhythm of body paragraphs (1rem), so the gap around an
-     image equals the gap between paragraphs. */
+    image equals the gap between paragraphs. */
   margin-top: 1rem;
   margin-bottom: 1rem;
   /* center small images (those narrower than the content column); no effect on
-     full-width images, whose auto side-margins resolve to 0. */
+    full-width images, whose auto side-margins resolve to 0. */
   margin-left: auto;
   margin-right: auto;
   border: 12px solid var(--vp-c-bg);
@@ -63,14 +64,14 @@ pre code span.line:not(:last-child) {
     0 1px 2px rgba(0, 0, 0, 0.05),
     0 6px 16px -8px rgba(0, 0, 0, 0.10);
 }
-.aspect-ratio-box:has(img[src*="/4_0/"]) .aspect-ratio-box-inside {
+.aspect-ratio-box:has(.aspect-ratio-box-inside[src*="/4_0/"]) .aspect-ratio-box-inside {
   border-radius: 4px;
 }
 /* Images with a per-image light/dark switch (Image.vue sets data-image-theme
-   to the mode currently shown). The frame — and the switch, which inherits
-   these vars — recolors to match the flipped image instead of the page theme,
-   so a pinned image never shows a mismatched seam. Values mirror VitePress's
-   palette; brand is deliberately not overridden so the :root brand applies. */
+  to the mode currently shown). The frame — and the switch, which inherits
+  these vars — recolors to match the flipped image instead of the page theme,
+  so a pinned image never shows a mismatched seam. Values mirror VitePress's
+  palette; brand is deliberately not overridden so the :root brand applies. */
 .aspect-ratio-box[data-image-theme="light"] {
   --vp-c-bg: #ffffff;
   --vp-c-divider: #e2e2e3;
@@ -88,15 +89,15 @@ pre code span.line:not(:last-child) {
   --vp-c-text-2: rgba(235, 235, 245, 0.6);
 }
 /* Touch devices and sub-md viewports show the switch permanently, so the
-   framed images grow their top mat to give it a row of its own instead of
-   letting it cover the screenshot. The switch itself is positioned by
-   Image.vue (whose media query mirrors this one; keep them in sync),
-   anchored 9px above the image's top edge. */
+  framed images grow their top mat to give it a row of its own instead of
+  letting it cover the screenshot. The switch itself is positioned by
+  Image.vue (whose media query mirrors this one; keep them in sync),
+  anchored 9px above the image's top edge. */
 @media (hover: none), (max-width: 767px) {
-  .aspect-ratio-box[data-image-theme]:has(img[src*="/4_0/"]) {
+  .aspect-ratio-box[data-image-theme]:has(.aspect-ratio-box-inside[src*="/4_0/"]) {
     overflow: visible;
     /* 45px = 9px gap above the image + ~28px switch + 8px headroom. If the
-       switch in Image.vue grows (icon size, padding), grow this with it. */
+      switch in Image.vue grows (icon size, padding), grow this with it. */
     border-top-width: 45px;
   }
 }

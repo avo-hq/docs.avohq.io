@@ -511,4 +511,4 @@ Avo.configure do |config|
 end
 ```
 
-![](/assets/img/customization/skip_show_view.webm)
+<Image src="/assets/img/customization/skip_show_view.webm" width="1870" height="880" alt="" />
