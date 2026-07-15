@@ -14,7 +14,7 @@ This is not the **dependable fields** feature but a placeholder so we can observ
 
 _What we'll be able to do at the end of reading these docs_
 
-<Image src="/assets/img/stimulus/country-city-select.gif" width="800" height="344" alt="Debug on input stimulus method" />
+<Image src="/assets/img/stimulus/country-city-select.webm" width="800" height="344" alt="Debug on input stimulus method" />
 
 :::info
 **Please note** that in order to have the JS code from your controllers loaded in Avo you'll need to add your asset pipeline using [these instructions](custom-asset-pipeline.html). It's really easier than it sounds. It's like you'd add a new JS file to your regular Rails app.
@@ -203,7 +203,7 @@ field :has_country, as: :boolean, html: {
 field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h
 ```
 
-<Image src="/assets/img/stimulus/toggle-method.gif" width="800" height="421" alt="Toggle method" />
+<Image src="/assets/img/stimulus/toggle-method.webm" width="800" height="421" alt="Toggle method" />
 
 ### `resource-edit#disable`
 
@@ -224,7 +224,7 @@ field :has_skills, as: :boolean, html: {
 field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h
 ```
 
-<Image src="/assets/img/stimulus/disable-method.gif" width="800" height="421" alt="Disable method" />
+<Image src="/assets/img/stimulus/disable-method.webm" width="800" height="421" alt="Disable method" />
 
 You may also target the `wrapper` element for that field if the target field has more than one input like the searchable polymorphic `belongs_to` field.
 
@@ -247,7 +247,7 @@ field :country, as: :select, options: Course.countries.map { |country| [country,
 
 For debugging purposes only, the `resource_edit` Stimulus JS controller provides the `debugOnInput` method that outputs the event and value for an action to the console. Use this just to make sure you targeted your fields correctly. It doesn't have any real use.
 
-<Image src="/assets/img/stimulus/debug-on-input.gif" width="800" height="261" alt="Debug on input stimulus method" />
+<Image src="/assets/img/stimulus/debug-on-input.webm" width="800" height="261" alt="Debug on input stimulus method" />
 
 ## Custom Stimulus controllers
 
@@ -470,7 +470,7 @@ export default class extends Controller {
 
 This is how the fields behave with this Stimulus JS controller.
 
-<Image src="/assets/img/stimulus/country-city-select.gif" width="800" height="344" alt="Debug on input stimulus method" />
+<Image src="/assets/img/stimulus/country-city-select.webm" width="800" height="344" alt="Debug on input stimulus method" />
 
 ## Use Stimulus JS in a tool
 
@@ -515,4 +515,3 @@ console.log("Hi from Avo custom JS 👋");
 ```
 
 Done 🙌 Now you have a controller connecting to a custom [Resource tool](./resource-tools) or [Avo tool](./custom-tools) (or Avo views).
-

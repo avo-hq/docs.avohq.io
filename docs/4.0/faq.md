@@ -148,11 +148,11 @@ end
 
 ### On Edit
 
-<Image src="/assets/img/4_0/faq/newline/edit.png" dark-src="/assets/img/4_0/faq/newline/edit-dark.png" width="1520" height="408" alt="A textarea Body field on the Edit form showing multi-line content with a trailing empty line after the last sentence" />
+<Image src="/assets/img/4_0/faq/newline/edit.webp" dark-src="/assets/img/4_0/faq/newline/edit-dark.webp" width="1520" height="408" alt="A textarea Body field on the Edit form showing multi-line content with a trailing empty line after the last sentence" />
 
 ### On Show
 
-<Image src="/assets/img/4_0/faq/newline/show.png" dark-src="/assets/img/4_0/faq/newline/show-dark.png" width="1520" height="372" alt="The same Body value on the Show view, including the trailing empty line after the last sentence" />
+<Image src="/assets/img/4_0/faq/newline/show.webp" dark-src="/assets/img/4_0/faq/newline/show-dark.webp" width="1520" height="372" alt="The same Body value on the Show view, including the trailing empty line after the last sentence" />
 
 
 
@@ -171,7 +171,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/faq/newline/simple_format.png" dark-src="/assets/img/4_0/faq/newline/simple_format-dark.png" width="1520" height="412" alt="A Show view Body field rendered with simple_format, turning blank lines into spaced paragraphs" />
+<Image src="/assets/img/4_0/faq/newline/simple_format.webp" dark-src="/assets/img/4_0/faq/newline/simple_format-dark.webp" width="1520" height="412" alt="A Show view Body field rendered with simple_format, turning blank lines into spaced paragraphs" />
 
 ## Getting `No valid predicate for combinator` error when filtering
 
@@ -183,4 +183,3 @@ config.ignore_unknown_conditions = true # [!code ++]
 ```
 
 This was originally discussed in [this issue](https://github.com/avo-hq/avo/issues/2622).
-

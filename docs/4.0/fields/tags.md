@@ -11,7 +11,7 @@ Adding a list of things to a record is something we need to do pretty frequently
 field :skills, as: :tags
 ```
 
-<Image src="/assets/img/4_0/fields/tags/create-save.gif" dark-src="/assets/img/4_0/fields/tags/create-save-dark.gif" width="760" height="493" alt="An Avo create form with a tags field: the animation opens the suggestions dropdown, picks one and two, saves the record, and shows the tags on the Show view." prompt="gif on the create form adding tags from suggestions and saving to see them on show" />
+<Image src="/assets/img/4_0/fields/tags/create-save.webm" dark-src="/assets/img/4_0/fields/tags/create-save-dark.webm" width="760" height="493" alt="An Avo create form with a tags field: the animation opens the suggestions dropdown, picks one and two, saves the record, and shows the tags on the Show view." prompt="gif on the create form adding tags from suggestions and saving to see them on show" />
 
 ## Options
 

@@ -21,7 +21,7 @@ container with an optional description, header controls, body, sidebar, and foot
 <% end %>
 ```
 
-<Image src="/assets/img/4_0/avo-panel-component/index.png" dark-src="/assets/img/4_0/avo-panel-component/index-dark.png" width="1376" height="384" alt="Composed panel with title, description, a control button, and a card body" />
+<Image src="/assets/img/4_0/avo-panel-component/index.webp" dark-src="/assets/img/4_0/avo-panel-component/index-dark.webp" width="1376" height="384" alt="Composed panel with title, description, a control button, and a card body" />
 
 ## Options
 
@@ -42,7 +42,7 @@ The title of the panel, rendered at the top of the header.
 #### Type
 `String`
 
-<Image src="/assets/img/4_0/avo-panel-component/title.png" dark-src="/assets/img/4_0/avo-panel-component/title-dark.png" width="1376" height="244" alt="Panel header showing a title" />
+<Image src="/assets/img/4_0/avo-panel-component/title.webp" dark-src="/assets/img/4_0/avo-panel-component/title-dark.webp" width="1376" height="244" alt="Panel header showing a title" />
 </Option>
 
 <Option name="`description`">
@@ -52,7 +52,7 @@ A small line of text under the title that describes what the panel is about.
 #### Type
 `String`
 
-<Image src="/assets/img/4_0/avo-panel-component/description.png" dark-src="/assets/img/4_0/avo-panel-component/description-dark.png" width="1376" height="288" alt="Panel header with a title and a description line underneath" />
+<Image src="/assets/img/4_0/avo-panel-component/description.webp" dark-src="/assets/img/4_0/avo-panel-component/description-dark.webp" width="1376" height="288" alt="Panel header with a title and a description line underneath" />
 </Option>
 
 <Option name="`class`">
@@ -70,7 +70,7 @@ A list of CSS classes applied to the panel container.
 <% end %>
 ```
 
-<Image src="/assets/img/4_0/avo-panel-component/class.png" dark-src="/assets/img/4_0/avo-panel-component/class-dark.png" width="1376" height="276" alt="Panel with a custom class adding a blue ring around the container" />
+<Image src="/assets/img/4_0/avo-panel-component/class.webp" dark-src="/assets/img/4_0/avo-panel-component/class-dark.webp" width="1376" height="276" alt="Panel with a custom class adding a blue ring around the container" />
 </Option>
 
 <Option name="`data`">
@@ -133,7 +133,7 @@ title and description on narrow screens.
 <% end %>
 ```
 
-<Image src="/assets/img/4_0/avo-panel-component/controls.png" dark-src="/assets/img/4_0/avo-panel-component/controls-dark.png" width="1376" height="128" alt="Panel header with a control button aligned to the right" />
+<Image src="/assets/img/4_0/avo-panel-component/controls.webp" dark-src="/assets/img/4_0/avo-panel-component/controls-dark.webp" width="1376" height="128" alt="Panel header with a control button aligned to the right" />
 </Option>
 
 <Option name="`cover`">
@@ -149,7 +149,7 @@ a cover image or banner.
 <% end %>
 ```
 
-<Image src="/assets/img/4_0/avo-panel-component/cover.png" dark-src="/assets/img/4_0/avo-panel-component/cover-dark.png" width="1376" height="556" alt="Panel with a cover banner across the top, a title, and a card body" />
+<Image src="/assets/img/4_0/avo-panel-component/cover.webp" dark-src="/assets/img/4_0/avo-panel-component/cover-dark.webp" width="1376" height="556" alt="Panel with a cover banner across the top, a title, and a card body" />
 </Option>
 
 <Option name="`body`">
@@ -165,7 +165,7 @@ the panel (no card wrapper).
 <% end %>
 ```
 
-<Image src="/assets/img/4_0/avo-panel-component/body.png" dark-src="/assets/img/4_0/avo-panel-component/body-dark.png" width="1881" height="208" alt="Panel with plain body content rendered flush, no inner card" />
+<Image src="/assets/img/4_0/avo-panel-component/body.webp" dark-src="/assets/img/4_0/avo-panel-component/body-dark.webp" width="1881" height="208" alt="Panel with plain body content rendered flush, no inner card" />
 </Option>
 
 <Option name="`card`">
@@ -181,7 +181,7 @@ the content to sit inside a bordered, padded card.
 <% end %>
 ```
 
-<Image src="/assets/img/4_0/avo-panel-component/card.png" dark-src="/assets/img/4_0/avo-panel-component/card-dark.png" width="1376" height="244" alt="Panel whose content sits inside an automatically-wrapped bordered card" />
+<Image src="/assets/img/4_0/avo-panel-component/card.webp" dark-src="/assets/img/4_0/avo-panel-component/card-dark.webp" width="1376" height="244" alt="Panel whose content sits inside an automatically-wrapped bordered card" />
 </Option>
 
 <Option name="`sidebar`">
@@ -200,7 +200,7 @@ Shows content in a smaller area on the end side of the `body`.
 <% end %>
 ```
 
-<Image src="/assets/img/4_0/avo-panel-component/sidebar.png" dark-src="/assets/img/4_0/avo-panel-component/sidebar-dark.png" width="1100" height="324" alt="Panel with a main card body on the start side and a narrower sidebar on the end side" />
+<Image src="/assets/img/4_0/avo-panel-component/sidebar.webp" dark-src="/assets/img/4_0/avo-panel-component/sidebar-dark.webp" width="1100" height="324" alt="Panel with a main card body on the start side and a narrower sidebar on the end side" />
 </Option>
 
 <Option name="`pre_bodies`">
@@ -220,7 +220,7 @@ entry is rendered in order.
 <% end %>
 ```
 
-<Image src="/assets/img/4_0/avo-panel-component/pre_bodies.png" dark-src="/assets/img/4_0/avo-panel-component/pre_bodies-dark.png" width="1376" height="364" alt="Panel with a pre-body notice strip between the header and the card body" />
+<Image src="/assets/img/4_0/avo-panel-component/pre_bodies.webp" dark-src="/assets/img/4_0/avo-panel-component/pre_bodies-dark.webp" width="1376" height="364" alt="Panel with a pre-body notice strip between the header and the card body" />
 </Option>
 
 <Option name="`footer`">
@@ -239,5 +239,5 @@ The lowest area of the component, rendered under the `body` or `card`.
 <% end %>
 ```
 
-<Image src="/assets/img/4_0/avo-panel-component/footer.png" dark-src="/assets/img/4_0/avo-panel-component/footer-dark.png" width="1376" height="332" alt="Panel with a card body and a footer area at the bottom" />
+<Image src="/assets/img/4_0/avo-panel-component/footer.webp" dark-src="/assets/img/4_0/avo-panel-component/footer-dark.webp" width="1376" height="332" alt="Panel with a card body and a footer area at the bottom" />
 </Option>

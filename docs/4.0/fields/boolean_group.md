@@ -33,7 +33,7 @@ field :roles,
   }
 ```
 
-<Image src="/assets/img/4_0/fields/boolean_group/index.png" dark-src="/assets/img/4_0/fields/boolean_group/index-dark.png" width="1776" height="570" alt="An Avo index table with three columns — ID, Name and a “User roles” boolean_group column rendered as a “View” link per row — with the popover open over a middle row listing Administrator, Manager and Writer each with a checked or unchecked box." prompt="use index page" />
+<Image src="/assets/img/4_0/fields/boolean_group/index.webp" dark-src="/assets/img/4_0/fields/boolean_group/index-dark.webp" width="1776" height="570" alt="An Avo index table with three columns — ID, Name and a “User roles” boolean_group column rendered as a “View” link per row — with the popover open over a middle row listing Administrator, Manager and Writer each with a checked or unchecked box." prompt="use index page" />
 
 <Option name="`options`">
 

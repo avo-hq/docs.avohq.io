@@ -22,7 +22,7 @@ The panel component is one of the most used components in Avo.
 <% end %>
 ```
 
-<Image src="/assets/img/native-components/avo-panel-component/index.jpg" width="773" height="276" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/index.webp" width="773" height="276" alt="" />
 
 ## Options
 
@@ -43,7 +43,7 @@ The name of the panel. It's displayed on the top under the breadcrumbs.
 #### Type
 `String`
 
-<Image src="/assets/img/native-components/avo-panel-component/name.jpg" width="773" height="411" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/name.webp" width="773" height="411" alt="" />
 </Option>
 
 <Option name="`description`">
@@ -53,7 +53,7 @@ Small text under the name that speaks a bit about what the panel does.
 #### Type
 `String`
 
-<Image src="/assets/img/native-components/avo-panel-component/description.jpg" width="773" height="533" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/description.webp" width="773" height="533" alt="" />
 </Option>
 
 <Option name="`classes`">
@@ -63,7 +63,7 @@ A list of classes that should be applied to the panel container.
 #### Type
 `String`
 
-<Image src="/assets/img/native-components/avo-panel-component/classes.jpg" width="773" height="533" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/classes.webp" width="773" height="533" alt="" />
 </Option>
 
 <Option name="`body_classes`">
@@ -73,7 +73,7 @@ A list of classes that should be applied to the body of panel.
 #### Type
 `String`
 
-<Image src="/assets/img/native-components/avo-panel-component/body_classes.jpg" width="773" height="533" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/body_classes.webp" width="773" height="533" alt="" />
 </Option>
 
 <Option name="`data`">
@@ -83,7 +83,7 @@ A hash of data attributes to be forwarded to the panel container.
 #### Type
 `Hash`
 
-<Image src="/assets/img/native-components/avo-panel-component/classes.jpg" width="773" height="533" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/classes.webp" width="773" height="533" alt="" />
 </Option>
 
 <Option name="`display_breadcrumbs`">
@@ -93,7 +93,7 @@ Toggles the breadcrumbs visibility. You can't customize the breadcrumbs yet.
 #### Type
 `Boolean`
 
-<Image src="/assets/img/native-components/avo-panel-component/display_breadcrumbs.jpg" width="773" height="720" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/display_breadcrumbs.webp" width="773" height="720" alt="" />
 </Option>
 
 ## Slots
@@ -117,7 +117,7 @@ The section is automatically aligned to the right using `justify-end` class.
 <% end %>
 ```
 
-<Image src="/assets/img/native-components/avo-panel-component/tools-slot.jpg" width="1014" height="226" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/tools-slot.webp" width="1014" height="226" alt="" />
 </Option>
 
 <Option name="`body`">
@@ -132,7 +132,7 @@ This is one of the main slots of the component where the bulk of the content is 
 <% end %>
 ```
 
-<Image src="/assets/img/native-components/avo-panel-component/body-slot.jpg" width="773" height="720" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/body-slot.webp" width="773" height="720" alt="" />
 </Option>
 
 <Option name="`bare_content`">
@@ -147,7 +147,7 @@ Used when displaying the [Grid view](./../grid-view), it displays the data flush
 <% end %>
 ```
 
-<Image src="/assets/img/native-components/avo-panel-component/grid-view.jpg" width="1312" height="1096" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/grid-view.webp" width="1312" height="1096" alt="" />
 </Option>
 
 <Option name="`footer_tools`">
@@ -162,7 +162,7 @@ This is pretty much the same slot as `tools` but rendered under the `body` or `b
 <% end %>
 ```
 
-<Image src="/assets/img/native-components/avo-panel-component/footer-controls.jpg" width="1013" height="295" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/footer-controls.webp" width="1013" height="295" alt="" />
 </Option>
 
 <Option name="`footer`">
@@ -189,5 +189,5 @@ The sidebar will conveniently show things in a smaller area on the right of the 
   <% end %>
 <% end %>
 ```
-<Image src="/assets/img/native-components/avo-panel-component/sidebar.png" width="2032" height="1294" alt="" />
+<Image src="/assets/img/native-components/avo-panel-component/sidebar.webp" width="2032" height="1294" alt="" />
 </Option>

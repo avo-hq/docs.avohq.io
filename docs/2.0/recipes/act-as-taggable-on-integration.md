@@ -14,4 +14,4 @@ resource :taggings
 resource :tags
 ```
 
-![](/assets/img/recipes/act-as-taggable-on-integration/act-as-taggable-on-integration.gif)
+![](/assets/img/recipes/act-as-taggable-on-integration/act-as-taggable-on-integration.webm)

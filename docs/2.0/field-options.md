@@ -29,7 +29,7 @@ In the following example, the `is_available` field will render the label as *Is 
 field :is_available, as: :boolean
 ```
 
-<img :src="('/assets/img/fields-reference/naming-convention.jpg')" alt="Field naming convention" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/naming-convention.webp')" alt="Field naming convention" class="border mb-4" />
 
 :::info
 If having the fields stacked one on top of another is not the right layout, try the [resource-sidebar](./resource-sidebar).
@@ -43,7 +43,7 @@ To customize the label, you can use the `name` property to pick a different labe
 field :is_available, as: :boolean, name: 'Availability'
 ```
 
-<img :src="('/assets/img/fields-reference/naming-convention-override.png')" alt="Field naming convention override" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/naming-convention-override.webp')" alt="Field naming convention override" class="border mb-4" />
 
 ## Showing / Hiding fields on different views
 
@@ -150,7 +150,7 @@ field :is_writer, as: :text, format_using: -> {
 
 This example snippet will make the `:is_writer` field generate `👍` or `👎` emojis instead of `1` or `0` values on display views and the values `1` or `0` on form views.
 
-<img :src="('/assets/img/fields-reference/fields-formatter.png')" alt="Fields formatter" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/fields-formatter.webp')" alt="Fields formatter" class="border mb-4" />
 
 Another example:
 
@@ -204,7 +204,7 @@ Add it to any field to make that column sortable in the <Index /> view.
 field :name, as: :text, sortable: true
 ```
 
-<img :src="('/assets/img/fields-reference/sortable-fields.png')" alt="Sortable fields" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/sortable-fields.webp')" alt="Sortable fields" class="border mb-4" />
 
 ## Custom sortable block
 
@@ -262,7 +262,7 @@ Some fields support the `placeholder` option, which will be passed to the inputs
 field :name, as: :text, placeholder: 'John Doe'
 ```
 
-<img :src="('/assets/img/fields-reference/placeholder.png')" alt="Placeholder option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/placeholder.webp')" alt="Placeholder option" class="border mb-4" />
 
 ## Required
 
@@ -272,7 +272,7 @@ When you want to mark a field as mandatory, you may use the `required` option to
 field :name, as: :text, required: true
 ```
 
-<img :src="('/assets/img/fields-reference/required.png')" alt="Required option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/required.webp')" alt="Required option" class="border mb-4" />
 
 :::warning
 This option is only a cosmetic one. It will not add the validation logic to your model. You must add that yourself (`validates :name, presence: true`).
@@ -298,7 +298,7 @@ When you need to prevent the user from editing a field, the `readonly` option wi
 field :name, as: :text, readonly: true
 ```
 
-<img :src="('/assets/img/fields-reference/readonly.png')" alt="Readonly option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/readonly.webp')" alt="Readonly option" class="border mb-4" />
 
 
 ### Readonly as a block
@@ -319,7 +319,7 @@ When you need to prevent the user from editing a field, the `disabled` option wi
 field :name, as: :text, disabled: true
 ```
 
-<img :src="('/assets/img/fields-reference/readonly.png')" alt="Disabled option" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/readonly.webp')" alt="Disabled option" class="border mb-4" />
 
 ## Default Value
 
@@ -346,7 +346,7 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css', help: "This ena
 field :password, as: :password, help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
 ```
 
-<img :src="('/assets/img/fields-reference/help-text.png')" alt="Help text" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/help-text.webp')" alt="Help text" class="border mb-4" />
 
 :::info
 Since version `2.19`, the `default` block is being evaluated in the [`ResourceViewRecordHost`](./evaluation-hosts#resourceviewrecordhost).
@@ -381,7 +381,7 @@ field :name, as: :text, link_to_resource: true
 field :email, as: :gravatar, link_to_resource: true
 ```
 
-<img :src="('/assets/img/fields-reference/as-link-to-resource.jpg')" alt="As link to resource" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/as-link-to-resource.webp')" alt="As link to resource" class="border mb-4" />
 
 You can add this property on `Id`, `Text`, and `Gravatar` fields.
 
@@ -402,7 +402,7 @@ class ProjectResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/fields/index_text_align.jpg')" alt="Index text align" class="border mb-4" />
+<img :src="('/assets/img/fields/index_text_align.webp')" alt="Index text align" class="border mb-4" />
 
 ## Stacked layout
 
@@ -413,11 +413,11 @@ field :meta, as: :key_value, stacked: true
 ```
 
 #### `inline` layout (default)
-![](/assets/img/fields/field_wrapper_layout_inline.jpg)
+![](/assets/img/fields/field_wrapper_layout_inline.webp)
 
 #### `stacked` layout
 
-![](/assets/img/fields/field_wrapper_layout_stacked.jpg)
+![](/assets/img/fields/field_wrapper_layout_stacked.webp)
 
 ## Global `stacked` layout
 

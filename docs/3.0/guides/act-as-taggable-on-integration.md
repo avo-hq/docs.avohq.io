@@ -14,4 +14,4 @@ resource :taggings
 resource :tags
 ```
 
-<Image src="/assets/img/3_0/guides/act-as-taggable-on-integration/act-as-taggable-on-integration.gif" width="1200" height="750" alt="" />
+<Image src="/assets/img/3_0/guides/act-as-taggable-on-integration/act-as-taggable-on-integration.webm" width="1200" height="750" alt="" />

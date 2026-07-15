@@ -5,7 +5,7 @@ outline: [2,3]
 
 # Scopes
 
-<Image src="/assets/img/scopes.png" width="862" height="636" alt="" />
+<Image src="/assets/img/scopes.webp" width="862" height="636" alt="" />
 
 :::warning
 This section is a work in progress.

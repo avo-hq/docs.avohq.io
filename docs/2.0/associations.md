@@ -58,4 +58,4 @@ You might want to change the name that appears on the association page. For exam
 
 You can customize that using [fields localization](localization.html#localizing-fields).
 
-<img :src="('/assets/img/associations/custom-label.jpg')" alt="Custom label" class="border mb-4" />
+<img :src="('/assets/img/associations/custom-label.webp')" alt="Custom label" class="border mb-4" />

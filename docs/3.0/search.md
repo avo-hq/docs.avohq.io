@@ -106,7 +106,7 @@ Avo.configure do |config|
 
 By default, the search results will be displayed as text. By default search title will be the [resource title](./resources.html#self_title).
 
-<Image src="/assets/img/search/search_blank.jpg" width="1412" height="686" alt="Blank search" />
+<Image src="/assets/img/search/search_blank.webp" width="1412" height="686" alt="Blank search" />
 
 You may configure that to be something more complex using the `item -> title` option. That will display it as the title of the search result.
 
@@ -123,7 +123,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/search/search_label.jpg" width="1406" height="674" alt="Search label" />
+<Image src="/assets/img/search/search_label.webp" width="1406" height="674" alt="Search label" />
 </Option>
 
 <Option name="`description`">
@@ -146,7 +146,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/search/search_description.jpg" width="1396" height="754" alt="Search description" />
+<Image src="/assets/img/search/search_description.webp" width="1396" height="754" alt="Search description" />
 </Option>
 
 <Option name="`image_url`">
@@ -194,14 +194,14 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/search/search_avatar.jpg" width="1400" height="794" alt="Search avatar" />
+<Image src="/assets/img/search/search_avatar.webp" width="1400" height="794" alt="Search avatar" />
 </Option>
 
 <Option name="`help`">
 
 You may improve the results listing header by adding a piece of text highlighting the fields you are looking for or any other instruction for the user. You do that by using the `help` attribute. This attribute takes a string and appends it to the title of the resource.
 
-<Image src="/assets/img/search/search_header_help.jpg" width="1620" height="538" alt="Search Header Help" />
+<Image src="/assets/img/search/search_header_help.webp" width="1620" height="538" alt="Search Header Help" />
 
 ```ruby{4}
 class Avo::Resources::Post < Avo::BaseResource
@@ -250,7 +250,7 @@ end
 
 When a resource has the `search` attribute with a valid configuration, a new search input will be displayed on the `Index` view.
 
-<Image src="/assets/img/search/resource_search.jpg" width="808" height="395" alt="" />
+<Image src="/assets/img/search/resource_search.webp" width="808" height="395" alt="" />
 
 ## Global search
 
@@ -260,7 +260,7 @@ Avo also has a global search feature. It will search through all the resources t
 
 You open the global search input by clicking the trigger on the navbar or by using the <kbd>CMD</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on Windows).
 
-<Image src="/assets/img/search/global_search_trigger.jpg" width="960" height="76" alt="Global search trigger" />
+<Image src="/assets/img/search/global_search_trigger.webp" width="960" height="76" alt="Global search trigger" />
 
 ### Hide the global search
 

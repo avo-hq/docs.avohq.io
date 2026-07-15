@@ -9,7 +9,7 @@ license: community
 heading "User information"
 ```
 
-<img :src="('/assets/img/fields/heading.png')" alt="Heading field" class="border mb-4" />
+<img :src="('/assets/img/fields/heading.webp')" alt="Heading field" class="border mb-4" />
 
 The `Heading` field displays a header that acts as a separation layer between different sections.
 
@@ -26,4 +26,3 @@ heading '<div class="underline text-gray-800 uppercase">Address fields</,div>', 
 
 <!-- @include: ./../common/default_boolean_false.md -->
 </Option>
-

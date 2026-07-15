@@ -30,13 +30,13 @@ There are a few customization options to change how resources are displayed in t
 
 You may customize how many resources you can view per page with `config.per_page = 24`.
 
-<img :src="('/assets/img/resource-index/per-page-config.jpg')" alt="Per page config" class="border mb-4" />
+<img :src="('/assets/img/resource-index/per-page-config.webp')" alt="Per page config" class="border mb-4" />
 
 ### Per page steps
 
 Similarly customize the per-page steps in the per-page picker with `config.per_page_steps = [12, 24, 48, 72]`.
 
-<img :src="('/assets/img/resource-index/per-page-steps.jpg')" alt="Per page config" class="border mb-4" />
+<img :src="('/assets/img/resource-index/per-page-steps.webp')" alt="Per page config" class="border mb-4" />
 
 ### Resources via per page
 
@@ -49,11 +49,11 @@ The `ResourceIndex` component supports two view types `:table` and `:grid`. You 
 <div class="grid grid-flow-row sm:grid-flow-col sm:grid-cols-2 gap-2 w-full">
   <div class="w-full">
     <strong>Table view</strong>
-    <img :src="('/assets/img/customization/table-view.png')" alt="Table view" class="border mb-4" />
+    <img :src="('/assets/img/customization/table-view.webp')" alt="Table view" class="border mb-4" />
   </div>
   <div class="w-full">
     <strong>Grid view</strong>
-    <img :src="('/assets/img/customization/grid-view.jpg')" alt="Grid view" class="border mb-4" />
+    <img :src="('/assets/img/customization/grid-view.webp')" alt="Grid view" class="border mb-4" />
   </div>
 </div>
 
@@ -73,7 +73,7 @@ end
 
 That will render all `id` fields in the **Index** view as a link to that resource.
 
-<img :src="('/assets/img/fields-reference/as-link-to-resource.jpg')" alt="As link to resource" class="border mb-4" />
+<img :src="('/assets/img/fields-reference/as-link-to-resource.webp')" alt="As link to resource" class="border mb-4" />
 
 ## Resource controls on the left side
 
@@ -87,7 +87,7 @@ Avo.configure do |config|
 end
 ```
 
-<img :src="('/assets/img/customization/resource-controls-left.jpg')" alt="Resource controls on the left side" class="border mb-4" />
+<img :src="('/assets/img/customization/resource-controls-left.webp')" alt="Resource controls on the left side" class="border mb-4" />
 
 ## Container width
 
@@ -173,19 +173,19 @@ A list of prepared templates:
 
 In the `app/views/avo/partials` directory, you will find the `_logo.html.erb` partial, which you may customize however you want. It will be displayed in place of Avo's logo.
 
-<img :src="('/assets/img/customization/logo.jpg')" alt="Avo logo customization" class="border mb-4" />
+<img :src="('/assets/img/customization/logo.webp')" alt="Avo logo customization" class="border mb-4" />
 
 #### Header
 
 The `_header.html.erb` partial enables you to customize the name and link of your app.
 
-<img :src="('/assets/img/customization/header.jpg')" alt="Avo header customization" class="border mb-4" />
+<img :src="('/assets/img/customization/header.webp')" alt="Avo header customization" class="border mb-4" />
 
 #### Footer
 
 The `_footer.html.erb` partial enables you to customize the footer of your admin.
 
-<img :src="('/assets/img/customization/footer.jpg')" alt="Avo footer customization" class="border mb-4" />
+<img :src="('/assets/img/customization/footer.webp')" alt="Avo footer customization" class="border mb-4" />
 
 #### Scripts
 
@@ -208,7 +208,7 @@ Once ejected, the views will not receive updates on new Avo releases. You must m
 
 By default, Avo ships with breadcrumbs enabled.
 
-<img :src="('/assets/img/customization/breadcrumbs.jpg')" alt="Avo breadcrumbs" class="border mb-4" />
+<img :src="('/assets/img/customization/breadcrumbs.webp')" alt="Avo breadcrumbs" class="border mb-4" />
 
 You may disable them using the `display_breadcrumbs` configuration option.
 
@@ -511,4 +511,4 @@ Avo.configure do |config|
 end
 ```
 
-![](/assets/img/customization/skip_show_view.gif)
+![](/assets/img/customization/skip_show_view.webm)

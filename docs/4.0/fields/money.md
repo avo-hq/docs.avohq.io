@@ -16,15 +16,15 @@ You can explore the implementation of the money field in [avodemo](https://main.
 
 ### Example on new
 
-<Image src="/assets/img/4_0/fields/money/form.png" dark-src="/assets/img/4_0/fields/money/form-dark.png" width="1520" height="236" alt="An Avo create-form card containing a money field: an amount input showing 0.00 beside a currency selector set to USD." prompt="on create page" />
+<Image src="/assets/img/4_0/fields/money/form.webp" dark-src="/assets/img/4_0/fields/money/form-dark.webp" width="1520" height="236" alt="An Avo create-form card containing a money field: an amount input showing 0.00 beside a currency selector set to USD." prompt="on create page" />
 
 ### Example on show
 
-<Image src="/assets/img/4_0/fields/money/show-inline.png" dark-src="/assets/img/4_0/fields/money/show-inline-dark.png" width="1776" height="254" alt="An Avo show-view card using the standard description-list layout: Price RON showing 1,499.00 Lei and Price USD showing $199.00 on separate rows with label left and value right." prompt="show page with Price RON and Price USD on separate lines in the same card" />
+<Image src="/assets/img/4_0/fields/money/show-inline.webp" dark-src="/assets/img/4_0/fields/money/show-inline-dark.webp" width="1776" height="254" alt="An Avo show-view card using the standard description-list layout: Price RON showing 1,499.00 Lei and Price USD showing $199.00 on separate rows with label left and value right." prompt="show page with Price RON and Price USD on separate lines in the same card" />
 
 ### Example on index
 
-<Image src="/assets/img/4_0/fields/money/index.png" dark-src="/assets/img/4_0/fields/money/index-dark.png" width="1776" height="570" alt="An Avo index table with three columns — ID, Title and Price — where the Price column shows each product's money field formatted as a currency value such as $199.00." prompt="index table with ID, Title and Price columns" />
+<Image src="/assets/img/4_0/fields/money/index.webp" dark-src="/assets/img/4_0/fields/money/index-dark.webp" width="1776" height="570" alt="An Avo index table with three columns — ID, Title and Price — where the Price column shows each product's money field formatted as a currency value such as $199.00." prompt="index table with ID, Title and Price columns" />
 
 ## Installation
 

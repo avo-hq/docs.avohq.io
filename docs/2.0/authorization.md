@@ -100,7 +100,7 @@ Controls whether the user can see the actions button on the <Index /> page.
 
 </Option>
 
-<img :src="('/assets/img/authorization/actions_button.jpg')" alt="Actions button" class="border mb-4" />
+<img :src="('/assets/img/authorization/actions_button.webp')" alt="Actions button" class="border mb-4" />
 
 <Option name="`reorder?`">
 
@@ -130,14 +130,14 @@ In the `Post` `has_many` `Comments` example, when you want to authorize `show_co
 
 Controls whether the `Attach comment` button is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
-<img :src="('/assets/img/authorization/attach.jpg')" class="border mb-4" />
+<img :src="('/assets/img/authorization/attach.webp')" class="border mb-4" />
 
 </Option>
 <Option name="`detach_{association}?`">
 
 Controls whether the **detach button is available** on the associated record row on the <Index /> view. The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
-<img :src="('/assets/img/authorization/detach.jpg')" class="border mb-4" />
+<img :src="('/assets/img/authorization/detach.webp')" class="border mb-4" />
 
 </Option>
 <Option name="`view_{association}?`">
@@ -153,7 +153,7 @@ Controls whether the **view button is visible** on the associated record row on 
 This **does not** control whether the user has access to that record. You control that using the Policy of that record (`PostPolicy.show?` in our example).
 :::
 
-<img :src="('/assets/img/authorization/show.jpg')" class="border mb-4" />
+<img :src="('/assets/img/authorization/show.webp')" class="border mb-4" />
 
 :::info Difference between `view_{association}?` and `show_{association}?`
 Let's take a `Post` `has_many` `Comment`s.
@@ -172,28 +172,28 @@ Controls whether the **edit button is visible** on the associated record row on 
 This **does not** control whether the user has access to that record's edit page. You control that using the Policy of that record (`PostPolicy.show?` in our example).
 :::
 
-<img :src="('/assets/img/authorization/edit.jpg')" class="border mb-4" />
+<img :src="('/assets/img/authorization/edit.webp')" class="border mb-4" />
 
 </Option>
 <Option name="`create_{association}?`">
 
 Controls whether the `Create comment` button is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
-<img :src="('/assets/img/authorization/create.jpg')" class="border mb-4" />
+<img :src="('/assets/img/authorization/create.webp')" class="border mb-4" />
 
 </Option>
 <Option name="`destroy_{association}?`">
 
 Controls whether the **delete button is visible** on the associated record row on the <Index /> page.The `record` variable is the actual row record (a `Comment` instance in our scenario).
 
-<img :src="('/assets/img/authorization/destroy.jpg')" class="border mb-4" />
+<img :src="('/assets/img/authorization/destroy.webp')" class="border mb-4" />
 
 </Option>
 <Option name="`act_on_{association}?`">
 
 Controls whether the `Actions` dropdown is visible. The `record` variable is the parent record (a `Post` instance in our scenario).
 
-<img :src="('/assets/img/authorization/actions.jpg')" class="border mb-4" />
+<img :src="('/assets/img/authorization/actions.webp')" class="border mb-4" />
 
 </Option>
 <Option name="`reorder_{association}?`">
@@ -299,7 +299,7 @@ When working with files, it may be necessary to establish policies that determin
 
 Both the `record` and the `user` will be available for you to access.
 
-<img :src="('/assets/img/authorization/file_actions.png')" class="border mb-4 rounded" />
+<img :src="('/assets/img/authorization/file_actions.webp')" class="border mb-4 rounded" />
 
 <Option name="`upload_{FIELD_ID}?`">
 Controls whether the user can upload the attachment.

@@ -27,7 +27,7 @@ end
 
 The `comments` query on the user `Index` page will have the `approved` scope attached.
 
-<Image src="/assets/img/4_0/common/associations/scope.png" dark-src="/assets/img/4_0/common/associations/scope-dark.png" width="2144" height="696" alt="An Avo User feedback has_many association on a User show page scoped to three matching comments, showing the full index table with attach and create actions." />
+<Image src="/assets/img/4_0/common/associations/scope.webp" dark-src="/assets/img/4_0/common/associations/scope-dark.webp" width="2144" height="696" alt="An Avo User feedback has_many association on a User show page scoped to three matching comments, showing the full index table with attach and create actions." />
 
 With version 2.5.0, you'll also have access to the `parent` record so that you can use that to scope your associated models even better.
 

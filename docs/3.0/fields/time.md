@@ -8,7 +8,7 @@ default_picker_format: 'H:i:S'
 
 # Time
 
-<Image src="/assets/img/fields/time.png" width="1674" height="402" alt="" />
+<Image src="/assets/img/fields/time.webp" width="1674" height="402" alt="" />
 
 The `Time` field is similar to the [DateTime](./date_time) field. It uses the time picker of flatpickr (without the calendar).
 

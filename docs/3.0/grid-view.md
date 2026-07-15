@@ -1,7 +1,7 @@
 # Grid view
 
 <br>
-<Image src="/assets/img/grid-view.jpg" width="1312" height="1096" alt="Avo grid view" />
+<Image src="/assets/img/grid-view.webp" width="1312" height="1096" alt="Avo grid view" />
 
 Some resources are best displayed in a grid view. We can do that with Avo using a `cover_url`, a `title`, and a `body`.
 
@@ -26,7 +26,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/view-switcher.png" width="822" height="153" alt="Avo view switcher" />
+<Image src="/assets/img/view-switcher.webp" width="822" height="153" alt="Avo view switcher" />
 
 ## Make default view
 
@@ -84,7 +84,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/grid-html-option.png" width="1014" height="637" alt="Grid html option" />
+<Image src="/assets/img/grid-html-option.webp" width="1014" height="637" alt="Grid html option" />
 
 ## Grid Item Badge
 
@@ -93,7 +93,7 @@ end
 <br>
 <br>
 
-<Image src="/assets/img/3_0/grid-view/grid-badge.png" size="2080 x1210" alt="Avo Grid View Badge Element" />
+<Image src="/assets/img/3_0/grid-view/grid-badge.webp" size="2080 x1210" alt="Avo Grid View Badge Element" />
 
 One common scenario is to show a badge on top of your grid items. Avo enables you to do that pretty easy using these three options.
 
@@ -114,7 +114,7 @@ self.grid_view = {
 }
 ```
 
-<Image src="/assets/img/3_0/grid-view/badge-label.png" size="1022 x686" alt="Avo Grid View Badge Label" />
+<Image src="/assets/img/3_0/grid-view/badge-label.webp" size="1022 x686" alt="Avo Grid View Badge Label" />
 
 </Option>
 
@@ -138,7 +138,7 @@ self.grid_view = {
 }
 ```
 
-<Image src="/assets/img/3_0/grid-view/badge-color.png" size="1016x 678" alt="Avo Grid View Badge Color" />
+<Image src="/assets/img/3_0/grid-view/badge-color.webp" size="1016x 678" alt="Avo Grid View Badge Color" />
 
 </Option>
 
@@ -161,6 +161,6 @@ self.grid_view = {
 }
 ```
 
-<Image src="/assets/img/3_0/grid-view/badge-title.png" size="1088x 740" alt="Avo Grid View Badge Title" />
+<Image src="/assets/img/3_0/grid-view/badge-title.webp" size="1088x 740" alt="Avo Grid View Badge Title" />
 
 </Option>

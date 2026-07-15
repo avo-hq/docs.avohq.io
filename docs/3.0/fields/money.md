@@ -17,21 +17,21 @@ You can explore the implementation of the money field in [avodemo](https://main.
 
 ### Example on new
 
-<Image src="/assets/img/money-field.png" width="1005" height="59" alt="" />
+<Image src="/assets/img/money-field.webp" width="1005" height="59" alt="" />
 
-<Image src="/assets/img/money-field2.png" width="1005" height="123" alt="" />
+<Image src="/assets/img/money-field2.webp" width="1005" height="123" alt="" />
 
 ### Example on show with currencies USD
 
-<Image src="/assets/img/money-field-show.png" width="689" height="54" alt="" />
+<Image src="/assets/img/money-field-show.webp" width="689" height="54" alt="" />
 
 ### Example on show with currencies RON
 
-<Image src="/assets/img/money-field-show-lei.png" width="689" height="55" alt="" />
+<Image src="/assets/img/money-field-show-lei.webp" width="689" height="55" alt="" />
 
 ### Example on index
 
-<Image src="/assets/img/money-field-index.png" width="208" height="299" alt="" />
+<Image src="/assets/img/money-field-index.webp" width="208" height="299" alt="" />
 
 ## Installation
 

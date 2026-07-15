@@ -141,7 +141,7 @@ The order in which Avo loads the partials and asset files is this one:
 3. `_head.html.erb`
 :::
 
-![Avo and the asset pipeline](/assets/img/asset-pipeline.jpg)
+![Avo and the asset pipeline](/assets/img/asset-pipeline.webp)
 
 ### Sprockets and Propshaft
 

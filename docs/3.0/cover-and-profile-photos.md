@@ -5,7 +5,7 @@ license: community
 
 # Cover and Profile photos
 
-<Image src="/assets/img/3_0/cover-and-profile-photo/cover-and-profile-photo.png" alt="Cover and Profile Photos" width="2560 " height=" 1876" class="mt-8" />
+<Image src="/assets/img/3_0/cover-and-profile-photo/cover-and-profile-photo.webp" alt="Cover and Profile Photos" width="2560 " height=" 1876" class="mt-8" />
 
 It's common to want to display the information in different ways than just "key" and "value". That's why Avo has rich fields like [`key_value`](./fields/key_value), [`trix`](./fields/trix), [`tip_tap`](./fields/tip_tap), [`files`](./fields/files), and more.
 

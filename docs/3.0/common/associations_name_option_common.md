@@ -1,7 +1,7 @@
 <Option name="`name`">
 Changes the text displayed as association name.
 
-![](/assets/img/associations/name-option.jpg)
+![](/assets/img/associations/name-option.webp)
 
 #### Default
 

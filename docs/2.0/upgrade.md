@@ -80,7 +80,7 @@ We did the work on our end, but if you have a [custom tool](./custom-tools), or 
 
 You can run a search and replace in your `app/views/avo` directory (`app/views` too if you use view components), searching for `c.` and replacing with `c.with_`. Please ensure that the change is applied only in `.html.erb` files.
 
-![](/assets/img/upgrade/2_30-2_31/view_compoent_with_upgrade.gif)
+![](/assets/img/upgrade/2_30-2_31/view_compoent_with_upgrade.webm)
 
 ## Upgrade from 2.30.1 to 2.30.2
 

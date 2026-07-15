@@ -199,7 +199,7 @@ But these activities aren't visible yet, right? Let's look at how to display the
 
 The `Avo::ResourceTools::Timeline` tool, provided by the `avo-audit_logging` gem, is designed for use in the sidebar. It offers a compact view of activities that have occurred on a specific resource, presenting them in a streamlined format:
 
-<Image src="/assets/img/4_0/audit-logging/sidebar-activities.png" dark-src="/assets/img/4_0/audit-logging/sidebar-activities-dark.png" width="2848" height="1360" alt="The History activity timeline tool shown in the product record's sidebar, with breadcrumbs and title" />
+<Image src="/assets/img/4_0/audit-logging/sidebar-activities.webp" dark-src="/assets/img/4_0/audit-logging/sidebar-activities-dark.webp" width="2848" height="1360" alt="The History activity timeline tool shown in the product record's sidebar, with breadcrumbs and title" />
 
 ### Configuring the Sidebar for Activity Tracking
 
@@ -235,7 +235,7 @@ end # [!code focus]
 
 Each entry shows a compact relative time — hover over an entry to reveal its full date and time. Clicking an entry opens a detailed page displaying the full payload.
 
-<Image src="/assets/img/4_0/audit-logging/hover-activities.png" dark-src="/assets/img/4_0/audit-logging/hover-activities-dark.png" width="356" height="422" alt="The History activity timeline card showing compact relative timestamps" />
+<Image src="/assets/img/4_0/audit-logging/hover-activities.webp" dark-src="/assets/img/4_0/audit-logging/hover-activities-dark.webp" width="356" height="422" alt="The History activity timeline card showing compact relative timestamps" />
 
 ### Enabling Change Logs and Reverting Changes
 
@@ -256,7 +256,7 @@ end # [!code focus]
 
 Once enabled, the changelog will be visible, along with an action to revert changes.
 
-<Image src="/assets/img/4_0/audit-logging/activity-details.png" dark-src="/assets/img/4_0/audit-logging/activity-details-dark.png" width="2848" height="2114" alt="An update activity detail page showing the changeset diff and payload, with breadcrumbs and title" />
+<Image src="/assets/img/4_0/audit-logging/activity-details.webp" dark-src="/assets/img/4_0/audit-logging/activity-details-dark.webp" width="2848" height="2114" alt="An update activity detail page showing the changeset diff and payload, with breadcrumbs and title" />
 
 ### Troubleshooting: Missing `changeset` Field
 
@@ -272,7 +272,7 @@ config.active_record.yaml_column_permitted_classes = [Symbol, Date, Time, Active
 
 We’ve already covered how to view all activity on a specific record. Now, let’s display a table within `Avo::Resources::User` to view all tracked activity for a particular user.
 
-<Image src="/assets/img/4_0/audit-logging/authored.png" dark-src="/assets/img/4_0/audit-logging/authored-dark.png" width="1960" height="1138" alt="Authored table image" />
+<Image src="/assets/img/4_0/audit-logging/authored.webp" dark-src="/assets/img/4_0/audit-logging/authored-dark.webp" width="1960" height="1138" alt="Authored table image" />
 
 :::warning
 If you're using a model other than `User`, make sure you have already [configured the author models](#configure-author-models).

@@ -28,7 +28,7 @@ end
 ```
 
 
-<Image src="/assets/img/actions/action_link.gif" width="684" height="391" alt="actions link demo" />
+<Image src="/assets/img/actions/action_link.webm" width="684" height="391" alt="actions link demo" />
 
 :::tip
 #### Generate an Action Link Without a Resource Instance

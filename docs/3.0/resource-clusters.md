@@ -10,7 +10,7 @@ The `cluster` DSL allows you to group multiple fields horizontally within a [`pa
 
 To enhance readability and maintain a well-organized UI, it is recommended to use the [`stacked`](./field-wrappers.html#stacked) option for fields inside clusters.
 
-<Image src="/assets/img/row.png" width="1028" height="230" alt="Cluster" />
+<Image src="/assets/img/row.webp" width="1028" height="230" alt="Cluster" />
 
 ```ruby{4-18}
 # app/avo/resources/person.rb
@@ -65,7 +65,7 @@ class Avo::Resources::Person < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/cluster_with_divider.png" width="1944" height="404" alt="Cluster with divider" />
+<Image src="/assets/img/cluster_with_divider.webp" width="1944" height="404" alt="Cluster with divider" />
 
 ##### Default value
 

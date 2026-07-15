@@ -63,7 +63,7 @@ Avo.configure do |config|
 
 When a resource has the `search` attribute with a valid configuration, a new search input will be displayed on the `Index` view. When you perform a search, the current view (table, grid, map, or any other view type) will update to show only the matching results, maintaining the same visual format.
 
-<Image src="/assets/img/4_0/search/resource-search.gif" dark-src="/assets/img/4_0/search/resource-search-dark.gif" width="2144" height="1158" alt="An Avo Projects index where typing into the per-resource search box filters the table to matching records." />
+<Image src="/assets/img/4_0/search/resource-search.webm" dark-src="/assets/img/4_0/search/resource-search-dark.webm" width="2144" height="1158" alt="An Avo Projects index where typing into the per-resource search box filters the table to matching records." />
 
 ## Searching within associations
 

@@ -19,7 +19,7 @@ field :joined_at,
   timezone: "PST"
 ```
 
-<Image src="/assets/img/4_0/fields/date-time.png" dark-src="/assets/img/4_0/fields/date-time-dark.png" width="536" height="390" alt="DateTime field" />
+<Image src="/assets/img/4_0/fields/date-time.webp" dark-src="/assets/img/4_0/fields/date-time-dark.webp" width="536" height="390" alt="DateTime field" />
 
 ## Options
 

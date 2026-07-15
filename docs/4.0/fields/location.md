@@ -11,7 +11,7 @@ The `Location` field is used to display a point on a map.
 field :coordinates, as: :location
 ```
 
-<Image src="/assets/img/4_0/fields/location/show-map.png" dark-src="/assets/img/4_0/fields/location/show-map-dark.png" width="1192" height="1060" alt="An Avo Map card on the Dashy dashboard showing an embedded Google Maps view of Manhattan with an Open in Maps link and map navigation controls." prompt="page with navigation map" />
+<Image src="/assets/img/4_0/fields/location/show-map.webp" dark-src="/assets/img/4_0/fields/location/show-map-dark.webp" width="1192" height="1060" alt="An Avo Map card on the Dashy dashboard showing an embedded Google Maps view of Manhattan with an Open in Maps link and map navigation controls." prompt="page with navigation map" />
 
 :::warning
 You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
@@ -50,7 +50,7 @@ By using this notation, Avo will grab the `latitude` and `longitude` from those 
 
 This will also render the <Edit /> view with two separate fields to edit the coordinates.
 
-<Image src="/assets/img/4_0/fields/location/stored-as.png" dark-src="/assets/img/4_0/fields/location/stored-as-dark.png" width="1520" height="236" alt="An Avo edit-form card showing a location field with stored_as configured: separate Latitude and Longitude text inputs side by side, prefilled with Paris coordinates." prompt="todo" />
+<Image src="/assets/img/4_0/fields/location/stored-as.webp" dark-src="/assets/img/4_0/fields/location/stored-as-dark.webp" width="1520" height="236" alt="An Avo edit-form card showing a location field with stored_as configured: separate Latitude and Longitude text inputs side by side, prefilled with Paris coordinates." prompt="todo" />
 </Option>
 
 <Option name="`mapkick_options`">

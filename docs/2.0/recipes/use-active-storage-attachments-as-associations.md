@@ -42,7 +42,7 @@ class ProjectResource < Avo::BaseResource
 end
 ```
 
-![](/assets/img/recipes/use-active-storage-attachments-as-associations/has_many.png)
+![](/assets/img/recipes/use-active-storage-attachments-as-associations/has_many.webp)
 
 We suggest making this resource read-only using Pundit policies so you don't accidentaly update Active Storage keys and settings.
 
@@ -62,4 +62,4 @@ class PostResource < Avo::BaseResource
 end
 ```
 
-![](/assets/img/recipes/use-active-storage-attachments-as-associations/has_one.png)
+![](/assets/img/recipes/use-active-storage-attachments-as-associations/has_one.webp)
