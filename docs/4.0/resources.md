@@ -321,13 +321,38 @@ We can still tell Avo which resource to use in other `has_many` or `has_and_belo
 
 ## Namespaced resources
 
-`Resource`s can't be namespaced yet, so they all need to be in the root level of that directory. If you have a model `Super::Dooper::Trooper::Model` you can use `Avo::Resources::SuperDooperTrooperModel` with the `model_class` option.
+Resources can be namespaced by nesting them in subdirectories of `app/avo/resources`, mirroring the namespace with `::` in the class name. This is handy for grouping resources that belong to a namespaced model (`Galaxy::Planet`) or that you just want organized under a common prefix (`Billing::Invoice`).
+
+```ruby
+# app/avo/resources/galaxy/planet.rb
+class Avo::Resources::Galaxy::Planet < Avo::BaseResource
+  self.title = :name
+
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+    field :satellites, as: :has_many
+  end
+end
+```
+
+If the resource's namespace matches its model's namespace (`Avo::Resources::Galaxy::Planet` → `Galaxy::Planet`), Avo infers the model class automatically — no `self.model_class` needed. If it doesn't, set `model_class` explicitly, same as with a flat resource:
 
 ```ruby
 class Avo::Resources::SuperDooperTrooperModel < Avo::BaseResource
   self.model_class = "Super::Dooper::Trooper::Model"
 end
 ```
+
+Generate a namespaced resource (and its matching namespaced controller) the same way you'd generate a flat one, just with the namespace in the name:
+
+```bash
+bin/rails generate avo:resource Galaxy::Planet
+```
+
+That creates `app/avo/resources/galaxy/planet.rb` (`Avo::Resources::Galaxy::Planet`) and `app/controllers/avo/galaxy/planets_controller.rb` (`Avo::Galaxy::PlanetsController`). Namespaces can go as deep as you need — `Universe::Cluster::Star::Comet` generates `app/avo/resources/universe/cluster/star/comet.rb`, and so on.
+
+Namespacing also affects the resource's routes and translation key: `Avo::Resources::Galaxy::Planet` gets the route path `galaxy/planets` and the translation key `avo.resource_translations.galaxy/planet`, following the same underscored, slash-joined convention as the class name.
 
 ## Views
 

@@ -66,6 +66,40 @@ pre code span.line:not(:last-child) {
 .aspect-ratio-box:has(img[src*="/4_0/"]) .aspect-ratio-box-inside {
   border-radius: 4px;
 }
+/* Images with a per-image light/dark switch (Image.vue sets data-image-theme
+   to the mode currently shown). The frame — and the switch, which inherits
+   these vars — recolors to match the flipped image instead of the page theme,
+   so a pinned image never shows a mismatched seam. Values mirror VitePress's
+   palette; brand is deliberately not overridden so the :root brand applies. */
+.aspect-ratio-box[data-image-theme="light"] {
+  --vp-c-bg: #ffffff;
+  --vp-c-divider: #e2e2e3;
+  --vp-c-bg-soft: #f6f6f7;
+  --vp-c-border: #c2c2c4;
+  --vp-c-text-1: rgba(60, 60, 67);
+  --vp-c-text-2: rgba(60, 60, 67, 0.78);
+}
+.aspect-ratio-box[data-image-theme="dark"] {
+  --vp-c-bg: #1b1b1f;
+  --vp-c-divider: #2e2e32;
+  --vp-c-bg-soft: #202127;
+  --vp-c-border: #3c3f44;
+  --vp-c-text-1: rgba(255, 255, 245, 0.86);
+  --vp-c-text-2: rgba(235, 235, 245, 0.6);
+}
+/* Touch devices and sub-md viewports show the switch permanently, so the
+   framed images grow their top mat to give it a row of its own instead of
+   letting it cover the screenshot. The switch itself is positioned by
+   Image.vue (whose media query mirrors this one; keep them in sync),
+   anchored 9px above the image's top edge. */
+@media (hover: none), (max-width: 767px) {
+  .aspect-ratio-box[data-image-theme]:has(img[src*="/4_0/"]) {
+    overflow: visible;
+    /* 45px = 9px gap above the image + ~28px switch + 8px headroom. If the
+       switch in Image.vue grows (icon size, padding), grow this with it. */
+    border-top-width: 45px;
+  }
+}
 /* Preview image right under the page title needs extra breathing room. */
 .vp-doc h1 + .aspect-ratio-box {
   margin-top: 2.5rem;
