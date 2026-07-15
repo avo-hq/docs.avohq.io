@@ -265,7 +265,7 @@ end
 
 <Option name="`counter.visible`" headingSize="4">
 
-A boolean or proc that shows the badge only in some cases. When it evaluates falsy, the count is hidden — the scope tab itself still shows (use the scope's own [`visible`](#visible) option to hide the tab):
+A boolean or proc that shows the badge only in some cases. When it evaluates falsy, the count is hidden — the scope tab itself still shows (use the scope's own [`visible`](#visible) option to hide the tab). On nested association indexes, the proc receives `parent_record` and `parent_resource` the same way the scope's [`visible`](#visible) option does:
 
 ```ruby{5}
 # app/avo/scopes/active.rb
@@ -281,7 +281,7 @@ end
 
 <Option name="`counter.format`" headingSize="4">
 
-By default the count is rendered with `number_to_delimited` (e.g. `1,234`). A `format` block renders it however you like. It runs in the execution context — the count is available as `value` (the result of your `count` block, or the computed count when you don't set one), alongside `query`, `resource`, and `scope` — and can return any value (coerced to a string):
+By default the count is rendered with `number_to_delimited` (e.g. `1,234`). A `format` block renders it however you like. It runs in the execution context — the count is available as `value` (the result of your `count` block, or the computed count when you don't set one), alongside `query`, `resource`, and `scope`, where `query` is the same unfiltered base query used by `counter.count` — and can return any value (coerced to a string):
 
 ```ruby{5}
 # app/avo/scopes/active.rb
