@@ -22,7 +22,7 @@ end
 :::
 
 
-<Image src="/assets/img/fields/heading.png" width="821" height="230" alt="Heading field" />
+<Image src="/assets/img/fields/heading.webp" width="821" height="230" alt="Heading field" />
 
 The `Heading` field displays a header that acts as a separation layer between different sections.
 

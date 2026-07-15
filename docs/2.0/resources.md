@@ -209,7 +209,7 @@ class UserResource < Avo::BaseResource
 end
 ```
 
-![](/assets/img/resources/model-resource-mapping-1.jpg)
+![](/assets/img/resources/model-resource-mapping-1.webp)
 
 So when you click on the Users sidebar menu item, you get to the `Index` page where all the users will be displayed. The information displayed will be the gravatar image, the first and the last name.
 
@@ -259,7 +259,7 @@ class TeamResource < Avo::BaseResource
 end
 ```
 
-![](/assets/img/resources/model-resource-mapping-2.jpg)
+![](/assets/img/resources/model-resource-mapping-2.webp)
 
 But now, if we visit the `Users` page, we will see the fields for the `TeamUserResource` instead of `UserResource`, and that's because Avo fetches the resources in an alphabetical order, and `TeamUserResource` is before `UserResource`. That's definitely not what we want.
 The same might happen if you reference the `User` in other associations throughout your resource files.
@@ -313,7 +313,7 @@ end
 
 You might want to display information about the current resource to your users. Then, using the `description` class attribute, you can add some text to the `Index`, `Show`, `Edit`, and `New` views.
 
-<img :src="('/assets/img/resources/description.png')" alt="Avo message" class="border mb-4" />
+<img :src="('/assets/img/resources/description.webp')" alt="Avo message" class="border mb-4" />
 
 There are two ways of setting the description. The quick way as a `string` and the more customizable way as a `block`.
 
@@ -386,7 +386,7 @@ The page where you can create a new resource.
 
 On **Index**, the most common view type is `:table`, but you might have some data that you want to display in a **grid**. You can change that by setting `default_view_type` to `:grid` and by adding the `grid` block.
 
-<img :src="('/assets/img/grid-view.jpg')" alt="Avo grid view" class="border mb-4" />
+<img :src="('/assets/img/grid-view.webp')" alt="Avo grid view" class="border mb-4" />
 
 ```ruby{2}
 class PostResource < Avo::BaseResource
@@ -506,7 +506,7 @@ Avo.configure do |config|
 end
 ```
 
-<img :src="('/assets/img/resources/buttons_on_footer.png')" alt="Buttons on footer" class="border mb-4" />
+<img :src="('/assets/img/resources/buttons_on_footer.webp')" alt="Buttons on footer" class="border mb-4" />
 
 ## Customize what happens after a record is created/edited
 
@@ -539,7 +539,7 @@ class CommentResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/resources/record_selector.png')" alt="Hide the record selector." class="border mb-4" />
+<img :src="('/assets/img/resources/record_selector.webp')" alt="Hide the record selector." class="border mb-4" />
 
 ## Link to child resource (STI)
 
@@ -622,7 +622,7 @@ self.pagination = -> do
 end
 ```
 
-![Default pagination](/assets/img/resources/pagination/default.png)
+![Default pagination](/assets/img/resources/pagination/default.webp)
 <br><br>
 
 #### Countless
@@ -635,7 +635,7 @@ self.pagination = -> do
 end
 ```
 
-![Countless pagination](/assets/img/resources/pagination/countless.png)
+![Countless pagination](/assets/img/resources/pagination/countless.webp)
 <br><br>
 
 #### Countless and "pageless"
@@ -647,5 +647,5 @@ self.pagination = -> do
   }
 end
 ```
-![Countless pagination size empty](/assets/img/resources/pagination/countless_empty_size.png)
+![Countless pagination size empty](/assets/img/resources/pagination/countless_empty_size.webp)
 </Option>

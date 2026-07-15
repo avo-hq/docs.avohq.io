@@ -176,7 +176,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/fields/complex-example.png" dark-src="/assets/img/4_0/fields/complex-example-dark.png" width="980" height="372" alt="User resource Show view with id, first and last name, email, active, cv and is_admin fields" />
+<Image src="/assets/img/4_0/fields/complex-example.webp" dark-src="/assets/img/4_0/fields/complex-example-dark.webp" width="980" height="372" alt="User resource Show view with id, first and last name, email, active, cv and is_admin fields" />
 
 ## Field Types
 

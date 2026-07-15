@@ -19,7 +19,7 @@ field :documents, as: :files
 
 <Option name="`view_type`">
 
-<Image src="/assets/img/4_0/fields/files/view-type.gif" dark-src="/assets/img/4_0/fields/files/view-type-dark.gif" width="1200" height="301" alt="An Avo show-view card for a files field: an animation toggling between grid view (thumbnail tiles) and list view (file rows) using the view-type switcher." prompt="gif to see the difference between grid and list view types" />
+<Image src="/assets/img/4_0/fields/files/view-type.webm" dark-src="/assets/img/4_0/fields/files/view-type-dark.webm" width="1200" height="301" alt="An Avo show-view card for a files field: an animation toggling between grid view (thumbnail tiles) and list view (file rows) using the view-type switcher." prompt="gif to see the difference between grid and list view types" />
 
 Set the default `view_type`.
 

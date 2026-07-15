@@ -52,7 +52,7 @@ class ProjectResource < Avo::BaseResource
   field :progress, as: :progress_bar
 end
 ```
-<img :src="('/assets/img/custom-fields/progress-show.jpg')" alt="Progress custom field" class="border mb-4" />
+<img :src="('/assets/img/custom-fields/progress-show.webp')" alt="Progress custom field" class="border mb-4" />
 
 The generated view components are basic text fields for now.
 
@@ -189,7 +189,7 @@ No let's do something about those views. Let's add a progress bar to the `Index`
 <% end %>
 ```
 
-<img :src="('/assets/img/custom-fields/progress-index.jpg')" alt="Progress bar custom field on index" class="border mb-4" />
+<img :src="('/assets/img/custom-fields/progress-index.webp')" alt="Progress bar custom field on index" class="border mb-4" />
 
 For the `Edit` view, we're going to do something different. We'll implement a `range` input.
 
@@ -230,7 +230,7 @@ function updateValue(e) {
 }
 </script>
 ```
-<img :src="('/assets/img/custom-fields/progress-edit.jpg')" alt="Progress bar custom field edit" class="border mb-4" />
+<img :src="('/assets/img/custom-fields/progress-edit.webp')" alt="Progress bar custom field edit" class="border mb-4" />
 
 ## Field assets
 
@@ -263,7 +263,7 @@ Avo ships with a few Stimulus controllers that help you build more dynamic field
 
 This controller allows you to hide your content and add a trigger to show it. You'll find it in the Trix field.
 
-<img :src="('/assets/img/stimulus/hidden_input_trix.gif')" alt="Hidden input controller" class="border mb-4" />
+<Image src="/assets/img/stimulus/hidden_input_trix.webm" width="1000" height="272" alt="Hidden input controller" />
 
 You should add the `:always_show` `attr_reader` and `@always_show` instance variables to your field.
 
@@ -307,4 +307,4 @@ Next, in your fields `Show` component, you need to do a few things.
 <% end %>
 ```
 
-<img :src="('/assets/img/stimulus/hidden_input_color.gif')" alt="Hidden input controller" class="border mb-4" />
+<Image src="/assets/img/stimulus/hidden_input_color.webm" width="1000" height="76" alt="Hidden input controller" />

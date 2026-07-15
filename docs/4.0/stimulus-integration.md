@@ -13,7 +13,7 @@ This is not the **dependable fields** feature but a placeholder so we can observ
 
 _What we'll be able to do at the end of reading these docs_
 
-<Image src="/assets/img/4_0/stimulus/country-city-select.gif" dark-src="/assets/img/4_0/stimulus/country-city-select-dark.gif" width="878" height="244" alt="An Avo Course edit form with Country and City highlighted together and a browser console readout below: picking USA repopulates the city select and logs the new options, then New York is chosen; switching to Spain swaps the city list and Barcelona is selected." />
+<Image src="/assets/img/4_0/stimulus/country-city-select.webm" dark-src="/assets/img/4_0/stimulus/country-city-select-dark.webm" width="878" height="244" alt="An Avo Course edit form with Country and City highlighted together and a browser console readout below: picking USA repopulates the city select and logs the new options, then New York is chosen; switching to Spain swaps the city list and Barcelona is selected." />
 
 :::info
 **Please note** that in order to have the JS code from your controllers loaded in Avo you'll need to add your asset pipeline using [these instructions](custom-asset-pipeline.html). It's really easier than it sounds. It's like you'd add a new JS file to your regular Rails app.
@@ -202,7 +202,7 @@ field :has_country, as: :boolean, html: {
 field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h
 ```
 
-<Image src="/assets/img/4_0/stimulus/toggle-method.gif" dark-src="/assets/img/4_0/stimulus/toggle-method-dark.gif" width="888" height="274" alt="An Avo Course edit form where toggling the Availability boolean uses resource-edit#toggle to show and hide the Skills field." />
+<Image src="/assets/img/4_0/stimulus/toggle-method.webm" dark-src="/assets/img/4_0/stimulus/toggle-method-dark.webm" width="888" height="274" alt="An Avo Course edit form where toggling the Availability boolean uses resource-edit#toggle to show and hide the Skills field." />
 
 ### `resource-edit#disable`
 
@@ -223,7 +223,7 @@ field :has_skills, as: :boolean, html: {
 field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h
 ```
 
-<Image src="/assets/img/4_0/stimulus/disable-method.gif" dark-src="/assets/img/4_0/stimulus/disable-method-dark.gif" width="888" height="274" alt="An Avo Course edit form where toggling the Availability boolean uses resource-edit#disable to disable and re-enable the Name field, greying it out." />
+<Image src="/assets/img/4_0/stimulus/disable-method.webm" dark-src="/assets/img/4_0/stimulus/disable-method-dark.webm" width="888" height="274" alt="An Avo Course edit form where toggling the Availability boolean uses resource-edit#disable to disable and re-enable the Name field, greying it out." />
 
 You may also target the `wrapper` element for that field if the target field has more than one input like the searchable polymorphic `belongs_to` field.
 
@@ -246,7 +246,7 @@ field :country, as: :select, options: Course.countries.map { |country| [country,
 
 For debugging purposes only, the `resource_edit` Stimulus JS controller provides the `debugOnInput` method that outputs the event and value for an action to the console. Use this just to make sure you targeted your fields correctly. It doesn't have any real use.
 
-<Image src="/assets/img/4_0/stimulus/debug-on-input.gif" dark-src="/assets/img/4_0/stimulus/debug-on-input-dark.gif" width="888" height="210" alt="An Avo Course edit form Name field wired to resource-edit#debugOnInput; typing logs each input event and value, shown in a console readout below the field." />
+<Image src="/assets/img/4_0/stimulus/debug-on-input.webm" dark-src="/assets/img/4_0/stimulus/debug-on-input-dark.webm" width="888" height="210" alt="An Avo Course edit form Name field wired to resource-edit#debugOnInput; typing logs each input event and value, shown in a console readout below the field." />
 
 ## Custom Stimulus controllers
 
@@ -469,7 +469,7 @@ export default class extends Controller {
 
 This is how the fields behave with this Stimulus JS controller.
 
-<Image src="/assets/img/4_0/stimulus/country-city-select.gif" dark-src="/assets/img/4_0/stimulus/country-city-select-dark.gif" width="878" height="244" alt="An Avo Course edit form with Country and City highlighted together and a browser console readout below: picking USA repopulates the city select and logs the new options, then New York is chosen; switching to Spain swaps the city list and Barcelona is selected." />
+<Image src="/assets/img/4_0/stimulus/country-city-select.webm" dark-src="/assets/img/4_0/stimulus/country-city-select-dark.webm" width="878" height="244" alt="An Avo Course edit form with Country and City highlighted together and a browser console readout below: picking USA repopulates the city select and logs the new options, then New York is chosen; switching to Spain swaps the city list and Barcelona is selected." />
 
 ## Use Stimulus JS in a tool
 
@@ -514,4 +514,3 @@ console.log("Hi from Avo custom JS 👋");
 ```
 
 Done 🙌 Now you have a controller connecting to a custom [Resource tool](./resource-tools) or [Avo tool](./custom-tools) (or Avo views).
-

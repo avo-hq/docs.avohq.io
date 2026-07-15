@@ -16,9 +16,9 @@ class Avo::Resources::Team < Avo::BaseResource
   def fields
     field :preview, as: :preview
     field :name,
-     as: :text,
-     sortable: true,
-     show_on: :preview
+    as: :text,
+    sortable: true,
+    show_on: :preview
     field :color,
       as: Avo::Fields::ColorPickerField,
       hide_on: :index,
@@ -29,4 +29,4 @@ class Avo::Resources::Team < Avo::BaseResource
   end
 end
 ```
-<Image src="/assets/img/3_0/record-previews/preview-field.png" width="1328" height="1000" alt="" />
+<Image src="/assets/img/3_0/record-previews/preview-field.webp" width="1328" height="1000" alt="" />

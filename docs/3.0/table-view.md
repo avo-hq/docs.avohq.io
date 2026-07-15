@@ -2,7 +2,7 @@
 
 The table view is the default way to display resources in Avo. It provides a powerful, tabular layout that supports searching, sorting, filtering, and pagination out of the box.
 
-<Image src="/assets/img/table-view.png" width="1919" height="1122" alt="Table view" />
+<Image src="/assets/img/table-view.webp" width="1919" height="1122" alt="Table view" />
 
 ## Row controls configuration
 :::info

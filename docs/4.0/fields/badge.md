@@ -6,7 +6,7 @@ license: community
 
 The `badge` field is used to display an easily recognizable status of a record.
 
-<Image src="/assets/img/4_0/fields/badge/types.png" dark-src="/assets/img/4_0/fields/badge/types-dark.png" width="1280" height="668" alt="Two Avo panels showing every badge color the field can render at its native size, grouped by category: a “Base colors” panel with red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink and rose badge pills, and a “Semantic colors” panel with neutral, info, success, warning and danger badge pills — each pill labelled with its color name." prompt="all posible badges types split nice per categories no outside labels, the label should be inside the badge" />
+<Image src="/assets/img/4_0/fields/badge/types.webp" dark-src="/assets/img/4_0/fields/badge/types-dark.webp" width="1280" height="668" alt="Two Avo panels showing every badge color the field can render at its native size, grouped by category: a “Base colors” panel with red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink and rose badge pills, and a “Semantic colors” panel with neutral, info, success, warning and danger badge pills — each pill labelled with its color name." prompt="all posible badges types split nice per categories no outside labels, the label should be inside the badge" />
 
 ```ruby
 field :status, as: :badge,

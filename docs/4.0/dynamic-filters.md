@@ -86,7 +86,7 @@ For instance, in the text filter example above, the `Contains` condition and the
 }.invert
 ```
 
-<Image src="/assets/img/4_0/dynamic-filters/boolean.png" dark-src="/assets/img/4_0/dynamic-filters/boolean-dark.png" width="3268" height="1082" alt="Avo Users index: the Is active dynamic filter pill and open card showing the Is true condition and Apply button, zoomed in over a short three-row table with pagination." />
+<Image src="/assets/img/4_0/dynamic-filters/boolean.webp" dark-src="/assets/img/4_0/dynamic-filters/boolean-dark.webp" width="3268" height="1082" alt="Avo Users index: the Is active dynamic filter pill and open card showing the Is true condition and Apply button, zoomed in over a short three-row table with pagination." />
 
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_admin?][is_true][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L38)
@@ -116,7 +116,7 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_adm
 }.invert
 ```
 
-<Image src="/assets/img/4_0/dynamic-filters/date3.png" dark-src="/assets/img/4_0/dynamic-filters/date3-dark.png" width="3268" height="2032" alt="Avo Teams index with a short three-row table: the Created at dynamic filter with flatpickr calendar and time picker open over the table." />
+<Image src="/assets/img/4_0/dynamic-filters/date3.webp" dark-src="/assets/img/4_0/dynamic-filters/date3-dark.webp" width="3268" height="2032" alt="Avo Teams index with a short three-row table: the Created at dynamic filter with flatpickr calendar and time picker open over the table." />
 
 
 
@@ -170,7 +170,7 @@ dynamic_filter :published_at, type: :time
 }.invert
 ```
 
-<Image src="/assets/img/4_0/dynamic-filters/number.png" dark-src="/assets/img/4_0/dynamic-filters/number-dark.png" width="3268" height="1082" alt="Avo Teams index with a short three-row table: the ID dynamic filter pill and open card over the table." />
+<Image src="/assets/img/4_0/dynamic-filters/number.webp" dark-src="/assets/img/4_0/dynamic-filters/number-dark.webp" width="3268" height="1082" alt="Avo Teams index with a short three-row table: the ID dynamic filter pill and open card over the table." />
 
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gte][]=2), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L27)
@@ -194,7 +194,7 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gt
 }.invert
 ```
 
-<Image src="/assets/img/4_0/dynamic-filters/select.png" dark-src="/assets/img/4_0/dynamic-filters/select-dark.png" width="3268" height="1082" alt="Avo Courses index with a short three-row table: the Country dynamic filter pill and open card over the table." />
+<Image src="/assets/img/4_0/dynamic-filters/select.webp" dark-src="/assets/img/4_0/dynamic-filters/select-dark.webp" width="3268" height="1082" alt="Avo Courses index with a short three-row table: the Country dynamic filter pill and open card over the table." />
 
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[country][is][]=USA), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L55)
@@ -230,7 +230,7 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[coun
 }.invert
 ```
 
-<Image src="/assets/img/4_0/dynamic-filters/text.png" dark-src="/assets/img/4_0/dynamic-filters/text-dark.png" width="3268" height="1082" alt="Avo Users index with a short three-row table: the First name dynamic filter pill and open card over the table." />
+<Image src="/assets/img/4_0/dynamic-filters/text.webp" dark-src="/assets/img/4_0/dynamic-filters/text-dark.webp" width="3268" height="1082" alt="Avo Users index with a short three-row table: the First name dynamic filter pill and open card over the table." />
 
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_name][contains][]=Avo), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L33)
@@ -256,7 +256,7 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_
 :::warning
 Contained in will not work when using the `acts-as-taggable-on` gem.
 :::
-<Image src="/assets/img/4_0/dynamic-filters/tags.png" dark-src="/assets/img/4_0/dynamic-filters/tags-dark.png" width="3268" height="1082" alt="Avo Courses index with a short three-row table: the Skills dynamic filter pill and open card over the table." />
+<Image src="/assets/img/4_0/dynamic-filters/tags.webp" dark-src="/assets/img/4_0/dynamic-filters/tags-dark.webp" width="3268" height="1082" alt="Avo Courses index with a short three-row table: the Skills dynamic filter pill and open card over the table." />
 
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[skills][array_contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L46)

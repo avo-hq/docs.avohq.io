@@ -40,6 +40,10 @@ const effectiveDark = computed(() => localDark.value === null ? isDark.value : l
 
 const src = computed(() => (effectiveDark.value && props.darkSrc) ? props.darkSrc : (props.src || ''))
 
+// Motion clips (former GIFs) are stored as .webm and rendered as an autoplaying,
+// looping, muted video so they behave exactly like the animated GIF they replaced.
+const isVideo = computed(() => /\.(mp4|webm)(\?|$)/i.test(src.value))
+
 // custom.css recolors the frame + switch off this attribute, so a flipped
 // image never shows a mismatched seam.
 const imageTheme = computed(() => hasBothVariants.value ? (effectiveDark.value ? 'dark' : 'light') : null)
@@ -92,9 +96,20 @@ const checkParentWidth = () => {
     :data-image-theme="imageTheme"
     ref="parent"
   >
-    <img :src="src" :alt="alt" loading="lazy" class="aspect-ratio-box-inside">
+    <video
+      v-if="isVideo"
+      :src="src"
+      :aria-label="alt"
+      class="aspect-ratio-box-inside"
+      autoplay
+      loop
+      muted
+      playsinline
+      preload="metadata"
+    ></video>
+    <img v-else :src="src" :alt="alt" loading="lazy" class="aspect-ratio-box-inside">
     <!-- Overlaid on the image so it takes no vertical space; revealed on hover
-         (always visible, icons only, on touch devices). -->
+        (always visible, icons only, on touch devices). -->
     <div v-if="hasBothVariants" class="image-theme-switch" role="group" aria-label="Preview this image in light or dark mode">
       <button
         type="button"
@@ -159,14 +174,14 @@ const checkParentWidth = () => {
   gap: 2px;
   padding: 2px;
   /* No var() fallbacks here: the switch only renders inside a
-     [data-image-theme] frame, which always defines these (custom.css). */
+    [data-image-theme] frame, which always defines these (custom.css). */
   border: 1px solid var(--vp-c-border);
   border-radius: 8px;
   background: var(--vp-c-bg-soft);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 /* Hover-capable devices on md+ (Tailwind md = 768px) viewports: keep the image
-   clean until pointed at (or focused via keyboard). */
+  clean until pointed at (or focused via keyboard). */
 @media (hover: hover) and (min-width: 768px) {
   .image-theme-switch {
     opacity: 0;
@@ -178,11 +193,11 @@ const checkParentWidth = () => {
   }
 }
 /* Touch devices and sub-md viewports: always visible, compact (icons only),
-   and moved off the screenshot into the widened top mat (custom.css grows the
-   frame's top border to make room — its media query mirrors this one; keep
-   them in sync). Anchored to the image's top edge, so vertical placement
-   holds regardless of the mat's exact height — but the mat must still be
-   tall enough to contain the switch (see the clearance note in custom.css). */
+  and moved off the screenshot into the widened top mat (custom.css grows the
+  frame's top border to make room — its media query mirrors this one; keep
+  them in sync). Anchored to the image's top edge, so vertical placement
+  holds regardless of the mat's exact height — but the mat must still be
+  tall enough to contain the switch (see the clearance note in custom.css). */
 @media (hover: none), (max-width: 767px) {
   .image-theme-switch__label {
     display: none;

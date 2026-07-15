@@ -11,7 +11,7 @@ resources to be displayed to the map view they require a `coordinates` field, bu
 
 To enable map view for a resource, you need to add the `map_view` class attribute to a resource. That will add the view switcher to the <Index /> view.
 
-<Image src="/assets/img/map-view.png" width="3240" height="1970" alt="Avo view switcher" />
+<Image src="/assets/img/map-view.webp" width="3240" height="1970" alt="Avo view switcher" />
 
 ```ruby
 class Avo::Resources::City < Avo::BaseResource
@@ -84,7 +84,7 @@ self.map_view = {
   # ...
 }
 ```
-<Image src="/assets/img/extra-markers.png" width="3240" height="1970" alt="Map extra markers" />
+<Image src="/assets/img/extra-markers.webp" width="3240" height="1970" alt="Map extra markers" />
 </Option>
 
 ## Make it the default view

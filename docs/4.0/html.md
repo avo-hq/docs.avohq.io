@@ -112,7 +112,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<Image src="/assets/img/4_0/html/index-field-wrapper.png" dark-src="/assets/img/4_0/html/index-field-wrapper-dark.png" width="2824" height="664" alt="Index field wrapper" />
+<Image src="/assets/img/4_0/html/index-field-wrapper.webp" dark-src="/assets/img/4_0/html/index-field-wrapper-dark.webp" width="2824" height="664" alt="Index field wrapper" />
 
 </Option>
 
@@ -126,7 +126,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<Image src="/assets/img/4_0/html/show-field-wrapper.png" dark-src="/assets/img/4_0/html/show-field-wrapper-dark.png" width="1960" height="646" alt="Show field wrapper" />
+<Image src="/assets/img/4_0/html/show-field-wrapper.webp" dark-src="/assets/img/4_0/html/show-field-wrapper-dark.webp" width="1960" height="646" alt="Show field wrapper" />
 
 </Option>
 <Option name="Show label target">
@@ -139,7 +139,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<Image src="/assets/img/4_0/html/show-label-target.png" dark-src="/assets/img/4_0/html/show-label-target-dark.png" width="1960" height="646" alt="Show label target" />
+<Image src="/assets/img/4_0/html/show-label-target.webp" dark-src="/assets/img/4_0/html/show-label-target-dark.webp" width="1960" height="646" alt="Show label target" />
 
 </Option>
 <Option name="Show content target">
@@ -152,7 +152,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<Image src="/assets/img/4_0/html/show-content-target.png" dark-src="/assets/img/4_0/html/show-content-target-dark.png" width="1960" height="646" alt="Show content target" />
+<Image src="/assets/img/4_0/html/show-content-target.webp" dark-src="/assets/img/4_0/html/show-content-target-dark.webp" width="1960" height="646" alt="Show content target" />
 
 </Option>
 <Option name="Edit field wrapper">
@@ -165,7 +165,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<Image src="/assets/img/4_0/html/edit-field-wrapper.png" dark-src="/assets/img/4_0/html/edit-field-wrapper-dark.png" width="1960" height="548" alt="Edit field wrapper" />
+<Image src="/assets/img/4_0/html/edit-field-wrapper.webp" dark-src="/assets/img/4_0/html/edit-field-wrapper-dark.webp" width="1960" height="548" alt="Edit field wrapper" />
 
 </Option>
 <Option name="Edit label target">
@@ -178,7 +178,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<Image src="/assets/img/4_0/html/edit-label-target.png" dark-src="/assets/img/4_0/html/edit-label-target-dark.png" width="1960" height="548" alt="Edit label target" />
+<Image src="/assets/img/4_0/html/edit-label-target.webp" dark-src="/assets/img/4_0/html/edit-label-target-dark.webp" width="1960" height="548" alt="Edit label target" />
 
 </Option>
 <Option name="Edit content target">
@@ -191,7 +191,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<Image src="/assets/img/4_0/html/edit-content-target.png" dark-src="/assets/img/4_0/html/edit-content-target-dark.png" width="1960" height="548" alt="Edit content target" />
+<Image src="/assets/img/4_0/html/edit-content-target.webp" dark-src="/assets/img/4_0/html/edit-content-target-dark.webp" width="1960" height="548" alt="Edit content target" />
 
 </Option>
 <Option name="Edit input target">
@@ -204,7 +204,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<Image src="/assets/img/4_0/html/edit-input-target.png" dark-src="/assets/img/4_0/html/edit-input-target-dark.png" width="1960" height="548" alt="Edit input target" />
+<Image src="/assets/img/4_0/html/edit-input-target.webp" dark-src="/assets/img/4_0/html/edit-input-target-dark.webp" width="1960" height="548" alt="Edit input target" />
 
 
 </Option>

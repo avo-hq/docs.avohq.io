@@ -77,7 +77,7 @@ Avo.configure do |config|
 
 By default, the search results will be displayed as text. The text label will be the [title column](./resources.html#setting-the-title-of-the-resource) you previously configured.
 
-<img :src="('/assets/img/search/search_blank.jpg')" alt="Blank search" class="border mb-4" />
+<img :src="('/assets/img/search/search_blank.webp')" alt="Blank search" class="border mb-4" />
 
 You may configure that to be something more complex using the `as_label` option. That will take the final value of that field and display it as the label of the search result.
 
@@ -96,7 +96,7 @@ class PostResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/search/search_label.jpg')" alt="Search label" class="border mb-4" />
+<img :src="('/assets/img/search/search_label.webp')" alt="Search label" class="border mb-4" />
 
 Notice the `hide_on: :all` option used to hide the computed `complex_name` attribute from the rest of the views. That is because you **may or may not** want to show that attribute in other views.
 
@@ -139,7 +139,7 @@ class PostResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/search/search_description.jpg')" alt="Search description" class="border mb-4" />
+<img :src="('/assets/img/search/search_description.webp')" alt="Search description" class="border mb-4" />
 
 ### Avatar
 
@@ -168,13 +168,13 @@ class PostResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/search/search_avatar.jpg')" alt="Search avatar" class="border mb-4" />
+<img :src="('/assets/img/search/search_avatar.webp')" alt="Search avatar" class="border mb-4" />
 
 ### Header Help Text
 
 You may improve the results listing header by adding a piece of text highlighting the fields you are looking for or any other instruction for the user. You do that by using the `search_query_help` attribute. This attribute takes a string and appends it to the title of the resource.
 
-<img :src="('/assets/img/search/search_header_help.jpg')" alt="Search Header Help" class="border mb-4" />
+<img :src="('/assets/img/search/search_header_help.webp')" alt="Search Header Help" class="border mb-4" />
 
 ```ruby{6}
 class PostResource < Avo::BaseResource
@@ -192,7 +192,7 @@ end
 
 When a resource has the `search_query` attribute, a new search input will be displayed on the `Index` view.
 
-![](/assets/img/search/resource_search.jpg)
+![](/assets/img/search/resource_search.webp)
 
 ## Global search
 
@@ -203,7 +203,7 @@ Avo also has a global search feature. It will search through all the resources t
 
 You open the global search input by clicking the trigger on the navbar or by using the <kbd>CMD</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on windows).
 
-<img :src="('/assets/img/search/global_search_trigger.jpg')" alt="Global search trigger" class="border mb-4" />
+<img :src="('/assets/img/search/global_search_trigger.webp')" alt="Global search trigger" class="border mb-4" />
 
 ### Hide the global search
 

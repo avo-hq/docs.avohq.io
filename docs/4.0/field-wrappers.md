@@ -13,7 +13,7 @@ You'll probably never have to use these components and helpers by themselves, bu
 
 # Index field wrapper
 
-<Image src="/assets/img/4_0/field-wrappers/index_field_wrapper.png" dark-src="/assets/img/4_0/field-wrappers/index_field_wrapper-dark.png" width="2824" height="664" alt="Index field wrapper" />
+<Image src="/assets/img/4_0/field-wrappers/index_field_wrapper.webp" dark-src="/assets/img/4_0/field-wrappers/index_field_wrapper-dark.webp" width="2824" height="664" alt="Index field wrapper" />
 
 Each field displayed on the <Index /> view is wrapped in this component that regulates the way content is displayed and makes it easy to control some options.
 
@@ -95,8 +95,8 @@ The instance of the resource. It's usually passed in with the `field_wrapper_arg
 
 # Show & Edit field wrapper
 
-<Image src="/assets/img/4_0/field-wrappers/show_field_wrapper.png" dark-src="/assets/img/4_0/field-wrappers/show_field_wrapper-dark.png" width="1960" height="450" alt="Show field wrapper" />
-<Image src="/assets/img/4_0/field-wrappers/edit_field_wrapper.png" dark-src="/assets/img/4_0/field-wrappers/edit_field_wrapper-dark.png" width="1960" height="352" alt="Edit field wrapper" />
+<Image src="/assets/img/4_0/field-wrappers/show_field_wrapper.webp" dark-src="/assets/img/4_0/field-wrappers/show_field_wrapper-dark.webp" width="1960" height="450" alt="Show field wrapper" />
+<Image src="/assets/img/4_0/field-wrappers/edit_field_wrapper.webp" dark-src="/assets/img/4_0/field-wrappers/edit_field_wrapper-dark.webp" width="1960" height="352" alt="Edit field wrapper" />
 
 The <Show /> and <Edit /> field wrappers are actually the same component.
 
@@ -256,7 +256,7 @@ Display the field in a column layout with the label on top of the value
 ```
 </Option>
 
-<Image src="/assets/img/4_0/field-wrappers/stacked_field.png" dark-src="/assets/img/4_0/field-wrappers/stacked_field-dark.png" width="1520" height="236" alt="A stacked field: the label is displayed above the input" />
+<Image src="/assets/img/4_0/field-wrappers/stacked_field.webp" dark-src="/assets/img/4_0/field-wrappers/stacked_field-dark.webp" width="1520" height="236" alt="A stacked field: the label is displayed above the input" />
 
 
 <Option name="`style`">
@@ -280,4 +280,3 @@ The view where the field is diplayed so it knows if it's a <Show /> or <Edit /> 
 <% end %>
 ```
 </Option>
-

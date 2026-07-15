@@ -12,7 +12,7 @@ The `Location` field is used to display a point on a map.
 field :coordinates, as: :location
 ```
 
-<img :src="('/assets/img/fields/location-field.png')" alt="Location field" class="border mb-4" />
+<img :src="('/assets/img/fields/location-field.webp')" alt="Location field" class="border mb-4" />
 
 :::warning
 You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
@@ -51,7 +51,7 @@ By using this notation, Avo will grab the `latitude` and `longitude` from those 
 
 This will also render the <Edit /> view with two separate fields to edit the coordinates.
 
-<img :src="('/assets/img/fields/location-edit.png')" alt="Location field" class="border mb-4" />
+<img :src="('/assets/img/fields/location-edit.webp')" alt="Location field" class="border mb-4" />
 
 </Option>
 <Option name="`zoom`">

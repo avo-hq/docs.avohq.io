@@ -14,7 +14,7 @@ This is not the **dependable fields** feature but a placeholder so we can observ
 
 _What we'll be able to do at the end of reading these docs_
 
-<img :src="('/assets/img/stimulus/country-city-select.gif')" alt="Debug on input stimulus method" class="border mb-4" />
+<Image src="/assets/img/stimulus/country-city-select.webm" width="800" height="344" alt="Debug on input stimulus method" />
 
 :::info
 **Please note** that in order to have the JS code from your controllers loaded in Avo you'll need to add your asset pipeline using [these instructions](custom-asset-pipeline.html). It's really easier than it sounds. It's like you'd add a new JS file to your regular Rails app.
@@ -256,7 +256,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/index-field-wrapper.jpg')" alt="Index field wrapper" class="border mb-4" />
+<img :src="('/assets/img/stimulus/index-field-wrapper.webp')" alt="Index field wrapper" class="border mb-4" />
 
 ## Show field wrapper
 
@@ -268,7 +268,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/show-field-wrapper.jpg')" alt="Show field wrapper" class="border mb-4" />
+<img :src="('/assets/img/stimulus/show-field-wrapper.webp')" alt="Show field wrapper" class="border mb-4" />
 
 ## Show label target
 
@@ -280,7 +280,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/show-label-target.jpg')" alt="Show label target" class="border mb-4" />
+<img :src="('/assets/img/stimulus/show-label-target.webp')" alt="Show label target" class="border mb-4" />
 
 ## Show content target
 
@@ -292,7 +292,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/show-content-target.jpg')" alt="Show content target" class="border mb-4" />
+<img :src="('/assets/img/stimulus/show-content-target.webp')" alt="Show content target" class="border mb-4" />
 
 ## Edit field wrapper
 
@@ -304,7 +304,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/edit-field-wrapper.jpg')" alt="Edit field wrapper" class="border mb-4" />
+<img :src="('/assets/img/stimulus/edit-field-wrapper.webp')" alt="Edit field wrapper" class="border mb-4" />
 
 ## Edit label target
 
@@ -316,7 +316,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/edit-label-target.jpg')" alt="Edit label target" class="border mb-4" />
+<img :src="('/assets/img/stimulus/edit-label-target.webp')" alt="Edit label target" class="border mb-4" />
 
 ## Edit content target
 
@@ -328,7 +328,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/edit-content-target.jpg')" alt="Edit content target" class="border mb-4" />
+<img :src="('/assets/img/stimulus/edit-content-target.webp')" alt="Edit content target" class="border mb-4" />
 
 ## Edit input target
 
@@ -340,7 +340,7 @@ field :name, as: :text, html: {
 }
 ```
 
-<img :src="('/assets/img/stimulus/edit-input-target.jpg')" alt="Index field wrapper" class="border mb-4" />
+<img :src="('/assets/img/stimulus/edit-input-target.webp')" alt="Index field wrapper" class="border mb-4" />
 
 ## Composing the attributes together
 
@@ -403,7 +403,7 @@ field :has_country, as: :boolean, html: {
 field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h
 ```
 
-<img :src="('/assets/img/stimulus/toggle-method.gif')" alt="Toggle method" class="border mb-4" />
+<Image src="/assets/img/stimulus/toggle-method.webm" width="800" height="421" alt="Toggle method" />
 
 ### `resource-edit#disable`
 
@@ -424,7 +424,7 @@ field :has_skills, as: :boolean, html: {
 field :country, as: :select, options: Course.countries.map { |country| [country, country] }.to_h
 ```
 
-<img :src="('/assets/img/stimulus/disable-method.gif')" alt="Disable method" class="border mb-4" />
+<Image src="/assets/img/stimulus/disable-method.webm" width="800" height="421" alt="Disable method" />
 
 You may also target the `wrapper` element for that field if the target field has more than one input like the searchable polymorphic `belongs_to` field.
 
@@ -447,7 +447,7 @@ field :country, as: :select, options: Course.countries.map { |country| [country,
 
 For debugging purposes only, the `resource_edit` Stimulus JS controller provides the `debugOnInput` method that outputs the event and value for an action to the console. Use this just to make sure you targeted your fields correctly. It doesn't have any real use.
 
-<img :src="('/assets/img/stimulus/debug-on-input.gif')" alt="Debug on input stimulus method" class="border mb-4" />
+<Image src="/assets/img/stimulus/debug-on-input.webm" width="800" height="261" alt="Debug on input stimulus method" />
 
 ## Custom Stimulus controllers
 
@@ -655,7 +655,7 @@ export default class extends Controller {
 
 This is how the fields behave with this Stimulus JS controller.
 
-<img :src="('/assets/img/stimulus/country-city-select.gif')" alt="Debug on input stimulus method" class="border mb-4" />
+<Image src="/assets/img/stimulus/country-city-select.webm" width="800" height="344" alt="Debug on input stimulus method" />
 
 ## Use Stimulus JS in a tool
 

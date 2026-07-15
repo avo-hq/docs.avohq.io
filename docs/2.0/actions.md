@@ -11,7 +11,7 @@ For example, you might want to mark a user as active/inactive and optionally sen
 
 Once you attach an action to a resource using the `action` method, it will appear in the **Actions** dropdown. By default, actions appear on the `Index`, `Show`, and `Edit` views. Versions previous to 2.9 would only display the actions on the `Index` and `Show` views.
 
-![Actions dropdown](/assets/img/actions/actions-dropdown.gif)
+<Image src="/assets/img/actions/actions-dropdown.webm" width="710" height="462" alt="Actions dropdown" />
 
 :::info
 Since version <Version version="2.13" /> you may use the [customizable controls](./customizable-controls) feature to show the actions outside the dropdown.
@@ -61,7 +61,7 @@ More about this on the [authorization page](./authorization#attachments).
 :::
 
 
-![Actions](/assets/img/actions/action-fields.jpg)
+![Actions](/assets/img/actions/action-fields.webp)
 
 The `handle` method is where the magic happens. That is where you put your action logic. In this method, you will have access to the selected `models` (if there's only one, it will be automatically wrapped in an array) and the values passed to the `fields`.
 
@@ -125,7 +125,7 @@ end
 Since Avo 2.20 we deprecated the `fail` method in favor of `error`.
 :::
 
-<img :src="('/assets/img/actions/alert-responses.png')" alt="Avo alert responses" class="border inline-block" />
+<img :src="('/assets/img/actions/alert-responses.webp')" alt="Avo alert responses" class="border inline-block" />
 
 ### Run actions silently
 
@@ -396,13 +396,13 @@ class ReleaseFish < Avo::BaseAction
 end
 ```
 
-<!-- <img :src="('/assets/img/actions/actions-message.jpg')" alt="Avo message" class="border mb-4" /> -->
+<!-- <img :src="('/assets/img/actions/actions-message.webp')" alt="Avo message" class="border mb-4" /> -->
 
 ### Customize the buttons
 
 You may customize the labels for the action buttons using `confirm_button_label` and `cancel_button_label`.
 
-<img :src="('/assets/img/actions/actions-button-labels.jpg')" alt="Avo button labels" class="border mb-4" />
+<img :src="('/assets/img/actions/actions-button-labels.webp')" alt="Avo button labels" class="border mb-4" />
 
 ### No confirmation actions
 

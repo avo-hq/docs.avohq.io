@@ -18,7 +18,7 @@ field :status,
 
 Each row in the table uses one of these values. `archived` is not listed in any array, so it falls back to `neutral`.
 
-<Image src="/assets/img/4_0/fields/status/index.png" dark-src="/assets/img/4_0/fields/status/index-dark.png" width="1776" height="782" alt="An Avo index table with ID, Name, Status and Stage columns where Status rows show loading, pending, failed, success and neutral indicators and Stage rows show colored badges." prompt="index table with ID, Name and Status columns showing loading, failed, success and neutral status states" />
+<Image src="/assets/img/4_0/fields/status/index.webp" dark-src="/assets/img/4_0/fields/status/index-dark.webp" width="1776" height="782" alt="An Avo index table with ID, Name, Status and Stage columns where Status rows show loading, pending, failed, success and neutral indicators and Stage rows show colored badges." prompt="index table with ID, Name and Status columns showing loading, failed, success and neutral status states" />
 
 ## Options
 
@@ -73,5 +73,3 @@ Set the values for when the status is `neutral`.
 
 `[:holding, "waiting"]` or an array with strings or symbols that indicate a `neutral` state.
 </Option>
-
-

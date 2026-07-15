@@ -109,13 +109,13 @@ In this example, even if the `can_create` option is set to `true`, if the `UserP
 
 On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`self.title`](./../resources.html#setting-the-title-of-the-resource) value of the target resource.
 
-<Image src="/assets/img/associations/belongs-to-index.jpg" width="188" height="115" alt="Belongs to index" />
+<Image src="/assets/img/associations/belongs-to-index.webp" width="188" height="115" alt="Belongs to index" />
 
-<Image src="/assets/img/associations/belongs-to-show.jpg" width="531" height="81" alt="Belongs to show" />
+<Image src="/assets/img/associations/belongs-to-show.webp" width="531" height="81" alt="Belongs to show" />
 
 On the `Edit` and `New` views, Avo will generate a dropdown element with the available records where the user can change the associated model.
 
-<Image src="/assets/img/associations/belongs-to-edit.jpg" width="555" height="123" alt="Belongs to edit" />
+<Image src="/assets/img/associations/belongs-to-edit.webp" width="555" height="123" alt="Belongs to edit" />
 
 ## Polymorphic `belongs_to`
 
@@ -166,7 +166,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/associations/polymorphic_help.jpg" width="1616" height="370" alt="Belongs to ploymorphic help" />
+<Image src="/assets/img/associations/polymorphic_help.webp" width="1616" height="370" alt="Belongs to ploymorphic help" />
 
 ## Searchable `belongs_to`
 
@@ -187,8 +187,8 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/associations/searchable-closed.jpg" width="1232" height="184" alt="Belongs to searchable" />
-<Image src="/assets/img/associations/searchable-open.jpg" width="1556" height="1272" alt="Belongs to searchable" />
+<Image src="/assets/img/associations/searchable-closed.webp" width="1232" height="184" alt="Belongs to searchable" />
+<Image src="/assets/img/associations/searchable-open.webp" width="1556" height="1272" alt="Belongs to searchable" />
 
 `searchable` works with `polymorphic` `belongs_to` associations too.
 

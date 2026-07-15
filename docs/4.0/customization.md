@@ -38,7 +38,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/4_0/customization/per-page-pagination.gif" dark-src="/assets/img/4_0/customization/per-page-pagination-dark.gif" width="888" height="280" alt="An Avo index table with four rows and a pagination bar; the per-page picker opens upward to list 4, 12, 24 and 48, then closes." prompt="index table with 4 rows and pagination bar; per-page picker opens listing 4, 12, 24, 48 then closes" />
+<Image src="/assets/img/4_0/customization/per-page-pagination.webm" dark-src="/assets/img/4_0/customization/per-page-pagination-dark.webm" width="888" height="280" alt="An Avo index table with four rows and a pagination bar; the per-page picker opens upward to list 4, 12, 24 and 48, then closes." prompt="index table with 4 rows and pagination bar; per-page picker opens listing 4, 12, 24, 48 then closes" />
 
 ### Resources via per page
 
@@ -49,7 +49,7 @@ For `has_many` associations you can control how many resources are visible in th
 The `ResourceIndex` component supports two view types `:table` and `:grid`. You can change that by `config.default_view_type = :table`. Read more on the [grid view configuration page](./grid-view.html).
 
 
-<Image src="/assets/img/4_0/customization/view-type-table-grid.gif" dark-src="/assets/img/4_0/customization/view-type-table-grid-dark.gif" width="888" height="650" alt="An Avo Posts index with six records per page: the view switcher toggles between table rows and grid cards." prompt="Posts index with 4 per page; GIF toggling table and grid view with annotated view switcher" />
+<Image src="/assets/img/4_0/customization/view-type-table-grid.webm" dark-src="/assets/img/4_0/customization/view-type-table-grid-dark.webm" width="888" height="650" alt="An Avo Posts index with six records per page: the view switcher toggles between table rows and grid cards." prompt="Posts index with 4 per page; GIF toggling table and grid view with annotated view switcher" />
 ## ID links to resource
 
 On the **Index** view, each row has the controls component at the end, which allows the user to go to the **Show** and **Edit** views and delete that entry. If you have a long row and a not-so-wide display, it might not be easy to scroll to the right-most section to click the **Show** link.
@@ -66,7 +66,7 @@ end
 
 That will render all `id` fields in the **Index** view as a link to that resource.
 
-<Image src="/assets/img/4_0/customization/as-link-to-resource.png" dark-src="/assets/img/4_0/customization/as-link-to-resource-dark.png" width="1696" height="664" alt="An Avo index where each row's ID is rendered as a blue link to that record's show view, with a Name column." />
+<Image src="/assets/img/4_0/customization/as-link-to-resource.webp" dark-src="/assets/img/4_0/customization/as-link-to-resource-dark.webp" width="1696" height="664" alt="An Avo index where each row's ID is rendered as a blue link to that record's show view, with a Name column." />
 
 ## Open a record in your editor
 
@@ -87,37 +87,37 @@ The default targets [Cursor](https://cursor.com). To open files in a different e
 
 The resource header shows the icon next to the resource's name, linking to the resource file (e.g. `app/avo/resources/project.rb`).
 
-<Image src="/assets/img/4_0/customization/open-in-editor-resource.png" dark-src="/assets/img/4_0/customization/open-in-editor-resource-dark.png" width="1776" height="172" alt="An Avo Projects index header in development, with a small code icon right after the resource name — it opens the resource's source file in your editor — highlighted with a red box." prompt="A resource Index view header in development showing the resource name with the small open-in-your-editor code icon right after it, with a red box annotation highlighting the icon" />
+<Image src="/assets/img/4_0/customization/open-in-editor-resource.webp" dark-src="/assets/img/4_0/customization/open-in-editor-resource-dark.webp" width="1776" height="172" alt="An Avo Projects index header in development, with a small code icon right after the resource name — it opens the resource's source file in your editor — highlighted with a red box." prompt="A resource Index view header in development showing the resource name with the small open-in-your-editor code icon right after it, with a red box annotation highlighting the icon" />
 
 ### Actions
 
 When you run an action, the icon sits in the modal heading next to the action's name, linking to the action file.
 
-<Image src="/assets/img/4_0/customization/open-in-editor-action.png" dark-src="/assets/img/4_0/customization/open-in-editor-action-dark.png" width="2502" height="1158" alt="An Avo action confirmation modal open over the Posts index in development, its heading showing the action name with a small code icon next to it — it opens the action's source file in your editor — highlighted with a red box." prompt="An action confirmation modal open over the Index view, showing the action name in the modal heading with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
+<Image src="/assets/img/4_0/customization/open-in-editor-action.webp" dark-src="/assets/img/4_0/customization/open-in-editor-action-dark.webp" width="2502" height="1158" alt="An Avo action confirmation modal open over the Posts index in development, its heading showing the action name with a small code icon next to it — it opens the action's source file in your editor — highlighted with a red box." prompt="An action confirmation modal open over the Index view, showing the action name in the modal heading with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
 
 ### Filters
 
 Each filter in the filters panel shows the icon next to its name, linking to that filter's file.
 
-<Image src="/assets/img/4_0/customization/open-in-editor-filter.png" dark-src="/assets/img/4_0/customization/open-in-editor-filter-dark.png" width="308" height="319" alt="The Avo filters panel open on the Posts index in development, each filter name (Featured, Published) followed by a small code icon that opens the filter's source file in your editor, each icon highlighted with a red box." prompt="The filters panel open on an Index view in development, each filter name followed by the small open-in-your-editor code icon, with red box annotations highlighting the icons" />
+<Image src="/assets/img/4_0/customization/open-in-editor-filter.webp" dark-src="/assets/img/4_0/customization/open-in-editor-filter-dark.webp" width="308" height="319" alt="The Avo filters panel open on the Posts index in development, each filter name (Featured, Published) followed by a small code icon that opens the filter's source file in your editor, each icon highlighted with a red box." prompt="The filters panel open on an Index view in development, each filter name followed by the small open-in-your-editor code icon, with red box annotations highlighting the icons" />
 
 ### Dashboards
 
 The dashboard header shows the icon next to the dashboard's name, linking to the dashboard file.
 
-<Image src="/assets/img/4_0/customization/open-in-editor-dashboard.png" dark-src="/assets/img/4_0/customization/open-in-editor-dashboard-dark.png" width="1776" height="132" alt="An Avo dashboard header in development, with a small code icon right after the dashboard title — it opens the dashboard's source file in your editor — highlighted with a red box." prompt="A dashboard page header in development showing the dashboard title with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
+<Image src="/assets/img/4_0/customization/open-in-editor-dashboard.webp" dark-src="/assets/img/4_0/customization/open-in-editor-dashboard-dark.webp" width="1776" height="132" alt="An Avo dashboard header in development, with a small code icon right after the dashboard title — it opens the dashboard's source file in your editor — highlighted with a red box." prompt="A dashboard page header in development showing the dashboard title with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
 
 ### Cards
 
 Each card on a dashboard shows the icon next to its label, linking to that card's file.
 
-<Image src="/assets/img/4_0/customization/open-in-editor-card.png" dark-src="/assets/img/4_0/customization/open-in-editor-card-dark.png" width="470" height="178" alt="An Avo dashboard metric card in development, with a small code icon right after the card label — it opens the card's source file in your editor — highlighted with a red box." prompt="A dashboard card in development showing the card label with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
+<Image src="/assets/img/4_0/customization/open-in-editor-card.webp" dark-src="/assets/img/4_0/customization/open-in-editor-card-dark.webp" width="470" height="178" alt="An Avo dashboard metric card in development, with a small code icon right after the card label — it opens the card's source file in your editor — highlighted with a red box." prompt="A dashboard card in development showing the card label with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
 
 ### Forms
 
 If you use [Avo Forms](./forms-and-pages/forms), the form header shows the icon next to the form's title, linking to the form file.
 
-<Image src="/assets/img/4_0/customization/open-in-editor-form.png" dark-src="/assets/img/4_0/customization/open-in-editor-form-dark.png" width="1360" height="132" alt="An Avo Forms form header in development, with a small code icon right after the form title — it opens the form's source file in your editor — highlighted with a red box." prompt="An Avo Forms form page header in development showing the form title with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
+<Image src="/assets/img/4_0/customization/open-in-editor-form.webp" dark-src="/assets/img/4_0/customization/open-in-editor-form-dark.webp" width="1360" height="132" alt="An Avo Forms form header in development, with a small code icon right after the form title — it opens the form's source file in your editor — highlighted with a red box." prompt="An Avo Forms form page header in development showing the form title with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
 
 ## Modify controls placement and appearance
 
@@ -248,7 +248,7 @@ end
 
 When set to `false`, the sidebar will remain permanently open on desktop and users won't be able to collapse it.
 
-<Image src="/assets/img/4_0/customization/sidebar-toggle-hidden.png" dark-src="/assets/img/4_0/customization/sidebar-toggle-hidden-dark.png" width="2880" height="2360" alt="An Avo resource index on desktop with the sidebar permanently open and no toggle button in the navbar, because sidebar_toggle_visible is set to false." prompt="Full Avo resource index page with config.sidebar_toggle_visible = false: the sidebar is open on the left and the navbar at the top has NO collapse/expand toggle button next to the logo. Capture the entire page (sidebar + navbar + content) at a desktop width." />
+<Image src="/assets/img/4_0/customization/sidebar-toggle-hidden.webp" dark-src="/assets/img/4_0/customization/sidebar-toggle-hidden-dark.webp" width="2880" height="2360" alt="An Avo resource index on desktop with the sidebar permanently open and no toggle button in the navbar, because sidebar_toggle_visible is set to false." prompt="Full Avo resource index page with config.sidebar_toggle_visible = false: the sidebar is open on the left and the navbar at the top has NO collapse/expand toggle button next to the logo. Capture the entire page (sidebar + navbar + content) at a desktop width." />
 
 ## Body classes
 
@@ -519,7 +519,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/4_0/customization/skip_show_view.gif" dark-src="/assets/img/4_0/customization/skip_show_view-dark.gif" width="1170" height="428" alt="An Avo create form for a course: after saving, Avo redirects to the Edit view instead of Show when skip_show_view is enabled." />
+<Image src="/assets/img/4_0/customization/skip_show_view.webm" dark-src="/assets/img/4_0/customization/skip_show_view-dark.webm" width="1170" height="428" alt="An Avo create form for a course: after saving, Avo redirects to the Edit view instead of Show when skip_show_view is enabled." />
 
 ## Logger
 
@@ -633,7 +633,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/4_0/customization/click-row-to-view-record.gif" dark-src="/assets/img/4_0/customization/click-row-to-view-record-dark.gif" width="1170" height="528" alt="An Avo resource index where a row name cell is highlighted, clicked, and navigates to the record show view with panel and card DSL layout." />
+<Image src="/assets/img/4_0/customization/click-row-to-view-record.webm" dark-src="/assets/img/4_0/customization/click-row-to-view-record-dark.webm" width="1170" height="528" alt="An Avo resource index where a row name cell is highlighted, clicked, and navigates to the record show view with panel and card DSL layout." />
 </Option>
 
 ## Associations
@@ -664,11 +664,11 @@ The message `There are more records available.` is shown when the limit is reach
 Using [searchable](./associations/searchable.html) is recommended for listing unlimited records with better performance and user experience.
 
 <!-- REDO MANUALLY: this shot shows an open native browser <select> dropdown listing the
-     records + the disabled "There are more records available." option. Playwright cannot open
+    records + the disabled "There are more records available." option. Playwright cannot open
     a native browser dropdown (the OS renders it outside the page), so the automated pipeline
-     can't capture it. Re-shoot by hand (CleanShot) in both light and dark and replace the two
-     assets, keeping the same filenames. -->
-<Image src="/assets/img/4_0/customization/associations-lookup-list-limit.png" dark-src="/assets/img/4_0/customization/associations-lookup-list-limit-dark.png" width="1952" height="820" alt="An Avo new form where a belongs_to user select lists five records followed by a disabled 'There are more records available.' message when the lookup list limit is reached." />
+    can't capture it. Re-shoot by hand (CleanShot) in both light and dark and replace the two
+    assets, keeping the same filenames. -->
+<Image src="/assets/img/4_0/customization/associations-lookup-list-limit.webp" dark-src="/assets/img/4_0/customization/associations-lookup-list-limit-dark.webp" width="1952" height="820" alt="An Avo new form where a belongs_to user select lists five records followed by a disabled 'There are more records available.' message when the lookup list limit is reached." />
 
 ### `frames`
 
@@ -723,10 +723,10 @@ end
 When enabled, the `persistence` configuration ensures the following:
 
 1. **Associations Pagination**
-   The pagination state (e.g., `page` and `per_page` settings) for association tables (e.g., `has_many` fields) is retained across requests.
+  The pagination state (e.g., `page` and `per_page` settings) for association tables (e.g., `has_many` fields) is retained across requests.
 
 2. **Static Filters**
-   Static filter selections applied by users are preserved during their session.
+  Static filter selections applied by users are preserved during their session.
 
 ---
 

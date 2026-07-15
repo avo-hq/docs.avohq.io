@@ -173,8 +173,8 @@ rails generate avo:all_resources
 3. Excludes abstract classes (e.g. `ApplicationRecord`)
 4. Skips non-model files (concerns, POROs, `Current`, form objects)
 5. For each match, it:
-   - Generates a corresponding Avo resource using the `avo:resource` generator
-   - Handles errors gracefully, printing error messages if generation fails for any model
+  - Generates a corresponding Avo resource using the `avo:resource` generator
+  - Handles errors gracefully, printing error messages if generation fails for any model
 
 This is particularly useful when:
 
@@ -243,7 +243,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/resources/model-resource-mapping-1.jpg" width="2048" height="1280" alt="" />
+<Image src="/assets/img/resources/model-resource-mapping-1.webp" width="2048" height="1280" alt="" />
 
 So when you click on the Users sidebar menu item, you get to the `Index` page where all the users will be displayed. The information displayed will be the gravatar image, the first and the last name.
 
@@ -299,7 +299,7 @@ class Avo::Resources::Team < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/resources/model-resource-mapping-2.jpg" width="1524" height="714" alt="" />
+<Image src="/assets/img/resources/model-resource-mapping-2.webp" width="1524" height="714" alt="" />
 
 But now, if we visit the `Users` page, we will see the fields for the `TeamUser` resource instead of `User` resource, and that's because Avo fetches the resources in an alphabetical order, and `TeamUser` resource is before `User` resource. That's definitely not what we want.
 The same might happen if you reference the `User` in other associations throughout your resource files.
@@ -503,7 +503,7 @@ You might want to display information about the current resource to your users. 
 `self.description` is not displayed when the resource is rendered as an association (for example, in a `has_many` table on another resource's page). To show a description there, use the [`description` option on the association field](./associations/has_many#description).
 :::
 
-<Image src="/assets/img/resources/description.png" width="1272" height="216" alt="Avo message" />
+<Image src="/assets/img/resources/description.webp" width="1272" height="216" alt="Avo message" />
 
 There are two ways of setting the description. The quick way as a `string` and the more customizable way as a `block`.
 
@@ -611,7 +611,7 @@ end
 
 This option defaults to false
 
-<Image src="/assets/img/customization/confirm-on-save.png" width="2494" height="845" alt="Confirm on save" />
+<Image src="/assets/img/customization/confirm-on-save.webp" width="2494" height="845" alt="Confirm on save" />
 
 </Option>
 
@@ -619,7 +619,7 @@ This option defaults to false
 
 On <Index />, the most common view type is `:table`, but you might have some data that you want to display in a `:grid` or `:map`. You can change that by setting `default_view_type` to `:grid` and by adding the `grid` block.
 
-<Image src="/assets/img/grid-view.jpg" width="1312" height="1096" alt="Avo grid view" />
+<Image src="/assets/img/grid-view.webp" width="1312" height="1096" alt="Avo grid view" />
 
 ```ruby{2}
 class Avo::Resources::Post < Avo::BaseResource
@@ -707,7 +707,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/resources/buttons_on_footer.png" width="1276" height="594" alt="Buttons on footer" />
+<Image src="/assets/img/resources/buttons_on_footer.webp" width="1276" height="594" alt="Buttons on footer" />
 
 </Option>
 
@@ -745,7 +745,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/resources/record_selector.png" width="688" height="361" alt="Hide the record selector." />
+<Image src="/assets/img/resources/record_selector.webp" width="688" height="361" alt="Hide the record selector." />
 </Option>
 
 <Option name="`self.link_to_child_resource`">
@@ -784,7 +784,7 @@ class Avo::Resources::Course < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/filters/keep-filters-panel-open.gif" width="449" height="800" alt="Avo filters" />
+<Image src="/assets/img/filters/keep-filters-panel-open.webm" width="449" height="800" alt="Avo filters" />
 </Option>
 
 <Option name="`self.components`">
@@ -1034,7 +1034,7 @@ self.pagination = -> do
 end
 ```
 
-<Image src="/assets/img/resources/pagination/default.png" width="1025" height="65" alt="Default pagination" />
+<Image src="/assets/img/resources/pagination/default.webp" width="1025" height="65" alt="Default pagination" />
 <br><br>
 
 #### Countless
@@ -1047,7 +1047,7 @@ self.pagination = -> do
 end
 ```
 
-<Image src="/assets/img/resources/pagination/countless.png" width="1030" height="67" alt="Countless pagination" />
+<Image src="/assets/img/resources/pagination/countless.webp" width="1030" height="67" alt="Countless pagination" />
 <br><br>
 
 #### Countless and "pageless"
@@ -1061,7 +1061,7 @@ self.pagination = -> do
 end
 ```
 
-<Image src="/assets/img/resources/pagination/countless_empty_size.png" width="1029" height="62" alt="Countless pagination size empty" />
+<Image src="/assets/img/resources/pagination/countless_empty_size.webp" width="1029" height="62" alt="Countless pagination size empty" />
 </Option>
 
 <Option name="`cache_hash`">
@@ -1127,7 +1127,7 @@ end
 <br>
 <br>
 
-<Image src="/assets/img/resources/external-link.png" width="1293" height="426" alt="External link demonstration" />
+<Image src="/assets/img/resources/external-link.webp" width="1293" height="426" alt="External link demonstration" />
 
 It's often desirable to provide users with a link to the public path of a record outside of the Avo interface. The `external_link` option allows you to achieve this.
 
@@ -1188,4 +1188,4 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/cards_on_resource.png" width="2520" height="1258" alt="Cards on resources - Avo for Rails" />
+<Image src="/assets/img/cards_on_resource.webp" width="2520" height="1258" alt="Cards on resources - Avo for Rails" />

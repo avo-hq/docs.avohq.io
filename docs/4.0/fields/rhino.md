@@ -4,7 +4,7 @@ license: community
 
 # Rhino
 
-<Image src="/assets/img/4_0/fields/rhino/form.png" dark-src="/assets/img/4_0/fields/rhino/form-dark.png" width="1520" height="604" alt="An Avo edit-form card with a Rhino WYSIWYG editor showing the formatting toolbar above a text area with sample content." prompt="an exemple" />
+<Image src="/assets/img/4_0/fields/rhino/form.webp" dark-src="/assets/img/4_0/fields/rhino/form-dark.webp" width="1520" height="604" alt="An Avo edit-form card with a Rhino WYSIWYG editor showing the formatting toolbar above a text area with sample content." prompt="an exemple" />
 
 The wonderful [Rhino Editor](https://rhino-editor.vercel.app/) built by [Konnor Rogers](https://www.konnorrogers.com/) is available and fully integrated with Avo.
 

@@ -6,7 +6,7 @@ demoVideo: "https://youtu.be/wnWvzQyyo6A?t=2128"
 
 # Markdown
 
-<Image src="/assets/img/4_0/fields/markdown/markdown-field.gif" dark-src="/assets/img/4_0/fields/markdown/markdown-field-dark.gif" width="760" height="385" alt="Typing Markdown in the Marksmith editor, then toggling the Preview tab to see the rendered HTML" />
+<Image src="/assets/img/4_0/fields/markdown/markdown-field.webm" dark-src="/assets/img/4_0/fields/markdown/markdown-field-dark.webm" width="760" height="385" alt="Typing Markdown in the Marksmith editor, then toggling the Preview tab to see the rendered HTML" />
 
 :::info
 In Avo 3.17 we renamed the `markdown` field `easy_mde` and introduced this custom one based on the [Marksmith editor](https://github.com/avo-hq/marksmith).
