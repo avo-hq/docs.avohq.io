@@ -265,7 +265,7 @@ end
 
 <Option name="`counter.visible`" headingSize="4">
 
-A boolean or proc that shows the badge only in some cases. When it evaluates falsy, the count is hidden — the scope tab itself still shows (use the scope's own [`visible`](#visible) option to hide the tab):
+A boolean or proc that shows the badge only in some cases. When it evaluates falsy, the count is hidden — the scope tab itself still shows (use the scope's own [`visible`](#visible) option to hide the tab). On nested association indexes, the proc receives `parent_record` and `parent_resource` the same way the scope's [`visible`](#visible) option does:
 
 ```ruby{5}
 # app/avo/scopes/active.rb
