@@ -11,10 +11,12 @@ export default {
   load() {
     const v2 = getFiles('recipes', '2.0').map((i) => replaceExtension(i))
     const v3 = getFiles('guides', '3.0').map((i) => replaceExtension(i))
+    const v4 = getFiles('guides', '4.0').map((i) => replaceExtension(i))
 
     return {
       v2,
-      v3
+      v3,
+      v4,
     }
   }
 }
