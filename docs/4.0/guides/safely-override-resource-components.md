@@ -6,7 +6,7 @@ Sometimes it's the small things in a UI that make a big impact. One of those thi
 What makes this guide particularly valuable is that it demonstrates how to safely override and customize the resource index component without having to maintain the original index component on each version update. While we'll be focusing on the index component in this guide, this technique can be applied to any resource view component in Avo. This approach lets you add custom functionality while still benefiting from Avo's updates to the core components, ensuring your customizations remain compatible across upgrades.
 :::
 
-<Image src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_2.png" dark-src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_2-dark.png" width="3448" height="1412" alt="The Movies index with a blue MovieFest 2025 message banner above the table" />
+<Image src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_2.webp" dark-src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_2-dark.webp" width="3448" height="1412" alt="The Movies index with a blue MovieFest 2025 message banner above the table" />
 
 
 That's where this guide comes in. I'll walk you through how to inject a custom message at the top of the index view. We'll do this by creating a new component that extends the one Avo already uses to render index pages, setting it as the default for specific resources (or all of them), and customizing the view to display our message cleanly above the list.
@@ -75,7 +75,7 @@ end
 
 Now when you visit the Movies resource page, it will render the custom component, currently just showing the placeholder text.
 
-<Image src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_1.png" dark-src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_1-dark.png" width="3512" height="296" alt="The Movies index rendering the custom index component placeholder text" />
+<Image src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_1.webp" dark-src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_1-dark.webp" width="3512" height="296" alt="The Movies index rendering the custom index component placeholder text" />
 
 
 ## Render the parent view and add your message
@@ -121,7 +121,7 @@ All Tailwind CSS classes used in this guide are already part of Avo's design sys
 
 Now when you visit the Movies resource page, it will render the custom component that shows the original component and your custom message on top. 🎉🎉🎉
 
-<Image src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_2.png" dark-src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_2-dark.png" width="3448" height="1412" alt="The Movies index with a blue MovieFest 2025 message banner above the table" />
+<Image src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_2.webp" dark-src="/assets/img/4_0/guides/safely-override-resource-components/custom_index_component_2-dark.webp" width="3448" height="1412" alt="The Movies index with a blue MovieFest 2025 message banner above the table" />
 
 ## Apply this component to all the resources
 

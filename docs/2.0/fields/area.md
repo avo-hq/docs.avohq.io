@@ -12,7 +12,7 @@ The `Area` field is used to display one or more Polygons on a map.
 field :center_area, as: :area
 ```
 
-<img :src="('/assets/img/fields/area-field.png')" alt="Area field" class="border mb-4" />
+<img :src="('/assets/img/fields/area-field.webp')" alt="Area field" class="border mb-4" />
 
 :::warning
 You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
@@ -70,8 +70,8 @@ Fore example:
 
 ```ruby
 datapoint_options: { label: 'Paris City Center',
-                     tooltip: 'Bonjour mes amis!',
-                     color: '#009099' }
+                    tooltip: 'Bonjour mes amis!',
+                    color: '#009099' }
 ```
 
 #### Default
@@ -103,4 +103,4 @@ field :center_area,
 
 This will render a map like this:
 
-<img :src="('/assets/img/fields/area-field-with-options.png')" alt="Area field with options" class="border mb-4" />
+<img :src="('/assets/img/fields/area-field-with-options.webp')" alt="Area field with options" class="border mb-4" />

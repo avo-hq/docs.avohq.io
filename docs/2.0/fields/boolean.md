@@ -7,7 +7,7 @@ license: community
 
 The `Boolean` field renders a `input[type="checkbox"]` on **Form** views and a nice green `check` icon/red `X` icon on the **Show** and **Index** views.
 
-<img :src="('/assets/img/fields/boolean.jpg')" alt="Boolean field" title="Boolean field on the Show view" class="border mb-4" />
+<img :src="('/assets/img/fields/boolean.webp')" alt="Boolean field" title="Boolean field on the Show view" class="border mb-4" />
 
 ```ruby
 field :is_published,

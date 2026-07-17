@@ -62,7 +62,7 @@ The partial is ready for you to customize further.
 </div>
 ```
 
-<Image src="/assets/img/4_0/resource-tools/resource-tool-partial.png" dark-src="/assets/img/4_0/resource-tools/resource-tool-partial-dark.png" width="2344" height="444" alt="Avo resource tool partial" />
+<Image src="/assets/img/4_0/resource-tools/resource-tool-partial.webp" dark-src="/assets/img/4_0/resource-tools/resource-tool-partial-dark.webp" width="2344" height="444" alt="Avo resource tool partial" />
 
 ## Partial context
 

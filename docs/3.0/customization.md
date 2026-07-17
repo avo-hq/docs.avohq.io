@@ -28,13 +28,13 @@ There are a few customization options to change how resources are displayed in t
 
 You may customize how many resources you can view per page with `config.per_page = 24`.
 
-<Image src="/assets/img/resource-index/per-page-config.jpg" width="648" height="438" alt="Per page config" />
+<Image src="/assets/img/resource-index/per-page-config.webp" width="648" height="438" alt="Per page config" />
 
 ### Per page steps
 
 Similarly customize the per-page steps in the per-page picker with `config.per_page_steps = [12, 24, 48, 72]`.
 
-<Image src="/assets/img/resource-index/per-page-steps.jpg" width="628" height="422" alt="Per page config" />
+<Image src="/assets/img/resource-index/per-page-steps.webp" width="628" height="422" alt="Per page config" />
 
 ### Resources via per page
 
@@ -47,11 +47,11 @@ The `ResourceIndex` component supports two view types `:table` and `:grid`. You 
 <div class="grid grid-flow-row sm:grid-flow-col sm:grid-cols-2 gap-2 w-full">
   <div class="w-full">
     <strong>Table view</strong>
-    <Image src="/assets/img/customization/table-view.png" width="2400" height="1500" alt="Table view" />
+    <Image src="/assets/img/customization/table-view.webp" width="2400" height="1500" alt="Table view" />
   </div>
   <div class="w-full">
     <strong>Grid view</strong>
-    <Image src="/assets/img/customization/grid-view.jpg" width="1312" height="1096" alt="Grid view" />
+    <Image src="/assets/img/customization/grid-view.webp" width="1312" height="1096" alt="Grid view" />
   </div>
 </div>
 
@@ -71,7 +71,7 @@ end
 
 That will render all `id` fields in the **Index** view as a link to that resource.
 
-<Image src="/assets/img/fields-reference/as-link-to-resource.jpg" width="694" height="166" alt="As link to resource" />
+<Image src="/assets/img/fields-reference/as-link-to-resource.webp" width="694" height="166" alt="As link to resource" />
 
 ## Resource controls on the left or both sides
 
@@ -92,7 +92,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/customization/resource-controls-left.jpg" width="1206" height="920" alt="Resource controls on the left side" />
+<Image src="/assets/img/customization/resource-controls-left.webp" width="1206" height="920" alt="Resource controls on the left side" />
 
 <VersionReq version="3.13.7" class="mt-2" /> You're able to render the controls on both sides
 
@@ -166,7 +166,7 @@ You can access the context data with `::Avo::Current.context` object.
 
 By default, Avo ships with breadcrumbs enabled.
 
-<Image src="/assets/img/customization/breadcrumbs.jpg" width="618" height="297" alt="Avo breadcrumbs" />
+<Image src="/assets/img/customization/breadcrumbs.webp" width="618" height="297" alt="Avo breadcrumbs" />
 
 You may disable them using the `display_breadcrumbs` configuration option.
 
@@ -467,7 +467,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/customization/skip_show_view.gif" width="1870" height="880" alt="" />
+<Image src="/assets/img/customization/skip_show_view.webm" width="1870" height="880" alt="" />
 
 ## Logger
 
@@ -575,7 +575,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/3_0/customization/click-row-to-view-record.gif" width="" height="" alt="Click to view record in Avo" />
+<Image src="/assets/img/3_0/customization/click-row-to-view-record.webm" width="" height="" alt="Click to view record in Avo" />
 </Option>
 
 ## Associations lookup list limit
@@ -598,7 +598,7 @@ The message `There are more records available.` is shown when the limit is reach
 
 Using [searchable](./associations/belongs_to.html#searchable) is recommended for listing unlimited records with better performance and user experience.
 
-<Image src="/assets/img/customization/associations-lookup-list-limit.png" width="2466" height="1098" alt="Associations lookup list limit configuration" />
+<Image src="/assets/img/customization/associations-lookup-list-limit.webp" width="2466" height="1098" alt="Associations lookup list limit configuration" />
 </Option>
 
 <Option name="`persistence`">
@@ -638,10 +638,10 @@ end
 When enabled, the `persistence` configuration ensures the following:
 
 1. **Associations Pagination**
-   The pagination state (e.g., `page` and `per_page` settings) for association tables (e.g., `has_many` fields) is retained across requests.
+  The pagination state (e.g., `page` and `per_page` settings) for association tables (e.g., `has_many` fields) is retained across requests.
 
 2. **Static Filters**
-   Static filter selections applied by users are preserved during their session.
+  Static filter selections applied by users are preserved during their session.
 
 ---
 

@@ -15,7 +15,7 @@ The `HasOne` association shows the unfolded view of your `has_one` association. 
 field :admin, as: :has_one
 ```
 
-<Image src="/assets/img/4_0/associations/has-one-panel.png" dark-src="/assets/img/4_0/associations/has-one-panel-dark.png" width="2344" height="1764" alt="An Avo Team show view with the admin has_one association panel titled Admin, showing the unfolded child user record with its Id and user information fields plus the Detach control." />
+<Image src="/assets/img/4_0/associations/has-one-panel.webp" dark-src="/assets/img/4_0/associations/has-one-panel-dark.webp" width="2344" height="1764" alt="An Avo Team show view with the admin has_one association panel titled Admin, showing the unfolded child user record with its Id and user information fields plus the Detach control." />
 
 ## Options
 

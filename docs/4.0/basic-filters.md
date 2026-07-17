@@ -122,7 +122,7 @@ end
 
 Avo has several types of filters available [Boolean filter](#Boolean%20Filter), [Select filter](#Select%20Filter), [Multiple select filter](#Multiple%20select%20filter), [Text filter](#Text%20Filter) and [Date time filter](#Date%20time%20Filter).
 
-<Image src="/assets/img/4_0/filters/types.png" dark-src="/assets/img/4_0/filters/types-dark.png" width="1618" height="1446" alt="Avo Filters button with the open panel showing boolean, multiple select, text, and date time filter types on the Users index." />
+<Image src="/assets/img/4_0/filters/types.webp" dark-src="/assets/img/4_0/filters/types-dark.webp" width="1618" height="1446" alt="Avo Filters button with the open panel showing boolean, multiple select, text, and date time filter types on the Users index." />
 
 ### Filter values
 
@@ -349,7 +349,7 @@ class Avo::Filters::PostStatus < Avo::Filters::MultipleSelectFilter
 end
 ```
 
-<Image src="/assets/img/4_0/filters/multiple-select.png" dark-src="/assets/img/4_0/filters/multiple-select-dark.png" width="1618" height="1207" alt="Avo multiple select filter named Status showing Admins and Non admins options with a Filter by Status button, over the Users index table." />
+<Image src="/assets/img/4_0/filters/multiple-select.webp" dark-src="/assets/img/4_0/filters/multiple-select-dark.webp" width="1618" height="1207" alt="Avo multiple select filter named Status showing Admins and Non admins options with a Filter by Status button, over the Users index table." />
 
 ### Dynamic options
 
@@ -470,15 +470,15 @@ By default, the input allows users to select both a date and a time.
 
 - `:date`
   - This option restricts the input to date selection only, ideal for scenarios where time input is unnecessary.
-  <Image src="/assets/img/4_0/filters/datetime-date.png" dark-src="/assets/img/4_0/filters/datetime-date-dark.png" class="mt-2" width="1618" height="1207" alt="Avo date time filter with type date showing the Birthday filter and flatpickr calendar with a date selected, over the Users index table." />
+  <Image src="/assets/img/4_0/filters/datetime-date.webp" dark-src="/assets/img/4_0/filters/datetime-date-dark.webp" class="mt-2" width="1618" height="1207" alt="Avo date time filter with type date showing the Birthday filter and flatpickr calendar with a date selected, over the Users index table." />
 
 - `:time`
   - This option limits the input to time selection only, suitable to apply where only the time is relevant.
-  <Image src="/assets/img/4_0/filters/datetime-time.png" dark-src="/assets/img/4_0/filters/datetime-time-dark.png" class="mt-2" width="1618" height="1207" alt="Avo date time filter with type time: the Birthday filter input and flatpickr time picker, over the Users index table." />
+  <Image src="/assets/img/4_0/filters/datetime-time.webp" dark-src="/assets/img/4_0/filters/datetime-time-dark.webp" class="mt-2" width="1618" height="1207" alt="Avo date time filter with type time: the Birthday filter input and flatpickr time picker, over the Users index table." />
 
 - `:date_time`
   - This combined option enables both date and time selection, providing a comprehensive input for more detailed needs.
-  <Image src="/assets/img/4_0/filters/datetime-datetime.png" dark-src="/assets/img/4_0/filters/datetime-datetime-dark.png" class="mt-2" width="1618" height="1207" alt="Avo date time filter with type date_time showing the Birthday filter and combined date/time picker, over the Users index table." />
+  <Image src="/assets/img/4_0/filters/datetime-datetime.webp" dark-src="/assets/img/4_0/filters/datetime-datetime-dark.webp" class="mt-2" width="1618" height="1207" alt="Avo date time filter with type date_time showing the Birthday filter and combined date/time picker, over the Users index table." />
 
 ### Mode
 Defines whether the input allows selection of a single date or a range of dates.
@@ -492,7 +492,7 @@ By default, the input permits users to select a range of dates, ideal for scenar
 ##### Possible values
 - `:range`
   - Allows users to choose a start and end date, making it suitable for applications that require a time span, such as reservations or scheduling.
-  <Image src="/assets/img/4_0/filters/datetime-range.png" dark-src="/assets/img/4_0/filters/datetime-range-dark.png" class="mt-2" width="1618" height="1207" alt="Avo date time filter in range mode showing the Birthday filter and a selected date range in flatpickr, over the Users index table." />
+  <Image src="/assets/img/4_0/filters/datetime-range.webp" dark-src="/assets/img/4_0/filters/datetime-range-dark.webp" class="mt-2" width="1618" height="1207" alt="Avo date time filter in range mode showing the Birthday filter and a selected date range in flatpickr, over the Users index table." />
   :::info
   In `:range` mode the `value` will be formatted as `"2024-08-13 to 2024-08-16"`.
 
@@ -501,7 +501,7 @@ By default, the input permits users to select a range of dates, ideal for scenar
 
 - `:single`
   - Limits the selection to a single date, perfect for use cases where only one specific day needs to be selected, such as an appointment or event date.
-  <Image src="/assets/img/4_0/filters/datetime-single.png" dark-src="/assets/img/4_0/filters/datetime-single-dark.png" class="mt-2" width="1618" height="1207" alt="Avo date time filter in single mode showing the Birthday filter and one selected date in flatpickr, over the Users index table." />
+  <Image src="/assets/img/4_0/filters/datetime-single.webp" dark-src="/assets/img/4_0/filters/datetime-single-dark.webp" class="mt-2" width="1618" height="1207" alt="Avo date time filter in single mode showing the Birthday filter and one selected date in flatpickr, over the Users index table." />
 
 ### `picker_options`
 
@@ -646,7 +646,7 @@ class Avo::Filters::CourseCity < Avo::Filters::BooleanFilter
 end
 ```
 
-<Image src="/assets/img/4_0/filters/dynamic-options.png" dark-src="/assets/img/4_0/filters/dynamic-options-dark.png" width="1628" height="925" alt="Avo Filters button with Course country and city filters where selecting USA populates US cities, over the Courses index table." />
+<Image src="/assets/img/4_0/filters/dynamic-options.webp" dark-src="/assets/img/4_0/filters/dynamic-options-dark.webp" width="1628" height="925" alt="Avo Filters button with Course country and city filters where selecting USA populates US cities, over the Courses index table." />
 
 The `countries` method above will check if the `Avo::Filters::CourseCountryFilter` has anything selected. If so, get the names of the chosen ones. This way, you show only the cities from the selected countries and not all of them.
 
@@ -764,7 +764,7 @@ end
 Besides checking if the countries filter is populated (`applied_filters["Avo::Filters::CourseCountryFilter"].present?`), we also want to allow the user to customize the cities filter further, so we need to check if the user has added a value to that filter (`applied_filters["Avo::Filters::CourseCountryFilter"].blank?`).
 If these conditions are true, the country filter has a value, and the user hasn't selected any values from the cities filter, we can react to it and set a value as the default one.
 
-<Image src="/assets/img/4_0/filters/country-city-filters.gif" dark-src="/assets/img/4_0/filters/country-city-filters-dark.gif" width="1100" height="625" alt="Courses table index: Filters button highlighted, panel opens with the city filter empty message, USA is ticked, and US cities populate with the first one auto-selected." />
+<Image src="/assets/img/4_0/filters/country-city-filters.webm" dark-src="/assets/img/4_0/filters/country-city-filters-dark.webm" width="1100" height="625" alt="Courses table index: Filters button highlighted, panel opens with the city filter empty message, USA is ticked, and US cities populate with the first one auto-selected." />
 
 Of course, you can modify the logic and return all kinds of values based on your needs.
 
@@ -807,6 +807,10 @@ end
 There are scenarios where you wouldn't want to close the filters panel when you change the values. For that, you can use the `keep_filters_panel_open` resource option.
 
 More on this on the [`keep_filters_panel_open` resource option](./resources#self_keep_filters_panel_open).
+
+## Open a filter in your editor
+
+In the `development` environment, each filter's title in the filters panel shows a small `</>` icon that opens the filter's source file in your editor. See [Open a record in your editor](./customization.html#open-a-record-in-your-editor) for how it works and how to configure it for your editor.
 
 ## Filter arguments
 

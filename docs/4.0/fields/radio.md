@@ -4,7 +4,7 @@ license: community
 
 # Radio
 
-<Image src="/assets/img/4_0/fields/radio/form.gif" dark-src="/assets/img/4_0/fields/radio/form-dark.gif" width="760" height="162" alt="An Avo edit-form card with a radio field labelled User role, animating through Administrator, Manager and Writer options." prompt="GIF with select options" />
+<Image src="/assets/img/4_0/fields/radio/form.webm" dark-src="/assets/img/4_0/fields/radio/form-dark.webm" width="760" height="162" alt="An Avo edit-form card with a radio field labelled User role, animating through Administrator, Manager and Writer options." prompt="GIF with select options" />
 
 The `Radio` field is used to render radio buttons. It's useful when only one value can be selected in a given options group.
 

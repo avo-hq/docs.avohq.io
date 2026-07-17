@@ -147,8 +147,8 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/faq/newline/edit.png" width="1560" height="1160" alt="Render new lines" />
-<Image src="/assets/img/faq/newline/default.png" width="1560" height="1160" alt="Render new lines" />
+<Image src="/assets/img/faq/newline/edit.webp" width="1560" height="1160" alt="Render new lines" />
+<Image src="/assets/img/faq/newline/default.webp" width="1560" height="1160" alt="Render new lines" />
 
 You can change how you display the information by using the `format_using` option.
 
@@ -166,7 +166,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/faq/newline/simple_format.png" width="1560" height="1160" alt="Render new lines" />
+<Image src="/assets/img/faq/newline/simple_format.webp" width="1560" height="1160" alt="Render new lines" />
 
 ### Use the `white-space: pre-line` style rule
 
@@ -182,7 +182,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/faq/newline/whitespace.png" width="1560" height="1160" alt="Render new lines" />
+<Image src="/assets/img/faq/newline/whitespace.webp" width="1560" height="1160" alt="Render new lines" />
 
 ### Use the `whitespace-pre-line` class
 
@@ -198,7 +198,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/faq/newline/whitespace.png" width="1560" height="1160" alt="Render new lines" />
+<Image src="/assets/img/faq/newline/whitespace.webp" width="1560" height="1160" alt="Render new lines" />
 
 ## Getting `No valid predicate for combinator` error when filtering
 
@@ -210,4 +210,3 @@ config.ignore_unknown_conditions = true # [!code ++]
 ```
 
 This was originally discussed in [this issue](https://github.com/avo-hq/avo/issues/2622).
-

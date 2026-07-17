@@ -89,7 +89,7 @@ const config = {
       { text: "FAQ", link: "/4.0/faq.html" },
       { text: "Team", link: "/team.html" },
       { text: "Releases", link: "https://avohq.io/releases" },
-      { text: "Gems versions", link: "https://avohq.io/gems" },
+      { text: "Gems", link: "https://avohq.io/gems" },
       { text: "Blog", link: "https://avohq.io/blog" },
       {
         text: "Version", items: [
@@ -370,8 +370,11 @@ const config = {
                 ? window.location.pathname.match(/^\/(\d+\.\d+)\//)
                 : null
 
-              if (match) {
-                const versionFilter = 'version:' + match[1]
+              // Scope to the current docs version; default to 4.0 on unversioned
+              // pages (home, /team) so search doesn't span every version.
+              const version = match ? match[1] : '4.0'
+              {
+                const versionFilter = 'version:' + version
                 const withFilter = function (request) {
                   // Only scope our docs index; leave any other index (e.g. Ask AI) untouched.
                   if (!request || request.indexName !== 'avohq') return request
@@ -405,8 +408,9 @@ const config = {
           const match = typeof window !== 'undefined'
             ? window.location.pathname.match(/^\/(\d+)\.\d+\//)
             : null
-          if (!match) return null
-          return html`<div class="vp-docsearch-version-note">Searching <strong>v${match[1]}</strong> docs</div>`
+          // Default to v4 on unversioned pages (home, /team) to match the filter.
+          const major = match ? match[1] : '4'
+          return html`<div class="vp-docsearch-version-note">Searching <strong>v${major}</strong> docs</div>`
         },
       },
     },

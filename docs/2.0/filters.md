@@ -10,7 +10,7 @@ Filters allow you to better scope the index queries for records you are looking 
 
 Avo has two types of filters available at the moment [Boolean filter](#boolean-filter) and [Select filter](#select-filter).
 
-<img :src="('/assets/img/filters.png')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<img :src="('/assets/img/filters.webp')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 
 ### Filter values
 
@@ -215,7 +215,7 @@ class PostStatusFilter < Avo::Filters::MultipleSelectFilter
 end
 ```
 
-<img :src="('/assets/img/multiple-select-filter.png')" alt="Avo multiple select filter" style="width: 300px;" class="border mb-4" />
+<img :src="('/assets/img/multiple-select-filter.webp')" alt="Avo multiple select filter" style="width: 300px;" class="border mb-4" />
 
 ## Dynamic options
 
@@ -403,7 +403,7 @@ class CourseCityFilter < Avo::Filters::BooleanFilter
 end
 ```
 
-<img :src="('/assets/img/filters/dynamic-options.png')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<img :src="('/assets/img/filters/dynamic-options.webp')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
 
 The `countries` method above will check if the `CourseCountryFilter` has anything selected. If so, get the names of the chosen ones. This way, you show only the cities from the selected countries and not all of them.
 
@@ -521,7 +521,7 @@ end
 Besides checking if the countries filter is populated (`applied_filters["CourseCountryFilter"].present?`), we also want to allow the user to customize the cities filter further, so we need to check if the user has added a value to that filter (`applied_filters["CourseCityFilter"].blank?`).
 If these conditions are true, the country filter has a value, and the user hasn't selected any values from the cities filter, we can react to it and set a value as the default one.
 
-<img :src="('/assets/img/filters/dynamic-options.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters/dynamic-options.webm" width="528" height="800" alt="Avo filters" />
 
 Of course, you can modify the logic and return all kinds of values based on your needs.
 
@@ -531,7 +531,7 @@ Of course, you can modify the logic and return all kinds of values based on your
 
 There might be times when you will want to show a message to the user when you're not returning any options. You may customize that message using the `empty_message` option.
 
-<img :src="('/assets/img/filters/empty-message.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters/empty-message.webm" width="528" height="800" alt="Avo filters" />
 
 ```ruby{4}
 # app/avo/filters/course_city_filter.rb
@@ -580,7 +580,7 @@ class CourseResource < Avo::BaseResource
 end
 ```
 
-<img :src="('/assets/img/filters/keep-filters-panel-open.gif')" alt="Avo filters" style="width: 300px;" class="border mb-4" />
+<Image src="/assets/img/filters/keep-filters-panel-open.webm" width="449" height="800" alt="Avo filters" />
 
 ## Visibility
 

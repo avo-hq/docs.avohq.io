@@ -6,7 +6,7 @@ It's common to have JSON objects stored in your database. So you might want to d
 field :meta, as: :code, language: 'javascript'
 ```
 
-<Image src="/assets/img/4_0/guides/format-ruby-object-to-json/before.png" dark-src="/assets/img/4_0/guides/format-ruby-object-to-json/before-dark.png" width="1960" height="340" alt="The meta JSON rendered on one hard-to-read wrapped line in a code field" />
+<Image src="/assets/img/4_0/guides/format-ruby-object-to-json/before.webp" dark-src="/assets/img/4_0/guides/format-ruby-object-to-json/before-dark.webp" width="1960" height="340" alt="The meta JSON rendered on one hard-to-read wrapped line in a code field" />
 
 But that will be hard to read on one line like that. So we need to format it.
 
@@ -20,7 +20,7 @@ field :meta, as: :code, language: 'javascript' do
 end
 ```
 
-<Image src="/assets/img/4_0/guides/format-ruby-object-to-json/after.png" dark-src="/assets/img/4_0/guides/format-ruby-object-to-json/after-dark.png" width="1960" height="860" alt="The meta JSON pretty-printed multi-line in the code field" />
+<Image src="/assets/img/4_0/guides/format-ruby-object-to-json/after.webp" dark-src="/assets/img/4_0/guides/format-ruby-object-to-json/after-dark.webp" width="1960" height="860" alt="The meta JSON pretty-printed multi-line in the code field" />
 
 That's better! You'll notice that the field is missing on the `Edit` view. That's normal for a computed field to be hidden on `Edit`.
 To fix that, we should add another one just for editing.

@@ -45,7 +45,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/fields/record_link/record-link.png" width="876" height="160" alt="Record link field" />
+<Image src="/assets/img/fields/record_link/record-link.webp" width="876" height="160" alt="Record link field" />
 
 ## Options
 

@@ -62,7 +62,7 @@ The partial is ready for you to customize further.
 </div>
 ```
 
-<img :src="('/assets/img/resource-tools/resource-tool-partial.png')" alt="Avo resource tool partial" class="border mb-4" />
+<img :src="('/assets/img/resource-tools/resource-tool-partial.webp')" alt="Avo resource tool partial" class="border mb-4" />
 
 ## Partial context
 

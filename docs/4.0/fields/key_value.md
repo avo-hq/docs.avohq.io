@@ -10,7 +10,7 @@ The `KeyValue` field makes it easy to edit flat key-value pairs stored in `JSON`
 ```ruby
 field :meta, as: :key_value
 ```
-<Image src="/assets/img/4_0/fields/key_value/index.png" dark-src="/assets/img/4_0/fields/key_value/index-dark.png" width="1976" height="468" alt="An Avo New (create) form card showing a KeyValue field with three editable key/value rows (environment: production, region: eu-west, tier: premium), each row with a drag handle and a delete button, plus an add-row button in the Key/Value header." prompt="from create page" />
+<Image src="/assets/img/4_0/fields/key_value/index.webp" dark-src="/assets/img/4_0/fields/key_value/index-dark.webp" width="1976" height="468" alt="An Avo New (create) form card showing a KeyValue field with three editable key/value rows (environment: production, region: eu-west, tier: premium), each row with a drag handle and a delete button, plus an add-row button in the Key/Value header." prompt="from create page" />
 
 ## Options
 

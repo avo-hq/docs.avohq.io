@@ -9,7 +9,7 @@ license: community
 Before Avo 3.17 this field was called `markdown`. It was renamed to `easy_mde` so we can add our own implementation with `markdown`.
 :::
 
-<Image src="/assets/img/fields/easy_mde.jpg" width="906" height="421" alt="Trix field" />
+<Image src="/assets/img/fields/easy_mde.webp" width="906" height="421" alt="Trix field" />
 
 The `easy_mde` field renders a [EasyMDE Markdown Editor](https://github.com/Ionaru/easy-markdown-editor) and is associated with a text or textarea column in the database.
 `easy_mde` field converts text within the editor into raw Markdown text and stores it back in the database.

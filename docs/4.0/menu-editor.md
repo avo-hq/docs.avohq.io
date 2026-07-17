@@ -35,7 +35,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/4_0/menu-editor/v4/main.png" dark-src="/assets/img/4_0/menu-editor/v4/main-dark.png" width="256" height="312" alt="Avo main menu" />
+<Image src="/assets/img/4_0/menu-editor/v4/main.webp" dark-src="/assets/img/4_0/menu-editor/v4/main-dark.webp" width="256" height="312" alt="Avo main menu" />
 
 For now, Avo supports editing only two menus, `main_menu` and `profile_menu`. However, that might change in the future by allowing you to write custom menus for other parts of your app.
 
@@ -421,7 +421,7 @@ end
 The `all_resources` helper is taking into account your [authorization](./authorization) rules, so make sure you have `def index?` enabled in your resource policy.
 :::
 
-<Image src="/assets/img/4_0/menu-editor/v4/all-helpers.png" dark-src="/assets/img/4_0/menu-editor/v4/all-helpers-dark.png" width="256" height="312" alt="Avo menu editor" />
+<Image src="/assets/img/4_0/menu-editor/v4/all-helpers.webp" dark-src="/assets/img/4_0/menu-editor/v4/all-helpers-dark.webp" width="256" height="312" alt="Avo menu editor" />
 
 ## Item visibility
 
@@ -545,7 +545,7 @@ section "Resources", icon: "heroicons/outline/academic-cap", collapsable: true d
 end
 ```
 
-<Image src="/assets/img/4_0/menu-editor/collapsable.jpg" dark-src="/assets/img/4_0/menu-editor/collapsable-dark.jpg" width="248" height="156" alt="Avo menu editor" />
+<Image src="/assets/img/4_0/menu-editor/collapsable.webp" dark-src="/assets/img/4_0/menu-editor/collapsable-dark.webp" width="248" height="156" alt="Avo menu editor" />
 
 ### Default collapsed state
 
@@ -560,7 +560,7 @@ section "Resources", icon: "heroicons/outline/academic-cap", collapsable: true, 
 end
 ```
 
-<Image src="/assets/img/4_0/menu-editor/collapsed.jpg" dark-src="/assets/img/4_0/menu-editor/collapsed-dark.jpg" width="248" height="66" alt="Avo menu editor" />
+<Image src="/assets/img/4_0/menu-editor/collapsed.webp" dark-src="/assets/img/4_0/menu-editor/collapsed-dark.webp" width="248" height="66" alt="Avo menu editor" />
 
 You might want to allow your users to hide certain items from view.
 
@@ -601,7 +601,7 @@ Avo.configure do |config|
 end
 ```
 
-<Image src="/assets/img/4_0/menu-editor/profile-menu.png" dark-src="/assets/img/4_0/menu-editor/profile-menu-dark.png" width="316" height="150" alt="Avo profile menu" />
+<Image src="/assets/img/4_0/menu-editor/profile-menu.webp" dark-src="/assets/img/4_0/menu-editor/profile-menu-dark.webp" width="316" height="150" alt="Avo profile menu" />
 
 ## Forms in profile menu
 

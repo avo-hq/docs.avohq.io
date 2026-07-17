@@ -6,8 +6,7 @@ demoVideo: "https://youtu.be/wnWvzQyyo6A?t=2128"
 
 # Markdown
 
-<!-- <Image src="/assets/img/fields/markdown/markdown-field.gif" alt="Markdown field" size="800x427" /> -->
-<Image src="/assets/img/4_0/fields/markdown/markdown-field.gif" dark-src="/assets/img/4_0/fields/markdown/markdown-field-dark.gif" width="1000" height="427" alt="An Avo New (create) form card showing the Markdown field powered by Marksmith: an animation switching from the Write tab (example markdown with heading, list, blockquote, link and code block) to the Preview tab showing the rendered HTML." prompt="create a gif that will display how markdown is working with some exemples" />
+<Image src="/assets/img/4_0/fields/markdown/markdown-field.webm" dark-src="/assets/img/4_0/fields/markdown/markdown-field-dark.webm" width="760" height="385" alt="Typing Markdown in the Marksmith editor, then toggling the Preview tab to see the rendered HTML" />
 
 :::info
 In Avo 3.17 we renamed the `markdown` field `easy_mde` and introduced this custom one based on the [Marksmith editor](https://github.com/avo-hq/marksmith).

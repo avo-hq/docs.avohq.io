@@ -1,11 +1,11 @@
 ---
 license: advanced
-outline: [2, 3]
+outline: [2, 4]
 ---
 
 # Scopes
 
-<Image src="/assets/img/4_0/scopes/scopes.png" dark-src="/assets/img/4_0/scopes/scopes-dark.png" width="2824" height="1208" alt="Scopes bar" />
+<Image src="/assets/img/4_0/scopes/scopes.webp" dark-src="/assets/img/4_0/scopes/scopes-dark.webp" width="2824" height="1208" alt="Scopes bar" />
 
 :::warning
 This section is a work in progress.
@@ -75,9 +75,8 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
+
 </Option>
-
-
 
 <Option name="`remove_scope_all`" headingSize="3">
 
@@ -92,6 +91,7 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
+
 </Option>
 
 ## Options
@@ -115,8 +115,9 @@ Inside each proc, you can call `scoped_query`, but use it with caution as it exe
 
 This value is going to be displayed on the scopes bar as the name of the scope.
 
-
-The `scoped_query` method can be used to compute and display the record count. Please see [the recipe](./guides/display-scope-record-count.html) on how to enable it.
+:::tip Record counts
+To show a record count next to the scope, use the built-in [`counter`](#counter) option instead of computing it inside `name`. It supports lazy and on-hover loading so it won't slow down the page.
+:::
 
 ```ruby{3}
 # app/avo/scopes/even_id.rb
@@ -132,6 +133,7 @@ class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   self.name = -> { "Even (#{scoped_query.count})" }
 end
 ```
+
 </Option>
 
 ---
@@ -155,6 +157,7 @@ class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   }
 end
 ```
+
 </Option>
 
 ---
@@ -179,6 +182,7 @@ class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
   self.scope = -> { query.where("#{resource.model_key}.id % 2 = ?", "0") }
 end
 ```
+
 </Option>
 
 ---
@@ -201,13 +205,106 @@ end
 
 </Option>
 
+---
+
+<Option name="`counter`" headingSize="3">
+
+Displays a count badge next to the scope's label showing how many records match the scope. This is the built-in, recommended alternative to computing the count manually inside `name`.
+
+The count is computed against the resource's authorization-scoped query and ignores any active search or filters, so it always reflects the whole scope.
+
+Set it to `true` (or `:eager`) to render the count during the request:
+
+```ruby{3}
+# app/avo/scopes/active.rb
+class Avo::Scopes::Active < Avo::Scopes::BaseScope
+  self.counter = true
+end
+```
+
+:::warning Performance Note
+An eager counter runs its `count` query on every page load. For large tables, use `:lazy` or `:hover` to defer it.
+:::
+
+For finer control, pass a Hash with any of the keys below.
+
+<Option name="`counter.loading`" headingSize="4">
+
+Controls when the count is fetched.
+
+| Mode                 | Behavior                                                              |
+| -------------------- | --------------------------------------------------------------------- |
+| `:eager` (or `true`) | Count is computed during the request and rendered inline.             |
+| `:lazy`              | Count loads in a deferred turbo-frame after the page paints.          |
+| `:hover`             | Same as `:lazy` — loads in a deferred turbo-frame after paint.        |
+
+```ruby{3}
+# app/avo/scopes/active.rb
+class Avo::Scopes::Active < Avo::Scopes::BaseScope
+  self.counter = :lazy
+end
+```
+
+</Option>
+
+<Option name="`counter.count`" headingSize="4">
+
+A custom count value. The `count` proc runs in the execution context with access to `query`, `resource`, and `scope`, where `query` is the unfiltered base query. It can return any value (not just a number) — whatever it returns becomes `value` in the `format` block:
+
+```ruby{3-6}
+# app/avo/scopes/active.rb
+class Avo::Scopes::Active < Avo::Scopes::BaseScope
+  self.counter = {
+    loading: :lazy,
+    count: -> { query.active.count }
+  }
+end
+```
+
+</Option>
+
+<Option name="`counter.visible`" headingSize="4">
+
+A boolean or proc that shows the badge only in some cases. When it evaluates falsy, the count is hidden — the scope tab itself still shows (use the scope's own [`visible`](#visible) option to hide the tab). On nested association indexes, the proc receives `parent_record` and `parent_resource` the same way the scope's [`visible`](#visible) option does:
+
+```ruby{5}
+# app/avo/scopes/active.rb
+class Avo::Scopes::Active < Avo::Scopes::BaseScope
+  self.counter = {
+    loading: :lazy,
+    visible: -> { current_user.admin? }
+  }
+end
+```
+
+</Option>
+
+<Option name="`counter.format`" headingSize="4">
+
+By default the count is rendered with `number_to_delimited` (e.g. `1,234`). A `format` block renders it however you like. It runs in the execution context — the count is available as `value` (the result of your `count` block, or the computed count when you don't set one), alongside `query`, `resource`, and `scope`, where `query` is the same unfiltered base query used by `counter.count` — and can return any value (coerced to a string):
+
+```ruby{5}
+# app/avo/scopes/active.rb
+class Avo::Scopes::Active < Avo::Scopes::BaseScope
+  self.counter = {
+    loading: :lazy,
+    format: -> { "#{value} #{resource.name.pluralize.downcase}" }
+  }
+end
+```
+
+The `format` block can return plain text, so it also works as a text-only badge — it renders even when the scope has no numeric count. If your `format` block raises, Avo falls back to the default delimited format, so a bad formatter never breaks the page.
+
+</Option>
+
+</Option>
+
 ## Full example
 
 ```ruby
 # app/avo/scopes/even_id.rb
 class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
-  # Please see the performance note above if you're using `scoped_query`
-  self.name = -> { "Even (#{scoped_query.count})" }
+  self.name = "Even"
 
   # This will compute the description based on the resource name
   self.description = -> {
@@ -219,5 +316,8 @@ class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
 
   # Only show this scope to admins
   self.visible = -> { current_user.admin? }
+
+  # Show a record count badge, loaded lazily so it won't slow down the page
+  self.counter = :lazy
 end
 ```

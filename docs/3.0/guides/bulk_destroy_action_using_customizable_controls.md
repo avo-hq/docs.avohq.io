@@ -13,7 +13,7 @@ The bulk destroy action is particularly useful when you need to:
 - Provide clear warnings about the irreversible nature of the action
 - Handle the deletion process with proper error handling
 
-<Image src="/assets/img/guides/bulk_destroy/bulk_destroy_image.png" width="1937" height="1031" alt="Bulk destroy action" />
+<Image src="/assets/img/guides/bulk_destroy/bulk_destroy_image.webp" width="1937" height="1031" alt="Bulk destroy action" />
 
 ## Bulk destroy action
 
@@ -107,4 +107,3 @@ We value your experience with this bulk destroy implementation! Whether you've s
 - **Alternative approaches**: If you've implemented bulk destroy differently, we'd love to hear about your solution
 
 You can share your feedback through [Feedback: Bulk destroy action using customizable controls](https://github.com/avo-hq/avo/discussions/3930).
-

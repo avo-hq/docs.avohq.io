@@ -36,13 +36,13 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/tabs-and-panels/tabs.png" width="1024" height="640" alt="Avo tabs" />
+<Image src="/assets/img/tabs-and-panels/tabs.webp" width="1024" height="640" alt="Avo tabs" />
 
 To use tabs, you need to open a `tabs` group block. Next, you add your `tab` block where you add fields and panels like you're used to on resource root. Most fields like `text`, `number`, `gravatar`, `date`, etc. need to be placed in a `panel`. However, the `has_one`, `has_many`, and `has_and_belongs_to_many` have their own panels, and they don't require a `panel` or a `tab`.
 
 The tab `name` is mandatory is what will be displayed on the tab switcher. The tab `description` is what will be displayed in the tooltip on hover.
 
-<Image src="/assets/img/tabs-and-panels/tab-name-description.png" width="640" height="211" alt="Avo tab name and description" />
+<Image src="/assets/img/tabs-and-panels/tab-name-description.webp" width="640" height="211" alt="Avo tab name and description" />
 
 ## Tabs on Show view
 
@@ -68,8 +68,8 @@ end
 <!-- The panel has a few parts available -->
 
 
-<!-- <img :src="('/assets/img/tabs-and-panels/panel-top.png')" alt="Avo Panels" class="border mb-4" /> -->
-<!-- <img :src="('/assets/img/tabs-and-panels/panel-bottom.png')" alt="Avo Panels" class="border mb-4" /> -->
+<!-- <img :src="('/assets/img/tabs-and-panels/panel-top.webp')" alt="Avo Panels" class="border mb-4" /> -->
+<!-- <img :src="('/assets/img/tabs-and-panels/panel-bottom.webp')" alt="Avo Panels" class="border mb-4" /> -->
 
 
 ## Display counter indicator on tabs switcher

@@ -16,9 +16,9 @@ class Avo::Resources::Team < Avo::BaseResource
   def fields
     field :preview, as: :preview
     field :name,
-     as: :text,
-     sortable: true,
-     show_on: :preview
+    as: :text,
+    sortable: true,
+    show_on: :preview
     field :color,
       as: Avo::Fields::ColorPickerField,
       hide_on: :index,
@@ -29,4 +29,4 @@ class Avo::Resources::Team < Avo::BaseResource
   end
 end
 ```
-<Image src="/assets/img/4_0/record-previews/preview-field.png" dark-src="/assets/img/4_0/record-previews/preview-field-dark.png" width="1419" height="467" alt="Record preview popover open over the Team index table, triggered from a row" />
+<Image src="/assets/img/4_0/record-previews/preview-field.webp" dark-src="/assets/img/4_0/record-previews/preview-field-dark.webp" width="1419" height="467" alt="Record preview popover open over the Team index table, triggered from a row" />

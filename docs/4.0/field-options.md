@@ -32,7 +32,7 @@ To customize the label, you can use the `name` property to pick a different labe
 field :is_available, as: :boolean, name: "Availability"
 ```
 
-<Image src="/assets/img/4_0/field-options/change-field-name.png" dark-src="/assets/img/4_0/field-options/change-field-name-dark.png" width="1776" height="570" alt="An Avo index table with three columns — ID, Name and a boolean column whose header reads “Availability”, the custom label set via the field's name option, highlighted." prompt="index with the column header Availability anotated" />
+<Image src="/assets/img/4_0/field-options/change-field-name.webp" dark-src="/assets/img/4_0/field-options/change-field-name-dark.webp" width="1776" height="570" alt="An Avo index table with three columns — ID, Name and a boolean column whose header reads “Availability”, the custom label set via the field's name option, highlighted." prompt="index with the column header Availability anotated" />
 
 ## Showing / Hiding fields on different views
 
@@ -126,7 +126,7 @@ field :is_writer, as: :text, format_using: -> {
 
 This example snippet will make the `:is_writer` field generate `👍` or `👎` emojis instead of `1` or `0` values on display views and the values `1` or `0` on form views.
 
-<Image src="/assets/img/4_0/field-options/format-using.png" dark-src="/assets/img/4_0/field-options/format-using-dark.png" width="1776" height="566" alt="An Avo index table with three columns — ID, Name and an “Is writer” column whose cells show a 👍 or 👎 emoji rendered via format_using instead of the raw value." prompt="Index view text field shown as a thumbs up/down emoji via format_using instead of the raw boolean value" />
+<Image src="/assets/img/4_0/field-options/format-using.webp" dark-src="/assets/img/4_0/field-options/format-using-dark.webp" width="1776" height="566" alt="An Avo index table with three columns — ID, Name and an “Is writer” column whose cells show a 👍 or 👎 emoji rendered via format_using instead of the raw value." prompt="Index view text field shown as a thumbs up/down emoji via format_using instead of the raw boolean value" />
 
 Another example:
 
@@ -165,7 +165,7 @@ Example on how to format a field in the index and show views:
 field :is_writer, format_display_using: -> { value.present? ? '👍' : '👎' }
 ```
 
-<Image src="/assets/img/4_0/field-options/format-display-using.png" dark-src="/assets/img/4_0/field-options/format-display-using-dark.png" width="1520" height="520" alt="An Avo Show view details panel card laid out in three rows — ID spanning the full width on top, First name and Last name side by side, then Is writer and User Email side by side — the “Is writer” value showing a 👍 emoji rendered via format_display_using." />
+<Image src="/assets/img/4_0/field-options/format-display-using.webp" dark-src="/assets/img/4_0/field-options/format-display-using-dark.webp" width="1520" height="520" alt="An Avo Show view details panel card laid out in three rows — ID spanning the full width on top, First name and Last name side by side, then Is writer and User Email side by side — the “Is writer” value showing a 👍 emoji rendered via format_display_using." />
 
 </Option>
 
@@ -198,7 +198,7 @@ Add it to any field to make that column sortable in the <Index /> view.
 field :name, as: :text, sortable: true
 ```
 
-<Image src="/assets/img/4_0/field-options/sortable.png" dark-src="/assets/img/4_0/field-options/sortable-dark.png" width="1776" height="664" alt="An Avo index table for Projects sorted by the Name column, whose header shows the active sort-arrow indicator for the sortable name text field." />
+<Image src="/assets/img/4_0/field-options/sortable.webp" dark-src="/assets/img/4_0/field-options/sortable-dark.webp" width="1776" height="664" alt="An Avo index table for Projects sorted by the Name column, whose header shows the active sort-arrow indicator for the sortable name text field." />
 
 **Related:**
   - [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
@@ -259,7 +259,7 @@ Some fields support the `placeholder` option, which will be passed to the inputs
 field :name, as: :text, placeholder: 'John Doe'
 ```
 
-<Image src="/assets/img/4_0/field-options/placeholder.png" dark-src="/assets/img/4_0/field-options/placeholder-dark.png" width="1256" height="254" alt="An Avo New form text field whose empty input shows the grey placeholder text “John Doe”." prompt="New form empty text input showing the placeholder text John Doe" />
+<Image src="/assets/img/4_0/field-options/placeholder.webp" dark-src="/assets/img/4_0/field-options/placeholder-dark.webp" width="1256" height="254" alt="An Avo New form text field whose empty input shows the grey placeholder text “John Doe”." prompt="New form empty text input showing the placeholder text John Doe" />
 
 ## Required
 To indicate that a field is mandatory, you can utilize the `required` option, which adds an asterisk to the field as a visual cue.
@@ -271,7 +271,7 @@ Avo automatically examines each field to determine if the associated attribute r
 field :name, as: :text, required: true
 ```
 
-<Image src="/assets/img/4_0/field-options/required.png" dark-src="/assets/img/4_0/field-options/required-dark.png" width="1256" height="254" alt="An Avo Edit form text field whose label has a red asterisk marking it as required." prompt="Edit form field label with a red asterisk marking it as required" />
+<Image src="/assets/img/4_0/field-options/required.webp" dark-src="/assets/img/4_0/field-options/required-dark.webp" width="1256" height="254" alt="An Avo Edit form text field whose label has a red asterisk marking it as required." prompt="Edit form field label with a red asterisk marking it as required" />
 
 <DemoVideo demo-video="https://youtu.be/peKt90XhdOg?t=937" />
 
@@ -290,7 +290,7 @@ When you need to prevent the user from editing a field, the `disabled` option wi
 field :name, as: :text, disabled: true
 ```
 
-<Image src="/assets/img/4_0/field-options/disabled.png" dark-src="/assets/img/4_0/field-options/disabled-dark.png" width="1256" height="254" alt="An Avo Edit form with a disabled, greyed-out 'Name' text field above a normal, editable 'Website' field — the contrast shows the disabled state." prompt="Edit form showing a disabled greyed-out text field" />
+<Image src="/assets/img/4_0/field-options/disabled.webp" dark-src="/assets/img/4_0/field-options/disabled-dark.webp" width="1256" height="254" alt="An Avo Edit form with a disabled, greyed-out 'Name' text field above a normal, editable 'Website' field — the contrast shows the disabled state." prompt="Edit form showing a disabled greyed-out text field" />
 
 
 ### Disabled as a block
@@ -310,7 +310,7 @@ When you need to prevent the user from editing a field, the `readonly` option wi
 field :name, as: :text, readonly: true
 ```
 
-<Image src="/assets/img/4_0/field-options/readonly.png" dark-src="/assets/img/4_0/field-options/readonly-dark.png" width="1256" height="254" alt="An Avo Edit form with a readonly, greyed-out 'Name' text field above a normal, editable 'Website' field — the contrast shows the readonly state." prompt="Edit form showing a readonly text field" />
+<Image src="/assets/img/4_0/field-options/readonly.webp" dark-src="/assets/img/4_0/field-options/readonly-dark.webp" width="1256" height="254" alt="An Avo Edit form with a readonly, greyed-out 'Name' text field above a normal, editable 'Website' field — the contrast shows the readonly state." prompt="Edit form showing a readonly text field" />
 
 ## Default Value
 
@@ -337,7 +337,7 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css', help: "This ena
 field :password, as: :password, help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
 ```
 
-<Image src="/assets/img/4_0/field-options/help.png" dark-src="/assets/img/4_0/field-options/help-dark.png" width="1440" height="284" alt="An Avo Edit form 'Custom CSS' text field with a line of help text shown directly below the input explaining what the field does." prompt="Edit form field with help text shown below the input" />
+<Image src="/assets/img/4_0/field-options/help.webp" dark-src="/assets/img/4_0/field-options/help-dark.webp" width="1440" height="284" alt="An Avo Edit form 'Custom CSS' text field with a line of help text shown directly below the input explaining what the field does." prompt="Edit form field with help text shown below the input" />
 
 </Option>
 
@@ -353,7 +353,7 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css', label_help: "Th
 field :password, as: :password, label_help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
 ```
 
-<Image src="/assets/img/4_0/field-options/label-help.png" dark-src="/assets/img/4_0/field-options/label-help-dark.png" width="1440" height="248" alt="An Avo Edit form 'Custom css' code field with a line of help text shown directly below the field label explaining what the field does." prompt="Form field with label_help text shown below the field label" />
+<Image src="/assets/img/4_0/field-options/label-help.webp" dark-src="/assets/img/4_0/field-options/label-help-dark.webp" width="1440" height="248" alt="An Avo Edit form 'Custom css' code field with a line of help text shown directly below the field label explaining what the field does." prompt="Form field with label_help text shown below the field label" />
 
 </Option>
 
@@ -414,7 +414,7 @@ field :name, as: :text, link_to_record: true
 field :email, as: :gravatar, link_to_record: true
 ```
 
-<Image src="/assets/img/4_0/field-options/link-to-record.png" dark-src="/assets/img/4_0/field-options/link-to-record-dark.png" width="1776" height="758" alt="An Avo index table where the Name column cells are rendered as blue links to each record via link_to_record." prompt="Index table cell rendered as a link to the record via link_to_record" />
+<Image src="/assets/img/4_0/field-options/link-to-record.webp" dark-src="/assets/img/4_0/field-options/link-to-record-dark.webp" width="1776" height="758" alt="An Avo index table where the Name column cells are rendered as blue links to each record via link_to_record." prompt="Index table cell rendered as a link to the record via link_to_record" />
 
 You can add this property on [`id`](./fields/id.html), [`text`](./fields/text.html), and [`gravatar`](./fields/gravatar.html) fields.
 
@@ -430,7 +430,7 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-<Image src="/assets/img/4_0/field-options/align-text.png" dark-src="/assets/img/4_0/field-options/align-text-dark.png" width="1776" height="758" alt="An Avo index table where the Users required number column is right-aligned via the html option, its numbers hugging the right edge of the column, contrasting with the left-aligned text columns." prompt="Index table numeric column right-aligned via the html option" />
+<Image src="/assets/img/4_0/field-options/align-text.webp" dark-src="/assets/img/4_0/field-options/align-text-dark.webp" width="1776" height="758" alt="An Avo index table where the Users required number column is right-aligned via the html option, its numbers hugging the right edge of the column, contrasting with the left-aligned text columns." prompt="Index table numeric column right-aligned via the html option" />
 
 ## Stacked layout
 
@@ -442,11 +442,11 @@ field :meta, as: :key_value, stacked: true
 
 #### `inline` layout (default)
 
-<Image src="/assets/img/4_0/field-options/stacked-inline.png" dark-src="/assets/img/4_0/field-options/stacked-inline-dark.png" width="1940" height="448" alt="An Avo show view key_value 'Meta' field in the default inline layout, the field label beside a key/value control listing three pairs (environment: production, region: eu-west, tier: premium)." prompt="show page key_value field with the default inline layout, label beside value" />
+<Image src="/assets/img/4_0/field-options/stacked-inline.webp" dark-src="/assets/img/4_0/field-options/stacked-inline-dark.webp" width="1940" height="448" alt="An Avo show view key_value 'Meta' field in the default inline layout, the field label beside a key/value control listing three pairs (environment: production, region: eu-west, tier: premium)." prompt="show page key_value field with the default inline layout, label beside value" />
 
 #### `stacked` layout
 
-<Image src="/assets/img/4_0/field-options/stacked-stacked.png" dark-src="/assets/img/4_0/field-options/stacked-stacked-dark.png" width="2124" height="528" alt="An Avo show view key_value 'Meta' field in the stacked layout, the field label shown above a key/value control listing three pairs (environment: production, region: eu-west, tier: premium)." prompt="key_value field with the stacked layout, label above value" />
+<Image src="/assets/img/4_0/field-options/stacked-stacked.webp" dark-src="/assets/img/4_0/field-options/stacked-stacked-dark.webp" width="2124" height="528" alt="An Avo show view key_value 'Meta' field in the stacked layout, the field label shown above a key/value control listing three pairs (environment: production, region: eu-west, tier: premium)." prompt="key_value field with the stacked layout, label above value" />
 
 ## Global `stacked` layout
 
@@ -536,7 +536,7 @@ You may find more detailed information about the HTML attributes [here](./html.h
 
 <Option name="`summarizable`">
 
-<Image src="/assets/img/4_0/field-options/summarizable.gif" dark-src="/assets/img/4_0/field-options/summarizable-dark.gif" width="900" height="397" alt="An animated Avo Projects index table (ID, Name, Status, Country columns) with the summarizable summary popover open over it, cycling a hover across each segment of the Status distribution pie chart to reveal each value's label and count." prompt="Index table header showing the summarizable chart icon and summary popover for a column" />
+<Image src="/assets/img/4_0/field-options/summarizable.webm" dark-src="/assets/img/4_0/field-options/summarizable-dark.webm" width="900" height="397" alt="An animated Avo Projects index table (ID, Name, Status, Country columns) with the summarizable summary popover open over it, cycling a hover across each segment of the Status distribution pie chart to reveal each value's label and count." prompt="Index table header showing the summarizable chart icon and summary popover for a column" />
 
 The `summarizable` option allows you to generate a visual summary of a column's data distribution. This feature provides a quick and intuitive overview of your dataset by displaying a chart within the table header.
 
