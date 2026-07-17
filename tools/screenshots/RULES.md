@@ -71,8 +71,8 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
    frame downscaled to the display width is crisp; an upscaled small frame is not. Pick `width`
    so the GIF displays near its captured CSS width (don't blow it up past it). (2026-06-22: the
    summarizable GIF shipped pixelated because a 434px DPR-1 clip was upscaled to 760px; fixed by
-   DPR 2 + downscale-only.) **Then compress the finished GIF — see lesson #21 for the weight cap
-   and `gifsicle` recipe; a long or photographic recording is what balloons past ~1MB.**
+   DPR 2 + downscale-only.) **Then convert the finished GIF to VP9/WebM before it ships — see
+   lesson #21 for the format policy and weight cap; motion clips never land as `.gif`.**
 3a. **To animate a chart/data demo, step a hover across each datapoint.** A GIF of a chart
    (the `summarizable` distribution popover) reads best when it pauses on EACH segment in turn,
    showing that segment's tooltip — `snap(hold)` per datapoint so each holds ~0.9–1.1s. Chart.js
@@ -633,20 +633,21 @@ markdown: `<Image src="…/x.png" dark-src="…/x-dark.png" … />`. Dark = doub
     to the pagination box cuts the panel's bottom border/padding (a stray grey strip at the
     image's bottom edge). Walk up to the wrapping panel (`.card`/`turbo-frame`), take ITS
     bottom, and add the breathing room below that. Same idea as lesson 4, one container up.
-21. **Cap the shipped file weight — a print-screen that renders fine can still be a multi-MB
-    payload that bloats the page and trips SEO "image too large" audits.** Optimize EVERY capture
-    before it lands, in place (same filename + format, so no `<Image>` refs change), and only
-    overwrite if the result is actually smaller AND still a valid image (`magick identify`).
-    Recipes proven 2026-07-06:
-    - **PNG** → `pngquant --quality=65-92 --speed 1` then `oxipng -o max --strip safe` — ~70% off,
-      visually lossless (text stays crisp, no banding).
-    - **Flat-UI GIF** (static background, a cursor/panel moving) → `gifsicle -O3 --lossy=80` — 85–95%
-      off; the win is inter-frame delta on the unchanging background, not the lossy pass.
-    - **Photographic / busy GIF** (many pixels change every frame — e.g. `media-library-rhino`,
-      347 frames of photo thumbnails) → delta optimization can't help, so `--lossy=80` alone may
-      even GROW the file (it spills the 256-colour global table into per-frame local colormaps).
-      Cap colours (`gifsicle -O3 --lossy=100 --colors 128`) to get ~20–30%, and if that's still
-      heavy the only real lever is **shortening the recording or thinning frames** — don't lossy-crush
-      a photo GIF into mush.
-    Targets: PNG under ~400KB, GIF under ~1MB. Anything above, re-encode. (Audit pass: 4_0 images
-    went 66MB → 22MB / −66% this way; the 1.9MB rhino GIF was the one irreducible survivor.)
+21. **Ship modern formats, not raw PNG/GIF — a print-screen that renders fine can still be a
+    multi-MB payload that bloats the page and trips SEO "image too large" audits.** This is the
+    format the `4_0` assets standardised on (Jul 2026, "Compress docs images: PNG/JPG→WebP,
+    GIF→VP9 WebM" — cut asset weight 184MB → ~35MB with no visible quality loss).
+    **`apply.mjs` now does this automatically:** capture/record still work in PNG/GIF (annotation
+    overlays + the no-dep dimension read need a lossless raster), and the transcode happens once,
+    when the finished asset lands in docs — so a spec's `out: "…/x.png"` ships as `x.webp` and a
+    `out: "…/x.gif"` ships as `x.webm`, with the `<Image>` tag pointing at the new extension. You
+    don't run the conversion by hand; just know what leaves the pipeline:
+    - **Stills → WebP q85** — `cwebp -q 85` (falls back to `magick … -quality 85` if cwebp is absent).
+    - **Motion → VP9/WebM** — `ffmpeg -c:v libvpx-vp9 -b:v 0 -crf 34 -an` (even dims forced for
+      yuv420p). **Needs `ffmpeg` on PATH** (`brew install ffmpeg`); apply errors clearly if it's missing.
+      `Image.vue` renders any `.webm`/`.mp4` src as an autoplaying, looping, muted `<video>` (see
+      `isVideo`), so it behaves exactly like the GIF it replaced.
+    `--raw` on apply skips the transcode and ships the captured PNG/GIF unchanged (debugging only).
+    Targets: WebP still under ~400KB, WebM clip under ~1MB. Above that, re-encode (drop WebP quality
+    a notch, or raise the VP9 `-crf`); a long or photographic recording is what balloons a clip, so
+    the last lever is **shortening the recording or thinning frames**, not crushing quality.
