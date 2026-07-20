@@ -454,6 +454,17 @@ Table cards are for top-N data — cap the row count in your query with `limit`.
 self.headers = -> { [I18n.t("avo.name"), I18n.t("avo.email")] }
 ```
 
+When the headers come from the same place as the data, declare them inside `query` — it mirrors `result` and wins over the class-level declaration:
+
+```ruby
+def query
+  report = FetchReport.call(range:)
+
+  headers report.column_names
+  result report.rows
+end
+```
+
 Omit `headers` entirely to render the card without a table header row — handy when the card is really a list:
 
 ```ruby
