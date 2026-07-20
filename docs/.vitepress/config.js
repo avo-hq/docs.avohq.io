@@ -16,6 +16,19 @@ const config = {
     },
     config: (md) => {
       md.use(require('markdown-it-task-lists'))
+
+      // Inject the LLM prompt box right under the page title when the
+      // page has a `prompt` frontmatter key.
+      const defaultHeadingClose = md.renderer.rules.heading_close ||
+        ((tokens, idx, options, env, self) => self.renderToken(tokens, idx, options))
+      md.renderer.rules.heading_close = (tokens, idx, options, env, self) => {
+        const html = defaultHeadingClose(tokens, idx, options, env, self)
+        if (tokens[idx].tag === 'h1' && !env.__llmPromptInjected && env.frontmatter?.prompt) {
+          env.__llmPromptInjected = true
+          return html + '\n<LlmPrompt />'
+        }
+        return html
+      }
     },
   },
   head: [
@@ -41,7 +54,7 @@ const config = {
       .replace(/index\.md$/, '')
       .replace(/\.md$/, '.html')
 
-    pageData.frontmatter.llmLink = `https://docs.avohq.io/${pageData?.params?.version}/llms-full.txt`
+    pageData.frontmatter.llmLink = `https://docs.avohq.io/${pageData?.params?.version}/docs-map.md`
 
     pageData.frontmatter.head ??= []
     pageData.frontmatter.head.push([

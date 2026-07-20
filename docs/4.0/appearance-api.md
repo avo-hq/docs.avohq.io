@@ -306,7 +306,7 @@ end
 
 <Option name="`logo`">
 
-Path to the main logo shown in the top navbar.
+Path to the main logo shown in the top navbar. The navbar has a dark background in both color schemes, so use a file that reads well on dark surfaces.
 
 ```ruby
 config.appearance = {

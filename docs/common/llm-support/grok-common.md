@@ -1,5 +1,7 @@
 ---
-prev: false
+prev:
+  text: Agentic engineering
+  link: /4.0/agentic-engineering
 next: false
 ---
 
@@ -9,7 +11,7 @@ Setup Grok to correctly generate Avo code based on your prompt.
 
 ## Quick use
 
-In Chat window, enable the `꩜ Deep Search` feature, and add this before your prompt:
+Paste the docs link before your prompt in a normal chat and Grok will fetch the page (no DeepSearch needed — that's a multi-step research agent, overkill for reading one file):
 
 <CustomCode :content="$frontmatter.llmLink" />
 

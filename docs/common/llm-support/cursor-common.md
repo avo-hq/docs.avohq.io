@@ -1,5 +1,7 @@
 ---
-prev: false
+prev:
+  text: Agentic engineering
+  link: /4.0/agentic-engineering
 next: false
 ---
 
@@ -9,53 +11,48 @@ Setup Cursor to correctly generate Avo code based on your prompt.
 
 ## Quick use
 
-  In chat window type this and Cursor will use Avo's llms.txt file to generate code.
+Paste the docs link in the chat window with your prompt and Cursor's web search will fetch it.
 
-<CustomCode :content="`@web ${$frontmatter.llmLink}`" />
+<CustomCode :content="`Read ${$frontmatter.llmLink} and use it as a reference for Avo code.`" />
 
-## Permanent setup
+## Custom docs
 
-1. Press <kbd>⌘ CMD</kbd>+<kbd>⇧ Shift</kbd>+<kbd>P</kbd>. Or if it's Windows, press <kbd>⌃ Ctrl</kbd>+<kbd>⇧ Shift</kbd>+<kbd>P</kbd>.
-2. Type `Add new custom docs`
-3. Add this: `{{$frontmatter.llmLink}}`
-4. Now in chat window you can type `@docs` and choose `Avo` to provide Avo's docs to Cursor.
+1. In the chat window type `@Docs`
+2. Choose `Add new doc`
+3. Paste this: `{{$frontmatter.llmLink}}`
+4. Now in chat window you can type `@Docs` and choose `Avo` to provide Avo's docs to Cursor.
 
 ## Project-level permanent setup
 
-You can setup Avo's llms.txt file to your repo so Cursor can use it by default. (Read more at Cursor docs)
+Cursor reads the `AGENTS.md` file from your repository. Add a line pointing to Avo's docs:
 
-Run this command to save the llms.txt file to `.cursor/rules/avohq.mdc`
+<CustomCode :content="`When working with Avo, use the docs at ${$frontmatter.llmLink} as a reference.`" />
 
-<CustomCode :content="`curl -L ${$frontmatter.llmLink} --create-dirs -o .cursor/rules/avo.mdc`" />
+Or save the docs in your repo and reference the file from `AGENTS.md`:
+
+<CustomCode :content="`curl -L ${$frontmatter.llmLink} --create-dirs -o docs/avo-docs-map.md`" />
 
 ## MCP server
 
-MCP is a an API to communicate with AI models. You can add MCP servers and Cursor will communicate with them to get more accurate results.
+MCP is an API to communicate with AI models. You can add MCP servers and Cursor will communicate with them to get more accurate results.
 
 I suggest using [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) which provides many libraries including Avo's docs.
 
-1. Go to Cursor settings <kbd>⌘ CMD</kbd>+<kbd>⇧ Shift</kbd>+<kbd>J</kbd> (or <kbd>⌃ Ctrl</kbd>+<kbd>⇧ Shift</kbd>+<kbd>J</kbd> on Windows)
-
-2. Click MCP from the left sidebar
-
-3. Click Add new global MCP server
-
-4. Add this:
+Add this to `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` to enable it globally):
 
 ```json
 // .cursor/mcp.json
 {
   "mcpServers": {
-   "Context7": {
-     "type": "stdio",
-     "command": "npx",
-     "args": ["-y", "@upstash/context7-mcp@latest"]
-   }
+    "Context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    }
   }
 }
 ```
 
-5. Now in Agent Mode you can ask AI anything about Avo, and write `use context7` at the end of your prompt.
+Now in Agent Mode you can ask AI anything about Avo, and write `use context7` at the end of your prompt.
 
 For example:
 

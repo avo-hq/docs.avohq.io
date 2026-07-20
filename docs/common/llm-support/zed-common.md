@@ -1,5 +1,7 @@
 ---
-prev: false
+prev:
+  text: Agentic engineering
+  link: /4.0/agentic-engineering
 next: false
 ---
 
@@ -17,29 +19,35 @@ Or in Text thread chat type this before your prompt
 
 <CustomCode :content="`/fetch ${$frontmatter.llmLink}`" />
 
+## Permanent setup
+
+Zed reads the `AGENTS.md` file from your repository. Add a line pointing to Avo's docs:
+
+<CustomCode :content="`When working with Avo, use the docs at ${$frontmatter.llmLink} as a reference.`" />
+
 ## MCP server
 
-MCP is a an API to communicate with AI models. You can add MCP servers to your code editor and Cursor will communicate with them to get more accurate results.
+MCP is an API to communicate with AI models. You can add MCP servers and Zed will communicate with them to get more accurate results.
 
 I suggest using [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) which provides many libraries including Avo's docs.
 
-1. Press <kbd>⌘ CMD</kbd>+<kbd>⇧ Shift</kbd>+<kbd>P</kbd> (or <kbd>⌃ Ctrl</kbd>+<kbd>⇧ Shift</kbd>+<kbd>P</kbd> on Windows)
+The easiest way is installing the Context7 extension: go to `Settings` → `AI` → `MCP Servers` → `Add Server` → `Install from Extensions` and pick Context7.
 
-2. Type `agent: add context server`
+Or add it as a custom server in your `settings.json`:
 
-3. Add this name and server:
-
-```bash
-# name
-context7
+```json
+{
+  "context_servers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {}
+    }
+  }
+}
 ```
 
-```bash
-# server
-npx -y @upstash/context7-mcp@latest
-```
-
-Now in Agent Mode you can ask AI anything about Avo, and write `use context7` at the end of your prompt.
+Now you can ask the agent anything about Avo, and write `use context7` at the end of your prompt.
 
 For example:
 

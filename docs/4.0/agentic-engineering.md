@@ -1,12 +1,20 @@
+---
+prompt: Use this page (${link}) to set up my AI coding agent to work with Avo — add the LLM docs context, install the Avo skills, and connect the MCP server.
+---
+
 # Agentic engineering
 
 Avo is designed to work well with AI coding agents. This page covers the tools and setup that let you build Avo features faster by pairing with agents like Claude Code, Cursor, Windsurf, and others.
 
-## LLM context
+## Code editors and LLM setup
 
-AI agents generate better code when they have up-to-date Avo documentation in their context. The [Code editors and LLM setup](/4.0/llm-support.html) page walks through how to wire up Avo's docs for each major editor and tool.
+AI agents generate better code when they have up-to-date Avo documentation in their context. Point your tool at <code><a href="https://docs.avohq.io/4.0/docs-map.md" target="_blank">https://docs.avohq.io/4.0/docs-map.md</a></code> — a map of every Avo 4 docs page and its headings, with links — and the agent will fetch exactly the pages it needs to generate accurate resources, fields, actions, filters, and more.
 
-The short version: point your tool at `https://docs.avohq.io/4.0/llms-full.txt` — a compact, text version of the full Avo 4 docs — and the agent will have everything it needs to generate accurate resources, fields, actions, filters, and more.
+<CustomCode content="https://docs.avohq.io/4.0/docs-map.md" />
+
+### Pick your tool
+
+<EditorList version="4.0" />
 
 ## Skills
 
@@ -23,11 +31,17 @@ Skills work with Claude Code, Cursor, Windsurf, Goose, and any other agent that 
 
 ## MCP server
 
-For agents that support MCP, the [avo-mcp](/4.0/mcp.html) gem exposes your running Avo admin as a set of tools the agent can call directly — listing records, searching, running actions, and more. This is useful when you want the agent to inspect live data while building features.
+For agents that support MCP, the [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) serves up-to-date docs for many libraries, including Avo. The agent queries it for the exact docs it needs while building features, instead of relying on stale training data.
+
+For example, to add it to Claude Code, run:
+
+<CustomCode content="claude mcp add context7 -- npx -y @upstash/context7-mcp" />
+
+Each editor's [setup page](#pick-your-tool) covers how to add it to that tool. Then write `use context7` at the end of your prompt.
 
 ## Suggested workflow
 
-1. Set up your editor with the Avo LLM context — [see the guide](/4.0/llm-support.html).
+1. Set up your editor with the Avo LLM context — [see above](#code-editors-and-llm-setup).
 2. Install the Avo skills from [github.com/avo-hq/skills](https://github.com/avo-hq/skills).
 3. Describe what you want to build. The agent will follow the skill workflow and reference the docs automatically.
-4. Optionally connect [avo-mcp](/4.0/mcp.html) so the agent can query your actual admin data.
+4. Optionally connect the [Context7 MCP server](#mcp-server) so the agent can query Avo's docs directly.

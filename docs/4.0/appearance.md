@@ -39,6 +39,10 @@ config.appearance = {
 }
 ```
 
+:::info Dark navbar
+The top navbar has a dark background in both light and dark mode, so `logo` is always displayed on a dark surface. Pick a file that reads well on dark backgrounds.
+:::
+
 ### Dark mode logo
 
 Provide [`logo_dark`](./appearance-api.html#logo_dark) to render a different file when the user is in dark mode. When omitted, the light logo is used in both schemes.
