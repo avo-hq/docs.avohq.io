@@ -1,15 +1,18 @@
 // Docs-screenshot pipeline — STAGE 5b: apply.
 //
 // Given a captured spec `id`, this:
-//   1. copies out/<id>.<ext> + out/<id>-dark.<ext> → the spec's `out:` path (+ `-dark` sibling),
+//   1. transcodes out/<id>.<ext> + out/<id>-dark.<ext> into the shipped modern format at the
+//      spec's `out:` path (+ `-dark` sibling): stills (.png) → WebP q85, motion (.gif) → VP9 WebM,
 //   2. rewrites the placeholder `<Image prompt=…/>` in its source doc to a finished
 //      `<Image src dark-src width height alt prompt/>` — keeping `prompt`, emitting kebab
-//      `dark-src`, dims read from the real asset.
+//      `dark-src` (pointing at the .webp/.webm), dims read from the captured PNG/GIF.
 //
 // Works for both static PNG specs (SPECS, captured by capture.mjs) and animated GIF specs
-// (GIF_SPECS, captured by record-gif.mjs). The asset extension is taken from the spec's
-// `out:` path (.png or .gif); the rendered <Image> tag is identical either way — a .gif `src`
-// animates natively in the browser, with the same dark-src swap.
+// (GIF_SPECS, captured by record-gif.mjs). Capture/record deliberately keep working in PNG/GIF
+// (annotation overlays + no-dep dimension reads need a lossless raster); the format conversion
+// happens ONLY here, when the finished asset lands in docs. A .webm `src` renders as a looping
+// muted <video> (Image.vue's isVideo); a .webp renders as <img> — same dark-src swap either way.
+// Pass --raw to skip transcoding and copy the PNG/GIF through unchanged (debugging).
 //
 // Leaves everything UNSTAGED (no git add / commit / push). Deterministic — no agent.
 //
@@ -25,6 +28,7 @@
 //   node apply.mjs <id> --dry           # print the rewrite, don't touch files
 
 import { readFileSync, writeFileSync, copyFileSync, mkdirSync, existsSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { dirname, join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -79,7 +83,40 @@ function gifSize(path) {
 // extension-aware paths: .png (capture.mjs) or .gif (record-gif.mjs)
 const ext = spec.out.endsWith(".gif") ? ".gif" : ".png";
 const isGif = ext === ".gif";
-const darkSibling = (p) => p.replace(new RegExp(`\\${ext}$`), `-dark${ext}`);
+
+// The shipped asset is a modern format: stills → WebP, motion → VP9 WebM. The captured
+// source in out/ stays PNG/GIF; the `out:` destination and the <Image> tag take the new ext.
+// --raw ships the captured PNG/GIF unchanged (debugging only).
+const raw = argv.includes("--raw");
+const shipExt = raw ? ext : (isGif ? ".webm" : ".webp");
+const shipOut = spec.out.replace(new RegExp(`\\${ext}$`), shipExt);
+const darkShipSibling = (p) => p.replace(new RegExp(`\\${shipExt}$`), `-dark${shipExt}`);
+
+// Transcode a captured PNG/GIF into the shipped format. PNG→WebP q85 (cwebp, falling back to
+// ImageMagick); GIF→VP9 WebM (ffmpeg). Even dims are forced for yuv420p. --raw just copies.
+function transcode(src, dst) {
+  if (raw) return void copyFileSync(src, dst);
+  if (isGif) {
+    try {
+      execFileSync("ffmpeg", [
+        "-y", "-i", src,
+        "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "34",
+        "-pix_fmt", "yuv420p",
+        "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2",
+        "-an", dst,
+      ], { stdio: "pipe" });
+    } catch (e) {
+      throw new Error(`GIF→WebM needs ffmpeg on PATH (e.g. \`brew install ffmpeg\`). ${e.message}`);
+    }
+    return;
+  }
+  try {
+    execFileSync("cwebp", ["-quiet", "-q", "85", src, "-o", dst], { stdio: "pipe" });
+  } catch {
+    // cwebp absent or failed → ImageMagick (already a pipeline dep) writes WebP just as well.
+    execFileSync("magick", [src, "-quality", "85", dst], { stdio: "pipe" });
+  }
+}
 
 // ---- copy captured assets → out: destinations -----------------------------
 const lightSrc = join(OUT, `${spec.id}${ext}`);
@@ -87,8 +124,8 @@ const darkSrc = join(OUT, `${spec.id}-dark${ext}`);
 for (const p of [lightSrc, darkSrc]) {
   if (!existsSync(p)) throw new Error(`captured asset missing: ${relative(REPO, p)} (run ${isGif ? "record-gif" : "capture"}.mjs ${spec.id} light + dark first)`);
 }
-const lightOut = join(REPO, spec.out);
-const darkOut = join(REPO, darkSibling(spec.out));
+const lightOut = join(REPO, shipOut);
+const darkOut = join(REPO, darkShipSibling(shipOut));
 
 // ---- compute the <Image> attributes ---------------------------------------
 const { width: pxW, height: pxH } = isGif ? gifSize(lightSrc) : pngSize(lightSrc);
@@ -97,8 +134,8 @@ const w = half ? Math.round(pxW / 2) : pxW;
 const h = half ? Math.round(pxH / 2) : pxH;
 
 const toUrl = (outPath) => "/" + relative(join(REPO, "docs", "public"), join(REPO, outPath)).split(/[\\/]/).join("/");
-const srcUrl = toUrl(spec.out);
-const darkUrl = toUrl(darkSibling(spec.out));
+const srcUrl = toUrl(shipOut);
+const darkUrl = toUrl(darkShipSibling(shipOut));
 const alt = (spec.alt || spec.source.prompt).replace(/"/g, "&quot;");
 const promptAttr = spec.source.prompt.replace(/"/g, "&quot;");
 
@@ -133,14 +170,14 @@ console.log(`apply ${spec.id}`);
 console.log(`  ${relative(REPO, srcFile)}`);
 console.log(`  - ${oldTag}`);
 console.log(`  + ${newTag}`);
-console.log(`  assets: ${spec.out}  +  ${darkSibling(spec.out)}  (${pxW}×${pxH} px → ${w}×${h})`);
+console.log(`  assets: ${shipOut}  +  ${darkShipSibling(shipOut)}  (${pxW}×${pxH} px → ${w}×${h}${raw ? "" : `, ${ext.slice(1)}→${shipExt.slice(1)}`})`);
 if (dry) {
   console.log("  (dry run — nothing written)");
   process.exit(0);
 }
 
 mkdirSync(dirname(lightOut), { recursive: true });
-copyFileSync(lightSrc, lightOut);
-copyFileSync(darkSrc, darkOut);
+transcode(lightSrc, lightOut);
+transcode(darkSrc, darkOut);
 writeFileSync(srcFile, updated);
 console.log("  ✓ applied (unstaged — review, then stage yourself)");
