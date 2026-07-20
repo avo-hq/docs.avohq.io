@@ -6,7 +6,7 @@ import path from 'path'
 
 export default {
   paths() {
-    const editors = ["vscode", "cursor", "zed", "windsurf", "claude", "chatgpt", "gemini", "grok"]
+    const editors = ["vscode", "cursor", "zed", "windsurf", "claude", "codex", "opencode", "jetbrains", "chatgpt", "gemini", "grok"]
     const versions = ["2.0", "3.0", "4.0"]
 
     // Get the path to the common directory

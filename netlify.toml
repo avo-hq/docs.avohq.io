@@ -38,7 +38,20 @@ force = false
 
 [[redirects]]
 from = "/4.0/editor.html"
-to = "/4.0/llm-support.html"
+to = "/4.0/agentic-engineering.html#code-editors-and-llm-setup"
+status = 301
+force = false
+
+# LLM setup page merged into the agentic engineering page
+[[redirects]]
+from = "/4.0/llm-support.html"
+to = "/4.0/agentic-engineering.html#code-editors-and-llm-setup"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/llm-support"
+to = "/4.0/agentic-engineering.html#code-editors-and-llm-setup"
 status = 301
 force = false
 

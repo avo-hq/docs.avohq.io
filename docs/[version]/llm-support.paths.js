@@ -4,9 +4,9 @@
 export default {
   paths() {
     return [
+      // 4.0 moved to /4.0/agentic-engineering.html#code-editors-and-llm-setup
       { params: { version: '2.0' }},
-      { params: { version: '3.0' }},
-      { params: { version: '4.0' }}
+      { params: { version: '3.0' }}
     ]
   }
 }

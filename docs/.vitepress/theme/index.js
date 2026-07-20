@@ -28,6 +28,7 @@ import EditorList from "../theme/components/EditorList.vue"
 import FieldTypesList from "../theme/components/FieldTypesList.vue"
 import RecipesList from "../theme/components/RecipesList.vue"
 import CustomCode from "../theme/components/CustomCode.vue"
+import LlmPrompt from "../theme/components/LlmPrompt.vue"
 import BrandingRedirect from "../theme/components/BrandingRedirect.vue"
 import RefactoredFromBranding from "../theme/components/RefactoredFromBranding.vue"
 import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline"
@@ -69,6 +70,7 @@ export default {
     app.component("FieldTypesList", FieldTypesList)
     app.component("RecipesList", RecipesList)
     app.component("CustomCode", CustomCode)
+    app.component("LlmPrompt", LlmPrompt)
     app.component("BrandingRedirect", BrandingRedirect)
     app.component("RefactoredFromBranding", RefactoredFromBranding)
   },
@@ -82,4 +84,3 @@ export default {
     })
   },
 }
-

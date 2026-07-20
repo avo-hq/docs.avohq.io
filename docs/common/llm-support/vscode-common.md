@@ -1,5 +1,7 @@
 ---
-prev: false
+prev:
+  text: Agentic engineering
+  link: /4.0/agentic-engineering
 next: false
 ---
 
@@ -9,63 +11,47 @@ Setup VSCode to correctly generate Avo code based on your prompt.
 
 ## Quick use
 
-In chat window type this and VSCode will use Avo's llms.txt file to generate code.
+In chat window type this and VSCode will use Avo's docs map to generate code.
 
 <CustomCode :content="`#fetch ${$frontmatter.llmLink}`" />
 
 ## Project-level permanent setup
 
-You can setup Avo's llms.txt file to your repo so Copilot can use it by default. (Read more at VSCode docs)
+Copilot automatically applies the `.github/copilot-instructions.md` file to every chat request. Add a line pointing to Avo's docs:
 
-1. Run this command to save the llms.txt file to `.vscode/avo.md`
+<CustomCode :content="`When working with Avo, use the docs at ${$frontmatter.llmLink} as a reference.`" />
 
-<CustomCode :content="`curl -L ${$frontmatter.llmLink} --create-dirs -o .vscode/avo.md`" />
+Or save the docs in your repo and reference the file from `.github/copilot-instructions.md`:
 
-2. Add this to `.vscode/settings.json`
+<CustomCode :content="`curl -L ${$frontmatter.llmLink} --create-dirs -o docs/avo-docs-map.md`" />
 
-```json
-.vscode/settings.json
-{
-  "github.copilot.chat.codeGeneration.instructions": [
-    {
-      "file": "./.vscode/avo.md"
-    }
-  ]
-}
-```
+VSCode also reads the `AGENTS.md` file from your workspace root, if you prefer the cross-tool standard.
 
 ## MCP server
 
-MCP is a an API to communicate with AI models. You can add MCP servers and Copilot will communicate with them to get more accurate results.
+MCP is an API to communicate with AI models. You can add MCP servers and Copilot will communicate with them to get more accurate results.
 
 I suggest using [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) which provides many libraries including Avo's docs.
 
-1. Go to MCP settings in VSCode: `vscode://settings/mcp`
-
-2. Click Edit in settings.json`
-
-3. Add this:
+Create a `.vscode/mcp.json` file in your project (or run the `MCP: Add Server` command from the Command Palette) with this content:
 
 ```json
-// settings.json
+// .vscode/mcp.json
 {
-  "mcp": {
-    "servers": {
-     "Context7": {
-       "type": "stdio",
-       "command": "npx",
-       "args": ["-y", "@upstash/context7-mcp@latest"]
-     }
+  "servers": {
+    "Context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
     }
   }
 }
 ```
 
-5. Now in Agent Mode you can ask AI anything about Avo, and write `use context7` at the end of your prompt.
+Now in Agent Mode you can ask AI anything about Avo, and write `use context7` at the end of your prompt.
 
 For example:
 
 ```bash
 create a new Avo resource for a product model. use context7
 ```
-

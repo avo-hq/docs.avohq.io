@@ -98,6 +98,37 @@ function extractHeadings(file) {
 }
 
 /**
+ * Read a page's `api_docs` frontmatter link (e.g. "./appearance-api.html") and
+ * resolve it against the page's own link. Returns { text, link } or null.
+ */
+function apiDocsPage(pageLink) {
+  let content;
+  try {
+    content = fs.readFileSync(linkToFile(pageLink), 'utf8');
+  } catch {
+    return null;
+  }
+
+  const frontmatter = content.match(/^---\n([\s\S]*?)\n---\n/);
+  if (!frontmatter) return null;
+
+  const m = frontmatter[1].match(/^api_docs:\s*["']?(\S+?)["']?\s*$/m);
+  if (!m) return null;
+
+  const link = path.posix.join(path.posix.dirname(pageLink.split('#')[0]), m[1]);
+  const apiContent = (() => {
+    try {
+      return fs.readFileSync(linkToFile(link), 'utf8');
+    } catch {
+      return '';
+    }
+  })();
+  const h1 = apiContent.replace(/^---\n[\s\S]*?\n---\n/, '').match(/^#\s+(.+?)\s*$/m);
+
+  return { text: h1 ? h1[1].replace(/`/g, '').trim() : 'API reference', link };
+}
+
+/**
  * Walk a sidebar section and collect its pages (DFS), deduped by link.
  * Returns [{ text, link }].
  */
@@ -130,7 +161,8 @@ function buildDocsMap(version, sections) {
   lines.push('');
   lines.push(
     `For the concise index, see [llms.txt](${SITE}/${version}/llms.txt). ` +
-      `For the full text of every page in one file, see [llms-full.txt](${SITE}/${version}/llms-full.txt).`
+      `For the full text of every page in one file (large — high token count), see [llms-full.txt](${SITE}/${version}/llms-full.txt). ` +
+      `For this map as raw markdown, see [docs-map.md](${SITE}/${version}/docs-map.md).`
   );
   lines.push('');
   lines.push('> Auto-generated from the VitePress sidebar by `scripts/generate-docs-map.js`. Do not edit manually.');
@@ -143,28 +175,42 @@ function buildDocsMap(version, sections) {
   lines.push('* Each page title links to the full documentation');
   lines.push('');
 
+  function pushPage(page) {
+    lines.push(`### [${page.text}](${absoluteUrl(page.link)})`);
+    lines.push('');
+
+    const headings = extractHeadings(linkToFile(page.link));
+    if (headings === null) {
+      lines.push('* (Page source not found)');
+    } else if (headings.length === 0) {
+      lines.push('* (No headings found)');
+    } else {
+      for (const h of headings) {
+        lines.push(`${'  '.repeat(h.level - 2)}* ${h.text}`);
+      }
+    }
+    lines.push('');
+  }
+
   for (const section of sections) {
     const pages = collectPages(section);
     if (pages.length === 0) continue;
+
+    const seen = new Set(pages.map((p) => p.link));
 
     lines.push(`## ${section.text}`);
     lines.push('');
 
     for (const page of pages) {
-      lines.push(`### [${page.text}](${absoluteUrl(page.link)})`);
-      lines.push('');
+      pushPage(page);
 
-      const headings = extractHeadings(linkToFile(page.link));
-      if (headings === null) {
-        lines.push('* (Page source not found)');
-      } else if (headings.length === 0) {
-        lines.push('* (No headings found)');
-      } else {
-        for (const h of headings) {
-          lines.push(`${'  '.repeat(h.level - 2)}* ${h.text}`);
-        }
+      // Pages with an `api_docs` frontmatter link get their API reference
+      // listed right after them, since API pages aren't in the sidebar.
+      const api = apiDocsPage(page.link);
+      if (api && !seen.has(api.link)) {
+        seen.add(api.link);
+        pushPage(api);
       }
-      lines.push('');
     }
   }
 
@@ -181,7 +227,7 @@ function buildLlmsTxt(version, sections) {
   lines.push(`> ${SITE_SUMMARY}`);
   lines.push('');
   lines.push(
-    `This is the concise index. For the full text of every page in one file, see ` +
+    `This is the concise index. For the full text of every page in one file (large — high token count), see ` +
       `[llms-full.txt](${SITE}/${version}/llms-full.txt). For a map of every page and ` +
       `its headings, see [docs-map.md](${SITE}/${version}/docs-map.md).`
   );
