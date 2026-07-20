@@ -9,7 +9,7 @@ Cards are one way of quickly adding custom content for your users.
 
 Cards can be used on dashboards or resources, we'll refer to both of them as "parent" since they're hosting the cards.
 
-You can add three types of cards to your parent: `partial`, `metric`, and `chartkick`.
+You can add four types of cards to your parent: `partial`, `metric`, `chartkick`, and `table`.
 
 ## Base settings
 
@@ -412,6 +412,103 @@ end
 ```
 
 <Image src="/assets/img/4_0/cards/map.webp" dark-src="/assets/img/4_0/cards/map-dark.webp" width="1428" height="1056" alt="An Avo partial card embedding a Google Maps view of Manhattan, rendered flush to the card edges because the card header is hidden." />
+
+## Table card
+
+<VersionReq version="4.1" />
+
+Use a table card to show a list of things — latest sign-ups, top products, failed jobs — styled like Avo's index table but fed by any query. Declare the column headers, return the rows from `query`, and the card renders the whole table.
+
+```ruby
+# app/avo/cards/latest_users.rb
+class Avo::Cards::LatestUsers < Avo::Cards::TableCard
+  self.id = "latest_users"
+  self.label = "Latest users"
+  self.headers = ["User", "Email", "Status"]
+  self.cols = 2
+  self.rows = 2
+
+  def query
+    result User.order(created_at: :desc).limit(10).map { |user|
+      [
+        user,
+        {text: user.email, url: "mailto:#{user.email}"},
+        {badge: user.active? ? "Active" : "Inactive", color: :green}
+      ]
+    }
+  end
+end
+```
+
+`result` takes an array of rows, and each row is an array of cells matching the `headers` positionally.
+
+:::info
+Table cards are for top-N data — cap the row count in your query with `limit`. There is no pagination or sorting; if you need the full table experience, use a resource's index view instead.
+:::
+
+### Headers
+
+`headers` accepts an array of strings or a lambda, so translated or dynamic headers resolve on every render:
+
+```ruby
+self.headers = -> { [I18n.t("avo.name"), I18n.t("avo.email")] }
+```
+
+Omit `headers` entirely to render the card without a table header row — handy when the card is really a list:
+
+```ruby
+# app/avo/cards/active_users.rb
+class Avo::Cards::ActiveUsers < Avo::Cards::TableCard
+  self.id = "active_users"
+  self.label = "Active users"
+
+  def query
+    result User.active.order(:name).limit(5)
+  end
+end
+```
+
+Returning records directly (no arrays, no hashes) renders each one as a single linked cell — the quickest way to get a list of records.
+
+### Cell types
+
+A cell can be a plain value or a hash that picks a richer rendering:
+
+| Cell | Renders |
+|------|---------|
+| `"text"`, `42`, any value | Escaped text (`to_s`) |
+| `{text:, url:, target: (optional)}` | A link |
+| `{record: user}` | A link to the record's Avo page, labeled with the record's title |
+| `{badge: "Active", color: :green, style: (optional)}` | A badge (any color supported by Avo's badge component; invalid colors fall back to neutral) |
+| `{image:, alt: (optional), size: (optional)}` | A round thumbnail; `size` accepts `:xs`, `:sm` (default), or `:md` |
+| `{partial: "avo/cards/cell", locals: {…}}` | Any partial — the escape hatch for custom content |
+
+A few things to know:
+
+- Cell text is always HTML-escaped. Raw HTML only enters through the `partial` cell.
+- `url:` and `image:` accept `http`, `https`, `mailto`, and relative URLs; anything else (like `javascript:`) renders as plain text.
+- The `record:` cell needs an Avo resource registered for the record's model; without one, the cell renders an unlinked title (and raises a descriptive error in development).
+- Cell partials receive your `locals` plus the `card`. Don't build the partial path from row data.
+
+### Empty state
+
+When the query returns no rows the card shows a translated "No record found" message. Override it per card:
+
+```ruby
+self.empty_message = "No sign-ups this week"
+# or
+self.empty_message = -> { I18n.t("cards.no_signups") }
+```
+
+### Ranges and refreshing
+
+Table cards support the same `ranges`, `initial_range`, and `refresh_every` settings as every other card. The selected range is available as `range` inside `query` — using it as the query's `limit` is a common pattern.
+
+:::warning
+`refresh_every` reloads the whole card, which resets the scroll position of a tall table. Prefer it on short tables.
+:::
+
+The card's `rows` setting also caps the table's height — rows past the cap scroll inside the card.
 
 ## Cards visibility
 
