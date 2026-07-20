@@ -250,6 +250,10 @@ const config = {
               link: "/4.0/kanban-boards.html",
             },
             {
+              text: "Dynamic configuration",
+              link: "/4.0/dynamic-configuration.html",
+            },
+            {
               text: "Forms and pages",
               link: "/4.0/forms-and-pages/overview.html",
               items: [
