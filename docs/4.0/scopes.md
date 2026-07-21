@@ -90,7 +90,7 @@ class Avo::Scopes::Active < Avo::Scopes::BaseScope
 end
 ```
 
-Use `:lazy` on large tables so the count loads after the page paints instead of slowing down the request, or `:hover` to load it only when the user hovers over the scope tab; `true` (or `:eager`) computes it inline. For finer control — a custom count, showing the badge conditionally, or formatting the number — pass a Hash with [`count`](./scopes-api.html#counter.count), [`visible`](./scopes-api.html#counter.visible), and [`format`](./scopes-api.html#counter.format) keys:
+Use `:lazy` on large tables so the count loads after the page paints instead of slowing down the request, or `:hover` to load it only when the user hovers over the scope tab; `true` (or `:eager`) computes it inline. For finer control — a custom count, showing the badge conditionally, or formatting the number — pass a Hash with [`count`](./scopes-api.html#counter.count), [`visible`](./scopes-api.html#counter.visible), and [`format`](./scopes-api.html#counter.format) keys. The badge isn't limited to numbers: return a String (text or an emoji) from `count` and pass it through with a `format` of just `value`.
 
 ```ruby{3-7}
 # app/avo/scopes/active.rb
