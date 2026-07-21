@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The Preview field adds a tiny icon to each row on the Index view that, when hovered, it will display a preview popup with more information regarding that record."
+fieldTags: [display]
 ---
 
 # Preview

@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The Code field generates a code editor using codemirror package."
+fieldTags: [structured]
 ---
 
 # Code

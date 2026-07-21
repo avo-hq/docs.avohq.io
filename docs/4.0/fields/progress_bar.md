@@ -1,10 +1,12 @@
 ---
 license: community
+description: "Renders a progress bar on the Index and Show views and a range slider on the Edit and New views."
+fieldTags: [number]
 ---
 
 # Progress bar
 
-The `ProgressBar` field renders a `progress` element on `Index` and `Show` views and and a `input[type=range]` element on `Edit` and `New` views.
+The `ProgressBar` field renders a `progress` element on `Index` and `Show` views and a `input[type=range]` element on `Edit` and `New` views.
 
 ```ruby
 field :progress, as: :progress_bar

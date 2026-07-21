@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Renders a select dropdown with configurable options."
+fieldTags: [choice]
 ---
 
 # Select

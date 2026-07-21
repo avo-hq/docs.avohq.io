@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The Gravatar field turns an email field from the database into an avatar image if it's found in the Gravatar database."
+fieldTags: [assets]
 ---
 
 # Gravatar

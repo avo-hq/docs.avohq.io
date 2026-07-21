@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Displays a heading separator to delimit sections of fields on a resource."
+fieldTags: [layout]
 ---
 
 # Heading

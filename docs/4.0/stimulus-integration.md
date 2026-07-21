@@ -139,7 +139,7 @@ Same way, the controllers will not receive the `view` attribute in the DOM, [as 
 
 ## Attach HTML attributes
 
-[This section has moved.](./field-options#html)
+[This section has moved.](./field-options-api#html)
 
 ## Composing the attributes together
 

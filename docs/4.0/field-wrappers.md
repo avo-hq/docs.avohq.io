@@ -109,13 +109,13 @@ Each field wrapper is divided in three areas.
 
 ### Label
 
-This is where the field name is being displayed. This is also where the [required](./field-options#required) asterisk is added for required fields.
+This is where the field name is being displayed. This is also where the [required](./field-options-api#required) asterisk is added for required fields.
 
 ### Value
 
 This area holds the actual value of the field or it's representation. The falue can be simple text or more advanced types like images, advanced pickers, and content editors.
 
-At the bottom the [help text](./field-options#help-text) is going to be shown on the <Edit /> view and below it the validation error.
+At the bottom the [help text](./field-options-api#help) is going to be shown on the <Edit /> view and below it the validation error.
 
 ### Extra
 

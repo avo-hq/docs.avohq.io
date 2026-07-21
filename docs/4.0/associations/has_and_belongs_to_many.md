@@ -1,6 +1,8 @@
 ---
 license: community
 field_type: has_and_belongs_to_many
+description: "Displays and manages the records of a has_and_belongs_to_many association."
+fieldTags: [associations]
 ---
 
 # Has And Belongs To Many

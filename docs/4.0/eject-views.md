@@ -79,7 +79,7 @@ create  app/components/avo/index/table_row_component.html.erb
 
 With `--field-components` option is easy to eject, one or multiple field components. Notice that without using the `--scope`, the ejected components will override the original components for that field everywhere on the project.
 
-Check the `--scope` and the [`components`](./field-options.html#components) field options for more details on how to override the components only on specific parts of the project.
+Check the `--scope` and the [`components`](./field-options-api.html#components) field options for more details on how to override the components only on specific parts of the project.
 
 ```bash
 $ rails g avo:eject --field-components text

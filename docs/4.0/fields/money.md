@@ -1,6 +1,8 @@
 ---
 license: community
-BetaStatus: Beta
+betaStatus: Beta
+description: "The Money field is used to display a monetary value."
+fieldTags: [number]
 ---
 
 # Money

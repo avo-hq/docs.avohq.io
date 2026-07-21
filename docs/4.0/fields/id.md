@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The id field is used to show the record's id."
+fieldTags: [display]
 ---
 
 # ID
@@ -13,4 +15,3 @@ field :id, as: :id
 ## Options
 
 <!-- @include: ./../common/link_to_record_common.md-->
-

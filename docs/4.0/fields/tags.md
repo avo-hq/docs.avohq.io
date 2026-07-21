@@ -1,6 +1,8 @@
 ---
 license: community
 demoVideo: https://youtu.be/DKKSjNUvuBA
+description: "Displays and manages a list of tags on a record."
+fieldTags: [choice]
 ---
 
 # Tags field

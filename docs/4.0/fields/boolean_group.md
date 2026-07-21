@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The BooleanGroup is used to update a Hash with string keys and boolean values in the database."
+fieldTags: [boolean, structured]
 ---
 
 # Boolean Group

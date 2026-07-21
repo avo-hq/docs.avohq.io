@@ -1,6 +1,8 @@
 ---
 license: community
 field_type: has_many
+description: "Displays a panel with the associated records below the resource's fields on the Show view."
+fieldTags: [associations]
 ---
 
 # Has Many

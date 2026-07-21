@@ -434,7 +434,7 @@ end
 - **Default:** `:show`
 - **Values:** `:show`, `:edit`, or `:index`
 
-For more granular control over the redirect or response, use the [`after_create_path` controller method](./controllers#after_create_path).
+For more granular control over the redirect or response, use the [`after_create_path` controller method](./controllers-api.html#after_create_path).
 
 </Option>
 
@@ -452,7 +452,7 @@ end
 - **Default:** `:show`
 - **Values:** `:show`, `:edit`, or `:index`
 
-For more granular control over the redirect or response, use the [`after_update_path`](./controllers#after_update_path) and [`after_destroy_path`](./controllers#after_destroy_path) controller methods.
+For more granular control over the redirect or response, use the [`after_update_path`](./controllers-api.html#after_update_path) and [`after_destroy_path`](./controllers-api.html#after_destroy_path) controller methods.
 
 </Option>
 

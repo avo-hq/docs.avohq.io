@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The Files field is similar to File and enables you to upload multiple files at once using the same easy-to-use Active Storage implementation."
+fieldTags: [attachments]
 ---
 
 # Files

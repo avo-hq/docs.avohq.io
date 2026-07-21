@@ -73,7 +73,7 @@ That should give you all the necessary data to scope out the partial content.
 
 ## Tool visibility
 
-The resource tool is default visible on the `Show` view of a resource. You can change that using the [visibility options](field-options.html#showing-hiding-fields-on-different-views) (`show_on`, `only_on`).
+The resource tool is default visible on the `Show` view of a resource. You can change that using the [visibility options](field-options.html#show-and-hide-fields-on-different-views) (`show_on`, `only_on`).
 
 ```ruby
 # app/avo/resources/post.rb

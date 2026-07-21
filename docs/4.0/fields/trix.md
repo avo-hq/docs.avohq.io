@@ -1,6 +1,8 @@
 ---
 license: community
 demo: https://trix.avodemo.com/
+description: "Renders the Trix WYSIWYG editor, storing its HTML content in a string or text column."
+fieldTags: [rich text, attachments]
 ---
 
 # Trix

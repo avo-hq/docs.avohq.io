@@ -1,6 +1,8 @@
 ---
 license: community
 outline: [2, 3]
+description: "The textarea field renders a textarea element."
+fieldTags: [text]
 ---
 
 # Textarea

@@ -46,7 +46,7 @@ The core covers managing records. Add-ons extend it toward whatever job your app
 
 - [Forms](./forms-and-pages/overview.html): standalone forms and pages beyond your resources, for surveys, settings, and bespoke flows.
 - [Nested Records](./associations/has_one.html#nested-in-forms): create and edit associated records inside the parent form.
-- [Reactive Fields](./field-options.html#react_on): fields that show, hide, or update based on what the user picks.
+- [Reactive Fields](./field-options.html#react-to-changes-in-other-fields): fields that show, hide, or update based on what the user picks.
 - [Media Library](./media-library.html): manage every uploaded asset in one place.
 
 **Run day-to-day operations**

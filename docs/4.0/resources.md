@@ -340,7 +340,7 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-For more granular control (custom paths, different responses), use the [controller methods](./controllers#after_create_path) instead.
+For more granular control (custom paths, different responses), use the [controller methods](./controllers-api.html#after_create_path) instead.
 
 If your forms grow tall, add the `Back` and `Save` buttons to the footer too with [`config.buttons_on_form_footers`](./resources-api.html#config.buttons_on_form_footers):
 

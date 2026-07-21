@@ -69,7 +69,7 @@ That depends on your setup:
 
 If you have one model, `User`, you'll have one Avo resource, `Avo::Resources::User`.
 Then you can customize different things based on your requirements. Like if for instance, you want to show only some types of users on the `Index` view, you can use [custom query scopes](https://docs.avohq.io/1.0/customization.html#custom-query-scopes) to hide specific types (if that's what you want to do).
-Same if you want to [show/hide fields](https://docs.avohq.io/1.0/field-options.html#field-visibility) based on the resource type or type of user.
+Same if you want to [show/hide fields](./field-options.html#show-fields-conditionally) based on the resource type or type of user.
 
 All in all **we're confident you'll have the necessary instruments** you need to build your admin.
 

@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Renders a password input element."
+fieldTags: [text]
 ---
 
 # Password

@@ -986,7 +986,7 @@ The default map style is now `mapbox://styles/mapbox/light-v11` and the default 
 This option allows you to add a help text to the label of a field on <Show /> and <Edit /> views.
 
 <RelatedList>
-<RelatedItem href="./field-options.html#label_help">Label help option</RelatedItem>
+<RelatedItem href="./field-options-api.html#label_help">Label help option</RelatedItem>
 </RelatedList>
 
 ## Cards `description` option renamed to `discreet_description`

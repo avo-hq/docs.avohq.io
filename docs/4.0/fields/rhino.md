@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Renders the Rhino WYSIWYG editor, based on TipTap, with ActionText and Media Library support."
+fieldTags: [rich text, attachments]
 ---
 
 # Rhino
