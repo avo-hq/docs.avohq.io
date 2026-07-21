@@ -24,7 +24,7 @@ end
 
 ## Identity
 
-<Option name="`self.title`">
+<Option name="`self.title`" headingSize="3">
 
 The attribute or block Avo uses as the record's display name — in link labels, breadcrumbs, association pickers, and the `Show` view header. When not set, Avo tries the `name`, `title`, and `label` attributes in order and falls back to `id`.
 
@@ -60,7 +60,7 @@ end
 
 </Option>
 
-<Option name="`self.description`">
+<Option name="`self.description`" headingSize="3">
 
 A piece of text displayed to users on the `Index`, `Show`, `Edit`, and `New` views, under the resource name.
 
@@ -103,7 +103,7 @@ end
 
 </Option>
 
-<Option name="`self.avatar`">
+<Option name="`self.avatar`" headingSize="3">
 
 The photo displayed next to the record on the <Show /> and <Edit /> views and in the breadcrumbs.
 
@@ -122,7 +122,7 @@ More information on the [cover and avatar page](./cover-and-avatar.html).
 
 </Option>
 
-<Option name="`self.cover`">
+<Option name="`self.cover`" headingSize="3">
 
 The large banner image displayed at the top of the record.
 
@@ -141,7 +141,7 @@ More information on the [cover and avatar page](./cover-and-avatar.html).
 
 </Option>
 
-<Option name="`self.icon`">
+<Option name="`self.icon`" headingSize="3">
 
 The icon displayed next to the resource on the sidebar.
 
@@ -156,7 +156,7 @@ end
 
 </Option>
 
-<Option name="`self.model_class`">
+<Option name="`self.model_class`" headingSize="3">
 
 The model this resource references. Set it when the model is namespaced, when the class can't be inferred from the resource name, or when the resource is a [secondary resource for a model](./resources.html#use-multiple-resources-for-the-same-model).
 
@@ -173,7 +173,7 @@ end
 
 ## Index view
 
-<Option name="`self.default_view_type`">
+<Option name="`self.default_view_type`" headingSize="3">
 
 The view type the `Index` view renders when the user hasn't picked one — the classic `:table`, or `:grid`/`:map` for more visual data.
 
@@ -203,7 +203,7 @@ end
 
 </Option>
 
-<Option name="`self.default_sort_column`">
+<Option name="`self.default_sort_column`" headingSize="3">
 
 The column records are sorted by on the `Index` view.
 
@@ -236,7 +236,7 @@ end
 
 </Option>
 
-<Option name="`self.default_sort_direction`">
+<Option name="`self.default_sort_direction`" headingSize="3">
 
 The direction records are sorted in on the `Index` view, applied to the [default sort column](#self.default_sort_column).
 
@@ -253,7 +253,7 @@ end
 
 </Option>
 
-<Option name="`self.pagination`">
+<Option name="`self.pagination`" headingSize="3">
 
 Pagination settings for the `Index` view. On large tables the record count can be inefficient — the `:countless` type skips it entirely.
 
@@ -323,7 +323,7 @@ end
 
 </Option>
 
-<Option name="`self.index_query`">
+<Option name="`self.index_query`" headingSize="3">
 
 The base query for the `Index` view. Useful for dropping a model's `default_scope` when rendering the index:
 
@@ -343,7 +343,7 @@ end
 
 </Option>
 
-<Option name="`self.record_selector`">
+<Option name="`self.record_selector`" headingSize="3">
 
 Whether the selection checkbox is rendered on each row of the `Index` view. Disable it for resources that will never be selected to reclaim the horizontal space.
 
@@ -360,7 +360,7 @@ end
 
 </Option>
 
-<Option name="`self.keep_filters_panel_open`">
+<Option name="`self.keep_filters_panel_open`" headingSize="3">
 
 <DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=374" />
 
@@ -384,7 +384,7 @@ end
 
 </Option>
 
-<Option name="`self.link_to_child_resource`">
+<Option name="`self.link_to_child_resource`" headingSize="3">
 
 For Single Table Inheritance (STI) models. When declared on the parent resource, clicking a record on the `Index` view redirects to the child resource's record instead of the parent's.
 
@@ -403,7 +403,7 @@ end
 
 ## Forms and saving
 
-<Option name="`self.confirm_on_save`">
+<Option name="`self.confirm_on_save`" headingSize="3">
 
 Whether Avo asks for confirmation before saving a record. Adds friction to the saving process, helping avoid human error.
 
@@ -420,7 +420,7 @@ end
 
 </Option>
 
-<Option name="`self.after_create_path`">
+<Option name="`self.after_create_path`" headingSize="3">
 
 Where the user is redirected after creating a record.
 
@@ -438,7 +438,7 @@ For more granular control over the redirect or response, use the [`after_create_
 
 </Option>
 
-<Option name="`self.after_update_path`">
+<Option name="`self.after_update_path`" headingSize="3">
 
 Where the user is redirected after updating a record.
 
@@ -456,7 +456,7 @@ For more granular control over the redirect or response, use the [`after_update_
 
 </Option>
 
-<Option name="`self.devise_password_optional`">
+<Option name="`self.devise_password_optional`" headingSize="3">
 
 If you use `devise` and update your user models (usually `User`) without passing a password, you will get a validation error. `devise_password_optional` stops that error by [stripping out](https://stackoverflow.com/questions/5113248/devise-update-user-without-password/11676957#11676957) the `password` key from `params`.
 
@@ -475,7 +475,7 @@ end
 
 </Option>
 
-<Option name="`config.buttons_on_form_footers`">
+<Option name="`config.buttons_on_form_footers`" headingSize="3">
 
 Whether the `Back` and `Save` buttons are also rendered in the footer of `New` and `Edit` forms — useful when forms grow tall. Unlike the other options on this page, this one is set in the initializer and applies to all resources.
 
@@ -495,7 +495,7 @@ end
 
 ## Navigation
 
-<Option name="`self.visible_on_sidebar`">
+<Option name="`self.visible_on_sidebar`" headingSize="3">
 
 Whether the resource appears in the auto-generated sidebar menu.
 
@@ -516,7 +516,7 @@ You'll have to use your own logic in the [`visible`](./menu-editor#item-visibili
 
 </Option>
 
-<Option name="`self.hotkey`">
+<Option name="`self.hotkey`" headingSize="3">
 
 A keyboard shortcut that jumps to the resource's `Index` view from anywhere in the admin panel. The binding is used automatically when the resource appears in the sidebar via the auto-generated menu or the [menu editor](./menu-editor).
 
@@ -535,7 +535,7 @@ end
 
 </Option>
 
-<Option name="`self.external_link`">
+<Option name="`self.external_link`" headingSize="3">
 
 A link to the record's public page outside the Avo interface. When configured, Avo displays an external link button on the record — clicking it takes the user to the returned URL.
 
@@ -558,7 +558,7 @@ end
 
 ## Performance
 
-<Option name="`self.includes`">
+<Option name="`self.includes`" headingSize="3">
 
 Associations to eager load on the `Index` view — the cure for those nasty `n+1` performance issues.
 
@@ -578,7 +578,7 @@ We know, the array notation looks weird, but it works.
 
 </Option>
 
-<Option name="`self.single_includes`">
+<Option name="`self.single_includes`" headingSize="3">
 
 Works the same as [`self.includes`](#self.includes), but eager loads the associations on the <Show /> and <Edit /> views only.
 
@@ -587,7 +587,7 @@ Works the same as [`self.includes`](#self.includes), but eager loads the associa
 
 </Option>
 
-<Option name="`self.attachments`">
+<Option name="`self.attachments`" headingSize="3">
 
 Attachments to eager load on the `Index` view, similar to how [`self.includes`](#self.includes) works for associations.
 
@@ -614,7 +614,7 @@ end
 
 </Option>
 
-<Option name="`self.single_attachments`">
+<Option name="`self.single_attachments`" headingSize="3">
 
 Works the same as [`self.attachments`](#self.attachments), but eager loads the attachments on the <Show /> and <Edit /> views only.
 
@@ -623,7 +623,7 @@ Works the same as [`self.attachments`](#self.attachments), but eager loads the a
 
 </Option>
 
-<Option name="`cache_hash`">
+<Option name="`cache_hash`" headingSize="3">
 
 The method Avo uses to compute the cache key for each row. The default implementation looks like this:
 
@@ -683,7 +683,7 @@ end
 
 ## Customization
 
-<Option name="`self.components`">
+<Option name="`self.components`" headingSize="3">
 
 The ViewComponent classes rendered for each view. By default, each view renders:
 
@@ -724,7 +724,7 @@ The easiest way to create a compatible component is to eject an existing one wit
 
 </Option>
 
-<Option name="`self.discreet_information`">
+<Option name="`self.discreet_information`" headingSize="3">
 
 Shows information about records without adding another field.
 
