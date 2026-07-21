@@ -9,7 +9,7 @@ Cards are one way of quickly adding custom content for your users.
 
 Cards can be used on dashboards or resources, we'll refer to both of them as "parent" since they're hosting the cards.
 
-You can add five types of cards to your parent: `partial`, `metric`, `chartkick`, `table`, and `list`.
+You can add six types of cards to your parent: `partial`, `html`, `metric`, `chartkick`, `table`, and `list`.
 
 ## Base settings
 
@@ -413,79 +413,153 @@ end
 
 <Image src="/assets/img/4_0/cards/map.webp" dark-src="/assets/img/4_0/cards/map-dark.webp" width="1428" height="1056" alt="An Avo partial card embedding a Google Maps view of Manhattan, rendered flush to the card edges because the card header is hidden." />
 
+## HTML card
+
+<VersionReq version="4.1" />
+
+When the content is simple enough that a dedicated partial file feels like overhead, use an HTML card and build the body straight from Ruby. Implement a `body` method — every view helper (`tag`, `safe_join`, `link_to`, `number_to_currency`, `render`, `main_app`, …) is available directly on the card, and the return value can take three shapes.
+
+### Inline ERB string
+
+Return a plain string and it's compiled as an inline ERB template. The template has access to all view helpers plus a `card` local.
+
+```ruby{6-17}
+# app/avo/cards/newest_users.rb
+class Avo::Cards::NewestUsers < Avo::Cards::HtmlCard
+  self.id = "newest_users"
+  self.label = "Newest users"
+
+  def body
+    <<~ERB
+      <ul class="divide-y divide-neutral-100">
+        <% User.order(created_at: :desc).limit(5).each do |user| %>
+          <li class="flex justify-between gap-2 px-4 py-2">
+            <%= link_to user.name, main_app.user_path(user) %>
+            <span class="text-content-secondary"><%= user.email %></span>
+          </li>
+        <% end %>
+      </ul>
+    ERB
+  end
+end
+```
+
+For passing data in explicitly, call `render inline:` yourself with `locals:` — the result renders the same way:
+
+```ruby
+def body
+  render inline: "<strong><%= count %></strong> signups", locals: {count: User.count}
+end
+```
+
+### Tag builder
+
+Return tag builder output:
+
+```ruby
+def body
+  tag.div class: "px-4 py-2" do
+    safe_join([
+      tag.strong(number_to_currency(149.99)),
+      tag.span("Total raised", class: "text-content-secondary")
+    ])
+  end
+end
+```
+
+### Renderables
+
+Return anything `render` accepts — a View Component instance, a `{partial:}` hash — and the card renders it:
+
+```ruby
+def body
+  MyStatsComponent.new(user: current_user)
+end
+```
+
+```ruby
+def body
+  {partial: "avo/cards/my_stats", locals: {user: current_user}}
+end
+```
+
+:::warning
+Inline templates go through ActionView, so interpolated values (`<%= user.name %>`) are HTML-escaped as usual. However, never build the template string itself from user input — pass dynamic values through ERB tags or `locals:`, not Ruby string interpolation.
+:::
+
 ## Table card
 
 <VersionReq version="4.1" />
 
-Use a table card to show a list of things — latest sign-ups, top products, failed jobs — styled like Avo's index table but fed by any query. Declare the column headers, return the rows from `query`, and the card renders the whole table.
+Use a table card to show a list of things — latest sign-ups, top products, failed jobs — styled like Avo's index table but fed by any query. Declare the columns as `fields` — the same DSL you use on resources — and return records from `query`.
 
 ```ruby
 # app/avo/cards/latest_users.rb
 class Avo::Cards::LatestUsers < Avo::Cards::TableCard
   self.id = "latest_users"
   self.label = "Latest users"
-  self.headers = ["User", "Email", "Status"]
   self.cols = 2
   self.rows = 2
 
+  def fields
+    field :name, as: :text, name: "User", link_to_record: true
+    field :email, as: :text, protocol: :mailto
+    field :active, as: :badge, name: "Status", options: {success: "Active"} do
+      record.active? ? "Active" : "Inactive"
+    end
+  end
+
   def query
-    result User.order(created_at: :desc).limit(10).map { |user|
-      [
-        user,
-        {text: user.email, url: "mailto:#{user.email}"},
-        {badge: user.active? ? "Active" : "Inactive", color: :green}
-      ]
-    }
+    result User.order(created_at: :desc).limit(10)
   end
 end
 ```
 
-`result` takes an array of rows, and each row is an array of cells matching the `headers` positionally.
+Each record from `result` becomes one row, and each field becomes one cell. Cells render through the same components as the resource <Index /> views, so every field type and option — computed blocks, `format_using`, `link_to_record`, badge `options:`, and the rest — behaves exactly like it does on an index table.
 
 :::info
+The records you return must have an Avo resource registered for their model — the card resolves and renders fields through it.
+
 Table cards are for top-N data — cap the row count in your query with `limit`. There is no pagination or sorting; if you need the full table experience, use a resource's index view instead.
 :::
 
 ### Headers
 
-`headers` accepts an array of strings or a lambda, so translated or dynamic headers resolve on every render:
+Column headers derive from the field names. Pass `name:` to override one:
 
 ```ruby
-self.headers = -> { [I18n.t("avo.name"), I18n.t("avo.email")] }
-```
-
-When the headers come from the same place as the data, declare them inside `query` — it mirrors `result` and wins over the class-level declaration:
-
-```ruby
-def query
-  report = FetchReport.call(range:)
-
-  headers report.column_names
-  result report.rows
-end
+field :created_at, as: :date, name: "Joined"
 ```
 
 If you don't need column headers at all, you probably want the [list card](#list-card) instead.
 
-### Cell types
+### Row links
 
-A cell can be a plain value or a hash that picks a richer rendering:
+Set `row_url` to make every row a link. The block runs per row with `record` in scope:
 
-| Cell | Renders |
-|------|---------|
-| `"text"`, `42`, any value | Escaped text (`to_s`) |
-| `{text:, url:, target: (optional)}` | A link |
-| `{record: user}` | A link to the record's Avo page, labeled with the record's title |
-| `{badge: "Active", color: :green, style: (optional)}` | A badge (any color supported by Avo's badge component; invalid colors fall back to neutral) |
-| `{image:, alt: (optional), size: (optional)}` | A round thumbnail; `size` accepts `:xs`, `:sm` (default), or `:md` |
-| `{partial: "avo/cards/cell", locals: {…}}` | Any partial — the escape hatch for custom content |
+```ruby
+self.row_url = -> { record_path(record) }
+```
 
-A few things to know:
+For a new tab or a tooltip, return a hash instead — the same semantics as [discreet information](resources#self_discreet_information):
 
-- Cell text is always HTML-escaped. Raw HTML only enters through the `partial` cell.
-- `url:` and `image:` accept `http`, `https`, `mailto`, and relative URLs; anything else (like `javascript:`) renders as plain text.
-- The `record:` cell needs an Avo resource registered for the record's model; without one, the cell renders an unlinked title (and raises a descriptive error in development).
-- Cell partials receive your `locals` plus the `card`. Don't build the partial path from row data.
+```ruby
+self.row_url = -> {
+  {url: record_path(record), target: :_blank, tooltip: "View #{record.name}"}
+}
+```
+
+- Each hash value may itself be a block receiving `record`.
+- `url` accepts `http`, `https`, `mailto`, and relative URLs; anything else (like `javascript:`) is ignored.
+- List card rows render a real anchor stretched over the row, so middle-click, copy-link, and no-JS navigation work. Table rows navigate through the same JavaScript as `click_row_to_view_record` on index tables — a `<tr>` can't be wrapped in an anchor. Either way, links inside the row (like a `mailto:` cell) still win over the row link.
+
+### Density
+
+Rows use the global [`config.density`](customization#density) unless the card overrides it:
+
+```ruby
+self.density = :tight # :tight, :normal, :relaxed
+```
 
 ### Empty state
 
@@ -511,13 +585,20 @@ The card's `rows` setting also caps the table's height — rows past the cap scr
 
 <VersionReq version="4.1" />
 
-Use a list card whenever you want to show a list of things without table semantics — it renders a real `<ul>`, not a `<table>`. Each item from `result` becomes one row.
+Use a list card whenever you want to show a list of things without table semantics — it renders a real `<ul>`, not a `<table>`, and there are no column headers. The first field is each row's primary content and every other field trails at the end edge — great for badges, booleans, or timestamps.
 
 ```ruby
 # app/avo/cards/active_users.rb
 class Avo::Cards::ActiveUsers < Avo::Cards::ListCard
   self.id = "active_users"
   self.label = "Active users"
+  self.row_url = -> { record_path(record) }
+
+  def fields
+    field :name, as: :text
+    field :email, as: :text
+    field :active, as: :boolean
+  end
 
   def query
     result User.active.order(:name).limit(5)
@@ -525,17 +606,7 @@ class Avo::Cards::ActiveUsers < Avo::Cards::ListCard
 end
 ```
 
-Returning records directly renders each one as a linked row. For richer rows, return an array per item: the first cell is the primary content and every other cell trails at the end edge — great for badges or timestamps:
-
-```ruby
-def query
-  result User.active.limit(5).map { |user|
-    [user, {badge: user.plan, color: :green}]
-  }
-end
-```
-
-List cells speak the same vocabulary as [table cells](#cell-types), and the empty state, `empty_message`, `ranges`, and height behavior work the same way as the table card.
+Fields, [row links](#row-links), [density](#density), the empty state, `empty_message`, `ranges`, and the height cap all work the same way as on the [table card](#table-card).
 
 ## Cards visibility
 
