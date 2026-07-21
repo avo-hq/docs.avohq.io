@@ -9,7 +9,7 @@ Cards are one way of quickly adding custom content for your users.
 
 Cards can be used on dashboards or resources, we'll refer to both of them as "parent" since they're hosting the cards.
 
-You can add four types of cards to your parent: `partial`, `metric`, `chartkick`, and `table`.
+You can add five types of cards to your parent: `partial`, `metric`, `chartkick`, `table`, and `list`.
 
 ## Base settings
 
@@ -465,21 +465,7 @@ def query
 end
 ```
 
-Omit `headers` entirely to render the card without a table header row — handy when the card is really a list:
-
-```ruby
-# app/avo/cards/active_users.rb
-class Avo::Cards::ActiveUsers < Avo::Cards::TableCard
-  self.id = "active_users"
-  self.label = "Active users"
-
-  def query
-    result User.active.order(:name).limit(5)
-  end
-end
-```
-
-Returning records directly (no arrays, no hashes) renders each one as a single linked cell — the quickest way to get a list of records.
+If you don't need column headers at all, you probably want the [list card](#list-card) instead.
 
 ### Cell types
 
@@ -519,7 +505,37 @@ Table cards support the same `ranges`, `initial_range`, and `refresh_every` sett
 `refresh_every` reloads the whole card, which resets the scroll position of a tall table. Prefer it on short tables.
 :::
 
-The card's `rows` setting also caps the table's height — rows past the cap scroll inside the card.
+The card's `rows` setting also caps the table's height — rows past the cap scroll inside the card, with the column headers staying pinned.
+
+## List card
+
+<VersionReq version="4.1" />
+
+Use a list card whenever you want to show a list of things without table semantics — it renders a real `<ul>`, not a `<table>`. Each item from `result` becomes one row.
+
+```ruby
+# app/avo/cards/active_users.rb
+class Avo::Cards::ActiveUsers < Avo::Cards::ListCard
+  self.id = "active_users"
+  self.label = "Active users"
+
+  def query
+    result User.active.order(:name).limit(5)
+  end
+end
+```
+
+Returning records directly renders each one as a linked row. For richer rows, return an array per item: the first cell is the primary content and every other cell trails at the end edge — great for badges or timestamps:
+
+```ruby
+def query
+  result User.active.limit(5).map { |user|
+    [user, {badge: user.plan, color: :green}]
+  }
+end
+```
+
+List cells speak the same vocabulary as [table cells](#cell-types), and the empty state, `empty_message`, `ranges`, and height behavior work the same way as the table card.
 
 ## Cards visibility
 
