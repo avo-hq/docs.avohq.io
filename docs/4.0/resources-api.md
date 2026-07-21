@@ -689,9 +689,9 @@ The ViewComponent classes rendered for each view. By default, each view renders:
 
 | View                                                   | Component                          |
 | ------------------------------------------------------ | ---------------------------------- |
-| [Index](views.html#Index)                              | `Avo::Views::ResourceIndexComponent` |
-| [Show](views.html#Show)                                | `Avo::Views::ResourceShowComponent`  |
-| [New](views.html#New), [Edit](views.html#Edit)         | `Avo::Views::ResourceEditComponent`  |
+| [Index](views.html#index)                              | `Avo::Views::ResourceIndexComponent` |
+| [Show](views.html#show)                                | `Avo::Views::ResourceShowComponent`  |
+| [New](views.html#new), [Edit](views.html#edit)         | `Avo::Views::ResourceEditComponent`  |
 
 Swap any of them for your own classes. Keys must be strings that match the original component class name; values may be classes or strings.
 
@@ -714,10 +714,10 @@ self.components = {
 :::warning
 The custom view components must ensure that their initializers are configured to receive all the arguments passed during the rendering of a component. You can verify this in our codebase through the following files:
 
-[Index](views.html#Index) -> `app/views/avo/base/index.html.erb`<br>
-[Show](views.html#Show) -> `app/views/avo/base/show.html.erb`<br>
-[New](views.html#New) -> `app/views/avo/base/new.html.erb`<br>
-[Edit](views.html#Edit) -> `app/views/avo/base/edit.html.erb`
+[Index](views.html#index) -> `app/views/avo/base/index.html.erb`<br>
+[Show](views.html#show) -> `app/views/avo/base/show.html.erb`<br>
+[New](views.html#new) -> `app/views/avo/base/new.html.erb`<br>
+[Edit](views.html#edit) -> `app/views/avo/base/edit.html.erb`
 :::
 
 The easiest way to create a compatible component is to eject an existing one with the [`--scope` parameter](./customization.html#scope). For a full walkthrough, see the [safely override resource components guide](./guides/safely-override-resource-components.html).
@@ -745,4 +745,5 @@ Some resource options have enough surface to warrant a dedicated page:
 | `self.map_view`       | [Map view](./map-view.html)                               |
 | `self.avatar`         | [Cover and avatar](./cover-and-avatar.html#add-an-avatar) |
 | `self.cover`          | [Cover and avatar](./cover-and-avatar.html#add-a-cover-photo) |
-| `self.row_controls_config` | [Table view](./table-view.html#resource-configuration) |
+| `self.row_controls_config` | [Table view API](./table-view-api.html#row_controls_config) |
+| `self.table_view`     | [Table view API](./table-view-api.html#table_view)        |

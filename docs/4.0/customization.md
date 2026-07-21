@@ -46,7 +46,7 @@ For `has_many` associations you can control how many resources are visible in th
 
 ### Default view type
 
-The `ResourceIndex` component supports two view types `:table` and `:grid`. You can change that by `config.default_view_type = :table`. Read more on the [grid view configuration page](./grid-view.html).
+The `ResourceIndex` component supports the `:table` (default), `:grid`, and `:map` view types, plus any [custom view type](./custom-view-types.html) you register. You can change the default for all resources with `config.default_view_type = :grid`, or per resource with the `default_view_type` class attribute. Read more on the [views pages](./views.html#view-types).
 
 
 <Image src="/assets/img/4_0/customization/view-type-table-grid.webm" dark-src="/assets/img/4_0/customization/view-type-table-grid-dark.webm" width="888" height="650" alt="An Avo Posts index with six records per page: the view switcher toggles between table rows and grid cards." prompt="Posts index with 4 per page; GIF toggling table and grid view with annotated view switcher" />

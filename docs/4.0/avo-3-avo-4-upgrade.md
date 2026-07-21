@@ -692,7 +692,7 @@ include Avo::Authorization::Concerns::PolicyHelpers # [!code ++]
 | Feature                                                             | Gem                   |
 | ------------------------------------------------------------------- | --------------------- |
 | [Resource scopes](./scopes)                                         | `avo-scopes`          |
-| [Customizable controls](./customizable-controls)                    | `avo-custom_controls` |
+| [Customizable controls](./custom-controls)                    | `avo-custom_controls` |
 | [Dynamic filters](./dynamic-filters)                                | `avo-dynamic_filters` |
 | [Nested association forms](./associations/has_many#nested-in-forms) | `avo-nested`          |
 

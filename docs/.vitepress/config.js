@@ -8,16 +8,25 @@ const fieldsMenuItems4 = getFiles('fields', '4.0')
 
 // Every page is also published as raw markdown next to its .html version (and
 // served the same way in dev). Markdown readers never see PageHeader's
-// `api_docs` callout, so surface it as a visible notice with an absolute URL.
+// `api_docs`/`guide` callouts, so surface them as visible notices with
+// absolute URLs.
 function transformRawMd(src, relativePath) {
   const fm = src.match(/^---\n[\s\S]*?\n---\n/)
-  const apiDocs = fm && fm[0].match(/^api_docs:\s*["']?(\S+?)["']?\s*$/m)
-  if (!apiDocs) return src
+  if (!fm) return src
 
-  const target = path.posix
-    .join(path.posix.dirname(`/${relativePath}`), apiDocs[1])
-    .replace(/\.html$/, '.md')
-  const notice = `> **Looking for every option?** See the full API reference → https://docs.avohq.io${target}\n`
+  const linkNotice = (key, label) => {
+    const match = fm[0].match(new RegExp(`^${key}:\\s*["']?(\\S+?)["']?\\s*$`, 'm'))
+    if (!match) return null
+    const target = path.posix
+      .join(path.posix.dirname(`/${relativePath}`), match[1])
+      .replace(/\.html$/, '.md')
+    return `> ${label} https://docs.avohq.io${target}\n`
+  }
+
+  const notice =
+    linkNotice('api_docs', '**Looking for every option?** See the full API reference →') ||
+    linkNotice('guide', '**How-to guides and worked examples** See the guides →')
+  if (!notice) return src
 
   return fm[0] + '\n' + notice + src.slice(fm[0].length)
 }
@@ -198,10 +207,11 @@ const config = {
             { text: "Scopes", link: "/4.0/scopes.html" },
             { text: "Record reordering", link: "/4.0/record-reordering.html" },
             { text: "Discreet information", link: "/4.0/discreet-information.html" },
-            { text: "Customizable controls", link: "/4.0/customizable-controls.html" },
+            { text: "Custom controls", link: "/4.0/custom-controls.html" },
             { text: "Cover and Avatar", link: "/4.0/cover-and-avatar.html" },
             {
               text: "Views",
+              link: "/4.0/views.html",
               collapsed: false,
               items: [
                 { text: "Overview", link: "/4.0/views.html" },

@@ -19,7 +19,7 @@ The **Pro** tier comes with [Advanced Authorization](./authorization.html) using
 
 <Option name="Advanced">
 
-The **Advanced** tier is a pick-and-choose plan which has a few features and add-ons to offer like [Customizable Controls](./customizable-controls.html), [Resource Scopes](./scopes.html), [Dynamic Filters](./dynamic-filters.html), [Kanban Boards](kanban-boards.html), Dynamic Fields, Collaboration, or White Labeling.
+The **Advanced** tier is a pick-and-choose plan which has a few features and add-ons to offer like [Customizable Controls](./custom-controls.html), [Resource Scopes](./scopes.html), [Dynamic Filters](./dynamic-filters.html), [Kanban Boards](kanban-boards.html), Dynamic Fields, Collaboration, or White Labeling.
 In order to get a quote on the **Advanced** features, please [get in touch](https://savvycal.com/avo-hq/discovery-call-advanced) with us.
 
 </Option>
