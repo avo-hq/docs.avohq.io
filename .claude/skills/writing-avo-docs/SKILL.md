@@ -57,17 +57,17 @@ common, and the overview's footer links to every sub-page in one line each. See
 ## Workflow
 
 1. **Find the option surface.** Look at the actual config (`config.<feature>`)
-   so you know every option, its type, default, allowed values, and what
-   raises. Don't invent options — document what exists. If you're unsure of a
-   default or a validation rule, find it in the source rather than guessing.
+  so you know every option, its type, default, allowed values, and what
+  raises. Don't invent options — document what exists. If you're unsure of a
+  default or a validation rule, find it in the source rather than guessing.
 2. **Apply the decision rule** above to pick one page or two.
 3. **Write the guide** (`feature.md`) — task-organized, plain English.
 4. **Write the reference** (`feature-api.md`) if warranted — one `<Option>` per
-   option.
+  option.
 5. **Wire them together** with frontmatter cross-links and option-to-anchor
-   links.
+  links.
 6. **Run the checklist** at the bottom, then `yarn dev` and confirm the page
-   renders and the guide ↔ reference callouts appear.
+  renders and the guide ↔ reference callouts appear.
 
 ## The guide page (`feature.md`)
 
@@ -116,6 +116,9 @@ This page is for *consulting*, not reading top to bottom.
 - **Mirror the feature's structure.** Group options under `##` headings (Theme
   selection, Custom palettes, Assets…) that follow how the feature is organized,
   ordered most- to least-commonly-touched.
+- **Nest options under their group.** Every `<Option>` inside a `##` group gets
+  `headingSize="3"` so it renders as an h3 under the group heading (and nests in
+  the outline) instead of sitting at the same level as its section.
 - **One `<Option>` block per option**, using the template below.
 - Use `:::warning` / `:::info` callouts for sharp edges (type coercion, values
   forwarded verbatim to a third party, etc.).
