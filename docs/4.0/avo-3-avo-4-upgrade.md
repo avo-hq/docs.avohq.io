@@ -661,7 +661,7 @@ Add only the gems for the features you use.
 | [Menu editor](./menu-editor)                                                                  | `avo-menu`              |
 | [Global search](./search/global-search), [searchable associations](./associations/searchable) | `avo-advanced_search`   |
 | [Authorization](./authorization)                                                              | `avo-authorization`     |
-| [Record reordering](./records-reordering)                                                     | `avo-record_reordering` |
+| [Record reordering](./record-reordering)                                                     | `avo-record_reordering` |
 
 If your `Gemfile` had `avo-pro`, remove it and add the gems for the features you use:
 

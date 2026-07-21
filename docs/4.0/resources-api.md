@@ -740,7 +740,7 @@ Some resource options have enough surface to warrant a dedicated page:
 | --------------------- | --------------------------------------------------------- |
 | `self.search`         | [Resource search](./search/resource-search.html)          |
 | `self.translation_key`| [I18n](./i18n.html)                                       |
-| `self.ordering`       | [Records reordering](./records-reordering.html)           |
+| `self.ordering`       | [Record reordering](./record-reordering.html)           |
 | `self.grid_view`      | [Grid view](./grid-view.html)                             |
 | `self.map_view`       | [Map view](./map-view.html)                               |
 | `self.avatar`         | [Cover and avatar](./cover-and-avatar.html#add-an-avatar) |

@@ -380,6 +380,10 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
+## Record previews
+
+Let users peek at a record from the `Index` view without opening it. Add a [`preview` field](./fields/preview.html) to the resource and mark the fields you want in the popover with `show_on: :preview`.
+
 ## Manage sidebar presence and shortcuts
 
 The auto-generated sidebar lists every resource. Hide the ones users shouldn't navigate to directly with [`self.visible_on_sidebar`](./resources-api.html#self.visible_on_sidebar), and give frequently visited resources a keyboard shortcut with [`self.hotkey`](./resources-api.html#self.hotkey):

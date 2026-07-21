@@ -180,9 +180,9 @@ Controls whether the user can see the actions button on the <Index /> page.
 
 <Option name="`reorder?`">
 
-Controls whether the user can see the [records reordering](./records-reordering) buttons on the <Index /> page.
+Controls whether the user can see the [record reordering](./record-reordering) buttons on the <Index /> page.
 
-<Image src="/assets/img/4_0/authorization/policy-reorder.webp" dark-src="/assets/img/4_0/authorization/policy-reorder-dark.webp" width="2032" height="758" alt="An Avo Course links index table with a row's records reordering controls (drag handle and up, down, to-top, to-bottom arrows) highlighted, the controls the reorder? policy governs." prompt="Records reordering controls highlighted on the Index view" />
+<Image src="/assets/img/4_0/authorization/policy-reorder.webp" dark-src="/assets/img/4_0/authorization/policy-reorder-dark.webp" width="2032" height="758" alt="An Avo Course links index table with a row's record reordering controls (drag handle and up, down, to-top, to-bottom arrows) highlighted, the controls the reorder? policy governs." prompt="Record reordering controls highlighted on the Index view" />
 
 </Option>
 
@@ -196,10 +196,10 @@ Controls whether the user can see the [resource search input](./search/resource-
 
 <Option name="`preview?`">
 
-Controls access to the preview endpoint, which is triggered by the [preview field](./record-previews.html).
+Controls access to the preview endpoint, which is triggered by the [preview field](./fields/preview.html).
 
 :::info
-This policy method does not control the visibility of the [preview field](./record-previews.html). It only manages authorization at the endpoint level. To hide the preview field, use the `visible` field option.
+This policy method does not control the visibility of the [preview field](./fields/preview.html). It only manages authorization at the endpoint level. To hide the preview field, use the `visible` field option.
 :::
 
 <Image src="/assets/img/4_0/authorization/policy-preview.webp" dark-src="/assets/img/4_0/authorization/policy-preview-dark.webp" width="2032" height="758" alt="Preview field trigger highlighted on a team row in the Index view" prompt="Preview field trigger highlighted on a resource row on the Index view" />
@@ -296,9 +296,9 @@ Controls whether the `Actions` dropdown is visible. The `record` variable is the
 </Option>
 <Option name="`reorder_{association}?`">
 
-Controls whether the user can see the [records reordering](./records-reordering) buttons on the `has_many` <Index /> page.
+Controls whether the user can see the [record reordering](./record-reordering) buttons on the `has_many` <Index /> page.
 
-<Image src="/assets/img/4_0/authorization/policy-reorder-assoc.webp" dark-src="/assets/img/4_0/authorization/policy-reorder-assoc-dark.webp" width="2032" height="680" alt="A Course links association Index (on the Course Show page) with a row's records-reordering controls (drag handle and up, down, to-top, to-bottom arrows) highlighted, the controls the reorder_{association}? policy governs." prompt="Records reordering controls highlighted on an associated record row on the association Index view" />
+<Image src="/assets/img/4_0/authorization/policy-reorder-assoc.webp" dark-src="/assets/img/4_0/authorization/policy-reorder-assoc-dark.webp" width="2032" height="680" alt="A Course links association Index (on the Course Show page) with a row's record-reordering controls (drag handle and up, down, to-top, to-bottom arrows) highlighted, the controls the reorder_{association}? policy governs." prompt="Record reordering controls highlighted on an associated record row on the association Index view" />
 
 </Option>
 
