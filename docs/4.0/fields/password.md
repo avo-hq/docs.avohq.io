@@ -15,5 +15,4 @@ field :password, as: :password
 You can set the `revealable` to true to show an "eye" icon that toggles the password between hidden or visible.
 
 **Related:**
-- [Devise password optional](./../resources#devise-password-optional)
-
+- [Devise password optional](./../resources-api#self.devise_password_optional)

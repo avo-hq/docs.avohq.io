@@ -78,7 +78,7 @@ end
 <Image src="/assets/img/guides/phlex/phlex_component.webp" dark-src="/assets/img/guides/phlex/phlex_component-dark.webp" width="1984" height="392" alt="Phlex component" />
 
 :::tip
-While this example uses a field, the same pattern applies to resources. You can use the [`components`](./../resources#self.components) option to customize the component for the `index`, `show`, `edit`, and `new` views.
+While this example uses a field, the same pattern applies to resources. You can use the [`components`](./../resources-api#self.components) option to customize the component for the `index`, `show`, `edit`, and `new` views.
 :::
 
 ## Conclusion

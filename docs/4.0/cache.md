@@ -43,7 +43,7 @@ Our recomendation is to not use MemoryStore in production because it will not be
 
 The `cache_hash` method is used to compute the cache key for each row.
 
-More about this on the [resource options page](./resources#cache_hash).
+More about this on the [resource options page](./resources-api#cache_hash).
 </Option>
 
 ## Caching caveats
@@ -73,7 +73,7 @@ Example with Child Model and Association with `touch: true`
 
 #### Option 2: override `cache_hash` method on resource to take associations in consideration
 
-Avo, internally, uses the [`cache_hash`](./resources#cache_hash) method to compute the hash that will be remembered by the caching driver when displaying the rows.
+Avo, internally, uses the [`cache_hash`](./resources-api#cache_hash) method to compute the hash that will be remembered by the caching driver when displaying the rows.
 
 You can take control and override it on that particular resource to take the association into account.
 ```ruby
@@ -99,7 +99,7 @@ You can take control and override it on that particular resource to take the ass
 
 When the rows are cached, the links from the controls, [`belongs_to`](./associations/belongs_to) and [`record_link`](./fields/record_link) fields, and maybe others will be cached along.
 
-The best solution here is to clear the cache with this ruby command `Rails.cache.clear`. If that's not an option then you can try to add the `root_path` to the [`cache_hash`](./resources#cache_hash) method in your particular resource.
+The best solution here is to clear the cache with this ruby command `Rails.cache.clear`. If that's not an option then you can try to add the `root_path` to the [`cache_hash`](./resources-api#cache_hash) method in your particular resource.
 
 ## Solid Cache
 

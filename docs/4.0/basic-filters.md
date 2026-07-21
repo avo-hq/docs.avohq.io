@@ -806,7 +806,7 @@ end
 
 There are scenarios where you wouldn't want to close the filters panel when you change the values. For that, you can use the `keep_filters_panel_open` resource option.
 
-More on this on the [`keep_filters_panel_open` resource option](./resources#self_keep_filters_panel_open).
+More on this on the [`keep_filters_panel_open` resource option](./resources-api#self.keep_filters_panel_open).
 
 ## Open a filter in your editor
 

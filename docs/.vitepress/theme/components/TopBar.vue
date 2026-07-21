@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted } from 'vue'
 
 onMounted(() => {
-  document.documentElement.style.setProperty('--vp-layout-top-height', '3rem')
+  document.documentElement.style.setProperty('--vp-layout-top-height', '2rem')
 })
 
 onUnmounted(() => {
@@ -26,7 +26,8 @@ section {
   left: 0;
   right: 0;
   z-index: var(--vp-z-index-layout-top);
-  background-color: var(--vp-button-brand-bg);
-  color: var(--vp-button-brand-text);
+  background-color: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  border-bottom: 1px solid var(--vp-c-divider);
 }
 </style>

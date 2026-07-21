@@ -8,7 +8,7 @@ The page where you see all your resources listed in a table or a [grid](grid-vie
 <br/>
 <RelatedList>
 <RelatedItem href="./customization.html#click_row_to_view_record">Click row to view record</RelatedItem>
-<RelatedItem href="./resources.html#self.components">Resource custom components</RelatedItem>
+<RelatedItem href="./resources-api.html#self.components">Resource custom components</RelatedItem>
 </RelatedList>
 
 </Option>
@@ -18,7 +18,7 @@ The page where you see all your resources listed in a table or a [grid](grid-vie
 The page where you see one resource in more detail.
 <br/>
 <RelatedList>
-<RelatedItem href="./resources.html#self.components">Resource custom components</RelatedItem>
+<RelatedItem href="./resources-api.html#self.components">Resource custom components</RelatedItem>
 </RelatedList>
 
 </Option>
@@ -28,7 +28,7 @@ The page where you see one resource in more detail.
 The page where you can edit one resource.
 <br/>
 <RelatedList>
-<RelatedItem href="./resources.html#self.components">Resource custom components</RelatedItem>
+<RelatedItem href="./resources-api.html#self.components">Resource custom components</RelatedItem>
 </RelatedList>
 
 </Option>
@@ -38,7 +38,7 @@ The page where you can edit one resource.
 The page where you can create a new resource.
 <br/>
 <RelatedList>
-<RelatedItem href="./resources.html#self.components">Resource custom components</RelatedItem>
+<RelatedItem href="./resources-api.html#self.components">Resource custom components</RelatedItem>
 </RelatedList>
 
 </Option>

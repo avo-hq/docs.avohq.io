@@ -756,7 +756,7 @@ self.pagination = -> do
 end
 ```
 
-Check the <a href="./resources.html#slots">slots documentation</a> for more details.
+Check the <a href="./resources-api.html#self.pagination">slots documentation</a> for more details.
 
 ## Breadcrumbs
 
@@ -851,13 +851,13 @@ self.grid_view = {
 #### Migration steps
 
 1. **Replace flat badge properties** with a `badge` hash:
-   - `badge_label` → `badge: { label: ... }`
-   - `badge_color` → `badge: { color: ... }`
-   - `badge_title` → `badge: { title: ... }`
+  - `badge_label` → `badge: { label: ... }`
+  - `badge_color` → `badge: { color: ... }`
+  - `badge_title` → `badge: { title: ... }`
 
 2. **Add optional new properties** if needed:
-   - `badge: { style: ... }` - Controls badge appearance (`subtle` or `solid`)
-   - `badge: { icon: ... }` - Adds an icon to the badge
+  - `badge: { style: ... }` - Controls badge appearance (`subtle` or `solid`)
+  - `badge: { icon: ... }` - Adds an icon to the badge
 
 For detailed information about available colors, styles, and icons, see the [Badge field documentation](./fields/badge).
 
@@ -1018,7 +1018,7 @@ More info on the [Description option](./actions/customization.html#description) 
 
 ## Added `self.icon` option to resources
 
-More info on the [Icon option](./resources.html#selficon) section.
+More info on the [Icon option](./resources-api.html#self.icon) section.
 
 ## Added `loading: :manual` for on-demand associations and tabs
 
