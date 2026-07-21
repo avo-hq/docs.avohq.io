@@ -281,9 +281,9 @@ self.pagination = {
 | `type`  | `:default`, `:countless`                                                                                      | `:default` | `:countless` skips the record count     |
 | `slots` | see [Pagy docs — control the page links](https://ddnexus.github.io/pagy/toolbox/helpers/series_nav/#options) | `9`        | Number of page links rendered           |
 
-### Examples
+#### Examples
 
-#### Default
+##### Default
 
 ```ruby
 self.pagination = -> do
@@ -296,7 +296,7 @@ end
 
 <Image src="/assets/img/4_0/resources/pagination/default.webp" dark-src="/assets/img/4_0/resources/pagination/default-dark.webp" width="2250" height="60" alt="Default pagination" />
 
-#### Countless
+##### Countless
 
 ```ruby
 self.pagination = -> do
@@ -308,7 +308,7 @@ end
 
 <Image src="/assets/img/4_0/resources/pagination/countless.webp" dark-src="/assets/img/4_0/resources/pagination/countless-dark.webp" width="2250" height="60" alt="Countless pagination" />
 
-#### Countless and "pageless"
+##### Countless and "pageless"
 
 ```ruby
 self.pagination = -> do

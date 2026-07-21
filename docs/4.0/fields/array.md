@@ -1,6 +1,5 @@
 ---
 license: community
-betaStatus: beta
 demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1030"
 ---
 
@@ -49,7 +48,7 @@ class CoursePolicy < ApplicationPolicy
 end
 ```
 
-For more details, refer to the [view_{association}?](./../authorization.html#view_association) documentation.
+For more details, refer to the [view\_{association}?](./../authorization.html#view_association) documentation.
 :::
 
 ### Example 2: Array field fetching data from the model's method
@@ -85,9 +84,9 @@ end
 ## Summary of Data Fetching Hierarchy
 
 When using `has_many` with `array: true`, Avo will fetch data in the following order:
+
 1. Use data returned by the **block** provided in the field.
 2. Fetch data from the **associated model method** (e.g., `Course#attendees`).
 3. Fall back to the **`records` method** defined in the resource.
 
 This hierarchy provides maximum flexibility and ensures seamless integration with both dynamic and predefined datasets.
-
