@@ -16,7 +16,7 @@ You may use custom tools to create custom sections or views to add to your app.
       create  app/views/avo/sidebar/items/_dashboard.html.erb
       insert  app/controllers/avo/tools_controller.rb
       create  app/views/avo/tools/dashboard.html.erb
-       route  namespace :avo do
+      route  namespace :avo do
   get "dashboard", to: "tools#dashboard"
 end
 ```
@@ -56,7 +56,22 @@ The `_dashboard.html.erb` partial will be added to the `app/views/avo/sidebar/it
 
 ### Customize the sidebar
 
-If you want to customize the sidebar partial further, you can [eject](./eject-views.html#partial) and update it to your liking. We're planning on creating a better sidebar customization experience later this year.
+If you want to customize the sidebar partial further, you can [eject](./eject-views.html#eject-a-partial) and update it to your liking. We're planning on creating a better sidebar customization experience later this year.
+
+## Set the page title
+
+To set the page title for a custom tool, assign a value to the `@page_title` instance variable in the controller method.
+
+```ruby{3}
+# app/controllers/avo/tools_controller.rb
+class Avo::ToolsController < Avo::ApplicationController
+  def custom_tool
+    @page_title = "Custom tool page title"
+  end
+end
+```
+
+Avo uses the [meta-tags](https://github.com/kpumuk/meta-tags) gem to compile and render the page title.
 
 ## Add assets
 

@@ -12,13 +12,13 @@ When a target resource has too many records for a simple dropdown, `searchable` 
 
 A `query` source must be defined, in one of two places:
 
-- `self.search = { query: ... }` on the target resource, shared by every searchable picker that points at it ([full docs here](./../search/resource-search.html#enable-search-for-a-resource)), or
+- `self.search = { query: ... }` on the target resource, shared by every searchable picker that points at it ([full docs here](./../search.html#enable-search-for-a-resource)), or
 - a `query:` proc inside the field's `searchable: { ... }` hash, scoped to that single picker ([details here](#query)).
 
 If neither is present, the picker stays empty.
 
 :::info Precedence
-A field-level `searchable: { query: }` or `{ item: }` overrides the matching key on the target resource for that picker only. Everything else about writing those procs is the same as [resource search](./../search/resource-search.html#enable-search-for-a-resource).
+A field-level `searchable: { query: }` or `{ item: }` overrides the matching key on the target resource for that picker only. Everything else about writing those procs is the same as [resource search](./../search.html#enable-search-for-a-resource).
 :::
 
 ## Boolean form
@@ -61,7 +61,7 @@ end
 
 ### `query:`
 
-Runs while the user is typing. The records it returns fill the dropdown. See [resource search](./../search/resource-search.html#enable-search-for-a-resource) for how to write the proc; the same rules apply here.
+Runs while the user is typing. The records it returns fill the dropdown. See [resource search](./../search.html#enable-search-for-a-resource) for how to write the proc; the same rules apply here.
 
 ### `enabled:`
 

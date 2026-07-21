@@ -4,6 +4,8 @@ yarn-error.log
 
 .vuepress/dist
 .vitepress/dist
+.vitepress/temp
+.vitepress/.temp
 
 docs/.vuepress/dist
 docs/.vitepress/dist

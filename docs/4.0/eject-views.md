@@ -1,88 +1,63 @@
-# Eject
+---
+license: community
+outline: [2, 3]
+---
 
-If you want to change one of Avo's built-in views, you can eject it, update it and use it in your admin panel.
+# Eject views
 
-:::warning
-Once ejected, the views will not receive updates on new Avo releases. You must maintain them yourself.
+Avo renders its UI from partials, ViewComponents, and controllers that live inside the gem. When configuration isn't enough, run `bin/rails generate avo:eject` to copy any of them into your application and customize them however you need — your copy takes precedence over Avo's.
+
+:::warning You take over maintenance
+Ejected files stop receiving updates on new Avo releases; keeping them in sync becomes your responsibility. That's why the generator asks you to confirm every ejection.
 :::
 
-<Option name="`--partial`">
+## Eject a partial
 
-Utilize the `--partial` option when you intend to extract certain partial
+Use the `--partial` option with the partial's path inside the gem to copy it into your app at the same path:
 
-## Prepared templates
-
-We prepared a few templates to make it easier for you.
-
-`bin/rails generate avo:eject --partial :head` will eject the `_head.html.erb` partial.
-
-```
-▶ bin/rails generate avo:eject --partial :head
-Running via Spring preloader in process 20947
-      create  app/views/avo/partials/_head.html.erb
-```
-
-A list of prepared templates:
-
-- `:head` ➡️ &nbsp; `app/views/avo/partials/_head.html.erb`
-- `:header` ➡️ &nbsp; `app/views/avo/partials/_header.html.erb`
-- `:scripts` ➡️ &nbsp; `app/views/avo/partials/_scripts.html.erb`
-- `:sidebar_extra` ➡️ &nbsp; `app/views/avo/partials/_sidebar_extra.html.erb`
-
-### Logo
-
-In the `app/views/avo/partials` directory, you will find the `_logo.html.erb` partial, which you may customize however you want. It will be displayed in place of Avo's logo.
-
-### Header
-
-The `_header.html.erb` partial enables you to customize the name and link of your app.
-
-### Scripts
-
-The `_scripts.html.erb` partial enables you to insert scripts in the footer of your admin.
-
-## Eject any template
-
-You can eject any partial from Avo using the partial path.
-
-```
-▶ bin/rails generate avo:eject --partial app/views/layouts/avo/application.html.erb
+```bash
+bin/rails generate avo:eject --partial app/views/layouts/avo/application.html.erb
       create  app/views/layouts/avo/application.html.erb
 ```
 
-</Option>
+### Prepared templates
 
-<Option name="`--component`">
-
-You can eject any view component from Avo using the `--component` option.
+The most commonly customized partials have a shorthand — pass the template name as a symbol:
 
 ```bash
-$ bin/rails generate avo:eject --component Avo::Index::TableRowComponent
+bin/rails generate avo:eject --partial :logo
+      create  app/views/avo/partials/_logo.html.erb
 ```
 
-or
+| Template | Ejects to `app/views/avo/partials/` | Rendered |
+|:---------|:------------------------------------|:---------|
+| `:logo` | `_logo.html.erb` | In place of Avo's logo in the navbar |
+| `:header` | `_header.html.erb` | The app name and link in the navbar |
+| `:pre_head` | `_pre_head.html.erb` | Inside `<head>`, before Avo's assets |
+| `:head` | `_head.html.erb` | Inside `<head>`, after Avo's assets — good for style overrides |
+| `:scripts` | `_scripts.html.erb` | Before `</body>` — good for extra scripts |
+| `:sidebar_extra` | `_sidebar_extra.html.erb` | Extra content after the sidebar menu |
+| `:profile_menu_extra` | `_profile_menu_extra.html.erb` | Extra items in the profile menu |
+
+## Eject a component
+
+Use the `--component` option to eject any of Avo's ViewComponents. It accepts the class name or the underscored path — these two commands are equivalent:
 
 ```bash
-$ bin/rails generate avo:eject --component avo/index/table_row_component
+bin/rails generate avo:eject --component Avo::Index::TableRowComponent
+bin/rails generate avo:eject --component avo/index/table_row_component
+      create  app/components/avo/index/table_row_component.rb
+      create  app/components/avo/index/table_row_component.html.erb
 ```
 
-Have the same output:
+Both the `.rb` and `.html.erb` files are copied. Components are ejected into the directory set by [`config.view_component_path`](./customization.html#custom-view_component-path) (`app/components` by default).
+
+## Eject field components
+
+Use the `--field-components` option with a field name to eject all of that field's components at once:
 
 ```bash
-create  app/components/avo/index/table_row_component.rb
-create  app/components/avo/index/table_row_component.html.erb
-```
-
-</Option>
-
-<Option name="`--field-components`">
-
-With `--field-components` option is easy to eject, one or multiple field components. Notice that without using the `--scope`, the ejected components will override the original components for that field everywhere on the project.
-
-Check the `--scope` and the [`components`](./field-options-api.html#components) field options for more details on how to override the components only on specific parts of the project.
-
-```bash
-$ rails g avo:eject --field-components text
+bin/rails generate avo:eject --field-components text
       create  app/components/avo/fields/text_field
       create  app/components/avo/fields/text_field/edit_component.html.erb
       create  app/components/avo/fields/text_field/edit_component.rb
@@ -92,37 +67,33 @@ $ rails g avo:eject --field-components text
       create  app/components/avo/fields/text_field/show_component.rb
 ```
 
-Let's say you want to override only the edit component of the `TextField`, that can be achieved with this simple command.
+If you only want one of them, add the `--view` option with `edit`, `index`, or `show`:
 
 ```bash
-$ rails g avo:eject --field-components text --view edit
+bin/rails generate avo:eject --field-components text --view edit
       create  app/components/avo/fields/text_field/edit_component.rb
       create  app/components/avo/fields/text_field/edit_component.html.erb
 ```
 
-</Option>
+:::warning
+Without `--scope`, the ejected components replace the originals for that field everywhere in your project. To override components only in specific places, combine `--scope` with the [`components`](./field-options-api.html#components) field option.
+:::
 
-<Option name="`--view`">
+## Scope ejected components
 
-While utilizing the `--field-components` option, you can selectively extract a specific view using the `--view` parameter, as demonstrated in the example above. If this option is omitted, all components of the field will be ejected.
-
-</Option>
-
-<Option name="`--scope`">
-
-When you opt to eject a view component that exists under `Avo::Views` or a field component under `Avo::Fields` namespace, for example the `Avo::Views::ResourceIndexComponent` or `Avo::Fields::TextField::ShowComponent` you can employ the `--scope` option to specify the namespace that should be adopted by the ejected component, extending from `Avo::Views` / `Avo::Fields`.
+When ejecting a component under the `Avo::Views` or `Avo::Fields` namespace, add the `--scope` option to nest your copy in its own namespace instead of replacing the original everywhere:
 
 ```bash
-$ rails g avo:eject --component Avo::Views::ResourceIndexComponent --scope admins
+bin/rails generate avo:eject --component Avo::Views::ResourceIndexComponent --scope admins
       create  app/components/avo/views/admins/resource_index_component.rb
       create  app/components/avo/views/admins/resource_index_component.html.erb
 
-$ rails g avo:eject --field-components text --view show --scope admins
+bin/rails generate avo:eject --field-components text --view show --scope admins
       create  app/components/avo/fields/admins/text_field/show_component.rb
       create  app/components/avo/fields/admins/text_field/show_component.html.erb
 ```
 
-The ejected file have the same code that original `Avo::Views::ResourceIndexComponent` or `Avo::Fields::TextField::ShowComponent` but you can notice that the class name and the directory has changed
+The ejected files keep the original code, but the class is renamed to include the scope:
 
 ```ruby
 class Avo::Views::Admins::ResourceIndexComponent < Avo::ResourceComponent
@@ -130,23 +101,31 @@ class Avo::Views::Admins::ResourceIndexComponent < Avo::ResourceComponent
 class Avo::Fields::Admins::TextField::ShowComponent < Avo::Fields::ShowComponent
 ```
 
-:::info Scopes transformation
-`--scope users_admins` -> `Avo::Views::UsersAdmins::ResourceIndexComponent`<br>
-`--scope users/admins` -> `Avo::Views::Users::Admins::ResourceIndexComponent`
+:::info Scope transformation
+`--scope users_admins` → `Avo::Views::UsersAdmins::ResourceIndexComponent`<br>
+`--scope users/admins` → `Avo::Views::Users::Admins::ResourceIndexComponent`
 :::
 
-</Option>
+Wire the scoped copy in wherever you need it — with the [`self.components`](./resources-api.html#self.components) resource option for view components, or the [`components`](./field-options-api.html#components) field option for field components. For a full walkthrough, see the [safely override resource components guide](./guides/safely-override-resource-components.html).
 
-<Option name="`--controller`">
+## Eject a controller
 
-You can eject any Avo controller using the `--controller` option. Once ejected, you'll be responsible for maintaining the ejected controller.
+Use the `--controller` option to eject any of Avo's controllers:
 
 ```bash
-$ rails g avo:eject --controller application_controller
+bin/rails generate avo:eject --controller application_controller
+      create  app/controllers/avo/application_controller.rb
 ```
 
-The most common use case is ejecting the `application_controller`. The ejected application controller serves as an extendable layer that inherits from `Avo::BaseApplicationController`, where the core logic resides. All your Avo controllers for a specific resource inherit from this extendable layer, allowing you to customize behavior that applies to all resources' controllers.
+The most common use case is ejecting the `application_controller`. It's an extendable layer that inherits from `Avo::BaseApplicationController`, where the core logic resides, and every resource controller inherits from it — so it's the place to add behavior that should apply to all of your Avo controllers without modifying Avo's base controllers.
 
-This approach provides a clean way to add custom functionality or override default behaviors without directly modifying Avo's base controllers.
+## Options reference
 
-</Option>
+| Option | Description |
+|:-------|:------------|
+| `--partial` | Partial to eject: a [prepared template](#prepared-templates) symbol or a path inside the gem |
+| `--component` | ViewComponent to eject: class name or underscored path |
+| `--field-components` | Field name whose components to eject |
+| `--view` | With `--field-components`, limit to `edit`, `index`, or `show` |
+| `--scope` | Namespace for the ejected `Avo::Views` / `Avo::Fields` component |
+| `--controller` | Controller to eject, e.g. `application_controller` |

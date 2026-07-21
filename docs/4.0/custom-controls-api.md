@@ -151,7 +151,7 @@ actions_list label: "Runnables", style: :primary, color: :slate
 - **Default icon:** `tabler/outline/circle-arrow-down`
 
 :::info
-The actions' [icon](actions/registration.md#icon) and the [dividers](actions/registration.md#divider) are defined in the `def actions` method.
+The actions' [icon](./actions-api.html#icon) and the [dividers](./actions-api.html#divider) are defined in the `def actions` method.
 :::
 
 #### `exclude`
@@ -178,7 +178,7 @@ actions_list include: [Avo::Actions::ExportSelection, Avo::Actions::PublishPost]
 
 <Option name="`action`">
 
-Renders a button that triggers an action. The first argument is an [Action](./actions/overview.md) class.
+Renders a button that triggers an action. The first argument is an [Action](./actions.html) class.
 
 ```ruby
 action Avo::Actions::DisableAccount

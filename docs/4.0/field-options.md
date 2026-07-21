@@ -306,6 +306,17 @@ end
 
 Now, all fields will have the stacked layout throughout your app.
 
+Avo 4 also adds `use_stacked_fields`, which stacks every field at the CSS level:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.use_stacked_fields = true # default: false
+end
+```
+
+With it enabled, fields render stacked by default without needing `stacked: true` on each one, and you can still override per field.
+
 ## Store empty values as `NULL`
 
 When a user saves a form, Avo stores the value for each field in the database as-is. If you prefer to store `NULL` when the field is empty, use the [`nullable`](./field-options-api.html#nullable) option — it converts `nil` and empty values to `NULL`.

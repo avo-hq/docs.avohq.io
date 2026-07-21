@@ -207,6 +207,31 @@ end
 
 </Option>
 
+<Option name="`self.view_types`" headingSize="3">
+
+The view types available on the `Index` view switcher. Icons on the switcher follow the order in which the values are declared. When only one view type is available, the switcher is not rendered.
+
+```ruby
+class Avo::Resources::City < Avo::BaseResource
+  self.view_types = [:table, :grid]
+end
+```
+
+A Proc can decide per request. Within the block you have access to all attributes of [`Avo::ExecutionContext`](execution-context) along with `resource` and `record`:
+
+```ruby
+class Avo::Resources::City < Avo::BaseResource
+  self.view_types = -> { current_user.is_admin? ? [:table, :grid] : :table }
+end
+```
+
+- **Type:** Symbol, Array of Symbols, or Proc
+- **Default:** `nil` — `:table`, plus `:grid`/`:map` when the resource has [`grid_view`](./grid-view.html)/[`map_view`](./map-view.html) configured
+- **Values:** `:table`, [`:grid`](./grid-view.html), [`:map`](./map-view.html), or a [custom view type](./custom-view-types.html)
+- **Validation:** requesting the `Index` view with a `view_type` outside this list raises an error
+
+</Option>
+
 <Option name="`self.default_sort_column`" headingSize="3">
 
 The column records are sorted by on the `Index` view.
@@ -344,6 +369,25 @@ end
 ```
 
 - **Type:** Proc — receives `query` and returns the modified query
+
+</Option>
+
+<Option name="`self.find_record_method`" headingSize="3">
+
+How Avo fetches one record for the `Show` and `Edit` views and any other context where a record is loaded from the database. Used with custom `to_param` methods, slugs, and similar non-standard identifiers.
+
+```ruby
+class Avo::Resources::Post < Avo::BaseResource
+  self.find_record_method = -> {
+    id.to_i == 0 ? query.find_by!(slug: id) : query.find(id)
+  }
+end
+```
+
+The block is evaluated with `query`, `id`, `params`, and `model_class` available. In batch contexts (bulk actions, for example) `id` is an Array — return a collection with `query.where(...)` in that case.
+
+- **Type:** Proc — receives `query`, `id`, `params`, and `model_class`; returns the record (or collection when `id` is an Array)
+- **Default:** `query.find(id)`. Models using [FriendlyId](https://github.com/norman/friendly_id) (without a scope) are detected automatically and found by slug.
 
 </Option>
 
@@ -724,7 +768,7 @@ The custom view components must ensure that their initializers are configured to
 [Edit](views.html#edit) -> `app/views/avo/base/edit.html.erb`
 :::
 
-The easiest way to create a compatible component is to eject an existing one with the [`--scope` parameter](./customization.html#scope). For a full walkthrough, see the [safely override resource components guide](./guides/safely-override-resource-components.html).
+The easiest way to create a compatible component is to eject an existing one with the [`--scope` parameter](./eject-views.html#scope-ejected-components). For a full walkthrough, see the [safely override resource components guide](./guides/safely-override-resource-components.html).
 
 </Option>
 
@@ -742,7 +786,7 @@ Some resource options have enough surface to warrant a dedicated page:
 
 | Option                | Documented on                                             |
 | --------------------- | --------------------------------------------------------- |
-| `self.search`         | [Resource search](./search/resource-search.html)          |
+| `self.search`         | [Search](./search.html)                                   |
 | `self.translation_key`| [I18n](./i18n.html)                                       |
 | `self.ordering`       | [Record reordering](./record-reordering.html)           |
 | `self.grid_view`      | [Grid view](./grid-view.html)                             |

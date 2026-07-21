@@ -12,7 +12,7 @@ The Avo CRUD feature generates four main views for each resource.
 The page where you see all your resources listed in a [table](./table-view.html), [grid](./grid-view.html), or [map](./map-view.html).
 <br/>
 <RelatedList>
-<RelatedItem href="./customization.html#click_row_to_view_record">Click row to view record</RelatedItem>
+<RelatedItem href="./customization.html#click-a-row-to-view-the-record">Click row to view record</RelatedItem>
 <RelatedItem href="./resources-api.html#self.components">Resource custom components</RelatedItem>
 </RelatedList>
 
@@ -178,4 +178,53 @@ The <Index /> view can render records through several view types, each with its 
 - [Table view](./table-view.html) — the default tabular layout; row controls placement and per-row styling.
 - [Grid view](./grid-view.html) — card-based layout with cover, title, body, and badge, for image-heavy resources.
 - [Map view](./map-view.html) — plot records with geospatial data on a map.
-- [Custom view types](./custom-view-types.html) — restrict which view types are available per resource, or register entirely new ones from a plugin.
+- [Custom view types](./custom-view-types.html) — register entirely new view types from a plugin.
+
+### Restrict the available view types
+
+By default, Avo displays all the configured view types on the view switcher. For example, if you have [`map_view`](./map-view.html) and [`grid_view`](./grid-view.html) configured, both of them, along with the `table_view`, will be available on the view switcher.
+
+However, there might be cases where you only want to make a specific view type available without removing the configurations for other view types. This can be achieved using the [`view_types`](./resources-api.html#self.view_types) class attribute on the resource. Note that when only one view type is available, the view switcher will not be displayed.
+
+```ruby{4}
+# app/avo/resources/city.rb
+class Avo::Resources::City < Avo::BaseResource
+  # ...
+  self.view_types = :table
+  # ...
+end
+```
+
+If you want to make multiple view types available, you can use an array. The icons on the view switcher will follow the order in which they are declared in the configuration.
+
+```ruby{4}
+# app/avo/resources/city.rb
+class Avo::Resources::City < Avo::BaseResource
+  # ...
+  self.view_types = [:table, :grid]
+  # ...
+end
+```
+
+You can also dynamically restrict the view types based on user roles, params, or other business logic. To do this, assign a block to the `view_types` attribute. Within the block, you'll have access to `resource`, `record`, `params`, `current_user`, and other default accessors provided by `ExecutionContext`.
+
+```ruby{4-10}
+# app/avo/resources/city.rb
+class Avo::Resources::City < Avo::BaseResource
+  # ...
+  self.view_types = -> do
+    if current_user.is_admin?
+      [:table, :grid]
+    else
+      :table
+    end
+  end
+  # ...
+end
+```
+
+The current pick is persisted in the URL as the `view_type` query parameter, so it survives page reloads and can be bookmarked.
+
+:::warning
+Requesting a view type that isn't in the available list raises an error, and rendering a view type that was never registered raises `Avo::ViewTypeComponentNotFoundError`. Keep `view_types`, [`default_view_type`](./resources-api.html#self.default_view_type), and your registered view types in sync.
+:::

@@ -557,7 +557,7 @@ self.row_url = -> {
 
 ### Density
 
-Rows use the global [`config.density`](customization#density) unless the card overrides it:
+Rows use the global [`config.density`](customization-api.html#density) unless the card overrides it:
 
 ```ruby
 self.density = :tight # :tight, :normal, :relaxed

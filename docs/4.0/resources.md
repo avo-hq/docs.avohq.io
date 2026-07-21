@@ -304,6 +304,43 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
+## Customize how records are fetched
+
+If your records are identified by something other than the numeric `id` — a slug from a custom `to_param` method, for example — tell Avo how to find them with [`self.find_record_method`](./resources-api.html#self.find_record_method):
+
+::: code-group
+
+```ruby [app/avo/resources/post.rb]
+class Avo::Resources::Post < Avo::BaseResource
+  self.find_record_method = -> {
+    # `id` is an Array in batch contexts (bulk actions), so return a collection there.
+    if id.is_a?(Array)
+      id.first.to_i == 0 ? query.where(slug: id) : query.where(id: id)
+    else
+      id.to_i == 0 ? query.find_by!(slug: id) : query.find(id)
+    end
+  }
+end
+```
+
+```ruby [app/models/post.rb]
+class Post < ApplicationRecord
+  before_save :update_slug
+
+  def to_param
+    slug || id
+  end
+
+  def update_slug
+    self.slug = name.parameterize
+  end
+end
+```
+
+:::
+
+If you use a gem for custom IDs you likely don't need this at all — Avo detects [FriendlyId](https://github.com/norman/friendly_id) automatically, and [prefixed_ids](https://github.com/excid3/prefixed_ids) and [hashid-rails](https://github.com/jcypret/hashid-rails) work out of the box. See the [custom IDs guide](./guides/custom-ids.html) for the setup for each gem.
+
 ## Customize pagination
 
 On large tables, counting all records to render the pagination can get expensive. Switch [`self.pagination`](./resources-api.html#self.pagination) to the `:countless` type to skip the count entirely:
@@ -432,7 +469,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-The easiest way to create a compatible component is to [eject an existing one](./customization.html#scope). The [safely override resource components guide](./guides/safely-override-resource-components.html) walks through the whole process.
+The easiest way to create a compatible component is to [eject an existing one](./eject-views.html#scope-ejected-components). The [safely override resource components guide](./guides/safely-override-resource-components.html) walks through the whole process.
 
 ## Use multiple resources for the same model
 

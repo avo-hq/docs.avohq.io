@@ -19,6 +19,7 @@ const links = {
   custom: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=custom",
   add_on: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=add_on", // this is different from the other add_on links
   add_on_blank: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=", // this is different from the other add_on links
+  mixed: "https://avohq.io/pricing#comparison-heading",
   enterprise: "https://savvycal.com/avo-hq/discovery-call-ent",
 };
 const labels = {
@@ -30,6 +31,7 @@ const labels = {
   audit_logging: "Audit logging",
   custom: "Custom",
   add_on: "Add-on",
+  mixed: "Community + Add-on",
 };
 console.log(props);
 const href = computed(() => {
@@ -54,6 +56,7 @@ const label = computed(() => labels[license.value]);
       'bg-teal-500 hover:bg-teal-600': license == 'audit_logging',
       'bg-rose-500 hover:bg-rose-600': license == 'custom',
       'bg-rose-500 hover:bg-rose-600': license == 'add_on',
+      'bg-amber-500 hover:bg-amber-600': license == 'mixed',
       'bg-yellow-300 hover:bg-yellow-400 !text-black': license == 'enterprise',
       'text-xs px-1 py-px': size == 'xs',
       'text-sm px-2 py-1': size == 'sm',
