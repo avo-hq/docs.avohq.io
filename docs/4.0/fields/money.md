@@ -65,7 +65,7 @@ The `currencies` option controls which currencies will be visible on the dropdow
 field :price, as: :money, currencies: %w[EUR USD RON PEN]
 ```
 
-#### Default
+#### Default value
 
 By default it's going to be an empty array.
 
@@ -76,4 +76,38 @@ By default it's going to be an empty array.
 Add an array of currencies by the ISO code.
 
 `%w[EUR USD RON PEN]`
+</Option>
+
+<Option name="`enable_currency`">
+
+Controls whether the currency selector is rendered alongside the amount input. When disabled, the field only edits and stores the amount and leaves the record's currency column untouched.
+
+#### Default value
+
+`true`
+
+#### Possible values
+
+`true` or `false`
+
+```ruby
+field :price, as: :money, enable_currency: false
+```
+</Option>
+
+<Option name="`currency_suffix`">
+
+The suffix appended to the field's `id` to build the currency column name (for example `price` + `_currency` &rarr; `price_currency`). Set this when your monetized column uses a different suffix than the `money-rails` default.
+
+#### Default value
+
+The `money-rails` currency column postfix (`_currency` by default), or `:_currency` when `money-rails` is not defined.
+
+#### Possible values
+
+Any string or symbol matching your model's currency column suffix.
+
+```ruby
+field :price, as: :money, currency_suffix: "_currency"
+```
 </Option>

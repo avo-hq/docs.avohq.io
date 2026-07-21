@@ -4,6 +4,10 @@ license: add_on
 add_on_link: https://avohq.io/pricing-4?add_ons[]=http-resource
 outline: [2, 3]
 guide: ./http-resource.html
+prev:
+  text: "HTTP Resource"
+  link: "./http-resource.html"
+next: false
 ---
 
 # HTTP Resource API

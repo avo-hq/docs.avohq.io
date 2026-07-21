@@ -18,17 +18,15 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css'
 
 <Option name="`theme`">
 
-Customize the color theme.
+Customize the color theme used in light mode. In dark mode Avo always uses the `monokai` theme, regardless of this setting.
 
 #### Default value
 
-`material-darker`
+`default`
 
 #### Possible values
 
-`material-darker`, `eclipse`, or `dracula`
-
-Preview the themes here: [codemirror-themes](https://codemirror.net/demo/theme.html).
+`default` or `monokai`. These are the only two [CodeMirror](https://codemirror.net/) themes bundled with Avo, so other theme names won't have any styling to apply.
 </Option>
 
 <Option name="`language`">
@@ -41,7 +39,7 @@ Customize the syntax highlighting using the language method.
 
 #### Possible values
 
-`css`, `dockerfile`, `htmlmixed`, `javascript`, `markdown`, `nginx`, `php`, `ruby`, `sass`, `shell`, `sql`, `vue` or `xml`.
+`css`, `dockerfile`, `htmlmixed`, `javascript`, `markdown`, `nginx`, `php`, `ruby`, `sass`, `shell`, `sql`, `vue`, `xml`, or `yaml`.
 </Option>
 
 <Option name="`height`">
@@ -94,4 +92,21 @@ Customize whether the editor should apply line wrapping.
 #### Possible values
 
 `true` or `false`
+</Option>
+
+<Option name="`pretty_generated`">
+
+Convenience option for JSON columns. When enabled, Avo pretty-prints the stored value when displaying and editing it (via `JSON.pretty_generate`) and parses the editor content back to JSON on save (via `JSON.parse`). It sets sensible defaults for `format_using` and `update_using`, which you can still override yourself.
+
+#### Default value
+
+`false`
+
+#### Possible values
+
+`true` or `false`
+
+```ruby
+field :metadata, as: :code, language: 'javascript', pretty_generated: true
+```
 </Option>

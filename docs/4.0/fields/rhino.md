@@ -10,6 +10,13 @@ fieldTags: [rich text, attachments]
 
 The wonderful [Rhino Editor](https://rhino-editor.vercel.app/) built by [Konnor Rogers](https://www.konnorrogers.com/) is available and fully integrated with Avo.
 
+:::info Add this field to the `Gemfile`
+```ruby
+# Gemfile
+gem "avo-rhino_field"
+```
+:::
+
 ```ruby
 field :body, as: :rhino
 ```

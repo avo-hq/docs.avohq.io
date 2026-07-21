@@ -55,7 +55,7 @@ Hides the attachment URL from the upload output in the field value.
 
 Enables file attachments.
 
-#### Default
+#### Default value
 
 `nil`
 

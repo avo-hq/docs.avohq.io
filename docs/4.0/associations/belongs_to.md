@@ -11,103 +11,6 @@ fieldTags: [associations]
 field :user, as: :belongs_to
 ```
 
-You will see three field types when you add a `BelongsTo` association to a model.
-
-
-## Options
-
-<!-- @include: ./../common/associations_searchable_option_common.md-->
-
-<Option name="`allow_via_detaching`">
-
-Keeps the field enabled when visiting from the parent record.
-
-<!-- @include: ./../common/default_boolean_false.md-->
-</Option>
-
-<!-- @include: ./../common/associations_attach_scope_option_common.md-->
-
-<Option name="`polymorphic_as`">
-
-Sets the field as polymorphic with the key set on the model.
-
-#### Default
-
-`nil`
-
-#### Possible values
-
-A symbol, used on the `belongs_to` association with `polymorphic: true`.
-
-:::warning
-You must use this option with the `types` option.
-:::
-
-#### Example
-
-```ruby
-field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
-```
-</Option>
-
-<Option name="`types`">
-
-Sets the types the field can morph to.
-
-#### Default
-
-`[]`
-
-#### Possible values
-
-`[Post, Project, Team]`. Any array of model names.
-
-:::warning
-You must use this option with the `polymorphic_as` option.
-:::
-
-#### Example
-
-```ruby
-field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
-```
-</Option>
-
-<Option name="`polymorphic_help`">
-
-Sets the help text for the polymorphic type dropdown. Useful when you need to specify to the user why and what they need to choose as polymorphic.
-
-#### Default
-
-`nil`
-
-#### Possible values
-
-Any string.
-</Option>
-
-<!-- @include: ./../common/associations_use_resource_option_common.md-->
-
-<Option name="`can_create`">
-
-Controls the creation link visibility on forms.
-
-#### Default
-
-`true`
-
-#### Possible values
-
-`true`, `false`
-:::warning
-The target resource policy takes precedence over this option.
-
-`field :user, as: :belongs_to, can_create: true`
-
-In this example, even if the `can_create` option is set to `true`, if the `UserPolicy` responds with `false` to the `create?` method, the creation link will **NOT** be visible.
-:::
-</Option>
-
 ## Overview
 
 On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`self.title`](./../resources-api.html#self.title) value of the target resource.
@@ -177,7 +80,7 @@ end
 
 When you edit a record that has a `belongs_to` association, on the edit screen, you will have a list of records from which you can choose a record to associate with.
 
-For example, a `Post` belongs to a `User`. So on the post edit screen, you will have a dropdown (or a search field if it's [searchable](#searchable-belongs-to)) with all the available users. But that's not ideal. For example, maybe you don't want to show all the users in your app but only those who are not admins.
+For example, a `Post` belongs to a `User`. So on the post edit screen, you will have a dropdown (or a search field if it's [searchable](#searchable)) with all the available users. But that's not ideal. For example, maybe you don't want to show all the users in your app but only those who are not admins.
 
 You can use the `attach_scope` option to keep only the users you need in the `belongs_to` dropdown field.
 
@@ -221,3 +124,116 @@ class Avo::Resources::Comment < Avo::BaseResource
   end
 end
 ```
+
+## Options
+
+<!-- @include: ./../common/associations_searchable_option_common.md-->
+
+<Option name="`allow_via_detaching`">
+
+Keeps the field enabled when visiting from the parent record.
+
+<!-- @include: ./../common/default_boolean_false.md-->
+</Option>
+
+<!-- @include: ./../common/associations_attach_scope_option_common.md-->
+
+<Option name="`polymorphic_as`">
+
+Sets the field as polymorphic with the key set on the model.
+
+#### Default value
+
+`nil`
+
+#### Possible values
+
+A symbol, used on the `belongs_to` association with `polymorphic: true`.
+
+:::warning
+You must use this option with the `types` option.
+:::
+
+#### Example
+
+```ruby
+field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
+```
+</Option>
+
+<Option name="`types`">
+
+Sets the types the field can morph to.
+
+#### Default value
+
+`[]`
+
+#### Possible values
+
+`[Post, Project, Team]`. Any array of model names.
+
+:::warning
+You must use this option with the `polymorphic_as` option.
+:::
+
+#### Example
+
+```ruby
+field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
+```
+</Option>
+
+<Option name="`polymorphic_help`">
+
+Sets the help text for the polymorphic type dropdown. Useful when you need to specify to the user why and what they need to choose as polymorphic.
+
+#### Default value
+
+`nil`
+
+#### Possible values
+
+Any string.
+</Option>
+
+<!-- @include: ./../common/associations_use_resource_option_common.md-->
+
+<Option name="`can_create`">
+
+Controls the creation link visibility on forms.
+
+#### Default value
+
+`true`
+
+#### Possible values
+
+`true`, `false`
+:::warning
+The target resource policy takes precedence over this option.
+
+`field :user, as: :belongs_to, can_create: true`
+
+In this example, even if the `can_create` option is set to `true`, if the `UserPolicy` responds with `false` to the `create?` method, the creation link will **NOT** be visible.
+:::
+</Option>
+
+<Option name="`link_to_record`">
+
+By default, the <Index /> cell links to the associated record. Set `link_to_record: true` to make the cell link to the current record instead — every cell on the row then leads to the same place.
+
+```ruby
+field :user, as: :belongs_to, link_to_record: true
+```
+
+#### Default value
+
+`false`
+
+#### Possible values
+
+`true`, `false`
+</Option>
+
+<!-- @include: ./../common/associations_link_to_child_resource_common.md-->

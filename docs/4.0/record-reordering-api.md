@@ -2,6 +2,10 @@
 license: pro
 outline: [2, 3]
 guide: ./record-reordering.html
+prev:
+  text: "Record reordering"
+  link: "./record-reordering.html"
+next: false
 ---
 
 # Record reordering API

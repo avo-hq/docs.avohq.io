@@ -41,9 +41,14 @@ export default {
     if (typeof window !== "undefined") {
       const scrollSidebarToActive = () => {
         requestAnimationFrame(() => {
-          document
-            .querySelector(".VPSidebarItem.is-active > .item")
-            ?.scrollIntoView({block: "center"})
+          const item = document.querySelector(".VPSidebarItem.is-active > .item")
+          const sidebar = item?.closest(".VPSidebar")
+          if (!item || !sidebar) return
+
+          const itemRect = item.getBoundingClientRect()
+          const sidebarRect = sidebar.getBoundingClientRect()
+          const inView = itemRect.top >= sidebarRect.top && itemRect.bottom <= sidebarRect.bottom
+          if (!inView) item.scrollIntoView({block: "center"})
         })
       }
       router.onAfterRouteChange = scrollSidebarToActive

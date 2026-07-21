@@ -25,7 +25,7 @@ field :status, as: :badge,
 
 The Badge field displays a colored indicator with optional icons. You can customize the color through the `options` mapping, and the `style` and `icon` for each value dynamically using procs.
 
-The `Badge` field is intended to be displayed only on **Index** and **Show** views. To update the value shown by the badge field, use another field like [Text](#text) or [Select](#select) with `hide_on: [:index, :show]`.
+The `Badge` field is intended to be displayed only on **Index** and **Show** views. To update the value shown by the badge field, use another field like [Text](./text.html) or [Select](./select.html) with `hide_on: [:index, :show]`.
 
 ## Options
 
@@ -33,7 +33,13 @@ The `Badge` field is intended to be displayed only on **Index** and **Show** vie
 
 Maps field values to badge colors. Keys are color names (semantic or base colors), and values can be a single value (string/symbol) or an array of values that should display with that color.
 
-#### Available colors
+#### Default value
+
+`{}`
+
+#### Possible values
+
+Keys are color names, values are the field values that should display in that color.
 
 **Base colors:** `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
 
@@ -58,11 +64,15 @@ field :status, as: :badge,
 
 <Option name="`style`">
 
-Controls the badge appearance style.
+Controls the badge appearance style. Can be a lambda, which is evaluated inside an [`ExecutionContext`](./../execution-context.html).
 
-#### Available styles
+#### Default value
 
-- `subtle` - Light background with colored text (default)
+`subtle`
+
+#### Possible values
+
+- `subtle` - Light background with colored text
 - `solid` - Solid colored background with white text
 
 :::info Default behavior
@@ -84,7 +94,15 @@ field :status, as: :badge,
 
 <Option name="`icon`">
 
-Adds an icon to the badge.
+Adds an icon to the badge. Can be a lambda, which is evaluated inside an [`ExecutionContext`](./../execution-context.html).
+
+#### Default value
+
+`nil`
+
+#### Possible values
+
+An icon name string (e.g. `"heroicons/outline/check-circle"`), or a lambda returning one.
 
 ```ruby
 field :status, as: :badge,

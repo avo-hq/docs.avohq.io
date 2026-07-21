@@ -13,11 +13,13 @@ field :progress, as: :progress_bar
 ```
 <Image src="/assets/img/4_0/fields/progress_bar/index.webp" dark-src="/assets/img/4_0/fields/progress_bar/index-dark.webp" width="1776" height="758" alt="An Avo index table with ID, Name and Progress columns where each row shows a progress bar with its percentage value." prompt="progress bar on the index table" />
 
+## Options
+
 <Option name="`max`">
 
 Sets the maximum value of the progress bar.
 
-#### Default
+#### Default value
 
 `100`
 
@@ -30,7 +32,7 @@ Any number.
 
 Sets the step in which the user can move the slider on the `Edit` and `New` views.
 
-#### Default
+#### Default value
 
 `1`
 
@@ -43,14 +45,14 @@ Any number.
 
 Choose if the value is displayed on the `Edit` and `New` views above the slider.
 
-<!-- @include: ./../common/default_boolean_true.md-->
+<!-- @include: ./../common/default_boolean_false.md-->
 </Option>
 
 <Option name="`value_suffix`">
 
 Set a string value to be displayed after the value above the progress bar.
 
-#### Default
+#### Default value
 
 `nil`
 

@@ -22,20 +22,35 @@ field :is_published,
 
 <Option name="`true_value`">
 
-What should count as true. You can use `1`, `yes`, or a different value.
+An extra value that should count as true, on top of the ones Avo always recognizes. Use it when your column stores something like `"yes"` or `1`.
 
 #### Default value
 
-`[true, "true", "1"]`
+`true`
 
+#### Possible values
+
+Any value (string, symbol, integer, etc.). The field always treats `"true"`, `"1"`, and the configured `true_value` as true.
+
+```ruby
+field :is_published, as: :boolean, true_value: "yes"
+```
 </Option>
 <Option name="`false_value`">
 
-What should count as false. You can use `0`, `no`, or a different value.
+An extra value that should count as false, on top of the ones Avo always recognizes. Use it when your column stores something like `"no"` or `0`.
 
 #### Default value
 
-`[false, "false", "0"]`
+`false`
+
+#### Possible values
+
+Any value (string, symbol, integer, etc.). The field always treats `"false"`, `"0"`, and the configured `false_value` as false.
+
+```ruby
+field :is_published, as: :boolean, false_value: "no"
+```
 </Option>
 
 <Option name="`nil_as_indeterminate`">
@@ -47,6 +62,14 @@ When `true`, `nil` values render as a gray minus-circle icon on **Show** and **I
 #### Default value
 
 `false`
+
+#### Possible values
+
+`true` or `false`
+
+```ruby
+field :is_published, as: :boolean, nil_as_indeterminate: true
+```
 </Option>
 
 <Option name="`as_toggle`">
@@ -57,4 +80,11 @@ Render the field as a toggle on the form views.
 
 `false`
 
+#### Possible values
+
+`true` or `false`
+
+```ruby
+field :is_published, as: :boolean, as_toggle: true
+```
 </Option>

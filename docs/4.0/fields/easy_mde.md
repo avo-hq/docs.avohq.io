@@ -34,9 +34,9 @@ By default, the content of the `easy_mde` field is not visible on the `Show` vie
 
 <Option name="`height`">
 
-Sets the value of the editor
+Sets the height of the editor.
 
-#### Default
+#### Default value
 
 `auto`
 

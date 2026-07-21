@@ -12,9 +12,25 @@ The `Password` field renders a `input[type="password"]` element for that field. 
 field :password, as: :password
 ```
 
-#### Revealable
+## Options
 
-You can set the `revealable` to true to show an "eye" icon that toggles the password between hidden or visible.
+<Option name="`revealable`">
 
-**Related:**
+Show an "eye" icon next to the input that toggles the password between hidden and visible.
+
+#### Default value
+
+`false`
+
+#### Possible values
+
+`true` or `false`
+
+```ruby
+field :password, as: :password, revealable: true
+```
+</Option>
+
+## Related
+
 - [Devise password optional](./../resources-api#self.devise_password_optional)

@@ -25,7 +25,7 @@ field :documents, as: :files
 
 Set the default `view_type`.
 
-#### Default
+#### Default value
 
 `grid`
 
@@ -38,7 +38,7 @@ Set the default `view_type`.
 
 Option to hide the view type switcher component.
 
-#### Default
+#### Default value
 
 `false`
 

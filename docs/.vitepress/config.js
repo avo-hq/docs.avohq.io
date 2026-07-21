@@ -242,7 +242,7 @@ const config = {
               text: "Associations",
               collapsed: true,
               items: [
-                { text: "Customization", link: "/4.0/associations.html" },
+                { text: "Overview", link: "/4.0/associations.html" },
                 { text: 'Searchable', link: '/4.0/associations/searchable.html' },
                 { text: 'Belongs to', link: '/4.0/associations/belongs_to.html' },
                 { text: 'Has one', link: '/4.0/associations/has_one.html' },

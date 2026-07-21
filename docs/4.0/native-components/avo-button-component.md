@@ -47,7 +47,7 @@ The visual style of the button.
 #### Type
 `Symbol` — one of `:primary`, `:outline`, `:text`
 
-#### Default
+#### Default value
 `:outline`
 
 ```erb
@@ -64,7 +64,7 @@ The size of the button.
 #### Type
 `Symbol` — one of `:xs`, `:sm`, `:md`, `:lg`
 
-#### Default
+#### Default value
 `:md`
 
 ```erb
@@ -82,7 +82,7 @@ or `color`.
 #### Type
 `Symbol` — `:full` (defaults to `nil`, the standard radius)
 
-#### Default
+#### Default value
 `nil`
 
 ```erb
@@ -98,7 +98,7 @@ The accent color of the button. Accepts Avo's semantic colors or any Tailwind co
 #### Type
 `Symbol` — `:primary`, `:accent`, or a Tailwind color such as `:red`, `:green`, `:blue`, `:gray`, …
 
-#### Default
+#### Default value
 `nil`
 
 ```erb
@@ -115,7 +115,7 @@ Icon-only buttons already get tightened padding automatically.
 #### Type
 `Symbol` — `:sm` or `:xs`
 
-#### Default
+#### Default value
 `nil`
 
 ```erb
@@ -155,7 +155,7 @@ Extra CSS classes applied to the `icon` and `end_icon` SVGs.
 #### Type
 `String`
 
-#### Default
+#### Default value
 `""`
 </Option>
 
@@ -166,7 +166,7 @@ Renders an `<a>` tag instead of a `<button>`. The `a_link` helper sets this for 
 #### Type
 `Boolean`
 
-#### Default
+#### Default value
 `false`
 </Option>
 
@@ -177,7 +177,7 @@ A hash of `aria-*` attributes forwarded to the element.
 #### Type
 `Hash`
 
-#### Default
+#### Default value
 `{}`
 </Option>
 
