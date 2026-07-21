@@ -11,10 +11,10 @@ When unsure, open them and match their structure.
 
 A feature with a real configuration surface gets **two pages**:
 
-| Page | File | Answers | Organized by | Style |
-| --- | --- | --- | --- | --- |
-| **Guide** | `feature.md` | "How do I do X?" | task | plain English, selective code |
-| **Reference (API)** | `feature-api.md` | "What exactly is option Y?" | option | exhaustive, one `<Option>` each |
+| Page                | File             | Answers                     | Organized by | Style                           |
+| ------------------- | ---------------- | --------------------------- | ------------ | ------------------------------- |
+| **Guide**           | `feature.md`     | "How do I do X?"            | task         | plain English, selective code   |
+| **Reference (API)** | `feature-api.md` | "What exactly is option Y?" | option       | exhaustive, one `<Option>` each |
 
 Decision rule:
 
@@ -24,12 +24,12 @@ Decision rule:
 
 Do not duplicate content between the two beyond a small shared enum table where it genuinely helps the narrative. The guide links to the reference for the full truth.
 
-**One page per feature.** Keep the whole feature on a single guide page and a single API page — organize sub-topics with `##`/`###` sections, not separate files. `appearance.md` covers logos, neutrals, accents, persistence, and CSS overrides on one page; it is not split into `appearance-logos.md`, `appearance-neutrals.md`, etc. The split that matters is *guide vs. reference*, never *topic vs. topic*. Reasons: related config reads better together, and a user can paste the entire page into an LLM and get the full picture of the feature in one shot — fanning it across files breaks that. Create a second file only when a sub-topic is genuinely a feature of its own.
+**One page per feature.** Keep the whole feature on a single guide page and a single API page — organize sub-topics with `##`/`###` sections, not separate files. `appearance.md` covers logos, neutrals, accents, persistence, and CSS overrides on one page; it is not split into `appearance-logos.md`, `appearance-neutrals.md`, etc. The split that matters is _guide vs. reference_, never _topic vs. topic_. Reasons: related config reads better together, and a user can paste the entire page into an LLM and get the full picture of the feature in one shot — fanning it across files breaks that. Create a second file only when a sub-topic is genuinely a feature of its own.
 
 **Exception — a feature with distinct variants that each carry their own options.** Some features are really an umbrella over several sub-features, each with a substantial, independent option set. Views are the canonical case: there's a general page covering what views are and what `index`/`show`/`edit` do in common, plus separate pages for each custom view type — table view, grid view, map view — because each has its own options. Give each variant its own page when it would otherwise bloat the overview or when its options stand on their own. When you do:
 
 - The overview page describes the shared concept and keeps only what's common.
-- At the **bottom of the overview page**, add a section that links to every sub-page and says, in one line each, what's there and when to go — e.g. *"For the table view's columns, ordering, and styling options, see [Table view](./table-view.html)."* Don't leave the sub-pages discoverable only through the sidebar.
+- At the **bottom of the overview page**, add a section that links to every sub-page and says, in one line each, what's there and when to go — e.g. _"For the table view's columns, ordering, and styling options, see [Table view](./table-view.html)."_ Don't leave the sub-pages discoverable only through the sidebar.
 - Each sub-page links back to the overview (and follows the same guide/reference rules itself).
 
 Footer pattern for the overview page:
@@ -60,29 +60,32 @@ Frontmatter:
 
 ```yaml
 ---
-license: pro          # community | pro
-outline: [2, 3]       # h2 + h3 in the "On this page" panel; or `deep`
-api_docs: ./feature-api.html   # link to the reference; omit if guide-only
+license: add_on # community | addon_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=http-resource
+outline: [2, 3] # h2 + h3 in the "On this page" panel; or `deep`
+api_docs: ./feature-api.html # link to the reference; omit if guide-only
 ---
 ```
+
+If the `license` is `add_on`, add the `add_on_link` key with the link to the add-on page. Ensure the addon is split by `-` not `_`. Ask the user to check the link.
 
 ## Reference page (`feature-api.md`)
 
 Rules:
 
 1. **Intro**: one sentence stating this is the per-option reference, a link back to the guide, and the canonical config snippet showing where options go.
-2. **Describe, don't instruct.** Reference is for *consulting*, not reading top-to-bottom. Keep the tone neutral and factual — state what each option is, its type, and its behavior. No step-by-step recipes, opinions, or "you should" — that's the guide's job. If you catch yourself writing how-to steps in an `<Option>`, move them to the guide and link.
+2. **Describe, don't instruct.** Reference is for _consulting_, not reading top-to-bottom. Keep the tone neutral and factual — state what each option is, its type, and its behavior. No step-by-step recipes, opinions, or "you should" — that's the guide's job. If you catch yourself writing how-to steps in an `<Option>`, move them to the guide and link.
 3. **Mirror the feature's structure.** Group options under `##` section headings (Theme selection, Custom palettes, Picker control, Assets, Charts…) that follow how the feature itself is organized, so a reader can navigate the docs and the config in parallel. Within that, order sections from most- to least-commonly-touched.
 4. **One `<Option>` block per option.** Inside each:
-   - A short description (1–3 sentences).
-   - A minimal `ruby` code block showing just that option.
-   - For enums, a `| Value | Behavior |` table.
-   - A bullet list of the contract — include whichever apply:
-     - `**Type:**` — e.g. `String`, `Symbol`, `Array of Strings`, `Hash with keys ...`, `Proc / Lambda`.
-     - `**Default:**` — the actual default in a code span, or `nil`.
-     - `**Values:**` — allowed values when not obvious from the type.
-     - `**Validation:**` — what raises and when (e.g. "raises `ArgumentError` if any shade is missing").
-     - Any feature-specific flag (e.g. `**Lockable:** yes — ...`, `**Context:** evaluated in a controller context`, `**Locals:** ...`).
+  - A short description (1–3 sentences).
+  - A minimal `ruby` code block showing just that option.
+  - For enums, a `| Value | Behavior |` table.
+  - A bullet list of the contract — include whichever apply:
+    - `**Type:**` — e.g. `String`, `Symbol`, `Array of Strings`, `Hash with keys ...`, `Proc / Lambda`.
+    - `**Default:**` — the actual default in a code span, or `nil`.
+    - `**Values:**` — allowed values when not obvious from the type.
+    - `**Validation:**` — what raises and when (e.g. "raises `ArgumentError` if any shade is missing").
+    - Any feature-specific flag (e.g. `**Lockable:** yes — ...`, `**Context:** evaluated in a controller context`, `**Locals:** ...`).
 5. Use `:::warning` / `:::info` callouts for sharp edges (type coercion, things forwarded verbatim to a third party, etc.).
 
 `<Option>` template:
@@ -113,7 +116,7 @@ Frontmatter:
 ---
 license: pro
 outline: [2, 3]
-guide: ./feature.html   # link back to the guide
+guide: ./feature.html # link back to the guide
 ---
 ```
 
@@ -138,12 +141,12 @@ Do this for the first, prominent mention of each option in the guide (don't link
 
 When a snippet maps to a real file, the first line is a comment naming that file, in the language's own comment syntax. Use the full path from the app root.
 
-| Language | Comment | Example first line |
-| --- | --- | --- |
-| Ruby | `#` | `# Gemfile` · `# config/initializers/avo.rb` |
-| CSS | `/* */` | `/* app/assets/stylesheets/application.css */` |
-| JS | `//` | `// app/assets/javascript/application.js` |
-| ERB | `<%# %>` | `<%# app/views/avo/partials/_head.html.erb %>` |
+| Language | Comment  | Example first line                             |
+| -------- | -------- | ---------------------------------------------- |
+| Ruby     | `#`      | `# Gemfile` · `# config/initializers/avo.rb`   |
+| CSS      | `/* */`  | `/* app/assets/stylesheets/application.css */` |
+| JS       | `//`     | `// app/assets/javascript/application.js`      |
+| ERB      | `<%# %>` | `<%# app/views/avo/partials/_head.html.erb %>` |
 
 Apply it:
 
