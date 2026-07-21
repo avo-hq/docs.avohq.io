@@ -2,6 +2,10 @@
 license: community
 outline: [2, 3]
 guide: ./resources.html
+prev:
+  text: "Resources"
+  link: "./resources.html"
+next: false
 ---
 
 # Resources API

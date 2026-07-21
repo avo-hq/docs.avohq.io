@@ -2,6 +2,10 @@
 license: community
 outline: [2, 3]
 guide: ./discreet-information.html
+prev:
+  text: "Discreet Information"
+  link: "./discreet-information.html"
+next: false
 ---
 
 # Discreet Information API

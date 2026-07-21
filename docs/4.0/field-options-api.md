@@ -2,6 +2,10 @@
 license: community
 outline: [2, 3]
 guide: ./field-options.html
+prev:
+  text: "Field options"
+  link: "./field-options.html"
+next: false
 ---
 
 # Field options API

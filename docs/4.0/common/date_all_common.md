@@ -2,7 +2,7 @@
 
 Format the date shown to the user on the `Index` and `Show` views.
 
-#### Default
+#### Default value
 
 `{{ $frontmatter.default_format }}`
 
@@ -15,7 +15,7 @@ Use [`luxon`](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) fo
 
 Format the date shown to the user on the `Edit` and `New` views.
 
-#### Default
+#### Default value
 
 `{{ $frontmatter.default_picker_format }}`
 
@@ -29,7 +29,7 @@ Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
 
 Passes the options here to [flatpickr](https://flatpickr.js.org/).
 
-#### Default
+#### Default value
 
 `{}`
 

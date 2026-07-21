@@ -22,7 +22,7 @@ This field needs to be backed by a numeric column in your database (e.g., `integ
 
 Sets the maximum number of stars to display.
 
-#### Default
+#### Default value
 
 `5`
 

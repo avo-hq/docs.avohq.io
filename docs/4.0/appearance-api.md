@@ -2,6 +2,10 @@
 license: pro
 outline: [2, 3]
 guide: ./appearance.html
+prev:
+  text: "Appearance"
+  link: "./appearance.html"
+next: false
 ---
 
 # Appearance API

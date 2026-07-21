@@ -16,11 +16,11 @@ Run `bundle install`. If you have not set up packager.dev access yet, see [Gem s
 
 Keep in mind that this will display the field’s resource as it appears in the edit view.
 
-<Option name="nested">
+<Option name="`nested`">
 
 Enables this field as a nested form in the specified views.
 
-##### Default value
+#### Default value
 
 `{}`
 

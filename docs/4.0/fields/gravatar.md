@@ -13,7 +13,7 @@ field :email,
   as: :gravatar,
   rounded: false,
   size: 60,
-  default_url: 'some image url'
+  default: 'some image url'
 ```
 
 ## Options
@@ -30,7 +30,7 @@ On `Show`, the image is always a `square,` and the size is `responsive`.
 
 Set the size of the avatar.
 
-#### Default
+#### Default value
 
 `32`
 
@@ -41,15 +41,15 @@ Any number in pixels. Remember that the size will influence the `Index` table ro
 
 <Option name="`default`">
 
-Set the default image if the email address was not found in Gravatar's database.
+Set the default image URL to display when the email address is not found in Gravatar's database.
 
-#### Default
+#### Default value
 
-`32`
+Empty string (`""`), which makes Gravatar serve its own default avatar.
 
 #### Possible values
 
-Any number in pixels. Remember that the size will influence the `Index` table row height.
+Any image URL as a string.
 </Option>
 
 <!-- @include: ./../common/link_to_record_common.md-->

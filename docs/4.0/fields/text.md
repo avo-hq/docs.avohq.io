@@ -39,7 +39,7 @@ field :email,
 
 <DemoVideo demo-video="https://www.youtube.com/watch?v=MfryUtcXqvU&t=662s" />
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -60,7 +60,7 @@ field :title, # The database field ID
   name: 'Post title', # The label you want displayed
   required: true, # Display it as required
   readonly: true, # Display it disabled
-  as_html: true # Should the output be parsed as html
+  as_html: true, # Should the output be parsed as html
   placeholder: 'My shiny new post', # Update the placeholder text
   format_using: -> { value.truncate 3 } # Format the output
 ```

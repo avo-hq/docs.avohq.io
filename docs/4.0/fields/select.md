@@ -12,13 +12,15 @@ The `Select` field renders a `select` field.
 field :type, as: :select, options: { 'Large container': :large, 'Medium container': :medium, 'Tiny container': :tiny }, display_value: true, placeholder: 'Choose the type of the container.'
 ```
 
+## Options
+
 <Option name="`options`">
 
 A `Hash` representing the options that should be displayed in the select. The keys represent the labels, and the values represent the value stored in the database.
 
 The options get cast as `ActiveSupport::HashWithIndifferentAccess` objects if they are a `Hash`.
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -29,7 +31,7 @@ The options get cast as `ActiveSupport::HashWithIndifferentAccess` objects if th
 
 ### Computed options
 
-You may want to compute the values on the fly for your `Select` field. You can use a lambda for that where you have access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
+You may want to compute the values on the fly for your `Select` field. You can use a lambda for that, which runs inside an [`ExecutionContext`](./../execution-context.html) where you have access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
 
 ```ruby{5-7}
 # app/avo/resources/project.rb
@@ -52,7 +54,7 @@ When you need to organize your select options into groups, you can use `grouped_
 
 The `grouped_options` supports the same data structures as Rails' [`grouped_options_for_select`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html#method-i-grouped_options_for_select) helper.
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -82,7 +84,7 @@ field :country,
 
 ### Computed grouped options
 
-Just like with regular options, you can compute grouped options dynamically using a lambda:
+Just like with regular options, you can compute grouped options dynamically using a lambda, which runs inside an [`ExecutionContext`](./../execution-context.html):
 
 ```ruby
 field :country,
@@ -122,7 +124,7 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -166,7 +168,7 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -190,7 +192,7 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-#### Default
+#### Default value
 
 `false`
 

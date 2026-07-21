@@ -2,6 +2,10 @@
 license: community
 outline: [2, 3]
 guide: ./field-discovery.html
+prev:
+  text: "Field Discovery"
+  link: "./field-discovery.html"
+next: false
 ---
 
 # Field Discovery API

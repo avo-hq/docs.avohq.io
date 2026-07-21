@@ -2,7 +2,7 @@
 
 Scope out the records the user sees on the Attach modal.
 
-#### Default
+#### Default value
 
 `nil`
 

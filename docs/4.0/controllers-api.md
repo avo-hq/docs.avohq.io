@@ -2,6 +2,10 @@
 license: community
 outline: [2, 3]
 guide: ./controllers.html
+prev:
+  text: "Resource controllers"
+  link: "./controllers.html"
+next: false
 ---
 
 # Resource controllers API

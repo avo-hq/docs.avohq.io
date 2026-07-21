@@ -24,6 +24,8 @@ field :role,
   }
 ```
 
+## Options
+
 <Option name="`options`">
 
 The `options` attribute accepts either a `Hash` or a proc, allowing the incorporation of custom logic. Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](../execution-context) along with the `record`, `resource`, `view` and `field`.
@@ -60,4 +62,32 @@ options: -> do
 end
 ```
 
+</Option>
+
+<Option name="`display_as`">
+
+Controls how the radio buttons are rendered. When set to `:tabs`, the options are displayed as a tab-style switcher instead of standard radio buttons.
+
+#### Default value
+
+`:radio`
+
+#### Possible values
+
+`:radio`, `:tabs`
+
+```ruby
+field :role, as: :radio, display_as: :tabs, options: { admin: "Administrator", writer: "Writer" }
+```
+</Option>
+
+<Option name="`display_value`">
+
+When set to `true`, the `Show` view displays the stored value itself instead of looking up the matching label from the `options` hash.
+
+<!-- @include: ./../common/default_boolean_false.md-->
+
+```ruby
+field :role, as: :radio, display_value: true, options: { admin: "Administrator", writer: "Writer" }
+```
 </Option>

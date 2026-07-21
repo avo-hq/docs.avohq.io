@@ -2,6 +2,10 @@
 license: community
 outline: [2, 3]
 guide: ./table-view.html
+prev:
+  text: "Table view"
+  link: "./table-view.html"
+next: false
 ---
 
 # Table view API

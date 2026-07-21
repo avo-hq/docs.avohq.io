@@ -127,8 +127,14 @@ Frontmatter:
 license: community
 outline: [2, 3]
 guide: ./feature.html # link back to the guide
+prev:
+  text: "Feature" # the guide page's H1
+  link: "./feature.html"
+next: false
 ---
 ```
+
+Reference pages disable the "Next page" footer link (`next: false`) and point "Previous page" back to the guide (`prev:` with the guide's H1 as text). This keeps the footer navigation from walking readers out of the guide/reference pair.
 
 ## Cross-linking
 

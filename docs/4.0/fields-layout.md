@@ -41,7 +41,7 @@ class Avo::Resources::User < Avo::BaseResource
 
     header # render the header only if you want to add a tool or card above it
 
-    card title: "User information", description: "Some information about this user" do
+    panel title: "User information", description: "Some information about this user" do
       field :id,         as: :id, link_to_record: true
       field :first_name, as: :text
       field :last_name # omitting the `as:` option renders the field as :text
@@ -104,7 +104,7 @@ Don't confuse `header` with [`heading`](./fields/heading). `header` is the page-
 
 ## Group fields into panels
 
-Panels are the backbone of Avo's display — most information on a page lives inside one. Fields you declare at the root are grouped into a computed **main panel**; add your own `panel` blocks to group related fields under a title and description.
+Panels are the backbone of Avo's display — most information on a page lives inside one. When you don't declare any panels, Avo groups root-level fields into computed panels for you; add your own `panel` blocks to group related fields under a title and description.
 
 ```ruby
 # app/avo/resources/user.rb
@@ -128,7 +128,7 @@ Set [`title`](./fields-layout-api.html#title) and [`description`](./fields-layou
 
 ### How Avo computes panels
 
-Avo organizes panels behind the scenes so you don't have to. It splits your fields into those that carry their own panel (most associations, like `field :users, as: :has_many`) and "standalone" fields, preserving declaration order. The first group of standalone fields becomes the computed **main panel**:
+Avo organizes panels behind the scenes so you don't have to. As long as you haven't declared a `panel` of your own, it splits your fields into those that carry their own panel (most associations, like `field :users, as: :has_many`) and "standalone" fields, preserving declaration order, then wraps each standalone group in a computed panel. A single run of standalone fields becomes the **main panel**:
 
 ```ruby
 def fields
@@ -141,7 +141,7 @@ end
 
 <Image src="/assets/img/4_0/resource-panels/computed-main.webp" dark-src="/assets/img/4_0/resource-panels/computed-main-dark.webp" width="1976" height="554" alt="An Avo show page with a single computed main panel containing ID, Name, User, and Type fields." prompt="Show page with a single computed main panel containing id, name, user, and type fields" />
 
-Insert a field that owns its panel (like a `has_many`) between standalone fields and Avo splits them: the main panel holds the first batch, and each standalone group that follows becomes its own simple panel.
+Insert a field that owns its panel (like a `has_many`) between standalone fields and Avo splits them: each standalone group — before and after the association — is wrapped in its own computed panel.
 
 ```ruby{5}
 def fields
@@ -157,13 +157,13 @@ end
 
 <Image src="/assets/img/4_0/resource-panels/split-panels.webp" dark-src="/assets/img/4_0/resource-panels/split-panels-dark.webp" width="1976" height="996" alt="An Avo show page with a computed main panel for ID and Name, a Reviews has_many association panel, and a second panel for User and Type." prompt="Show page with a computed main panel for id and name, a reviews has_many panel, and a simple panel for user and type fields" />
 
-To group fields under your own titled container, add a `panel` block. Its fields render on **Show** and **Edit** but stay off the **Index** view.
+To group fields under your own titled container, add a `panel` block. Declaring a panel yourself turns the automatic computing off — Avo takes it as a sign you're in control of the layout.
 
 ### Index view fields
 
-Only fields declared at the root — the ones Avo groups into the computed main panel — appear on the **Index** view. Fields tucked into a `panel` are hidden there and show up on **Show** and **Edit** only.
+The **Index** table builds its columns from root-level fields and from fields inside root-level `panel` and `card` blocks alike. Only `sidebar` contents and fields inside tabs stay off the table. To keep a panel's fields out of the Index view, hide the whole panel there with [`except_on: :index`](./field-options-api#except_on) — or hide individual fields the same way.
 
-```ruby{4-8}
+```ruby{11}
 class Avo::Resources::User < Avo::BaseResource
   def fields
     # Visible on Index
@@ -174,7 +174,7 @@ class Avo::Resources::User < Avo::BaseResource
     end
 
     # Hidden on Index
-    panel title: "User information", description: "Some information about this user" do
+    panel title: "User information", except_on: :index do
       field :first_name, as: :text, required: true, placeholder: "John"
       field :last_name,  as: :text, required: true, placeholder: "Doe"
       field :active,     as: :boolean, name: "Is active", show_on: :show
@@ -185,7 +185,7 @@ end
 
 ## Move compact fields to a sidebar
 
-Some fields — booleans, dates, badges — don't need the full width of the main area. Put them in a `sidebar` block, declared inside a panel, to stack them in a narrower column beside the main content. Wrap the fields in a `card` (or use fields that bring their own panel), and give each panel its own sidebar if you like.
+Some fields — booleans, dates, badges — don't need the full width of the main area. Put them in a `sidebar` block, declared inside a panel, to stack them in a narrower column beside the main content. Standalone fields are auto-wrapped in a card — declare a `card` yourself only to title the group — and each panel can have its own sidebar.
 
 ```ruby
 # app/avo/resources/user.rb
@@ -212,7 +212,7 @@ end
 
 <Image src="/assets/img/4_0/resource-sidebar/sidebar.webp" dark-src="/assets/img/4_0/resource-sidebar/sidebar-dark.webp" width="980" height="461" alt="Resource Show view with a main panel on the left and a sidebar on the right holding the avatar and Is active fields" />
 
-Sidebar fields are always stacked — label above value — because the narrower column requires it. If you're rendering a custom tool inside a sidebar and don't want Avo's panel styling applied to it, set [`panel_wrapper: false`](./fields-layout-api.html#panel_wrapper).
+Sidebar fields are always stacked — label above value — because the narrower column requires it.
 
 ## Organize fields under tabs
 
@@ -247,13 +247,13 @@ The tab [`title`](./fields-layout-api.html#title) is mandatory and labels the sw
 
 ### Loading behavior on Show and Edit
 
-On the **Show** page, `has_many`-type fields and tools inside tabs lazy-load only when their tab is displayed, keeping the initial page light. For heavy tabs you'd rather not fetch on every view, set [`loading: :manual`](./fields-layout-api.html#loading) to render a **Load** button and defer the fetch until the user asks for it. To fetch eagerly instead, opt individual tabs into native lazy loading with [`lazy_load`](./fields-layout-api.html#lazy_load).
+On the **Show** page, `has_many`-type fields and tools inside tabs lazy-load only when their tab is displayed, keeping the initial page light. For heavy tabs you'd rather not fetch on every view, set [`loading: :manual`](./fields-layout-api.html#loading) to render a **Load** button and defer the fetch until the user asks for it. A tab's own content renders eagerly by default; set [`lazy_load`](./fields-layout-api.html#lazy_load) to defer it until the tab is first revealed.
 
 On **Edit**, `has_*` fields stay hidden by default (add `show_on: :edit` to reveal them); all other fields load and hide so form validations on fields in an inactive tab still fire on submit.
 
 ### Durable and bookmarkable selection
 
-Tab selection is durable across view changes — each tab group remembers its active tab — and bookmarkable, so a link can carry a specific tab. Both rely on a unique tab-group ID, so assign one to each group:
+Tab selection is durable across view changes — each tab group remembers its active tab — and bookmarkable, so a link can carry a specific tab. Both rely on a unique tab-group ID; without one Avo falls back to the group's title, then to its position, so assign an [`id`](./fields-layout-api.html#id) to keep links stable as groups get renamed or reordered:
 
 ```ruby {1}
 tabs id: :some_random_uniq_id do
