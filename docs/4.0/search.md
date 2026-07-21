@@ -102,7 +102,7 @@ class Avo::Resources::Application < Avo::BaseResource
 end
 ```
 
-This is about searching *through* associations from an index or the palette. For the search-as-you-type picker on `belongs_to`/`has_many` fields, see [searchable associations](./associations/searchable).
+This is about searching _through_ associations from an index or the palette. For the search-as-you-type picker on `belongs_to`/`has_many` fields, see [searchable associations](./associations/searchable).
 
 ## Authorize search
 
@@ -152,7 +152,7 @@ end
 
 ## Global search {#global-search}
 
-<LicenseReq license="add_on" add_on_link="https://avohq.io/pricing-4?add_ons[]=advanced-search" />
+<LicenseReq license="add_on" add_on_link="https://avohq.io/pricing-4?add_ons[]=global-search" />
 
 The global search palette searches every resource that has `self.search` configured, all at once. Open it by clicking the trigger on the navbar or with the <kbd>Cmd</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on Windows).
 
