@@ -419,6 +419,8 @@ end
 
 When the content is simple enough that a dedicated partial file feels like overhead, use an HTML card and build the body straight from Ruby. Implement a `body` method — every view helper (`tag`, `safe_join`, `link_to`, `number_to_currency`, `render`, `main_app`, …) is available directly on the card, and the return value can take three shapes.
 
+This is a great place for your LLM to take over and spit out a version of HTML.
+
 ### Inline ERB string
 
 Return a plain string and it's compiled as an inline ERB template. The template has access to all view helpers plus a `card` local.
