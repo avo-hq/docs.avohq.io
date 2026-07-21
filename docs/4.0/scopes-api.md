@@ -141,7 +141,7 @@ end
 
 - **Type:** Boolean, Symbol, or Hash with keys `loading`, `count`, `visible`, `format`
 - **Default:** `nil` — no badge
-- **Values:** `true` / `:eager`, `:lazy`, `:hover`, or a Hash (see the sub-options below)
+- **Values:** `true` / `:eager`, `:lazy`, `:hover`, or a Hash (see the sub-options below). Invalid values are ignored — no badge renders (a debug line is logged in development).
 
 :::warning Performance note
 An eager counter runs its `count` query on every page load. For large tables, use `:lazy` or `:hover` to defer it.
@@ -155,7 +155,7 @@ Controls when the count is fetched.
 | -------------------- | ------------------------------------------------------------ |
 | `:eager` (or `true`) | Count is computed during the request and rendered inline.    |
 | `:lazy`              | Count loads in a deferred turbo-frame after the page paints. |
-| `:hover`             | Count loads when the user hovers over the scope tab.         |
+| `:hover`             | Count loads on the first hover over the scope tab. On touch devices (no hover) it degrades to `:lazy`. |
 
 ```ruby
 # app/avo/scopes/active.rb
@@ -183,8 +183,25 @@ class Avo::Scopes::Active < Avo::Scopes::BaseScope
 end
 ```
 
+To show text or an emoji instead of a number, return a String and pass it through with a `format` of just `value`:
+
+```ruby
+# app/avo/scopes/needs_review.rb
+class Avo::Scopes::NeedsReview < Avo::Scopes::BaseScope
+  self.counter = {
+    loading: :lazy,
+    count: -> { "🚩" },
+    format: -> { value }
+  }
+end
+```
+
 - **Type:** Proc
 - **Default:** `nil` — the count is computed from the scope's query
+
+:::info
+Without a custom `count`, the computed count must be an Integer — a grouped relation (whose `.count` returns a Hash) hides the badge instead of rendering it.
+:::
 
 </Option>
 

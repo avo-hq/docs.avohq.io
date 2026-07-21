@@ -7,6 +7,8 @@ The reference implementation for everything below is the pair
 [`docs/4.0/appearance-api.md`](./4.0/appearance-api.md) (reference).
 When unsure, open them and match their structure.
 
+Most active work happens in `docs/4.0/` — default to that version unless told otherwise.
+
 ## The model: guide + reference
 
 A feature with a real configuration surface gets **two pages**:
@@ -165,6 +167,7 @@ Apply it:
 ## House style
 
 - Code samples must be real and copy-pasteable — no `...` placeholders inside runnable Ruby unless clearly a comment.
+- Prefer as many distinct code samples as possible — each showing a different option, value, or use case — over one sample that tries to demonstrate everything.
 - Refer to config as `config.<thing>` and to files by path (`config/initializers/avo.rb`).
 - Use code spans for option names, values, symbols, and types: `:auto`, `logo_dark`, `ArgumentError`.
 - Use VitePress containers for callouts: `:::warning`, `:::info`, `:::tip`, `:::danger`.
@@ -201,3 +204,15 @@ When a published page changes its URL:
 ## Licensing
 
 In Avo 2 and 3 we had subscription tiers (Pro and Advanced). In Avo 4 we have a community license and addons or bundled addons that the user can purchase.
+
+## Gems source code
+
+If you need access to the source code it's usually available up a directory:
+
+- avo: `./../avo`
+- avo-ADDON: `./../workspace/gems/avo-ADDON`
+- avohq.io: `./../avohq.io-v3`
+
+## Why Avo
+
+If you need to know why would someone use Avo check the `why-avo.md` file from `avohq.io-v3` repo.

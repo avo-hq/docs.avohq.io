@@ -1,286 +1,115 @@
 ---
 license: community
+outline: [2, 3]
+api_docs: ./discreet-information-api.html
 ---
 
 # Discreet Information
 
-Sometimes you need to have some information available on the record page, but not necesarily front-and-center.
-This is where the `discreet_information` option is handy. You can use it to display one or more pieces of information.
+Sometimes you need some information available on the record page, but not necessarily front-and-center. The `discreet_information` resource option renders one or more small items — icons with tooltips, badges, links, or key-value pairs — next to the record title, without using up a whole field.
 
 ```ruby
 # app/avo/resources/post.rb
 class Avo::Resources::Post < Avo::BaseResource
   self.discreet_information = [
-    :id,
     :timestamps,
-    :created_at,
-    :updated_at,
     {
-      title: -> { sanitize("Product is <strong>#{record.published_at ? "published" : "draft"}</strong>", tags: %w[strong]) },
+      as: :badge,
+      text: -> { record.published_at ? "Published" : "Draft" },
       icon: -> { "heroicons/outline/#{record.published_at ? "eye" : "eye-slash"}" }
-    },
-    {
-      text: -> { record.published_at ? "🚀" : "😬" },
-      url: -> { "https://avohq.io" },
-      target: :_blank
     }
   ]
+
+  # fields and other resource configuration
 end
 ```
 
-## Preconfigured options
+By default the option is unset and nothing is rendered. You can pass a single item or an array of items; each item is either a preconfigured symbol or a `Hash` describing a custom item.
 
-Avo comes pre-configured with the `:id`, `:timestamps`, `:created_at`, and `:updated_at` types. You can use them as is, or you can add more to your liking.
+## Show the record's ID
 
-<Option name="`:id`">
-
-To save field space, you can use the discreet information area to display the current record's id using the `:id` option.
+Use the [`:id`](./discreet-information-api.html#:id) preconfigured item to display the current record's ID as a key-value pair, saving a field slot.
 
 ```ruby
 # app/avo/resources/post.rb
 class Avo::Resources::Post < Avo::BaseResource
   self.discreet_information = :id
-
-  # fields and other resource configuration
 end
 ```
 
 <!-- TODO: Add ss-->
 
-</Option>
+## Show timestamps without using a field
 
-<Option name="`:timestamps`">
+The reason we built this feature was that we wanted a place to display the `created_at` and `updated_at` timestamps without dedicating a whole field to them.
 
-The reason why we built this feature was that we wanted a place to display the `created_at` and `updated_at` timestamps but didn't want to use up a whole field for it.
-
-Set the option to the `:timestamps` value and a new icon will be added next to the title. When the user hovers over the icon, they will see the record's `created_at` and `updated_at` timestamps.
+Set the option to [`:timestamps`](./discreet-information-api.html#:timestamps) and an icon is added next to the title. Hovering over it reveals both timestamps in a tooltip.
 
 ```ruby
 # app/avo/resources/post.rb
 class Avo::Resources::Post < Avo::BaseResource
   self.discreet_information = :timestamps
-
-  # fields and other resource configuration
 end
 ```
 
 <!-- TODO: Add ss-->
 
-If the record doesn't have the `created_at` or `updated_at` attributes, they will be ommited.
+If the record has neither a `created_at` nor an `updated_at` value, the item is omitted.
 
-You can alternatively use `:created_at` or `:updated_at` to display the timestamps as a key-value pair.
+If you'd rather show a single timestamp as a visible key-value pair instead of a tooltip, use [`:created_at`](./discreet-information-api.html#:created_at) or [`:updated_at`](./discreet-information-api.html#:updated_at).
 
-</Option>
-<Option name="`:created_at`">
+## Add a custom item
 
-The `:created_at` option will display the `created_at` timestamp as a key-value pair.
-
-```ruby
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.discreet_information = :created_at
-end
-```
-
-<!-- TODO: Add ss-->
-
-</Option>
-
-<Option name="`:updated_at`">
-
-The `:updated_at` option will display the `updated_at` timestamp as a key-value pair.
-
-```ruby
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.discreet_information = :updated_at
-end
-```
-
-<!-- TODO: Add ss-->
-
-</Option>
-
-## API
-
-You may fully customize the discreet information item by taking control of different options.
-To do that, you can set it to a `Hash` with various keys.
-
-All options can take an [`ExecutionContext`](./execution-context) block where you have access to the `record`, `resource` and the rest of the [common objects](./execution-context#common-objects).
-
-| Option             | Description                                                                    | Possible values                                             |
-| ------------------ | ------------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| [:as](#as)         | The type of representation you want to display                                 | `:badge`, `:key_value`                                      |
-| [:title](#title)   | What you want displayed as a tooltip                                           |                                                             |
-| [:url](#url)       | The url you want to redirect to                                                |                                                             |
-| [:target](#target) | The link target you want to redirect to                                        | `:blank`, `:self`, `:parent`, `:top`                        |
-| [:icon](#icon)     | The icon you want to display. Any Tabler, Heroicon or Avo icon you need        | `tabler/outline/cube`, `heroicons/outline/cube`, `avo/cube` |
-| [:text](#text)     | The text you want to in a badge type                                           |                                                             |
-| [:key](#key)       | The string value you want to display in the `key` field of a `:key_value` type |                                                             |
-| [:value](#value)   | The value you want to display in the `value` field of a `:key_value` type      |                                                             |
-| [:data](#data)     | The data you want to pass to the url                                           | `{ turbo_frame: :some_frame }`                              |
+Pass a `Hash` to take full control of an item. Pick the representation with [`as`](./discreet-information-api.html#as) — `:text` (default), `:icon`, `:badge`, or `:key_value` — then set the options that type uses: [`text`](./discreet-information-api.html#text) for text and badge items, [`icon`](./discreet-information-api.html#icon), [`title`](./discreet-information-api.html#title) for the tooltip, or [`key`](./discreet-information-api.html#key) and [`value`](./discreet-information-api.html#value) for key-value items.
 
 ```ruby
 # app/avo/resources/post.rb
 class Avo::Resources::Post < Avo::BaseResource
   self.discreet_information = {
+    as: :badge,
+    text: -> { record.published_at ? "Published" : "Draft" },
     title: -> { "Product is #{record.published_at ? "published" : "draft"}" },
-    icon: -> { "heroicons/outline/#{record.published_at ? "eye" : "eye-slash"}" }
-    url: -> { main_app.post_path record }
-    target: :_blank
+    icon: "tabler/outline/bulb"
   }
 end
 ```
 
-<Option name="`as`">
+Every option accepts a static value or a block. Blocks run in an [`ExecutionContext`](./execution-context), so you have access to `record`, `resource`, and the rest of the [common objects](./execution-context#common-objects).
 
-The `as` option specifies the type of representation. Possible values right now are `:text` (default), `:badge` and `:key_value`.
+## Turn an item into a link
 
-```ruby{7}
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.discreet_information = {
-    title: -> { "Product is #{record.published_at ? "published" : "draft"}" },
-    icon: "tabler/outline/bulb",
-    url: -> { main_app. },
-    as: :badge
-  }
-end
-```
-
-</Option>
-
-<Option name="`title`">
-
-Use the `title` option to set the body of the tooltip.
-
-```ruby{4}
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.discreet_information = {
-    title: -> { "Product is #{record.published_at ? "published" : "draft"}" },
-  }
-end
-```
-
-You may return HTML for that tooltip but don't forget to sanitize the output.
+If you want an item to navigate somewhere, add a [`url`](./discreet-information-api.html#url). Use [`target`](./discreet-information-api.html#target) to control where it opens and [`data`](./discreet-information-api.html#data) to set data attributes on the item.
 
 ```ruby
 # app/avo/resources/post.rb
 class Avo::Resources::Post < Avo::BaseResource
   self.discreet_information = {
-    title: -> { sanitize("Product is <strong>#{record.published_at ? "published" : "draft"}</strong>", tags: %w[strong]) },
-  }
-end
-```
-
-</Option>
-
-<Option name="`url`">
-
-The `url` option will transform the item into a link.
-
-```ruby{6}
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.discreet_information = {
-    title: -> { "Product is #{record.published_at ? "published" : "draft"}" },
-    icon: "tabler/outline/bulb",
-    url: -> { main_app.post_path record }
-  }
-end
-```
-
-</Option>
-
-<Option name="`target`">
-
-The `target` option will set the link target.
-
-```ruby{7}
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.discreet_information = {
-    title: -> { "Product is #{record.published_at ? "published" : "draft"}" },
-    icon: "tabler/outline/bulb",
+    as: :badge,
+    text: "View on site",
     url: -> { main_app.post_path record },
     target: :_blank
   }
 end
 ```
 
-</Option>
+## Show an item conditionally
 
-<Option name="`icon`">
+Set [`visible`](./discreet-information-api.html#visible) to a boolean or a block if an item should only appear in certain conditions.
 
-The `icon` option will set the icon for the item.
-
-```ruby{4}
+```ruby
 # app/avo/resources/post.rb
 class Avo::Resources::Post < Avo::BaseResource
   self.discreet_information = {
-    icon: "tabler/outline/bulb",
+    as: :badge,
+    text: "Draft",
+    visible: -> { record.published_at.nil? }
   }
 end
 ```
 
-You can use any [Tabler](https://tabler.io/icons), [Heroicon](https://heroicons.com) or [Avo](https://github.com/avo-hq/avo/tree/main/app/assets/svgs/avo) icon as described in the [Icons](./icons#libraries) documentation.
+## Full example
 
-</Option>
-
-<Option name="`text`">
-
-The `text` option will set the text for the item in a `:badge` type.
-
-```ruby{4}
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.discreet_information = {
-    text: "Product is #{record.published_at ? "published" : "draft"}",
-    as: :badge
-  }
-end
-```
-
-</Option>
-
-<Option name="`key`">
-
-The `key` option will set the key for the item in a `:key_value` type.
-
-```ruby{4}
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.discreet_information = {
-    key: "Status:",
-    value: -> { record.published_at ? "published" : "draft" },
-    as: :key_value
-  }
-end
-```
-
-</Option>
-
-<Option name="`value`">
-
-The `value` option will set the value for the item in a `:key_value` type.
-
-```ruby{5}
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  self.discreet_information = {
-    key: "Status:",
-    value: -> { record.published_at ? "published" : "draft" },
-    as: :key_value
-  }
-end
-```
-
-</Option>
-
-## Possible full configuration
-
-Here's a possible full configuration for the discreet information area.
+Here's a possible full configuration for the discreet information area, mixing preconfigured and custom items.
 
 ```ruby
 # app/avo/resources/post.rb
@@ -291,24 +120,24 @@ class Avo::Resources::Post < Avo::BaseResource
     :created_at,
     :updated_at,
     {
-      text: "label",
       as: :badge,
+      text: "label",
       title: -> { sanitize("View <strong>#{record.name}</strong> on site", tags: %w[strong]) },
       icon: -> { "heroicons/outline/arrow-top-right-on-square" },
       url: -> { main_app.root_url },
       target: :_blank
     },
     {
-      text: -> { "Simple text #{record.id}" },
       as: :text,
+      text: -> { "Simple text #{record.id}" },
       title: -> { sanitize("View <strong>#{record.name}</strong> on site", tags: %w[strong]) },
       icon: -> { "tabler/outline/external-link" },
       url: -> { main_app.root_url },
       visible: true
     },
     {
-      text: "Test",
       as: :badge,
+      text: "Test",
       visible: false
     },
     {

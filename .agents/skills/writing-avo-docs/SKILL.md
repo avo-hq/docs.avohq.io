@@ -232,4 +232,4 @@ Also skip it for shell commands, REPL sessions, and syntax-only fragments.
 
 In Avo 2 and 3 we had subscription tiers (Pro and Advanced). In Avo 4 we have a community license and addons or bundled addons that the user can purchase.
 
-Whenever an add_on_link is provided check the URL to see if there's an addon selected.
+Whenever an add_on_link is provided check the URL to see if there's an addon selected. All the addons and bundles should be on https://avohq.io/pricing.
