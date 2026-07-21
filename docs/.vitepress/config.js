@@ -1,8 +1,26 @@
 import { getFiles } from "./getFiles.js"
 import sidebar20 from "./sidebar-2.0.js"
 import sidebar30 from "./sidebar-3.0.js"
+import fs from "node:fs"
+import path from "node:path"
 
 const fieldsMenuItems4 = getFiles('fields', '4.0')
+
+// Every page is also published as raw markdown next to its .html version (and
+// served the same way in dev). Markdown readers never see PageHeader's
+// `api_docs` callout, so surface it as a visible notice with an absolute URL.
+function transformRawMd(src, relativePath) {
+  const fm = src.match(/^---\n[\s\S]*?\n---\n/)
+  const apiDocs = fm && fm[0].match(/^api_docs:\s*["']?(\S+?)["']?\s*$/m)
+  if (!apiDocs) return src
+
+  const target = path.posix
+    .join(path.posix.dirname(`/${relativePath}`), apiDocs[1])
+    .replace(/\.html$/, '.md')
+  const notice = `> **Looking for every option?** See the full API reference → https://docs.avohq.io${target}\n`
+
+  return fm[0] + '\n' + notice + src.slice(fm[0].length)
+}
 
 /**
  * @type {import('vitepress').UserConfig}
@@ -49,6 +67,43 @@ const config = {
     ['meta', { name: "msapplication-config", content: "/favicons/browserconfig.xml" }],
     ['meta', { name: "theme-color", content: "#ffffff" }],
   ],
+  // Publish the raw .md of every page into dist so /4.0/scopes.md works in
+  // production (the Copy page button and LLMs fetch these).
+  buildEnd(siteConfig) {
+    for (const page of siteConfig.pages) {
+      try {
+        const src = fs.readFileSync(path.join(siteConfig.srcDir, page), 'utf8')
+        const out = path.join(siteConfig.outDir, page)
+        fs.mkdirSync(path.dirname(out), { recursive: true })
+        fs.writeFileSync(out, transformRawMd(src, page))
+      } catch {
+        // ponytail: dynamic-route/missing sources are skipped, not fatal
+      }
+    }
+  },
+  vite: {
+    plugins: [
+      {
+        // Dev parity with the published .md files: serve them transformed
+        // instead of letting Vite's static handler return the raw source.
+        name: 'avo-serve-transformed-md',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            // The SPA loads pages via import('/path/page.md') — those requests
+            // must reach Vite's transform pipeline, not get raw markdown.
+            if (req.headers['sec-fetch-dest'] === 'script') return next()
+            const url = (req.url || '').split('?')[0]
+            if (!url.endsWith('.md')) return next()
+            const docsDir = path.resolve(__dirname, '..')
+            const file = path.resolve(docsDir, decodeURIComponent(url).slice(1))
+            if (!file.startsWith(docsDir + path.sep) || !fs.existsSync(file)) return next()
+            res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
+            res.end(transformRawMd(fs.readFileSync(file, 'utf8'), url.slice(1)))
+          })
+        },
+      },
+    ],
+  },
   transformPageData(pageData) {
     const canonicalUrl = `https://docs.avohq.io/${pageData.relativePath}`
       .replace(/index\.md$/, '')

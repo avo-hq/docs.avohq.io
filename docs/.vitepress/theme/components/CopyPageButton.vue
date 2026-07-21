@@ -9,11 +9,26 @@ function flash(flag) {
   setTimeout(() => { flag.value = false }, 2000)
 }
 
-function copyPage() {
-  const doc = document.querySelector('.vp-doc')
-  if (!doc) return
+async function copyPage() {
+  // Prefer the published .md version of the page (real markdown, includes the
+  // API reference notice); fall back to the rendered text if it's unavailable.
+  let text = null
+  try {
+    const p = window.location.pathname
+    const mdUrl = (p.endsWith('/') ? `${p}index` : p.replace(/\.html$/, '')) + '.md'
+    const res = await fetch(mdUrl)
+    if (res.ok && (res.headers.get('content-type') || '').includes('markdown')) {
+      text = await res.text()
+    }
+  } catch {}
 
-  navigator.clipboard.writeText(doc.innerText).then(() => flash(copiedPage))
+  if (text === null) {
+    const doc = document.querySelector('.vp-doc')
+    if (!doc) return
+    text = doc.innerText
+  }
+
+  navigator.clipboard.writeText(text).then(() => flash(copiedPage))
 }
 
 function copyLink() {
