@@ -2,86 +2,23 @@
 license: community
 demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1030"
 betaStatus: Beta
+outline: [2, 3]
 ---
 
 # Array Resources
 
-## Overview
+An Array Resource is a resource backed by in-memory data instead of a database table. Use it to let Avo display and manage structured data that doesn't come from a model. The `records` method can return an array of hashes, an array of Active Record objects, an `ActiveRecord::Relation`, or an array of `StoreModel` instances.
 
-An **Array Resource** is a flexible resource that can be backed by an **array of hashes** or an **array of Active Record objects**. It is not constrained to an Active Record model and allows dynamic data handling.
-
-:::info Related field
-The Array Resource can be used in conjunction with the `Array` field to manage structured array data in your resources.
-
-For more details on using the `Array` field, including examples and hierarchy of data fetching, check out the [Array Field documentation](./fields/array).
-
-This integration allows for seamless configuration of dynamic or predefined array-based data within your application.
-:::
-
-:::warning ⚠️ Limitations
-
-#### Sorting
-- The array resource does **not support sorting**.
-
-#### Performance Considerations
-- When dealing with large datasets, you might experience suboptimal performance due to inherent architectural constraints.
-- **Caching Recommendation:**
-  - It is advisable to implement caching mechanisms as a viable solution to ameliorate these performance bottlenecks.
-  - **Note:** These caching mechanisms should ideally be integrated into the methods that fetch data, such as the `def records` method.
-
-**Please note that these caveats are based on the current implementation and may be subject to revisions in future releases.**
-
-:::
-
-
-<div class="aspect-video">
-  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/wnWvzQyyo6A?start=1030" title="Avo 3.17 - Media Library, new Markdown field &amp; the Array Adapter" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</div>
-
-## Creating an Array Resource
-
-Generate an **Array Resource** using the `--array` flag:
+Generate one with the `--array` flag:
 
 ```bash
 bin/rails generate avo:resource Movie --array
 ```
 
-This sets up a resource designed to work with an array of data.
-
-## Defining the `records` Method
-
-The `records` method serves as the fallback source for data in the resource. It returns an array of hashes or Active Record objects.
-
-### Example
+The generated class extends `Avo::Resources::ArrayResource`. Return the data from the `records` method and describe it with fields, like any other resource:
 
 ```ruby
-def records
-  [
-    {
-      id: 1,
-      name: "The Shawshank Redemption",
-      release_date: "1994-09-23"
-    },
-    {
-      id: 2,
-      name: "The Godfather",
-      release_date: "1972-03-24",
-      fun_fact: "The iconic cat in the opening scene was a stray found by director Francis Ford Coppola on the studio lot."
-    },
-    {
-      id: 3,
-      name: "Pulp Fiction",
-      release_date: "1994-10-14"
-    }
-  ]
-end
-```
-
-## Defining Fields
-
-Array Resources use fields like any other Avo resource. Here’s an example for a `Movie` resource:
-
-```ruby
+# app/avo/resources/movie.rb
 class Avo::Resources::Movie < Avo::Resources::ArrayResource
   def records
     [
@@ -122,3 +59,18 @@ class Avo::Resources::Movie < Avo::Resources::ArrayResource
   end
 end
 ```
+
+Each hash becomes a record, so `field :name` reads the `name:` key and computed fields can call `record.fun_fact` directly. If you return Active Record objects or a relation instead, Avo uses their real model class and fields behave as they do on a regular resource. Pagination works out of the box.
+
+## Render it inside another resource
+
+Array resources pair with the [`Array` field](./fields/array.html) to display array data on another resource — `field :attendees, as: :array` on a `Course`, for example. When rendered through the field, `records` is the last fallback in the data-fetching hierarchy; the field's block and the model's method take precedence. See the [Array field documentation](./fields/array.html) for the full hierarchy.
+
+:::warning Limitations
+- Sorting is not supported.
+- Large datasets can be slow — the array is rebuilt on every request. If that becomes a bottleneck, cache the data inside `records`.
+:::
+
+:::info Heavier workloads
+If your data comes from an external API or the array approach starts to feel limiting, consider an [HTTP Resource](./http-resources.html) instead — it's backed by an endpoint and built for that kind of work.
+:::
