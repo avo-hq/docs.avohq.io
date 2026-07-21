@@ -256,6 +256,10 @@ const config = {
               items: [
                 { text: "Dashboards", link: "/4.0/dashboards.html" },
                 { text: "Cards", link: "/4.0/cards.html" },
+                {
+                  text: "Dynamic dashboards",
+                  link: "/4.0/dynamic-dashboards.html",
+                },
               ],
             },
             {
