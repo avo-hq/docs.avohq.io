@@ -320,3 +320,22 @@ from = "/4.0/cover.html"
 to = "/4.0/cover-and-avatar.html#add-a-cover-photo"
 status = 301
 force = false
+
+# renamed to singular to match the add-on names
+[[redirects]]
+from = "/4.0/http-resources.html"
+to = "/4.0/http-resource.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/http-resources-api.html"
+to = "/4.0/http-resource-api.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/array-resources.html"
+to = "/4.0/array-resource.html"
+status = 301
+force = false

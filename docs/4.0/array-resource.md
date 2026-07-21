@@ -5,7 +5,7 @@ betaStatus: Beta
 outline: [2, 3]
 ---
 
-# Array Resources
+# Array Resource
 
 An Array Resource is a resource backed by in-memory data instead of a database table. Use it to let Avo display and manage structured data that doesn't come from a model. The `records` method can return an array of hashes, an array of Active Record objects, an `ActiveRecord::Relation`, or an array of `StoreModel` instances.
 
@@ -64,7 +64,7 @@ Each hash becomes a record, so `field :name` reads the `name:` key and computed 
 
 ## Render it inside another resource
 
-Array resources pair with the [`Array` field](./fields/array.html) to display array data on another resource — `field :attendees, as: :array` on a `Course`, for example. When rendered through the field, `records` is the last fallback in the data-fetching hierarchy; the field's block and the model's method take precedence. See the [Array field documentation](./fields/array.html) for the full hierarchy.
+The Array Resource pairs with the [`Array` field](./fields/array.html) to display array data on another resource — `field :attendees, as: :array` on a `Course`, for example. When rendered through the field, `records` is the last fallback in the data-fetching hierarchy; the field's block and the model's method take precedence. See the [Array field documentation](./fields/array.html) for the full hierarchy.
 
 :::warning Limitations
 - Sorting is not supported.
@@ -72,5 +72,5 @@ Array resources pair with the [`Array` field](./fields/array.html) to display ar
 :::
 
 :::info Heavier workloads
-If your data comes from an external API or the array approach starts to feel limiting, consider an [HTTP Resource](./http-resources.html) instead — it's backed by an endpoint and built for that kind of work.
+If your data comes from an external API or the array approach starts to feel limiting, consider an [HTTP Resource](./http-resource.html) instead — it's backed by an endpoint and built for that kind of work.
 :::

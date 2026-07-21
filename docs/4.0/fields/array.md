@@ -8,7 +8,7 @@ demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1030"
 The `Array` field allows you to display and manage structured array data. This field supports flexibility in fetching and rendering data, making it suitable for various use cases.
 
 :::tip Important
-To use the `Array` field, you must create a resource specifically for it. Refer to the [Array Resource documentation](../array-resources) for detailed instructions.
+To use the `Array` field, you must create a resource specifically for it. Refer to the [Array Resource documentation](../array-resource) for detailed instructions.
 
 For example, to use `field :attendees, as: :array`, you can generate an array resource by running the following command:
 

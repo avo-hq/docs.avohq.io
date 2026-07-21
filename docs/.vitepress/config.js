@@ -138,8 +138,8 @@ const config = {
           text: "Resources",
           items: [
             { text: "Overview", link: "/4.0/resources.html" },
-            { text: "Array Resources", link: "/4.0/array-resources.html" },
-            { text: "HTTP Resources", link: "/4.0/http-resources.html" },
+            { text: "Array Resource", link: "/4.0/array-resource.html" },
+            { text: "HTTP Resource", link: "/4.0/http-resource.html" },
             { text: "Record previews", link: "/4.0/record-previews.html" },
             { text: "Scopes", link: "/4.0/scopes.html" },
             { text: "Records reordering", link: "/4.0/records-reordering.html" },
