@@ -16,6 +16,10 @@ gem "chartkick"
 
 There comes the point in your app's life when you need to display the data in an aggregated form like a metric or chart. That's what Avo's Dashboards are all about.
 
+:::info Create dashboards at runtime
+Prefer to build dashboards and cards from inside Avo — without writing a class, committing, and deploying? See [Dynamic dashboards](./dynamic-dashboards.html). They store the dashboard and its cards in the database and evaluate their logic server-side, coexisting with the code-defined dashboards described here.
+:::
+
 ## Generate a dashboard
 
 Run `bin/rails g avo:dashboard my_dashboard` to get a shiny new dashboard.

@@ -11,6 +11,10 @@ Cards can be used on dashboards or resources, we'll refer to both of them as "pa
 
 You can add three types of cards to your parent: `partial`, `metric`, and `chartkick`.
 
+:::info Author cards at runtime
+On a [dynamic dashboard](./dynamic-dashboards.html) you can create these same card types from inside Avo and write their `query`/`format` logic as stored Ruby, instead of defining a card class in code.
+:::
+
 ## Base settings
 
 All cards have some standard settings like `id`, which must be unique, `label`, `description`, and `discreet_description`. The `label` is the title of your card, the `description` is a subtitle rendered below the title, and the `discreet_description` shows a tiny info icon at the bottom-right of the card with a tooltip containing the text.
