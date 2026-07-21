@@ -636,6 +636,27 @@ end
 <Image src="/assets/img/4_0/customization/click-row-to-view-record.webm" dark-src="/assets/img/4_0/customization/click-row-to-view-record-dark.webm" width="1170" height="528" alt="An Avo resource index where a row name cell is highlighted, clicked, and navigates to the record show view with panel and card DSL layout." />
 </Option>
 
+<Option name="`density`">
+
+Controls how much vertical space rows take up in <Index /> tables and in the dashboard table and list cards. Three options are available: `:tight`, `:normal`, and `:relaxed`.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.density = :normal # :tight, :normal, :relaxed
+end
+```
+
+Dashboard table and list cards can override the global setting per card:
+
+```ruby
+class Avo::Cards::ExampleList < Avo::Cards::ListCard
+  self.density = :tight
+end
+```
+
+</Option>
+
 ## Associations
 
 <Option name="`associations`">
