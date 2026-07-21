@@ -63,7 +63,7 @@ The page where you can create a new resource.
 
 ## Preview
 
-The fields marked with `show_on :preview`, will be show in the [preview field](./fields/preview) popup.
+The fields marked with `show_on: :preview`, will be show in the [preview field](./fields/preview) popup.
 By default, all fields are hidden in `:preview`.
 
 ## Checking the current view

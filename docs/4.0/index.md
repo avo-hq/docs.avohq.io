@@ -39,7 +39,7 @@ The core covers managing records. Add-ons extend it toward whatever job your app
 - [Dynamic Filters](./dynamic-filters.html): let users stack their own filter combinations without you writing each one.
 - [Resource Scopes](./scopes.html): reuse the model scopes you already trust as one-click segments.
 - [Searchable Associations](./associations/searchable.html): type-to-search when attaching related records, even in huge tables.
-- [Record Reordering](./records-reordering.html): drag-and-drop ordering for lists where position matters.
+- [Record Reordering](./record-reordering.html): drag-and-drop ordering for lists where position matters.
 - [Menu Editor](./menu-editor.html): shape the sidebar into a navigation that makes sense for your team.
 
 **Capture and edit data**

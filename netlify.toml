@@ -1,3 +1,10 @@
+# records-reordering renamed to record-reordering (singular, matches the add-on name)
+[[redirects]]
+from = "/4.0/records-reordering.html"
+to = "/4.0/record-reordering.html"
+status = 301
+force = false
+
 # 4.0 layout pages consolidated into fields-layout + fields-layout-api
 [[redirects]]
 from = "/4.0/resource-header.html"
@@ -337,5 +344,11 @@ force = false
 [[redirects]]
 from = "/4.0/array-resources.html"
 to = "/4.0/array-resource.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/record-previews.html"
+to = "/4.0/fields/preview.html"
 status = 301
 force = false

@@ -13,7 +13,7 @@ The **Community** version has powerful features that you can use today like [Res
 
 <Option name="Pro">
 
-The **Pro** tier comes with [Advanced Authorization](./authorization.html) using Pundit, [Advanced File Uploads](./fields/files.html#direct_upload), [Records Re-Ordering](./records-reordering.html), [Menu Editor](./menu-editor.html), and [Dashboards](./dashboards.html).
+The **Pro** tier comes with [Advanced Authorization](./authorization.html) using Pundit, [Advanced File Uploads](./fields/files.html#direct_upload), [Record Reordering](./record-reordering.html), [Menu Editor](./menu-editor.html), and [Dashboards](./dashboards.html).
 
 </Option>
 
