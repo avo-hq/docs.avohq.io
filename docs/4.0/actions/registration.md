@@ -31,7 +31,7 @@ More info [here](./../authorization#act-on)
 Once attached, the action will appear in the **Actions** dropdown menu. By default, actions are available on all views.
 
 :::info
-You may use the [customizable controls](./../customizable-controls) feature to show the actions outside the dropdown.
+You may use the [customizable controls](./../custom-controls) feature to show the actions outside the dropdown.
 :::
 
 <Option name="`arguments`" headingSize="3">

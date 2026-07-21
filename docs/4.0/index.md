@@ -60,7 +60,7 @@ The core covers managing records. Add-ons extend it toward whatever job your app
 **Control who can do what**
 
 - [Authorization](./authorization.html): granular permissions using Pundit policies.
-- [Custom Controls](./customizable-controls.html): decide exactly which buttons and actions each user sees.
+- [Custom Controls](./custom-controls.html): decide exactly which buttons and actions each user sees.
 
 **Connect other systems**
 
@@ -82,7 +82,7 @@ When configuration isn't enough, you drop down to plain Rails. Avo is built to b
 
 Avo runs entirely inside your Rails app. It ships as a gem, reads and writes through your own models, and your data stays on your servers; there's no external dashboard or third-party service between your team and your database.
 
-On top of that, you control access at every level: [authentication](./authentication.html) plugs into whatever you already use (Devise, the Rails 8 scaffold, or anything that gives you a current user), [authorization](./authorization.html) enforces granular permissions through Pundit policies, [Custom Controls](./customizable-controls.html) decide which buttons each user even sees, and [Audit Logging](./audit-logging/) keeps a record of who did what.
+On top of that, you control access at every level: [authentication](./authentication.html) plugs into whatever you already use (Devise, the Rails 8 scaffold, or anything that gives you a current user), [authorization](./authorization.html) enforces granular permissions through Pundit policies, [Custom Controls](./custom-controls.html) decide which buttons each user even sees, and [Audit Logging](./audit-logging/) keeps a record of who did what.
 
 ## Build it with AI agents
 

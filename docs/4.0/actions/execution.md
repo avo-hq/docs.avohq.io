@@ -11,9 +11,9 @@ When a user triggers an action in Avo, the following flow occurs:
 1. Record selection phase:
   - This phase can be bypassed by setting `self.standalone = true`
   - For bulk actions on the index page, Avo collects all the records selected by the user
-  - For actions on the show page [or row controls](./../customizable-controls.md#Row%20controls), Avo uses that record as the target of the action
+  - For actions on the show page [or row controls](./../custom-controls.md#customize-the-row-controls), Avo uses that record as the target of the action
 
-2. The action is initiated by the user through the index page (bulk actions), show page (single record actions), [or resource controls (custom action buttons)](./../customizable-controls.md)
+2. The action is initiated by the user through the index page (bulk actions), show page (single record actions), [or resource controls (custom action buttons)](./../custom-controls.md)
 
 3. Form display phase (optional):
     - This phase can be bypassed by setting `self.confirmation = false`

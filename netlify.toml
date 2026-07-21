@@ -352,3 +352,10 @@ from = "/4.0/record-previews.html"
 to = "/4.0/fields/preview.html"
 status = 301
 force = false
+
+# customizable-controls renamed to custom-controls (matches the add-on name)
+[[redirects]]
+from = "/4.0/customizable-controls.html"
+to = "/4.0/custom-controls.html"
+status = 301
+force = false
