@@ -244,7 +244,7 @@ Avo.configure do |config|
 end
 ```
 
-Check the [global search configuration](./search/global-search.md) for more information.
+Check the [global search configuration](./search.html#global-search) for more information.
 
 ##### Removed `help` option
 
@@ -659,7 +659,7 @@ Add only the gems for the features you use.
 | --------------------------------------------------------------------------------------------- | ----------------------- |
 | [Dashboards](./dashboards)                                                                    | `avo-dashboards`        |
 | [Menu editor](./menu-editor)                                                                  | `avo-menu`              |
-| [Global search](./search/global-search), [searchable associations](./associations/searchable) | `avo-advanced_search`   |
+| [Global search](./search.html#global-search), [searchable associations](./associations/searchable) | `avo-advanced_search`   |
 | [Authorization](./authorization)                                                              | `avo-authorization`     |
 | [Record reordering](./record-reordering)                                                     | `avo-record_reordering` |
 
@@ -1014,7 +1014,7 @@ More info on the [Toggle the sidebar button visibility](./customization.html#tog
 
 ## Added `self.description` option to actions
 
-More info on the [Description option](./actions/customization.html#description) section.
+More info on the [Description option](./actions-api.html#description) section.
 
 ## Added `self.icon` option to resources
 
@@ -1133,7 +1133,7 @@ if defined?(Avo::DynamicFilters)
 end
 ```
 
-More info on the [`always_expanded` option](./dynamic-filters.html#always_expanded) section.
+More info on the [`always_expanded` option](./dynamic-filters-api.html#always_expanded) section.
 
 ## `explicit_authorization` default changed to `true`
 

@@ -188,7 +188,7 @@ Controls whether the user can see the [record reordering](./record-reordering) b
 
 <Option name="`search?`">
 
-Controls whether the user can see the [resource search input](./search/resource-search) on top of the <Index /> page.
+Controls whether the user can see the [resource search input](./search.html#enable-search-for-a-resource) on top of the <Index /> page.
 
 <Image src="/assets/img/4_0/authorization/policy-search.webp" dark-src="/assets/img/4_0/authorization/policy-search-dark.webp" width="2032" height="834" alt="The Posts Index view with the resource search input highlighted at the top of the page, illustrating the input the Pundit search? policy controls." prompt="Resource search input highlighted on the Index view" />
 
@@ -405,7 +405,7 @@ When working with files, it may be necessary to establish policies that determin
 Both the `record` and the `user` will be available for you to access.
 
 :::info Actions inherit attachment authorization
-These attachment authorization methods also apply to file fields in [actions](./actions/overview) that run on the resource using the same policy. For example, if you define `upload_file?` in `PostPolicy` and have an action on `Avo::Resources::Post` with `field :file, as: :file`, the same `upload_file?` policy method will be used to authorize the file upload in that action.
+These attachment authorization methods also apply to file fields in [actions](./actions.html) that run on the resource using the same policy. For example, if you define `upload_file?` in `PostPolicy` and have an action on `Avo::Resources::Post` with `field :file, as: :file`, the same `upload_file?` policy method will be used to authorize the file upload in that action.
 :::
 
 <Option name="`upload_{FIELD_ID}?`">

@@ -1,54 +1,17 @@
+---
+license: community
+outline: [2, 3]
+---
+
 # Custom view types
 
-Avo ships with three built-in view types for the resource index: **table**, **grid**, and **map**. You can restrict which ones are available per-resource, or create entirely new view types through plugins.
+Avo ships with three built-in view types for the resource index: **table**, **grid**, and **map**. You can register entirely new view types from a Rails Engine (Avo plugin) — they appear in the view switcher alongside the built-in ones and can be set as the default for any resource.
 
-## Restricting available view types
-
-By default, Avo displays all the configured view types on the view switcher. For example, if you have `map_view` and `grid_view` configured, both of them, along with the `table_view`, will be available on the view switcher.
-
-However, there might be cases where you only want to make a specific view type available without removing the configurations for other view types. This can be achieved using the `view_types` class attribute on the resource. Note that when only one view type is available, the view switcher will not be displayed.
-
-```ruby{3}
-class Avo::Resources::City < Avo::BaseResource
-  # ...
-  self.view_types = :table
-  #...
-end
-```
-
-If you want to make multiple view types available, you can use an array. The icons on the view switcher will follow the order in which they are declared in the configuration.
-
-```ruby{3}
-class Avo::Resources::City < Avo::BaseResource
-  # ...
-  self.view_types = [:table, :grid]
-  #...
-end
-```
-
-You can also dynamically restrict the view types based on user roles, params, or other business logic. To do this, assign a block to the `view_types` attribute. Within the block, you'll have access to `resource`, `record`, `params`, `current_user`, and other default accessors provided by `ExecutionContext`.
-
-```ruby{3-9}
-class Avo::Resources::City < Avo::BaseResource
-  # ...
-  self.view_types = -> do
-    if current_user.is_admin?
-      [:table, :grid]
-    else
-      :table
-    end
-  end
-  #...
-end
-```
-
-## Creating a custom view type through a plugin
-
-You can register entirely new view types from a Rails Engine (Avo plugin). The view type will appear in the view switcher alongside the built-in ones and can be set as the default for any resource.
+If you're only looking to control which of the existing view types show up on a resource, see [Restrict the available view types](./views.html#restrict-the-available-view-types) instead.
 
 The process has three parts: **create the component**, **register the view type**, and **configure a resource to use it**.
 
-### 1. Create the view type component
+## 1. Create the view type component
 
 Every view type is a ViewComponent that inherits from `Avo::ViewTypes::BaseViewTypeComponent`. The base class provides these props automatically:
 
@@ -112,7 +75,7 @@ Then create the template. You have full control over the HTML — render items h
 The `paginator_component` method is inherited from the base class. Always render it to keep pagination working.
 :::
 
-### 2. Register the view type
+## 2. Register the view type
 
 In your engine's initializer, register the view type with `Avo.plugin_manager.register_view_type`. This must happen inside the `ActiveSupport.on_load(:avo_boot)` hook so Avo core is loaded first.
 
@@ -136,22 +99,22 @@ end
 
 `register_view_type` accepts these options:
 
-| Option            | Required | Description                                           |
-| ----------------- | -------- | ----------------------------------------------------- |
-| `component`       | Yes      | Component class or string (auto-constantized)         |
-| `icon`            | Yes      | Icon path for the inactive state in the view switcher |
-| `active_icon`     | Yes      | Icon path for the active state in the view switcher   |
-| `translation_key` | No       | I18n key for the view type name in tooltips           |
+| Option        | Required | Description                                           |
+| ------------- | -------- | ----------------------------------------------------- |
+| `component`   | Yes      | Component class or string (auto-constantized)         |
+| `icon`        | Yes      | Icon path for the inactive state in the view switcher |
+| `active_icon` | Yes      | Icon path for the active state in the view switcher   |
 
 :::info
 The `component` can be passed as a string (`"MyPlugin::ViewTypes::TimelineViewTypeComponent"`) or as the class itself. Strings are constantized at render time, which avoids load-order issues during boot.
 :::
 
-### 3. Configure a resource to use it
+## 3. Configure a resource to use it
 
 Once registered, you can use your custom view type in any resource:
 
 ```ruby
+# app/avo/resources/event.rb
 class Avo::Resources::Event < Avo::BaseResource
   self.default_view_type = :timeline # [!code focus:2]
   self.view_types = [:table, :timeline]
@@ -160,18 +123,7 @@ class Avo::Resources::Event < Avo::BaseResource
 end
 ```
 
-Setting `default_view_type` makes your view type the one users see first. Including `:table` in `view_types` keeps the table view available as a fallback via the view switcher.
-
-## How it works under the hood
-
-When a user visits a resource index, Avo resolves the current view type through the `ViewTypeManager`:
-
-1. The `ViewTypeManager` holds a registry of all view types (built-in + plugin-registered)
-2. It looks up the component class for the current view type via `component_for(name)`
-3. The `ResourceListingComponent` renders that component with all the standard props
-4. The view switcher partial reads the registry for icons and renders toggle buttons for each available view type
-
-The view type is persisted in the URL as the `view_type` query parameter, so it survives page reloads and can be bookmarked.
+Setting [`default_view_type`](./resources-api.html#self.default_view_type) makes your view type the one users see first. Including `:table` in `view_types` keeps the table view available as a fallback via the view switcher. To change the default for **all** resources, set `config.default_view_type` in `config/initializers/avo.rb`.
 
 ## Full example: avo-notifications
 
@@ -180,7 +132,7 @@ The `avo-notifications` gem ships a `:notification` view type as a real-world re
 **Registration** in the engine:
 
 ```ruby
-# lib/avo/notifications/engine_content.rb
+# lib/avo/notifications/engine_handler.rb
 Avo.plugin_manager.register_view_type :notification,
   component: "Avo::Notifications::ViewTypes::NotificationViewTypeComponent",
   icon: "tabler/outline/bell",
@@ -204,75 +156,23 @@ class Avo::Notifications::ViewTypes::NotificationViewTypeComponent < Avo::ViewTy
 end
 ```
 
-**Resource** sets it as the default:
+**Resource** sets it as the only view type:
 
 ```ruby
 # app/avo/resources/avo_notification.rb
 class Avo::Resources::AvoNotification < Avo::BaseResource
   self.default_view_type = :notification
-  self.view_types = [:table, :notification]
+  self.view_types = [:notification]
 end
 ```
 
-## Adding styles
+## Add styles and interactivity
 
-If your view type needs custom CSS, add it to your engine's stylesheet. Follow BEM methodology with Tailwind `@apply` directives:
-
-```css
-/* app/assets/stylesheets/my-plugin/application.css */
-@layer theme, base, components, utilities;
-
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities.css" layer(utilities);
-
-@layer components {
-  .timeline-view__item {
-    @apply flex gap-3 px-5 py-3.5 transition-colors;
-
-    &:hover {
-      @apply bg-gray-50;
-    }
-  }
-}
-```
-
-Then register the stylesheet in your engine initializer:
+Custom view types often ship their own CSS and Stimulus controllers. Register both from your engine through Avo's asset manager:
 
 ```ruby
 Avo.asset_manager.add_stylesheet "my-plugin/application"
+Avo.asset_manager.add_javascript "my-plugin/application"
 ```
 
-## Adding interactivity with Stimulus
-
-For client-side behavior (filtering, toggling, etc.), create a Stimulus controller in your engine and register it:
-
-```javascript
-// app/javascript/controllers/my_filter_controller.js
-import { Controller } from "@hotwired/stimulus";
-
-export default class extends Controller {
-  static targets = ["item"];
-  static values = { filter: { type: String, default: "all" } };
-
-  applyFilter() {
-    this.itemTargets.forEach((item) => {
-      item.toggleAttribute("hidden", !this.shouldShow(item));
-    });
-  }
-
-  shouldShow(item) {
-    if (this.filterValue === "all") return true;
-    return item.dataset.active === "true";
-  }
-}
-```
-
-```javascript
-// app/javascript/controllers/index.js
-import MyFilterController from "./my_filter_controller";
-
-const application = window.Stimulus;
-application.register("my-filter", MyFilterController);
-```
-
-Then use it in your template with `data-controller="my-filter"` and `data-action` attributes. Use the `hidden` HTML attribute (not CSS classes) for toggling visibility.
+See [Custom asset pipeline](./custom-asset-pipeline.html) for compiling and serving the assets, and [Stimulus JS integration](./stimulus-integration.html) for wiring up controllers.

@@ -27,7 +27,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-Around resources sit the tools your team works with every day: [actions](./actions/overview.html) to run business logic on one or many records, [filters](./filters.html) to slice lists, and [search](./search/resource-search.html) to get to any record fast.
+Around resources sit the tools your team works with every day: [actions](./actions.html) to run business logic on one or many records, [filters](./filters.html) to slice lists, and [search](./search.html) to get to any record fast.
 
 ## Add-ons
 
@@ -35,7 +35,7 @@ The core covers managing records. Add-ons extend it toward whatever job your app
 
 **Find and organize records**
 
-- [Global Search](./search/global-search.html): search every resource from one box.
+- [Global Search](./search.html#global-search): search every resource from one box.
 - [Dynamic Filters](./dynamic-filters.html): let users stack their own filter combinations without you writing each one.
 - [Resource Scopes](./scopes.html): reuse the model scopes you already trust as one-click segments.
 - [Searchable Associations](./associations/searchable.html): type-to-search when attaching related records, even in huge tables.

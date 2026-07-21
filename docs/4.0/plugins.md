@@ -174,3 +174,5 @@ We don't yet have a generator for that but what we do is to create a new Rails E
 1. Register the plugin to the `lib/avo/feed_view/engine.rb` file
 1. Optionally add assets
 1. Add the plugin to your app's `Gemfile` using the `path` option to test it out
+
+For a full example of a plugin that registers a new index view type, see [Custom view types](./custom-view-types).

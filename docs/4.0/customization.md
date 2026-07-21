@@ -1,16 +1,38 @@
 ---
 feedbackId: 836
+license: community
+outline: [2, 3]
+api_docs: ./customization-api.html
 ---
 
 # Customization options
 
+Avo's initializer exposes a set of app-wide settings that don't belong to any single feature — the app name, timezone, index view behavior, layout widths, logging, and more. They all live in `config/initializers/avo.rb`.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.app_name = "Avocadelicious"
+  config.timezone = "UTC"
+  config.currency = "USD"
+  config.per_page = 24
+end
+```
+
+With no configuration at all, Avo computes the app name from your Rails app, uses UTC and USD, shows 24 records per page in constrained-width tables, and redirects the logo to your first resource. Every default is listed in the [Customization API](./customization-api.html), and options that belong to a specific feature (appearance, menus, authentication, search…) are indexed [there](./customization-api.html) too.
+
 ## Change the app name
 
-On the main navbar next to the logo, Avo generates a link to the homepage of your app. The label for the link is usually computed from your Rails app name. You can customize that however, you want using `config.app_name = 'Avocadelicious'`.
+On the main navbar next to the logo, Avo generates a link to the homepage of your app. The label is usually computed from your Rails app name, and you can customize it with [`app_name`](./customization-api.html#app_name).
 
-To replace that single link with a list of links (docs, support, etc.), see [Header menu](./header-menu.html).
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.app_name = "Avocadelicious"
+end
+```
 
-The `app_name` option is also callable using a block. This is useful if you want to reference a `I18n.t` method or something more dynamic.
+If you need something dynamic — an `I18n.t` lookup, for example — pass a block instead:
 
 ```ruby
 Avo.configure do |config|
@@ -18,9 +40,19 @@ Avo.configure do |config|
 end
 ```
 
-## Timezone and Currency
+To replace that single link with a list of links (docs, support, etc.), see [Header menu](./menu-editor.html#header-menu).
 
-Your data-rich app might have a few fields where you reference `date`, `datetime`, and `currency` fields. You may customize the global timezone and currency with `config.timezone = 'UTC'` and `config.currency = 'USD'` config options.
+## Timezone and currency
+
+If your app displays `date`, `datetime`, or `currency` fields, set the global [`timezone`](./customization-api.html#timezone) and [`currency`](./customization-api.html#currency) they should use.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.timezone = "UTC"
+  config.currency = "USD"
+end
+```
 
 ## Resource Index view
 
@@ -28,7 +60,7 @@ There are a few customization options to change how resources are displayed in t
 
 ### Per-page pagination
 
-Set the default page size with `config.per_page` and the options in the per-page picker with `config.per_page_steps`.
+Set the default page size with [`per_page`](./customization-api.html#per_page) and the options in the per-page picker with [`per_page_steps`](./customization-api.html#per_page_steps).
 
 ```ruby
 # config/initializers/avo.rb
@@ -40,39 +72,239 @@ end
 
 <Image src="/assets/img/4_0/customization/per-page-pagination.webm" dark-src="/assets/img/4_0/customization/per-page-pagination-dark.webm" width="888" height="280" alt="An Avo index table with four rows and a pagination bar; the per-page picker opens upward to list 4, 12, 24 and 48, then closes." prompt="index table with 4 rows and pagination bar; per-page picker opens listing 4, 12, 24, 48 then closes" />
 
-### Resources via per page
+For `has_many` associations, control how many records are visible in their **Index** view with [`via_per_page`](./customization-api.html#via_per_page).
 
-For `has_many` associations you can control how many resources are visible in their `Index view` with `config.via_per_page = 8`.
+For the pagination engine itself — countless mode, page size behavior — set global defaults with [`pagination`](./customization-api.html#pagination), which takes the same keys as the per-resource [`self.pagination`](./resources-api#self.pagination) option.
 
 ### Default view type
 
-The `ResourceIndex` component supports the `:table` (default), `:grid`, and `:map` view types, plus any [custom view type](./custom-view-types.html) you register. You can change the default for all resources with `config.default_view_type = :grid`, or per resource with the `default_view_type` class attribute. Read more on the [views pages](./views.html#view-types).
+The `ResourceIndex` component supports the `:table` (default), `:grid`, and `:map` view types, plus any [custom view type](./custom-view-types.html) you register. Change the default for all resources with [`default_view_type`](./customization-api.html#default_view_type), or per resource with the `default_view_type` class attribute. Read more on the [views pages](./views.html#view-types).
 
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.default_view_type = :grid
+end
+```
 
 <Image src="/assets/img/4_0/customization/view-type-table-grid.webm" dark-src="/assets/img/4_0/customization/view-type-table-grid-dark.webm" width="888" height="650" alt="An Avo Posts index with six records per page: the view switcher toggles between table rows and grid cards." prompt="Posts index with 4 per page; GIF toggling table and grid view with annotated view switcher" />
+
+### Sorting direction
+
+The first time a user sorts a column, Avo sorts it descending. Flip that with [`first_sorting_option`](./customization-api.html#first_sorting_option).
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.first_sorting_option = :asc
+end
+```
+
+### Row density
+
+Control how much vertical space rows take up in tables and dashboard list cards with [`density`](./customization-api.html#density) — `:tight`, `:normal` (default), or `:relaxed`. Dashboard table and list cards can [override it per card](./customization-api.html#density).
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.density = :tight
+end
+```
+
+### Click a row to view the record
+
+By default, clicking anywhere on a row navigates to that record's <Show /> view. If you'd rather reserve navigation for the explicit controls, disable [`click_row_to_view_record`](./customization-api.html#click_row_to_view_record).
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.click_row_to_view_record = false
+end
+```
+
+<Image src="/assets/img/4_0/customization/click-row-to-view-record.webm" dark-src="/assets/img/4_0/customization/click-row-to-view-record-dark.webm" width="1170" height="528" alt="An Avo resource index where a row name cell is highlighted, clicked, and navigates to the record show view with panel and card DSL layout." />
+
+:::warning
+This interaction (clicking a `tr` element to behave as a link) is not natively supported in HTML. Avo enhances it with JavaScript, which may lead to side effects. Please report any issues you encounter on our [issue queue](https://avo.cool/new-issue).
+:::
+
+### Cache resources on the Index view
+
+Avo caches each resource row (or grid item) for performance reasons. Disable that with [`cache_resources_on_index_view`](./customization-api.html#cache_resources_on_index_view).
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.cache_resources_on_index_view = false
+end
+```
+
+:::info
+If you use the `visibility` option to show/hide fields based on the user's role, you should disable this setting.
+:::
+
+### Search debounce
+
+Avo waits 300 milliseconds after the user stops typing before firing a search request. Tune that with [`search_debounce`](./customization-api.html#search_debounce).
+
+### Modify controls placement and appearance
+
+<!-- @include: ./common/row_controls_config_common.md-->
+
+See [row controls configuration on table view](table-view.html#global-configuration).
+
 ## ID links to resource
 
 On the **Index** view, each row has the controls component at the end, which allows the user to go to the **Show** and **Edit** views and delete that entry. If you have a long row and a not-so-wide display, it might not be easy to scroll to the right-most section to click the **Show** link.
 
-You can enable the `id_links_to_resource` config option to make it easier.
+Enable [`id_links_to_resource`](./customization-api.html#id_links_to_resource) to render all `id` fields on the **Index** view as links to their resource.
 
-```ruby{4}
+```ruby
+# config/initializers/avo.rb
 Avo.configure do |config|
-  config.root_path = '/avo'
-  config.app_name = 'Avocadelicious'
   config.id_links_to_resource = true
 end
 ```
 
-That will render all `id` fields in the **Index** view as a link to that resource.
-
 <Image src="/assets/img/4_0/customization/as-link-to-resource.webp" dark-src="/assets/img/4_0/customization/as-link-to-resource-dark.webp" width="1696" height="664" alt="An Avo index where each row's ID is rendered as a blue link to that record's show view, with a Name column." />
+
+## Container width
+
+Control how wide Avo's main content area is with [`container_width`](./customization-api.html#container_width). The default keeps index views in a large constrained container and show/form views in a narrower one.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # Apply one width to all views
+  config.container_width = :full
+
+  # Or target specific views with a hash
+  config.container_width = { index: :full }
+end
+```
+
+Widths are `:large`, `:small`, or `:full`. The hash form accepts individual view keys (`:index`, `:show`, `:new`, `:edit`, `:create`, `:update`) and the group aliases `:forms`, `:display`, and `:single` — specific keys win over aliases. See the [reference](./customization-api.html#container_width) for the full tables.
+
+```ruby
+# All single-record views full-width; index stays large
+config.container_width = { single: :full }
+
+# Mix: single full-width, but show overridden back to small
+config.container_width = { single: :full, show: :small }
+```
+
+### Upgrading from `full_width_container` / `full_width_index_view`
+
+| Old | New |
+| --- | --- |
+| `config.full_width_container = true` | `config.container_width = :full` |
+| `config.full_width_container = false` | Remove the line (default is correct) |
+| `config.full_width_index_view = true` | `config.container_width = { index: :full }` |
+
+## Toggle the sidebar button visibility
+
+By default, Avo displays a toggle button in the navbar that allows users to collapse and expand the sidebar on desktop. Hide it with [`sidebar_toggle_visible`](./customization-api.html#sidebar_toggle_visible) — the sidebar then stays permanently open on desktop. On mobile, the sidebar toggle is always visible regardless of this setting.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.sidebar_toggle_visible = false
+end
+```
+
+<Image src="/assets/img/4_0/customization/sidebar-toggle-hidden.webp" dark-src="/assets/img/4_0/customization/sidebar-toggle-hidden-dark.webp" width="2880" height="2360" alt="An Avo resource index on desktop with the sidebar permanently open and no toggle button in the navbar, because sidebar_toggle_visible is set to false." prompt="Full Avo resource index page with config.sidebar_toggle_visible = false: the sidebar is open on the left and the navbar at the top has NO collapse/expand toggle button next to the logo. Capture the entire page (sidebar + navbar + content) at a desktop width." />
+
+## Body classes
+
+Add custom CSS classes to Avo's `<body>` tag with [`body_classes`](./customization-api.html#body_classes) — useful for applying global styles, theme variations, or targeting specific layouts with CSS.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.body_classes = "custom-theme compact-layout"
+end
+```
+
+It also accepts an array, or a block for dynamic classes. The block is evaluated with Avo's [`ExecutionContext`](./execution-context.html), so you have access to `current_user`, `request`, `params`, and other context methods.
+
+```ruby
+Avo.configure do |config|
+  config.body_classes = -> {
+    classes = []
+    classes << "admin-mode" if current_user&.admin?
+    classes << "dark-preference" if request.cookies["theme"] == "dark"
+    classes
+  }
+end
+```
+
+## Hide the layout when printing
+
+If your users print record pages, enable [`hide_layout_when_printing`](./customization-api.html#hide_layout_when_printing) to hide the sidebar, navbar, and footer on the printed page, leaving only the content.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.hide_layout_when_printing = true
+end
+```
+
+## Home path
+
+When a user clicks your logo inside Avo or goes to the `/avo` URL, they will be redirected to one of your resources. Point them somewhere else — a dashboard, for example — with [`home_path`](./customization-api.html#home_path).
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.home_path = "/avo/dashboard"
+end
+```
+
+It also accepts a block, which has access to route helpers:
+
+```ruby
+Avo.configure do |config|
+  config.home_path = -> { avo_dashboards.dashboard_path(:dashy) }
+end
+```
+
+When you configure `home_path`, the `Get started` sidebar item is hidden in the development environment.
+
+You can pair it with the `set_initial_breadcrumbs` option for a more cohesive experience:
+
+```ruby
+Avo.configure do |config|
+  config.home_path = "/avo/dashboard"
+  config.set_initial_breadcrumbs do
+    add_breadcrumb "Dashboard", "/avo/dashboard"
+  end
+end
+```
+
+## Skip show view
+
+In the CRUD interface Avo adds the <Show /> view by default: users see the view icon on rows and get redirected to the <Show /> page after updating a record, running an action, and similar tasks.
+
+If you don't use the <Show /> view at all and prefer to go straight to <Edit />, set [`resource_default_view`](./customization-api.html#resource_default_view) to `:edit`. Row links, redirects, and association links will all target the <Edit /> view instead.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.resource_default_view = :edit
+end
+```
+
+:::info Renamed from `skip_show_view`
+This option was previously named `config.skip_show_view = true`.
+:::
+
+<Image src="/assets/img/4_0/customization/skip_show_view.webm" dark-src="/assets/img/4_0/customization/skip_show_view-dark.webm" width="1170" height="428" alt="An Avo create form for a course: after saving, Avo redirects to the Edit view instead of Show when skip_show_view is enabled." />
 
 ## Open a record in your editor
 
 In the `development` environment, Avo renders a small `</>` icon next to the things you build with Avo — resources, actions, filters, dashboards, cards, and forms. Clicking it opens that class's source file directly in your editor, so you can jump from the UI to the code that powers it. The icon is only rendered in `development` and never shows up in other environments.
 
-The link is built from `config.default_editor_url`, where `%{path}` is replaced with the absolute path of the source file.
+The link is built from [`default_editor_url`](./customization-api.html#default_editor_url), where `%{path}` is replaced with the absolute path of the source file.
 
 ```ruby
 # config/initializers/avo.rb
@@ -119,103 +351,18 @@ If you use [Avo Forms](./forms-and-pages/forms), the form header shows the icon 
 
 <Image src="/assets/img/4_0/customization/open-in-editor-form.webp" dark-src="/assets/img/4_0/customization/open-in-editor-form-dark.webp" width="1360" height="132" alt="An Avo Forms form header in development, with a small code icon right after the form title — it opens the form's source file in your editor — highlighted with a red box." prompt="An Avo Forms form page header in development showing the form title with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
 
-## Modify controls placement and appearance
+## Context
 
-<!-- @include: ./common/row_controls_config_common.md-->
+In the `Resource` and `Action` classes, you have a global `context` object to which you can attach a custom payload. For example, you may add the current request `params` or any other arbitrary data.
 
-See [row controls configuration on table view](table-view.html#global-configuration).
-
-## Container width
-
-Control how wide Avo's main content area is. The default keeps index views in a large constrained container and show/form views in a narrower one.
+Configure it with [`set_context`](./customization-api.html#set_context) in your initializer. The block is instance-evaluated in `Avo::ApplicationController`, so it has access to the `_current_user` method and the `Current` object.
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  # Apply one width to all views
-  config.container_width = :full
-
-  # Or target specific views with a hash
-  config.container_width = { index: :full }
-end
-```
-
-### Width options
-
-| Value    | Behaviour                                   |
-| -------- | ------------------------------------------- |
-| `:large` | Constrained container (default for index)   |
-| `:small` | Narrow container (default for show / forms) |
-| `:full`  | Full viewport width                         |
-
-### Hash keys
-
-Pass a hash to override specific views. Both individual view keys and group aliases are supported.
-
-**Individual view keys:** `:index`, `:show`, `:new`, `:edit`, `:create`, `:update`
-
-**Group aliases:**
-
-| Alias      | Expands to                                     |
-| ---------- | ---------------------------------------------- |
-| `:forms`   | `:new`, `:edit`, `:create`, `:update`          |
-| `:display` | `:index`, `:show`                              |
-| `:single`  | `:show`, `:new`, `:edit`, `:create`, `:update` |
-
-When a specific key and a group alias target the same view, the specific key wins.
-
-### Examples
-
-```ruby
-# All views full-width
-config.container_width = :full
-
-# Only the index is full-width; show and forms keep their defaults
-config.container_width = { index: :full }
-
-# All single-record views full-width; index stays large
-config.container_width = { single: :full }
-
-# Forms full-width, show and index keep defaults
-config.container_width = { forms: :full }
-
-# Mix: single full-width, but show overridden back to small
-config.container_width = { single: :full, show: :small }
-```
-
-### Upgrading from `full_width_container` / `full_width_index_view`
-
-| Old | New |
-| --- | --- |
-| `config.full_width_container = true` | `config.container_width = :full` |
-| `config.full_width_container = false` | Remove the line (default is correct) |
-| `config.full_width_index_view = true` | `config.container_width = { index: :full }` |
-
-## Cache resources on the `Index` view
-
-Avo caches each resource row (or Grid item for Grid view) for performance reasons. You can disable that cache using the `cache_resources_on_index_view` configuration option. The cache key is using the record's `id` and `created_at` attributes and the resource file `md5`.
-
-:::info
-If you use the `visibility` option to show/hide fields based on the user's role, you should disable this setting.
-:::
-
-```ruby{2}
-Avo.configure do |config|
-  config.cache_resources_on_index_view = false
-end
-```
-
-## Context
-
-In the `Resource` and `Action` classes, you have a global `context` object to which you can attach a custom payload. For example, you may add the `current_user`, the current request `params`, or any other arbitrary data.
-
-You can configure it using the `set_context` method in your initializer. The block you pass in will be instance evaluated in `Avo::ApplicationController`, so it will have access to the `_current_user` method or `Current` object.
-
-```ruby{3-6}
-Avo.configure do |config|
   config.set_context do
     {
-      foo: 'bar',
+      foo: "bar",
       params: request.params,
     }
   end
@@ -226,442 +373,39 @@ end
 It's recommended you don't store your current user here but using the [`current_user_method`](./authentication.html#customize-the-current-user-method) config.
 :::
 
-You can access the context data with `::Avo::Current.context` object.
+You can access the context data with the `::Avo::Current.context` object.
 
-## Eject
+## Alerts
 
-[This section has moved.](./eject-views)
-
-## Breadcrumbs
-
-This section has moved to the [Breadcrumbs](./breadcrumbs.md) page.
-
-## Toggle the sidebar button visibility
-
-By default, Avo displays a toggle button in the navbar that allows users to collapse and expand the sidebar on desktop. You can hide this button using the `sidebar_toggle_visible` configuration option. On mobile, the sidebar toggle is always visible regardless of this setting.
-
-```ruby{2}
-Avo.configure do |config|
-  config.sidebar_toggle_visible = false
-end
-```
-
-When set to `false`, the sidebar will remain permanently open on desktop and users won't be able to collapse it.
-
-<Image src="/assets/img/4_0/customization/sidebar-toggle-hidden.webp" dark-src="/assets/img/4_0/customization/sidebar-toggle-hidden-dark.webp" width="2880" height="2360" alt="An Avo resource index on desktop with the sidebar permanently open and no toggle button in the navbar, because sidebar_toggle_visible is set to false." prompt="Full Avo resource index page with config.sidebar_toggle_visible = false: the sidebar is open on the left and the navbar at the top has NO collapse/expand toggle button next to the logo. Capture the entire page (sidebar + navbar + content) at a desktop width." />
-
-## Body classes
-
-You can add custom CSS classes to Avo's `<body>` tag using the `body_classes` configuration option. This is useful for applying global styles, theme variations, or targeting specific layouts with CSS.
+Alerts dismiss themselves after 5 seconds. Keep them on screen longer (or shorter) with [`alert_dismiss_time`](./customization-api.html#alert_dismiss_time), in milliseconds.
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.body_classes = "custom-theme compact-layout"
+  config.alert_dismiss_time = 8000
 end
 ```
 
-You can also pass an array:
+## Persist UI state
 
-```ruby
-Avo.configure do |config|
-  config.body_classes = ["custom-theme", "compact-layout"]
-end
-```
-
-For dynamic classes, use a block. It's evaluated with Avo's `ExecutionContext`, so you have access to `current_user`, `request`, `params`, and other context methods.
-
-```ruby
-Avo.configure do |config|
-  config.body_classes = -> {
-    classes = []
-    classes << "admin-mode" if current_user&.admin?
-    classes << "dark-preference" if request.cookies["theme"] == "dark"
-    classes
-  }
-end
-```
-
-## Page titles
-
-When you want to update the page title for a custom tool or page, you only need to assign a value to the `@page_title` instance variable in the controller method.
-
-```ruby{3}
-class Avo::ToolsController < Avo::ApplicationController
-  def custom_tool
-    @page_title = "Custom tool page title"
-  end
-end
-```
-
-Avo uses the [meta-tags](https://github.com/kpumuk/meta-tags) gem to compile and render the page title.
-
-## Home path
-
-When a user clicks your logo inside Avo or goes to the `/avo` URL, they will be redirected to one of your resources. You might want to change that path to something else, like a custom page. You can do that with the `home_path` configuration.
-
-```ruby{2}
-Avo.configure do |config|
-  config.home_path = "/avo/dashboard"
-end
-```
-
-### Use a lambda function for the home_path
-
-You can also use a lambda function to define that path.
-
-```ruby{2}
-Avo.configure do |config|
-  config.home_path = -> { avo_dashboards.dashboard_path(:dashy) }
-end
-```
-
-When you configure the `home_path` option, the `Get started` sidebar item will be hidden in the development environment.
-
-Now, users will be redirected to `/avo/dashboard` whenever they click the logo. You can use this configuration option alongside the `set_initial_breadcrumbs` option to create a more cohesive experience.
-
-```ruby{2-5}
-Avo.configure do |config|
-  config.home_path = "/avo/dashboard"
-  config.set_initial_breadcrumbs do
-    add_breadcrumb "Dashboard", "/avo/dashboard"
-  end
-end
-```
-
-## Mount Avo under a nested path
-
-You may need to mount Avo under a nested path, something like `/uk/admin`. In order to do that, you need to consider a few things.
-
-1. Move the engine mount point below any route for custom tools.
-
-```ruby{7,10}
-Rails.application.routes.draw do
-  # other routes
-
-  authenticate :user, ->(user) { user.is_admin? } do
-    scope :uk do
-      scope :admin do
-        get "dashboard", to: "avo/tools#dashboard" # custom tool added before engine
-      end
-
-      mount_avo # engine mounted last
-    end
-  end
-end
-```
-
-2. The `root_path` configuration should only be the last path segment.
-
-```ruby
-# 🚫 Don't add the scope to the root_path
-Avo.configure do |config|
-  config.root_path = "/uk/admin"
-end
-
-# ✅ Do this instead
-Avo.configure do |config|
-  config.root_path = "/admin"
-end
-```
-
-3. Use full paths for other configurations.
-
-```ruby
-Avo.configure do |config|
-  config.home_path = "/uk/admin/dashboard"
-
-  config.set_initial_breadcrumbs do
-    add_breadcrumb "Dashboard", "/uk/admin/dashboard"
-  end
-end
-```
-
-## Custom `view_component` path
-
-You may not keep your view components under `app/components` and want the generated field `view_component`s to be generated in your custom directory. You can change that using the `view_component_path` configuration key.
-
-```ruby
-Avo.configure do |config|
-  config.view_component_path = "app/frontend/components"
-end
-```
-
-## Custom query scopes
-
-You may want to change Avo's queries to add sorting or use gems like [friendly](https://github.com/norman/friendly_id).
-You can do that using `index_query` for multiple records and `find_record_method` when fetching one record.
-
-### Custom scope for `Index` page
-
-Using `index_query` you tell Avo how to fetch the records for the `Index` view.
-
-```ruby
-class Avo::Resources::User < Avo::BaseResource
-  self.index_query = -> {
-    query.order(last_name: :asc)
-  }
-end
-```
-
-### Custom find method for `Show` and `Edit` pages
-
-Using `find_record_method` you tell Avo how to fetch one record for `Show` and `Edit` views and other contexts where a record needs to be fetched from the database.
-
-This is very useful when you use something like `friendly` gem, custom `to_param` methods on your model, and even the wonderful `prefix_id` gem.
-
-#### Custom `to_param` method
-
-The following example shows how you can update the `to_param` (to use the post name) method on the `User` model to use a custom attribute and then update the `Avo::Resources::User` so it knows how to search for that model.
-
-::: code-group
-
-```ruby [app/avo/resources/post.rb]
-class Avo::Resource::Post < Avo::BaseResource
-  self.find_record_method = -> {
-    # When using friendly_id, we need to check if the id is a slug or an id.
-    # If it's a slug, we need to use the find_by_slug method.
-    # If it's an id, we need to use the find method.
-    # If the id is an array, we need to use the where method in order to return a collection.
-    if id.is_a?(Array)
-      id.first.to_i == 0 ? query.where(slug: id) : query.where(id: id)
-    else
-      id.to_i == 0 ? query.find_by_slug(id) : query.find(id)
-    end
-  }
-end
-```
-
-```ruby [app/models/post.rb]
-class Post < ApplicationRecord
-  before_save :update_slug
-
-  def to_param
-    slug || id
-  end
-
-  def update_slug
-    self.slug = name.parameterize
-  end
-end
-```
-
-:::
-
-#### Using the `friendly` gem
-
-::: code-group
-
-```ruby [app/avo/resources/user.rb]
-class Avo::Resources::User < Avo::BaseResource
-  self.find_record_method = -> {
-    if id.is_a?(Array)
-      query.where(slug: id)
-    else
-      # We have to add .friendly to the query
-      query.friendly.find id
-    end
-  }
-end
-```
-
-```ruby [app/models/user.rb]
-class User < ApplicationRecord
-  extend FriendlyId
-
-  friendly_id :name, use: :slugged
-end
-```
-
-:::
-
-#### Using `prefixed_ids` gem
-
-You really don't have to do anything on Avo's side for this to work. You only need to add the `has_prefix_id` the model as per the documentation. Avo will know how to search for the record.
-
-```ruby
-class Course < ApplicationRecord
-  has_prefix_id :course
-end
-```
-
-## Customize profile name, photo, and title
-
-You might see on the sidebar footer a small profile widget. The widget displays three types of information about the user; `name`, `photo`, and `title`.
-
-### Customize the name of the user
-
-Avo checks to see if the object returned by your [`current_user_method`](authentication.html#customize-the-current-user-method) responds to a `name` method. If not, it will try the `email` method and then fall back to `Avo user`.
-
-### Customize the profile photo
-
-Similarly, it will check if that current user responds to `avatar` and use that as the `src` of the photo.
-
-### Customize the title of the user
-
-Lastly, it will check if it responds to the `avo_title` method and uses that to display it under the name.
-
-### Customize the sign-out link
-
-Please follow [this](authentication.html#customise-the-sign-out-link) guide in [authentication](authentication).
-
-## Skip show view
-
-In the CRUD interface Avo adds the <Show /> view by default. This means that when your users will see the view icon to go to that detail page and they will be redirected to the <Show /> page when doing certain tasks (update a record, run an action, etc.).
-
-You might not want that behavior and you might not use the <Show /> view at all and prefer to skip that and just use the <Edit /> view.
-Adding `config.skip_show_view = true` to your `avo.rb` configuration file will tell Avo to skip it and use the <Edit /> view as the default resource view.
-
-```ruby{3}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.skip_show_view = true
-end
-```
-
-<Image src="/assets/img/4_0/customization/skip_show_view.webm" dark-src="/assets/img/4_0/customization/skip_show_view-dark.webm" width="1170" height="428" alt="An Avo create form for a course: after saving, Avo redirects to the Edit view instead of Show when skip_show_view is enabled." />
-
-## Logger
-
-You may want to set a different output stream for avo logs, you can do that by returning it on a `config.logger` Proc
-
-```ruby
-## == Logger ==
-config.logger = -> {
-  file_logger = ActiveSupport::Logger.new(Rails.root.join("log", "avo.log"))
-
-  file_logger.datetime_format = "%Y-%m-%d %H:%M:%S"
-  file_logger.formatter = proc do |severity, time, progname, msg|
-    "[Avo] #{time}: #{msg}\n".tap do |i|
-      puts i
-    end
-  end
-
-  file_logger
-}
-```
-
-<Option name="`default_url_options`">
-
-`default_url_options` is a Rails [controller method](https://apidock.com/rails/ActionController/Base/default_url_options) that will append params automatically to the paths you generate through path helpers.
-
-In order to implement some features like route-level Multitenancy we exposed an API to add to Avo's `default_url_options` method.
-
-::: code-group
-
-```ruby [config/initializers/avo.rb]{2}
-Avo.configure do |config|
-  config.default_url_options = [:account_id]
-end
-```
-
-```ruby [app/config/routes.rb]{3}
-Rails.application.routes.draw do
-  # Use to test out route-based multitenancy
-  scope "/account/:account_id" do
-    mount_avo
-  end
-end
-```
-
-:::
-
-Now, when you visit `https://example.org/account/adrian/avo`, the `account_id` param is `adrian` and it will be appended to all path helpers.
-
-</Option>
-
-<Option name="`turbo`">
-
-You may want to configure how turbo behave on Avo.
-
-You can configure it using `config.turbo` option on `avo.rb` initializer
-
-Supported options with default values:
-
-```ruby
-  config.turbo = -> do
-    {
-      instant_click: true
-    }
-  end
-```
-
-</Option>
-
-<Option name="`pagination`">
-
-You can configure the default pagination settings key by key.
-
-```ruby
-config.pagination = {
-  type: :countless
-}
-
-# Or
-
-config.pagination = -> do
-  {
-    type: :countless,
-  }
-end
-```
-
-This will make all your application's tables countless keeping the size key / value as the default one.
-
-Verify all possible options [here](resources-api#self.pagination).
-
-</Option>
-
-<Option name="`click_row_to_view_record`">
-
-<!-- <BetaStatus status="beta" /> -->
-
-This setting allows your users to click on a record to navigate to its <Show /> view.
-
-:::warning
-This interaction (clicking a `tr` element to behave as a link) is not natively supported in HTML.
-
-Avo enhances this functionality with JavaScript, which may lead to side effects. Please report any issues you encounter on our [issue queue](https://avo.cool/new-issue).
-:::
-
-Enable this setting by using the `click_row_to_view_record` configuration option.
+By default, association pagination and static filter selections reset on every request. To retain them while the user's session is active, enable [`persistence`](./customization-api.html#persistence) with the `:session` driver.
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.click_row_to_view_record = true
+  config.persistence = {
+    driver: :session
+  }
 end
 ```
 
-<Image src="/assets/img/4_0/customization/click-row-to-view-record.webm" dark-src="/assets/img/4_0/customization/click-row-to-view-record-dark.webm" width="1170" height="528" alt="An Avo resource index where a row name cell is highlighted, clicked, and navigates to the record show view with panel and card DSL layout." />
-</Option>
-
-<Option name="`density`">
-
-Controls how much vertical space rows take up in <Index /> tables and in the dashboard table and list cards. Three options are available: `:tight`, `:normal`, and `:relaxed`.
-
-```ruby
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.density = :normal # :tight, :normal, :relaxed
-end
-```
-
-Dashboard table and list cards can override the global setting per card:
-
-```ruby
-class Avo::Cards::ExampleList < Avo::Cards::ListCard
-  self.density = :tight
-end
-```
-
-</Option>
+:::warning Cookie store size limit
+Rails' default cookie session store is limited to 4096 bytes. Storing many pagination states and filter selections can exceed it and raise `ActionDispatch::Cookies::CookieOverflow`. Use a scalable [session store](https://guides.rubyonrails.org/configuring.html#config-session-store) such as Redis or MemCache instead.
+:::
 
 ## Associations
 
-<Option name="`associations`">
-
-Global defaults for associations, grouped under a single namespace. You only need to set the keys you want to change — everything else falls back to the defaults shown below.
+Global defaults for associations live under the [`associations`](./customization-api.html#associations) namespace. You only need to set the keys you want to change.
 
 ```ruby
 # config/initializers/avo.rb
@@ -676,9 +420,9 @@ Avo.configure do |config|
 end
 ```
 
-### `lookup_list_limit`
+### Lookup list limit
 
-By default, there is a limit of 1000 records per query when listing the association options. This limit ensures that the page will not crash due to large collections. Use `lookup_list_limit` to change the limit value.
+By default, there is a limit of 1000 records per query when listing the association options. This limit ensures that the page will not crash due to large collections. Use `lookup_list_limit` to change it.
 
 The message `There are more records available.` is shown when the limit is reached. To localize the message you can use `I18n.translate("avo.more_records_available")`.
 
@@ -691,189 +435,85 @@ Using [searchable](./associations/searchable.html) is recommended for listing un
     assets, keeping the same filenames. -->
 <Image src="/assets/img/4_0/customization/associations-lookup-list-limit.webp" dark-src="/assets/img/4_0/customization/associations-lookup-list-limit-dark.webp" width="1952" height="820" alt="An Avo new form where a belongs_to user select lists five records followed by a disabled 'There are more records available.' message when the lookup list limit is reached." />
 
-### `frames`
+### Association frames
 
-Controls how association turbo frames (`has_one`, `has_many`, `has_and_belongs_to_many`) load on the <Show /> page when a field doesn't set its own [`loading:`](./associations/has_many.html#loading) option.
+The `frames` keys control how association turbo frames (`has_one`, `has_many`, `has_and_belongs_to_many`) load on the <Show /> page when a field doesn't set its own [`loading:`](./associations/has_many.html#loading) option — `:lazy` fetches the frame when it's revealed; `:manual` renders a placeholder with a **Load** button that stays loaded for the `auto_load_for` window. A per-field `loading:` always overrides these global defaults. See the [reference](./customization-api.html#associations) for the full key table.
 
-| Key | Default | Description |
-|---|---|---|
-| `loading` | `:lazy` | `:lazy` fetches the frame when it's revealed; `:manual` renders a placeholder with a **Load** button. |
-| `auto_load_for` | `15.minutes` | For manual frames, how long an opened frame is remembered before the placeholder returns. `0`/`nil` disables it. |
+## Turbo
 
-A per-field [`loading:`](./associations/has_many.html#loading) always overrides these global defaults.
-
-:::info Backward compatibility
-The former `config.associations_lookup_list_limit = 1000` still works as an alias for `config.associations[:lookup_list_limit]`.
-:::
-</Option>
-
-<Option name="`persistence`">
-
-### Persistent UI State Configuration
-
-#### Overview
-
-The `persistence` configuration enables retention of specific UI settings, such as pagination and static filters, across user interactions.
-
----
-
-#### Configuration
-
-By default, the `:driver` is `nil`, which means no persistence is applied. You can configure the `:driver` for persistence as follows:
+Configure how Turbo behaves inside Avo — for example whether pages start loading on `mousedown` — with the [`turbo`](./customization-api.html#turbo) option.
 
 ```ruby
+# config/initializers/avo.rb
 Avo.configure do |config|
-  config.persistence = {
-    driver: :session
-  }
-
-  # Or with a dynamic block
-
-  config.persistence = -> do
+  config.turbo = -> do
     {
-      driver: :session
+      instant_click: true
     }
   end
 end
 ```
 
----
+## Default URL options
 
-#### Behavior
+To append params automatically to every path Avo generates — the mechanism behind route-level [multitenancy](./multitenancy.html) — list them in [`default_url_options`](./customization-api.html#default_url_options).
 
-When enabled, the `persistence` configuration ensures the following:
+::: code-group
 
-1. **Associations Pagination**
-  The pagination state (e.g., `page` and `per_page` settings) for association tables (e.g., `has_many` fields) is retained across requests.
-
-2. **Static Filters**
-  Static filter selections applied by users are preserved during their session.
-
----
-
-#### How It Works
-
-Setting `:driver` to `:session` stores the UI state in the user session, enabling it to persist while the session remains active.
-
----
-
-:::warning
-**Important**:
-To prevent issues with session storage limits, avoid relying solely on the default **cookie store** for session management. The **cookie store** in Rails has a size limit of 4096 bytes. Storing multiple pagination states and filter settings may exceed this limit, resulting in an `ActionDispatch::Cookies::CookieOverflow` error.
-:::
-
-#### Recommended Session Store
-
-To mitigate potential storage overflow, it is advisable to use a more scalable session store, such as:
-
-- **Redis Store**
-- **MemCache Store**
-
-For detailed guidance, refer to the [Rails session store configuration](https://guides.rubyonrails.org/v8.0/configuring.html#config-session-store).
-
----
-
-By adopting the `persistence` configuration with a suitable session store, you can ensure a seamless user experience.
-
-</Option>
-
-<Option name="`alert_dismiss_time`">
-
-Specifies the duration (in milliseconds) for which alerts remain visible before automatically dismissing.
-A lower value results in quicker dismissal, while a higher value keeps the alert on screen for longer.
-
-### Default value
-
-`5000`
-
-### Example
-
-```ruby
-# config/initializers/avo.rb
+```ruby [config/initializers/avo.rb]
 Avo.configure do |config|
-  config.alert_dismiss_time = 8000
+  config.default_url_options = [:account_id]
 end
 ```
 
-</Option>
-
-<Option name="`first_sorting_option`">
-
-Defines the default sorting option for the fields on the index view.
-
-### Default value
-
-`:desc`
-
-### Possible values
-
-- `:asc`
-- `:desc`
-
-### Example
-
-```ruby{3}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.first_sorting_option = :asc
-end
-```
-
-</Option>
-
-<Option name="`exclude_from_status`">
-
-Defines which status items to exclude from the status page (`/avo_private/status`). By default, the license key is hidden for security reasons.
-
-### Default value
-
-`["license_key"]`
-
-### Possible values
-
-An array of strings or a callable that returns an array of strings representing the status items to exclude.
-
-### Example
-
-```ruby
-# config/initializers/avo.rb
-Avo.configure do |config|
-  # Hide additional items from the status page
-  config.exclude_from_status = ["license_key", "ip"]
-
-  # OR using a callable
-  config.exclude_from_status = -> do
-    ["license_key", "ip"]
+```ruby [config/routes.rb]
+Rails.application.routes.draw do
+  scope "/account/:account_id" do
+    mount_avo
   end
 end
 ```
 
-### Show the license key
+:::
 
-To display the license key on the status page, remove it from the exclusion list:
+Now, when you visit `https://example.org/account/adrian/avo`, the `account_id` param is `adrian` and it will be appended to all path helpers.
+
+## Logger
+
+Send Avo's logs to a different output stream by returning a logger from the [`logger`](./customization-api.html#logger) proc.
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.exclude_from_status = []
+  config.logger = -> {
+    file_logger = ActiveSupport::Logger.new(Rails.root.join("log", "avo.log"))
+
+    file_logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+    file_logger.formatter = proc do |severity, time, progname, msg|
+      "[Avo] #{time}: #{msg}\n".tap do |i|
+        puts i
+      end
+    end
+
+    file_logger
+  }
 end
 ```
 
-</Option>
+## Status page
 
-<Option name="`send_metadata`">
+The status page (`/avo_private/status`) hides the license key by default. Control which items appear there with [`exclude_from_status`](./customization-api.html#exclude_from_status) — set it to `[]` to show everything, or add more items to hide them.
 
-Controls whether Avo sends usage metadata to Avo HQ, such as fields count, resources count, and other relevant metrics. This helps the Avo team understand how the framework is being used.
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.exclude_from_status = ["license_key", "ip"]
+end
+```
 
-:::info
-This option only takes effect on the community tier. Any other paid tier always sends metadata.
-:::
+## Usage metadata
 
-### Default value
-
-`true`
-
-### Example
+On the community tier, Avo sends usage metadata (fields count, resources count, and similar metrics) to Avo HQ to help the team understand how the framework is used. Opt out with [`send_metadata`](./customization-api.html#send_metadata).
 
 ```ruby
 # config/initializers/avo.rb
@@ -882,4 +522,50 @@ Avo.configure do |config|
 end
 ```
 
-</Option>
+## Generators
+
+### Custom `view_component` path
+
+You may not keep your view components under `app/components` and want the generated field `view_component`s to be generated in your custom directory. Change it with [`view_component_path`](./customization-api.html#view_component_path).
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.view_component_path = "app/frontend/components"
+end
+```
+
+### Generate Avo resources alongside models
+
+When you run `rails generate model`, Avo also generates the matching resource file. Opt out globally with [`model_generator_hook`](./customization-api.html#model_generator_hook), or pass `--skip-avo-resource` to skip it for a single run.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.model_generator_hook = false
+end
+```
+
+## Page titles
+
+This section has moved to the [Custom pages](./custom-tools.html#set-the-page-title) page.
+
+## Mount Avo under a nested path
+
+This section has moved to the [Routing](./routing.html#mount-avo-under-a-nested-path) page.
+
+## Custom query scopes
+
+This section has moved: see [`self.index_query`](./resources-api.html#self.index_query) and [customize how records are fetched](./resources.html#customize-how-records-are-fetched) on the Resources pages.
+
+## Customize profile name, photo, and title
+
+This section has moved to the [Authentication](./authentication.html#customize-the-profile-widget) page.
+
+## Eject
+
+[This section has moved.](./eject-views)
+
+## Breadcrumbs
+
+This section has moved to the [Breadcrumbs](./breadcrumbs.md) page.

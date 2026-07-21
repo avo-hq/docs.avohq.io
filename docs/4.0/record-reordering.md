@@ -93,7 +93,7 @@ Use `[:index, :association]` to show them in both places.
 Naturally, you'll want the <Index /> view to list records in their position order. You may do that in two ways:
 
 1. Add a `default_scope` to your model. If you're only using this ordering scheme in Avo, this is not the recommended way — it applies the scope to every query for that model, which you probably don't want.
-2. Use [`index_query`](./customization.html#custom-query-scopes) to alter the query only in Avo.
+2. Use [`index_query`](./resources-api.html#self.index_query) to alter the query only in Avo.
 
 ```ruby{3-5}
 # app/avo/resources/course_link.rb

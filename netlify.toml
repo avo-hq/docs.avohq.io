@@ -5,6 +5,19 @@ to = "/4.0/record-reordering.html"
 status = 301
 force = false
 
+# resource + global search merged into a single search guide + API pair
+[[redirects]]
+from = "/4.0/search/resource-search.html"
+to = "/4.0/search.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/search/global-search.html"
+to = "/4.0/search.html#global-search"
+status = 301
+force = false
+
 # 4.0 layout pages consolidated into fields-layout + fields-layout-api
 [[redirects]]
 from = "/4.0/resource-header.html"

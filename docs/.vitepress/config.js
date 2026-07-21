@@ -211,6 +211,7 @@ const config = {
             { text: "Record reordering", link: "/4.0/record-reordering.html" },
             { text: "Discreet information", link: "/4.0/discreet-information.html" },
             { text: "Custom controls", link: "/4.0/custom-controls.html" },
+            { text: "Actions", link: "/4.0/actions.html" },
             { text: "Cover and Avatar", link: "/4.0/cover-and-avatar.html" },
             {
               text: "Views",
@@ -221,6 +222,7 @@ const config = {
                 { text: "Table view", link: "/4.0/table-view.html" },
                 { text: "Grid view", link: "/4.0/grid-view.html" },
                 { text: "Map view", link: "/4.0/map-view.html" },
+                { text: "Custom view types", link: "/4.0/custom-view-types.html" },
               ],
             },
           ]
@@ -253,34 +255,20 @@ const config = {
           ],
         },
         {
-          text: "Actions",
-          items: [
-            { text: "Overview", link: "/4.0/actions/overview.html" },
-            { text: "Generate", link: "/4.0/actions/generate.html" },
-            { text: "Registration", link: "/4.0/actions/registration.html" },
-            { text: "Execution & Feedback", link: "/4.0/actions/execution.html" },
-            { text: "Customization", link: "/4.0/actions/customization.html" },
-            { text: "Guides & Tutorials", link: "/4.0/actions/guides-and-tutorials.html" },
-          ],
-        },
-        {
           text: "Filters",
           items: [
             { text: "Overview", link: "/4.0/filters.html" },
-            { text: "Standard Filters", link: "/4.0/basic-filters.html" },
+            { text: "Basic Filters", link: "/4.0/basic-filters.html" },
             { text: "Dynamic Filters", link: "/4.0/dynamic-filters.html" },
           ],
         },
         {
           text: "Customize Avo",
           items: [
-            { text: "Customization options", link: "/4.0/customization.html" },
+            { text: "Customization", link: "/4.0/customization.html" },
             { text: "Eject views", link: "/4.0/eject-views.html" },
-            { text: "Custom view types", link: "/4.0/custom-view-types.html" },
             { text: "Menu editor", link: "/4.0/menu-editor.html" },
-            { text: "Header menu", link: "/4.0/header-menu.html" },
-            { text: "Resource Search", link: "/4.0/search/resource-search.html" },
-            { text: "Global Search", link: "/4.0/search/global-search.html" },
+            { text: "Search", link: "/4.0/search.html" },
             { text: "Localization (I18n)", link: "/4.0/i18n.html" },
             { text: "Appearance", link: "/4.0/appearance.html" },
             // { text: "User Preferences", link: "/4.0/user-preferences.html" },
@@ -398,7 +386,6 @@ const config = {
             { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
             { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
             { text: "Plugins", link: "/4.0/plugins.html" },
-            { text: "Custom view types", link: "/4.0/custom-view-types.html" },
           ],
         },
         // {

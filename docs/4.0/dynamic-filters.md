@@ -1,23 +1,17 @@
 ---
 feedbackId: 838
-license: advanced
+license: add_on
+add_on_link: https://avohq.io/pricing-4?add_ons[]=dynamic-filters
+outline: [2, 3]
+api_docs: ./dynamic-filters-api.html
 ---
 
 # Dynamic filters
 
-The Dynamic filters make it so easy to add multiple, composable, and dynamic filters to the <Index /> view.
+Dynamic filters let users compose their own filtering on the <Index /> view. You declare which fields are filterable; Avo renders a filters bar where the user picks an attribute, a condition (`Contains`, `Is`, `>=`, `Is null`, …), and a value — and can stack as many conditions as they need. Queries are built with [Ransack](https://github.com/activerecord-hackery/ransack) behind the scenes.
 
-The first thing you need to do is add the `filterable: true` attribute to the fields you need to filter through. We use `ransack` behind the scenes so it's essential to configure the `ransackable_attributes` list to ensure that every filterable field is incorporated within it.
-
-:::info Filter Combination Logic
-When multiple filters are applied:
-- Filters on the same attribute are combined using OR conditions
-- Filters on different attributes are combined using AND conditions
-
-For example, if you have two filters on the `name` field (one for "John" and one for "Jane"), the query will find records where the name is either "John" OR "Jane". However, if you have one filter on `name` for "John" and another on `status` for "active", the query will find records where the name is "John" AND the status is "active".
-:::
-
-```ruby{4-6} [Fields]
+```ruby{4-6}
+# app/avo/resources/project.rb
 class Avo::Resources::Project < Avo::BaseResource
   def fields
     field :name, as: :text
@@ -28,8 +22,14 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-Authorize ransackable_attributes
+With no further configuration, each filterable field gets a [filter type inferred from its field type](./dynamic-filters-api#field-to-filter-mapping), a humanized label, a default icon, and that type's [default conditions](./dynamic-filters-api#filter-types-and-their-conditions). The filters bar is always visible on the resources where at least one field is filterable.
+
+## Authorize the attributes for Ransack
+
+Since Ransack builds the queries, every filterable attribute must be present in the model's `ransackable_attributes` list:
+
 ```ruby{3,11}
+# app/models/project.rb
 class Project < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     ["status", "stage", "country"] # the array items should be strings not symbols
@@ -46,436 +46,78 @@ end
 ```
 
 :::warning
-  Ensure the array items are strings, not symbols.
+Ensure the array items are strings, not symbols.
 :::
 
-This will make Avo add this new "Filters" button to the <Index /> view of your resource.
+## How conditions combine
 
-When the user clicks the button, a new filters bar will appear below enabling them to add filters based on the attributes you marked as filterable.
-The user can add multiple filters for the same attribute if they desire so.
+When multiple filters are applied:
+
+- Filters on the **same attribute** are combined with `OR`
+- Filters on **different attributes** are combined with `AND`
+
+For example, two filters on `name` (one for "John", one for "Jane") find records where the name is either "John" `OR` "Jane". A filter on `name` for "John" plus a filter on `status` for "active" finds records where the name is "John" `AND` the status is "active".
 
 ## Filter types
 
-The filter type determines the kind of input provided by the filter.
+The filter type determines the input the user sees and the conditions they can choose from. A [text](./dynamic-filters-api#text) filter renders a text input with conditions like `Contains` or `Starts with`; a [number](./dynamic-filters-api#number) filter renders a number input with `=`, `>`, `<=`, and so on.
 
-For instance, a [text](#text) type filter will render a text input field, while a [select](#select) type filter will render a dropdown menu with predefined options fetched from the field.
+There are eight types: [`:boolean`](./dynamic-filters-api#boolean), [`:date`](./dynamic-filters-api#date), [`:date_time`](./dynamic-filters-api#date), [`:time`](./dynamic-filters-api#date), [`:number`](./dynamic-filters-api#number), [`:select`](./dynamic-filters-api#select), [`:text`](./dynamic-filters-api#text), and [`:tags`](./dynamic-filters-api#tags). Each type's conditions, icons, and quirks are cataloged in the [API reference](./dynamic-filters-api.html#filter-types-and-their-conditions).
 
-#### Conditions
-Each filter type also offers a different set of conditions. Conditions specify how the input value should be applied to filter the data. For example, [text](#text) filters have conditions such as `Contains` or `Starts with`, while number filters include `=` (equals) or `>` (greater than).
+Avo picks the type automatically from the field type — a `boolean` field gets a boolean filter, a `badge` field gets a select filter, and so on, falling back to text. The full mapping is in the [API reference](./dynamic-filters-api#field-to-filter-mapping), and you can always override it with the [`type`](./dynamic-filters-api#type) option.
 
-#### Query
-Avo uses the input value and the specified condition to build a Ransack query. The filter conditions and input values are translated into Ransack predicates, which are then used to fetch the filtered data.
+## Customize a filter
 
-For instance, in the text filter example above, the `Contains` condition and the input value `John` are translated into a Ransack query resulting into the SQL `LIKE` operator to find all records where the name contains `John`.
+The automatic filters are deliberately strict — one filter per field, targeting that field's column with default conditions. When you need more control, or a filter that isn't bound to a field at all, define a custom dynamic filter. There are two equivalent ways:
 
-<Option name="Boolean">
-
-### Conditions
-
- - Is true
- - Is false
- - Is null
- - Is not null
-
-```ruby
-{
-  is_true: "Is true",
-  is_false: "Is false",
-  is_null: "Is null",
-  is_not_null: "Is not null",
-}.invert
-```
-
-<Image src="/assets/img/4_0/dynamic-filters/boolean.webp" dark-src="/assets/img/4_0/dynamic-filters/boolean-dark.webp" width="3268" height="1082" alt="Avo Users index: the Is active dynamic filter pill and open card showing the Is true condition and Apply button, zoomed in over a short three-row table with pagination." />
-
-
-Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_admin?][is_true][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L38)
-</Option>
-
-<Option name="Date">
-
-### Conditions
-
-- Is
-- Is not
-- Is on or before
-- Is on or after
-- Is within
-- Is null
-- Is not null
-
-```ruby
-{
-  is: "Is",
-  is_not: "Is not",
-  lte: "Is on or before",
-  gte: "Is on or after",
-  is_within: "Is within",
-  is_null: "Is null",
-  is_not_null: "Is not null",
-}.invert
-```
-
-<Image src="/assets/img/4_0/dynamic-filters/date3.webp" dark-src="/assets/img/4_0/dynamic-filters/date3-dark.webp" width="3268" height="2032" alt="Avo Teams index with a short three-row table: the Created at dynamic filter with flatpickr calendar and time picker open over the table." />
-
-
-
-Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[created_at][lte][]=2024-07-02%2012%3A00), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L50)
-</Option>
-
-<Option name="Date time">
-
-Same as **Date** (same conditions and visuals), but the picker also enables time selection.
-
-```ruby
-dynamic_filter :created_at, type: :date_time
-```
-
-</Option>
-
-<Option name="Time">
-
-Same as **Date** (same conditions and visuals), but the picker is time-only (no calendar).
-
-```ruby
-dynamic_filter :published_at, type: :time
-```
-</Option>
-
-<Option name="Number">
-
-### Conditions
-
- - `=` (equals)
- - `!=` (is different)
- - `>` (greater than)
- - `>=` (greater than or equal to)
- - `<` (lower than)
- - `<=` (lower than or equal to)
- - Is within
- - Is null
- - Is not null
-
-```ruby
-{
-  is: "=",
-  is_not: "!=",
-  gt: ">",
-  gte: ">=",
-  lt: "<",
-  lte: "<=",
-  is_within: "Is within",
-  is_null: "Is null",
-  is_not_null: "Is not null",
-}.invert
-```
-
-<Image src="/assets/img/4_0/dynamic-filters/number.webp" dark-src="/assets/img/4_0/dynamic-filters/number-dark.webp" width="3268" height="1082" alt="Avo Teams index with a short three-row table: the ID dynamic filter pill and open card over the table." />
-
-
-Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gte][]=2), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/team.rb#L27)
-</Option>
-
-<Option name="Select">
-
-### Conditions
-
- - Is
- - Is not
- - Is null
- - Is not null
-
-```ruby
-{
-  is: "Is",
-  is_not: "Is not",
-  is_null: "Is null",
-  is_not_null: "Is not null",
-}.invert
-```
-
-<Image src="/assets/img/4_0/dynamic-filters/select.webp" dark-src="/assets/img/4_0/dynamic-filters/select-dark.webp" width="3268" height="1082" alt="Avo Courses index with a short three-row table: the Country dynamic filter pill and open card over the table." />
-
-
-Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[country][is][]=USA), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L55)
-</Option>
-
-<Option name="Text">
-
-### Conditions
-
- - Contains
- - Does not contain
- - Is
- - Is not
- - Starts with
- - Ends with
- - Is null
- - Is not null
- - Is present
- - Is blank
-
-```ruby
-{
-  contains: "Contains",
-  does_not_contain: "Does not contain",
-  is: "Is",
-  is_not: "Is not",
-  starts_with: "Starts with",
-  ends_with: "Ends with",
-  is_null: "Is null",
-  is_not_null: "Is not null",
-  is_present: "Is present",
-  is_blank: "Is blank",
-}.invert
-```
-
-<Image src="/assets/img/4_0/dynamic-filters/text.webp" dark-src="/assets/img/4_0/dynamic-filters/text-dark.webp" width="3268" height="1082" alt="Avo Users index with a short three-row table: the First name dynamic filter pill and open card over the table." />
-
-
-Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_name][contains][]=Avo), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L33)
-</Option>
-<Option name="Tags">
-
-### Conditions
-
- - Are
- - Contain
- - Overlap
- - Contained in ([`active_record_extended`](https://github.com/GeorgeKaraszi/ActiveRecordExtended) gem required)
-
- ```ruby
-{
-  array_is: "Are",
-  array_contains: "Contain",
-  array_overlap: "Overlap",
-  array_contained_in: "Contained in" # (active_record_extended gem required)
-}.invert
-```
-
-:::warning
-Contained in will not work when using the `acts-as-taggable-on` gem.
-:::
-<Image src="/assets/img/4_0/dynamic-filters/tags.webp" dark-src="/assets/img/4_0/dynamic-filters/tags-dark.webp" width="3268" height="1082" alt="Avo Courses index with a short three-row table: the Skills dynamic filter pill and open card over the table." />
-
-
-Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[skills][array_contains][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/course.rb#L46)
-
-:::info
-The source code uses the custom dynamic filters DSL.
-
-Check how to do a more advanced configuration on the [custom dynamic filters](#custom-dynamic-filters) section.
-:::
-
-</Option>
-
-## Options
-
-You can have a few customization options available that you can add in your `avo.rb` initializer file.
-
-```ruby
-Avo.configure do |config|
-  # Other Avo configurations
-end
-
-if defined?(Avo::DynamicFilters)
-  Avo::DynamicFilters.configure do |config|
-    config.button_label = "Advanced filters"
-    config.always_expanded = false
-  end
-end
-```
-
-<Option name="`button_label`">
-
-This will change the label on the expand label.
-</Option>
-
-<Option name="`always_expanded`">
-
-Controls whether the dynamic filters bar starts expanded on page load.
-
-**Default:** `true` — the filters bar is always shown expanded and the toggle button is hidden.
-
-If you'd prefer the bar to start collapsed (with a toggle button the user clicks to expand it), set the option to `false` in your `config/initializers/avo.rb`:
-
-```ruby
-if defined?(Avo::DynamicFilters)
-  Avo::DynamicFilters.configure do |config|
-    config.always_expanded = false
-  end
-end
-```
-</Option>
-
-## Field to filter matching
-
-By default, each `filterable` field gets a dedicated filter type based on its field type. Avo maps field types to filter types automatically:
-
-```ruby
-def field_to_filter(type)
-  case type.to_sym
-  when :boolean
-    :boolean
-  when :date, :date_time, :time
-    :date
-  when :id, :number, :progress_bar
-    :number
-  when :select, :badge, :country, :status
-    :select
-  when :text, :textarea, :code, :markdown, :password, :trix
-    :text
-  else
-    :text
-  end
-end
-```
-
-For more control over labels, icons, queries, and conditions, use [custom dynamic filters](#custom-dynamic-filters).
-
-## Caveats
-
-At some point we'll integrate the [Basic filters](./basic-filters) into the dynamic filters bar. Until then, if you have both basic and dynamic filters on a resource **and** you've set `always_expanded = false`, you'll see two `Filters` buttons on the <Index /> view.
-
-The default (`always_expanded = true`) avoids this since the dynamic filters bar is shown directly without its own toggle button.
-
-## Custom Dynamic Filters
-
-Dynamic filters are great but strict, as each field creates a specific filter type, each with its own icon and query. The query remains static, targeting only that particular field. Dynamic filters are customizable and, even better, can be declared without being bound to a field.
-
-There are two ways to define custom dynamic filters: the field's `filterable` option and the `dynamic_filter` method.
-
-### Defining custom dynamic filters
-
-To start customizing a dynamic filter from the `filterable` option, change its value to a hash:
+**1. Turn the field's `filterable` option into a hash:**
 
 ```ruby
 field :first_name,
   as: :text,
   filterable: true # [!code --]
-  filterable: { } # [!code ++]
+  filterable: {label: "Name", icon: "avo/font"} # [!code ++]
 ```
 
-From this hash, you can configure several options specified below.
-
-Alternatively, you can define a custom dynamic filter using the `dynamic_filter` method, which should be called inside the `filters` method:
+**2. Call `dynamic_filter` inside the resource's `filters` method** — no field required:
 
 ```ruby
 def filters
-  # ...
-  dynamic_filter :first_name
-  # ...
+  dynamic_filter :first_name, label: "Name", icon: "avo/font"
 end
 ```
 
-Each option specified below can be used as a key in the hash definition or as a keyword argument in the method definition.
+Every option — [`label`](./dynamic-filters-api#label), [`icon`](./dynamic-filters-api#icon), [`type`](./dynamic-filters-api#type), [`conditions`](./dynamic-filters-api#conditions), [`query`](./dynamic-filters-api#query), [`query_attributes`](./dynamic-filters-api#query_attributes), [`options`](./dynamic-filters-api#options), [`suggestions`](./dynamic-filters-api#suggestions), and the rest — works as a key in the `filterable` hash and as a keyword argument to `dynamic_filter` alike. The [API reference](./dynamic-filters-api.html) documents them all.
 
 :::info Filters order
-The filter order is computed. Dynamic filters defined by the `dynamic_filter` method will respect the definition order and will be rendered first in the filter list. Filters declared using the field's `filterable` option will be sorted by label.
+Filters defined with `dynamic_filter` respect their definition order and render first in the list. Filters declared through the field's `filterable` option follow, sorted by label.
 :::
 
-:::warning Custom Dynamic Filter IDs
-When using a custom dynamic filter, the generated filter ID may not directly correspond to a database column. In such cases, you should use the [`query_attributes`](#query_attributes) option to specify which database columns the filter should apply to.
+:::warning Custom filter IDs
+When a `dynamic_filter`'s ID doesn't match a database column, point it at the real column(s) with [`query_attributes`](./dynamic-filters-api#query_attributes):
 
-For example, consider a `City` model with a `population` column in the database:
 ```ruby
-# The filter ID is custom_population
-# However, the filter should apply the query to the population attribute.
+# The filter ID is custom_population, but it should query the population column.
 dynamic_filter :custom_population, query_attributes: :population
 ```
 :::
-<Option name="`label`">
 
-Customize filter's label
+### Restrict or rename the conditions
 
-##### Default value
+Pass a [`conditions`](./dynamic-filters-api#conditions) hash to replace the type's default conditions, or an empty hash (`{}`) to hide the conditions dropdown entirely and always use the type's first default condition:
 
-Field's / filter's ID humanized.
+```ruby{3}
+dynamic_filter :last_name,
+  type: :select,
+  conditions: {},
+  options: User.pluck(:last_name).compact
+```
 
-#### Possible values
+### Write a custom query
 
-Any string
-</Option>
+By default, the chosen condition is applied to the filter's attribute via Ransack. Take over with the [`query`](./dynamic-filters-api#query) option:
 
-
-<Option name="`icon`">
-
-Customize filter's icon. Check [icons documentation](./icons)
-
-##### Default value
-
-Boolean filter - `heroicons/outline/check-circle`<br>
-Calendar filter - `heroicons/outline/calendar-days`<br>
-Number filter - `heroicons/outline/hashtag`<br>
-Select filter - `heroicons/outline/arrow-down-circle`<br>
-Tags filter - `heroicons/outline/tag`<br>
-Text filter - `avo/font`<br>
-
-#### Possible values
-
-Any icon from [avo](https://github.com/avo-hq/avo/tree/feature/allow_actions_to_render_turbo_streams/app/assets/svgs/avo) or [heroicons](https://heroicons.com/).
-</Option>
-
-<Option name="`type`">
-
-Customize filter's type
-
-##### Default value
-
-Computed from field using [`field_to_filter` method](#field-to-filter-matching).
-
-#### Possible values
-
-- [`:boolean`](#boolean)<br>
-- [`:date`](#date)<br>
-- [`:date_time`](#date-time) (same behavior as Date, with time enabled)<br>
-- [`:time`](#time) (same behavior as Date, time-only picker)<br>
-- [`:number`](#number)<br>
-- [`:select`](#select)<br>
-- [`:text`](#text)<br>
-- [`:tags`](#tags)<br>
-</Option>
-
-<Option name="`query`">
-
-Customize filter's query
-
-##### Default value
-
-Applies the condition to the field's attribute. For example, if the field is `first_name`, the condition is `contains`, and the value is `Bill`, the query will restrict to all records where the first name contains `Bill`.
-
-#### Possible values
-
-Any lambda function.
-
-Within the function, you have access to `query` and `filter_param` as well as all attributes of [`Avo::ExecutionContext`](execution-context).
-
-`filter_param` is an Avo object that stores the filter's `id`, the applied `condition` and the `value`.
-
-Usage example:
-
-```ruby {6-13,19-26}
-# Using field's filterable option
-field :first_name,
-  as: :text,
-  filterable: {
-    # ...
-    conditions: {
-      case_sensitive: "Is (case sensitive)",
-      not_case_sensitive: "Is (case insensitive)"
-    }.invert,
-    query: -> {
-      case filter_param.condition.to_sym
-      when :case_sensitive
-        query.where("name = ?", filter_param.value)
-      when :not_case_sensitive
-        query.where("LOWER(name) = ?", filter_param.value.downcase)
-      end
-    }
-    # ...
-  }
-
-# Using dynamic_filter method
+```ruby{6-13}
 dynamic_filter :first_name,
   conditions: {
     case_sensitive: "Is (case sensitive)",
@@ -490,432 +132,40 @@ dynamic_filter :first_name,
     end
   }
 ```
-</Option>
 
-<Option name="`conditions`">
+Inside the block you get `query`, `filter_param` (the filter's id, condition, and value), and everything on [`Avo::ExecutionContext`](./execution-context).
 
-Customize filter's conditions
+### Filter across multiple columns or associations
 
-##### Default value
+[`query_attributes`](./dynamic-filters-api#query_attributes) accepts several columns — the condition applies to any of them (`OR`):
 
-Check default conditions for each filter type above on this page.
-
-#### Possible values
-
-- A hash with the desired key-values to customize available conditions
-- An empty hash `{}` to hide conditions dropdown and use the first default condition
-
-##### Usage examples
-
-###### Custom conditions
-```ruby {6-9,15-18}
-# Using field's filterable option
-field :first_name,
-  as: :text,
-  filterable: {
-    # ...
-    conditions: {
-      case_sensitive: "Case sensitive",
-      not_case_sensitive: "Not case sensitive"
-    }.invert
-    # ...
-  }
-
-# Using dynamic_filter method
-dynamic_filter :first_name,
-  conditions: {
-    case_sensitive: "Case sensitive",
-    not_case_sensitive: "Not case sensitive"
-  }.invert
-```
-
-###### Hide conditions dropdown
-When set to an empty hash (`{}`), this option hides the conditions dropdown and automatically applies the first default condition for each filter type. This is particularly useful when you want to simplify the filter interface by removing the conditions selection, especially for filters where only one condition makes sense.
-
-```ruby{3}
-dynamic_filter :last_name,
-  type: :select,
-  conditions: {},
-  options: User.pluck(:last_name).compact
-```
-
-```ruby{4}
-field :department,
-  as: :select,
-  filterable: {
-    conditions: {},
-    type: :select,
-    options: ["Engineering", "Marketing", "Sales", "Support"]
-  }
-```
-
-:::info
-When `conditions: {}` is used, the filter will automatically use the first condition from the default conditions list for that filter type. For example, a select filter will use "Is" condition, and a text filter will use "Contains" condition.
-:::
-
-</Option>
-
-<Option name="`query_attributes`">
-
-Customize filter's query attributes
-
-##### Default value
-
-Field's / filter's id
-
-#### Possible values
-
-Any model DB column(s). Use an array of symbols for multiple columns or a single symbol for a single column. If your model has DB columns like `first_name` and `last_name`, you can combine both on a single filter:
-
-```ruby {6,13}
-# Using field's filterable option
-field :name,
-  as: :text,
-  filterable: {
-    # ...
-    query_attributes: [:first_name, :last_name]
-    # ...
-  }
-
-# Using dynamic_filter method
+```ruby
 dynamic_filter :name,
   type: :text,
   query_attributes: [:first_name, :last_name]
 ```
 
-You can also add query attributes for a `belongs_to` association. For example, with a model that belongs to `User`:
+Prefix an attribute with the association name to filter through a `belongs_to` (a Ransack feature):
 
-```ruby {7,13}
-# Using field's filterable option
-field :user,
-  as: :belongs_to,
-  filterable: {
-    label: "User (email & first_name)",
-    icon: "heroicons/solid/users",
-    query_attributes: [:user_email, :user_first_name]
-  }
-
-# Using dynamic_filter method
+```ruby
 dynamic_filter label: "User (email & first_name)",
   icon: "heroicons/solid/users",
   query_attributes: [:user_email, :user_first_name]
 ```
 
-This is possible due to a Ransack feature. To use it, you need to add the association name before the attribute.
-</Option>
+### Offer suggestions or fetch values from an API
 
-<Option name="`suggestions`">
-
-Suggestions work on filters that provide text input, enhancing the user experience by offering relevant options. This functionality is especially useful in scenarios where users might need guidance or where the filter values are numerous or complex.
-
-##### Default value
-
-`nil`
-
-:::info
-On `tags` fields, suggestions are fetched from the field.
-:::
-
-#### Possible values
-
-- Array of strings
-```ruby {6,12}
-# Using field's filterable option
-field :first_name,
-  as: :text,
-  filterable: {
-    # ...
-    suggestions: ["Avo", "Cado"]
-    # ...
-  }
-
-# Using dynamic_filter method
-dynamic_filter :first_name,
-  suggestions: ["Avo", "Cado"]
-```
-
-- Proc that returns an array of strings
-
-  When the filter is applied to an association, the `parent_record` becomes accessible within the `suggestions` block.
-
-```ruby {6,12}
-# Using field's filterable option
-field :first_name,
-  as: :text,
-  filterable: {
-    # ...
-    suggestions: -> { ["Avo", "Cado", params[:extra_suggestion]] }
-    # ...
-  }
-
-# Using dynamic_filter method
-dynamic_filter :first_name,
-  suggestions: -> { ["Avo", "Cado", params[:extra_suggestion]] }
-```
-
-
-- Array of hashes with the keys `value`, `label` and optionally an `avatar`
-:::warning Applicable only to filters with type tags.
-:::
-
-:::code-group
-```ruby {6-13,19-26} [Direct assign]
-# Using field's filterable option
-field :tags,
-  as: :tags,
-  filterable: {
-    # ...
-    suggestions: [
-      {
-        value: 1,
-        label: 'one',
-        avatar: 'https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
-      },
-      # ...
-    ]
-    # ...
-  }
-
-# Using dynamic_filter method
-dynamic_filter :tags,
-  suggestions: [
-    {
-      value: 1,
-      label: 'one',
-      avatar: 'https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
-    },
-    # ...
-  ]
-```
-
-```ruby {6-15,21-30} [Proc]
-# Using field's filterable option
-field :tags,
-  as: :tags,
-  filterable: {
-    # ...
-    suggestions: -> {
-      [
-        {
-          value: 1,
-          label: 'one', # or params[:something]
-          avatar: 'https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
-        },
-        # ...
-      ]
-    }
-    # ...
-  }
-
-# Using dynamic_filter method
-dynamic_filter :tags,
-  suggestions: -> {
-    [
-      {
-        value: 1,
-        label: 'one', # or params[:something]
-        avatar: 'https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
-      },
-      # ...
-    ]
-  }
-```
-:::
-
-</Option>
-
-<Option name="`fetch_values_from`">
-
-:::warning
-This option is compatible **only** with `tags` filters.
-:::
-
-In some cases, you may need to retrieve values dynamically from an API. The `fetch_values_from` option allows you to provide a URL from which the filter will suggest values, functioning similarly to the `fetch_values_from` option in the tags field.
-
-When a user searches for a record, the filter's input will send a request to the server to fetch records that match the query.
-
-##### Default value
-
-`nil`
-
-:::info
-If you're using a `filterable` field the `fetch_values_from` are fetched from the field.
+Text and tags filters can suggest values as the user types — a static array, a proc, or, for tags filters, a [`fetch_values_from`](./dynamic-filters-api#fetch_values_from) URL that queries your own endpoint:
 
 ```ruby
-field :tags, as: :tags,
-  fetch_values_from: -> { "/avo-filters/resources/cities/tags" }
-  filterable: true
-```
-:::
-
-#### Possible values
-
-- String
-```ruby
-fetch_values_from: "/avo-filters/resources/cities/tags"
+dynamic_filter :first_name, suggestions: ["Avo", "Cado"]
 ```
 
-- Proc that evaluates to a string.
-```ruby
-fetch_values_from: -> { "/avo-filters/resources/cities/tags" }
-```
+See [`suggestions`](./dynamic-filters-api#suggestions) and [`fetch_values_from`](./dynamic-filters-api#fetch_values_from) for the accepted shapes, and the endpoint contract for API-backed suggestions.
 
-The endpoint should handle two different scenarios:
+### Apply instantly, without the Apply button
 
-1. **Search functionality**: When a user types in the filter input, the endpoint receives the user input as `q` in the params (`params["q"]`)
-2. **Initial load**: When the filter already has selected values (like on page load), the endpoint receives an array of values in `params[:value]` to fetch the corresponding labels
-
-The endpoint should return an array of objects with the keys `value`, `label` and optionally `avatar`.
-
-::: code-group
-```ruby{3-33} [app/controllers/avo/cities_controller.rb]
-class Avo::CitiesController < Avo::ResourcesController
-  def tags
-    if params[:value].present?
-      # Handle initial load: return labels for selected values
-      # params[:value] contains an array of selected values
-      selected_cities = City.where(id: params[:value])
-      render json: selected_cities.map do |city|
-        {
-          value: city.id,
-          label: city.name,
-          avatar: city.avatar_url
-        }
-      end
-    elsif params["q"].present?
-      # Handle search: return cities matching the query
-      cities = City.where("name ILIKE ?", "%#{params["q"]}%").limit(10)
-      render json: cities.map do |city|
-        {
-          value: city.id,
-          label: city.name,
-          avatar: city.avatar_url
-        }
-      end
-    else
-      # Handle empty state: return some default suggestions
-      render json: [
-        {
-          value: 1,
-          label: "New York",
-          avatar: "https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop"
-        }
-      ]
-    end
-  end
-end
-```
-
-```ruby{5-11} [config/routes.rb]
-Rails.application.routes.draw do
-  # your routes...
-end
-
-if defined? ::Avo
-  Avo::Engine.routes.draw do
-    scope :resources do
-      get "cities/tags", to: "cities#tags"
-    end
-  end
-end
-```
-:::
-
-</Option>
-
-<Option name="`options`">
-
-Customize the options **for select type filters**. **This is available only for select type filters** and determines the options visible in the select dropdown.
-
-##### Default value
-
-Fetched from field if bond to a field or `[]`
-
-#### Possible values
-
-An array or hash where the key-value pairs represent the options.
-
-- If a hash is provided, the key is the option label and the value is the option value.
-- If an array is provided, the array elements are used as both the option value and the option label.
-
-##### Usage examples
-###### Array
-```ruby{3}
-dynamic_filter :version,
-  type: :select,
-  options: ["Label 1", "Label 2"]
-```
-
-###### Hash (with invert)
-```ruby{3-6}
-dynamic_filter :version,
-  type: :select,
-  options: {
-    value_1: "Label 1",
-    value_2: "Label 2"
-  }.invert
-```
-
-###### Hash (without invert)
-```ruby{3-6}
-dynamic_filter :version,
-  type: :select,
-  options: {
-    "Label 1" => :value_1,
-    "Label 2" => :value_2
-  }
-```
-</Option>
-
-<Option name="`render_apply_button`">
-
-Controls whether the "Apply" button should be rendered in the filter interface.
-
-##### Default value
-
-`true`
-
-#### Possible values
-
-Boolean value (`true` or `false`).
-
-When set to `false`, the apply button will be hidden from the filter interface. This is particularly useful when combined with `apply_on_select: true` to create an immediate filtering experience.
-
-##### Usage examples
-
-```ruby{3}
-dynamic_filter :status,
-  type: :select,
-  render_apply_button: false
-```
-
-```ruby{4-5}
-field :status,
-  as: :select,
-  filterable: {
-    render_apply_button: false,
-    apply_on_select: true,
-    options: ["active", "inactive", "pending"]
-  }
-```
-
-</Option>
-
-<Option name="`apply_on_select`">
-
-Controls whether the filter should be applied immediately when the selected value changes, without requiring the user to click the "Apply" button.
-
-##### Default value
-
-`false`
-
-#### Possible values
-
-Boolean value (`true` or `false`).
-
-When set to `true`, the filter will automatically apply as soon as the user selects or changes a value. This creates a more responsive user experience, especially when combined with `render_apply_button: false`.
-
-##### Usage examples
+For select filters, combine [`apply_on_select`](./dynamic-filters-api#apply_on_select) and [`render_apply_button`](./dynamic-filters-api#render_apply_button) to filter as soon as the user picks a value:
 
 ```ruby{3-4}
 dynamic_filter :category,
@@ -924,31 +174,9 @@ dynamic_filter :category,
   render_apply_button: false
 ```
 
-```ruby{4-5}
-field :priority,
-  as: :select,
-  filterable: {
-    apply_on_select: true,
-    render_apply_button: false,
-    options: ["high", "medium", "low"]
-  }
-```
+### Humanize the filter pills
 
-</Option>
-
-<Option name="`humanized_value`">
-
-Allows you to customize how filter values are displayed in the filter interface by providing humanized, user-friendly representations of the internal filter values.
-
-##### Default value
-
-`value` - The filter will display the raw filter values.
-
-#### Possible values
-
-A lambda/proc that returns a string representing the humanized value. Within the function, you have access to the `value` and `filter` object which contains the current filter's condition, as well as all attributes of [`Avo::ExecutionContext`](execution-context). Additionally `parent_record` (when the filter is applied to an association) is available.
-
-##### Usage examples
+Applied filters render as pills like "Is active **is true**". When raw values or auto-generated condition labels read poorly, override them with [`humanized_value`](./dynamic-filters-api#humanized_value) and [`humanized_condition`](./dynamic-filters-api#humanized_condition):
 
 ```ruby{4-11}
 field :is_capital,
@@ -965,47 +193,29 @@ field :is_capital,
   }
 ```
 
-```ruby{4-8}
-    dynamic_filter label: "Tags with fetch_values_from",
-      type: :tags,
-      fetch_values_from: -> { "/avo-filters/resources/cities/tags" },
-      humanized_value: -> {
-        City.controller_suggestions.select do |suggestion|
-          suggestion[:value].to_s.in?(value.split(","))
-        end.map { _1[:label] }.join(", ")
-      }
+## Configure the filters bar
+
+The bar itself is configured globally in the initializer — the toggle button's label, whether the bar starts expanded, and the URL param it reads from:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # Other Avo configurations
+end
+
+if defined?(Avo::DynamicFilters)
+  Avo::DynamicFilters.configure do |config|
+    config.button_label = "Advanced filters"
+    config.always_expanded = false
+  end
+end
 ```
 
-</Option>
+See [`button_label`](./dynamic-filters-api#button_label), [`always_expanded`](./dynamic-filters-api#always_expanded), and [`param_key`](./dynamic-filters-api#param_key) in the API reference.
 
-<Option name="`humanized_condition`">
+## Caveats
 
-Allows you to customize how filter conditions are displayed in the filter's pill interface by providing humanized, user-friendly representations of the internal filter conditions.
-
-##### Default value
-
-`condition` - The filter will display the auto-generated label for the filter condition.
-
-#### Possible values
-
-A lambda/proc that returns a string representing the humanized value. Within the function, you have access to the `condition` and `filter` object which contains the current filter's condition, as well as all attributes of [`Avo::ExecutionContext`](execution-context). Additionally `parent_record` (when the filter is applied to an association) is available.
-
-##### Usage examples
-
-```ruby{5-7}
-dynamic_filter :author,
-  type: :tags,
-  icon: "heroicons/outline/users",
-  conditions: {},
-  humanized_condition: -> {
-    (filter.value.split(",").count > 1) ? "are" : "is"
-  },
-  query: -> {
-    query.where(author_id: filter_param.value.split(","))
-  }
-```
-</Option>
-
+At some point we'll integrate the [basic filters](./basic-filters) into the dynamic filters bar. Until then, if a resource has both basic and dynamic filters **and** you've set [`always_expanded`](./dynamic-filters-api#always_expanded) to `false`, you'll see two `Filters` buttons on the <Index /> view. The default (`always_expanded = true`) avoids this, since the dynamic filters bar renders directly without its own toggle button.
 
 ## Guides & Tutorials
 
@@ -1040,9 +250,10 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-### `has_many` example
+#### `has_many` example
 
 ```ruby{19-22}
+# app/avo/resources/author.rb
 class Avo::Resources::Author < Avo::BaseResource
   self.record_selector = false
 
@@ -1076,11 +287,12 @@ When you have multiple fields that require similar filtering logic, you can crea
 
 This guide demonstrates four different approaches to create composable filters, each with its own benefits and use cases.
 
-### The Problem: Repetitive Filter Code
+### The problem: repetitive filter code
 
 Before diving into the solutions, let's look at a common problem where filter logic is repeated across multiple fields:
 
 ```ruby
+# app/avo/resources/feedback.rb
 class Avo::Resources::Feedback < Avo::BaseResource
   def fields
     field :company_size, filterable: {
@@ -1112,11 +324,12 @@ end
 
 As you can see, the same filtering logic is repeated for each field, which violates the DRY (Don't Repeat Yourself) principle and makes the code harder to maintain.
 
-### Method 1: Helper Method with Field Configuration
+### Method 1: helper method with field configuration
 
 This approach extracts the common filtering logic into a helper method that returns the filterable configuration hash. It's the most straightforward refactoring and maintains the existing field-based approach.
 
 ```ruby
+# app/avo/resources/feedback.rb
 class Avo::Resources::Feedback < Avo::BaseResource
   def filterable_helper(field_name)
     {
@@ -1143,7 +356,7 @@ end
 **Best for:** Quick refactoring of existing resources with repetitive filter logic.
 
 :::warning
-When you're using this approach within a `with_options` block, you need allow the extra args that are passed to the helper method.
+When you're using this approach within a `with_options` block, you need to allow the extra args that are passed to the helper method.
 
 ```ruby
 def filterable_helper(field_name, **args)
@@ -1152,11 +365,12 @@ end
 ```
 :::
 
-### Method 2: Separate Fields and Filters with Helper
+### Method 2: separate fields and filters with helper
 
 This approach separates the field definitions from the filter definitions using the `dynamic_filter` method. The helper method now directly creates the dynamic filter instead of returning a configuration hash.
 
 ```ruby
+# app/avo/resources/feedback.rb
 class Avo::Resources::Feedback < Avo::BaseResource
   def fields
     field :company_size
@@ -1191,11 +405,12 @@ end
 - Resources where you want to maintain clean separation between display fields and filtering logic.
 - Dynamic filters that are common across multiple resources.
 
-### Method 3: Programmatic Filter Generation
+### Method 3: programmatic filter generation
 
 This approach uses Ruby's array iteration to programmatically generate multiple filters with the same logic. It's the most concise and reduces the code to its essential elements.
 
 ```ruby
+# app/avo/resources/feedback.rb
 class Avo::Resources::Feedback < Avo::BaseResource
   def fields
     field :company_size
@@ -1222,11 +437,12 @@ end
 
 **Best for:** Resources with many fields that share identical filtering logic, especially when the list of filterable fields might change frequently.
 
-### Method 4: Custom DSL with Method Override
+### Method 4: custom DSL with method override
 
 This approach creates a custom DSL by overriding the `field` method to intercept a special symbol (`:by_answer`). This provides the cleanest syntax at the field level while hiding the complexity in the method override.
 
 ```ruby
+# app/avo/resources/feedback.rb
 class Avo::Resources::Feedback < Avo::BaseResource
   def fields
     field :company_size, filterable: :by_answer
@@ -1257,7 +473,7 @@ end
 
 **Best for:** Resources where you want to create a custom, reusable filtering pattern that feels natural and integrated with Avo's field DSL.
 
-### Choosing the Right Approach
+### Choosing the right approach
 
 - **Method 1** for quick refactoring of existing code
 - **Method 2** when you want clear separation between fields and filters

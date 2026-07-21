@@ -297,7 +297,7 @@ field :name, as: :text, readonly: true
 
 <Option name="`default`" headingSize="3">
 
-Pre-fills the field on the <New /> view (and in [action](./actions/overview.html) modals) when the record's attribute is `nil`. The block is executed in `Avo::ExecutionContext` with access to `record`, `resource`, `view`, and `parent`.
+Pre-fills the field on the <New /> view (and in [action](./actions.html) modals) when the record's attribute is `nil`. The block is executed in `Avo::ExecutionContext` with access to `record`, `resource`, `view`, and `parent`.
 
 ```ruby
 field :level, as: :select, options: {Beginner: :beginner, Advanced: :advanced}, default: -> { Time.now.hour < 12 ? "advanced" : "beginner" }

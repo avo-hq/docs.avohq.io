@@ -33,30 +33,30 @@ To install the `avo-kanban` gem, follow the steps below:
 
 1. Add the following line to your Gemfile:
 
-   ```ruby
-   gem "avo-kanban", source: "https://packager.dev/avo-hq/"
-   ```
+  ```ruby
+  gem "avo-kanban", source: "https://packager.dev/avo-hq/"
+  ```
 
 2. Run the `bundle install` command to install the gem:
 
-   ```bash
-   bundle install
-   ```
+  ```bash
+  bundle install
+  ```
 
 3. Generate the necessary resources and controllers by running:
 
-   ```bash
-   rails generate avo:kanban install
-   ```
+  ```bash
+  rails generate avo:kanban install
+  ```
 
-   This command will create pre-configured resources and controllers for managing boards, columns, and items in your application. You can further customize the generated code to suit your needs.
+  This command will create pre-configured resources and controllers for managing boards, columns, and items in your application. You can further customize the generated code to suit your needs.
 
-   This command will also generate the item's partial and a migration.
+  This command will also generate the item's partial and a migration.
 
 4. Run the migration to apply the database changes:
-   ```bash
-   rails db:migrate
-   ```
+  ```bash
+  rails db:migrate
+  ```
 
 ## DB schema
 
@@ -68,7 +68,7 @@ The `Avo::Kanban::Column` has a polymorphic `belongs_to` association with any ot
 
 We can create a kanban board by going to the Boards resource and clicking on the `Create board` button.
 
-Once you create the board, add it to the menu using the `link_to` option (for now. we'll add `board` soon).
+Once you create the board, add it to the menu using the [`board`](./menu-editor-api.html#board) menu item.
 
 ## Create columns
 

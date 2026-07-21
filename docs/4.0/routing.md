@@ -43,8 +43,69 @@ end
 :::info
 To guarantee that the `locale` scope is included in the `default_url_options`, you must explicitly add it to the Avo configuration.
 
-Check [this documentation section](customization.html#default_url_options) for details on how to configure `default_url_options` setting.
+Check [this documentation section](customization-api.html#default_url_options) for details on how to configure `default_url_options` setting.
 :::
+
+## Mount Avo under a nested path
+
+You may need to mount Avo under a nested path, something like `/uk/admin`. In order to do that, you need to consider a few things.
+
+1. Move the engine mount point below any route for custom tools.
+
+```ruby{7,10}
+# config/routes.rb
+Rails.application.routes.draw do
+  # other routes
+
+  authenticate :user, ->(user) { user.is_admin? } do
+    scope :uk do
+      scope :admin do
+        get "dashboard", to: "avo/tools#dashboard" # custom tool added before engine
+      end
+
+      mount_avo # engine mounted last
+    end
+  end
+end
+```
+
+2. The `root_path` configuration should only be the last path segment.
+
+```ruby
+# 🚫 Don't add the scope to the root_path
+Avo.configure do |config|
+  config.root_path = "/uk/admin"
+end
+
+# ✅ Do this instead
+Avo.configure do |config|
+  config.root_path = "/admin"
+end
+```
+
+3. Use full paths for other configurations.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.home_path = "/uk/admin/dashboard"
+
+  config.set_initial_breadcrumbs do
+    add_breadcrumb "Dashboard", "/uk/admin/dashboard"
+  end
+end
+```
+
+## Serve Avo from a custom `map` in `config.ru`
+
+If you serve your Rails app under a prefix through a custom `map` block in `config.ru`, set `prefix_path` to that mapping's prefix so Avo generates correct paths.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.prefix_path = "/internal"
+end
+```
 
 ## Namespaced resource routes
 
