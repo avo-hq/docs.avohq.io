@@ -121,7 +121,6 @@ const config = {
             { text: "Intro", link: "/4.0/index.html" },
             { text: "Avo 3 to Avo 4 upgrade", link: "/4.0/avo-3-avo-4-upgrade.html" },
             { text: "Technical Support", link: "/4.0/technical-support.html" },
-            { text: "Best practices", link: "/4.0/best-practices.html" },
             { text: "🤖 Agentic engineering", link: "/4.0/agentic-engineering.html" },
           ]
         },
@@ -146,8 +145,7 @@ const config = {
             { text: "Records reordering", link: "/4.0/records-reordering.html" },
             { text: "Discreet information", link: "/4.0/discreet-information.html" },
             { text: "Customizable controls", link: "/4.0/customizable-controls.html" },
-            { text: "Avatar", link: "/4.0/avatar.html" },
-            { text: "Cover", link: "/4.0/cover.html" },
+            { text: "Cover and Avatar", link: "/4.0/cover-and-avatar.html" },
             {
               text: "Views",
               collapsed: false,

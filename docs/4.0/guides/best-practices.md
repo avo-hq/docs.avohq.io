@@ -12,7 +12,7 @@ Here's a collection of best practices that we'd like you to know about.
 Each resource has the `self.includes` option that helps you eager-load associations.
 
 :::info Detailed documentation
-[`self.includes`](resources.html#self_includes)
+[`self.includes`](../resources-api.html#self.includes)
 :::
 
 ## Avoid using `if/else` statements in `def fields`
@@ -22,7 +22,7 @@ This practice is discouraged and we'll try to explain why here.
 
 Because of checks Avo makes during the request lifecycle, we need to know exactly which fields you have defined for your resource, no matter if they should be hidden or not to a user or in a certain scenario.
 
-The alternative is to use the [`visible`](./field-options.html#field-visibility) field option which will add the field on the list, but keep it hidden from the user based on the computed value.
+The alternative is to use the [`visible`](../field-options.html#field-visibility) field option which will add the field on the list, but keep it hidden from the user based on the computed value.
 
 ### Example:
 

@@ -23,6 +23,13 @@ to = "/4.0/fields-layout.html#organize-fields-under-tabs"
 status = 301
 force = false
 
+# best practices moved into guides
+[[redirects]]
+from = "/4.0/best-practices.html"
+to = "/4.0/guides/best-practices.html"
+status = 301
+force = false
+
 # temporary until we set up a proper navigation for the LLMs
 [[redirects]]
 from = "/llms.txt"
@@ -298,5 +305,18 @@ force = false
 [[redirects]]
 from = "/installation.html"
 to = "/4.0/installation.html"
+status = 301
+force = false
+
+# avatar + cover consolidated into cover-and-avatar
+[[redirects]]
+from = "/4.0/avatar.html"
+to = "/4.0/cover-and-avatar.html#add-an-avatar"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/cover.html"
+to = "/4.0/cover-and-avatar.html#add-a-cover-photo"
 status = 301
 force = false

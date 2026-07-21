@@ -201,7 +201,7 @@ field :name, as: :text, sortable: true
 <Image src="/assets/img/4_0/field-options/sortable.webp" dark-src="/assets/img/4_0/field-options/sortable-dark.webp" width="1776" height="664" alt="An Avo index table for Projects sorted by the Name column, whose header shows the active sort-arrow indicator for the sortable name text field." />
 
 **Related:**
-  - [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
+  - [Add an index on the `created_at` column](./guides/best-practices#add-an-index-on-the-created-at-column)
 
 ## Custom sortable block
 

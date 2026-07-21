@@ -108,7 +108,7 @@ In this example, even if the `can_create` option is set to `true`, if the `UserP
 
 ## Overview
 
-On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`self.title`](./../resources.html#setting-the-title-of-the-resource) value of the target resource.
+On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`self.title`](./../resources-api.html#self.title) value of the target resource.
 
 <Image src="/assets/img/4_0/associations/belongs-to-index.webp" dark-src="/assets/img/4_0/associations/belongs-to-index-dark.webp" width="1834" height="558" alt="Comments index table with ID and User columns, the User cell showing a belongs_to link to the associated record." />
 

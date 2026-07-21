@@ -543,7 +543,7 @@ Set `row_url` to make every row a link. The block runs per row with `record` in 
 self.row_url = -> { record_path(record) }
 ```
 
-For a new tab or a tooltip, return a hash instead — the same semantics as [discreet information](resources#self_discreet_information):
+For a new tab or a tooltip, return a hash instead — the same semantics as [discreet information](resources-api#self.discreet_information):
 
 ```ruby
 self.row_url = -> {

@@ -608,7 +608,7 @@ end
 
 This will make all your application's tables countless keeping the size key / value as the default one.
 
-Verify all possible options [here](resources#self_pagination).
+Verify all possible options [here](resources-api#self.pagination).
 
 </Option>
 
