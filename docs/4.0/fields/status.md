@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The Status field renders a colored indicator on index and show views — loading, failed, success, or neutral."
+fieldTags: [display]
 ---
 
 # Status

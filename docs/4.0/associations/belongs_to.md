@@ -1,6 +1,8 @@
 ---
 license: community
 field_type: belongs_to
+description: "Lets the user select an associated record from a belongs_to association."
+fieldTags: [associations]
 ---
 
 # Belongs to

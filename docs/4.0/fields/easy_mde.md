@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Renders the EasyMDE Markdown editor, storing raw Markdown in the database."
+fieldTags: [rich text]
 ---
 
 # EasyMDE

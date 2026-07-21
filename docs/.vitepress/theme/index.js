@@ -37,7 +37,21 @@ import {h} from "vue"
 
 export default {
   ...DefaultTheme,
-  enhanceApp({app}) {
+  enhanceApp({app, router}) {
+    if (typeof window !== "undefined") {
+      const scrollSidebarToActive = () => {
+        requestAnimationFrame(() => {
+          document
+            .querySelector(".VPSidebarItem.is-active > .item")
+            ?.scrollIntoView({block: "center"})
+        })
+      }
+      router.onAfterRouteChange = scrollSidebarToActive
+      // ponytail: initial load — sidebar isn't mounted yet in enhanceApp, so defer
+      window.addEventListener("load", scrollSidebarToActive, {once: true})
+    }
+
+
     app.component("FeedbackPill", FeedbackPill)
     app.component("LicenseReq", LicenseReq)
     app.component("VersionReq", VersionReq)

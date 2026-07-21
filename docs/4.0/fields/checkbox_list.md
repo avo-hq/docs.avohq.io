@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The CheckboxList field renders a list of checkboxes for selecting multiple values from a finite set of options."
+fieldTags: [choice]
 ---
 
 # Checkbox List

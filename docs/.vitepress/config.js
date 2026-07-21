@@ -160,14 +160,17 @@ const config = {
       copyright: `Copyright © 2020–${new Date().getFullYear()} Adrian Marin`
     },
     nav: [
-      { text: "Home", link: "/" },
-      { text: "Docs", link: "/4.0/index.html" },
+      { text: "avohq.io", link: "https://avohq.io" },
       { text: "Guides", link: "/4.0/guides.html" },
       { text: "FAQ", link: "/4.0/faq.html" },
       { text: "Team", link: "/team.html" },
-      { text: "Releases", link: "https://avohq.io/releases" },
-      { text: "Gems", link: "https://avohq.io/gems" },
       { text: "Blog", link: "https://avohq.io/blog" },
+      {
+        text: "More", items: [
+          { text: "Releases", link: "https://avohq.io/releases" },
+          { text: "Gems", link: "https://avohq.io/gems" },
+        ]
+      },
       {
         text: "Version", items: [
           { text: "4.0", link: "/4.0/index.html" },
@@ -220,7 +223,6 @@ const config = {
                 { text: "Map view", link: "/4.0/map-view.html" },
               ],
             },
-            { text: "Controller configuration", link: "/4.0/controllers.html" },
           ]
         },
         {
@@ -392,6 +394,7 @@ const config = {
           text: "Extending",
           collapsed: false,
           items: [
+            { text: "Controller configuration", link: "/4.0/controllers.html" },
             { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
             { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
             { text: "Plugins", link: "/4.0/plugins.html" },

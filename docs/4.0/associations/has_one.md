@@ -1,6 +1,8 @@
 ---
 license: community
 field_type: has_one
+description: "Displays the associated record's fields unfolded on the Show view."
+fieldTags: [associations]
 ---
 
 :::warning

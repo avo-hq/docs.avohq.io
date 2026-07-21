@@ -3,6 +3,8 @@ license: community
 field_type: date_time
 default_format: "yyyy-LL-dd TT"
 default_picker_format: "Y-m-d H:i:S"
+description: "Displays date and time values, with configurable format, timezone, and picker options."
+fieldTags: [date & time]
 ---
 
 # DateTime

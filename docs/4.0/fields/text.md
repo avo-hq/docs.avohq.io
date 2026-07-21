@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Renders a text input element."
+fieldTags: [text]
 ---
 
 # Text

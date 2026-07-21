@@ -2,6 +2,8 @@
 license: community
 betaStatus: Beta
 demoVideo: "https://youtu.be/wnWvzQyyo6A?t=2128"
+description: "A GitHub-inspired Markdown editor based on the Marksmith editor."
+fieldTags: [rich text]
 ---
 
 # Markdown

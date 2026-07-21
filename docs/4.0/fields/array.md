@@ -1,6 +1,8 @@
 ---
 license: community
 demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1030"
+description: "The Array field allows you to display and manage structured array data."
+fieldTags: [structured]
 ---
 
 # Array

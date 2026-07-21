@@ -1,6 +1,8 @@
 ---
 license: community
 betaStatus: "Open beta"
+description: "The Location field is used to display a point on a map."
+fieldTags: [maps]
 ---
 
 # Location

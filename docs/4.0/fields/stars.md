@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The stars field renders a star rating display on Index and Show views, and interactive clickable stars on Edit and New views."
+fieldTags: [number]
 ---
 
 # Stars
@@ -40,4 +42,3 @@ field :rating, as: :stars, max: 10
 ```
 
 The field stores a numeric value (e.g., `0` to `5` for a 5-star rating). On edit forms, users can click on stars to set the rating. Filled stars represent the current value, while unfilled stars show the remaining capacity up to the maximum.
-

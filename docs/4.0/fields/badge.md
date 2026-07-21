@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The badge field is used to display an easily recognizable status of a record."
+fieldTags: [display]
 ---
 
 # Badge

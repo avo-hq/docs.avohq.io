@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The KeyValue field makes it easy to edit flat key-value pairs stored in JSON format in the database."
+fieldTags: [structured]
 ---
 
 # KeyValue

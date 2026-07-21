@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Displays an image from a URL stored in the database."
+fieldTags: [assets]
 ---
 
 # External image

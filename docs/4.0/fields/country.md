@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Country field generates a Select field on Edit view that includes all ISO 3166-1 countries."
+fieldTags: [choice]
 ---
 
 # Country

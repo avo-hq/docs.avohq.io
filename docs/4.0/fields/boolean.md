@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Renders a checkbox on form views and a green check or red X icon on the Index and Show views."
+fieldTags: [boolean]
 ---
 
 # Boolean

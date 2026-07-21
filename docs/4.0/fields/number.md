@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Renders a number input element."
+fieldTags: [number]
 ---
 
 # Number

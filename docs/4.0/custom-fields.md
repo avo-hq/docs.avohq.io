@@ -201,7 +201,7 @@ end
 
 ## Field Visibility
 
-If you need to hide the field in some view, you can use the [visibility helpers](./field-options.html#showing-hiding-fields-on-different-views).
+If you need to hide the field in some view, you can use the [visibility helpers](./field-options.html#show-and-hide-fields-on-different-views).
 
 ```ruby{16}
 # app/avo/fields/progress_bar_field.rb

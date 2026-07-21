@@ -88,7 +88,7 @@ For more information about extending the base resource, see the [Extending Avo::
 
 ## Related documentation
 
-- [Field components](../field-options.html#components) - Learn how to eject and override existing field components
+- [Field components](../field-options-api.html#components) - Learn how to eject and override existing field components
 - [Ejecting views](../eject-views.html) - Learn how to eject and override existing views
 - [Extending Avo::BaseResource](../resources.html#extending-avo-baseresource)
 - [Views](../views.html) - Understanding different view types in Avo

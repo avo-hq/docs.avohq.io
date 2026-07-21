@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The Radio field is used to render radio buttons."
+fieldTags: [choice]
 ---
 
 # Radio
