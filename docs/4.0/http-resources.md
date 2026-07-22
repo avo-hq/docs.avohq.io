@@ -196,3 +196,38 @@ end
 ```
 
 This approach grants you complete control over how HTTP Resources interact with your external services, allowing seamless integration, even with APIs that have unconventional or highly specific requirements.
+
+## Debug console
+
+HTTP Resources ship with an interactive debug console for inspecting exactly what your resource sends and receives. Visit `<avo_root>/http-resource/debug` (e.g. `/avo/http-resource/debug`), pick a resource and an action (`index`, `show`, `count`, `create`, `update`, or `delete`), and fire the request.
+
+For each run you can inspect:
+
+- the sent URL, query params, and (masked) request headers
+- the raw response alongside the parsed result
+- the request timing
+- the output of your `parse_collection`, `parse_record`, and `parse_count` blocks
+
+Errors are surfaced inline per stage — a failed request and a failing `parse_*` block are reported separately — so a broken adapter never crashes the page.
+
+The console is gated behind the `avo-http_resource` license feature and Avo's developer/admin access, the same gate as Avo's own debug tools.
+
+:::warning
+The `create`, `update`, and `delete` actions hit your real external API. From the console they require an explicit confirmation before running.
+:::
+
+### Add it to the sidebar
+
+To surface the console as a tool in the sidebar's **Tools** section, add a sidebar item partial to your app at `app/views/avo/sidebar/items/_http_resource_debugger.html.erb`:
+
+```erb
+<%= render Avo::Sidebar::LinkComponent.new(
+  label: "HTTP debugger",
+  path: File.join(avo.root_path, "http-resource", "debug"),
+  icon: "tabler/outline/api"
+) %>
+```
+
+### JSON API
+
+The same diagnostics are available as JSON for scripting or agent use. `POST` to `<avo_root>/http-resource/debug/run.json` with the params `resource`, `probe_action`, `id`, `page`, `limit`, `query`, `body`, and `confirm`. Write actions (`create`, `update`, `delete`) require `confirm=1` since they hit the real external API.
