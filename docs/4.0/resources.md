@@ -675,6 +675,30 @@ end
 
 </Option>
 
+<Option name="`self.index_view_loading`">
+
+Controls when the <Index /> view runs its records query.
+
+With the default `:eager`, records are queried and rendered in the initial request. With `:lazy`, Avo renders the header and controls immediately, then defers the records query to a Turbo Frame request and shows a loading state until the table, grid, or other view type loads.
+
+```ruby{2}
+class Avo::Resources::Post < Avo::BaseResource
+  self.index_view_loading = :lazy
+end
+```
+
+Once the frame has loaded, search, filters, sorting, pagination, and view switches keep updating inside it asynchronously while the browser URL and query state stay current.
+
+- **Type:** Symbol
+- **Default:** `:eager`
+- **Values:** `:eager`, `:lazy`
+
+:::info
+Lazy loading applies only to a resource's own <Index /> view rendered by the default index component. Association indexes (`has_many`, `has_and_belongs_to_many`) and custom index components keep loading their records eagerly.
+:::
+
+</Option>
+
 <Option name="`self.model_class`">
 
 For some resources you might have a model that is namespaced, or you might have a secondary resource for a model. For that scenario, you can use the `self.model_class` option to tell Avo which model to reference in that resource.
