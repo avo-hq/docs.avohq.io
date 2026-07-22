@@ -299,6 +299,69 @@ The `format` block can return plain text, so it also works as a text-only badge 
 
 </Option>
 
+## Limiting index columns per scope
+
+By default a scope only changes which **records** show on the index. It can also change which **columns** show while it is active. Only the index view is affected — the show, new, and edit views keep the resource's normal fields.
+
+<Option name="`fields`" headingSize="3">
+
+Define a `fields` method on the scope to declare the exact columns shown on the index while that scope is active. It uses the same DSL and options as a resource's [`fields`](./resources.html) method, so anything you can pass to `field` works here too.
+
+```ruby{5-9}
+# app/avo/scopes/published.rb
+class Avo::Scopes::Published < Avo::Scopes::BaseScope
+  self.scope = -> { query.where(published: true) }
+
+  def fields
+    field :id, as: :id
+    field :title, as: :text
+    field :published_at, as: :date_time
+  end
+end
+```
+
+Scopes without a `fields` method keep the resource's default index columns.
+
+</Option>
+
+---
+
+<Option name="`field_whitelist`" headingSize="3">
+
+For a lighter touch, keep the resource's own fields but show **only** the listed columns while the scope is active. Accepts a proc or a static array, resolved through the [Execution Context](#execution-context).
+
+```ruby{4}
+# app/avo/scopes/members.rb
+class Avo::Scopes::Members < Avo::Scopes::BaseScope
+  self.scope = -> { query.where(admin: false) }
+  self.field_whitelist = -> { [:name, :email, :role] }
+end
+```
+
+</Option>
+
+---
+
+<Option name="`field_blacklist`" headingSize="3">
+
+The inverse of `field_whitelist` — hide the listed columns and keep the rest. Accepts a proc or a static array.
+
+```ruby{4}
+# app/avo/scopes/members.rb
+class Avo::Scopes::Members < Avo::Scopes::BaseScope
+  self.scope = -> { query.where(admin: false) }
+  self.field_blacklist = -> { [:internal_notes, :audit_trail] }
+end
+```
+
+:::warning Display only
+`field_whitelist` and `field_blacklist` change only which columns render on the index. They are **not** an authorization boundary — the underlying data is still loaded and remains visible on the show and edit views and through the API. Use a [policy](./authorization.html) or a field's [`visible`](./field-options.html) option to actually restrict access to sensitive attributes.
+:::
+
+**Precedence** when a scope is active: a `fields` method wins over everything; otherwise `field_whitelist` wins over `field_blacklist`; with none set, the resource's default columns are used.
+
+</Option>
+
 ## Full example
 
 ```ruby
