@@ -138,6 +138,25 @@ bin/rails generate avo:eject --partial :head
 
 Avo renders the `:head` partial after its bundled stylesheets, so these take precedence too. The full list of component variables, with defaults and descriptions, lives in the [CSS variables reference](./appearance-api.html#css-variables).
 
+### Set a background image
+
+The main content panel takes a solid color from [`--color-main-content-background`](./appearance-api.html#css-variables). For an **image or gradient** instead, there's no config option — set `background-image` on `.main-content` in `avo-overrides.css`. It layers over that color, so keep an opaque image or leave the color as the fallback for any area the image doesn't cover:
+
+```css
+/* app/assets/stylesheets/avo-overrides.css */
+.main-content {
+  background-image: url("/my-background.png"); /* a file in public/, or a full URL */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Or a gradient — no asset needed: */
+/* .main-content { background-image: linear-gradient(135deg, #dbeafe, #fce7f3); } */
+```
+
+Scope a different image per scheme with `.dark .main-content { background-image: … }`.
+
 ## Style your custom UI
 
 Theming variables cover Avo's own screens. When you build [custom tools](./custom-tools.html), [custom fields](./custom-fields.html), or [resource tools](./resource-tools.html), you're writing your own markup — style it with Tailwind utility classes or your own CSS:
