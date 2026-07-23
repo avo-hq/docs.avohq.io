@@ -1,12 +1,16 @@
-# Execution context
+---
+license: community
+---
 
-[`Avo::Services::EncryptionService`](https://github.com/avo-hq/avo/blob/main/lib/avo/services/encryption_service.rb) it's used internally by Avo when is needed to encrypt sensible params.
+# Encryption service
+
+[`Avo::Services::EncryptionService`](https://github.com/avo-hq/avo/blob/main/lib/avo/services/encryption_service.rb) is used internally by Avo when it needs to encrypt sensitive params.
 
 One example is the select all feature, where we pass the query, encrypted, through params.
 
 ## How does the [`Avo::Services::EncryptionService`](https://github.com/avo-hq/avo/blob/main/lib/avo/services/encryption_service.rb) work?
 
-The `EncryptionService` is an service that can be called anywhere on the app.
+The `EncryptionService` is a service that can be called anywhere in the app.
 
 ### Public methods
 

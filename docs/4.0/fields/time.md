@@ -3,6 +3,8 @@ license: community
 field_type: time
 default_format: TT
 default_picker_format: H:i:S
+description: "The Time field is similar to the DateTime field."
+fieldTags: [date & time]
 ---
 
 # Time

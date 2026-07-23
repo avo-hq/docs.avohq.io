@@ -8,7 +8,7 @@ Avo is a **Ruby on Rails engine** that runs isolated and side-by-side with your 
 
 Avo's philosophy is to have as little business logic in your app as possible and give the developer the right tools to extend the functionality when needed.
 
-That means we use a few files to configure most of the interface. When that configuration is not enough, we enable the developer to export ([eject](./eject-views#partial)) partials or even generate new ones for their total control.
+That means we use a few files to configure most of the interface. When that configuration is not enough, we enable the developer to export ([eject](./eject-views#eject-a-partial)) partials or even generate new ones for their total control.
 
 ### Prepend engine name in URL path helpers
 
@@ -57,4 +57,4 @@ Avo's built with Hotwire, so anytime you'd like to use Turbo Frames, that's supp
 
 Avo comes loaded with Stimulus JS and has a quite deep integration with it by providing useful built-in helpers that improve the development experience.
 
-Please follow the [Stimulus JS guide](./stimulus-integration.html ) that takes an in-depth look at all the possible ways of extending the UI.
+Please follow the [JavaScript guide](./javascript.html) that takes an in-depth look at all the possible ways of extending the UI.

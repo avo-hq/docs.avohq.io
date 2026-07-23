@@ -50,7 +50,7 @@ application.register('nested-form', NestedForm)
 ```
 
 :::info
-Use [this guide](./../custom-asset-pipeline.html#add-custom-js-code-and-stimulus-controllers) to add custom JavaScript to your Avo app.
+Use [this guide](./../asset-handling.html#add-your-own-css-and-javascript) to add custom JavaScript to your Avo app.
 :::
 
 ### 3. Generate a new resource tool

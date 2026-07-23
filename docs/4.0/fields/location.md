@@ -1,6 +1,8 @@
 ---
 license: community
 betaStatus: "Open beta"
+description: "The Location field is used to display a point on a map."
+fieldTags: [maps]
 ---
 
 # Location
@@ -59,7 +61,7 @@ The `mapkick_options` option allows you to customize the appearance and behavior
 
 Using this option, you can provide a hash of configuration settings supported by the Mapkick gem, such as specifying the map style, enabling or disabling controls, or adding additional customizations.
 
-#### Default
+#### Default value
 
 - When `static` is `true`:
 
@@ -99,6 +101,23 @@ field :coordinates,
 By using `mapkick_options`, you can tailor the map's look and functionality to suit your application's requirements.
 </Option>
 
+<Option name="`zoom`">
+
+Sets the initial zoom level of the interactive map. It has no effect on static maps.
+
+#### Default value
+
+`15`
+
+#### Possible values
+
+Any integer zoom level supported by Mapbox.
+
+```ruby
+field :coordinates, as: :location, zoom: 12
+```
+</Option>
+
 <Option name="`static`">
 
 The `static` option enables the rendering of a static map leveraging the power of the [mapkick-static](https://github.com/ankane/mapkick-static) gem.
@@ -108,7 +127,7 @@ You need to add the [mapkick-static](https://github.com/ankane/mapkick-static) g
 :::
 
 
-#### Default
+#### Default value
 
 `false`
 

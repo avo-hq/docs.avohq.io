@@ -63,6 +63,14 @@ end
 
 </Option>
 
+## Customize the profile widget
+
+The sidebar footer shows a small profile widget displaying three pieces of information about the current user — `name`, `photo`, and `title` — all read from the object returned by your [`current_user_method`](#customize-the-current-user-method).
+
+- **Name:** Avo calls the `name` method. If the object doesn't respond to it, it tries `email`, then falls back to `Avo user`.
+- **Photo:** the `avatar` method, used as the `src` of the photo.
+- **Title:** the `avo_title` method, displayed under the name.
+
 ## Customize the sign-out link
 
 If your app responds to `destroy_user_session_path`, a sign-out menu item will be added on the bottom sidebar (when you click the three dots). If your app does not respond to this method, the link will be hidden unless you provide a custom sign-out path. There are two ways to customize the sign-out path.

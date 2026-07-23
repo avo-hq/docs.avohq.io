@@ -1,6 +1,8 @@
 ---
 license: community
 outline: [2, 3]
+description: "The textarea field renders a textarea element."
+fieldTags: [text]
 ---
 
 # Textarea
@@ -20,19 +22,19 @@ field :body, as: :textarea
 ## Options
 
 
-<Option name="`rows`" headingSize="3">
+<Option name="`rows`">
 
 Set the number of rows visible in the `Edit` and `New` views.
 
-```ruby
-field :body, as: :textarea, rows: 5
-```
-
-#### Default
+#### Default value
 
 `5`
 
 #### Possible values
 
 Any integer.
+
+```ruby
+field :body, as: :textarea, rows: 5
+```
 </Option>

@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The File field is the fastest way to implement file uploads in a Ruby on Rails app using Active Storage."
+fieldTags: [attachments]
 ---
 
 # File
@@ -20,7 +22,7 @@ Avo detects the attachment type via Active Storage and renders images, audio, an
 
 ## Variants
 
-When using the `file` field to display an image, you can opt to show a processed variant of that image. This can be achieved using the [`format_using`](./../field-options.html#fields-formatter) option.
+When using the `file` field to display an image, you can opt to show a processed variant of that image. This can be achieved using the [`format_using`](./../field-options.html#format-displayed-values) option.
 
 ### Example:
 

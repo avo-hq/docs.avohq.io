@@ -2,7 +2,7 @@
 
 Scope out the records displayed in the table.
 
-#### Default
+#### Default value
 
 `nil`
 

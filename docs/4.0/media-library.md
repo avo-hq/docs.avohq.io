@@ -1,13 +1,15 @@
 ---
+license: community
 betaStatus: Alpha
 demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1698"
+outline: [2, 3]
 ---
 
 # Media Library
 
 <Image src="/assets/img/4_0/media-library/media-library.webm" dark-src="/assets/img/4_0/media-library/media-library-dark.webm" alt="Media Library" size="800x402" />
 
-If you run an asset-intensive, having a place to view all those asses would be great. It's becoming easier with Avo and it's Media Library feature.
+If you run an asset-intensive app, having one place to view and manage all those assets is invaluable. Avo's Media Library feature makes that easier.
 
 The Media Library has two goals in mind.
 
@@ -38,7 +40,7 @@ end
 ```
 
 This is the killswitch of the whole feature.
-When disabled, the Media Library will not be available to anyone. It will hide the menu item, block the all the routes, and hide media the library icons from the editors.
+When disabled, the Media Library will not be available to anyone. It will hide the menu item, block all the routes, and hide the Media Library icons from the editors.
 
 ## Hide menu item
 
@@ -68,7 +70,7 @@ This will hide the menu item from the sidebar if the current user is not a devel
 
 ## Add it to the menu editor
 
-The Media Library is a menu item in the sidebar. You can add it to the menu editor by using the `media_library` helper.
+If you [customize the menu](./menu-editor), the Media Library won't appear automatically. Add it back with a `link_to` (or `link`) item pointing at `avo.media_library_index_path`.
 
 ```ruby
 # config/initializers/avo.rb
@@ -93,3 +95,13 @@ field :body, as: :markdown
 
 The editors will each have a button to open the Media Library modal.
 Once open, after the user selects the asset, it will be injected into the editor.
+
+### Disable it on a single markdown field
+
+The [`markdown`](./fields/markdown) field accepts a `media_library` option (defaults to `true`). Set it to `false` to hide the gallery button on that field while keeping the Media Library enabled everywhere else.
+
+```ruby
+field :body, as: :markdown, media_library: false
+```
+
+This is a `markdown`-only option; the `trix` and `rhino` fields don't support per-field toggling.

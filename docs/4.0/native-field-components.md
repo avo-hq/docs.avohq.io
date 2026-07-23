@@ -6,7 +6,7 @@ feedbackId: 1273
 
 One of the most important features of Avo is the ability to extend it pass the DSL. It's very important to us to enable you to add the features you need and create the best experience for your users.
 
-That's why you can so easily create [custom fields](./custom-fields), [resource tools](./resource-tools), and [custom tools](./custom-tools) altogether. When you need to augment the UI even more you can use your [custom CSS and JS assets](./custom-asset-pipeline) too.
+That's why you can so easily create [custom fields](./custom-fields), [resource tools](./resource-tools), and [custom tools](./custom-tools) altogether. When you need to augment the UI even more you can use your [custom CSS and JS assets](./asset-handling) too.
 
 When you start adding those custom views you might want to add your own fields, and you'd like to make them look like the rest of the app.
 That's why Avo provides a way to use those fields beyond the DSL, in your own custom Rails partials.
@@ -18,33 +18,34 @@ When you generate a new [resource tool](./resource-tools) you get access to the 
 :::details Sample resource tool
 ```erb
 <div class="flex flex-col">
-  <%= render Avo::PanelComponent.new title: "Post info" do |c| %>
-    <% c.with_tools do %>
-      <%= a_link('/avo', icon: 'heroicons/solid/academic-cap', style: :primary) do %>
+  <%= render ui.panel(title: "Post info") do |panel| %>
+    <% panel.with_controls do %>
+      <%= a_link('/avo', icon: 'tabler/outline/school', color: :primary, style: :primary) do %>
         Dummy link
       <% end %>
     <% end %>
-    <% c.with_body do %>
-      <div class="flex flex-col p-4 min-h-24">
-        <div class="space-y-4">
-          <h3>🪧 This partial is waiting to be updated</h3>
-          <p>
-            You can edit this file here <code class='p-1 rounded bg-gray-500 text-white text-sm'>app/views/avo/resource_tools/post_info.html.erb</code>.
-          </p>
-          <p>
-            The resource tool configuration file should be here <code class='p-1 rounded bg-gray-500 text-white text-sm'>app/avo/resource_tools/post_info.rb</code>.
-          </p>
-          <%
-            # In this partial, you have access to the following variables:
-            # tool
-            # @resource
-            # @resource.model
-            # form (on create & edit pages. please check for presence first)
-            # params
-            # Avo::Current.context
-            # current_user
-          %>
-        </div>
+
+    <% panel.with_card(title: "New resource tool") do %>
+      <div class="flex flex-col p-4 min-h-24 space-y-4">
+        <h3>🪧 This partial is waiting to be updated</h3>
+
+        <p>
+          You can edit this file here <code class='p-1 rounded bg-gray-500 text-white text-sm'>app/views/avo/resource_tools/post_info.html.erb</code>.
+        </p>
+
+        <p>
+          The resource tool configuration file should be here <code class='p-1 rounded bg-gray-500 text-white text-sm'>app/avo/resource_tools/post_info.rb</code>.
+        </p>
+
+        <%
+          # In this partial you have access to the following variables:
+          # tool
+          # @resource
+          # @resource.record
+          # params
+          # Avo::Current.context
+          # current_user
+        %>
       </div>
     <% end %>
   <% end %>

@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The Avatar field is a field that displays a user's avatar or initials."
+fieldTags: [assets]
 ---
 
 # Avatar

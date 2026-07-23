@@ -1,6 +1,6 @@
 ## Nested in Forms
 
-You can use ["Show on edit screens"](#show-on-edit-screens) to make the `{{ $frontmatter.field_type }}` field available in the [edit](./../views.html#Edit) view. However, this will render it using the [show](./../views.html#Show) view component.
+You can use ["Show on edit screens"](#show-on-edit-screens) to make the `{{ $frontmatter.field_type }}` field available in the [edit](./../views.html#edit) view. However, this will render it using the [show](./../views.html#show) view component.
 
 To enable nested creation for the `{{ $frontmatter.field_type }}` field, allowing it to be created and / or edited alongside its parent record within the same form, use the `nested` option which is a hash with configurable option.
 
@@ -16,11 +16,11 @@ Run `bundle install`. If you have not set up packager.dev access yet, see [Gem s
 
 Keep in mind that this will display the field’s resource as it appears in the edit view.
 
-<Option name="nested">
+<Option name="`nested`">
 
 Enables this field as a nested form in the specified views.
 
-##### Default value
+#### Default value
 
 `{}`
 
@@ -28,9 +28,9 @@ Enables this field as a nested form in the specified views.
 
 A hash with the following options:
 - `on:` Views in which to enable nesting. Accepted values:
-  - `:new` - Enables nesting in the [new](./../views.html#New) view.
-  - `:edit` - Enables nesting in the [edit](./../views.html#Edit) view.
-  - `:forms` - Enables nesting in the [new](./../views.html#New) and [edit](./../views.html#Edit) views.
+  - `:new` - Enables nesting in the [new](./../views.html#new) view.
+  - `:edit` - Enables nesting in the [edit](./../views.html#edit) view.
+  - `:forms` - Enables nesting in the [new](./../views.html#new) and [edit](./../views.html#edit) views.
 - `limit:` *(Only for `has_many` and `has_and_belongs_to_many` fields)* Hides the "Add" button when the specified limit is reached.
 
 :::tip

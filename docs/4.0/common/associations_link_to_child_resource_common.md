@@ -4,7 +4,7 @@ Sets which resource should be used in an STI scenario.
 
 See more on this in the [STI section](./../associations#link-to-child-resource-when-using-sti).
 
-#### Default
+#### Default value
 
 `false`. When it's `false` it will use the same resource.
 
