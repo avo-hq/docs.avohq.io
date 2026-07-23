@@ -395,8 +395,18 @@ config.back_to_top = {
 
 Raise `threshold` if you'd rather the pill only show up further down long pages.
 
+The button's label is translated — override it like any other Avo string:
+
+```yaml
+# config/locales/avo.en.yml
+en:
+  avo:
+    back_to_top: Back to top
+```
+
 - **Type:** Hash, merged over the defaults
 - **Default:** `{ enabled: false, threshold: 64 }`
+- **i18n key:** `avo.back_to_top` ("Back to top")
 
 </Option>
 
