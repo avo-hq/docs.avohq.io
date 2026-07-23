@@ -176,7 +176,8 @@ end
 ```
 
 - **Type:** String or Proc
-- **Default:** `"Are you sure you want to run this action?"` (translated, i18n key `avo.are_you_sure_you_want_to_run_this_option`)
+- **Default:** `"Are you sure you want to run this action?"`
+- **i18n key:** `avo.are_you_sure_you_want_to_run_this_option` ("Are you sure you want to run this action?")
 
 </Option>
 
@@ -196,7 +197,8 @@ end
 ```
 
 - **Type:** String or Proc
-- **Default:** `"Run"` (translated, i18n key `avo.run`)
+- **Default:** `"Run"`
+- **i18n key:** `avo.run` ("Run")
 
 </Option>
 
@@ -216,7 +218,8 @@ end
 ```
 
 - **Type:** String or Proc
-- **Default:** `"Cancel"` (translated, i18n key `avo.cancel`)
+- **Default:** `"Cancel"`
+- **i18n key:** `avo.cancel` ("Cancel")
 
 </Option>
 

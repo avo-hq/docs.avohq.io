@@ -462,7 +462,8 @@ self.empty_message = "No sign-ups this week"
 ```
 
 - **Type:** String or Proc
-- **Default:** the translated `avo.no_item_found`
+- **Default:** the translated default
+- **i18n key:** `avo.no_item_found` ("No record found")
 
 </Option>
 

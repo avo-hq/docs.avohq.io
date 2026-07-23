@@ -93,7 +93,8 @@ Links to the record's <Show /> view. Rendered by default in the row controls.
 Submits the form on the <Edit /> and <New /> views.
 
 - **Options:** [`label`](#label), [`title`](#title), [`style`](#style), [`color`](#color), [`icon`](#icon)
-- **Default label:** "Save", or the resource's `save` translation when defined
+- **Default label:** `"Save"`
+- **i18n key:** `avo.save` ("Save"), overridden by the resource's own `save` translation when defined
 
 </Option>
 
@@ -204,9 +205,9 @@ Renders a link to a path set by you. The first two arguments are the label and t
 link_to "Fish.com", "https://fish.com", icon: "heroicons/outline/academic-cap", target: :_blank
 ```
 
-- **Options:** [`title`](#title), [`style`](#style), [`color`](#color), [`icon`](#icon), `target`, `data`, `class`
+- **Options:** [`title`](#title), [`style`](#style), [`color`](#color), [`icon`](#icon), [`size`](#size), `target`, `data`, `class`
 
-Any other arguments (`rel: "noopener"`, etc.) are forwarded to the link.
+Only these options are rendered on the link — any other argument (`rel: "noopener"`, etc.) is ignored. Use [`data`](#data) for `data-*` attributes, including the Turbo and Stimulus ones.
 
 #### `target`
 
