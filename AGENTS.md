@@ -62,7 +62,7 @@ Frontmatter:
 
 ```yaml
 ---
-license: add_on # community | addon_on
+license: add_on # community | add_on
 add_on_link: https://avohq.io/addons/http-resource
 outline: [2, 3] # h2 + h3 in the "On this page" panel; or `deep`
 api_docs: ./feature-api.html # link to the reference; omit if guide-only

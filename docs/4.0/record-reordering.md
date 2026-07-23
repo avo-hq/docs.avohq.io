@@ -1,5 +1,6 @@
 ---
-license: pro
+license: add_on
+add_on_link: https://avohq.io/addons/record-reordering
 demoVideo: "https://www.youtube.com/watch?v=LEALfPiyfRk"
 outline: [2, 3]
 api_docs: ./record-reordering-api.html

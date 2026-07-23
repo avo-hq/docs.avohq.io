@@ -35,7 +35,7 @@ end
 
 You can do that using Pundit scopes and the Authorization feature. You create a policy for that resource and set the condition on the `index?` method. More on that on the [authorization](authorization) page and Pundit's [docs](https://github.com/varvet/pundit).
 
-Authorization is a Pro feature for Avo. Please [reach out](https://avohq.io/subscriptions/new?plan=2&trial=1) if you need a trial key to test it out.
+Authorization is an [add-on](authorization) for Avo. Please [reach out](https://avohq.io/addons/authorization) if you need a trial key to test it out.
 
 ## How can I set a homepage for the admin section
 
@@ -102,7 +102,7 @@ gem 'avo', '1.19.1.pre.1'
 
 If you're having trouble with the authorization feature, make sure you have the following enabled:
 
-- you are on a [Pro](licensing) license
+- you have the [Authorization add-on](authorization) installed
 - you have set the [`current_user_method`](authentication.html#customize-the-current-user-method)
 - you have reset the rails server after the above settings
 - you have the pundit policy on the appropriate model

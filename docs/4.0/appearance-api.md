@@ -1,5 +1,5 @@
 ---
-license: pro
+license: community
 outline: [2, 3]
 guide: ./appearance.html
 prev:

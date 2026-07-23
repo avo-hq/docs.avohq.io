@@ -1,5 +1,6 @@
 ---
-license: pro
+license: add_on
+add_on_link: https://avohq.io/addons/menu-editor
 outline: [2, 3]
 guide: ./menu-editor.html
 ---

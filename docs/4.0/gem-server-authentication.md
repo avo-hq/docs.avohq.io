@@ -195,7 +195,7 @@ gem 'avo',
 
 group :avo, optional: true do
   source "https://packager.dev/avo-hq/" do
-    gem "avo-advanced", "~> 3.17"
+    gem "avo-advanced", "~> 4.0"
   end
 end
 ```

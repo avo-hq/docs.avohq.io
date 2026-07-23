@@ -61,7 +61,7 @@ module Avo
 
           # Add asset files to be loaded by Avo
           # These assets will be added to Avo's `application.html.erb` layout file
-          Avo.asset_manager.add_javascript "/avo-advanced-assets/avo_advanced"
+          Avo.asset_manager.add_javascript "/avo-dashboards-assets/avo_dashboards"
           Avo.asset_manager.add_stylesheet "/avo-kanban-assets/avo_kanban"
         end
 
