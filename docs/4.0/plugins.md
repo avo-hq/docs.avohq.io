@@ -1,14 +1,9 @@
 ---
-betaStatus: Beta
+license: community
+outline: [2, 3]
 ---
 
 # Plugins
-
-:::warning
-This feature is in beta and we might change the API as we develop it.
-
-These docs are in beta too, so please [ask for more information](https://github.com/avo-hq/avo/discussions) when you need it.
-:::
 
 ## Overview
 
@@ -16,9 +11,7 @@ Plugins are a way to extend the functionality of Avo.
 
 ### Light layer
 
-We are in the early days of the plugin system and we're still figuring out the best way to do it. This is why we have a light layer that you can use to extend the functionality of Avo.
-
-This means we provide two hooks that you can use to extend the functionality of the Rails app, and a few Avo APIs to add scrips and stylesheets.
+Avo exposes a light layer for extending it: two boot/request hooks you can use to extend the Rails app, plus a few Avo APIs to add scripts and stylesheets.
 
 ## Register the plugin
 
@@ -102,31 +95,9 @@ We don't use it as much in our plugins as we do in the `avo_boot` hook.
 
 </Option>
 
-## Avo `AssetManager`
+## Add asset files
 
-We use the `AssetManager` to add our own asset files (JavaScript and CSS) to be loaded by Avo. They will be added in the `<head>` section of Avo's layout file.
-
-It has two methods:
-
-<Option name="`add_javascript`">
-
-```ruby
-Avo.asset_manager.add_javascript "/avo-kanban-assets/avo_kanban"
-```
-
-This snippet will add the `/avo-kanban-assets/avo_kanban.js` file to the `<head>` section of Avo's layout file.
-
-</Option>
-
-<Option name="`add_stylesheet`">
-
-```ruby
-Avo.asset_manager.add_stylesheet "/avo-kanban-assets/avo_kanban"
-```
-
-This snippet will add the `/avo-kanban-assets/avo_kanban.css` file to the `<head>` section of Avo's layout file.
-
-</Option>
+Plugins load their own JavaScript and CSS through Avo's [`AssetManager`](./asset-manager.html), which injects them into the `<head>` of Avo's layout. It exposes `add_javascript`, `add_stylesheet`, and `register_stimulus_controller` — see the [Asset manager](./asset-manager.html) guide for details.
 
 ## Using a middleware to surface asset files
 

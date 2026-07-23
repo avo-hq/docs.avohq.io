@@ -1,3 +1,8 @@
+---
+license: community
+outline: [2, 3]
+---
+
 # `Avo::ApplicationController`
 
 ## On extending the `ApplicationController`
@@ -52,7 +57,7 @@ module Multitenancy
   end
 end
 
-# configuration/initializers/avo.rb
+# config/initializers/avo.rb
 Rails.configuration.to_prepare do
   Avo::ApplicationController.include Multitenancy
 end
@@ -70,7 +75,7 @@ Sometimes you don't want to add methods but want to override the current ones.
 
 For example, you might want to take control of the `Avo::ApplicationController.fill_record` method and add your own behavior.
 
-TO do that you should change a few things in the approach we mentioned above. First we want to `prepend` the concern instead of `include` it and next, if we want to run a class method, we used `prepended` instead of `included`.
+To do that you should change a few things in the approach we mentioned above. First we want to `prepend` the concern instead of `include` it and next, if we want to run a class method, we use `prepended` instead of `included`.
 
 
 ```ruby{5-8,10-12,14-17,23}
@@ -93,7 +98,7 @@ module ApplicationControllerOverrides
   end
 end
 
-# configuration/initializers/avo.rb
+# config/initializers/avo.rb
 Rails.configuration.to_prepare do
   # we will prepend instead of include
   Avo::ApplicationController.prepend ApplicationControllerOverrides

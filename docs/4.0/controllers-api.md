@@ -48,7 +48,22 @@ The response rendered when a record was created with success.
 
 ```ruby
 def create_success_action
-  return super if params[:via_belongs_to_resource_class].present?
+  if params[:via_belongs_to_resource_class].present?
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.remove(Avo::MODAL_FRAME_ID),
+          turbo_stream.avo_update_belongs_to(
+            relation_name: params[:via_relation],
+            target_record_id: @record.to_param,
+            target_resource_label: @resource.record_title,
+            target_resource_class: @record.class.name
+          )
+        ]
+      end
+    end
+    return
+  end
 
   respond_to do |format|
     format.html { redirect_to after_create_path, flash: {success: create_success_message} }
@@ -258,7 +273,7 @@ The flash message shown when a record was destroyed with success.
 
 ```ruby
 def destroy_success_message
-  t("avo.resource_destroyed")
+  t("avo.resource_destroyed", attachment_class: @attachment_class)
 end
 ```
 

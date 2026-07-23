@@ -7,7 +7,9 @@ When defining models in an Avo-powered application, certain names should be avoi
 Avo uses the following names for its internal controllers:
 
 - `action`
+- `appearance_settings`
 - `application`
+- `array`
 - `association`
 - `attachment`
 - `base_application`
@@ -15,6 +17,7 @@ Avo uses the following names for its internal controllers:
 - `chart`
 - `debug`
 - `home`
+- `media_library`
 - `private`
 - `resource`
 - `search`

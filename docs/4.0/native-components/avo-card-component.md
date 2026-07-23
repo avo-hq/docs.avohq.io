@@ -35,16 +35,14 @@ All options are optional. You may render a card without any of them.
 
 The title of the card, rendered at the top of the header.
 
-#### Type
-`String`
+- **Type:** String
 </Option>
 
 <Option name="`description`">
 
 A small line of text under the title that describes what the card is about.
 
-#### Type
-`String`
+- **Type:** String
 </Option>
 
 <Option name="`padded`">
@@ -57,17 +55,14 @@ Prefer this option over adding your own `p-*`/`px-*`/`py-*` utility classes to t
 content: it gives you Avo's exact padding and stays correct if that spacing ever
 changes. It's equivalent to adding the `card--padded` CSS modifier via `class`.
 
-#### Type
-`Boolean`
-
-#### Default
-`false`
-
 ```erb
 <%= render ui.card(padded: true) do %>
   Free-form content that needs padding.
 <% end %>
 ```
+
+- **Type:** Boolean
+- **Default:** `false`
 </Option>
 
 <Option name="`class`">
@@ -75,14 +70,13 @@ changes. It's equivalent to adding the `card--padded` CSS modifier via `class`.
 A list of CSS classes applied to the outer `.card` container. This is also how you
 apply the built-in [variants](#variants).
 
-#### Type
-`String`
-
 ```erb
 <%= render ui.card(title: "Card", class: "ring-2 ring-blue-500") do %>
   Something here.
 <% end %>
 ```
+
+- **Type:** String
 </Option>
 
 <Option name="`wrapper_class`">
@@ -91,22 +85,20 @@ A list of CSS classes applied to the inner `.card__wrapper` element (the element
 wraps the header, body, and footer). Use it when you need to target the inner wrapper
 rather than the outer container.
 
-#### Type
-`String`
+- **Type:** String
 </Option>
 
 <Option name="`data`">
 
 A hash of `data-*` attributes forwarded to the outer card container.
 
-#### Type
-`Hash`
-
 ```erb
 <%= render ui.card(title: "Chart", data: { controller: "distribution-chart" }) do %>
   ...
 <% end %>
 ```
+
+- **Type:** Hash
 </Option>
 
 <Option name="`index`">
@@ -114,8 +106,7 @@ A hash of `data-*` attributes forwarded to the outer card container.
 The item index, forwarded to the card as a `data-item-index` attribute. Used when cards
 are rendered as part of a collection.
 
-#### Type
-`Integer`
+- **Type:** Integer
 </Option>
 
 ## Slots
