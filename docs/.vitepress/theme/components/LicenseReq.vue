@@ -5,8 +5,8 @@ const props = defineProps({
   license: String,
   title: String,
   size: String,
-  add_on: String,
-  add_on_link: String,
+  addon: String,
+  addon_link: String,
 });
 const license = computed(() => props.license || "community");
 const size = computed(() => props.size || "sm");
@@ -17,8 +17,8 @@ const links = {
   kanban: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=kanban",
   audit_logging: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=audit_logging",
   custom: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=custom",
-  add_on: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=add_on", // this is different from the other add_on links
-  add_on_blank: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=", // this is different from the other add_on links
+  addon: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=add_on", // this is different from the other addon links
+  addon_blank: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=", // this is different from the other addon links
   mixed: "https://avohq.io/pricing#comparison-heading",
   enterprise: "https://savvycal.com/avo-hq/discovery-call-ent",
 };
@@ -30,16 +30,16 @@ const labels = {
   enterprise: "Enterprise",
   audit_logging: "Audit logging",
   custom: "Custom",
-  add_on: "Add-on",
+  addon: "Add-on",
   mixed: "Community + Add-on",
 };
-console.log(props);
+
 const href = computed(() => {
-  if (props.add_on_link) {
-    return props.add_on_link;
+  if (props.addon_link) {
+    return props.addon_link;
   }
-  if (props.add_on) {
-    return links.add_on_blank + props.add_on;
+  if (props.addon) {
+    return links.addon_blank + props.addon;
   }
   return links[license.value];
 });
@@ -55,7 +55,7 @@ const label = computed(() => labels[license.value]);
       'bg-fuchsia-500 hover:bg-fuchsia-600': license == 'kanban',
       'bg-teal-500 hover:bg-teal-600': license == 'audit_logging',
       'bg-rose-500 hover:bg-rose-600': license == 'custom',
-      'bg-rose-500 hover:bg-rose-600': license == 'add_on',
+      'bg-rose-500 hover:bg-rose-600': license == 'addon',
       'bg-amber-500 hover:bg-amber-600': license == 'mixed',
       'bg-yellow-300 hover:bg-yellow-400 !text-black': license == 'enterprise',
       'text-xs px-1 py-px': size == 'xs',

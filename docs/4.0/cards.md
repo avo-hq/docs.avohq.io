@@ -1,7 +1,7 @@
 ---
 feedbackId: 839
-license: add_on
-add_on_link: https://avohq.io/addons/dashboards
+license: addon
+addon_link: https://avohq.io/addons/dashboards
 outline: [2, 3]
 api_docs: ./cards-api.html
 ---

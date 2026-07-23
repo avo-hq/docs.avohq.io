@@ -152,7 +152,7 @@ end
 
 ## Global search {#global-search}
 
-<LicenseReq license="add_on" add_on_link="https://avohq.io/pricing-4?add_ons[]=global-search" />
+<LicenseReq license="addon" addon_link="https://avohq.io/pricing-4?add_ons[]=global-search" />
 
 The global search palette searches every resource that has `self.search` configured, all at once. Open it by clicking the trigger on the navbar or with the <kbd>Cmd</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on Windows).
 

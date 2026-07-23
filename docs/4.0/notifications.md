@@ -1,6 +1,6 @@
 ---
-license: add_on
-add_on_link: https://avohq.io/addons/notifications
+license: addon
+addon_link: https://avohq.io/addons/notifications
 outline: [2, 3]
 api_docs: ./notifications-api.html
 ---
