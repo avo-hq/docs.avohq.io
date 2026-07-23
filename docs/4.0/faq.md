@@ -13,6 +13,8 @@ You might want to hide some buttons and not show them to your users. That's pret
 - Attach button -> `attach_#{RESOURCE_PLURL_NAME}?` (eg: `attach_posts?`) method
 - Detach button -> `detach_#{RESOURCE_PLURL_NAME}?` (eg: `detach_posts?`) method
 
+If you want to remove or relabel a button regardless of authorization, use [custom controls](./custom-controls) to take over the controls area and declare only the buttons you want.
+
 ## Why don't regular URL helpers work as expected?
 
 When writing rails code somewhere in the Avo domain you might want to use your regular URL helpers like the below:
