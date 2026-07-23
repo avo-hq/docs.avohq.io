@@ -449,6 +449,28 @@ end
 
 </Option>
 
+<Option name="`self.index_view_loading`" headingSize="3">
+
+Controls when the `Index` view queries and renders its records. With `:lazy`, Avo renders the header and controls immediately, then defers the records query to a Turbo Frame request, showing the loading component while the table, grid, or other view type loads.
+
+```ruby
+class Avo::Resources::Post < Avo::BaseResource
+  self.index_view_loading = :lazy
+end
+```
+
+| Value | Behavior |
+| --- | --- |
+| `:eager` | The records are queried and rendered with the initial page load. |
+| `:lazy` | The shell renders first; the records are fetched in a deferred Turbo Frame. Search, filters, sorting, pagination, and view switches then update inside that frame while the browser URL stays in sync. |
+
+- **Type:** Symbol
+- **Default:** `:eager`
+- **Values:** `:eager`, `:lazy`
+- **Scope:** applies only to a resource's own `Index` view rendered by the default `Avo::Views::ResourceIndexComponent`. Association indexes, and resources with a custom index component, keep eager loading regardless of this setting.
+
+</Option>
+
 ## Forms and saving
 
 <Option name="`self.confirm_on_save`" headingSize="3">

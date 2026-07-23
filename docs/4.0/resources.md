@@ -417,6 +417,17 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
+For resources whose records are slow to load, switch to [`self.index_view_loading = :lazy`](./resources-api.html#self.index_view_loading) so the page shell and controls paint immediately and the records stream in through a Turbo Frame:
+
+```ruby
+# app/avo/resources/order.rb
+class Avo::Resources::Order < Avo::BaseResource
+  self.index_view_loading = :lazy
+end
+```
+
+Search, filters, sorting, pagination, and view switches then stay asynchronous inside that frame while the URL keeps in sync. Loading stays eager on association indexes and on resources with a custom index component.
+
 ## Record previews
 
 Let users peek at a record from the `Index` view without opening it. Add a [`preview` field](./fields/preview.html) to the resource and mark the fields you want in the popover with `show_on: :preview`.
