@@ -64,7 +64,7 @@ The core covers managing records. Add-ons extend it toward whatever job your app
 
 **Connect other systems**
 
-- [JSON API](./rest-api/): expose your resources as a JSON API for integrations and mobile apps.
+- [JSON API](./rest-api.html): expose your resources as a JSON API for integrations and mobile apps.
 - [HTTP Resource](./http-resource.html): manage data from an external API as if it were local.
 
 ## Your code
