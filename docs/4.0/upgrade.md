@@ -6,7 +6,11 @@ If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedica
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
-## Resource and field translations are used verbatim
+## Upgrade to 4.0.18
+
+<Option name="Resource and field translations are used verbatim">
+
+### Breaking Change
 
 Avo used to humanize every resource and field label it resolved from your locale files. That silently overrode the casing you wrote: `'Payment Intent ID'` rendered as `Payment intent id`, and `'API Products'` rendered as `Api products`.
 
@@ -16,7 +20,15 @@ Avo now renders a resolved translation exactly as written and humanizes only the
 If your locale entries are lowercase, they used to appear capitalized. They will now appear as written.
 :::
 
-To keep the previous output, capitalize the entry:
+### Action Required
+
+**Review your locale files.** If every `resource_translations` and `field_translations` entry is already written the way you want it on screen, there's nothing to do.
+
+Avo's own interface strings are unaffected — the "New", "Edit", and "View" labels still render as before.
+
+### Steps to Update
+
+Grep your locale files for `resource_translations` and `field_translations`, and capitalize any entry you want capitalized on screen:
 
 ```yaml
 # config/locales/avo.pt-BR.yml
@@ -40,8 +52,8 @@ pt-BR:
         other: 'Arquivos' # [!code ++]
 ```
 
-Grep your locale files for `resource_translations` and `field_translations`, and capitalize any entry you want capitalized on screen. Nothing else changes: resources and fields without a translation still fall back to the humanized class or attribute name.
-
-Avo's own interface strings are unaffected — the "New", "Edit", and "View" labels still render as before.
+Nothing else changes: resources and fields without a translation still fall back to the humanized class or attribute name.
 
 See [Localization (i18n)](./i18n) for the full picture.
+
+</Option>
