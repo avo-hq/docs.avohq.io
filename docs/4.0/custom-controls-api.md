@@ -1,6 +1,6 @@
 ---
 license: add_on
-add_on_link: https://avohq.io/pricing-4?add_ons[]=custom-controls
+add_on_link: https://avohq.io/addons/custom-controls
 outline: [2, 3]
 guide: ./custom-controls.html
 prev:

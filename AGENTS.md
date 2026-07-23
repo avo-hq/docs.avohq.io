@@ -63,13 +63,13 @@ Frontmatter:
 ```yaml
 ---
 license: add_on # community | addon_on
-add_on_link: https://avohq.io/pricing-4?add_ons[]=http-resource
+add_on_link: https://avohq.io/addons/http-resource
 outline: [2, 3] # h2 + h3 in the "On this page" panel; or `deep`
 api_docs: ./feature-api.html # link to the reference; omit if guide-only
 ---
 ```
 
-If the `license` is `add_on`, add the `add_on_link` key with the link to the add-on page. Ensure the addon is split by `-` not `_`. Ask the user to check the link.
+If the `license` is `add_on`, add the `add_on_link` key pointing to the add-on's page: `https://avohq.io/addons/<slug>` (the pill links straight here). The `<slug>` matches the add-on, split by `-` not `_` (e.g. `http-resource`, `kanban-boards`). Ask the user to check the link.
 
 **Add-on pages are named after the add-on, singular.** The page filename matches the add-on's slug. Check the gem/add-on name before titling the page.
 

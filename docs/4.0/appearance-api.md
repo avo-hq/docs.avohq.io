@@ -155,6 +155,10 @@ config.appearance = {
 
 </Option>
 
+:::info
+When either palette is set, Avo renders it as an inline `:root` `<style>` block in the page `<head>`, after your `_head` partial ([load order](./asset-handling.html#load-order-and-overriding-avo-s-styles)). The block is wrapped in `@layer base`, which sits between Avo's defaults (`@layer theme`) and the theme classes (`@layer components`): the brand palette therefore overrides Avo's default colors in both light and dark mode, while a user-selected `.accent-theme-*` / `.neutral-theme-*` still wins so the appearance picker keeps working.
+:::
+
 ## Picker control
 
 <Option name="`neutrals`">

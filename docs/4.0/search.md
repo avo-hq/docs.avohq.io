@@ -63,7 +63,7 @@ class Avo::Resources::User < Avo::BaseResource
         query.ransack(first_name_cont: q, last_name_cont: q, email_cont: q, m: "or").result(distinct: false)
       when :association # picker — tightest
         query.ransack(first_name_cont: q).result(distinct: false)
-      else              # index search bar, kanban
+      else              # index search bar
         query.ransack(first_name_cont: q, last_name_cont: q, m: "or").result(distinct: false)
       end
     }
@@ -74,7 +74,7 @@ end
 If you don't need surface-specific behavior, ignore the local and write a single query that runs everywhere.
 
 :::info
-The `search_type` local is injected by Avo Pro. On a Community-only install the index search bar is the only search surface, and referencing `search_type` in the proc raises an error — write a plain query instead.
+The `search_type` local is injected by Avo Pro for the index, global, and association surfaces. It is **not** injected by the [kanban board](./kanban-boards.html) card picker, and on a Community-only install it isn't defined at all. Referencing `search_type` in those contexts raises an error — guard with `defined?(search_type)` or write a plain query. The kanban picker also reads the term from `params[:q]` rather than a `q` local.
 :::
 
 ## Search within associations

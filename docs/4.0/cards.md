@@ -1,6 +1,8 @@
 ---
 feedbackId: 839
 license: pro
+outline: [2, 3]
+api_docs: ./cards-api.html
 ---
 
 # Cards
@@ -13,11 +15,11 @@ You can add six types of cards to your parent: `partial`, `html`, `metric`, `cha
 
 ## Base settings
 
-All cards have some standard settings like `id`, which must be unique, `label`, `description`, and `discreet_description`. The `label` is the title of your card, the `description` is a subtitle rendered below the title, and the `discreet_description` shows a tiny info icon at the bottom-right of the card with a tooltip containing the text.
+All cards have some standard settings like [`id`](./cards-api.html#self.id), which must be unique, [`label`](./cards-api.html#self.label), [`description`](./cards-api.html#self.description), and [`discreet_description`](./cards-api.html#self.discreet_description). The `label` is the title of your card, the `description` is a subtitle rendered below the title, and the `discreet_description` shows a tiny info icon at the bottom-right of the card with a tooltip containing the text.
 
-Each card has its own `cols` and `rows` settings to control the width and height of the card inside the parent's grid. They can have values from `1` to `6`.
+Each card has its own [`cols`](./cards-api.html#self.cols) and [`rows`](./cards-api.html#self.rows) settings to control the width and height of the card inside the parent's grid. They can have values from `1` to `6`.
 
-All this settings can be called as an lambda.
+All these settings can be set to a lambda.
 
 The lambda will be executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent`, `resource`, `dashboard` and `card`.
 
@@ -81,7 +83,7 @@ end
 
 #### Control the aggregation using ranges
 
-You may also want to give the user the ability to query data in different ranges. You can control what's passed in the dropdown using the' ranges' attribute. The array passed here will be parsed and displayed on the card. All integers are transformed to days, and other string variables will be passed as they are.
+You may also want to give the user the ability to query data in different ranges. You can control what's passed in the dropdown using the [`ranges`](./cards-api.html#self.ranges) attribute. The array passed here will be parsed and displayed on the card. All integers are transformed to days, and other string variables will be passed as they are.
 
 You can also set a default range using the `initial_range` attribute.
 
@@ -108,7 +110,7 @@ end
 
 ## Keep the data fresh
 
-If the parent is something that you keep on the big screen, you need to keep the data fresh at all times. That's easy using `refresh_every`. You pass the number of seconds you need to be refreshed and forget about it. Avo will do it for you.
+If the parent is something that you keep on the big screen, you need to keep the data fresh at all times. That's easy using [`refresh_every`](./cards-api.html#self.refresh_every). You pass the number of seconds you need to be refreshed and forget about it. Avo will do it for you.
 
 ```ruby{3}
 class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
@@ -119,7 +121,7 @@ end
 
 ## Hide the header
 
-In cases where you need to embed some content that should fill the whole card (like a map, for example), you can choose to hide the label and ranges dropdown.
+In cases where you need to embed some content that should fill the whole card (like a map, for example), you can choose to hide the label and ranges dropdown with [`display_header`](./cards-api.html#self.display_header).
 
 ```ruby{3}
 class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
@@ -132,7 +134,7 @@ end
 
 ## Format
 
-Option `self.format` is useful when you want to format the data that `result` returns from `query`.
+Option [`self.format`](./cards-api.html#self.format) is useful when you want to format the data that `result` returns from `query`.
 
 Example without format:
 
@@ -308,24 +310,24 @@ end
 
 ### Chart types
 
-Using the `self.chart_type` class attribute you can change the type of the chart. Supported types are `line_chart`, `pie_chart`, `column_chart`, `bar_chart`, `area_chart`, and `scatter_chart`.
+Using the [`self.chart_type`](./cards-api.html#self.chart_type) class attribute you can change the type of the chart. Supported types are `line_chart`, `pie_chart`, `column_chart`, `bar_chart`, `area_chart`, and `scatter_chart`.
 
 ### Customize chart
 
-Because the charts are being rendered with padding initially, we offset that before rendering to make the chart look good on the card. To disable that, you can set `self.flush = false`. That will set the chart loose for you to customize further.
+Because the charts are being rendered with padding initially, we offset that before rendering to make the chart look good on the card. To disable that, you can set [`self.flush = false`](./cards-api.html#self.flush). That will set the chart loose for you to customize further.
 
-After you set `flush` to `false`, you can add/remove the `scale` and `legend`. You can also place the legend on the left or right using `legend_on_left` and `legend_on_right`.
+After you set `flush` to `false`, you can add/remove the [`scale`](./cards-api.html#self.scale) and [`legend`](./cards-api.html#self.legend). You can also place the legend on the left or right using [`legend_on_left`](./cards-api.html#self.legend_on_left) and [`legend_on_right`](./cards-api.html#self.legend_on_right).
 
-These are just some of the predefined options we provide out of the box, but you can send different [chartkick options](https://github.com/ankane/chartkick#options) to the chart using `chart_options`.
+These are just some of the predefined options we provide out of the box, but you can send different [chartkick options](https://github.com/ankane/chartkick#options) to the chart using [`chart_options`](./cards-api.html#self.chart_options).
 
 If you'd like to use [Groupdate](https://github.com/ankane/groupdate), [Hightop](https://github.com/ankane/hightop), and [ActiveMedian](https://github.com/ankane/active_median) you should require them in your `Gemfile`. Only `chartkick` is required by default.
 
 `chart.js` is supported for the time being. So if you need support for other types, please reach out or post a PR (🙏 PRs are much appreciated).
 
-`self.chartkick_options` accepts callable blocks:
+`self.chart_options` accepts callable blocks:
 ```ruby
 class Avo::Cards::ExampleAreaChart < Avo::Cards::ChartkickCard
-  self.chart_options: -> do
+  self.chart_options = -> do
     {
       library: {
         plugins: {
@@ -337,7 +339,7 @@ class Avo::Cards::ExampleAreaChart < Avo::Cards::ChartkickCard
 end
 ```
 
-`chartkick_options` can also be declared when registering the card:
+`chart_options` can also be declared when registering the card:
 
 ```ruby
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
@@ -537,7 +539,7 @@ If you don't need column headers at all, you probably want the [list card](#list
 
 ### Row links
 
-Set `row_url` to make every row a link. The block runs per row with `record` in scope:
+Set [`row_url`](./cards-api.html#self.row_url) to make every row a link. The block runs per row with `record` in scope:
 
 ```ruby
 self.row_url = -> { record_path(record) }
@@ -557,7 +559,7 @@ self.row_url = -> {
 
 ### Density
 
-Rows use the global [`config.density`](customization-api.html#density) unless the card overrides it:
+Rows use the global [`config.density`](customization-api.html#density) unless the card overrides it with [`density`](./cards-api.html#self.density):
 
 ```ruby
 self.density = :tight # :tight, :normal, :relaxed
@@ -565,7 +567,7 @@ self.density = :tight # :tight, :normal, :relaxed
 
 ### Empty state
 
-When the query returns no rows the card shows a translated "No record found" message. Override it per card:
+When the query returns no rows the card shows a translated "No record found" message. Override it per card with [`empty_message`](./cards-api.html#self.empty_message):
 
 ```ruby
 self.empty_message = "No sign-ups this week"

@@ -1,22 +1,17 @@
 ---
 feedbackId: 943
 demoVideo: "https://www.youtube.com/watch?v=ZMOz22FaAUg"
-betaStatus: Beta
+outline: [2, 3]
 ---
 
-# Stimulus JS & HTML attributes
-
-:::warning
-This feature is in the **beta** phase. The API might change while seeing how the community uses it to build their apps.
-This is not the **dependable fields** feature but a placeholder so we can observe and see what we need to ship to make it helpful to you.
-:::
+# JavaScript & Stimulus
 
 _What we'll be able to do at the end of reading these docs_
 
 <Image src="/assets/img/4_0/stimulus/country-city-select.webm" dark-src="/assets/img/4_0/stimulus/country-city-select-dark.webm" width="878" height="244" alt="An Avo Course edit form with Country and City highlighted together and a browser console readout below: picking USA repopulates the city select and logs the new options, then New York is chosen; switching to Spain swaps the city list and Barcelona is selected." />
 
 :::info
-**Please note** that in order to have the JS code from your controllers loaded in Avo you'll need to add your asset pipeline using [these instructions](custom-asset-pipeline.html). It's really easier than it sounds. It's like you'd add a new JS file to your regular Rails app.
+To have the JS code from your controllers loaded in Avo, first add your entrypoint through your [asset pipeline](./asset-handling.html). It's easier than it sounds — it's like adding a new JS file to a regular Rails app.
 :::
 
 <hr>
@@ -475,7 +470,7 @@ This is how the fields behave with this Stimulus JS controller.
 
 There are a few steps you need to take in order to register the Stimulus JS controller in the current app context.
 
-First, you need to have a JS entrypoint (ex: `avo.custom.js`) and have that loaded in the `_head` partial. For instructions on that please follow [these steps](./custom-asset-pipeline#add-custom-js-code-and-stimulus-controllers) to add it to your app (`importmaps` or `esbuild`).
+First, you need a JS entrypoint (ex: `avo.custom.js`) loaded through your asset pipeline. Follow the [asset handling guide](./asset-handling.html#add-your-own-css-and-javascript) to add it to your app (`importmap` or `esbuild`).
 
 ### Set up a controller
 

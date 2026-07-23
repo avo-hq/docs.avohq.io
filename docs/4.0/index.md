@@ -44,7 +44,7 @@ The core covers managing records. Add-ons extend it toward whatever job your app
 
 **Capture and edit data**
 
-- [Forms](./forms-and-pages/overview.html): standalone forms and pages beyond your resources, for surveys, settings, and bespoke flows.
+- [Forms](./forms-and-pages.html): standalone forms and pages beyond your resources, for surveys, settings, and bespoke flows.
 - [Nested Records](./associations/has_one.html#nested-in-forms): create and edit associated records inside the parent form.
 - [Reactive Fields](./field-options.html#react-to-changes-in-other-fields): fields that show, hide, or update based on what the user picks.
 - [Media Library](./media-library.html): manage every uploaded asset in one place.
@@ -55,7 +55,7 @@ The core covers managing records. Add-ons extend it toward whatever job your app
 - [Kanban](./kanban-boards.html): drag-and-drop boards for pipelines and workflows.
 - [Notifications](./notifications.html): in-app notifications for the events that matter.
 - [Collaboration](./collaboration/overview.html): comments and status updates on records, so context stays with the data.
-- [Audit Logging](./audit-logging/): who did what, and when.
+- [Audit Logging](./audit-logging.html): who did what, and when.
 
 **Control who can do what**
 
@@ -75,14 +75,14 @@ When configuration isn't enough, you drop down to plain Rails. Avo is built to b
 - [Resource tools](./resource-tools.html) embed your own partials inside a resource's pages.
 - [Custom tools](./custom-tools.html) give you entire pages built from partials or View Components.
 - [Eject views](./eject-views.html) copies any of Avo's own templates into your app for full control.
-- [Stimulus integration](./stimulus-integration.html) is baked in for sprinkling interactivity anywhere.
+- [JavaScript & Stimulus](./javascript.html) is baked in for sprinkling interactivity anywhere.
 - [Plugins](./plugins.html) package your extensions for reuse across apps.
 
 ## Security
 
 Avo runs entirely inside your Rails app. It ships as a gem, reads and writes through your own models, and your data stays on your servers; there's no external dashboard or third-party service between your team and your database.
 
-On top of that, you control access at every level: [authentication](./authentication.html) plugs into whatever you already use (Devise, the Rails 8 scaffold, or anything that gives you a current user), [authorization](./authorization.html) enforces granular permissions through Pundit policies, [Custom Controls](./custom-controls.html) decide which buttons each user even sees, and [Audit Logging](./audit-logging/) keeps a record of who did what.
+On top of that, you control access at every level: [authentication](./authentication.html) plugs into whatever you already use (Devise, the Rails 8 scaffold, or anything that gives you a current user), [authorization](./authorization.html) enforces granular permissions through Pundit policies, [Custom Controls](./custom-controls.html) decide which buttons each user even sees, and [Audit Logging](./audit-logging.html) keeps a record of who did what.
 
 ## Build it with AI agents
 

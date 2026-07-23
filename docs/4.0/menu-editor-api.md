@@ -150,7 +150,7 @@ dashboard "Sales", label: "Sales dashboard"
 
 <Option name="`page`" headingSize="3">
 
-Generates a link to one of your [pages](./forms-and-pages/pages.html). Pass the page's class name as a **String**.
+Generates a link to one of your [pages](./forms-and-pages.html). Pass the page's class name as a **String**.
 
 ```ruby
 page "Avo::Pages::Settings"
@@ -158,7 +158,7 @@ page "Avo::Pages::Settings", label: "App configuration"
 ```
 
 - **Options:** `label` (defaults to the page's `navigation_label`, falling back to its `title`), plus the shared [`icon`](#icon), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options
-- **Availability:** provided by the [`avo-forms`](./forms-and-pages/overview.html) add-on
+- **Availability:** provided by the [`avo-forms`](./forms-and-pages.html) add-on
 
 :::info Use the String form
 Reference the page by its class name in quotes, not the bare constant. The String is resolved when the menu renders, so the page class isn't autoloaded while your initializer is parsed — which is what prevents boot and reload errors. The bare constant still works, but the String form is recommended.
@@ -168,7 +168,7 @@ Reference the page by its class name in quotes, not the bare constant. The Strin
 
 <Option name="`form`" headingSize="3">
 
-Generates a link to one of your [forms](./forms-and-pages/forms.html). Pass the form's class name as a String (recommended, for the same autoloading reasons as [`page`](#page)) or the class itself.
+Generates a link to one of your [forms](./forms-and-pages.html). Pass the form's class name as a String (recommended, for the same autoloading reasons as [`page`](#page)) or the class itself.
 
 ```ruby
 form "Avo::Forms::AppSettings"
@@ -176,7 +176,7 @@ form "Avo::Forms::AppSettings", label: "Settings"
 ```
 
 - **Options:** `label` (defaults to the form's `title`), plus the shared [`icon`](#icon), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options
-- **Availability:** provided by the [`avo-forms`](./forms-and-pages/overview.html) add-on
+- **Availability:** provided by the [`avo-forms`](./forms-and-pages.html) add-on
 
 </Option>
 
@@ -260,7 +260,7 @@ end
 
 <Option name="`all_pages`" headingSize="3">
 
-Adds every **main** [page](./forms-and-pages/pages.html) — sub-pages are reached through their parent page's own navigation.
+Adds every **main** [page](./forms-and-pages.html) — sub-pages are reached through their parent page's own navigation.
 
 ```ruby
 section "Configuration", icon: "tabler/outline/settings" do
@@ -268,13 +268,13 @@ section "Configuration", icon: "tabler/outline/settings" do
 end
 ```
 
-- **Availability:** provided by the [`avo-forms`](./forms-and-pages/overview.html) add-on
+- **Availability:** provided by the [`avo-forms`](./forms-and-pages.html) add-on
 
 </Option>
 
 <Option name="`all_forms`" headingSize="3">
 
-Adds every [form](./forms-and-pages/forms.html) defined under the `Avo::Forms` namespace.
+Adds every [form](./forms-and-pages.html) defined under the `Avo::Forms` namespace.
 
 ```ruby
 section "Forms", icon: "tabler/outline/forms" do
@@ -282,7 +282,7 @@ section "Forms", icon: "tabler/outline/forms" do
 end
 ```
 
-- **Availability:** provided by the [`avo-forms`](./forms-and-pages/overview.html) add-on
+- **Availability:** provided by the [`avo-forms`](./forms-and-pages.html) add-on
 
 </Option>
 

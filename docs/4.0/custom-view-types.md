@@ -175,4 +175,4 @@ Avo.asset_manager.add_stylesheet "my-plugin/application"
 Avo.asset_manager.add_javascript "my-plugin/application"
 ```
 
-See [Custom asset pipeline](./custom-asset-pipeline.html) for compiling and serving the assets, and [Stimulus JS integration](./stimulus-integration.html) for wiring up controllers.
+See [Asset handling](./asset-handling.html) for compiling and serving the assets, and [JavaScript & Stimulus](./javascript.html) for wiring up controllers.

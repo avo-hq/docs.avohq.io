@@ -49,7 +49,7 @@ The items themselves:
 - [`link_to`](./menu-editor-api.html#link_to) (alias `link`) links to any path, internal or external.
 - [`resource`](./menu-editor-api.html#resource) links to a resource's Index view — pass a symbol (`:users`) or the full class name (`"Avo::Resources::User"`).
 - [`dashboard`](./menu-editor-api.html#dashboard) links to a [dashboard](./dashboards.html) by `id` or `name`.
-- [`page`](./menu-editor-api.html#page) and [`form`](./menu-editor-api.html#form) link to your [pages and forms](./forms-and-pages/overview.html) (requires the `avo-forms` add-on).
+- [`page`](./menu-editor-api.html#page) and [`form`](./menu-editor-api.html#form) link to your [pages and forms](./forms-and-pages.html) (requires the `avo-forms` add-on).
 - [`board`](./menu-editor-api.html#board) links to a [kanban board](./kanban-boards.html) (requires the `avo-kanban` add-on).
 - [`action`](./menu-editor-api.html#action) triggers a [standalone action](./actions.html) straight from the menu.
 - [`render`](./menu-editor-api.html#render) renders a partial or View Component for anything custom.

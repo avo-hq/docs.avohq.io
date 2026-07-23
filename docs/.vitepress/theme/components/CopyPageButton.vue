@@ -9,14 +9,21 @@ function flash(flag) {
   setTimeout(() => { flag.value = false }, 2000)
 }
 
+// Published .md version of the current page (real markdown, includes the API reference notice).
+function mdPath() {
+  const p = window.location.pathname
+  return (p.endsWith('/') ? `${p}index` : p.replace(/\.html$/, '')) + '.md'
+}
+
+function viewMarkdown() {
+  window.open(mdPath(), '_blank')
+}
+
 async function copyPage() {
-  // Prefer the published .md version of the page (real markdown, includes the
-  // API reference notice); fall back to the rendered text if it's unavailable.
+  // Prefer the published .md version of the page; fall back to the rendered text if unavailable.
   let text = null
   try {
-    const p = window.location.pathname
-    const mdUrl = (p.endsWith('/') ? `${p}index` : p.replace(/\.html$/, '')) + '.md'
-    const res = await fetch(mdUrl)
+    const res = await fetch(mdPath())
     if (res.ok && (res.headers.get('content-type') || '').includes('markdown')) {
       text = await res.text()
     }
@@ -39,7 +46,8 @@ function copyLink() {
 </script>
 
 <template>
-  <div class="mb-4 flex gap-1.5">
+  <div class="mb-4 flex flex-col gap-1.5">
+    <div class="flex gap-1.5">
     <button
       @click="copyPage"
       :class="[
@@ -77,6 +85,18 @@ function copyLink() {
         <polyline points="20 6 9 17 4 12"/>
       </svg>
       {{ copiedLink ? 'Copied!' : 'Copy link' }}
+    </button>
+    </div>
+    <button
+      @click="viewMarkdown"
+      class="flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40"
+      title="Open this page as Markdown"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      View as Markdown
     </button>
   </div>
 </template>

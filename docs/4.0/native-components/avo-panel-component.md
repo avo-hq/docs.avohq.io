@@ -170,8 +170,8 @@ the panel (no card wrapper).
 
 <Option name="`card`">
 
-Wraps the content in a bordered card automatically. Use this instead of `body` when
-you want the content to sit inside a distinct card surface.
+Wraps the content in a bordered card automatically (an [`Avo::UI::CardComponent`](./avo-card-component.html)).
+Use this instead of `body` when you want the content to sit inside a distinct card surface.
 
 The card body ships **unpadded** so wide content (tables, horizontal scrollers) can
 sit flush to the card edge. Opt into the standard body padding with `padded: true`

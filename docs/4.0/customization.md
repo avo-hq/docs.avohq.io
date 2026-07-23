@@ -347,7 +347,7 @@ Each card on a dashboard shows the icon next to its label, linking to that card'
 
 ### Forms
 
-If you use [Avo Forms](./forms-and-pages/forms), the form header shows the icon next to the form's title, linking to the form file.
+If you use [Avo Forms](./forms-and-pages.html), the form header shows the icon next to the form's title, linking to the form file.
 
 <Image src="/assets/img/4_0/customization/open-in-editor-form.webp" dark-src="/assets/img/4_0/customization/open-in-editor-form-dark.webp" width="1360" height="132" alt="An Avo Forms form header in development, with a small code icon right after the form title — it opens the form's source file in your editor — highlighted with a red box." prompt="An Avo Forms form page header in development showing the form title with the small open-in-your-editor code icon next to it, with a red box annotation highlighting the icon" />
 
