@@ -1,6 +1,6 @@
 ---
 license: add_on
-add_on_link: https://avohq.io/pricing-4?add_ons[]=scopes
+add_on_link: https://avohq.io/addons/scopes
 outline: [2, 3]
 guide: ./scopes.html
 prev:

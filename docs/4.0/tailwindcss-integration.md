@@ -38,8 +38,12 @@ gem "tailwindcss-ruby"
 
 Once present, Avo will:
 
-- auto-build in development
+- auto-build in development (on server boot)
 - hook into `assets:precompile` in production
+
+:::warning
+Avo's build emits Tailwind **v4** syntax. If your app pulls Tailwind in through `tailwindcss-rails`, it must be **`>= 4.0`** — on `tailwindcss-rails` 3.x the integration stays disabled even though `tailwindcss-ruby` is present. Apps that depend on `tailwindcss-ruby` directly (no `tailwindcss-rails`) aren't affected by this check.
+:::
 
 :::tip
 We highly recommend running this integration through `bin/dev` with a `Procfile.dev` watcher process:
@@ -87,22 +91,7 @@ rails g avo:eject --partial :avo_overrides_js
 rails g avo:eject --partial :asset_overrides
 ```
 
-### Re-theme with CSS variables
-
-Because `avo-overrides.css` loads last, overriding Avo's CSS variables is enough to re-skin the whole interface — no `@apply`, no build step. This is also the easiest surface for an LLM to target ("restyle the top navbar", "make a warmer color theme"):
-
-```css
-/* app/assets/stylesheets/avo-overrides.css */
-:root {
-  --color-accent: var(--color-fuchsia-500);
-  --color-accent-content: var(--color-fuchsia-600);
-  --radius-card: 1.5rem;
-}
-
-.dark {
-  --color-accent: var(--color-fuchsia-400);
-}
-```
+Because `avo-overrides.css` loads after Avo's own stylesheet, overriding Avo's CSS variables here is enough to re-skin the whole interface — no `@apply`, no build step. See the [Theming guide](./theming.html#re-skin-with-css-variables) for how to re-color and re-skin Avo through these variables.
 
 ### Add behavior with Stimulus
 
@@ -119,7 +108,7 @@ document.addEventListener("turbo:load", () => {
 ```
 
 :::tip
-For custom JS that needs bundling or `import`s (esbuild/importmap), use the [custom asset pipeline](./custom-asset-pipeline.html) and [Stimulus integration](./stimulus-integration.html) instead. `avo-overrides.js` is for small, dependency-free snippets.
+For custom JS that needs bundling or `import`s (esbuild/importmap), use [asset handling](./asset-handling.html) and the [JavaScript guide](./javascript.html) instead. `avo-overrides.js` is for small, dependency-free snippets.
 :::
 
 ## Disable integration (opt-out)
@@ -178,6 +167,6 @@ How it works, in short:
 Quick checks:
 
 - confirm the integration is enabled (`config.tailwindcss_integration_enabled = true`);
-- ensure `tailwindcss-ruby` is installed (directly or via `tailwindcss-rails`);
+- ensure `tailwindcss-ruby` is installed (directly, or via `tailwindcss-rails` `>= 4.0`);
 - verify your custom styles are under `app/assets/stylesheets/avo/`;
 - run with the watcher (`bin/dev`) so changes are rebuilt continuously.

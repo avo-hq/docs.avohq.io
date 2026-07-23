@@ -1,6 +1,6 @@
 ---
 license: add_on
-add_on_link: "https://avohq.io/pricing-4?add_ons[]=json-api"
+add_on_link: https://avohq.io/addons/json-api
 add_on: avo-api
 betaStatus: Alpha
 outline: [2, 3]

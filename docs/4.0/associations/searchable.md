@@ -1,6 +1,6 @@
 ---
 license: add_on
-add_on_link: https://avohq.io/pricing-4?add_ons[]=advanced-search
+add_on_link: https://avohq.io/addons/advanced-search
 outline: [2, 3]
 api_docs: "./searchable-api.html"
 ---

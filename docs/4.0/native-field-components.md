@@ -6,7 +6,7 @@ feedbackId: 1273
 
 One of the most important features of Avo is the ability to extend it pass the DSL. It's very important to us to enable you to add the features you need and create the best experience for your users.
 
-That's why you can so easily create [custom fields](./custom-fields), [resource tools](./resource-tools), and [custom tools](./custom-tools) altogether. When you need to augment the UI even more you can use your [custom CSS and JS assets](./custom-asset-pipeline) too.
+That's why you can so easily create [custom fields](./custom-fields), [resource tools](./resource-tools), and [custom tools](./custom-tools) altogether. When you need to augment the UI even more you can use your [custom CSS and JS assets](./asset-handling) too.
 
 When you start adding those custom views you might want to add your own fields, and you'd like to make them look like the rest of the app.
 That's why Avo provides a way to use those fields beyond the DSL, in your own custom Rails partials.

@@ -1,13 +1,14 @@
 ---
 feedbackId: 836
 license: community
+outline: [2, 3]
 ---
 
 # Custom fields
 
-Avo ships with 20+ well polished and ready to be used, fields out of the box.
+Avo ships with 20+ polished, ready-to-use fields out of the box.
 
-When you need a field that is not provided by default, Avo makes it easy to add it.
+When you need a field that isn't provided by default, Avo makes it easy to build your own.
 
 ## Generate a new field
 
@@ -59,29 +60,31 @@ end
 
 The generated view components are basic text fields for now.
 
-```erb{1,9,14}
-# app/components/avo/fields/progress_bar_field/edit_component.html.erb
-<%= edit_field_wrapper field: @field, index: @index, form: @form, resource: @resource, displayed_in_modal: @displayed_in_modal do %>
+```erb
+<%# app/components/avo/fields/progress_bar_field/edit_component.html.erb %>
+<%= field_wrapper **field_wrapper_args do %>
   <%= @form.text_field @field.id,
-    class: helpers.input_classes('w-full', has_error: @field.model_errors.include?(@field.id)),
+    class: classes("w-full"),
     placeholder: @field.placeholder,
-    disabled: @field.readonly %>
+    disabled: disabled? %>
 <% end %>
 
-# app/components/avo/fields/progress_bar_field/index_component.html.erb
-<%= index_field_wrapper field: @field do %>
+<%# app/components/avo/fields/progress_bar_field/index_component.html.erb %>
+<%= index_field_wrapper **field_wrapper_args do %>
   <%= @field.value %>
 <% end %>
 
-# app/components/avo/fields/progress_bar_field/show_component.html.erb
-<%= show_field_wrapper field: @field, index: @index do %>
+<%# app/components/avo/fields/progress_bar_field/show_component.html.erb %>
+<%= field_wrapper **field_wrapper_args do %>
   <%= @field.value %>
 <% end %>
 ```
 
+The `field_wrapper_args`, `classes`, and `disabled?` helpers come from the base components your field inherits from (`Avo::Fields::EditComponent`, `ShowComponent`, and `IndexComponent`), so they're available in every generated component.
+
 You can customize them and add as much or as little content as needed. More on customization [below](#customize-the-views).
 
-<Option name="Use existent field template">
+## Start from an existing field
 
 There may be times when you want to duplicate an existing field and start from there.
 
@@ -142,8 +145,6 @@ module Avo
   end
 end
 ```
-
-</Option>
 
 ## Field options
 
@@ -224,13 +225,41 @@ class Avo::Fields::ProgressBarField < Avo::Fields::BaseField
 end
 ```
 
+## What's available in your components
+
+Each of the three generated components inherits from an Avo base component — `Avo::Fields::EditComponent`, `Avo::Fields::ShowComponent`, and `Avo::Fields::IndexComponent` (see the generated `*_component.rb` files). Those base classes expose the objects and helpers you use when rendering.
+
+The most useful ones, available in the `.html.erb` templates:
+
+| Variable / helper | Available in | What it is |
+| --- | --- | --- |
+| `@field` | all three | The field instance — your `Avo::Fields::ProgressBarField`. Read its value with `@field.value` and its `id`, `placeholder`, `name`, `type`, plus **every `attr_reader` you add** (`@field.max`, `@field.step`, …). |
+| `@resource` | all three | The resource the field belongs to. |
+| `@index` | all three | The field's position on the page. |
+| `@view` | all three | An [`Avo::ViewInquirer`](./views.html) — `@view.index?`, `@view.show?`, `@view.edit?`, `@view.new?`. |
+| `field_wrapper_args` | all three | The hash to splat into the [field wrapper](./field-wrappers.html): `field_wrapper **field_wrapper_args`. Passes `@field`, `@resource`, `@view`, and layout flags through for you. |
+| `@form` | `Edit` | The Rails form builder. Build inputs with `@form.text_field @field.id`, `@form.range_field @field.id`, etc. |
+| `classes("extra")` | `Edit` | Input CSS classes with error state, size, and any HTML overrides already applied. Pass extra classes as a string. |
+| `disabled?` | `Edit`, `Show` | `true` when the field is readonly **or** disabled. Prefer it over `@field.readonly` — it covers both cases. |
+| `@stacked`, `@full_width`, `@density` | vary by view | Layout flags forwarded from the resource; usually you just pass them through via `field_wrapper_args`. |
+
+### How the field wrapper ties it together
+
+The first thing every generated component does is wrap your content in the **[field wrapper](./field-wrappers.html)** — `field_wrapper` on `Show`/`Edit`, `index_field_wrapper` on `Index`. This is the piece that makes a custom field look native: the wrapper renders the label, the required asterisk, the help text, the validation error, and the blank-`—` placeholder, and it applies the `stacked` / `full_width` / `density` layout around whatever you put inside the block. You render the *value*; the wrapper renders everything around it.
+
+That's why you splat `field_wrapper_args` into it instead of building the label and spacing yourself — the base component already collected everything the wrapper needs. You can still pass extra options alongside it (`field_wrapper **field_wrapper_args, full_width: true`); the full list lives in the [field wrappers reference](./field-wrappers.html).
+
+:::warning
+The wrapper renders a dash (`—`) instead of your block whenever `@field.value` is blank — it checks the value, not what your block actually renders. If your custom field draws something meaningful even when the value is `nil`, pass [`dash_if_blank: false`](./field-wrappers.html#dash_if_blank) or your content will never show.
+:::
+
 ## Customize the views
 
-No let's do something about those views. Let's add a progress bar to the `Index` and `Show` views.
+Now let's do something about those views. Let's add a progress bar to the `Index` and `Show` views.
 
 ```erb{1,15}
-# app/components/avo/fields/progress_bar_field/show_component.html.erb
-<%= show_field_wrapper field: @field, index: @index do %>
+<%# app/components/avo/fields/progress_bar_field/show_component.html.erb %>
+<%= field_wrapper **field_wrapper_args do %>
   <!-- If display_value is set to true, show the value above the progress bar -->
   <% if @field.display_value %>
     <div class="text-center text-sm font-semibold w-full leading-none mb-1">
@@ -243,8 +272,8 @@ No let's do something about those views. Let's add a progress bar to the `Index`
   <progress max="<%= @field.max %>" value="<%= @field.value %>" class="block w-full"></progress>
 <% end %>
 
-# app/components/avo/fields/progress_bar_field/index_component.html.erb
-<%= index_field_wrapper field: @field do %>
+<%# app/components/avo/fields/progress_bar_field/index_component.html.erb %>
+<%= index_field_wrapper **field_wrapper_args do %>
   <!-- If display_value is set to true, show the value above the progress bar -->
   <% if @field.display_value %>
     <div class="text-center text-sm font-semibold w-full leading-none mb-1">
@@ -263,8 +292,8 @@ No let's do something about those views. Let's add a progress bar to the `Index`
 For the `Edit` view, we're going to do something different. We'll implement a `range` input.
 
 ```erb{1}
-# app/components/avo/fields/progress_bar_field/edit_component.html.erb
-<%= edit_field_wrapper field: @field, index: @index, form: @form, resource: @resource, displayed_in_modal: @displayed_in_modal do %>
+<%# app/components/avo/fields/progress_bar_field/edit_component.html.erb %>
+<%= field_wrapper **field_wrapper_args do %>
   <!-- Show the progress input with the settings we passed to the field. -->
   <% if @field.display_value %>
     <div class="text-center text-sm font-semibold w-full leading-none mb-1">
@@ -276,7 +305,7 @@ For the `Edit` view, we're going to do something different. We'll implement a `r
   <%= @form.range_field @field.id,
     class: 'w-full',
     placeholder: @field.placeholder,
-    disabled: @field.readonly,
+    disabled: disabled?,
     min: 0,
     # add the field-specific options
     max: @field.max,
@@ -306,7 +335,7 @@ function updateValue(e) {
 
 Because there isn't just one standardized way of handling assets in Rails, we decided we won't provide **asset loading** support for custom fields for now. That doesn't mean that you can't use custom assets (javascript or CSS files), but you will have to load them in your own pipeline in dedicated Avo files.
 
-In the example above, we added javascript on the page just to demonstrate the functionality. In reality, you might add that to a stimulus controller inside your own Avo [dedicated pipeline](./custom-asset-pipeline.html) (webpacker or sprockets).
+In the example above, we added javascript on the page just to demonstrate the functionality. In reality, you might add that to a stimulus controller inside your own Avo [dedicated pipeline](./asset-handling.html).
 
 Some styles were added in the asset pipeline directly.
 
@@ -346,7 +375,6 @@ class Avo::Fields::ColorPickerField < Avo::Fields::BaseField
     super(id, **args, &block)
 
     @always_show = args[:always_show] || false
-    @allow_non_colors = args[:allow_non_colors]
   end
 end
 ```
@@ -359,9 +387,9 @@ Next, in your fields `Show` component, you need to do a few things.
 1. Add the `content` target (`data-hidden-input-target="content"`) to that div.
 
 ```erb{4-7,8}
-# app/components/avo/fields/color_picker_field/show_component.html.erb
+<%# app/components/avo/fields/color_picker_field/show_component.html.erb %>
 
-<%= show_field_wrapper field: @field, index: @index do %>
+<%= field_wrapper **field_wrapper_args do %>
   <div data-controller="hidden-input">
     <% unless @field.always_show %>
       <%= link_to t('avo.show_content'), 'javascript:void(0);', class: 'font-bold inline-block', data: { action: 'click->hidden-input#showContent' } %>

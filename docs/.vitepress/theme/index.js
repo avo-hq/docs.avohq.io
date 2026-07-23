@@ -31,6 +31,7 @@ import CustomCode from "../theme/components/CustomCode.vue"
 import LlmPrompt from "../theme/components/LlmPrompt.vue"
 import BrandingRedirect from "../theme/components/BrandingRedirect.vue"
 import RefactoredFromBranding from "../theme/components/RefactoredFromBranding.vue"
+import InternalsList from "../theme/components/InternalsList.vue"
 import {ChatBubbleBottomCenterIcon, CheckBadgeIcon, InformationCircleIcon, BeakerIcon, PlayIcon} from "@heroicons/vue/24/outline"
 import './custom.css'
 import {h} from "vue"
@@ -39,8 +40,23 @@ export default {
   ...DefaultTheme,
   enhanceApp({app, router}) {
     if (typeof window !== "undefined") {
-      const scrollSidebarToActive = () => {
+      // -api pages aren't sidebar entries, so nothing lights up on them. Read their
+      // `guide:` frontmatter and mark the guide's sidebar item active instead.
+      let manualActive = null
+      const highlightGuideForApiPage = () => {
+        if (manualActive) { manualActive.classList.remove("is-active"); manualActive = null }
+        const guide = router.route.data?.frontmatter?.guide
+        if (!guide) return
+        const target = new URL(guide, window.location.href).pathname.replace(/\.html$/, "")
+        const link = [...document.querySelectorAll(".VPSidebar a")]
+          .find(a => a.pathname.replace(/\.html$/, "") === target)
+        const item = link?.closest(".VPSidebarItem")
+        if (item) { item.classList.add("is-active"); manualActive = item }
+      }
+
+      const syncSidebar = () => {
         requestAnimationFrame(() => {
+          highlightGuideForApiPage()
           const item = document.querySelector(".VPSidebarItem.is-active > .item")
           const sidebar = item?.closest(".VPSidebar")
           if (!item || !sidebar) return
@@ -51,9 +67,9 @@ export default {
           if (!inView) item.scrollIntoView({block: "center"})
         })
       }
-      router.onAfterRouteChange = scrollSidebarToActive
+      router.onAfterRouteChange = syncSidebar
       // ponytail: initial load — sidebar isn't mounted yet in enhanceApp, so defer
-      window.addEventListener("load", scrollSidebarToActive, {once: true})
+      window.addEventListener("load", syncSidebar, {once: true})
     }
 
 
@@ -92,6 +108,7 @@ export default {
     app.component("LlmPrompt", LlmPrompt)
     app.component("BrandingRedirect", BrandingRedirect)
     app.component("RefactoredFromBranding", RefactoredFromBranding)
+    app.component("InternalsList", InternalsList)
   },
   Layout() {
     return h(DefaultTheme.Layout, null, {

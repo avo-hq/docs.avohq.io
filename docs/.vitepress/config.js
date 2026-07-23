@@ -195,6 +195,7 @@ const config = {
           text: "Configuration",
           items: [
             { text: "Installation", link: "/4.0/installation.html" },
+            { text: "Routing", link: "/4.0/routing.html" },
             { text: "Gem server authentication", link: "/4.0/gem-server-authentication.html" },
             { text: "License troubleshooting", link: "/4.0/license-troubleshooting.html" },
             { text: "Authentication", link: "/4.0/authentication.html" },
@@ -271,20 +272,20 @@ const config = {
             { text: "Search", link: "/4.0/search.html" },
             { text: "Localization (I18n)", link: "/4.0/i18n.html" },
             { text: "Appearance", link: "/4.0/appearance.html" },
+            { text: "Theming", link: "/4.0/theming.html" },
             // { text: "User Preferences", link: "/4.0/user-preferences.html" },
-            { text: "Routing", link: "/4.0/routing.html" },
             { text: "Multitenancy", link: "/4.0/multitenancy.html" },
             { text: "Breadcrumbs", link: "/4.0/breadcrumbs.html" },
             {
-              text: "Custom content",
+              text: "Build your own UI",
               collapsed: false,
               items: [
-                { text: "Custom views", link: "/4.0/custom-tools.html" },
+                { text: "Custom tools", link: "/4.0/custom-tools.html" },
+                { text: "Resource tools", link: "/4.0/resource-tools.html" },
                 { text: "Custom fields", link: "/4.0/custom-fields.html" },
                 { text: "Custom errors", link: "/4.0/custom-errors.html" },
-                { text: "Resource tools", link: "/4.0/resource-tools.html" },
-                { text: "Stimulus JS integration", link: "/4.0/stimulus-integration.html" },
-                { text: "Custom asset pipeline", link: "/4.0/custom-asset-pipeline.html" },
+                { text: "Asset handling", link: "/4.0/asset-handling.html" },
+                { text: "JavaScript & Stimulus", link: "/4.0/javascript.html" },
                 { text: "TailwindCSS integration", link: "/4.0/tailwindcss-integration.html" },
               ],
             },
@@ -301,27 +302,16 @@ const config = {
           items: [
             { text: "Notifications", link: "/4.0/notifications.html" },
             { text: "Media Library", link: "/4.0/media-library.html" },
-            { text: "Audit Logging", link: "/4.0/audit-logging/" },
-            {
-              text: "Dashboards and cards",
-              link: "/4.0/dashboards.html",
-              items: [
-                { text: "Dashboards", link: "/4.0/dashboards.html" },
-                { text: "Cards", link: "/4.0/cards.html" },
-              ],
-            },
+            { text: "Audit Logging", link: "/4.0/audit-logging.html" },
+            { text: "Dashboards", link: "/4.0/dashboards.html" },
+            { text: "Cards", link: "/4.0/cards.html" },
             {
               text: "Kanban board",
               link: "/4.0/kanban-boards.html",
             },
             {
               text: "Forms and pages",
-              link: "/4.0/forms-and-pages/overview.html",
-              items: [
-                { text: "Overview", link: "/4.0/forms-and-pages/overview.html" },
-                { text: "Forms", link: "/4.0/forms-and-pages/forms.html" },
-                { text: "Pages", link: "/4.0/forms-and-pages/pages.html" },
-              ],
+              link: "/4.0/forms-and-pages.html",
             },
             {
               text: "REST API",
@@ -366,26 +356,21 @@ const config = {
             { text: "Icons", link: "/4.0/icons.html" },
             { text: "Reserved model names and routes", link: "/4.0/internal-model-names.html" },
             { text: "Rails engines and path helpers", link: "/4.0/rails-engines-paths.html" },
+            { text: "Controller configuration", link: "/4.0/controllers.html" },
+            { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
+            { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
+            { text: "Plugins", link: "/4.0/plugins.html" },
             {
               text: "Native Avo components",
               collapsed: true,
               items: [
                 { text: "<code>Avo::ButtonComponent</code>", link: "/4.0/native-components/avo-button-component.html" },
                 { text: "<code>Avo::PanelComponent</code>", link: "/4.0/native-components/avo-panel-component.html" },
+                { text: "<code>Avo::CardComponent</code>", link: "/4.0/native-components/avo-card-component.html" },
                 { text: "Native field components", link: "/4.0/native-field-components.html" },
                 { text: "Field wrappers", link: "/4.0/field-wrappers.html" },
               ],
             },
-          ],
-        },
-        {
-          text: "Extending",
-          collapsed: false,
-          items: [
-            { text: "Controller configuration", link: "/4.0/controllers.html" },
-            { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
-            { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
-            { text: "Plugins", link: "/4.0/plugins.html" },
           ],
         },
         // {

@@ -1,6 +1,6 @@
 ---
 license: add_on
-add_on_link: "https://avohq.io/pricing-4?add_ons[]=json-api"
+add_on_link: https://avohq.io/addons/json-api
 add_on: avo-api
 betaStatus: Alpha
 outline: [2, 3]
@@ -234,8 +234,8 @@ The `BaseResourcesController` provides these methods that you can override:
 1. **Create your Avo resources** as usual in `app/avo/resources/`
 2. **Update your routes** to use individual controllers (this is already done)
 3. **Generate controllers** using one of the generators:
-   - `rails generate avo_api:controllers` (for all resources)
-   - `rails generate avo_api:controller ResourceName` (for specific resource)
+  - `rails generate avo_api:controllers` (for all resources)
+  - `rails generate avo_api:controller ResourceName` (for specific resource)
 4. **Customize as needed** by overriding methods in the generated controllers
 
 ## Notes

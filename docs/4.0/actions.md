@@ -385,4 +385,4 @@ With this in place, visiting `https://example.com/avo/resources/users?hey=ya` an
 
 ## StimulusJS
 
-Actions play well with custom Stimulus controllers. Follow the [StimulusJS guide](./stimulus-integration.html#use-stimulus-js-in-a-tool) for more information.
+Actions play well with custom Stimulus controllers. Follow the [JavaScript guide](./javascript.html#use-stimulus-js-in-a-tool) for more information.
