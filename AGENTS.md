@@ -92,6 +92,7 @@ Rules:
   - `**Default:**` — the actual default in a code span, or `nil`.
   - `**Values:**` — allowed values when not obvious from the type.
   - `**Validation:**` — what raises and when (e.g. "raises `ArgumentError` if any shade is missing").
+  - `**i18n key:**` — when the option renders a translatable string, the key followed by the English text in parentheses: `` `avo.run` ("Run") ``. Always its own bullet, never folded into `**Default:**` — plenty of translatable strings aren't defaults, and a separate line keeps every key greppable.
   - Any feature-specific flag (e.g. `**Lockable:** yes — ...`, `**Context:** evaluated in a controller context`, `**Locals:** ...`).
 
 5. Use `:::warning` / `:::info` callouts for sharp edges (type coercion, things forwarded verbatim to a third party, etc.).
@@ -112,6 +113,7 @@ config.feature = {
 - **Type:** ...
 - **Default:** `...`
 - **Values:** ...
+- **i18n key:** `avo.some_key` ("English text")
 
 </Option>
 ````

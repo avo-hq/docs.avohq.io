@@ -89,7 +89,8 @@ self.empty_message = "Please select a country to view options."
 ```
 
 - **Type:** String
-- **Default:** `nil` — falls back to the localized `avo.no_options_available` ("No options available")
+- **Default:** `nil` — falls back to the translated default
+- **i18n key:** `avo.no_options_available` ("No options available")
 
 </Option>
 
