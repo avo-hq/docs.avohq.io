@@ -380,6 +380,36 @@ config.hide_layout_when_printing = true
 
 </Option>
 
+<Option name="`back_to_top`" headingSize="3">
+
+A floating "Back to top" pill that appears centered below the navbar. It stays hidden within `threshold` pixels of the top of the page, reveals when you scroll back up, and hides again when you scroll down. Clicking it smooth-scrolls to the top.
+
+It's off by default — opt in from your initializer:
+
+```ruby
+config.back_to_top = {
+  enabled: true, # show the "Back to top" pill
+  threshold: 64  # pixels scrolled down before an upward scroll reveals it
+}
+```
+
+Raise `threshold` if you'd rather the pill only show up further down long pages.
+
+The button's label is translated — override it like any other Avo string:
+
+```yaml
+# config/locales/avo.en.yml
+en:
+  avo:
+    back_to_top: Back to top
+```
+
+- **Type:** Hash, merged over the defaults
+- **Default:** `{ enabled: false, threshold: 64 }`
+- **i18n key:** `avo.back_to_top` ("Back to top")
+
+</Option>
+
 ## Behavior
 
 <Option name="`resource_default_view`" headingSize="3">
