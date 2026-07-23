@@ -1,7 +1,7 @@
 ---
-license: add_on
-add_on_link: https://avohq.io/addons/forms
-add_on: forms_feature
+license: addon
+addon_link: https://avohq.io/addons/forms
+addon: forms_feature
 betaStatus: Beta
 outline: [2, 3]
 guide: ./forms-and-pages.html

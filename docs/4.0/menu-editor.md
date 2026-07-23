@@ -1,8 +1,8 @@
 ---
 feedbackId: 831
 demoVideo: https://youtu.be/VMvG-j1Vxio
-license: add_on
-add_on_link: https://avohq.io/addons/menu-editor
+license: addon
+addon_link: https://avohq.io/addons/menu-editor
 outline: [2, 3]
 api_docs: ./menu-editor-api.html
 ---

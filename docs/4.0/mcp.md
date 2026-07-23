@@ -1,6 +1,6 @@
 ---
-license: add_on
-add_on_link: https://avohq.io/addons/mcp-server
+license: addon
+addon_link: https://avohq.io/addons/mcp-server
 betaStatus: "Not yet released"
 outline: [2, 3]
 ---

@@ -1,6 +1,6 @@
 ---
-license: add_on
-add_on_link: https://avohq.io/addons/record-reordering
+license: addon
+addon_link: https://avohq.io/addons/record-reordering
 outline: [2, 3]
 guide: ./record-reordering.html
 prev:

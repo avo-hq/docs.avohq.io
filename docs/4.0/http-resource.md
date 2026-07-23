@@ -1,7 +1,7 @@
 ---
 betaStatus: "Open Beta"
-license: add_on
-add_on_link: https://avohq.io/addons/http-resource
+license: addon
+addon_link: https://avohq.io/addons/http-resource
 outline: [2, 3]
 api_docs: ./http-resource-api.html
 ---

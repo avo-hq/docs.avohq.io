@@ -1,7 +1,7 @@
 ---
 feedbackId: 838
-license: add_on
-add_on_link: https://avohq.io/addons/dynamic-filters
+license: addon
+addon_link: https://avohq.io/addons/dynamic-filters
 outline: [2, 3]
 api_docs: ./dynamic-filters-api.html
 ---

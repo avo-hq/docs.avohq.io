@@ -185,8 +185,8 @@ const config = {
         {
           text: "Avo 4",
           items: [
-            { text: "Intro", link: "/4.0/index.html" },
-            { text: "Avo 3 to Avo 4 upgrade", link: "/4.0/avo-3-avo-4-upgrade.html" },
+            { text: "Getting Started", link: "/4.0/index.html" },
+            { text: "Upgrade Guide", link: "/4.0/upgrade.html" },
             { text: "Technical Support", link: "/4.0/technical-support.html" },
             { text: "🤖 Agentic engineering", link: "/4.0/agentic-engineering.html" },
           ]
@@ -235,6 +235,7 @@ const config = {
           items: [
             { text: "Fields", link: "/4.0/fields.html" },
             { text: "Field options", link: "/4.0/field-options.html" },
+            { text: "HTML attributes", link: "/4.0/html.html" },
             { text: "Field discovery", link: "/4.0/field-discovery.html" },
 
             { text: "Layout", link: "/4.0/fields-layout.html" },

@@ -1,7 +1,7 @@
 ---
-license: add_on
-add_on_link: https://avohq.io/addons/collaboration
-add_on: collaboration_feature
+license: addon
+addon_link: https://avohq.io/addons/collaboration
+addon: collaboration_feature
 betaStatus: Beta
 outline: [2, 3]
 api_docs: ./collaboration-api.html

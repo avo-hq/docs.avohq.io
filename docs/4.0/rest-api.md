@@ -1,7 +1,7 @@
 ---
-license: add_on
-add_on_link: https://avohq.io/addons/json-api
-add_on: avo-api
+license: addon
+addon_link: https://avohq.io/addons/json-api
+addon: avo-api
 outline: [2, 3]
 ---
 

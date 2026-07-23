@@ -1,6 +1,6 @@
 ---
-license: add_on
-add_on_link: https://avohq.io/addons/scopes
+license: addon
+addon_link: https://avohq.io/addons/scopes
 outline: [2, 3]
 api_docs: ./scopes-api.html
 ---

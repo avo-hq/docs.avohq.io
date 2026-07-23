@@ -132,7 +132,7 @@ A local injected into the [`query`](#query) proc identifying which surface trigg
 
 ## Global search configuration
 
-<LicenseReq license="add_on" add_on_link="https://avohq.io/pricing-4?add_ons[]=advanced-search" />
+<LicenseReq license="addon" addon_link="https://avohq.io/pricing-4?add_ons[]=advanced-search" />
 
 Keys of the `config.global_search` hash in `config/initializers/avo.rb`. Also listed in the [customization API](./customization-api.html#global_search).
 
