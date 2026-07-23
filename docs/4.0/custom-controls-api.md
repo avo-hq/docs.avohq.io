@@ -247,8 +247,6 @@ end
 
 Within the block the permitted elements are `link_to`, `action`, and [`divider`](#divider). Unlike a directly declared `action` control, actions inside a `list` do respect the action's `visible` block.
 
-The dropdown styles its own items, so [`style`](#style), [`color`](#color), and [`size`](#size) have no effect on a nested `link_to` or `action` — only [`icon`](#icon), [`label`](#label), and (for links) `target`, `data`, and `class` are used.
-
 :::warning
 Button controls like `back_button` or `edit_button` are not allowed inside a `list` block — in development they raise an error.
 :::
