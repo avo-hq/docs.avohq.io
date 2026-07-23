@@ -157,7 +157,7 @@ const config = {
     ],
     footer: {
       message: '',
-      copyright: `Copyright © 2020–${new Date().getFullYear()} Adrian Marin`
+      copyright: `Copyright © 2020–${new Date().getFullYear()} Avo`
     },
     nav: [
       { text: "avohq.io", link: "https://avohq.io" },
@@ -302,6 +302,8 @@ const config = {
                     { text: "Field wrappers", link: "/4.0/field-wrappers.html" },
                   ],
                 },
+                { text: "Plugins", link: "/4.0/plugins.html" },
+                { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
               ],
             },
           ],
@@ -351,8 +353,6 @@ const config = {
             { text: "Rails engines and path helpers", link: "/4.0/rails-engines-paths.html" },
             { text: "Controller configuration", link: "/4.0/controllers.html" },
             { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
-            { text: "Plugins", link: "/4.0/plugins.html" },
-            { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
           ],
         },
         // {
