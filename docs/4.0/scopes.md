@@ -134,6 +134,33 @@ end
 
 See the [execution context reference](./scopes-api.html#execution-context) for what each option's proc has access to.
 
+## Limit index columns per scope
+
+A scope normally changes which **records** appear on the index. It can also change which **columns** appear while it's active — only on the <Index /> view; the show, new, and edit views keep the resource's normal fields.
+
+There are three ways to do it, in order of precedence:
+
+- Define a [`fields`](./scopes-api.html#fields) method on the scope to declare the exact index columns from scratch, using the same DSL as a resource's `fields`.
+- Set [`field_whitelist`](./scopes-api.html#field_whitelist) to keep the resource's fields but show **only** the listed ids.
+- Set [`field_blacklist`](./scopes-api.html#field_blacklist) to keep the resource's fields but **hide** the listed ids.
+
+```ruby{5-9}
+# app/avo/scopes/published.rb
+class Avo::Scopes::Published < Avo::Scopes::BaseScope
+  self.scope = -> { query.where(published: true) }
+
+  def fields
+    field :id, as: :id
+    field :title, as: :text
+    field :published_at, as: :date_time
+  end
+end
+```
+
+:::warning Display only
+`field_whitelist` and `field_blacklist` only change which columns render on the index. They are **not** an authorization boundary — the data is still loaded and stays visible on the show and edit views and through the API. To actually restrict access, use a [policy](./authorization.html) or a field's [`visible`](./field-options.html) option.
+:::
+
 ## Full example
 
 ```ruby

@@ -69,6 +69,59 @@ For example:
 }
 ```
 
+## Override styles and scripts (`avo-overrides.css` / `avo-overrides.js`)
+
+Avo ships two empty files and loads them automatically on every screen:
+
+- `avo-overrides.css` — loaded **after** `avo/application.css`, so its rules win the cascade.
+- `avo-overrides.js` — loaded **after** `avo/application.js`, so `window.Stimulus` is available.
+
+Both are the no-build escape hatch: unlike `app/assets/stylesheets/avo/`, they are **not** run through the Tailwind build — they are served as-is. Use them for quick tweaks, re-theming, or small behaviors without touching the pipeline. To customize them, eject the file into your own app (Avo's copy is then shadowed by yours):
+
+```bash
+# just the stylesheet
+rails g avo:eject --partial :avo_overrides_css
+# just the script
+rails g avo:eject --partial :avo_overrides_js
+# both at once
+rails g avo:eject --partial :asset_overrides
+```
+
+### Re-theme with CSS variables
+
+Because `avo-overrides.css` loads last, overriding Avo's CSS variables is enough to re-skin the whole interface — no `@apply`, no build step. This is also the easiest surface for an LLM to target ("restyle the top navbar", "make a warmer color theme"):
+
+```css
+/* app/assets/stylesheets/avo-overrides.css */
+:root {
+  --color-accent: var(--color-fuchsia-500);
+  --color-accent-content: var(--color-fuchsia-600);
+  --radius-card: 1.5rem;
+}
+
+.dark {
+  --color-accent: var(--color-fuchsia-400);
+}
+```
+
+### Add behavior with Stimulus
+
+`avo-overrides.js` runs once, but Avo navigates with Turbo. Register a Stimulus controller (Stimulus re-connects it on every visit) or attach a `turbo:load` listener — **avoid one-shot DOM edits**, they won't survive navigation:
+
+```js
+// app/assets/javascripts/avo-overrides.js
+document.addEventListener("turbo:load", () => {
+  // runs on every Turbo visit
+})
+
+// or register a controller against Avo's Stimulus instance:
+// window.Stimulus.register("my-controller", class extends Controller { ... })
+```
+
+:::tip
+For custom JS that needs bundling or `import`s (esbuild/importmap), use the [custom asset pipeline](./custom-asset-pipeline.html) and [Stimulus integration](./stimulus-integration.html) instead. `avo-overrides.js` is for small, dependency-free snippets.
+:::
+
 ## Disable integration (opt-out)
 
 If your app has `tailwindcss-ruby` (directly or via `tailwindcss-rails`) but you do not need Avo custom utility coverage, disable the integration in your initializer:
