@@ -279,7 +279,6 @@ const config = {
             { text: "Theming", link: "/4.0/theming.html" },
             // { text: "User Preferences", link: "/4.0/user-preferences.html" },
             { text: "Multitenancy", link: "/4.0/multitenancy.html" },
-            { text: "Breadcrumbs", link: "/4.0/breadcrumbs.html" },
             {
               text: "Build your own UI",
               collapsed: false,
@@ -288,7 +287,6 @@ const config = {
                 { text: "Resource tools", link: "/4.0/resource-tools.html" },
                 { text: "Custom fields", link: "/4.0/custom-fields.html" },
                 { text: "Custom errors", link: "/4.0/custom-errors.html" },
-                { text: "Icons", link: "/4.0/icons.html" },
                 { text: "Asset handling", link: "/4.0/asset-handling.html" },
                 { text: "JavaScript & Stimulus", link: "/4.0/javascript.html" },
                 { text: "TailwindCSS integration", link: "/4.0/tailwindcss-integration.html" },
@@ -315,6 +313,18 @@ const config = {
         //     { text: "Overview", link: "/4.0/mcp.html" },
         //   ],
         // },
+        {
+          text: "Concepts",
+          items: [
+            { text: "Overview", link: "/4.0/concepts.html" },
+            { text: "Breadcrumbs", link: "/4.0/breadcrumbs.html" },
+            { text: "Tooltips", link: "/4.0/tooltips.html" },
+            { text: "Icons", link: "/4.0/icons.html" },
+            { text: "Resource controllers", link: "/4.0/controllers.html" },
+            { text: "How pages are rendered", link: "/4.0/how-pages-are-rendered.html" },
+            { text: "Rails engines and path helpers", link: "/4.0/rails-engines-paths.html" },
+          ],
+        },
         {
           text: "Add-ons",
           items: [
@@ -351,8 +361,6 @@ const config = {
             { text: "<code>Avo::ExecutionContext</code>", link: "/4.0/execution-context.html" },
             { text: "<code>Avo::Services::EncryptionService</code>", link: "/4.0/encryption-service.html" },
             { text: "Reserved model names and routes", link: "/4.0/internal-model-names.html" },
-            { text: "Rails engines and path helpers", link: "/4.0/rails-engines-paths.html" },
-            { text: "Controller configuration", link: "/4.0/controllers.html" },
             { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
           ],
         },
