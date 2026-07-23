@@ -31,16 +31,49 @@ main_app.posts_path
 main_app.user_path(@user)
 ```
 
+### Linking to Avo add-ons
+
+Avo isn't a single engine. Most add-ons ship their own engine with its own routes, mounted **inside** Avo's root path. Each one gets its own prefix, so a dashboard link is `avo_dashboards.dashboard_path`, not `avo.dashboard_path`.
+
+| Add-on                               | Prefix                 | Mounted at                 | Example                                    |
+| ------------------------------------ | ---------------------- | -------------------------- | ------------------------------------------ |
+| Core                                 | `avo.`                 | `/avo`                     | `avo.resources_users_path`                 |
+| [Dashboards](./dashboards)           | `avo_dashboards.`      | `/avo/dashboards`          | `avo_dashboards.dashboard_path(dashboard)` |
+| [Kanban](./kanban-boards)            | `avo_kanban.`          | `/avo/boards`              | `avo_kanban.board_path(board)`             |
+| [Collaboration](./collaboration)     | `avo_collaboration.`   | `/avo/collaboration`       | `avo_collaboration.entries_path`           |
+| [Notifications](./notifications)     | `avo_notifications.`   | `/avo/notifications`       | `avo_notifications.notifications_path`     |
+| [Dynamic filters](./dynamic-filters) | `avo_dynamic_filters.` | `/avo/avo-dynamic_filters` | `avo_dynamic_filters.fields_path`          |
+
+The mount points are relative to your configured `root_path`. If you mounted Avo at `/admin`, dashboards live at `/admin/dashboards`.
+
+:::warning
+A prefix only exists when that gem is installed. Calling `avo_kanban.board_path` in an app without `avo-kanban` raises `NoMethodError`, so guard optional add-ons with `Avo.plugin_manager.installed?("avo-kanban")`.
+:::
+
+### Inside view components
+
+ViewComponents don't have the routing proxies in scope directly — reach them through `helpers`:
+
+```ruby
+# In a ViewComponent
+helpers.avo_dashboards.dashboard_path(dashboard)
+helpers.avo.resources_users_path
+helpers.main_app.posts_path
+```
+
 ## Why this matters
 
 Without the prefix, Rails resolves helpers in the current context. Calling `posts_path` from inside Avo could fail (undefined method) or resolve to the wrong route if both Avo and your app define it. The `avo` and `main_app` proxies explicitly tell Rails which route set to use.
 
 ## Quick reference
 
-| You want to link to… | Use this prefix |
-| -------------------- | --------------- |
-| Avo pages (resources, tools, dashboards, etc.) | `avo.` |
-| Your main application routes | `main_app.` |
+| You want to link to…                                       | Use this prefix                              |
+| ---------------------------------------------------------- | -------------------------------------------- |
+| Avo core pages (resources, tools, media library, etc.)     | `avo.`                                       |
+| An Avo add-on's pages (dashboards, boards, notifications…) | that add-on's prefix, e.g. `avo_dashboards.` |
+| Your main application routes                               | `main_app.`                                  |
+
+Not sure which prefix an add-on uses? Run `rails routes` and look at the `Mounts` lines — each mounted engine is listed with the name you use as the prefix.
 
 ## Learn more
 
