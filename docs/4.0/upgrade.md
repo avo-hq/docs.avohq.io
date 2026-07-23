@@ -24,9 +24,20 @@ pt-BR:
   avo:
     resource_translations:
       user:
+        zero: 'usuários' # [!code --]
+        one: 'usuário' # [!code --]
+        other: 'usuários' # [!code --]
         zero: 'Usuários' # [!code ++]
         one: 'Usuário' # [!code ++]
         other: 'Usuários' # [!code ++]
+    field_translations:
+      file:
+        zero: 'arquivos' # [!code --]
+        one: 'arquivo' # [!code --]
+        other: 'arquivos' # [!code --]
+        zero: 'Arquivos' # [!code ++]
+        one: 'Arquivo' # [!code ++]
+        other: 'Arquivos' # [!code ++]
 ```
 
 Grep your locale files for `resource_translations` and `field_translations`, and capitalize any entry you want capitalized on screen. Nothing else changes: resources and fields without a translation still fall back to the humanized class or attribute name.
