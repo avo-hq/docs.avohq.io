@@ -1,4 +1,4 @@
-#### Default
+#### Default value
 
 `true`
 

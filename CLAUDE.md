@@ -8,4 +8,6 @@ Humans who want the short version: read [`writing-docs.md`](./docs/contributing/
 
 Reference example to copy: [`docs/4.0/appearance.md`](./4.0/appearance.md) (guide) and [`docs/4.0/appearance-api.md`](./4.0/appearance-api.md) (reference).
 
+**No blur in code blocks.** Don't use the `[!code focus]` marker — it blurs every unfocused line, which we don't want. Emphasize lines with highlights instead (`[!code highlight]`, or `[!code ++]` / `[!code --]` for diffs). If you think a specific block genuinely needs focus/blur, don't add it silently — point it out and ask.
+
 Running the site locally and component details: [`readme.md`](./readme.md).

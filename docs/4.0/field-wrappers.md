@@ -25,7 +25,7 @@ Controls whether a dash `—` is rendered instead of the block's content.
 
 Avo decides this by checking `@field.value.blank?` — **not** whether the block passed to `index_field_wrapper` actually renders something. In the example below, we'd like to show a red cross icon instead of a dash even when `@field.value` is `nil`, so we pass `dash_if_blank: false`.
 
-#### Default
+#### Default value
 
 `true`
 
@@ -45,7 +45,7 @@ Because the check runs against `@field.value` and not the block's rendered outpu
 
 Wraps the content in a container with `flex items-center justify-center` classes making everything centered horizontally and vertically.
 
-#### Default
+#### Default value
 
 `false`
 
@@ -60,7 +60,7 @@ Wraps the content in a container with `flex items-center justify-center` classes
 
 Removes the padding around the field allowing it to flow from edge to edge.
 
-#### Default
+#### Default value
 
 `false`
 
@@ -109,13 +109,13 @@ Each field wrapper is divided in three areas.
 
 ### Label
 
-This is where the field name is being displayed. This is also where the [required](./field-options#required) asterisk is added for required fields.
+This is where the field name is being displayed. This is also where the [required](./field-options-api#required) asterisk is added for required fields.
 
 ### Value
 
 This area holds the actual value of the field or it's representation. The falue can be simple text or more advanced types like images, advanced pickers, and content editors.
 
-At the bottom the [help text](./field-options#help-text) is going to be shown on the <Edit /> view and below it the validation error.
+At the bottom the [help text](./field-options-api#help) is going to be shown on the <Edit /> view and below it the validation error.
 
 ### Extra
 
@@ -129,7 +129,7 @@ Controls whether a dash `—` is rendered instead of the block's content.
 
 Avo decides this by checking `@field.value.blank?` — **not** whether the block passed to `field_wrapper` actually renders something. In the example below, we'd like to show a red cross icon instead of a dash even when `@field.value` is `nil`, so we pass `dash_if_blank: false`.
 
-#### Default
+#### Default value
 
 `true`
 
@@ -151,7 +151,7 @@ This renders the field in a more compact way by removing the **Extra** area and 
 
 This is enabled on the fields displayed in actions.
 
-#### Default
+#### Default value
 
 `false`
 
@@ -179,7 +179,7 @@ This removes the **Extra** area and renders the **Value** area full width.
 
 This is used on fields that require a larger area to be displayed like [WYSIWYG editors](./fields/trix), [`KeyValue`](./fields/key_value), or [file fields](./fields/files).
 
-#### Default
+#### Default value
 
 `false`
 

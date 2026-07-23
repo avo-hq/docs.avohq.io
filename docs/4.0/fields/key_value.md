@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The KeyValue field makes it easy to edit flat key-value pairs stored in JSON format in the database."
+fieldTags: [structured]
 ---
 
 # KeyValue
@@ -18,7 +20,7 @@ field :meta, as: :key_value
 
 Customize the label for the key header.
 
-#### Default
+#### Default value
 
 `I18n.translate("avo.key_value_field.key")`
 
@@ -31,7 +33,7 @@ Any string value.
 
 Customize the label for the value header.
 
-#### Default
+#### Default value
 
 `I18n.translate("avo.key_value_field.value")`
 
@@ -44,7 +46,7 @@ Any string value.
 
 Customize the label for the add row button tooltip.
 
-#### Default
+#### Default value
 
 `I18n.translate("avo.key_value_field.add_row")`
 
@@ -57,7 +59,7 @@ Any string value.
 
 Customize the label for the delete row button tooltip.
 
-#### Default
+#### Default value
 
 `I18n.translate("avo.key_value_field.delete_row")`
 
@@ -70,7 +72,7 @@ Any string value.
 
 Set a custom label for the tooltip on the reorder by drag-and-drop row button.
 
-#### Default
+#### Default value
 
 `I18n.translate("avo.key_value_field.reorder_row")`
 

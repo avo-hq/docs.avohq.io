@@ -1,8 +1,35 @@
 import { getFiles } from "./getFiles.js"
 import sidebar20 from "./sidebar-2.0.js"
 import sidebar30 from "./sidebar-3.0.js"
+import fs from "node:fs"
+import path from "node:path"
 
 const fieldsMenuItems4 = getFiles('fields', '4.0')
+
+// Every page is also published as raw markdown next to its .html version (and
+// served the same way in dev). Markdown readers never see PageHeader's
+// `api_docs`/`guide` callouts, so surface them as visible notices with
+// absolute URLs.
+function transformRawMd(src, relativePath) {
+  const fm = src.match(/^---\n[\s\S]*?\n---\n/)
+  if (!fm) return src
+
+  const linkNotice = (key, label) => {
+    const match = fm[0].match(new RegExp(`^${key}:\\s*["']?(\\S+?)["']?\\s*$`, 'm'))
+    if (!match) return null
+    const target = path.posix
+      .join(path.posix.dirname(`/${relativePath}`), match[1])
+      .replace(/\.html$/, '.md')
+    return `> ${label} https://docs.avohq.io${target}\n`
+  }
+
+  const notice =
+    linkNotice('api_docs', '**Looking for every option?** See the full API reference →') ||
+    linkNotice('guide', '**How-to guides and worked examples** See the guides →')
+  if (!notice) return src
+
+  return fm[0] + '\n' + notice + src.slice(fm[0].length)
+}
 
 /**
  * @type {import('vitepress').UserConfig}
@@ -49,6 +76,43 @@ const config = {
     ['meta', { name: "msapplication-config", content: "/favicons/browserconfig.xml" }],
     ['meta', { name: "theme-color", content: "#ffffff" }],
   ],
+  // Publish the raw .md of every page into dist so /4.0/scopes.md works in
+  // production (the Copy page button and LLMs fetch these).
+  buildEnd(siteConfig) {
+    for (const page of siteConfig.pages) {
+      try {
+        const src = fs.readFileSync(path.join(siteConfig.srcDir, page), 'utf8')
+        const out = path.join(siteConfig.outDir, page)
+        fs.mkdirSync(path.dirname(out), { recursive: true })
+        fs.writeFileSync(out, transformRawMd(src, page))
+      } catch {
+        // ponytail: dynamic-route/missing sources are skipped, not fatal
+      }
+    }
+  },
+  vite: {
+    plugins: [
+      {
+        // Dev parity with the published .md files: serve them transformed
+        // instead of letting Vite's static handler return the raw source.
+        name: 'avo-serve-transformed-md',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            // The SPA loads pages via import('/path/page.md') — those requests
+            // must reach Vite's transform pipeline, not get raw markdown.
+            if (req.headers['sec-fetch-dest'] === 'script') return next()
+            const url = (req.url || '').split('?')[0]
+            if (!url.endsWith('.md')) return next()
+            const docsDir = path.resolve(__dirname, '..')
+            const file = path.resolve(docsDir, decodeURIComponent(url).slice(1))
+            if (!file.startsWith(docsDir + path.sep) || !fs.existsSync(file)) return next()
+            res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
+            res.end(transformRawMd(fs.readFileSync(file, 'utf8'), url.slice(1)))
+          })
+        },
+      },
+    ],
+  },
   transformPageData(pageData) {
     const canonicalUrl = `https://docs.avohq.io/${pageData.relativePath}`
       .replace(/index\.md$/, '')
@@ -93,17 +157,20 @@ const config = {
     ],
     footer: {
       message: '',
-      copyright: `Copyright © 2020–${new Date().getFullYear()} Adrian Marin`
+      copyright: `Copyright © 2020–${new Date().getFullYear()} Avo`
     },
     nav: [
-      { text: "Home", link: "/" },
-      { text: "Docs", link: "/4.0/index.html" },
+      { text: "avohq.io", link: "https://avohq.io" },
       { text: "Guides", link: "/4.0/guides.html" },
       { text: "FAQ", link: "/4.0/faq.html" },
       { text: "Team", link: "/team.html" },
-      { text: "Releases", link: "https://avohq.io/releases" },
-      { text: "Gems", link: "https://avohq.io/gems" },
       { text: "Blog", link: "https://avohq.io/blog" },
+      {
+        text: "More", items: [
+          { text: "Releases", link: "https://avohq.io/releases" },
+          { text: "Gems", link: "https://avohq.io/gems" },
+        ]
+      },
       {
         text: "Version", items: [
           { text: "4.0", link: "/4.0/index.html" },
@@ -118,10 +185,9 @@ const config = {
         {
           text: "Avo 4",
           items: [
-            { text: "Intro", link: "/4.0/index.html" },
-            { text: "Avo 3 to Avo 4 upgrade", link: "/4.0/avo-3-avo-4-upgrade.html" },
+            { text: "Getting Started", link: "/4.0/index.html" },
+            { text: "Upgrade Guide", link: "/4.0/upgrade.html" },
             { text: "Technical Support", link: "/4.0/technical-support.html" },
-            { text: "Best practices", link: "/4.0/best-practices.html" },
             { text: "🤖 Agentic engineering", link: "/4.0/agentic-engineering.html" },
           ]
         },
@@ -129,36 +195,39 @@ const config = {
           text: "Configuration",
           items: [
             { text: "Installation", link: "/4.0/installation.html" },
+            { text: "Routing", link: "/4.0/routing.html" },
             { text: "Gem server authentication", link: "/4.0/gem-server-authentication.html" },
             { text: "License troubleshooting", link: "/4.0/license-troubleshooting.html" },
             { text: "Authentication", link: "/4.0/authentication.html" },
             { text: "Authorization", link: "/4.0/authorization.html" },
+            { text: "Performance", link: "/4.0/performance.html" },
           ],
         },
         {
           text: "Resources",
           items: [
             { text: "Overview", link: "/4.0/resources.html" },
-            { text: "Array Resources", link: "/4.0/array-resources.html" },
-            { text: "HTTP Resources", link: "/4.0/http-resources.html" },
-            { text: "Record previews", link: "/4.0/record-previews.html" },
+            { text: "Array Resource", link: "/4.0/array-resource.html" },
+            { text: "HTTP Resource", link: "/4.0/http-resource.html" },
             { text: "Scopes", link: "/4.0/scopes.html" },
-            { text: "Records reordering", link: "/4.0/records-reordering.html" },
+            { text: "Record reordering", link: "/4.0/record-reordering.html" },
             { text: "Discreet information", link: "/4.0/discreet-information.html" },
-            { text: "Customizable controls", link: "/4.0/customizable-controls.html" },
-            { text: "Avatar", link: "/4.0/avatar.html" },
-            { text: "Cover", link: "/4.0/cover.html" },
+            { text: "Custom controls", link: "/4.0/custom-controls.html" },
+            { text: "Actions", link: "/4.0/actions.html" },
+            { text: "Select All", link: "/4.0/select-all.html" },
+            { text: "Cover and Avatar", link: "/4.0/cover-and-avatar.html" },
             {
               text: "Views",
+              link: "/4.0/views.html",
               collapsed: false,
               items: [
                 { text: "Overview", link: "/4.0/views.html" },
                 { text: "Table view", link: "/4.0/table-view.html" },
                 { text: "Grid view", link: "/4.0/grid-view.html" },
                 { text: "Map view", link: "/4.0/map-view.html" },
+                { text: "Custom view types", link: "/4.0/custom-view-types.html" },
               ],
             },
-            { text: "Controller configuration", link: "/4.0/controllers.html" },
           ]
         },
         {
@@ -166,6 +235,7 @@ const config = {
           items: [
             { text: "Fields", link: "/4.0/fields.html" },
             { text: "Field options", link: "/4.0/field-options.html" },
+            { text: "HTML attributes", link: "/4.0/html.html" },
             { text: "Field discovery", link: "/4.0/field-discovery.html" },
 
             { text: "Layout", link: "/4.0/fields-layout.html" },
@@ -178,7 +248,7 @@ const config = {
               text: "Associations",
               collapsed: true,
               items: [
-                { text: "Customization", link: "/4.0/associations.html" },
+                { text: "Overview", link: "/4.0/associations.html" },
                 { text: 'Searchable', link: '/4.0/associations/searchable.html' },
                 { text: 'Belongs to', link: '/4.0/associations/belongs_to.html' },
                 { text: 'Has one', link: '/4.0/associations/has_one.html' },
@@ -189,51 +259,52 @@ const config = {
           ],
         },
         {
-          text: "Actions",
-          items: [
-            { text: "Overview", link: "/4.0/actions/overview.html" },
-            { text: "Generate", link: "/4.0/actions/generate.html" },
-            { text: "Registration", link: "/4.0/actions/registration.html" },
-            { text: "Execution & Feedback", link: "/4.0/actions/execution.html" },
-            { text: "Customization", link: "/4.0/actions/customization.html" },
-            { text: "Guides & Tutorials", link: "/4.0/actions/guides-and-tutorials.html" },
-          ],
-        },
-        {
           text: "Filters",
           items: [
             { text: "Overview", link: "/4.0/filters.html" },
-            { text: "Standard Filters", link: "/4.0/basic-filters.html" },
+            { text: "Basic Filters", link: "/4.0/basic-filters.html" },
             { text: "Dynamic Filters", link: "/4.0/dynamic-filters.html" },
           ],
         },
         {
           text: "Customize Avo",
           items: [
-            { text: "Customization options", link: "/4.0/customization.html" },
+            { text: "Customization", link: "/4.0/customization.html" },
             { text: "Eject views", link: "/4.0/eject-views.html" },
-            { text: "Custom view types", link: "/4.0/custom-view-types.html" },
             { text: "Menu editor", link: "/4.0/menu-editor.html" },
-            { text: "Header menu", link: "/4.0/header-menu.html" },
-            { text: "Resource Search", link: "/4.0/search/resource-search.html" },
-            { text: "Global Search", link: "/4.0/search/global-search.html" },
+            { text: "Search", link: "/4.0/search.html" },
+            { text: "Keyboard Shortcuts", link: "/4.0/keyboard-shortcuts.html" },
             { text: "Localization (I18n)", link: "/4.0/i18n.html" },
             { text: "Appearance", link: "/4.0/appearance.html" },
+            { text: "Theming", link: "/4.0/theming.html" },
             // { text: "User Preferences", link: "/4.0/user-preferences.html" },
-            { text: "Routing", link: "/4.0/routing.html" },
             { text: "Multitenancy", link: "/4.0/multitenancy.html" },
             { text: "Breadcrumbs", link: "/4.0/breadcrumbs.html" },
             {
-              text: "Custom content",
+              text: "Build your own UI",
               collapsed: false,
               items: [
-                { text: "Custom views", link: "/4.0/custom-tools.html" },
+                { text: "Custom tools", link: "/4.0/custom-tools.html" },
+                { text: "Resource tools", link: "/4.0/resource-tools.html" },
                 { text: "Custom fields", link: "/4.0/custom-fields.html" },
                 { text: "Custom errors", link: "/4.0/custom-errors.html" },
-                { text: "Resource tools", link: "/4.0/resource-tools.html" },
-                { text: "Stimulus JS integration", link: "/4.0/stimulus-integration.html" },
-                { text: "Custom asset pipeline", link: "/4.0/custom-asset-pipeline.html" },
+                { text: "Icons", link: "/4.0/icons.html" },
+                { text: "Asset handling", link: "/4.0/asset-handling.html" },
+                { text: "JavaScript & Stimulus", link: "/4.0/javascript.html" },
                 { text: "TailwindCSS integration", link: "/4.0/tailwindcss-integration.html" },
+                {
+                  text: "Native Avo components",
+                  collapsed: false,
+                  items: [
+                    { text: "<code>Avo::ButtonComponent</code>", link: "/4.0/native-components/avo-button-component.html" },
+                    { text: "<code>Avo::PanelComponent</code>", link: "/4.0/native-components/avo-panel-component.html" },
+                    { text: "<code>Avo::CardComponent</code>", link: "/4.0/native-components/avo-card-component.html" },
+                    { text: "Native field components", link: "/4.0/native-field-components.html" },
+                    { text: "Field wrappers", link: "/4.0/field-wrappers.html" },
+                  ],
+                },
+                { text: "Plugins", link: "/4.0/plugins.html" },
+                { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
               ],
             },
           ],
@@ -249,56 +320,26 @@ const config = {
           items: [
             { text: "Notifications", link: "/4.0/notifications.html" },
             { text: "Media Library", link: "/4.0/media-library.html" },
-            { text: "Audit Logging", link: "/4.0/audit-logging/" },
-            {
-              text: "Dashboards and cards",
-              link: "/4.0/dashboards.html",
-              items: [
-                { text: "Dashboards", link: "/4.0/dashboards.html" },
-                { text: "Cards", link: "/4.0/cards.html" },
-              ],
-            },
+            { text: "Audit Logging", link: "/4.0/audit-logging.html" },
+            { text: "Dashboards", link: "/4.0/dashboards.html" },
+            { text: "Cards", link: "/4.0/cards.html" },
             {
               text: "Kanban board",
               link: "/4.0/kanban-boards.html",
             },
             {
               text: "Forms and pages",
-              link: "/4.0/forms-and-pages/overview.html",
-              items: [
-                { text: "Overview", link: "/4.0/forms-and-pages/overview.html" },
-                { text: "Forms", link: "/4.0/forms-and-pages/forms.html" },
-                { text: "Pages", link: "/4.0/forms-and-pages/pages.html" },
-              ],
+              link: "/4.0/forms-and-pages.html",
             },
             {
               text: "REST API",
-              link: "/4.0/rest-api/",
-              items: [
-                { text: "Overview", link: "/4.0/rest-api/" },
-                { text: "Mount", link: "/4.0/rest-api/mount.html" },
-                { text: "Generators", link: "/4.0/rest-api/generators.html" },
-                { text: "CSRF Protection", link: "/4.0/rest-api/csrf-protection.html" },
-                { text: "Authentication", link: "/4.0/rest-api/authentication.html" },
-              ],
+              link: "/4.0/rest-api.html",
             },
             {
               text: "Collaboration",
-              link: "/4.0/collaboration/overview.html",
-              items: [
-                { text: "Overview", link: "/4.0/collaboration/overview.html" },
-                { text: "Authorization", link: "/4.0/collaboration/authorization.html" },
-              ],
+              link: "/4.0/collaboration.html",
             },
           ]
-        },
-        {
-          text: "Performance",
-          collapsed: false,
-          items: [
-            { text: "Cache", link: "/4.0/cache.html" },
-            { text: "Views", link: "/4.0/views-performance.html" },
-          ],
         },
         {
           text: "Internals",
@@ -306,34 +347,13 @@ const config = {
           items: [
             { text: "Overview", link: "/4.0/internals.html" },
             { text: "Testing", link: "/4.0/testing.html" },
-            { text: "Keyboard Shortcuts", link: "/4.0/keyboard-shortcuts.html" },
             { text: "<code>Avo::Current</code>", link: "/4.0/avo-current.html" },
             { text: "<code>Avo::ExecutionContext</code>", link: "/4.0/execution-context.html" },
             { text: "<code>Avo::Services::EncryptionService</code>", link: "/4.0/encryption-service.html" },
-            { text: "Select All", link: "/4.0/select-all.html" },
-            { text: "Icons", link: "/4.0/icons.html" },
             { text: "Reserved model names and routes", link: "/4.0/internal-model-names.html" },
             { text: "Rails engines and path helpers", link: "/4.0/rails-engines-paths.html" },
-            {
-              text: "Native Avo components",
-              collapsed: true,
-              items: [
-                { text: "<code>Avo::ButtonComponent</code>", link: "/4.0/native-components/avo-button-component.html" },
-                { text: "<code>Avo::PanelComponent</code>", link: "/4.0/native-components/avo-panel-component.html" },
-                { text: "Native field components", link: "/4.0/native-field-components.html" },
-                { text: "Field wrappers", link: "/4.0/field-wrappers.html" },
-              ],
-            },
-          ],
-        },
-        {
-          text: "Extending",
-          collapsed: false,
-          items: [
+            { text: "Controller configuration", link: "/4.0/controllers.html" },
             { text: "<code>Avo::ApplicationController</code>", link: "/4.0/avo-application-controller.html" },
-            { text: "<code>Avo.asset_manager</code>", link: "/4.0/asset-manager.html" },
-            { text: "Plugins", link: "/4.0/plugins.html" },
-            { text: "Custom view types", link: "/4.0/custom-view-types.html" },
           ],
         },
         // {

@@ -1,3 +1,67 @@
+# collaboration overview + authorization merged into a single guide
+[[redirects]]
+from = "/4.0/collaboration/overview.html"
+to = "/4.0/collaboration.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/collaboration/authorization.html"
+to = "/4.0/collaboration.html#authorization"
+status = 301
+force = false
+
+# records-reordering renamed to record-reordering (singular, matches the add-on name)
+[[redirects]]
+from = "/4.0/records-reordering.html"
+to = "/4.0/record-reordering.html"
+status = 301
+force = false
+
+# forms-and-pages overview/forms/pages merged into a single guide + API pair
+[[redirects]]
+from = "/4.0/forms-and-pages/overview.html"
+to = "/4.0/forms-and-pages.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/forms-and-pages/forms.html"
+to = "/4.0/forms-and-pages.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/forms-and-pages/pages.html"
+to = "/4.0/forms-and-pages.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/forms-and-pages/forms-api.html"
+to = "/4.0/forms-and-pages-api.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/forms-and-pages/pages-api.html"
+to = "/4.0/forms-and-pages-api.html"
+status = 301
+force = false
+
+# resource + global search merged into a single search guide + API pair
+[[redirects]]
+from = "/4.0/search/resource-search.html"
+to = "/4.0/search.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/search/global-search.html"
+to = "/4.0/search.html#global-search"
+status = 301
+force = false
+
 # 4.0 layout pages consolidated into fields-layout + fields-layout-api
 [[redirects]]
 from = "/4.0/resource-header.html"
@@ -20,6 +84,13 @@ force = false
 [[redirects]]
 from = "/4.0/tabs.html"
 to = "/4.0/fields-layout.html#organize-fields-under-tabs"
+status = 301
+force = false
+
+# best practices moved into guides
+[[redirects]]
+from = "/4.0/best-practices.html"
+to = "/4.0/guides/best-practices.html"
 status = 301
 force = false
 
@@ -298,5 +369,88 @@ force = false
 [[redirects]]
 from = "/installation.html"
 to = "/4.0/installation.html"
+status = 301
+force = false
+
+# avatar + cover consolidated into cover-and-avatar
+[[redirects]]
+from = "/4.0/avatar.html"
+to = "/4.0/cover-and-avatar.html#add-an-avatar"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/cover.html"
+to = "/4.0/cover-and-avatar.html#add-a-cover-photo"
+status = 301
+force = false
+
+# renamed to singular to match the add-on names
+[[redirects]]
+from = "/4.0/http-resources.html"
+to = "/4.0/http-resource.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/http-resources-api.html"
+to = "/4.0/http-resource-api.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/array-resources.html"
+to = "/4.0/array-resource.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/record-previews.html"
+to = "/4.0/fields/preview.html"
+status = 301
+force = false
+
+# customizable-controls renamed to custom-controls (matches the add-on name)
+[[redirects]]
+from = "/4.0/customizable-controls.html"
+to = "/4.0/custom-controls.html"
+status = 301
+force = false
+
+# audit-logging moved from its own directory to a single page
+[[redirects]]
+from = "/4.0/audit-logging/"
+to = "/4.0/audit-logging.html"
+status = 301
+force = false
+
+# REST API directory (overview + mount/generators/csrf/authentication) merged into a single page
+[[redirects]]
+from = "/4.0/rest-api/"
+to = "/4.0/rest-api.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/rest-api/mount.html"
+to = "/4.0/rest-api.html#mount-the-api"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/rest-api/generators.html"
+to = "/4.0/rest-api.html#custom-controllers"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/rest-api/csrf-protection.html"
+to = "/4.0/rest-api.html#csrf-protection"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/rest-api/authentication.html"
+to = "/4.0/rest-api.html#authentication"
 status = 301
 force = false

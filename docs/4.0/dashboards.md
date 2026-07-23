@@ -1,6 +1,9 @@
 ---
 feedbackId: 833
-license: pro
+license: addon
+addon_link: https://avohq.io/addons/dashboards
+outline: [2, 3]
+api_docs: ./dashboards-api.html
 ---
 
 # Dashboards
@@ -24,7 +27,7 @@ Run `bin/rails g avo:dashboard my_dashboard` to get a shiny new dashboard.
 class Avo::Dashboards::MyDashboard < Avo::Dashboards::BaseDashboard
   self.id = 'my_dashboard'
   self.name = 'Dashy'
-  self.description = 'The first dashbaord'
+  self.description = 'The first dashboard'
   self.grid_cols = 3
 
   def cards
@@ -50,19 +53,48 @@ end
 
 Each dashboard is a file. It holds information about itself like the `id`, `name`, `description`, and how many columns its grid has.
 
-The `id` field has to be unique. The `name` is what the user sees in big letters on top of the page, and the `description` is some text you pass to give the user more details regarding the dashboard.
+The [`id`](dashboards-api#self.id) field has to be unique. The [`name`](dashboards-api#self.name) is what the user sees in big letters on top of the page, and the [`description`](dashboards-api#self.description) is some text you pass to give the user more details regarding the dashboard.
 
-Using the ' grid_cols ' parameter, you may organize the cards in a grid with `3`, `4`, `5`, or `6` columns using the `grid_cols` parameter. The default is `3`.
+Both `name` and `description` accept a Proc, evaluated through [`Avo::ExecutionContext`](execution-context) with access to all its attributes plus the `dashboard` — handy for i18n:
+
+```ruby
+self.name = -> { I18n.t("avo.dashboards.dashy.name") }
+```
+
+Use the [`grid_cols`](dashboards-api#self.grid_cols) parameter to organize the cards in a grid of `3`, `4`, `5`, or `6` columns. The default is `3`.
+
+## Global ranges
+
+Cards each carry their own [range dropdown](cards#ranges), but you can also render a row of range buttons at the top of the dashboard that update every card at once. Pass the day counts you want as [`global_ranges`](dashboards-api#self.global_ranges):
+
+```ruby{4}
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
+  self.id = "dashy"
+  self.name = "Dashy"
+  self.global_ranges = [7, 30, 60, 365]
+
+  def cards
+    card Avo::Cards::UsersCount
+  end
+end
+```
+
+Each entry is a number of days; its button label comes from the `avo.<days>` translation key. The default is an empty array (no global range bar).
 
 ## Cards
-[This section has moved.](cards.html)
+
+Dashboards host cards — metrics, charts, tables, lists, and custom content. You declare them in the `cards` method, as shown in the [generated dashboard](#generate-a-dashboard) above.
+
+Cards aren't dashboard-specific; the same card classes render on resources too. For everything about building and configuring them, see the [Cards guide](cards.html) and the [Cards API reference](cards-api.html).
+
+You can also drop a [`divider`](cards.html#dividers) between cards to group them, as the generated dashboard does with `divider label: "Custom partials"`.
 
 ### Override card arguments from the dashboard
 
 We found ourselves in the position to add a few cards that were the same card but with a slight difference. Ex: Have one `Users count` card and another `Active users count` card. They both count users, but the latter has an `active: true` condition applied.
 
 Before, we'd have to duplicate that card and modify the `query` method slightly but end up with duplicated boilerplate code.
-For those scenarios, we created the `arguments` attribute. It allows you to send arbitrary arguments to the card from the parent.
+For those scenarios, we created the [`arguments`](cards-api#arguments) attribute. It allows you to send arbitrary arguments to the card from the parent.
 
 ```ruby{7-9}
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
@@ -103,7 +135,7 @@ That gives you an extra layer of control without code duplication and the best d
 #### Control the base settings from the parent
 
 Evidently, you don't want to show the same `label`, `description`, and other details for that second card from the first card.
-Therefore, you can control the `label`, `description`, `cols`, `rows`, `visible`, and `refresh_every` arguments from the parent declaration.
+Therefore, you can control the `label`, `description`, `cols`, `rows`, `visible`, and `refresh_every` arguments from the parent declaration. See [registration overrides](cards-api#card) for the full list.
 
 ```ruby{8-16}
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
@@ -117,7 +149,7 @@ class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
       description: "Active users count",
       cols: 2,
       rows: 2,
-      visible: -> { true }
+      visible: -> { true },
       refresh_every: 2.minutes,
       arguments: {
         active_users: true
@@ -128,7 +160,7 @@ end
 
 ## Dashboards visibility
 
-You might want to hide specific dashboards from certain users. You can do that using the `visible` option. The option can be a boolean `true`/`false` or a block where you have access to the `params`, `current_user`, `context`, and `dashboard`.
+You might want to hide specific dashboards from certain users. You can do that using the [`visible`](dashboards-api#self.visible) option. The option can be a boolean `true`/`false` or a block where you have access to the `params`, `current_user`, `context`, and `dashboard`.
 
 If you don't pass anything to `visible`, the dashboard will be available for anyone.
 
@@ -153,32 +185,14 @@ end
 
 ## Dashboards authorization
 
-You can set authorization rules for dashboards using the `authorize` block.
+You can set authorization rules for dashboards using the [`authorize`](dashboards-api#self.authorize) block.
 
 ```ruby{3-6}
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   self.id = 'dashy'
   self.authorize = -> do
-    # You have access to current_user, params, request, context, adn view_context.
+    # You have access to current_user, params, request, context, and view_context.
     current_user.is_admin?
   end
 end
 ```
-
-<Option name="`self.name`">
-
-`self.name` is what is going to be displayed to the user as the dashboard name.
-
-```ruby
-self.name = "Dashy"
-```
-
-`self.name` can be configured using a Proc.
-
-```ruby
-self.name = -> { I18n.t("avo.dashboards.dashy.name") }
-```
-
-Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `dashboard`.
-
-</Option>

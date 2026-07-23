@@ -1,14 +1,18 @@
+---
+license: community
+outline: [2, 3]
+api_docs: ./customization-api.html#routing
+---
+
 # Routing
 
 We stick to Rails defaults in terms of routing just to make working with Avo as straightforward as possible.
 
-Avo's functionality is distributed across multiple gems, each encapsulating its own engine. By default, these engines are mounted under Avo's scope within your Rails application.
+Avo's functionality is distributed across multiple gems, each encapsulating its own engine. By default, these engines are mounted under Avo's scope within your Rails application. Each engine registers itself with Avo, so you mount everything with a single `mount_avo` call.
 
-Each engine registers itself with Avo.
+## Default mounting behavior
 
-### Default Mounting Behavior
-
-When the `mount_avo` method is invoked, Avo and all the associated engines are mounted at a common entry point. By default, this mounting point corresponds to `Avo.configuration.root_path`, but you can customize it using the `at` argument:
+When the `mount_avo` method is invoked, Avo and all the associated engines are mounted at a common entry point. By default, this mounting point corresponds to [`root_path`](./customization-api.html#root_path), but you can customize it using the `at` argument:
 
 ```ruby{4,7}
 # config/routes.rb
@@ -22,6 +26,8 @@ end
 ```
 
 If no custom path is specified, Avo is mounted at the default configuration root path.
+
+`mount_avo` also accepts a block, so you can append your own routes to the Avo engine inline (see [Add your own routes](#add-your-own-routes)), and a `mount_lookbook: true` argument to mount [Lookbook](https://lookbook.build) alongside Avo in development.
 
 ## Mount Avo under a scope
 
@@ -43,8 +49,69 @@ end
 :::info
 To guarantee that the `locale` scope is included in the `default_url_options`, you must explicitly add it to the Avo configuration.
 
-Check [this documentation section](customization.html#default_url_options) for details on how to configure `default_url_options` setting.
+Check [this documentation section](customization-api.html#default_url_options) for details on how to configure `default_url_options` setting.
 :::
+
+## Mount Avo under a nested path
+
+You may need to mount Avo under a nested path, something like `/uk/admin`. In order to do that, you need to consider a few things.
+
+1. Move the engine mount point below any route for custom tools.
+
+```ruby{7,10}
+# config/routes.rb
+Rails.application.routes.draw do
+  # other routes
+
+  authenticate :user, ->(user) { user.is_admin? } do
+    scope :uk do
+      scope :admin do
+        get "dashboard", to: "avo/tools#dashboard" # custom tool added before engine
+      end
+
+      mount_avo # engine mounted last
+    end
+  end
+end
+```
+
+2. The [`root_path`](./customization-api.html#root_path) configuration should only be the last path segment.
+
+```ruby
+# 🚫 Don't add the scope to the root_path
+Avo.configure do |config|
+  config.root_path = "/uk/admin"
+end
+
+# ✅ Do this instead
+Avo.configure do |config|
+  config.root_path = "/admin"
+end
+```
+
+3. Use full paths for other configurations.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.home_path = "/uk/admin/dashboard"
+
+  config.set_initial_breadcrumbs do
+    add_breadcrumb "Dashboard", "/uk/admin/dashboard"
+  end
+end
+```
+
+## Serve Avo from a custom `map` in `config.ru`
+
+If you serve your Rails app under a prefix through a custom `map` block in `config.ru`, set [`prefix_path`](./customization-api.html#prefix_path) to that mapping's prefix so Avo generates correct paths.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.prefix_path = "/internal"
+end
+```
 
 ## Namespaced resource routes
 
@@ -57,7 +124,7 @@ You may want to add your own routes inside Avo so you can access different custo
 You can do that in your app's `routes.rb` file by opening up the Avo routes block and append your own.
 
 ```ruby
-# routes.rb
+# config/routes.rb
 Rails.application.routes.draw do
   mount_avo
 

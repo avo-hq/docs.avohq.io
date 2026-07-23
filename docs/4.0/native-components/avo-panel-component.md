@@ -23,6 +23,8 @@ container with an optional description, header controls, body, sidebar, and foot
 
 <Image src="/assets/img/4_0/avo-panel-component/index.webp" dark-src="/assets/img/4_0/avo-panel-component/index-dark.webp" width="1376" height="384" alt="Composed panel with title, description, a control button, and a card body" />
 
+`ui.panel(...)` is shorthand for `Avo::UI::PanelComponent.new(...)` — both forms work.
+
 ## Options
 
 All options are optional. You may render a panel without any of them.
@@ -39,28 +41,23 @@ All options are optional. You may render a panel without any of them.
 
 The title of the panel, rendered at the top of the header.
 
-#### Type
-`String`
-
 <Image src="/assets/img/4_0/avo-panel-component/title.webp" dark-src="/assets/img/4_0/avo-panel-component/title-dark.webp" width="1376" height="244" alt="Panel header showing a title" />
+
+- **Type:** String
 </Option>
 
 <Option name="`description`">
 
 A small line of text under the title that describes what the panel is about.
 
-#### Type
-`String`
-
 <Image src="/assets/img/4_0/avo-panel-component/description.webp" dark-src="/assets/img/4_0/avo-panel-component/description-dark.webp" width="1376" height="288" alt="Panel header with a title and a description line underneath" />
+
+- **Type:** String
 </Option>
 
 <Option name="`class`">
 
 A list of CSS classes applied to the panel container.
-
-#### Type
-`String`
 
 ```erb
 <%= render Avo::UI::PanelComponent.new(title: "Panel", class: "ring-2 ring-blue-500") do |panel| %>
@@ -71,14 +68,15 @@ A list of CSS classes applied to the panel container.
 ```
 
 <Image src="/assets/img/4_0/avo-panel-component/class.webp" dark-src="/assets/img/4_0/avo-panel-component/class-dark.webp" width="1376" height="276" alt="Panel with a custom class adding a blue ring around the container" />
+
+- **Type:** String
 </Option>
 
 <Option name="`data`">
 
 A hash of `data-*` attributes forwarded to the panel container.
 
-#### Type
-`Hash`
+- **Type:** Hash
 </Option>
 
 <Option name="`index`">
@@ -86,17 +84,16 @@ A hash of `data-*` attributes forwarded to the panel container.
 The item index, forwarded to the container as a `data-item-index` attribute. Used
 when panels are rendered as part of a collection (for example the [Grid view](./../grid-view)).
 
-#### Type
-`Integer`
+- **Type:** Integer
 </Option>
 
 <Option name="`content_focusable`">
 
 When `true`, the panel body becomes a keyboard focus anchor: focusing it lets the user
-`Tab` into the fields and `Shift+Tab` back to the header controls. Defaults to `false`.
+`Tab` into the fields and `Shift+Tab` back to the header controls.
 
-#### Type
-`Boolean`
+- **Type:** Boolean
+- **Default:** `false`
 </Option>
 
 ## Slots
@@ -170,8 +167,8 @@ the panel (no card wrapper).
 
 <Option name="`card`">
 
-Wraps the content in a bordered card automatically. Use this instead of `body` when
-you want the content to sit inside a distinct card surface.
+Wraps the content in a bordered card automatically (an [`Avo::UI::CardComponent`](./avo-card-component.html)).
+Use this instead of `body` when you want the content to sit inside a distinct card surface.
 
 The card body ships **unpadded** so wide content (tables, horizontal scrollers) can
 sit flush to the card edge. Opt into the standard body padding with `padded: true`
@@ -210,8 +207,8 @@ Shows content in a smaller area on the end side of the `body`.
 
 <Option name="`pre_bodies`">
 
-Content rendered between the header and the body. Can be used more than once; each
-entry is rendered in order.
+Content rendered between the header and the body. Can be used more than once (via
+repeated `with_pre_body` calls); each entry is rendered in order.
 
 ```erb
 <%= render Avo::UI::PanelComponent.new(title: "Product") do |panel| %>

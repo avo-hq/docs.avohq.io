@@ -13,7 +13,7 @@ end
 
 See [Searchable associations](./../associations/searchable) for setup requirements, the hash form (`searchable: { query:, item:, enabled: }`), proc locals, and precedence rules.
 
-#### Default
+#### Default value
 
 `false`
 

@@ -39,7 +39,7 @@ end
 Located in the [`avo`](https://github.com/avo-hq/avo/tree/main/app/assets/svgs/avo) directory.
 Use them with this notation: `avo/ICON_NAME`.
 
-These are the custom icons that Avo uses throughout the app and don't come from any of the two supported libraries.
+These are the custom icons that Avo uses throughout the app and don't come from either of the two public libraries (Tabler and Heroicons).
 
 :::warning
 These icons are considered private API. We may remove or change them without notice. Use at your own risk.
@@ -54,7 +54,10 @@ These icons are considered private API. We may remove or change them without not
 [Tabler](https://tabler.io/icons) is considered the official icon library for Avo. It's huge, modern and well maintained.
 
 The icons are provided by the [`avo-icons`](https://github.com/avo-hq/avo-icons) gem.
-You can use these icons with this notation: `tabler/ICON_NAME`.
+
+Tabler comes in two variants: `outline` and `filled`.
+
+You can use these icons with this notation: `tabler/VARIANT/ICON_NAME`.
 
 #### Example:
 

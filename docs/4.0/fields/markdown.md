@@ -2,6 +2,8 @@
 license: community
 betaStatus: Beta
 demoVideo: "https://youtu.be/wnWvzQyyo6A?t=2128"
+description: "A GitHub-inspired Markdown editor based on the Marksmith editor."
+fieldTags: [rich text]
 ---
 
 # Markdown
@@ -109,11 +111,13 @@ module Marksmith
 end
 ```
 
+## Options
+
 <Option name="`media_library`">
 
 Controls the visibility of the **"Attach from gallery"** option in the markdown editor.
 
-##### Default value
+#### Default value
 
 `true`
 
@@ -121,8 +125,6 @@ Controls the visibility of the **"Attach from gallery"** option in the markdown 
 
 - `true`
 - `false`
-
-#### Code example
 
 ```ruby
 field :body, as: :markdown, media_library: false
@@ -134,7 +136,7 @@ field :body, as: :markdown, media_library: false
 
 Controls the visibility of the **"Upload files"** option in the markdown editor.
 
-##### Default value
+#### Default value
 
 `true`
 
@@ -142,8 +144,6 @@ Controls the visibility of the **"Upload files"** option in the markdown editor.
 
 - `true`
 - `false`
-
-#### Code example
 
 ```ruby
 field :body, as: :markdown, file_uploads: false
@@ -155,15 +155,13 @@ field :body, as: :markdown, file_uploads: false
 Sends additional parameters to the **preview renderer** of the markdown field.
 Useful for injecting context-specific data during preview rendering.
 
-##### Default value
+#### Default value
 
 `{}`
 
 #### Possible values
 
 - Any `Hash` of key-value pairs.
-
-#### Code example
 
 ```ruby
 field :body, as: :markdown, extra_preview_params: { foo: :bar }

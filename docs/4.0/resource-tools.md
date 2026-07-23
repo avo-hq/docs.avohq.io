@@ -2,11 +2,16 @@
 feedbackId: 836
 demoVideo: "https://youtu.be/Eex8CiinQZ8?t=196"
 license: community
+outline: [2, 3]
 ---
 
 # Resource tools
 
-Similar to adding custom fields to a resource, you can add custom tools. A custom tool is a partial added to your resource's `Show` and `Edit` views.
+Similar to adding custom fields to a resource, you can add custom tools. A resource tool is a partial added to your resource's `Show` and `Edit` views.
+
+:::info Resource tools vs. custom tools
+A resource tool lives **inside a resource's `Show` or `Edit` view**. If you instead want a **standalone page** with its own route and sidebar item, reach for a [custom tool](./custom-tools.html).
+:::
 
 ## Generate a resource tool
 
@@ -24,38 +29,37 @@ end
 The partial is ready for you to customize further.
 
 ```erb
+<%# app/views/avo/resource_tools/_post_info.html.erb %>
 <div class="flex flex-col">
-  <%= render Avo::PanelComponent.new title: "Post info" do |c| %>
-    <% c.with_tools do %>
-      <%= a_link('/avo', icon: 'heroicons/solid/academic-cap', style: :primary) do %>
+  <%= render ui.panel(title: "Post info") do |panel| %>
+    <% panel.with_controls do %>
+      <%= a_link('/avo', icon: 'tabler/outline/school', color: :primary, style: :primary) do %>
         Dummy link
       <% end %>
     <% end %>
 
-    <% c.with_body do %>
-      <div class="flex flex-col p-4 min-h-24">
-        <div class="space-y-4">
-          <h3>🪧 This partial is waiting to be updated</h3>
+    <% panel.with_card(title: "New resource tool") do %>
+      <div class="flex flex-col p-4 min-h-24 space-y-4">
+        <h3>🪧 This partial is waiting to be updated</h3>
 
-          <p>
-            You can edit this file here <code class="p-1 rounded bg-gray-500 text-white text-sm">app/views/avo/resource_tools/post_info.html.erb</code>.
-          </p>
+        <p>
+          You can edit this file here <code class="p-1 rounded bg-gray-500 text-white text-sm">app/views/avo/resource_tools/_post_info.html.erb</code>.
+        </p>
 
-          <p>
-            The resource tool configuration file should be here <code class="p-1 rounded bg-gray-500 text-white text-sm">app/avo/resource_tools/post_info.rb</code>.
-          </p>
+        <p>
+          The resource tool configuration file should be here <code class="p-1 rounded bg-gray-500 text-white text-sm">app/avo/resource_tools/post_info.rb</code>.
+        </p>
 
-          <%
-            # In this partial, you have access to the following variables:
-            # tool
-            # @resource
-            # @resource.model
-            # form (on create & edit pages. please check for presence first)
-            # params
-            # Avo::Current.context
-            # current_user
-          %>
-        </div>
+        <%
+          # In this partial you have access to the following variables:
+          # tool
+          # @resource
+          # @resource.record
+          # form (on create & edit pages. please check for presence first)
+          # params
+          # Avo::Current.context
+          # current_user
+        %>
       </div>
     <% end %>
   <% end %>
@@ -68,12 +72,12 @@ The partial is ready for you to customize further.
 
 You might need access to a few things in the partial.
 
-You have access to the `tool`, which is an instance of your tool `PostInfo`, and the `@resource`, which holds all the information about that particular resource (`view`, `model`, `params`, and others), the `params` of the request, the `Avo::Current.context` and the `current_user`.
+You have access to the `tool`, which is an instance of your tool `PostInfo`, and the `@resource`, which holds all the information about that particular resource (`view`, `record`, `params`, and others), the `params` of the request, the `Avo::Current.context` and the `current_user`.
 That should give you all the necessary data to scope out the partial content.
 
 ## Tool visibility
 
-The resource tool is default visible on the `Show` view of a resource. You can change that using the [visibility options](field-options.html#showing-hiding-fields-on-different-views) (`show_on`, `only_on`).
+The resource tool is default visible on the `Show` view of a resource. You can change that using the [visibility options](field-options.html#show-and-hide-fields-on-different-views) (`show_on`, `only_on`).
 
 ```ruby
 # app/avo/resources/post.rb
@@ -98,8 +102,6 @@ When you want to reference paths from your main app, instead of writing `posts_p
 
 ## Add custom fields on forms
 
-**From Avo 2.12**
-
 You might want to add a few more fields or pieces of functionality besides the CRUD-generated fields on your forms. Of course, you can already create new [custom fields](./custom-fields) to do it in a more structured way, but you can also use a resource tool to achieve more custom behavior.
 
 You have access to the `form` object that is available on the new/edit pages on which you can attach inputs of your choosing. You can even achieve nested form functionality.
@@ -115,7 +117,7 @@ In the example below, we'll use the `Avo::Resources::Fish`, add a few input fiel
 We first need to generate the tool with `bin/rails g avo:resource_tool fish_information` and add the tool to the resource file.
 
 ```ruby{3}
-class Avo::ResourcesFish < Avo::BaseResource
+class Avo::Resources::Fish < Avo::BaseResource
   def fields
     tool Avo::ResourceTools::FishInformation, show_on: :forms
   end
@@ -131,16 +133,16 @@ The fields are:
 - `information` as nested inputs which will produce a `Hash` in the back-end
 
 ```erb{13-36}
-<!-- _fish_information.html.erb -->
+<%# app/views/avo/resource_tools/_fish_information.html.erb %>
 <div class="flex flex-col">
-  <%= render Avo::PanelComponent.new(title: @resource.model.name) do |c| %>
-    <% c.with_tools do %>
-      <%= a_link('/admin', icon: 'heroicons/solid/academic-cap', style: :primary) do %>
+  <%= render ui.panel(title: @resource.record.name) do |panel| %>
+    <% panel.with_controls do %>
+      <%= a_link('/admin', icon: 'tabler/outline/school', color: :primary, style: :primary) do %>
         Primary
       <% end %>
     <% end %>
 
-    <% c.with_body do %>
+    <% panel.with_card do %>
       <div class="flex flex-col p-4 min-h-24">
         <div class="space-y-4">
           <% if form.present? %>
@@ -212,26 +214,25 @@ If you run this code, you'll notice that the `information.information_age` param
 
 ## Where to add logic
 
-It's a good practice not to keep login in view files (partials).
+It's a good practice not to keep logic in view files (partials).
 You can hide that logic inside the tool using instance variables and methods, and access it in the partial using the `tool` variable.
+
+Define a `post_initialize` method on the tool — Avo calls it after the tool is hydrated, so you don't need to override `initialize` or call `super`.
 
 [Here's an example](https://github.com/avo-hq/main.avodemo.com/commit/c8ecb9b53a770103a993df4c2b3acec0a1faf737) on how you could do that.
 
-```ruby{8,10}
+```ruby{12,16}
 class Avo::ResourceTools::PostInfo < Avo::BaseResourceTool
   self.name = "Post info"
   # self.partial = "avo/resource_tools/post_info"
 
   attr_reader :foo
 
-  def initialize(**kwargs)
-    super **kwargs # It's important to call super with the same keyword arguments
-
-    # You'll have access to the following objects:
-    # resource - when attached to a resource
-    # parent - which is the object it's attached to (resource if attached to a resource)
-    # view
-
+  # Runs after Avo hydrates the tool. Inside it you have access to:
+  #   resource - the resource the tool is attached to
+  #   parent   - the object the tool is attached to (the resource, when attached to one)
+  #   view     - the current view
+  def post_initialize
     @foo = :bar # Add your variables
   end
 
@@ -242,12 +243,12 @@ end
 ```
 
 ```erb{7,12}
+<%# app/views/avo/resource_tools/_post_info.html.erb %>
 <div class="flex flex-col">
-  <%= render Avo::PanelComponent.new title: "Post info" do |c| %>
-
-    <% c.with_body do %>
+  <%= render ui.panel(title: "Post info") do |panel| %>
+    <% panel.with_card do %>
       <p>
-        This variable was declared in the initializer:
+        This variable was declared in post_initialize:
         <%= tool.foo %>
       </p>
 

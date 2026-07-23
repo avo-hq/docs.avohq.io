@@ -1,16 +1,31 @@
 <script setup>
+import { computed } from 'vue'
+import { useData } from 'vitepress'
+
 import TopBar from "./TopBar.vue"
+
+const { page } = useData()
+
+const major = computed(() => {
+  const match = page.value.relativePath.match(/^(\d+)\.0\//)
+  return match ? match[1] : null
+})
 </script>
 
 <template>
   <TopBar>
-    <p>You are browsing docs for Avo 2: go to <a href="/4.0/">Avo 4</a></p>
+    <p>You're viewing Avo {{ major }} docs — <a href="/4.0/">go to Avo 4</a></p>
   </TopBar>
 </template>
 
 <style scoped>
+p {
+  font-size: 13px;
+}
+
 a {
-  font-weight: bold;
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
   text-decoration: underline;
 }
 

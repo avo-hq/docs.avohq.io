@@ -1,168 +1,114 @@
 ---
 feedbackId: 838
+license: community
+outline: [2, 3]
+api_docs: ./basic-filters-api.html
 ---
 
-# Filters
+# Basic filters
 
-Filters allow you to better scope the index queries for records you are looking for.
-
-Each filter is configured in a class with a few dedicated [methods and options](#filter-options). To use a filter on a resource you must [register it](#register-filters) and it will be displayed on the <Index /> view.
-
-## Filter options
-
-<Option name="`self.name`">
-
-`self.name` is what is going to be displayed to the user in the filters panel.
+Basic filters scope the <Index /> query through Ruby classes you write yourself. Each filter is one class: you pick the input type the user sees (checkboxes, a select, a text input, or a date picker), define its options, and write the exact query in the `apply` method. You then register the filter on every resource that should display it.
 
 ```ruby
-self.name = "User names filter"
-```
+# app/avo/filters/featured.rb
+class Avo::Filters::Featured < Avo::Filters::BooleanFilter
+  self.name = "Featured filter"
 
-```ruby
-self.name = -> { I18n.t("avo.filter.name") }
-```
-Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `arguments`.
+  def apply(request, query, values)
+    return query if values["is_featured"] && values["is_unfeatured"]
 
-</Option>
-
-<Option name="`self.button_label`">
-
-The value of `self.button_label` is the label displayed on the button that applies the filter.
-
-```ruby
-self.button_label = "Filter by user names"
-```
-
-```ruby
-self.button_label = -> { I18n.t("avo.filter.button_label") }
-```
-Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `arguments`.
-
-</Option>
-
-<Option name="`self.visible`">
-
-You may want to show/hide the filter in some scenarios. You can do that using the `self.visible` attribute.
-
-Inside the visible block you can acces the following variables and you should return a boolean (`true`/`false`).
-
-```ruby
-  self.visible = -> do
-    #   You have access to:
-    #   block
-    #   context
-    #   current_user
-    #   params
-    #   parent_model
-    #   parent_resource
-    #   resource
-    #   view
-    #   view_context
-    true
-  end
-```
-</Option>
-
-<Option name="`self.empty_message`">
-
-There might be times when you will want to show a message to the user when you're not returning any options.
-
-More on this in the [Empty message guide](#empty-message-text).
-</Option>
-<Option name="`options`">
-
-Some filters allow you to pass options to the user. For example on the [select filter](#select_filter) you can set the options in the dropdown, and on the [boolean filter](#boolean_filter) you may set the checkbox values.
-Each filter type has their own `options` configuration explained below.
-
-In the `options` method you have access to the `request`, `params`, [`context`](./customization#context), `view_context`, and `current_user` objects.
-</Option>
-
-<Option name="`apply`">
-
-The `apply` method is what is going to be run when Avo fetches the records on the <Index /> view.
-
-It recieves the `request` form which you can get all the `params` if you need them, it gets the `query` which is the query Avo made to fetch the records. It's a regular [Active Record](https://guides.rubyonrails.org/active_record_querying.html) which you can manipulate.
-
-It also receives the `values` variable which holds the actual choices the user made on the front-end for the [options](#options) you set.
-</Option>
-
-<Option name="`default`">
-
-You may set default values for the `options` you set. For example you may set which option to be selected for the [select filter](#select_filter) and which checkboxes to be set for the [boolean filter](#boolean_filter).
-
-In the `default` method you have access to the `request`, `params`, [`context`](./customization#context), `view_context`, and `current_user` objects.
-</Option>
-
-<Option name="`react`">
-
-This is a hook in which you can change the value of the filter based on what other filters have for values.
-
-More on this in the [React to filters guide](#react-to-filters)
-</Option>
-
-## Register filters
-
-In order to use a filter you must register it on a `Resource` using the `filter` method inside the `filters` method.
-
-```ruby{9}
-class Avo::Resources::Post < Avo::BaseResource
-  self.title = :name
-
-  def fields
-    field :id, as: :id
+    if values["is_featured"]
+      query.where(is_featured: true)
+    elsif values["is_unfeatured"]
+      query.where(is_featured: false)
+    else
+      query
+    end
   end
 
-  def filters
-    filter Avo::Filters::Published
+  def options
+    {
+      is_featured: "Featured",
+      is_unfeatured: "Unfeatured"
+    }
   end
 end
 ```
 
-## Filter types
-
-Avo has several types of filters available [Boolean filter](#Boolean%20Filter), [Select filter](#Select%20Filter), [Multiple select filter](#Multiple%20select%20filter), [Text filter](#Text%20Filter) and [Date time filter](#Date%20time%20Filter).
-
-<Image src="/assets/img/4_0/filters/types.webp" dark-src="/assets/img/4_0/filters/types-dark.webp" width="1618" height="1446" alt="Avo Filters button with the open panel showing boolean, multiple select, text, and date time filter types on the Users index." />
-
-### Filter values
-
-Because the filters get serialized back and forth, the final `value`/`values` in the `apply` method will be stringified or have the stringified keys if they are hashes. You can declare them as regular hashes in the `options` method, but they will get stringified.
-
-<Option name="Boolean Filter">
-
-The boolean filter is a filter where the user can filter the records using one or more checkboxes.
-
-To generate one run:
-
-```bash
-bin/rails generate avo:filter featured
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  def filters
+    filter Avo::Filters::Featured
+  end
+end
 ```
-or
+
+With no filters registered, the Filters button simply doesn't render on the <Index /> view.
+
+Every class-level option (`self.name`, `self.visible`, …) and overridable method (`apply`, `options`, `default`, `react`) is documented in the [Basic filters API](./basic-filters-api.html).
+
+## Generate a filter
+
+The generator creates the filter file under `app/avo/filters/`:
+
 ```bash
 bin/rails generate avo:filter featured --type boolean
 ```
 
-Here's a sample filter
+The `--type` argument accepts `boolean` (the default), `select`, `multiple_select`, `text`, and `date_time`.
+
+## Register the filter on a resource
+
+Declare filters inside the resource's `filters` method using `filter`:
+
+```ruby{8-11}
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+  end
+
+  def filters
+    filter Avo::Filters::Published
+    filter Avo::Filters::Featured
+  end
+end
+```
+
+The same filter class can be registered on as many resources as you like. If the filter should behave differently per resource, pass [`arguments`](#pass-arguments-to-a-filter).
+
+## Pick a filter type
+
+There are five filter types. They differ only in the input the user interacts with and the shape of the value your `apply` method receives.
+
+<Image src="/assets/img/4_0/filters/types.webp" dark-src="/assets/img/4_0/filters/types-dark.webp" width="1618" height="1446" alt="Avo Filters button with the open panel showing boolean, multiple select, text, and date time filter types on the Users index." />
+
+:::info Filter values are stringified
+Filter state is serialized into the URL, so the `value`/`values` your [`apply`](./basic-filters-api#apply) method receives is always a string — or a hash with stringified keys. Declare `options` with symbols if you like, but read values with string keys: `values["is_featured"]`, not `values[:is_featured]`.
+:::
+
+### Boolean filter
+
+Renders one checkbox per option. `values` arrives as a hash of `true`/`false` flags keyed by option id.
 
 ```ruby
+# app/avo/filters/featured.rb
 class Avo::Filters::Featured < Avo::Filters::BooleanFilter
-  self.name = 'Featured filter'
+  self.name = "Featured filter"
 
-  # `values` comes as a hash with stringified keys
-  # Eg:
-  # {
-  #   'is_featured': true
-  # }
+  # values = { "is_featured" => true, "is_unfeatured" => false }
   def apply(request, query, values)
-    return query if values['is_featured'] && values['is_unfeatured']
+    return query if values["is_featured"] && values["is_unfeatured"]
 
-    if values['is_featured']
-      query = query.where(is_featured: true)
-    elsif values['is_unfeatured']
-      query = query.where(is_featured: false)
+    if values["is_featured"]
+      query.where(is_featured: true)
+    elsif values["is_unfeatured"]
+      query.where(is_featured: false)
+    else
+      query
     end
-
-    query
   end
 
   def options
@@ -171,91 +117,123 @@ class Avo::Filters::Featured < Avo::Filters::BooleanFilter
       is_unfeatured: "Unfeatured"
     }
   end
-
-  # Optional method to set the default state.
-  # def default
-  #   {
-  #     is_featured: true
-  #   }
-  # end
 end
 ```
 
-Each filter file comes with a `name`, `apply`, and `options` methods.
+### Select filter
 
-The `name` method lets you set the name of the filter.
-
-The `apply` method is responsible for filtering out the records by giving you access to modify the `query` object. The `apply` method also gives you access to the current `request` object and the passed `values`. The `values` object is a `Hash` containing all the configured `options` with the option name as the key and `true`/`false` as the value.
+Renders a dropdown; `value` is the single selected option id as a string.
 
 ```ruby
-# Example values payload
-{
-  'is_featured': true,
-  'is_unfeatured': false,
-}
-```
-
-The `options` method defines the available values of your filter. They should return a `Hash` with the option id as a key and option label as value.
-
-### Default value
-
-You can set a default value to the filter, so it has a predetermined state on load. To do that, return the state you desire from the `default` method.
-
-```ruby{23-27}
-class Avo::Filters::Featured < Avo::Filters::BooleanFilter
-  self.name = 'Featured status'
-
-  def apply(request, query, values)
-    return query if values['is_featured'] && values['is_unfeatured']
-
-    if values['is_featured']
-      query = query.where(is_featured: true)
-    elsif values['is_unfeatured']
-      query = query.where(is_featured: false)
-    end
-
-    query
-  end
-
-  def options
-    {
-      is_featured: "Featured",
-      is_unfeatured: "Unfeatured"
-    }
-  end
-
-  def default
-    {
-      is_featured: true
-    }
-  end
-end
-```
-</Option>
-
-<Option name="Select Filter">
-
-Select filters are similar to Boolean ones but they give the user a dropdown with which to filter the values.
-
-```bash
-rails generate avo:filter published --type select
-```
-
-The most significant difference from the **Boolean filter** is in the `apply` method. You only get back one `value` attribute, which represents which entry from the `options` method is selected.
-
-A finished, select filter might look like this.
-
-```ruby
+# app/avo/filters/published.rb
 class Avo::Filters::Published < Avo::Filters::SelectFilter
-  self.name = 'Published status'
+  self.name = "Published status"
 
-  # `value` comes as a string
-  # Eg: 'published'
+  # value = "published"
   def apply(request, query, value)
     case value
-    when 'published'
+    when "published"
       query.where.not(published_at: nil)
-    when 'unpublished'
+    when "unpublished"
+      query.where(published_at: nil)
+    else
+      query
+    end
+  end
+
+  def options
+    {
+      published: "Published",
+      unpublished: "Unpublished"
+    }
+  end
+end
+```
+
+### Multiple select filter
+
+Like the select filter, but the user can pick several options; `value` is an array of strings.
+
+```ruby
+# app/avo/filters/post_status.rb
+class Avo::Filters::PostStatus < Avo::Filters::MultipleSelectFilter
+  self.name = "Status"
+
+  # value = ["admins", "non_admins"]
+  def apply(request, query, value)
+    query = query.admins if value.include?("admins")
+    query = query.non_admins if value.include?("non_admins")
+
+    query
+  end
+
+  def options
+    {
+      admins: "Admins",
+      non_admins: "Non admins"
+    }
+  end
+end
+```
+
+<Image src="/assets/img/4_0/filters/multiple-select.webp" dark-src="/assets/img/4_0/filters/multiple-select-dark.webp" width="1618" height="1207" alt="Avo multiple select filter named Status showing Admins and Non admins options with a Filter by Status button, over the Users index table." />
+
+### Text filter
+
+Renders a free text input; `value` is whatever the user typed. No `options` method needed.
+
+```ruby
+# app/avo/filters/name.rb
+class Avo::Filters::Name < Avo::Filters::TextFilter
+  self.name = "Name filter"
+  self.button_label = "Filter by name"
+
+  # value = "avo"
+  def apply(request, query, value)
+    query.where("LOWER(name) LIKE ?", "%#{value}%")
+  end
+end
+```
+
+### Date time filter
+
+Renders a [flatpickr](https://flatpickr.js.org) date/time picker. Set [`self.type`](./basic-filters-api#self.type) to choose between date, time, or combined input, and [`self.mode`](./basic-filters-api#self.mode) to switch between a single value and a range.
+
+```ruby
+# app/avo/filters/created_at.rb
+class Avo::Filters::CreatedAt < Avo::Filters::DateTimeFilter
+  self.name = "Created at"
+  self.type = :date
+  self.mode = :single
+
+  def apply(request, query, value)
+    query.where(created_at: Date.parse(value).all_day)
+  end
+end
+```
+
+In the default `:range` mode the value arrives as `"2024-08-13 to 2024-08-16"` — split it with `value.split(" to ")`.
+
+:::warning Timezone handling
+The selected value is sent exactly as picked, with no timezone adjustment. If you need timezone conversion, handle it in the `apply` method.
+:::
+
+To fine-tune the picker (formats, minute increments, …), override [`picker_format`](./basic-filters-api#picker_format) or [`picker_options`](./basic-filters-api#picker_options) — see the [API reference](./basic-filters-api.html#date-time-filter-options).
+
+## Set a default value
+
+To pre-apply a filter on load, return the desired state from the `default` method. The shape matches what `apply` receives: a hash for boolean filters, a string or symbol for select filters, an array for multiple select filters.
+
+```ruby{22-26}
+# app/avo/filters/published.rb
+class Avo::Filters::Published < Avo::Filters::SelectFilter
+  self.name = "Published status"
+
+  def apply(request, query, value)
+    case value
+    when "published"
+      query.where.not(published_at: nil)
+    when "unpublished"
       query.where(published_at: nil)
     else
       query
@@ -269,274 +247,40 @@ class Avo::Filters::Published < Avo::Filters::SelectFilter
     }
   end
 
-  # Optional method to set the default state.
-  # def default
-  #   :published
-  # end
-end
-```
-
-### Default value
-
-The select filter supports setting a default too. That should be a string or symbol with the select item. It will be stringified by Avo automatically.
-
-```ruby{22-24}
-class Avo::Filters::Published < Avo::Filters::SelectFilter
-  self.name = 'Published status'
-
-  def apply(request, query, value)
-    case value
-    when 'published'
-      query.where.not(published_at: nil)
-    when 'unpublished'
-      query.where(published_at: nil)
-    else
-      query
-    end
-  end
-
-  def options
-    {
-      'published': 'Published',
-      'unpublished': 'Unpublished',
-    }
-  end
-
   def default
     :published
   end
 end
 ```
-</Option>
 
-<Option name="Multiple select filter">
+## Populate options dynamically
 
-You may also use a multiple select filter.
+The `options` method is plain Ruby — query the database, call an API, or compute values on the fly:
 
-```bash
-rails generate avo:filter post_status --type multiple_select
-```
-
-```ruby
-class Avo::Filters::PostStatus < Avo::Filters::MultipleSelectFilter
-  self.name = "Status"
-
-  # `value` comes as an array of strings
-  # Ex: ['admins', 'non_admins']
-  def apply(request, query, value)
-    if value.include? 'admins'
-      query = query.admins
-    end
-
-    if value.include? 'non_admins'
-      query = query.non_admins
-    end
-
-    query
-  end
-
-  def options
-    {
-      admins: "Admins",
-      non_admins: "Non admins",
-    }
-  end
-
-  # Optional method to set the default state.
-  # def default
-  #   ['admins', 'non_admins']
-  # end
-end
-```
-
-<Image src="/assets/img/4_0/filters/multiple-select.webp" dark-src="/assets/img/4_0/filters/multiple-select-dark.webp" width="1618" height="1207" alt="Avo multiple select filter named Status showing Admins and Non admins options with a Filter by Status button, over the Users index table." />
-
-### Dynamic options
-
-The select filter can also take dynamic options:
-
-```ruby{15-17}
+```ruby{11-13}
+# app/avo/filters/author.rb
 class Avo::Filters::Author < Avo::Filters::SelectFilter
-  self.name = 'Author'
+  self.name = "Author"
 
   def apply(request, query, value)
-    query = query.where(author_id: value) if value.present?
-    query
+    return query if value.blank?
+
+    query.where(author_id: value)
   end
 
-  # Example `applied_filters`
-  # applied_filters = {
-  #   "Avo::Filters::CourseCountryFilter" => {
-  #     "USA" => true,
-  #     "Japan" => true,
-  #     "Spain" => false,
-  #     "Thailand" => false,
-  #   }
-  # }
   def options
-    # Here you have access to the `applied_filters` object too
     Author.select(:id, :name).each_with_object({}) { |author, options| options[author.id] = author.name }
   end
 end
 ```
-</Option>
 
-<Option name="Text Filter">
+Inside `options` (and `default`) you have access to `request`, `params`, `view_context`, `current_user`, and [`applied_filters`](./basic-filters-api#applied_filters) — the currently applied filter values — which enables filters that depend on each other.
 
-You can add complex text filters to Avo using the Text filter
-
-```bash
-rails generate avo:filter name --type text
-```
-
-```ruby
-class Avo::Filters::Name < Avo::Filters::TextFilter
-  self.name = "Name filter"
-  self.button_label = "Filter by name"
-
-  # `value` comes as text
-  # Eg: 'avo'
-  def apply(request, query, value)
-    query.where('LOWER(name) LIKE ?', "%#{value}%")
-  end
-
-  # def default
-  #   'avo'
-  # end
-end
-```
-</Option>
-
-<Option name="Date time Filter">
-
-The ideal filter for date selection. This filter allows you to generate a date input, with options to include time selection and even a range selection mode. Customizable to suit your specific needs.
-
-:::warning Timezone Handling
-This filter sends the selected value exactly as selected, without any timezone adjustments. If you need to apply timezone conversion or adjustments, please ensure to handle it during the [`apply`](#apply) method.
-:::
-
-Generate one by using:
-```bash
-rails generate avo:filter created_at --type date_time
-```
-
-The generated file should be following a similar format:
-```ruby
-# frozen_string_literal: true
-
-class Avo::Filters::CreatedAt < Avo::Filters::DateTimeFilter
-  self.name = "Created at"
-  # self.type = :date_time
-  # self.mode = :range
-  # self.visible = -> do
-  #   true
-  # end
-
-  def apply(request, query, value)
-    query
-  end
-
-  # def format
-  #   case type
-  #   when :date_time
-  #     'yyyy-LL-dd TT'
-  #   when :date
-  #     'yyyy-LL-dd'
-  #   end
-  # end
-
-  # def picker_format
-  #   case type
-  #   when :date_time
-  #     'Y-m-d H:i:S'
-  #   when :time
-  #     'Y-m-d'
-  #   end
-  # end
-end
-
-```
-
-### Type
-Determines the format of the input field.
-
-##### Default value
-
-`:date_time`
-
-By default, the input allows users to select both a date and a time.
-
-##### Possible values
-
-- `:date`
-  - This option restricts the input to date selection only, ideal for scenarios where time input is unnecessary.
-  <Image src="/assets/img/4_0/filters/datetime-date.webp" dark-src="/assets/img/4_0/filters/datetime-date-dark.webp" class="mt-2" width="1618" height="1207" alt="Avo date time filter with type date showing the Birthday filter and flatpickr calendar with a date selected, over the Users index table." />
-
-- `:time`
-  - This option limits the input to time selection only, suitable to apply where only the time is relevant.
-  <Image src="/assets/img/4_0/filters/datetime-time.webp" dark-src="/assets/img/4_0/filters/datetime-time-dark.webp" class="mt-2" width="1618" height="1207" alt="Avo date time filter with type time: the Birthday filter input and flatpickr time picker, over the Users index table." />
-
-- `:date_time`
-  - This combined option enables both date and time selection, providing a comprehensive input for more detailed needs.
-  <Image src="/assets/img/4_0/filters/datetime-datetime.webp" dark-src="/assets/img/4_0/filters/datetime-datetime-dark.webp" class="mt-2" width="1618" height="1207" alt="Avo date time filter with type date_time showing the Birthday filter and combined date/time picker, over the Users index table." />
-
-### Mode
-Defines whether the input allows selection of a single date or a range of dates.
-
-##### Default value
-
-`:range`
-
-By default, the input permits users to select a range of dates, ideal for scenarios such as booking periods or event durations.
-
-##### Possible values
-- `:range`
-  - Allows users to choose a start and end date, making it suitable for applications that require a time span, such as reservations or scheduling.
-  <Image src="/assets/img/4_0/filters/datetime-range.webp" dark-src="/assets/img/4_0/filters/datetime-range-dark.webp" class="mt-2" width="1618" height="1207" alt="Avo date time filter in range mode showing the Birthday filter and a selected date range in flatpickr, over the Users index table." />
-  :::info
-  In `:range` mode the `value` will be formatted as `"2024-08-13 to 2024-08-16"`.
-
-  To separate the start and end dates, use `date_1, date_2 = value.split(" to ")`, which will split the value into `["2024-08-13", "2024-08-16"]`
-  :::
-
-- `:single`
-  - Limits the selection to a single date, perfect for use cases where only one specific day needs to be selected, such as an appointment or event date.
-  <Image src="/assets/img/4_0/filters/datetime-single.webp" dark-src="/assets/img/4_0/filters/datetime-single-dark.webp" class="mt-2" width="1618" height="1207" alt="Avo date time filter in single mode showing the Birthday filter and one selected date in flatpickr, over the Users index table." />
-
-### `picker_options`
-
-This filter uses [flatpickr](https://flatpickr.js.org) as the date and time picker. If you wish to customize the picker’s options, you can do so by overriding the [`picker_options(value)`](https://github.com/avo-hq/avo/blob/menu/lib/avo/filters/date_time_filter.rb#L22) method. You can merge your custom options with those provided by [flatpickr](https://flatpickr.js.org), which are detailed [here](https://flatpickr.js.org/options/).
-
-```ruby{10-14}
-# frozen_string_literal: true
-
-class Avo::Filters::StartingAt < Avo::Filters::DateTimeFilter
-  self.name = "The starting at filter"
-  self.button_label = "Filter by start time"
-  self.empty_message = "Search by start time"
-  self.type = :time
-  self.mode = :single
-
-  def picker_options(value)
-    super.merge({
-      minuteIncrement: 3
-    })
-  end
-
-  def apply(request, query, value)
-    query.where("to_char(starting_at, 'HH24:MI:SS') = ?", value)
-  end
-end
-```
-</Option>
-
-## Dynamic filter options
+### Compose filters that depend on each other
 
 <DemoVideo demo-video="https://youtu.be/M2RsNPPFOio" />
 
-You might want to compose more advanced filters, like when you have two filters, one for the country and another for cities, and you'd like to have the cities one populated with cities from the selected country.
-
-Let's take the `Avo::Resources::Course` as an example.
+Say you have a countries filter and a cities filter, and the cities list should only show cities from the selected countries.
 
 ```ruby{3-5,7-14}
 # app/models/course.rb
@@ -556,21 +300,21 @@ class Course < ApplicationRecord
 end
 ```
 
-We will create two filters—one for choosing countries and another for cities.
+Register both filters:
 
 ```ruby{4-5}
 # app/avo/resources/course.rb
 class Avo::Resources::Course < Avo::BaseResource
   def filters
-    filter Avo::Filters::CourseCountryFilter
-    filter Avo::Filters::CourseCityFilter
+    filter Avo::Filters::CourseCountry
+    filter Avo::Filters::CourseCity
   end
 end
 ```
 
-The country filter is pretty straightforward. Set the query so the `country` field to be one of the selected countries and the `options` are the available countries as `Hash`.
+The country filter is straightforward:
 
-```ruby{6,10}
+```ruby
 # app/avo/filters/course_country.rb
 class Avo::Filters::CourseCountry < Avo::Filters::BooleanFilter
   self.name = "Course country filter"
@@ -585,11 +329,9 @@ class Avo::Filters::CourseCountry < Avo::Filters::BooleanFilter
 end
 ```
 
-The cities filter has a few more methods to manage the data better, but the gist is the same. The `query` makes sure the records have the city value in one of the cities that have been selected.
+The cities filter reads the countries filter's state from `applied_filters` and only offers cities from the selected countries:
 
-The `options` method gets the selected countries from the countries filter (`Avo::Filters::CourseCountryFilter`) and formats them to a `Hash`.
-
-```ruby{6,10}
+```ruby
 # app/avo/filters/course_city.rb
 class Avo::Filters::CourseCity < Avo::Filters::BooleanFilter
   self.name = "Course city filter"
@@ -604,59 +346,44 @@ class Avo::Filters::CourseCity < Avo::Filters::BooleanFilter
 
   private
 
-  # Get a hash of cities for certain countries
-  # Example payload:
   # countries = ["USA", "Japan"]
   def cities_for_countries(countries_array = [])
     countries_array
-      .map do |country|
-        # Get the cities for this country
-        Course.cities.stringify_keys[country]
-      end
+      .map { |country| Course.cities.stringify_keys[country] }
       .flatten
-      # Prepare to transform to a Hash
       .map { |city| [city, city] }
-      # Turn to a Hash
       .to_h
   end
 
-  # Get the value of the selected countries
-  # Example payload:
   # applied_filters = {
-  #   "Avo::Filters::CourseCountryFilter" => {
+  #   "Avo::Filters::CourseCountry" => {
   #     "USA" => true,
   #     "Japan" => true,
   #     "Spain" => false,
-  #     "Thailand" => false,
+  #     "Thailand" => false
   #   }
   # }
   def countries
-    if applied_filters["Avo::Filters::CourseCountryFilter"].present?
-      # Fetch the value of the countries filter
-      applied_filters["Avo::Filters::CourseCountryFilter"]
-        # Keep only the ones selected
-        .select { |country, selected| selected }
-        # Pluck the name of the coutnry
-        .keys
-    else
-      # Return empty array
-      []
-    end
+    return [] if applied_filters["Avo::Filters::CourseCountry"].blank?
+
+    applied_filters["Avo::Filters::CourseCountry"]
+      .select { |country, selected| selected }
+      .keys
   end
 end
 ```
 
 <Image src="/assets/img/4_0/filters/dynamic-options.webp" dark-src="/assets/img/4_0/filters/dynamic-options-dark.webp" width="1628" height="925" alt="Avo Filters button with Course country and city filters where selecting USA populates US cities, over the Courses index table." />
 
-The `countries` method above will check if the `Avo::Filters::CourseCountryFilter` has anything selected. If so, get the names of the chosen ones. This way, you show only the cities from the selected countries and not all of them.
-
-## React to filters
+## React to other filters
 
 <DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=219" />
 
-Going further with the example above, a filter can react to other filters. For example, let's say that when a user selects `USA` from the list of countries, you want to display a list of cities from the USA (that's already happening in `options`), and you'd like to select the first one on the list. You can do that with the `react` method.
+Going one step further, a filter can change its own value when another filter changes. After all filters are applied, Avo calls each filter's [`react`](./basic-filters-api#react) method; return a new value for the current filter (in the same shape `apply` expects), or `nil` to leave it untouched.
 
-```ruby{21-36}
+Continuing the example above — when the user selects a country and hasn't picked a city yet, auto-select the first city on the list:
+
+```ruby{10-22}
 # app/avo/filters/course_city.rb
 class Avo::Filters::CourseCity < Avo::Filters::BooleanFilter
   self.name = "Course city filter"
@@ -665,114 +392,34 @@ class Avo::Filters::CourseCity < Avo::Filters::BooleanFilter
     query.where(city: values.select { |city, selected| selected }.keys)
   end
 
-  def options
-    cities_for_countries countries
-  end
-
-  # applied_filters = {
-  #   "Avo::Filters::CourseCountryFilter" => {
-  #     "USA" => true,
-  #     "Japan" => true,
-  #     "Spain" => false,
-  #     "Thailand" => false,
-  #   }
-  # }
   def react
-    # Check if the user selected a country
-    if applied_filters["Avo::Filters::CourseCountryFilter"].present? && applied_filters["Avo::Filters::CourseCityFilter"].blank?
-      # Get the selected countries, get their cities, and select the first one.
-      selected_countries = applied_filters["Avo::Filters::CourseCountryFilter"].select do |name, selected|
-        selected
-      end
+    # Only react when a country is selected and no city has been picked yet
+    if applied_filters["Avo::Filters::CourseCountry"].present? && applied_filters["Avo::Filters::CourseCity"].blank?
+      selected_countries = applied_filters["Avo::Filters::CourseCountry"]
+        .select { |name, selected| selected }
 
-      # Get the first city
-      cities = cities_for_countries(selected_countries.keys)
-      first_city = cities.first.first
+      first_city = cities_for_countries(selected_countries.keys).first&.first
 
-      # Return the first city as selected
-      [[first_city, true]].to_h
+      return if first_city.nil?
+
+      # Return the new value for this filter
+      {first_city => true}
     end
   end
 
-  private
-
-  # Get a hash of cities for certain countries
-  # Example payload:
-  # countries = ["USA", "Japan"]
-  def cities_for_countries(countries_array = [])
-    countries_array
-      .map do |country|
-        # Get the cities for this country
-        Course.cities.stringify_keys[country]
-      end
-      .flatten
-      # Prepare to transform to a Hash
-      .map { |city| [city, city] }
-      # Turn to a Hash
-      .to_h
-  end
-
-  # Get the value of the selected countries
-  # Example `applied_filters` payload:
-  # applied_filters = {
-  #   "Avo::Filters::CourseCountryFilter" => {
-  #     "USA" => true,
-  #     "Japan" => true,
-  #     "Spain" => false,
-  #     "Thailand" => false,
-  #   }
-  # }
-  def countries
-    if applied_filters["Avo::Filters::CourseCountryFilter"].present?
-      # Fetch the value of the countries filter
-      applied_filters["Avo::Filters::CourseCountryFilter"]
-        # Keep only the ones selected
-        .select { |country, selected| selected }
-        # Pluck the name of the coutnry
-        .keys
-    else
-      # Return empty array
-      []
-    end
-  end
+  # `options`, `cities_for_countries`, and `countries` as in the previous example
 end
 ```
 
-After all, filters are applied, the `react` method is called, so you have access to the `applied_filters` object.
-Using the applied filter payload, you can return the value of the current filter.
-
-```ruby
-def react
-  # Check if the user selected a country
-  if applied_filters["Avo::Filters::CourseCountryFilter"].present? && applied_filters["Avo::Filters::CourseCityFilter"].blank?
-    # Get the selected countries, get their cities, and select the first one.
-    selected_countries = applied_filters["Avo::Filters::CourseCountryFilter"]
-      .select do |name, selected|
-        selected
-      end
-
-    # Get the first city
-    cities = cities_for_countries(selected_countries.keys)
-    first_city = cities.first.first
-
-    # Return the first city selected as a Hash
-    [[first_city, true]].to_h
-  end
-end
-```
-
-Besides checking if the countries filter is populated (`applied_filters["Avo::Filters::CourseCountryFilter"].present?`), we also want to allow the user to customize the cities filter further, so we need to check if the user has added a value to that filter (`applied_filters["Avo::Filters::CourseCountryFilter"].blank?`).
-If these conditions are true, the country filter has a value, and the user hasn't selected any values from the cities filter, we can react to it and set a value as the default one.
+Checking that the current filter is `blank?` matters: it keeps the user's own selection intact once they've interacted with the filter.
 
 <Image src="/assets/img/4_0/filters/country-city-filters.webm" dark-src="/assets/img/4_0/filters/country-city-filters-dark.webm" width="1100" height="625" alt="Courses table index: Filters button highlighted, panel opens with the city filter empty message, USA is ticked, and US cities populate with the first one auto-selected." />
 
-Of course, you can modify the logic and return all kinds of values based on your needs.
-
-## Empty message text
+## Show a message when there are no options
 
 <DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=347" />
 
-There might be times when you will want to show a message to the user when you're not returning any options. You may customize that message using the `empty_message` option. The animation above opens the Filters panel, shows the custom empty message when no country is selected, then ticks USA and populates the city filter.
+When `options` returns an empty collection — for example, the cities filter before a country is selected — Avo shows a generic "no options" message. Customize it with `self.empty_message`:
 
 ```ruby{4}
 # app/avo/filters/course_city.rb
@@ -780,64 +427,47 @@ class Avo::Filters::CourseCity < Avo::Filters::BooleanFilter
   self.name = "Course city filter"
   self.empty_message = "Please select a country to view options."
 
-  def apply(request, query, values)
-    query.where(city: values.select { |city, selected| selected }.keys)
-  end
-
-  def options
-    if countries.present?
-      []
-    else
-      ["Los Angeles", "New York"]
-    end
-  end
-
-  private
-
-  def countries
-    # logic to fetch the countries
-  end
+  # ...
 end
 ```
 
-## Keep filters panel open
+## Show or hide a filter conditionally
 
-<DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=374" />
+Use `self.visible` with a block that returns a boolean. The block runs in [`Avo::ExecutionContext`](./execution-context), so you can check `current_user`, `params`, the `resource`, and more:
 
-There are scenarios where you wouldn't want to close the filters panel when you change the values. For that, you can use the `keep_filters_panel_open` resource option.
-
-More on this on the [`keep_filters_panel_open` resource option](./resources#self_keep_filters_panel_open).
-
-## Open a filter in your editor
-
-In the `development` environment, each filter's title in the filters panel shows a small `</>` icon that opens the filter's source file in your editor. See [Open a record in your editor](./customization.html#open-a-record-in-your-editor) for how it works and how to configure it for your editor.
-
-## Filter arguments
-
-Filters can have different behaviors according to their host resource. In order to achieve that, arguments must be passed like on the example below:
-
-```ruby{12-14}
-class Avo::Resources::Fish < Avo::BaseResource
-  self.title = :name
-
-  def fields
-    field :id, as: :id
-    field :name, as: :text
-    field :user, as: :belongs_to
-    field :type, as: :text, hide_on: :forms
+```ruby{4-6}
+# app/avo/filters/featured.rb
+class Avo::Filters::Featured < Avo::Filters::BooleanFilter
+  self.name = "Featured filter"
+  self.visible = -> do
+    current_user.admin?
   end
 
+  # ...
+end
+```
+
+See [`self.visible`](./basic-filters-api#self.visible) for everything available inside the block.
+
+## Pass arguments to a filter
+
+To reuse one filter class with different behavior per resource, pass `arguments` at registration:
+
+```ruby{4-6}
+# app/avo/resources/fish.rb
+class Avo::Resources::Fish < Avo::BaseResource
   def filters
-    filter Avo::Filters::NameFilter, arguments: {
+    filter Avo::Filters::Name, arguments: {
       case_insensitive: true
     }
   end
 end
 ```
 
-Now, the arguments can be accessed inside `Avo::Filters::NameFilter` ***`apply` method***, ***`options` method*** and on the ***`visible` block***!
+The `arguments` hash is then available in the `apply` and `options` methods and inside the `self.name`, `self.button_label`, and `self.visible` blocks:
 
 ```ruby{4-6,8-14}
+# app/avo/filters/name.rb
 class Avo::Filters::Name < Avo::Filters::TextFilter
   self.name = "Name filter"
   self.button_label = "Filter by name"
@@ -855,98 +485,24 @@ class Avo::Filters::Name < Avo::Filters::TextFilter
 end
 ```
 
-## Manually create encoded URLs
+## Keep the filters panel open
 
-You may want to redirect users to filtered states of the <Index /> view from other places in your app. In order to create those filtered states you may use these helpers functions or Rails helpers.
+<DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=374" />
 
+By default the panel closes each time a filter value changes. To keep it open while the user tweaks several filters, set the [`self.keep_filters_panel_open`](./resources-api#self.keep_filters_panel_open) option on the resource.
 
-### Rails helpers
+## Link to a pre-filtered view
 
-<Option name="`decode_filter_params`">
-
-Decodes the `filters` param. This Rails helper can be used anywhere in a view or off the `view_context`.
-
-#### Usage
+Filter state travels in the `encoded_filters` URL param as a Base64-encoded JSON payload, so you can redirect users to a pre-filtered <Index /> view from anywhere in your app:
 
 ```ruby
-# in a view
-decode_filter_params params[:filters] # {"NameFilter"=>"Apple"}
-
-# Or somewhere in an Avo configuration file
-
-class Avo::Actions::DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-
-  def handle(**args)
-    filters = view_context.decode_filter_params(params[:filters])
-
-    do_something_important_with_the_filters filters
-  end
-end
+redirect_to avo.resources_users_path(
+  encoded_filters: Avo::Filters::BaseFilter.encode_filters({"Avo::Filters::Name" => "Apple"})
+)
 ```
-</Option>
 
-<Option name="`encode_filter_params`">
+Avo provides two pairs of helpers — the Rails view helpers [`encode_filter_params`](./basic-filters-api#encode_filter_params) / [`decode_filter_params`](./basic-filters-api#decode_filter_params) (available in views and off `view_context`) and the standalone [`Avo::Filters::BaseFilter.encode_filters`](./basic-filters-api#Avo::Filters::BaseFilter.encode_filters) / [`Avo::Filters::BaseFilter.decode_filters`](./basic-filters-api#Avo::Filters::BaseFilter.decode_filters) class methods, usable anywhere.
 
-Encodes a `filters` object into a serialized state that Avo understands. This Rails helper can be used anywhere in a view or off the `view_context`.
+## Open a filter in your editor
 
-#### Usage
-
-```ruby
-# in a view
-filters = {"NameFilter"=>"Apple"}
-encode_filter_params filters # eyJOYW1lRmlsdGVyIjoiQXBwbGUifQ==
-
-# Or somewhere in an Avo configuration file
-
-class Avo::Actions::DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-
-  def handle(**args)
-    do_something_important
-
-    redirect_to avo.resources_users_path(filters: view_context.decode_filter_params({"NameFilter"=>"Apple"}))
-  end
-end
-```
-</Option>
-
-### Standalone helpers
-
-<Option name="`Avo::Filters::BaseFilter.decode_filters`">
-
-Decodes the `filters` param. This standalone method can be used anywhere.
-
-#### Usage
-
-```ruby
-class Avo::Actions::DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-
-  def handle(**args)
-    filters = Avo::Filters::BaseFilter.decode_filters(params[:filters])
-
-    do_something_important_with_the_filters filters
-  end
-end
-```
-</Option>
-
-<Option name="`Avo::Filters::BaseFilter.encode_filters`">
-
-Encodes a `filters` object into a serialized state that Avo understands. This standalone method can be used anywhere.
-
-#### Usage
-
-```ruby
-class Avo::Actions::DummyAction < Avo::BaseAction
-  self.name = "Dummy action"
-
-  def handle(**args)
-    do_something_important
-
-    redirect_to avo.resources_users_path(encoded_filters: Avo::Filters::BaseFilter.encode_filters({"Avo::Filters::NameFilter"=>"Apple"}))
-  end
-end
-```
-</Option>
+In the `development` environment, each filter's title in the filters panel shows a small `</>` icon that opens the filter's source file in your editor. See [Open a record in your editor](./customization.html#open-a-record-in-your-editor) for how it works and how to configure it for your editor.
