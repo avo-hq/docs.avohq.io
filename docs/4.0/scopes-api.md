@@ -251,6 +251,72 @@ The `format` block can return plain text, so it also works as a text-only badge 
 
 </Option>
 
+<Option name="`fields`">
+
+A method (not a class attribute) that declares the exact index columns shown while the scope is active. It uses the same DSL as a resource's [`fields`](./resources.html) method, so anything you can pass to `field` works here too. Only the <Index /> view is affected.
+
+```ruby
+# app/avo/scopes/published.rb
+class Avo::Scopes::Published < Avo::Scopes::BaseScope
+  self.scope = -> { query.where(published: true) }
+
+  def fields
+    field :id, as: :id
+    field :title, as: :text
+    field :published_at, as: :date_time
+  end
+end
+```
+
+- **Type:** Method
+- **Default:** none — the scope keeps the resource's default index columns
+
+:::info Precedence
+When present, `fields` wins over [`field_whitelist`](#field_whitelist) and [`field_blacklist`](#field_blacklist).
+:::
+
+</Option>
+
+<Option name="`field_whitelist`">
+
+Keeps the resource's own fields but shows **only** the listed ids on the index while the scope is active. Accepts a static array or a proc, resolved through the [execution context](#execution-context).
+
+```ruby
+# app/avo/scopes/members.rb
+class Avo::Scopes::Members < Avo::Scopes::BaseScope
+  self.scope = -> { query.where(admin: false) }
+  self.field_whitelist = -> { [:name, :email, :role] }
+end
+```
+
+- **Type:** Array or Proc
+- **Default:** `nil` — all of the resource's fields are shown
+
+:::warning Display only
+This only changes which columns render on the index — it is **not** an authorization boundary. The hidden fields' data is still loaded and remains visible on the show and edit views and through the API. Use a [policy](./authorization.html) or a field's [`visible`](./field-options.html) option to restrict access.
+:::
+
+</Option>
+
+<Option name="`field_blacklist`">
+
+The inverse of [`field_whitelist`](#field_whitelist) — keeps the resource's own fields but **hides** the listed ids on the index while the scope is active. Accepts a static array or a proc.
+
+```ruby
+# app/avo/scopes/members.rb
+class Avo::Scopes::Members < Avo::Scopes::BaseScope
+  self.scope = -> { query.where(admin: false) }
+  self.field_blacklist = -> { [:internal_notes, :audit_trail] }
+end
+```
+
+- **Type:** Array or Proc
+- **Default:** `nil` — no fields are hidden
+
+The same **display only** caveat as [`field_whitelist`](#field_whitelist) applies. If both are set, `field_whitelist` takes precedence over `field_blacklist`.
+
+</Option>
+
 ## Registration options
 
 Options passed when registering a scope on a resource, inside the `scopes` method.

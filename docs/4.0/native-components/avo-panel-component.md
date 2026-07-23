@@ -170,12 +170,17 @@ the panel (no card wrapper).
 
 <Option name="`card`">
 
-Wraps the content in a card automatically. Use this instead of `body` when you want
-the content to sit inside a bordered, padded card.
+Wraps the content in a bordered card automatically. Use this instead of `body` when
+you want the content to sit inside a distinct card surface.
+
+The card body ships **unpadded** so wide content (tables, horizontal scrollers) can
+sit flush to the card edge. Opt into the standard body padding with `padded: true`
+(or the `card--padded` CSS modifier) when your content is free-form — forms, prose,
+custom tools:
 
 ```erb{2-4}
 <%= render Avo::UI::PanelComponent.new do |panel| %>
-  <% panel.with_card do %>
+  <% panel.with_card(padded: true) do %>
     Something here.
   <% end %>
 <% end %>
