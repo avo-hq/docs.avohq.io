@@ -55,6 +55,36 @@ Findings that were applied are in commit `eadba43`.
 - **`avo-dynamic_filters` uses `index-missing-resources:`**, a core-only custom variant.
   Surfaced by the widened scanner in `eadba43`; baselined, not migrated.
 
+### From the audit_logging CI-hang investigation (2026-07-23)
+
+The `avo-audit_logging:dummy` flake (`Net::ReadTimeout` + "Requests did not finish in 60
+seconds") was root-caused to Avo's license check running inline in the first page render on
+a cold cache; fixed for CI by a suite-boot warmup (`d4c2fb4`). The investigation surfaced
+these pre-existing defects, all reproduced on `main`:
+
+- **P1 · every Avo page in `avo-audit_logging/spec/dummy` responds 500.** The legacy
+  routes file mounts `Avo::Engine` directly and never mounts `Avo::AdvancedSearch::Engine`,
+  so the navbar's global-search component raises `NoMethodError: avo_advanced_search`.
+  Specs pass anyway because they assert only `Activity` counts (written before the render
+  fails). Fix: switch `spec/dummy/config/routes.rb` to `mount_avo` like
+  `spec/paper_trail_dummy`.
+
+- **P1 · `avo-licensing` re-attempts Clerk HTTP on every render when the cache is empty**
+  (production-relevant). `HQ#handle_expired_response` throttles retries to one per 5
+  minutes, but the cache-*miss* path (`process_request`) has no throttle — and
+  `REQUEST_MUTEX` serializes the calls globally, so a Clerk outage with a cold cache turns
+  every page render into a 10–20s serialized wait (unbounded if DNS stalls; the 5s
+  timeouts don't cover `getaddrinfo`). Fix: extend the `last_attempt` throttle to the miss
+  path. Touches all paid gems — own PR.
+
+- **P2 · the JS error detector in `avo-audit_logging` specs is inert.** Selenium's W3C
+  driver returns no browser logs without the `goog:loggingPrefs` capability, so
+  `logs.get(:browser)` is always empty and the SEVERE-console-error assertion never fires
+  (which is how the 500s above went unnoticed).
+
+- **P3 · paper_trail dummy "show" example fails locally, passes CI.** `visit` on a product
+  show page renders 200 but records no `Activity` (local-only; reproduced on `main`).
+
 ## Advisory
 
 - `DataCard#classes_for_rows` (`gems/avo-dashboards/lib/avo/cards/data_card.rb`) still uses
