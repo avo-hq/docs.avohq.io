@@ -1,5 +1,6 @@
 ---
-license: pro
+license: add_on
+add_on_link: https://avohq.io/addons/authorization
 ---
 
 # Authorization

@@ -127,7 +127,7 @@ A local injected into the [`query`](#query) proc identifying which surface trigg
 | `:association` | [searchable association picker](./associations/searchable) on edit forms and the attach modal |
 
 :::info
-`search_type` is injected by Avo Pro. On a Community-only install the local is not defined and referencing it in the proc raises an error. The [kanban board](./kanban-boards) card picker also does not inject `search_type` (or a `q` local) — read the term from `params[:q]` and detect the board with `params[:for_kanban_board]`.
+`search_type` is injected by Avo. On a Community-only install the local is not defined and referencing it in the proc raises an error. The [kanban board](./kanban-boards) card picker also does not inject `search_type` (or a `q` local) — read the term from `params[:q]` and detect the board with `params[:for_kanban_board]`.
 :::
 
 ## Global search configuration

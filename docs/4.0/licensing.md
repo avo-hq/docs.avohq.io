@@ -1,30 +1,33 @@
+---
+license: community
+outline: [2, 3]
+---
+
 # Licensing
 
-Avo runs on the [Open-Core model](https://en.wikipedia.org/wiki/Open-core_model). The **Community** edition is free to use and works best for personal, hobby, and small commercial projects.
-There are a couple of paid tiers (**Pro**, **Advanced**, and **Enterprise**) that give you more features, more customization, a higher level of control, and more support.
+Avo runs on the [Open-Core model](https://en.wikipedia.org/wiki/Open-core_model). The **Community** edition is free to use and works best for personal, hobby, and small commercial projects. Paid **add-ons** unlock the more advanced features, and **bundles** group several add-ons together for a better price. Selling these is what lets us fund the business and work on Avo full-time, so it keeps improving over time.
 
-## Community vs. Paid
+## Community
 
-<Option name="Community">
+The **Community** version is free and has powerful features you can use today like [Resource management](./resources.html), most [feature-rich](./field-options.html) [fields](./fields.html), out-of-the-box [sorting](./field-options.html#make-columns-sortable), [filtering](./filters.html) and [actions](./actions.html), all the [associations](./associations.html) you need, [appearance](./appearance.html) controls, and [localization](./i18n.html) — about 70% of everything Avo has to offer.
 
-The **Community** version has powerful features that you can use today like [Resource management](./resources.html), most [feature-rich](./field-options.html) [fields](./fields.html), out-of-the box [sorting](./field-options.html#make-columns-sortable), [filtering](./filters.html) and [actions](./actions.html), all the [associations](./associations.html) you need, and about 70% of all the features Avo has to offer.
+## Add-ons
 
-</Option>
+Each advanced feature ships as its own installable gem, so you only pay for what you use. Add-ons include [Authorization](./authorization.html), [Dashboards](./dashboards.html), the [Menu Editor](./menu-editor.html), [Record Reordering](./record-reordering.html), [Dynamic Filters](./dynamic-filters.html), [Custom Controls](./custom-controls.html), [Resource Scopes](./scopes.html), [Kanban Boards](./kanban-boards.html), [Collaboration](./collaboration.html), and more. Every add-on page carries a **License: Add-on** badge that links to its page on [avohq.io](https://avohq.io/addons).
 
-<Option name="Pro">
+## Bundles
 
-The **Pro** tier comes with [Advanced Authorization](./authorization.html) using Pundit, [Advanced File Uploads](./fields/files.html#direct_upload), [Record Reordering](./record-reordering.html), [Menu Editor](./menu-editor.html), and [Dashboards](./dashboards.html).
+If you need several add-ons, a bundle is the cheaper way to get them:
 
-</Option>
+- **`avo-pro`** — Dashboards and the Menu Editor.
+- **`avo-advanced`** — everything in `avo-pro`, plus Dynamic Filters.
+- **`avo-everything`** — every add-on Avo offers.
 
-<Option name="Advanced">
+See the [pricing page](https://avohq.io/pricing) for what each one includes.
 
-The **Advanced** tier is a pick-and-choose plan which has a few features and add-ons to offer like [Customizable Controls](./custom-controls.html), [Resource Scopes](./scopes.html), [Dynamic Filters](./dynamic-filters.html), [Kanban Boards](kanban-boards.html), Dynamic Fields, Collaboration, or White Labeling.
-In order to get a quote on the **Advanced** features, please [get in touch](https://savvycal.com/avo-hq/discovery-call-advanced) with us.
+## Enterprise
 
-</Option>
-
-The features are separated by their level of complexity and maintenance needs. Selling the Avo Pro edition as a paid upgrade and enables us to fund this business and work on it full-time. That way, Avo improves over time, helping developers with more features and customization options.
+Larger teams that need features like [Audit Logging](./audit-logging.html), custom builds, or dedicated support should [book an Enterprise call](https://savvycal.com/avo-hq/discovery-call-ent).
 
 ## One license per site
 
@@ -81,7 +84,6 @@ Avo pings the [HQ](https://avohq.io) (the license validation service) with some 
 ```ruby
 # HQ ping payload
 {
-  license: Avo.configuration.license,
   license_key: Avo.configuration.license_key,
   avo_version: Avo::VERSION,
   rails_version: Rails::VERSION::STRING,
@@ -99,15 +101,3 @@ That information helps us to identify your license and return a license valid/in
 The requests are made at boot time and every hour when you use Avo on any license type.
 
 If you need a special build without the license validation mechanism please [get in touch](mailto:adrian@avohq.io).
-
-
-## Upgrade your 1.0 license to 2.0, to 3.0
-
-We are grateful to our `1.0` customers for believing in us. So we offer a free and easy upgrade path and **a year of free updates** for version `2.0`.
-
-If you have a 1.0 license and want to upgrade to 2.0, you need to log in to [avohq.io](https://avohq.io), and go to the [licenses page](https://avohq.io/subscriptions), and hit the `Upgrade` button next to your license. You'll be redirected to the new subscription screen where you can start the subscription for 2.0.
-After you add your billing details, you won't get charged immediately, but on the next billing cycle next year.
-
-If you choose not to renew the subscription after one year, that's fine; you can cancel at any time, no biggie. You won't get charged and will keep the last version available at the end of that subscription.
-
-Same treatment was applied with the 2.0 -> 3.0 customers.

@@ -23,7 +23,7 @@ The boards and columns and items are database backed and you can create them on 
 
 Some of these requirements might change over time.
 
-- We tested this on an app with Avo Advanced license
+- We tested this on an app with the Kanban add-on installed
 - [`acts_as_list`](https://github.com/brendon/acts_as_list) gem (comes automatically as a requirement)
 - [`hotwire_combobox`](https://github.com/josefarias/hotwire_combobox) gem (comes automatically as a requirement)
 
