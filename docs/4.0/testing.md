@@ -48,16 +48,41 @@ This only applies when you explicitly disable outbound connections in the test e
 
 ## Testing helpers
 
-We prepared a few testing helpers for you to use in your apps. They will help with opening/closing datepickers, choosing the date, saving the records, add/remove tags, and also select a lot of elements throughout the UI.
+We prepared a few testing helpers for you to use in your apps. They help with opening/closing datepickers, choosing the date, saving records, adding/removing tags, and selecting a lot of elements throughout the UI.
 
-You can find them all [here](https://github.com/avo-hq/avo/blob/main/lib/avo/test_helpers.rb),
+You can find them all [here](https://github.com/avo-hq/avo/blob/main/lib/avo/test_helpers.rb).
+
+To use them, include `Avo::TestHelpers` in your test suite. For RSpec, add it in `spec/rails_helper.rb`:
+
+```ruby
+# spec/rails_helper.rb
+RSpec.configure do |config|
+  config.include Avo::TestHelpers # [!code ++]
+end
+```
+
+The helpers are then available in your specs:
+
+```ruby
+add_tag(field: :tags, tag: "one")
+set_picker_day("June 12, 2024")
+save
+```
+
+If a bare helper name would clash with something in your suite, include `Avo::PrefixedTestHelpers` instead — it exposes the same helpers with an `avo_` prefix (`avo_save`, `avo_add_tag`, …):
+
+```ruby
+# spec/rails_helper.rb
+RSpec.configure do |config|
+  config.include Avo::PrefixedTestHelpers # [!code ++]
+end
+```
 
 ## Testing Actions
 
 Given this `Avo::Actions::ReleaseFish`, this is the `spec` that tests it.
 
 ```ruby
-
 class Avo::Actions::ReleaseFish < Avo::BaseAction
   self.name = "Release fish"
   self.message = "Are you sure you want to release this fish?"
@@ -72,13 +97,12 @@ class Avo::Actions::ReleaseFish < Avo::BaseAction
     succeed "#{query.count} fish released with message '#{fields[:message]}'."
   end
 end
-
 ```
 
 ```ruby
 require 'rails_helper'
 
-RSpec.feature Avo::Actions::ReleaseFish, type: :feature do
+RSpec.describe Avo::Actions::ReleaseFish do
   let(:fish) { create :fish }
   let(:current_user) { create :user }
   let(:resource) { Avo::Resources::User.new.hydrate model: fish }

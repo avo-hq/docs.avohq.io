@@ -6,7 +6,7 @@ import VersionAlertBar from "./VersionAlertBar.vue"
 
 const { page } = useData();
 
-const showVersionAlertBar = computed(() => page.value.relativePath.includes('2.0'));
+const showVersionAlertBar = computed(() => /^(2|3)\.0\//.test(page.value.relativePath));
 </script>
 
 <template>

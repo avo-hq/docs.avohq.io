@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Renders a number input element."
+fieldTags: [number]
 ---
 
 # Number
@@ -16,7 +18,7 @@ field :age, as: :number
 
 Set the `min` attribute.
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -29,7 +31,7 @@ Any number.
 
 Set the `max` attribute.
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -42,7 +44,7 @@ Any number.
 
 Set the `step` attribute.
 
-#### Default
+#### Default value
 
 `nil`
 

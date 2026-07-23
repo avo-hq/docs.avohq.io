@@ -1,33 +1,47 @@
 <script setup>
 import { computed } from "vue"
 import { useData } from "vitepress"
+import { data } from "./../../fieldTypes.data.js"
 
-const { site, page } = useData()
-
-function findFieldTypesItems(sidebar) {
-  for (const section of sidebar ?? []) {
-    if (section.text === "Field types" && section.items) return section.items
-    for (const item of section.items ?? []) {
-      if (item.text === "Field types" && item.items) return item.items
-    }
-  }
-  return []
-}
+const { page } = useData()
 
 const fields = computed(() => {
   const version = page.value.relativePath.split("/")[0] || "4.0"
-  const sidebar = site.value.themeConfig.sidebar[`/${version}/`] ?? []
-  return findFieldTypesItems(sidebar).map((item) => ({
-    text: item.text,
-    link: item.link.replace(/\.md$/, ".html"),
-  }))
+  return data[version] ?? data["4.0"]
 })
 </script>
 
 <template>
-  <ul>
-    <li v-for="field in fields" :key="field.link">
-      <a :href="field.link">{{ field.text }}</a>
-    </li>
-  </ul>
+  <table tabindex="0">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Description</th>
+        <th>Tags</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="field in fields" :key="field.link">
+        <td class="whitespace-nowrap">
+          <a :href="field.link">{{ field.text }}</a>
+          <span
+            v-if="field.betaStatus"
+            class="VPBadge"
+            :class="field.betaStatus === 'Deprecated' ? 'danger' : 'warning'"
+          >{{ field.betaStatus }}</span>
+        </td>
+        <td>{{ field.description }}</td>
+        <td>
+          <span v-for="tag in field.tags" :key="tag" class="VPBadge info field-tag">{{ tag }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>
+
+<style scoped>
+.field-tag {
+  margin-right: 4px;
+  white-space: nowrap;
+}
+</style>

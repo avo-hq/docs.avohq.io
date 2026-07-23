@@ -55,7 +55,7 @@ end
 
 ## Step 2: Use the component in your field declaration
 
-With the [`components`](./../field-options#components) option, you can specify the component to be used for the `show` view of a field.
+With the [`components`](./../field-options-api#components) option, you can specify the component to be used for the `show` view of a field.
 
 ```ruby{10-12}
 # app/avo/resources/course_link.rb
@@ -78,7 +78,7 @@ end
 <Image src="/assets/img/guides/phlex/phlex_component.webp" dark-src="/assets/img/guides/phlex/phlex_component-dark.webp" width="1984" height="392" alt="Phlex component" />
 
 :::tip
-While this example uses a field, the same pattern applies to resources. You can use the [`components`](./../resources#self.components) option to customize the component for the `index`, `show`, `edit`, and `new` views.
+While this example uses a field, the same pattern applies to resources. You can use the [`components`](./../resources-api#self.components) option to customize the component for the `index`, `show`, `edit`, and `new` views.
 :::
 
 ## Conclusion

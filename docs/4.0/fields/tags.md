@@ -1,6 +1,8 @@
 ---
 license: community
 demoVideo: https://youtu.be/DKKSjNUvuBA
+description: "Displays and manages a list of tags on a record."
+fieldTags: [choice]
 ---
 
 # Tags field
@@ -35,7 +37,7 @@ class Course < ApplicationRecord
 end
 ```
 
-#### Default
+#### Default value
 
 `[]`
 
@@ -83,7 +85,7 @@ field :skills,
   disallowed: ["not", "that"]
 ```
 
-#### Default
+#### Default value
 
 `[]`
 
@@ -119,7 +121,7 @@ field :skills,
   suggestions_max_items: 2
 ```
 
-#### Default
+#### Default value
 
 `20`
 
@@ -146,7 +148,7 @@ field :items,
 
 Set the field the `acts_as_taggable_on` is set.
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -165,7 +167,7 @@ field :skills,
   delimiters: [",", " "]
 ```
 
-#### Default
+#### Default value
 
 `[","]`
 
@@ -188,7 +190,7 @@ field :skills,
   mode: :select
 ```
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -202,7 +204,7 @@ Valid values are `nil` for array values and `select` for a single value.
 
 There might be cases where you want to dynamically fetch the values from an API. The `fetch_values_from` option enables you to pass a URL from where the field should suggest values.
 
-This options works wonderful when used in [Actions](./../actions/overview.md).
+This options works wonderful when used in [Actions](./../actions.html).
 
 ```ruby{3}
 field :skills,
@@ -214,7 +216,7 @@ When the user searches for a record, the field will perform a request to the ser
 
 <br>
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -291,7 +293,7 @@ In the above example, `format_using` is a lambda that retrieves the names and th
 
 When you use `format_using`, Avo passes the `value`, current `resource` and `record` as arguments to the lambda function. This gives you access to the hydrated resource and the current record.
 
-#### Default
+#### Default value
 
 Avo's default behavior on tags
 

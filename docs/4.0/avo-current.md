@@ -1,3 +1,7 @@
+---
+license: community
+---
+
 # `Avo::Current`
 
 `Avo::Current` is based on the `Current` pattern Rails exposes using [`ActiveSupport/CurrentAttributes`](https://api.rubyonrails.org/classes/ActiveSupport/CurrentAttributes.html).
@@ -50,4 +54,3 @@ You can set the `tenant` for the current request.
 
 **Related:**
   - [Multitenancy](./multitenancy)
-

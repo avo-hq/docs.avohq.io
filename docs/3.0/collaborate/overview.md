@@ -1,7 +1,7 @@
 ---
-license: add_on
-add_on_link: https://avohq.io/pricing-4?add_ons[]=collaboration
-add_on: collaboration_feature
+license: addon
+addon_link: https://avohq.io/pricing-4?add_ons[]=collaboration
+addon: collaboration_feature
 betaStatus: Beta
 outline: [2, 3]
 ---
@@ -14,27 +14,27 @@ Keep your team in sync with built-in comments and status updates. No more scatte
 
 1. **Add gem:** Add the following to your Gemfile:
 
-   ```ruby
-   gem "avo-collaboration", source: "https://packager.dev/avo-hq"
-   ```
+  ```ruby
+  gem "avo-collaboration", source: "https://packager.dev/avo-hq"
+  ```
 
 2. **Bundle:** Run bundle install:
 
-   ```bash
-   bundle
-   ```
+  ```bash
+  bundle
+  ```
 
 3. **Install migrations:** Generate the required database migrations:
 
-   ```bash
-   rails avo_collaboration:install:migrations
-   ```
+  ```bash
+  rails avo_collaboration:install:migrations
+  ```
 
 4. **Run migrations:** Apply the migrations to your database:
 
-   ```bash
-   rails db:migrate
-   ```
+  ```bash
+  rails db:migrate
+  ```
 
 5. **Configure resources:** Enable collaboration on your resources by adding `self.collaboration` to your resource configuration.
 

@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Displays a heading separator to delimit sections of fields on a resource."
+fieldTags: [layout]
 ---
 
 # Heading
@@ -47,7 +49,15 @@ end
 
 <Option name="`label`">
 
-The content of `label` is the content displayed on the heading space.
+The content of `label` is the content displayed on the heading space. Unlike the computed (block) syntax, `label` is rendered on **all** views, including the form views.
+
+#### Default value
+
+The humanized field id (e.g. `field :user_information` becomes `User information`).
+
+#### Possible values
+
+Any string value.
 
 ```ruby
 field :some_id, as: :heading, label: "user information"

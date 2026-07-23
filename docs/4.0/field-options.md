@@ -1,32 +1,30 @@
 ---
 feedbackId: 834
+license: community
+outline: [2, 3]
+api_docs: ./field-options-api.html
 ---
 
 # Field options
 
-Avo fields are dynamic and can be configured using field options.
-
-There are quite a few **common field options** described on this page that will work with most fields (but some might not support them), and some **custom field options** that only some fields respond to that are described on each field page.
-
-
-### Common field option example
+Every Avo field accepts a set of **common options** that control its label, visibility, formatting, and behavior. This page walks through what you can do with them; the [Field options API](./field-options-api.html) lists every option's type, default, and accepted values.
 
 ```ruby
-# disabled will disable the field on the `Edit` view
-field :name, as: :text, disabled: true
-field :status, as: :select, disabled: true
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :name, as: :text, sortable: true, placeholder: "John Doe"
+  end
+end
 ```
 
-### Custom field option example
+With no options, a field shows up on the <Index />, <Show />, <New />, and <Edit /> views with a humanized version of its id as the label.
 
-```ruby
-# options will set the dropdown options for a select field
-field :status, as: :select, options: %w[first second third]
-```
+Besides the common options, some fields respond to **field-specific options** — like `options` on the [select field](./fields/select.html) — documented on each field's page.
 
-## Change field name
+## Change the field label
 
-To customize the label, you can use the `name` property to pick a different label.
+Pass [`name`](./field-options-api.html#name) to display a different label than the humanized field id.
 
 ```ruby
 field :is_available, as: :boolean, name: "Availability"
@@ -34,28 +32,27 @@ field :is_available, as: :boolean, name: "Availability"
 
 <Image src="/assets/img/4_0/field-options/change-field-name.webp" dark-src="/assets/img/4_0/field-options/change-field-name-dark.webp" width="1776" height="570" alt="An Avo index table with three columns — ID, Name and a boolean column whose header reads “Availability”, the custom label set via the field's name option, highlighted." prompt="index with the column header Availability anotated" />
 
-## Showing / Hiding fields on different views
+If you localize your app, translate the label through the [i18n conventions](./i18n.html) instead of hardcoding it.
 
-There will be cases where you want to show fields on different views conditionally. For example, you may want to display a field in the <New /> and <Edit /> views and hide it on the <Index /> and <Show /> views.
+## Show and hide fields on different views
 
-For scenarios like that, you may use the visibility helpers `hide_on`, `show_on`, `only_on`, and `except_on` methods. Available options for these methods are: `:new`, `:edit`, `:index`, `:show`, `:forms` (both `:new` and `:edit`) and `:all` (only for `hide_on` and `show_on`).
+There will be cases where you want to show fields on some views and hide them on others. For example, you may want to display a field on the <New /> and <Edit /> views and hide it on the <Index /> and <Show /> views.
 
-Version 3 introduces the `:display` option that is the opposite of `:forms`, referring to both, `:index` and `:show`
-
-Be aware that a few fields are designed to override those options (ex: the `id` field is hidden in <Edit /> and <New />).
+Use the visibility helpers [`hide_on`](./field-options-api.html#hide_on), [`show_on`](./field-options-api.html#show_on), [`only_on`](./field-options-api.html#only_on), and [`except_on`](./field-options-api.html#except_on). They accept `:index`, `:show`, `:new`, `:edit`, and `:preview`, plus the shorthands `:forms` (`:new` and `:edit`), `:display` (`:index` and `:show`), and `:all` (only for `hide_on` and `show_on`).
 
 ```ruby
-field :body, as: :text, hide_on: [:index, :show]
+field :body, as: :textarea, hide_on: [:index, :show]
 ```
+
+Be aware that a few fields override those options — for example, the [`id`](./fields/id.html) field hides itself on the <Edit /> and <New /> views.
 
 Please read the detailed [views](./views.html) page for more info.
 
-## Field Visibility
+## Show fields conditionally
 
-You might want to restrict some fields to be accessible only if a specific condition applies. For example, hide fields if the user is not an admin.
+You might want to restrict some fields to be accessible only if a specific condition applies — for example, hide fields if the user is not an admin.
 
-You can use the `visible` block to do that. It can be a `boolean` or a lambda.
-Inside the lambda, we have access to the [`context`](./customization.html#context) object and the current `resource`. The `resource` has the current `record` object, too (`resource.record`).
+Use the [`visible`](./field-options-api.html#visible) option with a boolean or a block. Inside the block, you have access to the [`context`](./customization.html#context) object and the current `resource`. The `resource` has the current `record` object, too (`resource.record`).
 
 ```ruby
 field :is_featured, as: :boolean, visible: -> { context[:user].is_admin? }  # show field based on the context object
@@ -67,18 +64,17 @@ field :is_featured, as: :boolean, visible: -> { resource.record.published_at.pre
 On form submissions, the `visible` block is evaluated in the `create` and `update` controller actions. That's why you have to check if the `resource.record` object is present before trying to use it.
 :::
 
-
 ```ruby
 # `resource.record` is nil when submitting the form on resource creation
-field :name, as: :text, visible -> { resource.record.enabled? }
+field :name, as: :text, visible: -> { resource.record.enabled? }
 
 # Do this instead
-field :name, as: :text, visible -> { resource.record&.enabled? }
+field :name, as: :text, visible: -> { resource.record&.enabled? }
 ```
 
-## Computed Fields
+## Compute the value with a block
 
-You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `record` (the actual database record), the `resource` (the configured Avo resource), and the current `view`. With that information, you can compute what to show on the field in the <Index /> and <Show /> views.
+You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `record` (the actual database record), the `resource` (the configured Avo resource), and the current `view`.
 
 ```ruby
 field 'Has posts', as: :boolean do
@@ -92,27 +88,13 @@ end
 Computed fields are displayed only on the <Show /> and <Index /> views.
 :::
 
-This example will display a boolean field with the value computed from your custom block.
+## Format displayed values
 
-## Fields Formatter
+Sometimes you will want to process the database value before showing it to the user. Inside every formatter block you have access to all the defaults that [`Avo::ExecutionContext`](./execution-context.html) provides plus `value`, `record`, `resource`, `view`, and `field`.
 
-Sometimes you will want to process the database value before showing it to the user.
+### On every view
 
-There are several ways to format fields.
-
-### Common formatting options
-
-In all cases, you have access to a bunch of variables inside this block, all the defaults that [`Avo::ExecutionContext`](./execution-context.html) provides plus `value`, `record`, `resource`, `view` and `field`.
-
-
-<Option name="`format_using`">
-Format the field value using a block.
-
-:::info
-Notice that this block will have effect on **all** views.
-:::
-
-Formatting affects copyable value, when using `format_using` with `copyable`, the formatted value is what gets copied to the clipboard, not the original database value. For example, using `format_using: -> { value.truncate(20) }` will copy the truncated text (including the `...`). If you need to display a truncated value while copying the full value, consider using CSS truncation via the [`html` option](./html) instead of `format_using`.
+[`format_using`](./field-options-api.html#format_using) formats the value on **all** views — including inside the inputs on forms, so return the raw value on form views if the user should edit it.
 
 ```ruby
 field :is_writer, as: :text, format_using: -> {
@@ -124,42 +106,11 @@ field :is_writer, as: :text, format_using: -> {
 }
 ```
 
-This example snippet will make the `:is_writer` field generate `👍` or `👎` emojis instead of `1` or `0` values on display views and the values `1` or `0` on form views.
-
 <Image src="/assets/img/4_0/field-options/format-using.webp" dark-src="/assets/img/4_0/field-options/format-using-dark.webp" width="1776" height="566" alt="An Avo index table with three columns — ID, Name and an “Is writer” column whose cells show a 👍 or 👎 emoji rendered via format_using instead of the raw value." prompt="Index view text field shown as a thumbs up/down emoji via format_using instead of the raw boolean value" />
 
-Another example:
+### On specific views
 
-```ruby
-field :company_url,
-  as: :text,
-  format_using: -> {
-    if view.new? || view.edit?
-      value
-    else
-      link_to(value, value, target: "_blank")
-    end
-  } do
-  main_app.companies_url(record)
-end
-```
-
-</Option>
-
-<Option name="`format_{view}_using`">
-
-Avo provides helper methods to format fields based on the current view.
-
-- `format_index_using` - Format the field value **only** for the **index** view
-- `format_show_using` - Format the field value **only** for the **show** view
-- `format_edit_using` - Format the field value **only** for the **edit** view
-- `format_new_using` - Format the field value **only** for the **new** view
-- `format_form_using` - Format the field value **only** for the **forms** view (**new** and **edit**)
-- `format_display_using` - Format the field value **only** for the **display** view (**index** and **show**)
-
-This methods are available for all fields.
-
-Example on how to format a field in the index and show views:
+If the formatting only applies to certain views, reach for the view-scoped variants — [`format_display_using`](./field-options-api.html#format_view_using), `format_form_using`, `format_index_using`, `format_show_using`, `format_edit_using`, or `format_new_using` — instead of branching on `view` yourself. When several are declared, the most specific one wins; see the [precedence table](./field-options-api.html#format_view_using).
 
 ```ruby
 field :is_writer, format_display_using: -> { value.present? ? '👍' : '👎' }
@@ -167,18 +118,17 @@ field :is_writer, format_display_using: -> { value.present? ? '👍' : '👎' }
 
 <Image src="/assets/img/4_0/field-options/format-display-using.webp" dark-src="/assets/img/4_0/field-options/format-display-using-dark.webp" width="1520" height="520" alt="An Avo Show view details panel card laid out in three rows — ID spanning the full width on top, First name and Last name side by side, then Is writer and User Email side by side — the “Is writer” value showing a 👍 emoji rendered via format_display_using." />
 
-</Option>
+### With Rails helpers
 
-## Formatting with Rails helpers
-
-You can also format using Rails helpers like `number_to_currency` (note that `view_context` is used to access the helper):
+You can format using Rails helpers like `number_to_currency` (note that `view_context` is used to access the helper):
 
 ```ruby
 field :price, as: :number, format_using: -> { view_context.number_to_currency(value) }
 ```
 
-## Parse value before update
-When it's necessary to parse information before storing it in the database, the `update_using` option proves to be useful. Inside the block you can access the raw `value` from the form, and the returned value will be saved in the database.
+## Parse the value before saving
+
+When it's necessary to parse information before storing it in the database, the [`update_using`](./field-options-api.html#update_using) option proves to be useful. Inside the block you can access the raw `value` from the form, and the returned value will be saved in the database.
 
 ```ruby
 field :metadata,
@@ -188,11 +138,9 @@ field :metadata,
   end
 ```
 
-## Sortable fields
+## Make columns sortable
 
-One of the most common operations with database records is sorting the records by one of your fields. For that, Avo makes it easy using the `sortable` option.
-
-Add it to any field to make that column sortable in the <Index /> view.
+Add [`sortable`](./field-options-api.html#sortable) to any field to make that column sortable on the <Index /> view.
 
 ```ruby
 field :name, as: :text, sortable: true
@@ -201,31 +149,13 @@ field :name, as: :text, sortable: true
 <Image src="/assets/img/4_0/field-options/sortable.webp" dark-src="/assets/img/4_0/field-options/sortable-dark.webp" width="1776" height="664" alt="An Avo index table for Projects sorted by the Name column, whose header shows the active sort-arrow indicator for the sortable name text field." />
 
 **Related:**
-  - [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
+  - [Add an index on the `created_at` column](./guides/best-practices#add-an-index-on-the-created-at-column)
 
-## Custom sortable block
+### Sort computed fields and associations
 
-When using computed fields or `belongs_to` associations, you can't set `sortable: true` to that field because Avo doesn't know what to sort by. However, you can use a block to specify how the records should be sorted in those scenarios.
+When using computed fields or `belongs_to` associations, you can't set `sortable: true` because Avo doesn't know what to sort by. Pass a block instead — it receives the `query` and the `direction` and must return a query.
 
-```ruby{4-7}
-class Avo::Resources::User < Avo::BaseResource
-  field :is_writer,
-    as: :text,
-    sortable: -> {
-      # Order by something else completely, just to make a test case that clearly and reliably does what we want.
-      query.order(id: direction)
-    },
-    hide_on: :edit do
-      record.posts.to_a.size > 0 ? "yes" : "no"
-    end
-end
-```
-
-The block receives the `query` and the `direction` in which the sorting should be made and must return back a `query`.
-
-In the example of a `Post` that `has_many` `Comment`s, you might want to order the posts by which one received a comment the latest.
-
-You can do that using this query.
+In the example of a `Post` that `has_many` `Comment`s, you might want to order the posts by which one received a comment the latest:
 
 ::: code-group
 
@@ -251,60 +181,39 @@ end
 
 :::
 
-## Placeholder
+## Mark fields as required
 
-Some fields support the `placeholder` option, which will be passed to the inputs on <Edit /> and <New /> views when they are empty.
+To indicate that a field is mandatory, use the [`required`](./field-options-api.html#required) option, which adds an asterisk to the field as a visual cue.
 
-```ruby
-field :name, as: :text, placeholder: 'John Doe'
-```
-
-<Image src="/assets/img/4_0/field-options/placeholder.webp" dark-src="/assets/img/4_0/field-options/placeholder-dark.webp" width="1256" height="254" alt="An Avo New form text field whose empty input shows the grey placeholder text “John Doe”." prompt="New form empty text input showing the placeholder text John Doe" />
-
-## Required
-To indicate that a field is mandatory, you can utilize the `required` option, which adds an asterisk to the field as a visual cue.
-
-Avo automatically examines each field to determine if the associated attribute requires a mandatory presence. If it does, Avo appends the asterisk to signify its mandatory status. It's important to note that this option is purely cosmetic and does not incorporate any validation logic into your model. You will need to manually include the validation logic yourself, such as (`validates :name, presence: true`).
-
+Avo automatically adds the asterisk when the model has a presence validator on the attribute, so you often don't need this option at all. It's purely cosmetic either way — add the actual validation to your model (`validates :name, presence: true`).
 
 ```ruby
 field :name, as: :text, required: true
+
+# or conditionally
+field :name, as: :text, required: -> { view == :new }
 ```
 
 <Image src="/assets/img/4_0/field-options/required.webp" dark-src="/assets/img/4_0/field-options/required-dark.webp" width="1256" height="254" alt="An Avo Edit form text field whose label has a red asterisk marking it as required." prompt="Edit form field label with a red asterisk marking it as required" />
 
 <DemoVideo demo-video="https://youtu.be/peKt90XhdOg?t=937" />
 
-You may use a block as well. It will be executed in the `Avo::ExecutionContext` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
+## Prevent users from editing a field
 
-```ruby
-field :name, as: :text, required: -> { view == :new } # make the field required only on the new view and not on edit
-```
+Two options render the input as `disabled` on the <New /> and <Edit /> views — pick based on how much protection you need.
 
-## Disabled
-
-When you need to prevent the user from editing a field, the `disabled` option will render it as `disabled` on <New /> and <Edit /> views and the value will not be passed to that record in the database. This prevents a bad actor to go into the DOM, enable that field, update it, and then submit it, updating the record.
-
+[`disabled`](./field-options-api.html#disabled) also ignores the field's value on save. Even if a bad actor re-enables the input in the DOM and submits, the record is not updated.
 
 ```ruby
 field :name, as: :text, disabled: true
+
+# or conditionally
+field :id, as: :number, disabled: -> { view == :edit }
 ```
 
 <Image src="/assets/img/4_0/field-options/disabled.webp" dark-src="/assets/img/4_0/field-options/disabled-dark.webp" width="1256" height="254" alt="An Avo Edit form with a disabled, greyed-out 'Name' text field above a normal, editable 'Website' field — the contrast shows the disabled state." prompt="Edit form showing a disabled greyed-out text field" />
 
-
-### Disabled as a block
-
-You may use a block as well. It will be executed in the `Avo::ExecutionContext` and you will have access to the `view`, `record`, `params`, `context`, `view_context`, and `current_user`.
-
-```ruby
-field :id, as: :number, disabled: -> { view == :edit } # make the field disabled only on the new edit view
-```
-
-## Readonly
-
-When you need to prevent the user from editing a field, the `readonly` option will render it as `disabled` on <New /> and <Edit /> views. This does not, however, prevent the user from enabling the field in the DOM and send an arbitrary value to the database.
-
+[`readonly`](./field-options-api.html#readonly) only disables the input in the UI — a user can still re-enable it in the DOM and submit an arbitrary value. Use it for convenience, not protection.
 
 ```ruby
 field :name, as: :text, readonly: true
@@ -312,9 +221,9 @@ field :name, as: :text, readonly: true
 
 <Image src="/assets/img/4_0/field-options/readonly.webp" dark-src="/assets/img/4_0/field-options/readonly-dark.webp" width="1256" height="254" alt="An Avo Edit form with a readonly, greyed-out 'Name' text field above a normal, editable 'Website' field — the contrast shows the readonly state." prompt="Edit form showing a readonly text field" />
 
-## Default Value
+## Set a default value
 
-When you need to give a default value to one of your fields on the <New /> view, you may use the `default` block, which takes either a fixed value or a block.
+Use [`default`](./field-options-api.html#default) to pre-fill the field on the <New /> view (and in action modals) with a fixed value or a block.
 
 ```ruby
 # using a value
@@ -324,10 +233,9 @@ field :name, as: :text, default: 'John'
 field :level, as: :select, options: { 'Beginner': :beginner, 'Advanced': :advanced }, default: -> { Time.now.hour < 12 ? 'advanced' : 'beginner' }
 ```
 
-<Option name="`help`">
+## Add help text
 
-Sometimes you will need some extra text to explain better what the field is used for. You can achieve that by using the `help` method.
-The value can be either text or HTML and is displayed only on the <Edit /> view (use [`label_help`](#label_help) option to display it on all views).
+Use [`help`](./field-options-api.html#help) to display extra text — plain or HTML — below the input on the form views.
 
 ```ruby
 # using the text value
@@ -339,102 +247,39 @@ field :password, as: :password, help: 'You may verify the password strength <a h
 
 <Image src="/assets/img/4_0/field-options/help.webp" dark-src="/assets/img/4_0/field-options/help-dark.webp" width="1440" height="284" alt="An Avo Edit form 'Custom CSS' text field with a line of help text shown directly below the input explaining what the field does." prompt="Edit form field with help text shown below the input" />
 
-</Option>
-
-<Option name="`label_help`">
-
-The `label_help` option allows you to add a help text below the label of a field on every view.
+If the text should appear on every view — not just forms — use [`label_help`](./field-options-api.html#label_help), which renders below the field's label.
 
 ```ruby
-# using the text value
 field :custom_css, as: :code, theme: 'dracula', language: 'css', label_help: "This enables you to edit the user's custom styles."
-
-# using HTML value
-field :password, as: :password, label_help: 'You may verify the password strength <a href="http://www.passwordmeter.com/">here</a>.'
 ```
 
 <Image src="/assets/img/4_0/field-options/label-help.webp" dark-src="/assets/img/4_0/field-options/label-help-dark.webp" width="1440" height="248" alt="An Avo Edit form 'Custom css' code field with a line of help text shown directly below the field label explaining what the field does." prompt="Form field with label_help text shown below the field label" />
 
-</Option>
+## Add a placeholder
 
-## Width
+Some fields support the [`placeholder`](./field-options-api.html#placeholder) option, which will be passed to the inputs on the <New /> and <Edit /> views when they are empty.
 
-The `width` option controls how much horizontal space a field takes inside its parent panel or card. Use it to place multiple fields on the same row — adjacent fields with a `width` below `100` sit side by side.
+```ruby
+field :name, as: :text, placeholder: 'John Doe'
+```
+
+<Image src="/assets/img/4_0/field-options/placeholder.webp" dark-src="/assets/img/4_0/field-options/placeholder-dark.webp" width="1256" height="254" alt="An Avo New form text field whose empty input shows the grey placeholder text “John Doe”." prompt="New form empty text input showing the placeholder text John Doe" />
+
+## Place fields on the same row
+
+The [`width`](./field-options-api.html#width) option controls how much horizontal space a field takes inside its parent panel or card. Adjacent fields with a `width` below `100` (a percentage) sit side by side.
 
 ```ruby
 field :first_name, width: 50
 field :last_name,  width: 50
+field :years_of_experience # full width
 ```
 
-`width` is a percentage. Supported values:
+Setting any `width` below `100` automatically marks the field as [`stacked`](./field-options-api.html#stacked) — the label moves above the value so the field fits the narrower column. See the [supported values](./field-options-api.html#width) in the reference.
 
-| `width` | Approx. fraction |
-| ------- | ---------------- |
-| `25`    | ¼                |
-| `33`    | ⅓                |
-| `50`    | ½                |
-| `66`    | ⅔                |
-| `75`    | ¾                |
-| `100`   | full row (default) |
+### Stack the label above the value
 
-Setting any `width` below `100` automatically marks the field as [`stacked`](#stacked-layout) — the label moves above the value so the field fits the narrower column. You don't need to pass `stacked: true` yourself, but you can still combine the two if you want a stacked field at full width.
-
-```ruby
-field :company,    width: 50 do "TechCorp Inc." end
-field :department, width: 50 do "Research & Development" end
-field :years_of_experience do "7 Years" end # full width
-```
-
-## Nullable
-
-When a user uses the **Save** button, Avo stores the value for each field in the database. However, there are cases where you may prefer to explicitly instruct Avo to store a `NULL` value in the database row when the field is empty. You do that by using the `nullable` option, which converts `nil` and empty values to `NULL`.
-
-You may also define which values should be interpreted as `NULL` using the `null_values` method.
-
-```ruby
-# using default options
-field :updated_status, as: :status, failed_when: [:closed, :rejected, :failed], loading_when: [:loading, :running, :waiting], nullable: true
-
-# using custom null values
-field :body, as: :textarea, nullable: true, null_values: ['0', '', 'null', 'nil', nil]
-```
-
-## Link to record
-
-Sometimes, on the <Index /> view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click on the <Show /> icon. You can use `link_to_record` to change a table cell to be a link to that record.
-
-```ruby
-# for id field
-field :id, as: :id, link_to_record: true
-
-# for text field
-field :name, as: :text, link_to_record: true
-
-# for gravatar field
-field :email, as: :gravatar, link_to_record: true
-```
-
-<Image src="/assets/img/4_0/field-options/link-to-record.webp" dark-src="/assets/img/4_0/field-options/link-to-record-dark.webp" width="1776" height="758" alt="An Avo index table where the Name column cells are rendered as blue links to each record via link_to_record." prompt="Index table cell rendered as a link to the record via link_to_record" />
-
-You can add this property on [`id`](./fields/id.html), [`text`](./fields/text.html), and [`gravatar`](./fields/gravatar.html) fields.
-
-Optionally you can enable the global config `id_links_to_resource`. More on that on the [id links to resource docs page](./customization.html#id-links-to-resource).
-
-## Align text on Index view
-
-It's customary on tables to align numbers to the right. You can do that using the `html` option.
-
-```ruby{2}
-class Avo::Resources::Project < Avo::BaseResource
-  field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
-end
-```
-
-<Image src="/assets/img/4_0/field-options/align-text.webp" dark-src="/assets/img/4_0/field-options/align-text-dark.webp" width="1776" height="758" alt="An Avo index table where the Users required number column is right-aligned via the html option, its numbers hugging the right edge of the column, contrasting with the left-aligned text columns." prompt="Index table numeric column right-aligned via the html option" />
-
-## Stacked layout
-
-For some fields, it might make more sense to use all of the horizontal area to display it. You can do that by changing the layout of the field wrapper using the `stacked` option.
+For some fields, it might make more sense to use all of the horizontal area to display the value. Change the layout of the field wrapper using the [`stacked`](./field-options-api.html#stacked) option.
 
 ```ruby
 field :meta, as: :key_value, stacked: true
@@ -448,11 +293,12 @@ field :meta, as: :key_value, stacked: true
 
 <Image src="/assets/img/4_0/field-options/stacked-stacked.webp" dark-src="/assets/img/4_0/field-options/stacked-stacked-dark.webp" width="2124" height="528" alt="An Avo show view key_value 'Meta' field in the stacked layout, the field label shown above a key/value control listing three pairs (environment: production, region: eu-west, tier: premium)." prompt="key_value field with the stacked layout, label above value" />
 
-## Global `stacked` layout
+### Global `stacked` layout
 
 You may also set all the fields to follow the `stacked` layout by changing the `field_wrapper_layout` initializer option from `:inline` (default) to `:stacked`.
 
 ```ruby
+# config/initializers/avo.rb
 Avo.configure do |config|
   config.field_wrapper_layout = :stacked
 end
@@ -460,36 +306,99 @@ end
 
 Now, all fields will have the stacked layout throughout your app.
 
-## Field options
+Avo 4 also adds `use_stacked_fields`, which stacks every field at the CSS level:
 
-<Option name="`components`">
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.use_stacked_fields = true # default: false
+end
+```
 
-The field's `components` option allows you to customize the view components used for rendering the field in all, `index`, `show` and `edit` views. This provides you with a high degree of flexibility.
+With it enabled, fields render stacked by default without needing `stacked: true` on each one, and you can still override per field.
 
-### Ejecting the field components
-To start customizing the field components, you can eject one or multiple field components using the `avo:eject` command. Ejecting a field component generates the necessary files for customization. Here's how you can use the `avo:eject` command:
+## Store empty values as `NULL`
 
-#### Ejecting All Components for a Field
+When a user saves a form, Avo stores the value for each field in the database as-is. If you prefer to store `NULL` when the field is empty, use the [`nullable`](./field-options-api.html#nullable) option — it converts `nil` and empty values to `NULL`.
 
-`$ rails g avo:eject --field-components FIELD_TYPE --scope admin`
+You may also define which values should be interpreted as `NULL` using [`null_values`](./field-options-api.html#null_values).
 
-Replace `FIELD_TYPE` with the desired field type. For instance, to eject components for a Text field, use:
+```ruby
+# using default null values (nil and "")
+field :body, as: :textarea, nullable: true
 
-`$ rails g avo:eject --field-components text --scope admin`
+# using custom null values
+field :body, as: :textarea, nullable: true, null_values: ['0', '', 'null', 'nil', nil]
+```
 
-This command will generate the files for all the index, edit and show components of the Text field, for each field type the amount of components may vary.
+## Link the table cell to the record
 
-For more advanced usage check the [eject documentation](./eject-views.html).
+Sometimes, on the <Index /> view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click the <Show /> icon. Use [`link_to_record`](./field-options-api.html#link_to_record) to change a table cell into a link to that record. It's available on the [`id`](./fields/id.html), [`text`](./fields/text.html), [`gravatar`](./fields/gravatar.html), and [`belongs_to`](./associations/belongs_to.html) fields.
+
+```ruby
+field :id, as: :id, link_to_record: true
+field :name, as: :text, link_to_record: true
+```
+
+<Image src="/assets/img/4_0/field-options/link-to-record.webp" dark-src="/assets/img/4_0/field-options/link-to-record-dark.webp" width="1776" height="758" alt="An Avo index table where the Name column cells are rendered as blue links to each record via link_to_record." prompt="Index table cell rendered as a link to the record via link_to_record" />
+
+Optionally you can enable the global config `id_links_to_resource`, which links every `id` field automatically. More on that on the [customization page](./customization.html#id-links-to-resource).
+
+## Summarize a column
+
+The [`summarizable`](./field-options-api.html#summarizable) option generates a visual summary of a column's data distribution. A chart icon appears in the table header; clicking it displays a summary chart based on the data in that column.
+
+```ruby
+field :status, as: :select, summarizable: true
+```
+
+<Image src="/assets/img/4_0/field-options/summarizable.webm" dark-src="/assets/img/4_0/field-options/summarizable-dark.webm" width="900" height="397" alt="An animated Avo Projects index table (ID, Name, Status, Country columns) with the summarizable summary popover open over it, cycling a hover across each segment of the Status distribution pie chart to reveal each value's label and count." prompt="Index table header showing the summarizable chart icon and summary popover for a column" />
+
+## Let users copy the value
+
+The [`copyable`](./field-options-api.html#copyable) option shows a clipboard icon when hovering over the field's value, allowing easy copying. Particularly useful for unique identifiers, URLs, or other text users frequently need to copy.
+
+```ruby
+field :name, as: :text, copyable: true
+```
+
+:::info
+The copied value is the displayed value. If you truncate it with [`format_using`](./field-options-api.html#format_using), the truncated text is what gets copied — use CSS truncation via the [`html` option](./html.html) if you need to display a short value but copy the full one.
+:::
+
+## Align text on the Index view
+
+It's customary on tables to align numbers to the right. You can do that using the [`html`](./field-options-api.html#html) option, which attaches classes, styles, and data attributes to the field's elements — see the [HTML attributes page](./html.html) for everything it can do.
+
+```ruby{2}
+class Avo::Resources::Project < Avo::BaseResource
+  field :users_required, as: :number, html: {index: {wrapper: {classes: "text-right"}}}
+end
+```
+
+<Image src="/assets/img/4_0/field-options/align-text.webp" dark-src="/assets/img/4_0/field-options/align-text-dark.webp" width="1776" height="758" alt="An Avo index table where the Users required number column is right-aligned via the html option, its numbers hugging the right edge of the column, contrasting with the left-aligned text columns." prompt="Index table numeric column right-aligned via the html option" />
+
+## Customize the field components
+
+The [`components`](./field-options-api.html#components) option lets you swap the view components used to render the field on the `index`, `show`, and `edit` views.
+
+### Eject the field components
+
+To start customizing, eject one or multiple field components using the `avo:eject` command — it generates the files for all of the field type's components:
+
+```bash
+rails g avo:eject --field-components text --scope admin
+```
 
 :::warning Scope
 If you don't pass a `--scope` when ejecting a field view component, the ejected component will override the default components all over the project.
 
-Check [eject documentation](./eject-views.html) for more details.
+Check the [eject documentation](./eject-views.html) for more details.
 :::
 
-### Customizing field components using `components` option
+### Point the field at your components
 
-Here's some examples of how to use the `components` option in a field definition:
+Pass a hash (or a block returning one) with `<view>_component` keys:
 
 ::: code-group
 ```ruby [Hash]
@@ -514,54 +423,9 @@ field :description,
 ```
 :::
 
-The components block it's executed using `Avo::ExecutionContent` and gives access to a bunch of variables as: `resource`, `record`, `view`, `params` and more.
+## Target a different database attribute
 
-`<view>_component` is the key used to render the field's `<view>`'s component, replace `<view>` with one of the views in order to customize a component per each view.
-
-:::warning Initializer
-It's important to keep the initializer on your custom components as the original field view component initializer.
-:::
-
-</Option>
-
-<Option name="`html`">
-
-### Attach HTML attributes
-
-Using the `html` option you can attach `style`, `classes`, and `data` attributes. The `style` attribute adds the `style` tag to your element, `classes` adds the `class` tag, and the `data` attribute the `data` tag to the element you choose.
-
-You may find more detailed information about the HTML attributes [here](./html.html).
-
-</Option>
-
-<Option name="`summarizable`">
-
-<Image src="/assets/img/4_0/field-options/summarizable.webm" dark-src="/assets/img/4_0/field-options/summarizable-dark.webm" width="900" height="397" alt="An animated Avo Projects index table (ID, Name, Status, Country columns) with the summarizable summary popover open over it, cycling a hover across each segment of the Status distribution pie chart to reveal each value's label and count." prompt="Index table header showing the summarizable chart icon and summary popover for a column" />
-
-The `summarizable` option allows you to generate a visual summary of a column's data distribution. This feature provides a quick and intuitive overview of your dataset by displaying a chart within the table header.
-
-You can enable `summarizable` for a column like this:
-
-```ruby
-def fields
-  field :status, as: :select, summarizable: true
-  field :status, as: :badge, summarizable: true
-end
-```
-
-### How It Works
-
-When `summarizable` is enabled, a chart icon will appear in the table header for that column.
-Clicking on the icon will display a summary chart based on the data in that column.
-The chart provides a visual representation of data distribution, making it easier to analyze trends.
-
-</Option>
-
-<Option name="`for_attribute`">
-
-Allows to specify the target attribute on the model for each field. By default the target attribute is the field's id.
-
-Usage example:
+Use [`for_attribute`](./field-options-api.html#for_attribute) to point a field at a different model attribute than its id — for example, to declare two fields backed by the same attribute with different presentations:
 
 ```ruby
 field :status, as: :select, options: [:one, :two, :three], only_on: :forms
@@ -569,19 +433,16 @@ field :status, as: :select, options: [:one, :two, :three], only_on: :forms
 field :secondary_field_for_status,
   as: :badge,
   for_attribute: :status,
-  options: {info: :one, :success: :two, warning: :three},
+  options: {info: :one, success: :two, warning: :three},
   except_on: :forms,
   help: "Secondary field for status using the for_attribute option"
 ```
-</Option>
 
-<Option name="`meta`">
+## Pass arbitrary data to the field
 
-This handy option enables you to send arbitrary information to the field. It's especially useful when you're building your own [custom fields](./custom-fields) or you are using [custom components](#components) for the built-in fields.
+The [`meta`](./field-options-api.html#meta) option sends arbitrary information to the field — especially useful when you're building your own [custom fields](./custom-fields.html) or using custom [components](#customize-the-field-components) for the built-in fields.
 
-Usage example:
-
-```ruby{4,9-11}
+```ruby
 # meta as a hash
 field :status,
   as: :custom_status,
@@ -595,7 +456,7 @@ field :status,
   end
 ```
 
-Within your field template you can now access the `@field.meta` attribute.
+Within your field template you can now access the `@field.meta` attribute:
 
 ```erb{2}
 <%= field_wrapper **field_wrapper_args do %>
@@ -606,56 +467,16 @@ Within your field template you can now access the `@field.meta` attribute.
   <% end %>
 <% end %>
 ```
-</Option>
 
-<Option name="`copyable`">
+## React to changes in other fields
 
-The `copyable` option enables users to copy the field's value to their clipboard. When set to `true`, a clipboard icon appears when hovering over the field value, allowing easy copying. This feature can be particularly useful for fields such as unique identifiers, URLs, or other text-based content that users may frequently need to copy.
-
-```ruby
-field :name, as: :text, copyable: true
-```
-
-The `copyable` option is available for text-based fields such as `:text`, `:textarea`, and others that render text values.
-
-</Option>
-
-<Option name="`react_on`">
-
-The `react_on` option enables dynamic reactivity for a field when changes occur elsewhere in the form. When a specified field changes, the current field is re-evaluated, and the `@record` object is refreshed with the latest form values.
+The [`react_on`](./field-options-api.html#react_on) option re-evaluates a field when other fields change in the form, refreshing `@record` with the latest form values. Updates run when the watched field's value is committed — on selection for selects and checkboxes, and when the input loses focus for text fields.
 
 This feature is provided by the **`avo-reactive_fields`** add-on. Add the gem to your app before using `react_on` (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#gems) for the `packager.dev` source).
 
-:::tip
-To retrieve the original value of a field before it was changed, use the [`*_was`](https://api.rubyonrails.org/classes/ActiveModel/Dirty.html#method-i-2A_was) methods.
+### Dependent select
 
-```ruby
-# Current from form
-@record.country
-"USA"
-
-# Initial value
-@record.country_was
-"Spain"
-```
-:::
-
-#### Possible values
-
-You can configure the field to react to:
-
-- A single field: `:field_one`
-- Multiple fields: `[:field_one, :field_two]`
-- All fields in the form: `:all`
-
-#### When updates run
-
-- **Selects and checkboxes** — the dependent field updates on `change` (when the value is committed).
-- **Text fields and textareas** — the dependent field updates while typing, using a debounced `input` handler (about 300ms after the last keystroke), so you do not need to blur the field first.
-
-#### Example: dependent select
-
-In the example below, the `city` field is set to react whenever the `country` select field is changed. This ensures that the available city options are always relevant to the selected country.
+In the example below, the `city` field reacts whenever the `country` select changes, so the available city options are always relevant to the selected country:
 
 ```ruby{11}
 # app/avo/resources/course.rb
@@ -674,13 +495,9 @@ class Avo::Resources::Course < Avo::BaseResource
 end
 ```
 
-#### Example: slug from name
+### Derived value (slug from name)
 
-Pair `react_on` with [`format_using`](#format_using) to re-compute a derived value whenever another field changes—for example, a slug from the course name.
-
-While the user types in **name** (for example `Hello World`), **slug** updates to `hello_world` after a short pause. Each further change to **name** re-runs the formatter so **slug** always reflects the current name.
-
-On each reactive request, `@record` is hydrated from the submitted form params, so `format_using` always sees the latest **name**—even before save:
+Pair `react_on` with [`format_using`](./field-options-api.html#format_using) to re-compute a derived value whenever another field changes. When the user fills in **name** (for example `Hello World`) and the input loses focus, **slug** updates to `hello_world` — on each reactive request, `@record` is hydrated from the submitted form params, so `format_using` always sees the latest **name**, even before save:
 
 ```ruby
 # app/avo/resources/course.rb
@@ -695,8 +512,6 @@ class Avo::Resources::Course < Avo::BaseResource
 end
 ```
 
-- `react_on: :name` re-renders the **slug** field when **name** changes.
-- Avo submits the form in the background and streams an updated slug field component.
-- `format_using` runs in that context with the latest form values.
-
-</Option>
+:::tip
+To retrieve the original value of a field before it was changed, use the [`*_was`](https://api.rubyonrails.org/classes/ActiveModel/Dirty.html#method-i-2A_was) methods.
+:::

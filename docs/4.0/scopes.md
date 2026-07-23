@@ -1,31 +1,31 @@
 ---
-license: advanced
-outline: [2, 4]
+license: addon
+addon_link: https://avohq.io/addons/scopes
+outline: [2, 3]
+api_docs: ./scopes-api.html
 ---
 
 # Scopes
 
 <Image src="/assets/img/4_0/scopes/scopes.webp" dark-src="/assets/img/4_0/scopes/scopes-dark.webp" width="2824" height="1208" alt="Scopes bar" />
 
-:::warning
-This section is a work in progress.
-:::
+Sometimes you need to segment your data beyond just a few filters. You might have a `User` resource but frequently need to see all the **Active users** or **Admin users**. You can use a filter for that, or add a scope — a one-click segment rendered as a tab bar above the records.
 
-Sometimes you might need to segment your data beyond just a few filters. You might have an `User` resource but you frequently need to see all the **Active users** or **Admin users**. You can use a filter for that or add a scope.
-
-## Generating scopes
+## Generate a scope
 
 ```bash
 bin/rails generate avo:scope admins
 ```
+
+The generator creates a scope class in `app/avo/scopes`. Point its [`scope`](./scopes-api.html#scope) option to a scope on your model:
 
 ```ruby
 # app/avo/scopes/admins.rb
 class Avo::Scopes::Admins < Avo::Scopes::BaseScope
   self.name = "Admins" # Name displayed on the scopes bar
   self.description = "Admins only" # This is the tooltip value
-  self.scope = :admins # valid scope on the model you're using it
-  self.visible = -> { true } # control the visibility
+  self.scope = :admins # A scope on the model this resource uses
+  self.visible = -> { true } # Control the visibility
 end
 
 # app/models/user.rb
@@ -34,9 +34,11 @@ class User < ApplicationRecord
 end
 ```
 
-## Registering scopes
+If you'd rather not define a model scope, `scope` also accepts a proc that modifies the query directly.
 
-Because scopes are re-utilizable, you must manually add that scope to a resource using the `scope` method inside the `scopes` method.
+## Register the scope on a resource
+
+Because scopes are reusable, you must manually add each scope to a resource using the `scope` method inside the `scopes` method:
 
 ```ruby{4}
 # app/avo/resources/user.rb
@@ -47,107 +49,75 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-<Option name="`default`" headingSize="3">
+### Set a default scope
 
-The `default` option lets you select a default scope that is applied when you
-navigate to the resources page.
-
-This option can be configured using a static value or a proc, which is executed using the [Avo::ExecutionContext](./execution-context.html). Check the [Execution Context](#execution-context) section for more information about what's available in the execution context.
+Pass [`default: true`](./scopes-api.html#default) when registering a scope to apply it when you navigate to the resource's <Index /> view. It also accepts a proc, so you can pick the default per user:
 
 ```ruby{5-6}
 # app/avo/resources/user.rb
 class Avo::Resources::User < Avo::BaseResource
   def scopes
     scope Avo::Scopes::OddId
-    # EvenId scope is applied as default
-    scope Avo::Scopes::EvenId, default: true
-  end
-end
-```
-
-```ruby{5-6}
-# app/avo/resources/user.rb
-class Avo::Resources::User < Avo::BaseResource
-  def scopes
-    scope Avo::Scopes::OddId
-    # EvenId scope is applied as default if the current user is an admin
+    # EvenId is the default scope only for admins
     scope Avo::Scopes::EvenId, default: -> { current_user.admin? }
   end
 end
 ```
 
-</Option>
+### Remove the "All" scope
 
-<Option name="`remove_scope_all`" headingSize="3">
+Avo adds an `All` scope by default. If you don't want it — or you'd rather ship a custom "All" scope of your own — call [`remove_scope_all`](./scopes-api.html#remove_scope_all) inside the `scopes` method and mark another scope as the default:
 
-If you don't want to have the `All` default scope you can remove it by executing the `remove_scope_all` method inside `scopes` method.
-
-```ruby{4}
+```ruby{4-5}
 # app/avo/resources/user.rb
 class Avo::Resources::User < Avo::BaseResource
   def scopes
     remove_scope_all
+    scope Avo::Scopes::Everybody, default: true
     scope Avo::Scopes::Admins
   end
 end
 ```
 
-</Option>
+## Show record counts
 
-## Options
-
-### Execution Context
-
-All options can be configured using static values or procs. The procs are executed using the [Avo::ExecutionContext](./execution-context.html), which provides access to all default methods and attributes available in Avo's execution context. Each option has access to:
-
-- `query`
-- `resource`
-- `scope`
-- `scoped_query` (check below Performance Note)
-
-:::warning Performance Note
-Inside each proc, you can call `scoped_query`, but use it with caution as it executes the scope. If the scope takes a while to execute, this could impact performance.
-:::
-
----
-
-<Option name="`name`" headingSize="3">
-
-This value is going to be displayed on the scopes bar as the name of the scope.
-
-:::tip Record counts
-To show a record count next to the scope, use the built-in [`counter`](#counter) option instead of computing it inside `name`. It supports lazy and on-hover loading so it won't slow down the page.
-:::
+To display a count badge next to a scope's label, set [`counter`](./scopes-api.html#counter) on the scope class:
 
 ```ruby{3}
-# app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
-  self.name = "Even"
+# app/avo/scopes/active.rb
+class Avo::Scopes::Active < Avo::Scopes::BaseScope
+  self.counter = :lazy
 end
 ```
+
+Use `:lazy` on large tables so the count loads after the page paints instead of slowing down the request, or `:hover` to load it only when the user hovers over the scope tab; `true` (or `:eager`) computes it inline. For finer control — a custom count, showing the badge conditionally, or formatting the number — pass a Hash with [`count`](./scopes-api.html#counter.count), [`visible`](./scopes-api.html#counter.visible), and [`format`](./scopes-api.html#counter.format) keys. The badge isn't limited to numbers: return a String (text or an emoji) from `count` and pass it through with a `format` of just `value`.
+
+```ruby{3-7}
+# app/avo/scopes/active.rb
+class Avo::Scopes::Active < Avo::Scopes::BaseScope
+  self.counter = {
+    loading: :lazy,
+    count: -> { query.active.count },
+    format: -> { "#{value} #{resource.name.pluralize.downcase}" }
+  }
+end
+```
+
+## Control who sees a scope
+
+Use the [`visible`](./scopes-api.html#visible) option to show, hide, or authorize a scope per user:
 
 ```ruby{4}
 # app/avo/scopes/even_id.rb
 class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
-  # Please see the performance note above if you're using `scoped_query`
-  self.name = -> { "Even (#{scoped_query.count})" }
+  # Only show this scope to admins
+  self.visible = -> { current_user.admin? }
 end
 ```
 
-</Option>
+## Dynamic values
 
----
-
-<Option name="`description`" headingSize="3">
-
-This value is going to be displayed when the user hovers over the scope.
-
-```ruby{3}
-# app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
-  self.description = "Only records that have an even ID."
-end
-```
+Every option accepts a proc instead of a static value, executed using the [Avo::ExecutionContext](./execution-context.html) with access to `query`, `resource`, `scope`, and `scoped_query`. For example, a description that adapts to the resource:
 
 ```ruby{3-5}
 # app/avo/scopes/even_id.rb
@@ -158,154 +128,21 @@ class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
 end
 ```
 
-</Option>
-
----
-
-<Option name="`scope`" headingSize="3">
-
-The scope you return here is going to be applied to the query of records on that page.
-
-You can use a symbol which will indicate the scope on that model or a proc which will have the `query` available so you can apply any modifications you need.
-
-```ruby{4}
-# app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
-  # This will use the `even_id` scope from the model
-  self.scope = :even_id
-end
-```
-
-```ruby{3}
-# app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
-  self.scope = -> { query.where("#{resource.model_key}.id % 2 = ?", "0") }
-end
-```
-
-</Option>
-
----
-
-<Option name="`visible`" headingSize="3">
-
-From this block you can show, hide, and authorize the scope on the resource.
-
-:::info Extra Access
-The `visible` option has additional access to `parent_record` and `parent_resource` variables, which are useful when working with nested resources or association contexts.
+:::warning Performance note
+`scoped_query` executes the scope when called. If the scope is slow, using it inside a proc impacts every page load. To show record counts, prefer the built-in [`counter`](./scopes-api.html#counter) option over computing them in `name`.
 :::
 
-```ruby{4}
-# app/avo/scopes/even_id.rb
-class Avo::Scopes::EvenId < Avo::Scopes::BaseScope
-  # Only show this scope to admins
-  self.visible = -> { current_user.admin? }
-end
-```
+See the [execution context reference](./scopes-api.html#execution-context) for what each option's proc has access to.
 
-</Option>
+## Limit index columns per scope
 
----
+A scope normally changes which **records** appear on the index. It can also change which **columns** appear while it's active — only on the <Index /> view; the show, new, and edit views keep the resource's normal fields.
 
-<Option name="`counter`" headingSize="3">
+There are three ways to do it, in order of precedence:
 
-Displays a count badge next to the scope's label showing how many records match the scope. This is the built-in, recommended alternative to computing the count manually inside `name`.
-
-The count is computed against the resource's authorization-scoped query and ignores any active search or filters, so it always reflects the whole scope.
-
-Set it to `true` (or `:eager`) to render the count during the request:
-
-```ruby{3}
-# app/avo/scopes/active.rb
-class Avo::Scopes::Active < Avo::Scopes::BaseScope
-  self.counter = true
-end
-```
-
-:::warning Performance Note
-An eager counter runs its `count` query on every page load. For large tables, use `:lazy` or `:hover` to defer it.
-:::
-
-For finer control, pass a Hash with any of the keys below.
-
-<Option name="`counter.loading`" headingSize="4">
-
-Controls when the count is fetched.
-
-| Mode                 | Behavior                                                              |
-| -------------------- | --------------------------------------------------------------------- |
-| `:eager` (or `true`) | Count is computed during the request and rendered inline.             |
-| `:lazy`              | Count loads in a deferred turbo-frame after the page paints.          |
-| `:hover`             | Same as `:lazy` — loads in a deferred turbo-frame after paint.        |
-
-```ruby{3}
-# app/avo/scopes/active.rb
-class Avo::Scopes::Active < Avo::Scopes::BaseScope
-  self.counter = :lazy
-end
-```
-
-</Option>
-
-<Option name="`counter.count`" headingSize="4">
-
-A custom count value. The `count` proc runs in the execution context with access to `query`, `resource`, and `scope`, where `query` is the unfiltered base query. It can return any value (not just a number) — whatever it returns becomes `value` in the `format` block:
-
-```ruby{3-6}
-# app/avo/scopes/active.rb
-class Avo::Scopes::Active < Avo::Scopes::BaseScope
-  self.counter = {
-    loading: :lazy,
-    count: -> { query.active.count }
-  }
-end
-```
-
-</Option>
-
-<Option name="`counter.visible`" headingSize="4">
-
-A boolean or proc that shows the badge only in some cases. When it evaluates falsy, the count is hidden — the scope tab itself still shows (use the scope's own [`visible`](#visible) option to hide the tab). On nested association indexes, the proc receives `parent_record` and `parent_resource` the same way the scope's [`visible`](#visible) option does:
-
-```ruby{5}
-# app/avo/scopes/active.rb
-class Avo::Scopes::Active < Avo::Scopes::BaseScope
-  self.counter = {
-    loading: :lazy,
-    visible: -> { current_user.admin? }
-  }
-end
-```
-
-</Option>
-
-<Option name="`counter.format`" headingSize="4">
-
-By default the count is rendered with `number_to_delimited` (e.g. `1,234`). A `format` block renders it however you like. It runs in the execution context — the count is available as `value` (the result of your `count` block, or the computed count when you don't set one), alongside `query`, `resource`, and `scope`, where `query` is the same unfiltered base query used by `counter.count` — and can return any value (coerced to a string):
-
-```ruby{5}
-# app/avo/scopes/active.rb
-class Avo::Scopes::Active < Avo::Scopes::BaseScope
-  self.counter = {
-    loading: :lazy,
-    format: -> { "#{value} #{resource.name.pluralize.downcase}" }
-  }
-end
-```
-
-The `format` block can return plain text, so it also works as a text-only badge — it renders even when the scope has no numeric count. If your `format` block raises, Avo falls back to the default delimited format, so a bad formatter never breaks the page.
-
-</Option>
-
-</Option>
-
-## Limiting index columns per scope
-
-By default a scope only changes which **records** show on the index. It can also change which **columns** show while it is active. Only the index view is affected — the show, new, and edit views keep the resource's normal fields.
-
-<Option name="`fields`" headingSize="3">
-
-Define a `fields` method on the scope to declare the exact columns shown on the index while that scope is active. It uses the same DSL and options as a resource's [`fields`](./resources.html) method, so anything you can pass to `field` works here too.
+- Define a [`fields`](./scopes-api.html#fields) method on the scope to declare the exact index columns from scratch, using the same DSL as a resource's `fields`.
+- Set [`field_whitelist`](./scopes-api.html#field_whitelist) to keep the resource's fields but show **only** the listed ids.
+- Set [`field_blacklist`](./scopes-api.html#field_blacklist) to keep the resource's fields but **hide** the listed ids.
 
 ```ruby{5-9}
 # app/avo/scopes/published.rb
@@ -320,47 +157,9 @@ class Avo::Scopes::Published < Avo::Scopes::BaseScope
 end
 ```
 
-Scopes without a `fields` method keep the resource's default index columns.
-
-</Option>
-
----
-
-<Option name="`field_whitelist`" headingSize="3">
-
-For a lighter touch, keep the resource's own fields but show **only** the listed columns while the scope is active. Accepts a proc or a static array, resolved through the [Execution Context](#execution-context).
-
-```ruby{4}
-# app/avo/scopes/members.rb
-class Avo::Scopes::Members < Avo::Scopes::BaseScope
-  self.scope = -> { query.where(admin: false) }
-  self.field_whitelist = -> { [:name, :email, :role] }
-end
-```
-
-</Option>
-
----
-
-<Option name="`field_blacklist`" headingSize="3">
-
-The inverse of `field_whitelist` — hide the listed columns and keep the rest. Accepts a proc or a static array.
-
-```ruby{4}
-# app/avo/scopes/members.rb
-class Avo::Scopes::Members < Avo::Scopes::BaseScope
-  self.scope = -> { query.where(admin: false) }
-  self.field_blacklist = -> { [:internal_notes, :audit_trail] }
-end
-```
-
 :::warning Display only
-`field_whitelist` and `field_blacklist` change only which columns render on the index. They are **not** an authorization boundary — the underlying data is still loaded and remains visible on the show and edit views and through the API. Use a [policy](./authorization.html) or a field's [`visible`](./field-options.html) option to actually restrict access to sensitive attributes.
+`field_whitelist` and `field_blacklist` only change which columns render on the index. They are **not** an authorization boundary — the data is still loaded and stays visible on the show and edit views and through the API. To actually restrict access, use a [policy](./authorization.html) or a field's [`visible`](./field-options.html) option.
 :::
-
-**Precedence** when a scope is active: a `fields` method wins over everything; otherwise `field_whitelist` wins over `field_blacklist`; with none set, the resource's default columns are used.
-
-</Option>
 
 ## Full example
 

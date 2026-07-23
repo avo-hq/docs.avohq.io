@@ -35,7 +35,7 @@ end
 
 You can do that using Pundit scopes and the Authorization feature. You create a policy for that resource and set the condition on the `index?` method. More on that on the [authorization](authorization) page and Pundit's [docs](https://github.com/varvet/pundit).
 
-Authorization is a Pro feature for Avo. Please [reach out](https://avohq.io/subscriptions/new?plan=2&trial=1) if you need a trial key to test it out.
+Authorization is an [add-on](authorization) for Avo. Please [reach out](https://avohq.io/addons/authorization) if you need a trial key to test it out.
 
 ## How can I set a homepage for the admin section
 
@@ -68,8 +68,8 @@ That depends on your setup:
 2. You don't have Rails STI but something custom. Then the response is it depends. Because something custom is... custom, we offer a few mechanisms to get over that.
 
 If you have one model, `User`, you'll have one Avo resource, `Avo::Resources::User`.
-Then you can customize different things based on your requirements. Like if for instance, you want to show only some types of users on the `Index` view, you can use [custom query scopes](https://docs.avohq.io/1.0/customization.html#custom-query-scopes) to hide specific types (if that's what you want to do).
-Same if you want to [show/hide fields](https://docs.avohq.io/1.0/field-options.html#field-visibility) based on the resource type or type of user.
+Then you can customize different things based on your requirements. Like if for instance, you want to show only some types of users on the `Index` view, you can use [custom query scopes](./resources-api.html#self.index_query) to hide specific types (if that's what you want to do).
+Same if you want to [show/hide fields](./field-options.html#show-fields-conditionally) based on the resource type or type of user.
 
 All in all **we're confident you'll have the necessary instruments** you need to build your admin.
 
@@ -102,7 +102,7 @@ gem 'avo', '1.19.1.pre.1'
 
 If you're having trouble with the authorization feature, make sure you have the following enabled:
 
-- you are on a [Pro](licensing) license
+- you have the [Authorization add-on](authorization) installed
 - you have set the [`current_user_method`](authentication.html#customize-the-current-user-method)
 - you have reset the rails server after the above settings
 - you have the pundit policy on the appropriate model

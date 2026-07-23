@@ -38,8 +38,12 @@ gem "tailwindcss-ruby"
 
 Once present, Avo will:
 
-- auto-build in development
+- auto-build in development (on server boot)
 - hook into `assets:precompile` in production
+
+:::warning
+Avo's build emits Tailwind **v4** syntax. If your app pulls Tailwind in through `tailwindcss-rails`, it must be **`>= 4.0`** — on `tailwindcss-rails` 3.x the integration stays disabled even though `tailwindcss-ruby` is present. Apps that depend on `tailwindcss-ruby` directly (no `tailwindcss-rails`) aren't affected by this check.
+:::
 
 :::tip
 We highly recommend running this integration through `bin/dev` with a `Procfile.dev` watcher process:
@@ -68,6 +72,44 @@ For example:
   }
 }
 ```
+
+## Override styles and scripts (`avo-overrides.css` / `avo-overrides.js`)
+
+Avo ships two empty files and loads them automatically on every screen:
+
+- `avo-overrides.css` — loaded **after** `avo/application.css`, so its rules win the cascade.
+- `avo-overrides.js` — loaded **after** `avo/application.js`, so `window.Stimulus` is available.
+
+Both are the no-build escape hatch: unlike `app/assets/stylesheets/avo/`, they are **not** run through the Tailwind build — they are served as-is. Use them for quick tweaks, re-theming, or small behaviors without touching the pipeline. To customize them, eject the file into your own app (Avo's copy is then shadowed by yours):
+
+```bash
+# just the stylesheet
+rails g avo:eject --partial :avo_overrides_css
+# just the script
+rails g avo:eject --partial :avo_overrides_js
+# both at once
+rails g avo:eject --partial :asset_overrides
+```
+
+Because `avo-overrides.css` loads after Avo's own stylesheet, overriding Avo's CSS variables here is enough to re-skin the whole interface — no `@apply`, no build step. See the [Theming guide](./theming.html#re-skin-with-css-variables) for how to re-color and re-skin Avo through these variables.
+
+### Add behavior with Stimulus
+
+`avo-overrides.js` runs once, but Avo navigates with Turbo. Register a Stimulus controller (Stimulus re-connects it on every visit) or attach a `turbo:load` listener — **avoid one-shot DOM edits**, they won't survive navigation:
+
+```js
+// app/assets/javascripts/avo-overrides.js
+document.addEventListener("turbo:load", () => {
+  // runs on every Turbo visit
+})
+
+// or register a controller against Avo's Stimulus instance:
+// window.Stimulus.register("my-controller", class extends Controller { ... })
+```
+
+:::tip
+For custom JS that needs bundling or `import`s (esbuild/importmap), use [asset handling](./asset-handling.html) and the [JavaScript guide](./javascript.html) instead. `avo-overrides.js` is for small, dependency-free snippets.
+:::
 
 ## Disable integration (opt-out)
 
@@ -125,6 +167,6 @@ How it works, in short:
 Quick checks:
 
 - confirm the integration is enabled (`config.tailwindcss_integration_enabled = true`);
-- ensure `tailwindcss-ruby` is installed (directly or via `tailwindcss-rails`);
+- ensure `tailwindcss-ruby` is installed (directly, or via `tailwindcss-rails` `>= 4.0`);
 - verify your custom styles are under `app/assets/stylesheets/avo/`;
 - run with the watcher (`bin/dev`) so changes are rebuilt continuously.

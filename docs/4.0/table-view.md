@@ -1,114 +1,58 @@
-# Table View
+---
+license: community
+outline: [2, 3]
+api_docs: ./table-view-api.html
+---
+
+# Table view
 
 The table view is the default way to display resources in Avo. It provides a powerful, tabular layout that supports searching, sorting, filtering, and pagination out of the box.
 
 <Image src="/assets/img/4_0/table-view/table-view.webp" dark-src="/assets/img/4_0/table-view/table-view-dark.webp" width="2808" height="1208" alt="Table view" />
 
-## Row controls configuration
+With no configuration, every resource renders as a table with the row controls (show, edit, delete, actions) on the right side of each row and standard row styling. Two hooks let you customize it: [row controls placement](#row-controls) and [`row_options`](#style-rows-with-row_options) for per-row HTML attributes.
 
-By default, resource controls are positioned on the right side of record rows. However, if the table contains many columns, these controls may become obscured. In such cases, you may prefer to move the controls to the left side for better visibility.
+## Row controls
 
-Avo provides configuration options that allow you to customize row controls placement, floating behavior, and visibility on hover either globally or individually for each resource.
-
-
-## Global configuration
-
-`resource_row_controls_config` defines the default settings for row controls across all resources. These global configurations will apply to each resource unless explicitly overridden.
-
-This option can be configured on `config/initializers/avo.rb` and defaults to the following:
-
-```ruby{3-7}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.resource_row_controls_config = {
-    placement: :right,
-    float: false,
-    show_on_hover: false
-  }
-end
-```
-
-## Resource configuration
-
-`row_controls_config` allows you to customize the row controls for a specific resource, overriding the global configuration.
-
-This option can be configured individually for each resource and defaults to the global configuration value defined in `resource_row_controls_config`.
-
-
-```ruby{3-7}
-# app/avo/resources/user.rb
-class Avo::Resources::User < Avo::BaseResource
-  self.row_controls_config = {
-    placement: :right,
-    float: false,
-    show_on_hover: false,
-  }
-end
-```
-
-<Option name="`placement`">
-
-Defines the position of the row controls.
-
-##### Optional
-
-`true`
-
-##### Default value
-
-`:right`
-
-#### Possible values
-
-- `:left` - Places the controls on the **left side** of the resource row.
-- `:right` - Places the controls on the **right side** of the resource row.
-- `:both` - Displays controls on **both sides** of the resource row.
-
-
-:::warning
-The `float` and `show_on_hover` options are designed to function optimally when `placement` is set to `:right`. While Avo does not restrict its usage with `:left` or `:both`, the applied styles are specifically intended for use with `:right`, and unexpected behavior may occur with other placements.
-:::
-</Option>
-
-<Option name="`float`">
-
-Determines whether the row controls should float over the row.
+By default, resource controls are positioned on the right side of record rows. However, if the table contains many columns, these controls may become obscured. In such cases, you may prefer to move the controls to the left side, float them over the row, or reveal them only on hover.
 
 <DemoVideo demo-video="https://youtu.be/wnWvzQyyo6A?t=698" class="mb-4" />
 
-##### Optional
+### Global configuration
 
-`true`
+If you want to change the defaults for every resource, set [`resource_row_controls_config`](./table-view-api.html#resource_row_controls_config) in the initializer:
 
-##### Default value
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.resource_row_controls_config = {
+    placement: :left,
+    float: true,
+    show_on_hover: true
+  }
+end
+```
 
-`false`
+### Resource configuration
 
-#### Possible values
+If a single resource needs different behavior, set [`row_controls_config`](./table-view-api.html#row_controls_config) on it — it overrides the global configuration for that resource:
 
-- `true` - Enables floating behavior.
-- `false` - Disables floating behavior (default).
-</Option>
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.row_controls_config = {
+    placement: :left
+  }
+end
+```
 
-<Option name="`show_on_hover`">
+Both accept the same keys — [`placement`](./table-view-api.html#placement), [`float`](./table-view-api.html#float), and [`show_on_hover`](./table-view-api.html#show_on_hover). See the [API reference](./table-view-api.html#row-controls) for values and defaults.
 
-Controls whether the row controls should be displayed only on hover.
+:::warning
+`float` and `show_on_hover` are designed to work with `placement: :right`. Avo doesn't restrict other placements, but the applied styles are intended for `:right` and unexpected behavior may occur with `:left` or `:both`.
+:::
 
-##### Optional
-
-`true`
-
-##### Default value
-
-`false`
-
-#### Possible values
-
-- `true` - Displays the controls on hover only.
-- `false` - Always shows the controls (default).
-</Option>
-
-## Row options
+## Style rows with `row_options`
 
 `self.table_view = { row_options: { ... } }` lets you declaratively set HTML attributes on the `<tr>` element for each record on the index, with optional per-record blocks. Use it to highlight rows, add custom data attributes, set tooltips, or attach Stimulus controllers — all without overriding the row component.
 
@@ -129,6 +73,8 @@ end
 
 The same configuration applies to both the main index and any `has_many` association table that lists this resource.
 
+The supported keys ([`class`](./table-view-api.html#class), [`data`](./table-view-api.html#data), [`style`](./table-view-api.html#style), and other passthrough HTML attributes), the merge rules, and the reserved attributes are documented in the [API reference](./table-view-api.html#row_options).
+
 ### Configuration shape
 
 `row_options` accepts a hash whose values may be static or blocks. The whole hash itself can also be a block returning a hash.
@@ -147,7 +93,7 @@ self.table_view = {
   row_options: -> {
     {
       class: record.archived? ? "opacity-60" : "",
-      data: { kind: "message", archived: record.archived? }
+      data: { kind: "message", archived: record.archived?.to_s }
     }
   }
 }
@@ -160,52 +106,9 @@ Blocks are evaluated once per row, per render, through `Avo::ExecutionContext`. 
 - `view` — `:index` on the main index, `:has_many` inside an association panel
 - Standard `Avo::ExecutionContext` defaults (`current_user`, `params`, `request`, view helpers)
 
-### Supported keys
-
-<Option name="`class`">
-
-Tailwind classes (or any CSS class string) appended to Avo's row classes. Accepts `String`, `Array<String>`, or `Hash<String, Boolean>` like Rails' `class_names` helper.
-
-```ruby
-class: "bg-yellow-50"                                  # String
-class: -> { record.flagged? ? ["ring-2", "ring-red-300"] : [] }  # Array
-class: -> { { "opacity-60" => record.archived? } }     # Hash
-```
-
-User classes are appended **after** Avo's, so they win at equal CSS specificity. Avo will not strip its own utility classes (notably `cursor-pointer` when click-to-view is enabled).
-</Option>
-
-<Option name="`data`">
-
-A hash of `data-*` attributes. User-provided data is deep-merged with Avo's existing data attributes:
-
-- `data-controller` and `data-action` are **token-concatenated** (your Stimulus identifiers are added alongside Avo's, never replacing them)
-- Avo's reserved keys (`record_id`, `index`, `component_name`, `resource_name`, `resource_id`, `visit_path`, `reorder_target`) are protected — attempts to set these are ignored with a development warning
-- Other keys pass through untouched
-
-```ruby
-data: -> { { test_id: "message-#{record.id}", controller: "highlightable" } }
-```
-</Option>
-
-<Option name="`style`">
-
-Inline CSS style string. Pass-through to `<tr>`, HTML-escaped by Rails.
-
-```ruby
-style: -> { "border-left: 4px solid #{record.priority_color};" }
-```
-</Option>
-
-<Option name="`title`, `aria-label`, other HTML attributes">
-
-Any other HTML attribute is passed through unchanged. Values are HTML-escaped by Rails' `content_tag`.
-
-```ruby
-title: -> { "Created #{time_ago_in_words(record.created_at)} ago" }
-"aria-label": -> { "Message from #{record.role}" }
-```
-</Option>
+:::warning
+Attribute values must resolve to a `String`, `Symbol`, or `Integer` (or `nil`/`false` to omit the attribute). Booleans like `record.archived?` raise an `ArgumentError` — convert them with `.to_s` first. See [value coercion](./table-view-api.html#style) in the API reference.
+:::
 
 ### Examples
 
@@ -283,41 +186,20 @@ User-supplied classes are outside Avo's semantic CSS variable system, so dark-mo
   style: "background-color: var(--color-secondary);"
   ```
 
-### Tailwind safelist
+### Tailwind class discovery
 
-Tailwind's JIT compiler only generates classes it sees in your source. If your `class:` block returns dynamic strings that aren't literally written elsewhere, add them to your `tailwind.config.js`:
+Tailwind only generates utility classes it can see in your source files. With Avo's [Tailwind CSS integration](./tailwindcss-integration.html) enabled, the compiler scans your Rails `app/` directory — including `app/avo` — so classes written **literally** inside `row_options` blocks (like the examples above) are compiled automatically.
 
-```js
-// config/tailwind.config.js
-module.exports = {
-  content: [
-    "./app/**/*.{rb,erb,html,js}",
-    "./app/avo/**/*.rb",
-  ],
-  safelist: [
-    "bg-red-50", "bg-amber-50", "bg-emerald-50",
-    "dark:bg-red-950/30", "dark:bg-amber-950/30", "dark:bg-emerald-950/30",
-    // Or use a regex pattern for whole color scales:
-    { pattern: /bg-(red|amber|emerald)-(50|100)/, variants: ["dark"] },
-  ],
-}
-```
+Two cases need attention:
 
-Without this, classes returned only from `row_options` blocks will be purged from the production CSS bundle.
+- **Dynamically-built class names** (`"role-#{record.role.slug}"`, concatenated strings) are invisible to the scanner. Register them explicitly with Tailwind v4's `@source inline(...)` in one of your Avo stylesheets:
 
-### Reserved and denied keys
+  ```css
+  /* app/assets/stylesheets/avo/custom.css */
+  @source inline("{dark:,}bg-{red,amber,emerald}-{50,950/30}");
+  ```
 
-Some attributes are off-limits because Avo owns them or they break behavior:
-
-| Attribute | Reason |
-|---|---|
-| `id` | Avo emits `<tr id="...">` for tests and Stimulus targeting |
-| `role` | The implicit `role="row"` on `<tr>` inside `<table>` is canonical; overriding breaks screen-reader semantics |
-| `aria-selected` | Owned by Avo's row-selection state |
-| `on*` event handlers (`onclick`, `onmouseover`, …) | Use Stimulus actions via `data: { action: "..." }` instead |
-| `tabindex`, `contenteditable`, `draggable` | Conflict with Avo's keyboard navigation and selection |
-
-In development and test, setting any of these raises `ArgumentError` listing the supported keys. In production, the row falls back to Avo's defaults and the violation is logged via `Avo.logger`.
+- **Without the integration** (precompiled Avo bundle only), no new utility classes are generated at all — only classes already present in Avo's own bundle will work. Enable the [Tailwind CSS integration](./tailwindcss-integration.html) if you rely on custom classes here.
 
 ### Performance
 
@@ -344,5 +226,5 @@ If your override does anything beyond `<tr>` attribute customization (e.g., chan
 ### Limitations
 
 - **No cell-level options yet.** A future `cell_options` API will let you customize individual `<td>` elements via the field DSL. For now, `row_options` only affects the row container.
-- **No grid or kanban analog.** `self.grid_view` is the future home for grid-card options; kanban gets its own when the time comes.
+- **No grid analog.** [`self.grid_view`](./grid-view.html) configures the card content, not per-card HTML attributes.
 - **Turbo Stream re-renders.** When a row is broadcast-updated via Turbo Stream, the `view:` local resolves based on the original render context. Verify in your specs if you depend on `view` branching.

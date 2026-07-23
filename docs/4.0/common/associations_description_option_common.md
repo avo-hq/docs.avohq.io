@@ -4,7 +4,7 @@ Changes the text displayed under the association name.
 
 <Image src="/assets/img/4_0/common/associations/description-option.webp" dark-src="/assets/img/4_0/common/associations/description-option-dark.webp" width="2140" height="790" alt="An Avo has_many association titled User feedback with its description — Comments left by this user across the app. — highlighted below the panel title, showing the full index table with search and pagination." />
 
-#### Default
+#### Default value
 
 `nil`
 

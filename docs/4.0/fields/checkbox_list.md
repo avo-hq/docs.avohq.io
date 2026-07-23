@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The CheckboxList field renders a list of checkboxes for selecting multiple values from a finite set of options."
+fieldTags: [choice]
 ---
 
 # Checkbox List
@@ -82,6 +84,8 @@ field :user_ids,
 Set `inline_search: true` to add a client-side search input above the checkbox list.
 
 The search filters the options that were already rendered on the page. It does not make server requests, so use it for small and medium option sets.
+
+You can also pass a lambda that returns a boolean. It runs inside an [`Avo::ExecutionContext`](./../execution-context.html).
 
 ```ruby{4}
 field :team_member_ids,

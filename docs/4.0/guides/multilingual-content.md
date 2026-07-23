@@ -1,5 +1,5 @@
 ---
-license: pro
+license: community
 ---
 
 # Multilingual content

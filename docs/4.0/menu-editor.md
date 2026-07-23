@@ -1,25 +1,27 @@
 ---
 feedbackId: 831
 demoVideo: https://youtu.be/VMvG-j1Vxio
-license: pro
+license: addon
+addon_link: https://avohq.io/addons/menu-editor
 outline: [2, 3]
+api_docs: ./menu-editor-api.html
 ---
 
 # Menu editor
 
 One common task you need to do is organize your sidebar resources into menus. You can easily do that using the menu editor in the initializer.
 
-When you start with Avo, you'll get an auto-generated sidebar by default. That sidebar will contain all your resources, dashboards, and custom tools. To customize that menu, you have to add the `main_menu` key to your initializer.
+When you start with Avo, you'll get an auto-generated sidebar by default. That sidebar will contain all your resources, dashboards, and custom tools. To customize it, add the `main_menu` key to your initializer.
 
-```ruby{3-20}
+```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.main_menu = -> {
     section "Resources", icon: "tabler/outline/building-store", collapsable: false do
       group "Company", collapsable: true do
         resource :projects do
-          link "First project", active: :inclusive, path: "/admin/resources/projects/1"
-          link "Second project", active: :inclusive, path: "/admin/resources/projects/2"
+          link_to "First project", path: "/admin/resources/projects/1"
+          link_to "Second project", path: "/admin/resources/projects/2"
         end
         resource :team, icon: "heroicons/outline/user-group"
         resource :team_membership
@@ -37,109 +39,58 @@ end
 
 <Image src="/assets/img/4_0/menu-editor/v4/main.webp" dark-src="/assets/img/4_0/menu-editor/v4/main-dark.webp" width="256" height="312" alt="Avo main menu" />
 
-For now, Avo supports editing only two menus, `main_menu` and `profile_menu`. However, that might change in the future by allowing you to write custom menus for other parts of your app.
+Avo has three configurable menus, all built with the same DSL: `main_menu` (the sidebar), [`profile_menu`](#profile-menu), and [`header_menu`](#header-menu). The rest of this page uses `main_menu` in its examples; the profile and header menus are covered at the end.
 
 ## Menu item types
 
-A few menu item types are supported: `link_to`, `section`, `group`, `resource`, `dashboard`, `page`, and `action`. There are a few helpers too, like `all_resources`, `all_dashboards`, `all_pages`, and `all_tools`.
+The recommended hierarchy is [`section`](./menu-editor-api.html#section) → [`group`](./menu-editor-api.html#group) → item. Sections are the top-level containers rendered with an icon header; groups are collapsable sub-categories inside them.
 
-The recommended hierarchy is `section → group → resource → subitem`. Sections are the top-level containers rendered with an icon header in the sidebar.
-<!-- here add the short details about the rest of the cases-->
+The items themselves:
 
-<Option name="`link_to`">
+- [`link_to`](./menu-editor-api.html#link_to) (alias `link`) links to any path, internal or external.
+- [`resource`](./menu-editor-api.html#resource) links to a resource's Index view — pass a symbol (`:users`) or the full class name (`"Avo::Resources::User"`).
+- [`dashboard`](./menu-editor-api.html#dashboard) links to a [dashboard](./dashboards.html) by `id` or `name`.
+- [`page`](./menu-editor-api.html#page) and [`form`](./menu-editor-api.html#form) link to your [pages and forms](./forms-and-pages.html) (requires the `avo-forms` add-on).
+- [`board`](./menu-editor-api.html#board) links to a [kanban board](./kanban-boards.html) (requires the `avo-kanban` add-on).
+- [`action`](./menu-editor-api.html#action) triggers a [standalone action](./actions.html) straight from the menu.
+- [`render`](./menu-editor-api.html#render) renders a partial or View Component for anything custom.
 
-`link_to` is the menu item that the user will probably interact with the most. It will generate a link on your menu. You can specify the `name`, `path` , and `target`.
+If you want to change an item's label, pass `label:` — `resource :posts, label: "News posts"` works the same on `dashboard`, `page`, `form`, and `action` items.
 
-```ruby
-link_to "Google", path: "https://google.com", target: :_blank
-```
+## Add everything at once
 
-When you add the `target: :_blank` option, a tiny external link icon will be displayed.
-
-#### `link_to` options
-
-#### `path`
-
-This is the path of the item.
-It may be ommited to make the API look like Rail's
+Instead of listing items one by one, the `all_*` helpers pull in a whole category: [`all_resources`](./menu-editor-api.html#all_resources), [`all_dashboards`](./menu-editor-api.html#all_dashboards), [`all_pages`](./menu-editor-api.html#all_pages), [`all_forms`](./menu-editor-api.html#all_forms), [`all_boards`](./menu-editor-api.html#all_boards), and [`all_tools`](./menu-editor-api.html#all_tools). Most accept an `except:` array to leave specific entries out.
 
 ```ruby
-config.main_menu = -> {
-  # These two are equivalent
-  link_to "Home", path: main_app.root_path
-  link_to "Home", main_app.root_path
-}
-```
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    section "App", icon: "heroicons/outline/beaker" do
+      group "Dashboards" do
+        all_dashboards
+      end
 
-##### `data`
+      group "Resources" do
+        all_resources except: [:users, :orders]
+      end
 
-You may add arbitraty `data` attributes to your link.
-
-You can make a link execute a `put`, `post`, or `delete` request similar to how you use the `data-turbo-method` attribute.
-
-```ruby
-config.main_menu = -> {
-  link_to "Sign out!", main_app.destroy_user_session_path, data: { turbo_method: :delete }
-}
-```
-
-</Option>
-
-<Option name="`render`">
-
-The `render` method will render renderable objects like partials or View Components.
-
-You can even pass `locals` to partials.
-The partials follow the same pattern as the regular `render` method.
-
-```ruby
-render "avo/sidebar/items/custom_tool"
-render "avo/sidebar/items/custom_tool", locals: { something: :here }
-render Super::Dooper::Component.new(something: :here)
-```
-
-</Option>
-
-<Option name="`resource`">
-
-To make it a bit easier, you can use `resource` to quickly generate a link to one of your resources. For example, you can pass a short symbol name `:user` or the full name `Avo::Resources::User`.
-
-```ruby
-resource :posts
-resource "Avo::Resources::Comments"
-```
-
-You can also change the label for the `resource` items to something else.
-
-```ruby
-resource :posts, label: "News posts"
-```
-
-Additionally, you can pass the `params` option to the `resource` items to add query params to the link.
-
-```ruby
-resource :posts, params: { status: "published" }
-resource :users, params: -> do
-  decoded_filter = {"Avo::Filters::IsAdmin"=>["non_admins"]}
-
-  { encoded_filters: Avo::Filters::BaseFilter.encode_filters(decoded_filter)}
+      group "All tools" do
+        all_tools
+      end
+    end
+  }
 end
 ```
 
-### Subitems
+:::warning
+The `all_resources` helper takes your [authorization](./authorization) rules into account, so make sure you have `def index?` enabled in your resource policy.
+:::
 
-You can nest items beneath a `resource` by passing a block. They appear as child items under the resource link in the sidebar.
+<Image src="/assets/img/4_0/menu-editor/v4/all-helpers.webp" dark-src="/assets/img/4_0/menu-editor/v4/all-helpers-dark.webp" width="256" height="312" alt="Avo menu editor" />
 
-Sub-items can be any menu item type:
+## Sub-items
 
-- [`link_to`](#menu-item-types)
-- [`resource`](./resources.html)
-- [`dashboard`](./dashboards.html)
-- [`page`](./forms-and-pages/pages.html)
-- [`board`](./kanban-boards.html)
-- [`action`](./actions/overview.html)
-
-A nested `resource`, `dashboard`, `page`, `board`, or `action` resolves its own URL automatically, so only `link_to` needs an explicit `path:`. A nested `action` also inherits its enclosing `resource`, so you don't repeat it.
+You can nest items beneath a `resource` by passing a block. They appear as child items under the resource link in the sidebar. Any item type can be nested; a nested `resource`, `dashboard`, `page`, `board`, or `action` resolves its own URL automatically, so only `link_to` needs an explicit `path:`. A nested `action` also inherits its enclosing resource, so you don't repeat it.
 
 ```ruby
 # config/initializers/avo.rb
@@ -157,70 +108,16 @@ Avo.configure do |config|
 end
 ```
 
-The `active` option controls when the sub-link is highlighted as active:
-- `:inclusive` — the link is active when the current path starts with the given `path` (useful for nested routes)
-- `:exclusive` — the link is active only on an exact path match (default)
+Avo highlights the active sub-item automatically by matching the current path, favoring the most specific match. Sub-items don't render an `icon`. For readability you can optionally wrap them in a `subitems` block — it behaves identically to listing them directly.
 
-Sub-items don't render an `icon`. For readability you can optionally wrap them in a `subitems` block — it behaves identically to listing them directly.
+## Trigger actions from the menu
 
-</Option>
-
-<Option name="`dashboard`">
-
-Similar to `resource`, this is a helper to make it easier to reference a dashboard. You pass in the `id` or the `name` of the dashboard.
-
-```ruby
-dashboard :dashy
-dashboard "Sales"
-```
-
-You can also change the label for the `dashboard` items to something else.
-
-```ruby
-dashboard :dashy, label: "Dashy Dashboard"
-```
-
-</Option>
-
-<Option name="`page`">
-
-Similar to `resource` and `dashboard`, `page` adds a link to one of your [pages](./forms-and-pages/pages.html). Pass the page's class name as a **String**:
-
-```ruby
-page "Avo::Pages::Settings"
-page "Avo::Pages::SystemHealth"
-```
-
-:::info Use the String form
-Reference the page by its class name in quotes, not the bare constant. The String is resolved when the menu renders, so the page class isn't autoloaded while your initializer is parsed — which is what prevents boot and reload errors. The bare constant still works, but the String form is recommended.
-:::
-
-The label defaults to the page's `navigation_label` (falling back to its `title`). You can override it:
-
-```ruby
-page "Avo::Pages::Settings", label: "App configuration"
-```
-
-Like other menu items, `page` accepts the `icon`, `hotkey`, `data`, and `visible` options.
-
-```ruby
-page "Avo::Pages::Settings", icon: "tabler/outline/adjustments", hotkey: "g s"
-```
-
-:::info
-Pages are provided by the [`avo-forms`](./forms-and-pages/overview.html) addon. The `page` and `all_pages` helpers are only available when it is installed.
-:::
-
-</Option>
-
-<Option name="`action`">
-
-`action` adds a menu item that triggers one of your [actions](./actions/overview.html). Clicking it opens the action's modal, just like the per-resource **Actions** dropdown.
+An [`action`](./menu-editor-api.html#action) item opens the action's modal, just like the per-resource **Actions** dropdown. Because the menu has no selected record, only [standalone actions](./actions-api.html#standalone) (`self.standalone = true`) can be added — others are skipped with a log warning.
 
 ```ruby
 # app/avo/actions/export_data.rb
 class Avo::Actions::ExportData < Avo::BaseAction
-  self.name = "Export data"
+  self.name = "Export data" # used as the menu label unless you override it
   self.standalone = true # required to add it to the menu
 
   def handle(fields:, **)
@@ -229,27 +126,14 @@ class Avo::Actions::ExportData < Avo::BaseAction
 end
 ```
 
-```ruby
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.main_menu = -> {
-    action Avo::Actions::ExportData, resource: :projects
-  }
-end
-```
-
-Because the menu has no selected record, only [**standalone** actions](./actions/generator.html) (`self.standalone = true`) can be added — actions that depend on selected records would run against nothing and are skipped (with a log warning).
-
-#### `resource`
-
-An action always lives under a resource's URL, so you must tell it which one. At the top level `resource:` is **required**; nested inside a `resource` block it is **inherited** from the enclosing resource (an explicit `resource:` still overrides it).
+An action always lives under a resource's URL, so you must tell it which one. At the top level `resource:` is required; nested inside a `resource` block it is inherited (an explicit `resource:` still overrides it).
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.main_menu = -> {
     # Top level — resource: required
-    action Avo::Actions::ExportData, resource: :projects
+    action Avo::Actions::ExportData, resource: :projects, label: "Export", icon: "tabler/outline/download"
 
     # Nested — inherits :projects automatically
     resource :projects do
@@ -259,173 +143,9 @@ Avo.configure do |config|
 end
 ```
 
-The label defaults to the action's `self.name`. Like other menu items, `action` accepts the `label`, `icon`, `data`, and `visible` options.
-
-```ruby
-# app/avo/actions/export_data.rb
-class Avo::Actions::ExportData < Avo::BaseAction
-  self.name = "Export data" # used as the menu label unless you override it
-  self.standalone = true
-end
-```
-
-```ruby
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.main_menu = -> {
-    # `label` overrides "Export data"; `icon` is shown next to it
-    action Avo::Actions::ExportData, resource: :projects, label: "Export", icon: "tabler/outline/download"
-  }
-end
-```
-
-</Option>
-
-<Option name="`section`">
-
-Sections are the **top-level containers** in the sidebar. They are rendered with a prominent header that includes an `icon` and a `name`. Sections are intended to group related `group`s and items at the highest level of the menu.
-
-```ruby
-section "Resources", icon: "heroicons/outline/academic-cap" do
-  group "Academia", collapsable: true do
-    resource :course
-    resource :course_link
-  end
-
-  group "Blog", collapsable: true, collapsed: true do
-    resource :posts
-    resource :comments
-  end
-end
-```
-
-You can also place items directly inside a section without a group:
-
-```ruby
-section "Tools", icon: "heroicons/outline/finger-print" do
-  all_tools
-end
-```
-
-</Option>
-
-<Option name="`group`">
-
-Groups are **sub-categories** nested inside sections. They render as a collapsable label and are used to cluster related items within a section. Groups support `collapsable` and `collapsed` options. Note that groups do not support the `icon` option.
-
-```ruby
-section "Resources", icon: "heroicons/outline/academic-cap" do
-  group "Blog", collapsable: true, collapsed: true do
-    resource :posts
-    resource :categories
-    resource :comments
-  end
-end
-```
-
-Groups can also be placed at the top level without a parent section, but the recommended structure is to nest them inside sections.
-
-</Option>
-
-<Option name="`all_resources`">
-
-Renders all resources, except those explicitly excluded.
-
-#### Arguments:
-- `except`: *(Array, optional)* – A list of resource names to be excluded.
-
-#### Example:
-
-```ruby
-section "App", icon: "heroicons/outline/beaker" do
-  group "Resources" do
-    all_resources except: [:users, :orders]
-  end
-end
-```
-
-In the example above, all resources will be rendered except `Avo::Resources::Users` and `Avo::Resources::Orders`.
-
-</Option>
-
-<Option name="`all_dashboards`">
-
-Renders all dashboards, except those explicitly excluded.
-
-#### Arguments:
-- `except`: *(Array, optional)* – A list of dashboard names to be excluded.
-
-#### Example:
-
-```ruby
-section "App", icon: "heroicons/outline/beaker" do
-  group "Dashboards" do
-    all_dashboards except: [:sales, :analytics]
-  end
-end
-```
-
-In this example, all dashboards will be rendered except `Avo::Resources::Sales` and `Avo::Resources::Analytics`.
-
-</Option>
-
-<Option name="`all_pages`">
-
-Renders all your main [pages](./forms-and-pages/pages.html).
-
-#### Example:
-
-```ruby
-section "Configuration", icon: "tabler/outline/settings" do
-  all_pages
-end
-```
-
-Only main pages are added to the menu — sub-pages are reached through their parent page's own navigation.
-
-</Option>
-
-<Option name="`all_tools`">
-
-Renders all tools.
-
-```ruby
-section "App", icon: "heroicons/outline/beaker" do
-  group "All tools" do
-    all_tools
-  end
-end
-```
-
-</Option>
-
-### `all_` helpers
-
-```ruby
-section "App", icon: "heroicons/outline/beaker" do
-  group "Dashboards" do
-    all_dashboards
-  end
-
-  group "Resources" do
-    all_resources
-  end
-
-  group "All tools" do
-    all_tools
-  end
-end
-```
-
-:::warning
-The `all_resources` helper is taking into account your [authorization](./authorization) rules, so make sure you have `def index?` enabled in your resource policy.
-:::
-
-<Image src="/assets/img/4_0/menu-editor/v4/all-helpers.webp" dark-src="/assets/img/4_0/menu-editor/v4/all-helpers-dark.webp" width="256" height="312" alt="Avo menu editor" />
-
 ## Item visibility
 
-The `visible` option is available on all menu items. It can be a boolean or a block that has access to a few things:
+The [`visible`](./menu-editor-api.html#visible) option is available on all menu items. It can be a boolean or a block that has access to a few things:
 
 - the `current_user`. Given that you [set a way](authentication.html#customize-the-current-user-method) for Avo to know who the current user is, that will be available in that block call
 - the [`context`](customization.html#context) object.
@@ -443,76 +163,70 @@ Avo.configure do |config|
 end
 ```
 
-## Add `data` attributes to items
+A `group` hides itself automatically when every item inside it is invisible.
 
-You may want to add special data attributes to some items and you can do that using the `data` option. For example you may add `data: {turbo: false}` to make a regular request for a link.
+## Authorization
 
-```ruby{4}
+<DemoVideo demo-video="https://youtu.be/Eex8CiinQZ8?t=373" />
+
+When you switch from a generated menu to a custom one, you might want to keep using the same [authorization](authorization) rules as before. For that scenario, use the `authorize` helper inside the `visible` block.
+
+```ruby{5}
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.main_menu = -> {
-    resource :user, data: {turbo: false}
+    resource :team, visible: -> {
+      # authorize current_user, THE_RESOURCE_MODEL, THE_POLICY_METHOD, raise_exception: false
+      authorize current_user, Team, "index?", raise_exception: false
+    }
   }
 end
 ```
 
-## Using authorization rules
+Give it the `current_user` (available in the block), the resource's model class, the policy method you'd like to authorize for (default is `index?`), and tell it not to raise an exception. The item's visibility will now follow the `index?` method from the `TeamPolicy` class.
 
-When you switch from a generated menu to a custom one, you might want to keep using the same authorization rules as before. To quickly do that, use the `authorize` method in the `visible` option.
+## Add `data` attributes to items
 
-```ruby
+You may want to add special data attributes to some items and you can do that using the [`data`](./menu-editor-api.html#data) option. For example you may add `data: { turbo: false }` to make a regular request for a link, or make a link execute a `put`, `post`, or `delete` request the same way you'd use the `data-turbo-method` attribute.
+
+```ruby{4,5}
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.main_menu = -> {
-    resource :team, visible: -> do
-      # authorize current_user, MODEL_THAT_NEEDS_TO_BE_AUTHORIZED, METHOD_THAT_NEEDS_TO_BE_AUTHORIZED
-      authorize current_user, Team, "index?", raise_exception: false
-    end
+    resource :user, data: { turbo: false }
+    link_to "Sign out!", main_app.destroy_user_session_path, data: { turbo_method: :delete }
   }
 end
 ```
 
 ## Icons
 
-The `icon` option is supported on `section` and on individual menu items (`link_to`, `resource`, `dashboard`, `page`). It is not supported on `group` or `subitems` (including links within subitems).
+The [`icon`](./menu-editor-api.html#icon) option is supported on `section` and on individual menu items (`link_to`, `resource`, `dashboard`, `page`, `form`, `board`, `action`). It is not supported on `group` or on sub-items nested inside a `resource` block.
 
-You can use icons from [Heroicons](https://heroicons.com/) (both `outline` and `solid` variants) or from [Tabler Icons](https://tabler.io/icons) (preferred in Avo 4).
+You can use icons from [Tabler Icons](https://tabler.io/icons) (preferred in Avo 4) or from [Heroicons](https://heroicons.com/) (both `outline` and `solid` variants).
 
 ```ruby
-section "Resources", icon: "heroicons/solid/academic-cap" do
+section "Resources", icon: "tabler/outline/building-store" do
   group "Blog" do
     resource :posts, icon: "heroicons/outline/academic-cap"
   end
+
+  link_to "Avo", "https://avohq.io", icon: "tabler/outline/world"
 end
-
-section "Resources", icon: "heroicons/solid/finger-print" do
-  resource :course, icon: "heroicons/outline/finger-print"
-end
-
-section "Resources", icon: "heroicons/solid/adjustments" do
-  resource :course, icon: "heroicons/outline/adjustments"
-end
-```
-
-### Icons on resource, dashboard, and link_to
-
-In addition to sections, you can add icons to `resource`, `dashboard`, and `link_to` items.
-
-```ruby
-link_to "Avo", "https://avohq.io", icon: "globe"
 ```
 
 ## Keyboard shortcuts on menu items
 
-Any menu item — `resource`, `link`, or `dashboard` — accepts a `hotkey:` option. When set, Avo renders a `<kbd>` badge next to the label and registers the key binding so users can jump straight to that item from anywhere in the admin panel.
+Any menu item accepts a [`hotkey:`](./menu-editor-api.html#hotkey) option. When set, Avo renders a `<kbd>` badge next to the label and registers the key binding so users can jump straight to that item from anywhere in the admin panel.
 
 ```ruby
+# config/initializers/avo.rb
 Avo.configure do |config|
   config.main_menu = -> {
     section "Content", icon: "tabler/outline/files" do
       resource :post, hotkey: "g p"
       resource :category, hotkey: "g c"
-      link "Analytics", path: "/avo/analytics", hotkey: "g a"
+      link_to "Analytics", path: "/avo/analytics", hotkey: "g a"
     end
   }
 end
@@ -523,6 +237,7 @@ The hotkey string follows [@github/hotkey](https://github.com/github/hotkey) syn
 For `resource` items you can also set the hotkey on the resource class itself, which acts as a fallback when no `hotkey:` is passed to the menu item:
 
 ```ruby
+# app/avo/resources/post.rb
 class Avo::Resources::Post < Avo::BaseResource
   self.hotkey = "g p"
 end
@@ -534,7 +249,7 @@ end
 
 ## Collapsable sections and groups
 
-Both `section` and `group` support the `collapsable` option. When enabled, an arrow icon is added to indicate the item can be collapsed. The collapsed/expanded state is stored in the browser's Local Storage and remembered across page loads.
+Both `section` and `group` support the [`collapsable`](./menu-editor-api.html#collapsable) option. When enabled, an arrow icon is added to indicate the item can be collapsed. The collapsed/expanded state is stored in the browser's Local Storage and remembered across page loads.
 
 ```ruby
 section "Resources", icon: "heroicons/outline/academic-cap", collapsable: true do
@@ -549,7 +264,7 @@ end
 
 ### Default collapsed state
 
-You can set a default collapsed state using the `collapsed` option. This only takes effect the first time a user visits — once they have a stored preference, that preference takes priority.
+You can set a default collapsed state using the [`collapsed`](./menu-editor-api.html#collapsed) option. This only takes effect the first time a user visits — once they have a stored preference, that preference takes priority.
 
 ```ruby
 section "Resources", icon: "heroicons/outline/academic-cap", collapsable: true, collapsed: true do
@@ -562,35 +277,11 @@ end
 
 <Image src="/assets/img/4_0/menu-editor/collapsed.webp" dark-src="/assets/img/4_0/menu-editor/collapsed-dark.webp" width="248" height="66" alt="Avo menu editor" />
 
-You might want to allow your users to hide certain items from view.
-
-## Authorization
-
-<DemoVideo demo-video="https://youtu.be/Eex8CiinQZ8?t=373" />
-
-If you use the [authorization feature](authorization), you will need an easy way to authorize your items in the menu builder.
-For that scenario, we added the `authorize` helper.
-
-```ruby{3}
-Avo.configure do |config|
-  config.main_menu = -> {
-    resource :team, visible: -> {
-      # authorize current_user, THE_RESOURCE_MODEL, THE_POLICY_METHOD, raise_exception: false
-      authorize current_user, Team, "index?", raise_exception: false
-    }
-  }
-end
-```
-
-Use it in the `visible` block by giving it the `current_user` (which is available in that block), the class of the resource, the method that you'd like to authorize for (default is `index?`), and tell it not to throw an exception.
-
-Now, the item visibility will use the `index?` method from the `TeamPolicy` class.
-
 ## Profile menu
 
 The profile menu allows you to add items to the menu displayed in the profile component. **The sign-out link is automatically added for you.**
 
-You may add the `icon` option to the `profile_menu` links.
+Only `link_to` items are rendered here; other item types are ignored.
 
 ```ruby
 # config/initializers/avo.rb
@@ -603,20 +294,20 @@ end
 
 <Image src="/assets/img/4_0/menu-editor/profile-menu.webp" dark-src="/assets/img/4_0/menu-editor/profile-menu-dark.webp" width="316" height="150" alt="Avo profile menu" />
 
-## Forms in profile menu
+### Forms in the profile menu
 
-It's common to have forms that `POST` to a path to do sign ut a user. For this scenario we added the `method` and `params` option to the profile item `link_to`, so if you have a custom sign out path you can do things like this.
+It's common to have links that `POST` to a path, like signing out a user. For this scenario the profile menu's `link_to` supports the [`method`](./menu-editor-api.html#link_to) and `params` options, so if you have a custom sign-out path you can do things like this:
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.profile_menu = -> {
-    link_to "Sign out", path: main_app.destroy_user_session_path, icon: "user-circle", method: :post, params: {custom_param: :here}
+    link_to "Sign out", path: main_app.destroy_user_session_path, icon: "user-circle", method: :post, params: { custom_param: :here }
   }
 end
 ```
 
-## Custom content in the profile menu
+### Custom content in the profile menu
 
 You might, however, want to add a very custom form or more items to the profile menu. For that we prepared the `_profile_menu_extra.html.erb` partial for you.
 
@@ -627,6 +318,26 @@ bin/rails generate avo:eject --partial :profile_menu_extra
 This will eject the partial and you can add whatever custom content you might need.
 
 ```erb
+<%# app/views/avo/partials/_profile_menu_extra.html.erb %>
 <%# Example link below %>
 <%#= render Avo::ProfileItemComponent.new label: 'Profile', path: '/profile', icon: 'user-circle' %>
 ```
+
+## Header menu
+
+The header menu is the row of links rendered in Avo's top navigation bar. By default it shows a single link to your `app_name`; setting `header_menu` replaces that with your own links — typically documentation, status, billing, or other external destinations. Links that don't fit collapse into a "more" dropdown automatically.
+
+The DSL is flat — only `link_to` items render.
+
+```ruby{3-7}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.header_menu = -> {
+    link_to "Docs", path: "https://docs.avohq.io", target: :_blank
+    link_to "Drafts", path: avo.resources_posts_path, params: { status: "draft" }
+    link_to "Sign out", path: main_app.destroy_user_session_path, method: :delete
+  }
+end
+```
+
+Header links support the same [`link_to` options](./menu-editor-api.html#link_to) as everywhere else — including `method`, `params`, and [`title`](./menu-editor-api.html#link_to) for a hover tooltip — plus the [`visible`](./menu-editor-api.html#visible) block for conditional links.

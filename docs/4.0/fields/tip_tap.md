@@ -1,5 +1,8 @@
 ---
+license: community
 betaStatus: Deprecated
+description: "The TipTap field is deprecated in favor of the Rhino field."
+fieldTags: [rich text]
 ---
 
 # Tip Tap

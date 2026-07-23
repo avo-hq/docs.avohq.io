@@ -1,227 +1,110 @@
 ---
+license: community
+outline: [2, 3]
+api_docs: ./controllers-api.html
 demoVideo: "https://youtu.be/peKt90XhdOg?t=11"
 ---
 
 # Resource controllers
 
-In order to benefit from Rails' amazing REST architecture, Avo generates a controller alongside every resource.
-Generally speaking you don't need to touch those controllers. Everything just works out of the box with configurations added to the resource file.
-
-However, sometimes you might need more granular control about what is happening in the controller actions or their callbacks. In that scenario you may take over and override that behavior.
-
-## Request-Response lifecycle
-
-Each interaction with the CRUD UI results in a request - response cycle. That cycle passes through the `BaseController`. Each auto-generated controller for your resource inherits from `ResourcesController`, which inherits from `BaseController`.
+In order to benefit from Rails' amazing REST architecture, Avo generates a controller alongside every resource. Each generated controller inherits from `Avo::ResourcesController`, which inherits from `Avo::BaseController` — that's where every CRUD action lives.
 
 ```ruby
+# app/controllers/avo/courses_controller.rb
 class Avo::CoursesController < Avo::ResourcesController
 end
 ```
 
-In order to make your controllers more flexible, there are several overridable methods similar to how [devise](https://github.com/heartcombo/devise#controller-filters-and-helpers:~:text=You%20can%20also%20override%20after_sign_in_path_for%20and%20after_sign_out_path_for%20to%20customize%20your%20redirect%20hooks) overrides `after_sign_in_path_for` and `after_sign_out_path_for`.
+Generally speaking you don't need to touch these controllers — everything works out of the box with configuration added to the resource file. When you need more granular control over what happens in an action, override one of the hook methods below in your generated controller, similar to how [devise](https://github.com/heartcombo/devise#controller-filters-and-helpers:~:text=You%20can%20also%20override%20after_sign_in_path_for%20and%20after_sign_out_path_for%20to%20customize%20your%20redirect%20hooks) lets you override `after_sign_in_path_for`.
 
-## Create methods
+Every hook comes in three flavors per action (`create`, `update`, `destroy`): a redirect path, success/failure messages, and success/failure responses. The [API reference](./controllers-api.html) documents each one with its default behavior.
 
-For the `create` method, you can modify the `after_create_path`, the messages, and the actions both on success or failure.
+## Change where the user is redirected
 
-<Option name="`after_create_path`">
-
-Overriding this method, you can tell Avo what path to follow after a record was created with success.
+If you only want to send the user to the <Index /> or <Edit /> view after saving, you don't need the controller at all — set [`self.after_create_path`](./resources-api.html#self.after_create_path) or [`self.after_update_path`](./resources-api.html#self.after_update_path) on the resource:
 
 ```ruby
-def after_create_path
-  "/avo/resources/users"
+# app/avo/resources/comment.rb
+class Avo::Resources::Comment < Avo::BaseResource
+  self.after_create_path = :index
 end
 ```
 
-</Option>
-
-<Option name="`create_success_action`">
-
-Override this method to create a custom response when a record was created with success.
+For anything more custom, override [`after_create_path`](./controllers-api.html#after_create_path), [`after_update_path`](./controllers-api.html#after_update_path), or [`after_destroy_path`](./controllers-api.html#after_destroy_path) in the controller:
 
 ```ruby
-def create_success_action
-  respond_to do |format|
-    format.html { redirect_to after_create_path, notice: create_success_message}
+# app/controllers/avo/courses_controller.rb
+class Avo::CoursesController < Avo::ResourcesController
+  def after_create_path
+    "/avo/resources/users"
   end
 end
 ```
 
-</Option>
-
-<Option name="`create_fail_action`">
-
-Override this method to create a custom response when a record failed to be created.
+:::warning The defaults do more than redirect to the record
+The default paths handle cases you may want to keep: `after_create_path` redirects back to the parent record when the record was created through an association, and `after_update_path` honors the `return_to` and `referrer` params. Guard your override so those flows still work:
 
 ```ruby
-def create_fail_action
-  respond_to do |format|
-    flash.now[:error] = create_fail_message
-    format.html { render :new, status: :unprocessable_entity }
-  end
-end
-```
-
-</Option>
-
-<Option name="`create_success_message`">
-
-Override this method to change the message the user receives when a record was created with success.
-
-```ruby
-def create_success_message
-  "#{@resource.name} #{t("avo.was_successfully_created")}."
-end
-```
-
-</Option>
-
-<Option name="`create_fail_message`">
-
-Override this method to change the message the user receives when a record failed to be created.
-
-```ruby
-def create_fail_message
-  t "avo.you_missed_something_check_form"
-end
-```
-
-</Option>
-
-## Update methods
-
-For the `update` method, you can modify the `after_update_path`, the messages, and the actions both on success or failure.
-
-<Option name="`after_update_path`">
-
-Overriding this method, you can tell Avo what path to follow after a record was updated with success.
-
-```ruby
+# app/controllers/avo/courses_controller.rb
 def after_update_path
-  "/avo/resources/users"
+  return super if params[:return_to].present?
+
+  "/avo/resources/courses"
 end
 ```
+:::
 
-</Option>
+## Customize the flash messages
 
-<Option name="`update_success_action`">
-
-Override this method to create a custom response when a record was updated with success.
+Override the `*_success_message` and `*_fail_message` methods to change what the user sees after each action:
 
 ```ruby
-def update_success_action
-  respond_to do |format|
-    format.html { redirect_to after_update_path, notice: update_success_message }
+# app/controllers/avo/courses_controller.rb
+class Avo::CoursesController < Avo::ResourcesController
+  def create_success_message
+    "Course saved. Off you go! 🚀"
+  end
+
+  def destroy_fail_message
+    "This course could not be removed."
   end
 end
 ```
 
-</Option>
+There's one per outcome: [`create_success_message`](./controllers-api.html#create_success_message), [`create_fail_message`](./controllers-api.html#create_fail_message), [`update_success_message`](./controllers-api.html#update_success_message), [`update_fail_message`](./controllers-api.html#update_fail_message), [`destroy_success_message`](./controllers-api.html#destroy_success_message), and [`destroy_fail_message`](./controllers-api.html#destroy_fail_message).
 
-<Option name="`update_fail_action`">
+## Return a custom response
 
-Override this method to create a custom response when a record failed to be updated.
+When changing the path or message isn't enough — you want a different format, extra headers, or a completely different render — override the `*_action` methods:
 
 ```ruby
-def update_fail_action
-  respond_to do |format|
-    flash.now[:error] = update_fail_message
-    format.html { render :edit, status: :unprocessable_entity }
+# app/controllers/avo/courses_controller.rb
+class Avo::CoursesController < Avo::ResourcesController
+  def create_success_action
+    return super if params[:via_belongs_to_resource_class].present?
+
+    respond_to do |format|
+      format.html { redirect_to "/dashboard", flash: {success: create_success_message} }
+    end
   end
 end
 ```
 
-</Option>
+:::warning The default responses handle Turbo flows
+The default `*_action` implementations do more than redirect: `create_success_action` closes the modal and updates the field when a record is created through a `belongs_to` modal, `destroy_success_action` reloads the Turbo Frame when deleting from an association list, and the fail actions render a `turbo_stream` format. Fall back to `super` for the cases you're not customizing — see each method's default behavior in the [API reference](./controllers-api.html#create-methods).
+:::
 
-<Option name="`update_success_message`">
+## Change how records are saved or destroyed
 
-Override this method to change the message the user receives when a record was updated with success.
-
-```ruby
-def update_success_message
-  "#{@resource.name} #{t("avo.was_successfully_updated")}."
-end
-```
-
-</Option>
-
-<Option name="`update_fail_message`">
-
-Override this method to change the message the user receives when a record failed to be updated.
+Avo persists records with `@record.save!` and removes them with `@record.destroy!`. To use a different mechanism — soft deletes, a service object, extra bookkeeping — override [`save_record_action`](./controllers-api.html#save_record_action) or [`destroy_record_action`](./controllers-api.html#destroy_record_action):
 
 ```ruby
-def update_fail_message
-  t "avo.you_missed_something_check_form"
-end
-```
-
-</Option>
-
-## Destroy methods
-
-For the `destroy` method, you can modify the `after_destroy_path`, the messages, and the actions both on success or failure.
-
-<Option name="`after_destroy_path`">
-
-Overriding this method, you can tell Avo what path to follow after a record was destroyed with success.
-
-```ruby
-def after_update_path
-  "/avo/resources/users"
-end
-```
-
-</Option>
-
-<Option name="`destroy_success_action`">
-
-Override this method to create a custom response when a record was destroyed with success.
-
-```ruby
-def destroy_success_action
-  respond_to do |format|
-    format.html { redirect_to after_destroy_path, notice: destroy_success_message }
+# app/controllers/avo/courses_controller.rb
+class Avo::CoursesController < Avo::ResourcesController
+  def destroy_record_action
+    @record.archive!
   end
 end
 ```
 
-</Option>
-
-<Option name="`destroy_fail_action`">
-
-Override this method to create a custom response when a record failed to be destroyed.
-
-```ruby
-def destroy_fail_action
-  respond_to do |format|
-    format.html { redirect_back fallback_location: params[:referrer] || resources_path(resource: @resource, turbo_frame: params[:turbo_frame], view_type: params[:view_type]), error: destroy_fail_message }
-  end
-end
-```
-
-</Option>
-
-<Option name="`destroy_success_message`">
-
-Override this method to change the message the user receives when a record was destroyed with success.
-
-```ruby
-def destroy_success_message
-  t("avo.resource_destroyed", attachment_class: @attachment_class)
-end
-```
-
-</Option>
-
-<Option name="`destroy_fail_message`">
-
-Override this method to change the message the user receives when a record failed to be destroyed.
-
-```ruby
-def destroy_fail_message
-  @errors.present? ? @errors.join(". ") : t("avo.failed")
-end
-```
-
-</Option>
+Errors raised inside these methods are caught and surfaced on the record, so the regular fail actions and messages kick in.

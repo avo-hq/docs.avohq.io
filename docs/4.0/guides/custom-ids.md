@@ -46,7 +46,7 @@ end
 With this setup, you can use `Post.find("bar")` to find records by their custom IDs.
 
 :::info
-For a version of [friendly_id](https://github.com/norman/friendly_id) smaller then 5.0 you can use [custom query scopes](/3.0/customization.md#custom-query-scopes)
+For a version of [friendly_id](https://github.com/norman/friendly_id) smaller then 5.0 you can use [`self.find_record_method`](../resources-api.html#self.find_record_method)
 :::
 View [friendly_id](https://github.com/norman/friendly_id) setup in action: [View Demo](https://main.avodemo.com/avo/resources/users)
 

@@ -1,6 +1,6 @@
 ---
-license: add_on
-add_on_link: "https://avohq.io/pricing-4?add_ons[]=mcp-server"
+license: addon
+addon_link: https://avohq.io/addons/mcp-server
 betaStatus: "Not yet released"
 outline: [2, 3]
 ---
@@ -35,11 +35,11 @@ Add the following to your `config/initializers/avo.rb`:
 
 ```ruby
 Avo::Mcp.configure do |config|
-  config.enabled = true # [!code focus]
-  config.token = ENV["AVO_MCP_TOKEN"] # [!code focus]
+  config.enabled = true # [!code highlight]
+  config.token = ENV["AVO_MCP_TOKEN"] # [!code highlight]
   config.mount_path = "/avo-mcp"
   config.transport = :both # :stdio, :http, or :both
-  config.current_user = ->(token) { User.find_by(mcp_token: token) } # [!code focus]
+  config.current_user = ->(token) { User.find_by(mcp_token: token) } # [!code highlight]
 end
 ```
 

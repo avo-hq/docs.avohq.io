@@ -2,6 +2,8 @@
 license: community
 default_format: yyyy-LL-dd
 default_picker_format: Y-m-d
+description: "The Date field may be used to display date values."
+fieldTags: [date & time]
 ---
 
 # Date

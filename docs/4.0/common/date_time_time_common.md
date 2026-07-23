@@ -22,7 +22,7 @@ Select in which timezone the values should be cast.
 This option is only taken into account if the `relative` option is `true`.
 :::
 
-#### Default
+#### Default value
 
 If nothing is selected, the browser's timezone will be used.
 

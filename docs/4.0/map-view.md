@@ -1,5 +1,7 @@
 ---
 feedbackId: 835
+license: community
+outline: [2, 3]
 ---
 
 # Map view
@@ -27,9 +29,11 @@ class Avo::Resources::City < Avo::BaseResource
         tooltip: record.name
       }
     },
+    map: {
+      position: :left
+    },
     table: {
-      visible: true,
-      layout: :right
+      visible: true
     }
   }
 end
@@ -43,6 +47,13 @@ You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have 
 
 The options you pass here are forwarded to the [`mapkick` gem](https://github.com/ankane/mapkick).
 
+- **Type:** Hash
+- **Default:** `{}` — Avo sets `style` to `"mapbox://styles/mapbox/light-v11"` unless you provide one
+
+:::info
+Avo always sets the map's `height` (based on the [layout](#map)) — a `height` you pass here is overwritten.
+:::
+
 </Option>
 
 <Option name="`record_marker`">
@@ -51,12 +62,49 @@ This block is being applied to all the records present in the current query to f
 
 You may use this block to fetch the coordinates from other places (API calls, cache queries, etc.) rather than the database.
 
-This block has to return a hash compatible with the [`PointMap` items](https://github.com/ankane/mapkick#point-map). Has to have `latitude` and `longitude` and optionally `tooltip`, `label`, or `color`.
+This block has to return a hash compatible with the [`PointMap` items](https://github.com/ankane/mapkick#point-map). Has to have `latitude` and `longitude` and optionally `tooltip`, `label`, or `color`. Markers missing `latitude` or `longitude` are skipped.
+
+- **Type:** Proc, evaluated per record in the [`ExecutionContext`](./execution-context)
+- **Default:** reads `record.coordinates.first` as latitude and `record.coordinates.last` as longitude
+
+</Option>
+
+<Option name="`map`">
+
+Controls where the map sits relative to the adjacent [table](#table).
+
+```ruby
+self.map_view = {
+  # ...
+  map: {
+    position: :left
+  }
+}
+```
+
+- **Type:** Hash with key `position`
+- **Default:** `nil`
+- **Values:** `position` accepts `:left`, `:right`, `:top`, or `:bottom` — the table takes the remaining side. `:left`/`:right` render the two side by side; `:top`/`:bottom` stack them.
+
 </Option>
 
 <Option name="`table`">
 
-This is the configuration for the adjacent table. You can set the visibility to `true` or `false`, and set the position of the table `:top`, `:right`, `:bottom`, or `:left`.
+This is the configuration for the adjacent table.
+
+```ruby
+self.map_view = {
+  # ...
+  table: {
+    visible: true
+  }
+}
+```
+
+- **Type:** Hash with key `visible`
+- **Default:** `nil` — no table is rendered
+- **Values:** `visible` accepts `true` or `false`. Position the table through [`map.position`](#map).
+
 </Option>
 
 <Option name="`extra_markers`">
@@ -83,14 +131,20 @@ self.map_view = {
 }
 ```
 <Image src="/assets/img/4_0/map-view/extra-markers.webp" dark-src="/assets/img/4_0/map-view/extra-markers-dark.webp" width="2504" height="872" alt="A map view zoomed on the Azores showing an extra marker labelled Açores with tooltip São Miguel." prompt="map view extra marker with label Açores and tooltip São Miguel" />
+
+- **Type:** Proc returning an Array of Hashes
+- **Default:** `nil`
+
 </Option>
 
 ## Make it the default view
 
 To make the map view the default way of viewing a resource on <Index />, we have to use the `default_view_type` class attribute.
 
-```ruby{7}
+```ruby{2}
 class Avo::Resources::City < Avo::BaseResource
   self.default_view_type = :map
 end
 ```
+
+To change the default for **all** resources, set `config.default_view_type = :map` in `config/initializers/avo.rb`. Both the global and per-resource settings accept a block, evaluated through `Avo::ExecutionContext`, if the choice depends on the request.
