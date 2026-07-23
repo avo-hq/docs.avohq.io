@@ -198,8 +198,88 @@ When a published page changes its URL:
 2. Update every inbound link (`grep -rn "old-name" docs/`), the sidebar entry in `docs/.vitepress/config.js`, and any image asset directory named after the page (`docs/public/assets/img/...`).
 3. Old versions (`docs/3.0`, `docs/2.0`) keep the old name — don't touch them.
 
+## Breaking changes and upgrade notes
+
+Two pages carry upgrade information. Know which one you're editing:
+
+| Page                    | File                             | Scope                                                                                                             |
+| ----------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Release upgrade log** | `docs/4.0/upgrade.md`            | Every release of the current major that asks something of the reader. This is the one you edit day to day.           |
+| **Major upgrade guide** | `docs/4.0/avo-3-avo-4-upgrade.md` | The one-time Avo 3 → Avo 4 migration. Only touched while a major is in flight; organized by chapter, not by version. |
+
+Old majors (`docs/3.0`, `docs/2.0`) are frozen — never backport an entry into them.
+
+### Does it need an entry?
+
+Add an entry to `upgrade.md` when the reader must do — or at least check — something after `bundle update`:
+
+- an option, method, field type, or component is renamed or removed;
+- a default flips (`explicit_authorization`, `always_expanded`);
+- behavior changes silently — the app boots, the tests pass, the UI is different;
+- a new policy or authorization gate can now deny what used to be allowed;
+- a config keeps its name but changes shape (`config.controls_placement` → `config.resource_row_controls_config = { placement: ... }`);
+- an option that used to apply in one view now applies everywhere.
+
+Don't add an entry for a pure addition — document it on the feature page with `<VersionReq version="4.1.0" />` instead. Rule of thumb: if a reader could be surprised **in production**, it belongs in the upgrade guide.
+
+### Entry shape
+
+Newest first, directly under the page intro. One `##` per version, one `<Option>` per change inside it:
+
+````markdown
+## Upgrade to 4.3.0
+
+<Option name="`decorate` deprecated in favor of `format_display_using`">
+
+### Breaking Change
+
+One or two sentences: what changed, and why. Link the feature docs.
+
+### Steps to Update
+
+What to grep for and what to replace it with.
+
+```ruby
+field :is_writer, as: :text, decorate: -> { ... } # [!code --]
+field :is_writer, as: :text, format_display_using: -> { ... } # [!code ++]
+```
+
+### Maintaining Previous Behavior
+
+Only when the old behavior is still reachable — show the config that restores it.
+
+</Option>
+````
+
+Rules:
+
+1. **Heading is the version you upgrade _to_**: `## Upgrade to 4.3.0`. For an add-on gem, name the gem: `` ## Upgrade to `avo-kanban` `0.1.18` ``. Don't use ranges (`Upgrade from X to Y`) — the 3.0 page has both because it drifted; new entries use the short form.
+2. **Unreleased changes** get a plain descriptive `##` heading at the top of the page (this is how `docs/4.0/upgrade.md` reads today). When the release ships, fold them under the `## Upgrade to X.Y.Z` heading.
+3. **One `<Option>` per change**, even when the version has only one. It gives each change a stable anchor (`upgrade.html#decorate-deprecated...`) to link from release notes and support replies. The `name` is a full statement of the change, not a topic — `"read_only and disabled options on has_one fields"`, not `"has_one"`. Backticks in the name render it as code; use them when the name is mostly an identifier.
+4. **`###` sub-headings inside the `<Option>`**, Title Case, only the ones that apply, in this order: `Breaking Change` → `Action Required` → `Steps to Update` → `Maintaining Previous Behavior`. These are below the outline cutoff, so the `<Option>` name has to carry the meaning on its own.
+5. **Always state the action, including when there is none** — `**Action required:** None, this is an internal fix.` Readers skim for that line to know they can skip.
+6. **Show the migration as a diff** with `[!code --]` / `[!code ++]` when it's a line-level rename, and as separate `# Before` / `# After` blocks when the shape changes enough that a diff is unreadable. Snippets that map to a real file carry the path comment (`# config/initializers/avo.rb`, `# app/avo/resources/user.rb`) — upgrade snippets are things the reader edits, so the "skip it on reference pages" exception doesn't apply here.
+7. **Reference versions with the components**, never bare text: `<Version version="3.10.6" />` links to the release page for "in version X"; `<VersionReq version="3.10.7" />` renders a "Since v3.10.7" badge. Both link to `avohq.io/releases/<version>`.
+8. **Link out to the docs that describe the new state** — the guide section or the `<Option>` anchor on the API page (`./field-options.html#format_view_using`). The upgrade entry documents the _transition_; the feature pages document the _result_. Don't restate the whole feature here.
+9. **Use callouts for the sharp edges**: `:::warning` for footguns (cookie overflow, a lowercase translation now rendering lowercase), `:::info` for context. Link the PR or issue when the change is subtle enough that someone will want the reasoning ([#3469](https://github.com/avo-hq/avo/pull/3469)).
+10. **Broken intermediate releases get their own `##` section** without an `<Option>` — see `## Skip versions 3.8.x and 3.9.0`. Say which version to jump straight to and why.
+
+### The rest of the change
+
+An upgrade note is never the whole job. In the same PR:
+
+- [ ] **Update the feature guide and its `-api.md`** so they describe the new behavior. The most common miss is an upgrade note that lands while the guide still teaches the old API.
+- [ ] **Renamed option?** Rename the `<Option>` block on the API page (the anchor changes with it), then `grep -rn "old_name" docs/4.0/` and fix every mention. If the old name still works, keep its `<Option>` with a `:::warning Option Renamed` callout naming the replacement and the version — see `implicit_authorization` in `docs/3.0/upgrade.md`.
+- [ ] **Removed option?** Delete its `<Option>` block; don't leave it documented with a note.
+- [ ] **New default?** The `**Default:**` bullet on the API page is the source of truth — update it there too.
+- [ ] **Page URL changed?** Follow [Renaming or moving a page](#renaming-or-moving-a-page) (redirect in `netlify.toml`).
+- [ ] Regenerate the LLM files: `yarn generate-llms-4 && node scripts/generate-docs-map.js 4.0`.
+
+Verify the change against the gem source before writing the note — what shipped and what the PR description said often differ.
+
 ## Before you finish
 
+- [ ] Breaking change or behavior change? An upgrade note exists (see [Breaking changes and upgrade notes](#breaking-changes-and-upgrade-notes)) **and** the feature pages describe the new behavior.
 - [ ] Guide is task-organized, plain English, skimmable.
 - [ ] Reference has one `<Option>` per option with Type + Default (+ Values/Validation where relevant).
 - [ ] Frontmatter cross-links both pages (`api_docs` ↔ `guide`) and sets `license`.
