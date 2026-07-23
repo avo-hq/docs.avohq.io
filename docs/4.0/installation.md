@@ -36,6 +36,16 @@ Run this command which will run all the required steps to install Avo in your ap
 bin/rails app:template LOCATION='https://avohq.io/app-template'
 ```
 
+:::tip Let an LLM do it for you
+Working with an AI coding assistant (Claude, Cursor, Copilot, etc.)? Paste this prompt and let it handle the install:
+
+```
+Install and configure Avo in this Rails app by following
+https://docs.avohq.io/4.0/installation.html — run the install steps,
+wire up the initializer and routes, then generate my first resource.
+```
+:::
+
 ### 2. Manual, step by step.
 
 1. Add the appropriate Avo gem to the `Gemfile`
