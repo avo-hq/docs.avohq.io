@@ -35,7 +35,8 @@ field :is_available, as: :boolean, name: "Availability"
 ```
 
 - **Type:** String or Proc
-- **Default:** the humanized field id, or its translation when one exists
+- **Default:** the humanized field id
+- **i18n key:** `avo.field_translations.<field_id>` — used when defined, otherwise the id is humanized
 
 </Option>
 
@@ -61,7 +62,8 @@ field :password, as: :password, help: 'Verify the password strength <a href="htt
 ```
 
 - **Type:** String (HTML allowed) or Proc
-- **Default:** `nil`, falling back to the `avo.field_translations.<field_id>.help` i18n key when defined
+- **Default:** `nil`
+- **i18n key:** `avo.field_translations.<field_id>.help` — used when defined
 
 </Option>
 
@@ -87,7 +89,8 @@ field :name, as: :text, placeholder: "John Doe"
 ```
 
 - **Type:** String or Proc
-- **Default:** the `avo.field_translations.<field_id>.placeholder` i18n key when defined, otherwise the field's name
+- **Default:** the field's name
+- **i18n key:** `avo.field_translations.<field_id>.placeholder` — used when defined
 
 </Option>
 

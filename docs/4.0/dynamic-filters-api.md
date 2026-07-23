@@ -439,7 +439,8 @@ config.button_label = "Advanced filters"
 ```
 
 - **Type:** String or Proc
-- **Default:** the localized `avo.filters` ("Filters")
+- **Default:** the translated default
+- **i18n key:** `avo.filters` ("Filters")
 
 The button only renders when [`always_expanded`](#always_expanded) is `false`.
 
