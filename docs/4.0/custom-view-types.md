@@ -32,7 +32,7 @@ Create your component class inside your engine's namespace:
 
 ```ruby
 # app/components/my_plugin/view_types/timeline_view_type_component.rb
-class MyPlugin::ViewTypes::TimelineViewTypeComponent < Avo::ViewTypes::BaseViewTypeComponent # [!code focus]
+class MyPlugin::ViewTypes::TimelineViewTypeComponent < Avo::ViewTypes::BaseViewTypeComponent # [!code highlight]
   def grouped_resources
     @resources.group_by { |r| r.record.created_at.to_date }
   end

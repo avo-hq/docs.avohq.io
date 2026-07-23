@@ -190,7 +190,7 @@ For each run you can inspect:
 
 Errors are surfaced inline per stage — a failed request and a failing `parse_*` block are reported separately — so a broken adapter never crashes the page.
 
-The console is gated behind the `avo-http_resource` license feature and Avo's developer/admin access, the same gate as Avo's own debug tools. On top of that, it only lists — and only runs against — resources the current user is authorized to access, honoring each resource's [authorization policy](authorization). If you don't configure authorization, only the developer/admin gate applies.
+The console is gated behind the `avo-http_resource` license feature and Avo's developer/admin access, the same gate as Avo's own debug tools. On top of that, it only lists — and only runs against — resources the current user is authorized to access, honoring each resource's [authorization policy](authorization). If you use Avo's authorization, a user can never reach a resource from the console that their policy would otherwise hide; if you don't configure authorization, only the developer/admin gate applies.
 
 :::warning
 The `create`, `update`, and `delete` actions hit your real external API. From the console they require an explicit confirmation before running.
