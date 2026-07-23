@@ -2,7 +2,7 @@
 
 Hides the filters button displayed on the association table.
 
-#### Default
+#### Default value
 
 `false`. The filters button is displayed by default and only hidden when `hide_filter_button` is set to `true`
 

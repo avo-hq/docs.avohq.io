@@ -13,8 +13,8 @@ const version = computed(() => frontmatter.value.version)
 const demoVideo = computed(() => frontmatter.value.demoVideo)
 const demo = computed(() => frontmatter.value.demo)
 const betaStatus = computed(() => frontmatter.value.betaStatus)
-const add_on = computed(() => frontmatter.value.add_on)
-const add_on_link = computed(() => frontmatter.value.add_on_link)
+const addon = computed(() => frontmatter.value.addon)
+const addon_link = computed(() => frontmatter.value.addon_link)
 const apiDocs = computed(() => frontmatter.value.api_docs)
 const guide = computed(() => frontmatter.value.guide)
 
@@ -25,7 +25,7 @@ const shouldHide = computed(() => [feedbackId, license, version, demoVideo, demo
   <div class="grid grid-cols-2 gap-2 mb-6" v-if="!shouldHide">
     <VersionReq :version="version" v-if="version" />
     <FeedbackPill :feedback-id="feedbackId" v-if="feedbackId" />
-    <LicenseReq :license="license" :add_on="add_on" :add_on_link="add_on_link" v-if="license" />
+    <LicenseReq :license="license" :addon="addon" :addon_link="addon_link" v-if="license" />
     <DemoVideo :demo-video="demoVideo" v-if="demoVideo" />
     <Demo :link="demo" v-if="demo" />
     <BetaStatus :label="betaStatus" v-if="betaStatus" />

@@ -1,11 +1,9 @@
 ---
 license: community
 field_type: has_one
+description: "Displays the associated record's fields unfolded on the Show view."
+fieldTags: [associations]
 ---
-
-:::warning
-It's important to set the `inverse_of` as often as possible to your model's association attribute.
-:::
 
 # Has One
 
@@ -21,7 +19,11 @@ field :admin, as: :has_one
 
 <!-- @include: ./../common/associations_searchable_option_common.md-->
 <!-- @include: ./../common/associations_attach_scope_option_common.md-->
+<!-- @include: ./../common/associations_description_option_common.md-->
 <!-- @include: ./../common/associations_loading_option_common.md-->
+<!-- @include: ./../common/associations_use_resource_option_common.md-->
+<!-- @include: ./../common/associations_linkable_option_common.md-->
 
 <!-- @include: ./../common/show_on_edit_common.md-->
 <!-- @include: ./../common/nested_common.md-->
+<!-- @include: ./../common/reloadable.md-->

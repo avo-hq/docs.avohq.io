@@ -1,6 +1,8 @@
 ---
 license: community
 demo: https://trix.avodemo.com/
+description: "Renders the Trix WYSIWYG editor, storing its HTML content in a string or text column."
+fieldTags: [rich text, attachments]
 ---
 
 # Trix
@@ -53,7 +55,7 @@ Hides the attachment URL from the upload output in the field value.
 
 Enables file attachments.
 
-#### Default
+#### Default value
 
 `nil`
 

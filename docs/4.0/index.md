@@ -1,77 +1,111 @@
-# Getting Started
+# Getting started
 
-Avo is a tool that helps developers and teams build apps 10x faster. It takes the things we always build for every app and abstracts them in familiar configuration files.
+Avo turns your Rails app into something your whole team can operate. You describe your data in small Ruby configuration files, and Avo builds the interface around it: the screens to browse and edit records, the actions that run your business logic, the dashboards, the search. It's the layer your team logs into every day to run the product, whether you use it as an admin panel, an internal tool, or the app itself.
 
-It has three main parts:
+Everything in these docs fits into three rings:
 
-1. [The CRUD UI](#_1-the-crud-ui)
-2. [Dashboards](#_2-dashboards)
-3. [The custom content](#_3-the-custom-content)
+1. **[The core](#the-core)**. Describe your data once and Avo generates the full interface around it.
+2. **[Add-ons](#add-ons)**. Optional gems that extend the core with new capabilities as your needs grow.
+3. **[Your code](#your-code)**. Escape hatches at every level, so configuration never boxes you in.
 
-## 1. The CRUD UI
+## The core
 
-If before, we built apps by creating layouts, adding controller methods to extract _data_ from the database, display it on the screen, worrying how we present it to the user, capture the users input as best we can and writing logic to send that data back to the database, Avo takes a different approach.
+You don't build screens with Avo. You tell it what data you have, and it builds the screens.
 
-It only needs to know what kind of data you need to expose and what type it is. After that, it takes care of the rest.
-You **tell it** you need to manage Users, Projects, Products, or any other types of data and what properties they have; `first_name` as `text`, `birthday` as `date`, `cover_photo` as `file` and so on.
+A [resource](./resources.html) maps to one of your models and declares its [fields](./fields.html): `first_name` as `text`, `birthday` as `date`, `cover_photo` as `file`, and so on. From that, Avo renders the [views](./views.html) to list, show, create, and edit records, complete with [associations](./associations.html), validations surfaced from your models, and file uploads through Active Storage.
 
-There are the basic fields like [text](./fields/text), [textarea](./fields/textarea), [select](./fields/select) and [boolean](./fields/boolean), and the more complex ones like [trix](./fields/trix), [markdown](./fields/markdown), [gravatar](./fields/gravatar), and [boolean_group](./fields/boolean_group). There's even an amazing [file](./fields/file) field that's tightly integrated with `Active Storage`. **You've never added files integration as easy as this before.**
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :id, as: :id
+    field :first_name, as: :text
+    field :birthday, as: :date
+    field :cover_photo, as: :file
+    field :projects, as: :has_many
+  end
+end
+```
 
-## 2. Dashboards
+Around resources sit the tools your team works with every day: [actions](./actions.html) to run business logic on one or many records, [filters](./filters.html) to slice lists, and [search](./search.html) to get to any record fast.
 
-Most apps need a way of displaying the stats in an aggregated form. Using the same configuration-based approach, Avo makes it so easy to display data in metric cards, charts, and even lets you take over using partial cards.
+## Add-ons
 
-## 3. Custom content
-Avo is a shell in which you develop your app. It offers a familiar DSL to configure the app you're building, but sometimes you might have custom needs. That's where the custom content comes in.
+The core covers managing records. Add-ons extend it toward whatever job your app or your internal tools have to do. Each one is a separate gem you install when the need shows up, and it slots into the same configuration style as everything else.
 
-You can extend Avo in different layers. For example, in the CRUD UI, you may add [Custom fields](./custom-fields) that slot in perfectly in the current panels and in each view. You can also add [Resource tools](./resource-tools) to control the experience using standard Rails partials completely.
+**Find and organize records**
 
-You can even create [Custom tools](./custom-tools) where you can add all the content you need using Rails partials or View Components.
+- [Global Search](./search.html#global-search): search every resource from one box.
+- [Dynamic Filters](./dynamic-filters.html): let users stack their own filter combinations without you writing each one.
+- [Resource Scopes](./scopes.html): reuse the model scopes you already trust as one-click segments.
+- [Searchable Associations](./associations/searchable.html): type-to-search when attaching related records, even in huge tables.
+- [Record Reordering](./record-reordering.html): drag-and-drop ordering for lists where position matters.
+- [Menu Editor](./menu-editor.html): shape the sidebar into a navigation that makes sense for your team.
 
-Most of the places where records are listed like [Has many associations](./associations/has_many), [attach modals](./associations/belongs_to.html#belongs-to-attach-scope), [resource search](./search/resource-search), and more are scopable to meet your multi-tenancy scenarios.
+**Capture and edit data**
 
-Most of the views you see are exportable using the [`eject` command](./eject-views).
+- [Forms](./forms-and-pages.html): standalone forms and pages beyond your resources, for surveys, settings, and bespoke flows.
+- [Nested Records](./associations/has_one.html#nested-in-forms): create and edit associated records inside the parent form.
+- [Reactive Fields](./field-options.html#react-to-changes-in-other-fields): fields that show, hide, or update based on what the user picks.
+- [Media Library](./media-library.html): manage every uploaded asset in one place.
 
-StimulusJS is deeply baked into the CRUD UI and helps you extend the UI and make a complete experience for your users.
+**Run day-to-day operations**
+
+- [Dashboards](./dashboards.html) and [cards](./cards.html): metrics and charts at a glance.
+- [Kanban](./kanban-boards.html): drag-and-drop boards for pipelines and workflows.
+- [Notifications](./notifications.html): in-app notifications for the events that matter.
+- [Collaboration](./collaboration.html): comments and status updates on records, so context stays with the data.
+- [Audit Logging](./audit-logging.html): who did what, and when.
+
+**Control who can do what**
+
+- [Authorization](./authorization.html): granular permissions using Pundit policies.
+- [Custom Controls](./custom-controls.html): decide exactly which buttons and actions each user sees.
+
+**Connect other systems**
+
+- [JSON API](./rest-api.html): expose your resources as a JSON API for integrations and mobile apps.
+- [HTTP Resource](./http-resource.html): manage data from an external API as if it were local.
+
+## Your code
+
+When configuration isn't enough, you drop down to plain Rails. Avo is built to be extended, not worked around:
+
+- [Custom fields](./custom-fields.html) slot into panels and views just like built-in ones.
+- [Resource tools](./resource-tools.html) embed your own partials inside a resource's pages.
+- [Custom tools](./custom-tools.html) give you entire pages built from partials or View Components.
+- [Eject views](./eject-views.html) copies any of Avo's own templates into your app for full control.
+- [JavaScript & Stimulus](./javascript.html) is baked in for sprinkling interactivity anywhere.
+- [Plugins](./plugins.html) package your extensions for reuse across apps.
+
+## Security
+
+Avo runs entirely inside your Rails app. It ships as a gem, reads and writes through your own models, and your data stays on your servers; there's no external dashboard or third-party service between your team and your database.
+
+On top of that, you control access at every level: [authentication](./authentication.html) plugs into whatever you already use (Devise, the Rails 8 scaffold, or anything that gives you a current user), [authorization](./authorization.html) enforces granular permissions through Pundit policies, [Custom Controls](./custom-controls.html) decide which buttons each user even sees, and [Audit Logging](./audit-logging.html) keeps a record of who did what.
+
+## Build it with AI agents
+
+The same thing that makes Avo fast for you makes it fast for AI agents: features are small, declarative Ruby files, so agents like Claude Code or Cursor generate resources, actions, and filters that work on the first try instead of hallucinating view code.
+
+We lean into it. Point your agent at the [docs map](https://docs.avohq.io/4.0/docs-map.md) so it pulls accurate, current docs, and install the official [Avo skills](https://github.com/avo-hq/skills), pre-built workflows for building resources, writing tests, creating field types, and more. The [Agentic engineering](./agentic-engineering.html) page walks through the full setup for every editor.
 
 ## Seamless upgrades
 
-Avo comes packaged as a [gem](https://rubygems.org/gems/avo). Therefore, it does not pollute your app with its internal files. Instead, everything is tucked away neatly in the package.
+Avo ships as a [gem](https://rubygems.org/gems/avo), so none of its internals live in your app. Upgrading is `bundle update avo`: no file conflicts, no generated code drifting out of date.
 
-That makes for a beautiful upgrade experience. You hit `bundle update avo` and get the newest and best of Avo without any file conflicts.
+## Start here
 
-## Next up
-
-Please take your time and read the documentation pages to see how Avo interacts with your app and how one should use it.
-
-<!-- 1. [Rails and Hotwire](./rails-and-hotwire)
-1. [Installation](./installation)
-1. [Authentication](./authentication)
-1. [Authorization](./authorization) -->
 1. [Install Avo in your app](./installation.html)
-1. [Set up the current user](authentication.html#customize-the-current-user-method)
-1. [Create a Resource](./resources.html#defining-resources)
-1. [Set up authorization](authorization.html)
-1. [Set up licensing](licensing)
-1. [Explore the live demo app](https://main.avodemo.com/)
-1. Explore these docs
-1. Enjoy building your app without ever worrying about the admin layer ever again
-1. Explore the [FAQ](faq) pages for guides on how to set up your Avo instance.
+2. [Hook up the current user](./authentication.html#customize-the-current-user-method)
+3. [Create your first resource](./resources.html)
+4. [Set up authorization](./authorization.html)
+5. [Explore the live demo app](https://main.avodemo.com/)
 
-## Walkthrough videos
+## Where to go next
 
-### Build a blog admin panel
-
-<br/>
-
-<div class="aspect-video">
-  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/WgNK-oINFww" title="Build a production-ready blog admin panel" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
-
-### Build a booking app
-
-<br/>
-
-<div class="aspect-video">
-  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/BK47E7TMXn0" title="Build a booking app in less than an hour" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
+- [Best practices](./guides/best-practices.html) for structuring a real-world Avo app.
+- [Guides](./guides.html) with worked examples and recipes.
+- [FAQ](./faq.html) for common setup questions.
+- [Avo 3 to Avo 4 upgrade](./avo-3-avo-4-upgrade.html) if you're coming from an existing app.
+- [Technical support](./technical-support.html) when you get stuck.

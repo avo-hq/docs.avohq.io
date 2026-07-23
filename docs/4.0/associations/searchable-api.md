@@ -1,5 +1,6 @@
 ---
-license: pro
+license: addon
+addon_link: https://avohq.io/addons/advanced-search
 outline: [2, 3]
 guide: ./searchable.html
 ---
@@ -10,15 +11,15 @@ Per-option reference for `searchable`. For task-oriented documentation, see the 
 
 | Form | Value | Behavior |
 | ---- | ----- | -------- |
-| Boolean | `true` | Searchable picker using the target resource's [`self.search`](./../search/resource-search.html#enable-search-for-a-resource) |
+| Boolean | `true` | Searchable picker using the target resource's [`self.search`](./../search.html#enable-search-for-a-resource) |
 | Boolean | `false` | Standard `<select>` |
 | Hash | `{ query:, item:, enabled: }` | Per-field overrides |
 
 ## Boolean form
 
-Pass `searchable: true` on the association field. The picker reads `query:` and `item:` from the **target resource's** [`self.search`](./../search/resource-search.html#enable-search-for-a-resource) hash. Nothing is configured on the field itself.
+Pass `searchable: true` on the association field. The picker reads `query:` and `item:` from the **target resource's** [`self.search`](./../search.html#enable-search-for-a-resource) hash. Nothing is configured on the field itself.
 
-If the target resource has no [`self.search[:query]`](./../search/resource-search.html#enable-search-for-a-resource), the picker stays empty. If it has no [`self.search[:item]`](./../search/global-search.html#item), rows fall back to the resource title.
+If the target resource has no [`self.search[:query]`](./../search.html#enable-search-for-a-resource), the picker stays empty. If it has no [`self.search[:item]`](./../search-api.html#item), rows fall back to the resource title.
 
 ```ruby{4}
 # app/avo/resources/course.rb
@@ -75,10 +76,10 @@ end
 Proc that filters records as the user types.
 
 - **Type:** Proc / Lambda
-- **Where:** `searchable: { query: }` on the field, or [`self.search[:query]`](./../search/resource-search.html#enable-search-for-a-resource) on the target resource
-- **Default:** `nil` — falls back to [`self.search[:query]`](./../search/resource-search.html#enable-search-for-a-resource). If neither is set, the picker stays empty.
+- **Where:** `searchable: { query: }` on the field, or [`self.search[:query]`](./../search.html#enable-search-for-a-resource) on the target resource
+- **Default:** `nil` — falls back to [`self.search[:query]`](./../search.html#enable-search-for-a-resource). If neither is set, the picker stays empty.
 - **Precedence:** field-level overrides resource-level
-- **Cap:** same rules as [Limiting results](./../search/resource-search.html#limiting-results)
+- **Cap:** same rules as [Limiting results](./../search-api.html#limiting-results)
 - **Locals:** `q`, `query`, `params`, `search_type`, `parent_record`, `parent_resource`
 
 `parent_record` can be `nil` on create forms. Guard with `&.` when referencing it.
@@ -125,8 +126,8 @@ end
 Proc that renders each row in the picker dropdown.
 
 - **Type:** Proc / Lambda
-- **Where:** `searchable: { item: }` on the field, or [`self.search[:item]`](./../search/global-search.html#item) on the target resource
-- **Default:** `nil` — falls back to [`self.search[:item]`](./../search/global-search.html#item), then the resource title
+- **Where:** `searchable: { item: }` on the field, or [`self.search[:item]`](./../search-api.html#item) on the target resource
+- **Default:** `nil` — falls back to [`self.search[:item]`](./../search-api.html#item), then the resource title
 - **Precedence:** field-level overrides resource-level
 - **Locals:** `record`, `resource`
 
@@ -141,7 +142,7 @@ class Avo::Resources::Review < Avo::BaseResource
     field :user, as: :belongs_to, searchable: {
       item: -> do
         {
-          title: "Reviewer: #{record.first_name}", 
+          title: "Reviewer: #{record.first_name}",
           description: record.email
         }
       end

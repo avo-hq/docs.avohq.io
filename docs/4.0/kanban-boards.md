@@ -1,6 +1,6 @@
 ---
-license: add_on
-add_on_link: https://avohq.io/pricing-4?add_ons[]=kanban-boards
+license: addon
+addon_link: https://avohq.io/addons/kanban-boards
 betaStatus: Beta
 outline: [2, 3]
 ---
@@ -23,7 +23,7 @@ The boards and columns and items are database backed and you can create them on 
 
 Some of these requirements might change over time.
 
-- We tested this on an app with Avo Advanced license
+- We tested this on an app with the Kanban add-on installed
 - [`acts_as_list`](https://github.com/brendon/acts_as_list) gem (comes automatically as a requirement)
 - [`hotwire_combobox`](https://github.com/josefarias/hotwire_combobox) gem (comes automatically as a requirement)
 
@@ -33,30 +33,30 @@ To install the `avo-kanban` gem, follow the steps below:
 
 1. Add the following line to your Gemfile:
 
-   ```ruby
-   gem "avo-kanban", source: "https://packager.dev/avo-hq/"
-   ```
+  ```ruby
+  gem "avo-kanban", source: "https://packager.dev/avo-hq/"
+  ```
 
 2. Run the `bundle install` command to install the gem:
 
-   ```bash
-   bundle install
-   ```
+  ```bash
+  bundle install
+  ```
 
 3. Generate the necessary resources and controllers by running:
 
-   ```bash
-   rails generate avo:kanban install
-   ```
+  ```bash
+  rails generate avo:kanban install
+  ```
 
-   This command will create pre-configured resources and controllers for managing boards, columns, and items in your application. You can further customize the generated code to suit your needs.
+  This command will create pre-configured resources and controllers for managing boards, columns, and items in your application. You can further customize the generated code to suit your needs.
 
-   This command will also generate the item's partial and a migration.
+  This command will also generate the item's partial and a migration.
 
 4. Run the migration to apply the database changes:
-   ```bash
-   rails db:migrate
-   ```
+  ```bash
+  rails db:migrate
+  ```
 
 ## DB schema
 
@@ -68,7 +68,7 @@ The `Avo::Kanban::Column` has a polymorphic `belongs_to` association with any ot
 
 We can create a kanban board by going to the Boards resource and clicking on the `Create board` button.
 
-Once you create the board, add it to the menu using the `link_to` option (for now. we'll add `board` soon).
+Once you create the board, add it to the menu using the [`board`](./menu-editor-api.html#board) menu item.
 
 ## Create columns
 
@@ -80,38 +80,48 @@ The `value` is what is being used to update the record when it's dropped into a 
 
 ## Configure the board
 
-Each board has a configuration attached to it.
-We can configure what kind of resources can be added to the board.
+Each board stores its configuration in a `settings` JSON column, edited through the board's own form. The generated `Avo::Resources::Board` exposes these fields:
 
-Similar we can change the column names and the value from the settings screen.
+- **`name`** — the board's name.
+- **`description`** — a free-text description of the board.
+- **`property`** — the record attribute each column writes to when an item is dropped into it (see [How does it work?](#how-does-it-work)). **Required** — a board can't be saved without it.
+- **`allowed_resources`** — the resources whose records can be added to the board. Blank and duplicate entries are stripped automatically.
+- **`full_width_container`** — render the board in a full-width container instead of the standard large container. Defaults to `true`.
+- **`exclude_duplicates`** — hide records that are already on the board from the search results, so you can't pin the same record twice. Defaults to `true`.
+
+You change the column names and their values from the same settings screen (through the board's columns).
 
 ## Adding items to the board
 
-This is best done on the board. Under each column you'll find the new field. This will search throught the resources that you've selected in the configuration.
-It will use the `self.search[:query]` block to search for the records. Alongside the usual `params` and `query`, the block receives these locals so you can customize the query for the board:
+This is best done on the board. Under each column you'll find the search field. It searches through the resources that you selected in the [board configuration](#configure-the-board), using each resource's `self.search[:query]` block. A resource without a `search` block can't be added from the board.
 
-- `search_type` — set to `:kanban` (the same contract the other search surfaces use: `:resource` for the index search bar, `:global` for the navbar palette, and `:association` for the association picker).
-- `q` — the stripped search term the user typed.
+The block runs with the standard `params` and `query` locals — the same ones your index search bar uses. The user's search term is available as `params[:q]`.
+
+If you want to tailor the scope specifically for the board picker, detect it with `params[:for_kanban_board]`, which the board's search field sets:
 
 ```ruby
 # app/avo/resources/project.rb
 class Avo::Resources::Project < Avo::BaseResource
   self.search = {
     query: -> {
-      if search_type == :kanban
+      if params[:for_kanban_board]
         # tailor the scope for the board picker
-        query.where(active: true).ransack(name_cont: q).result
+        query.where(active: true).ransack(name_cont: params[:q]).result
       else
-        query.ransack(name_cont: q).result
+        query.ransack(name_cont: params[:q]).result
       end
     }
   }
 end
 ```
 
-When an item is added to the a column, it will have an `Avo::Kanban::Item` record created for it. This `Item` record is responsible for keeping track of the board, column, position properties and more.
+:::info
+Unlike the index, global, and association search surfaces, the board picker does **not** inject `search_type` or a `q` local into the block. Read the term from `params[:q]` and detect the board with `params[:for_kanban_board]`.
+:::
 
-When an item is added to the a column it will update the property on the record to the column's `value`. More on what this means in the next section.
+When an item is added to a column, an `Avo::Kanban::Item` record is created for it. This `Item` record keeps track of the board, column, position, and more.
+
+Adding an item to a column also updates the property on the record to the column's `value`. More on what this means in the next section.
 
 ## How does it work?
 
@@ -160,8 +170,9 @@ Or some models might belong to a a status but that isn't dictated by a single pr
 
 In order to mitigate that we can create virtual properties on the model.
 
-Let's imagine that a new board that displays the posts in columns based on their "published" status. the board uses the `status` property to but the `Post` model doesn't have the `status` property as a column in the database.
-We can create a virtual property on the model.
+Let's imagine a new board that displays posts in columns based on their "published" status. The board uses the `status` property, but the `Post` model doesn't have a `status` column in the database. We can create a virtual property on the model.
+
+The getter derives the status from the real columns, and the setter maps a column's `value` back onto them. Avo assigns the property and then saves the record, so the setter only needs to set the attributes — not call `save!` itself.
 
 ```ruby
 class Post < ApplicationRecord
@@ -176,18 +187,17 @@ class Post < ApplicationRecord
   end
 
   def status=(value)
-    if value == "published"
-      published_at = Time.now
-      published_status = "draft"
-    elsif value == "draft"
-      published_at = nil
-      published_status = "draft"
-    elsif value == "draft"
-      published_at = nil
-      published_status = nil
+    case value
+    when "published"
+      self.published_at = Time.current
+      self.published_status = "published"
+    when "draft"
+      self.published_at = nil
+      self.published_status = "draft"
+    else # "private"
+      self.published_at = nil
+      self.published_status = nil
     end
-
-    save!
   end
 end
 ```

@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Displays a link to another record."
+fieldTags: [display, associations]
 ---
 
 # Record link

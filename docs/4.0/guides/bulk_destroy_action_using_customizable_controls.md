@@ -1,5 +1,6 @@
 ---
-license: advanced
+license: addon
+addon_link: https://avohq.io/addons/custom-controls
 feedbackId: 3930
 ---
 

@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The BooleanGroup is used to update a Hash with string keys and boolean values in the database."
+fieldTags: [boolean, structured]
 ---
 
 # Boolean Group
@@ -35,6 +37,8 @@ field :roles,
 
 <Image src="/assets/img/4_0/fields/boolean_group/index.webp" dark-src="/assets/img/4_0/fields/boolean_group/index-dark.webp" width="1776" height="570" alt="An Avo index table with three columns — ID, Name and a “User roles” boolean_group column rendered as a “View” link per row — with the popover open over a middle row listing Administrator, Manager and Writer each with a checked or unchecked box." prompt="use index page" />
 
+## Options
+
 <Option name="`options`">
 
 The `options` attribute should be a `Hash` where the keys match the DB keys and the values are the visible labels.
@@ -49,7 +53,7 @@ Empty `Hash`.
 
 #### Computed options
 
-You may need to compute the options dynamically for your `BooleanGroup` field. You can use a lambda for this, which provides access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
+You may need to compute the options dynamically for your `BooleanGroup` field. You can use a lambda for this, which runs inside an [`Avo::ExecutionContext`](./../execution-context.html) and provides access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
 
 ```ruby{5-9}
 # app/avo/resources/project.rb

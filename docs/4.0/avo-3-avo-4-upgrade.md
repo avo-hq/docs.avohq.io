@@ -244,7 +244,7 @@ Avo.configure do |config|
 end
 ```
 
-Check the [global search configuration](./search/global-search.md) for more information.
+Check the [global search configuration](./search.html#global-search) for more information.
 
 ##### Removed `help` option
 
@@ -659,9 +659,9 @@ Add only the gems for the features you use.
 | --------------------------------------------------------------------------------------------- | ----------------------- |
 | [Dashboards](./dashboards)                                                                    | `avo-dashboards`        |
 | [Menu editor](./menu-editor)                                                                  | `avo-menu`              |
-| [Global search](./search/global-search), [searchable associations](./associations/searchable) | `avo-advanced_search`   |
+| [Global search](./search.html#global-search), [searchable associations](./associations/searchable) | `avo-advanced_search`   |
 | [Authorization](./authorization)                                                              | `avo-authorization`     |
-| [Record reordering](./records-reordering)                                                     | `avo-record_reordering` |
+| [Record reordering](./record-reordering)                                                     | `avo-record_reordering` |
 
 If your `Gemfile` had `avo-pro`, remove it and add the gems for the features you use:
 
@@ -692,7 +692,7 @@ include Avo::Authorization::Concerns::PolicyHelpers # [!code ++]
 | Feature                                                             | Gem                   |
 | ------------------------------------------------------------------- | --------------------- |
 | [Resource scopes](./scopes)                                         | `avo-scopes`          |
-| [Customizable controls](./customizable-controls)                    | `avo-custom_controls` |
+| [Customizable controls](./custom-controls)                    | `avo-custom_controls` |
 | [Dynamic filters](./dynamic-filters)                                | `avo-dynamic_filters` |
 | [Nested association forms](./associations/has_many#nested-in-forms) | `avo-nested`          |
 
@@ -756,7 +756,7 @@ self.pagination = -> do
 end
 ```
 
-Check the <a href="./resources.html#slots">slots documentation</a> for more details.
+Check the <a href="./resources-api.html#self.pagination">slots documentation</a> for more details.
 
 ## Breadcrumbs
 
@@ -851,13 +851,13 @@ self.grid_view = {
 #### Migration steps
 
 1. **Replace flat badge properties** with a `badge` hash:
-   - `badge_label` → `badge: { label: ... }`
-   - `badge_color` → `badge: { color: ... }`
-   - `badge_title` → `badge: { title: ... }`
+  - `badge_label` → `badge: { label: ... }`
+  - `badge_color` → `badge: { color: ... }`
+  - `badge_title` → `badge: { title: ... }`
 
 2. **Add optional new properties** if needed:
-   - `badge: { style: ... }` - Controls badge appearance (`subtle` or `solid`)
-   - `badge: { icon: ... }` - Adds an icon to the badge
+  - `badge: { style: ... }` - Controls badge appearance (`subtle` or `solid`)
+  - `badge: { icon: ... }` - Adds an icon to the badge
 
 For detailed information about available colors, styles, and icons, see the [Badge field documentation](./fields/badge).
 
@@ -986,7 +986,7 @@ The default map style is now `mapbox://styles/mapbox/light-v11` and the default 
 This option allows you to add a help text to the label of a field on <Show /> and <Edit /> views.
 
 <RelatedList>
-<RelatedItem href="./field-options.html#label_help">Label help option</RelatedItem>
+<RelatedItem href="./field-options-api.html#label_help">Label help option</RelatedItem>
 </RelatedList>
 
 ## Cards `description` option renamed to `discreet_description`
@@ -1014,11 +1014,11 @@ More info on the [Toggle the sidebar button visibility](./customization.html#tog
 
 ## Added `self.description` option to actions
 
-More info on the [Description option](./actions/customization.html#description) section.
+More info on the [Description option](./actions-api.html#description) section.
 
 ## Added `self.icon` option to resources
 
-More info on the [Icon option](./resources.html#selficon) section.
+More info on the [Icon option](./resources-api.html#self.icon) section.
 
 ## Added `loading: :manual` for on-demand associations and tabs
 
@@ -1133,7 +1133,7 @@ if defined?(Avo::DynamicFilters)
 end
 ```
 
-More info on the [`always_expanded` option](./dynamic-filters.html#always_expanded) section.
+More info on the [`always_expanded` option](./dynamic-filters-api.html#always_expanded) section.
 
 ## `explicit_authorization` default changed to `true`
 

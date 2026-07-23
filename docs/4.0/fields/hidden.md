@@ -1,5 +1,7 @@
 ---
 license: community
+description: "Renders a hidden input on the New and Edit views."
+fieldTags: [utility]
 ---
 
 # Hidden

@@ -60,7 +60,7 @@ You can delete the generated test file `test/components/avo/views/resource_custo
 
 Let's apply the new component to a specific resource. I'll use the `Movie` resource as an example.
 
-Update the resource file (`Avo::Resources::Movie`) to use the new component via the [`self.components`](./../resources.html#self.components) configuration:
+Update the resource file (`Avo::Resources::Movie`) to use the new component via the [`self.components`](./../resources-api.html#self.components) configuration:
 
 ```ruby
 # app/avo/resources/movie.rb

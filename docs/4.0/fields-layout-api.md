@@ -2,6 +2,10 @@
 license: community
 outline: [2, 3]
 guide: ./fields-layout.html
+prev:
+  text: "Fields layout"
+  link: "./fields-layout.html"
+next: false
 ---
 
 # Fields layout API
@@ -116,7 +120,7 @@ end
 sidebar(**args, &block)
 ```
 
-A narrow column that stacks compact fields beside the main content. Must be declared inside a `panel` (declaring it elsewhere raises). Wrap the fields in a `card`, or add a field that brings its own panel.
+A narrow column that stacks compact fields beside the main content. Must be declared inside a `panel` (declaring it elsewhere raises). Standalone fields are auto-wrapped in a card; declare a `card` yourself only to attach a title or description.
 
 ```ruby
 panel do
@@ -130,21 +134,6 @@ panel do
   end
 end
 ```
-
-<Option name="`panel_wrapper`" headingSize="3">
-
-Controls whether Avo's panel styling (`white_panel_classes`) is applied to the sidebar's contents. Set it to `false` when rendering a custom tool inside a sidebar that should not carry the default panel chrome.
-
-```ruby
-sidebar panel_wrapper: false do
-  tool Avo::ResourceTools::SidebarTool
-end
-```
-
-- **Type:** Boolean
-- **Default:** `true`
-
-</Option>
 
 </Option>
 
@@ -160,7 +149,7 @@ The group block wrapping a set of `tab`s. `title`, `description`, and `visible` 
 
 <Option name="`id`" headingSize="3">
 
-A unique identifier for the tab group. Required for durable (remembered across views) and bookmarkable tab selection — assign a distinct `id` to each group.
+A unique identifier for the tab group, used for durable (remembered across views) and bookmarkable tab selection. Assign a distinct `id` to each group to keep selection stable when groups are renamed or reordered.
 
 ```ruby
 tabs id: :some_random_uniq_id do
@@ -169,7 +158,7 @@ end
 ```
 
 - **Type:** Symbol or String
-- **Default:** `nil`
+- **Default:** `nil` — falls back to the parameterized group `title`, then to the group's position in the resource
 
 </Option>
 

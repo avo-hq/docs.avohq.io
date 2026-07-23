@@ -1,6 +1,6 @@
 ---
-license: add_on
-add_on_link: https://avohq.io/pricing-4?add_ons[]=kanban-boards
+license: addon
+addon_link: https://avohq.io/pricing-4?add_ons[]=kanban-boards
 betaStatus: Beta
 outline: [2, 3]
 ---
@@ -33,30 +33,30 @@ To install the `avo-kanban` gem, follow the steps below:
 
 1. Add the following line to your Gemfile:
 
-   ```ruby
-   gem "avo-kanban", source: "https://packager.dev/avo-hq/"
-   ```
+  ```ruby
+  gem "avo-kanban", source: "https://packager.dev/avo-hq/"
+  ```
 
 2. Run the `bundle install` command to install the gem:
 
-   ```bash
-   bundle install
-   ```
+  ```bash
+  bundle install
+  ```
 
 3. Generate the necessary resources and controllers by running:
 
-   ```bash
-   rails generate avo:kanban install
-   ```
+  ```bash
+  rails generate avo:kanban install
+  ```
 
-   This command will create pre-configured resources and controllers for managing boards, columns, and items in your application. You can further customize the generated code to suit your needs.
+  This command will create pre-configured resources and controllers for managing boards, columns, and items in your application. You can further customize the generated code to suit your needs.
 
-   This command will also generate the item's partial and a migration.
+  This command will also generate the item's partial and a migration.
 
 4. Run the migration to apply the database changes:
-   ```bash
-   rails db:migrate
-   ```
+  ```bash
+  rails db:migrate
+  ```
 
 ## DB schema
 

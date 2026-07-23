@@ -1,115 +1,105 @@
 ---
+license: community
 outline: [2, 3]
 ---
 
 # Keyboard Shortcuts
 
-Avo ships with a built-in keyboard shortcut system that lets users navigate and operate the admin panel without touching the mouse. Press <kbd>?</kbd> at any time to open the shortcuts reference modal.
+Avo ships with a built-in keyboard shortcut system that lets users navigate and operate the admin panel without touching the mouse. Press <kbd>?</kbd> at any time to open the shortcuts reference modal, which lists every shortcut available on the current page.
 
-## Library
+With no configuration, all shortcuts are enabled and each bound button or link renders a small badge — for example <kbd>C</kbd> on a *Create* button — hinting at its shortcut. Shortcuts never fire while you're typing in an input, textarea, select, or contenteditable field, so search boxes and form fields behave normally.
 
-Avo uses [**@github/hotkey**](https://github.com/github/hotkey) under the hood — the same library that powers GitHub's own keyboard shortcuts. It handles multi-key sequences (e.g. `r r r`), modifier chords (e.g. `Mod+Enter`), and fires a `hotkey-fire` DOM event that Avo listens to before triggering the bound element's click.
+## Configure keyboard shortcuts
 
-Hotkeys are attached declaratively via `data-hotkey` attributes on HTML elements:
+Keyboard shortcuts are controlled through `config.hotkeys`:
 
-```html
-<a href="/avo/posts/new" data-hotkey="c">New post</a>
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.hotkeys = {
+    enabled: true,          # master switch for all keyboard shortcuts
+    show_key_badges: true   # show the inline <kbd> badges next to buttons and links
+  }
+end
 ```
 
-For alternatives (Mac vs. non-Mac), space-separate the variants:
+Set `enabled: false` to turn the whole system off — no shortcuts fire and the key badges disappear. Set `show_key_badges: false` to keep the shortcuts working but hide the inline badges from the UI.
 
-```html
-<button data-hotkey="Meta+Enter Control+Enter">Save</button>
-```
-
-The library is initialised once on page load and re-applied on every `turbo:load` and `turbo:frame-render` event so shortcuts survive Turbo navigations.
+Both default to `true`, so you only need to set the keys you want to change.
 
 ## Global shortcuts
 
-These shortcuts are always available, regardless of the current page.
+These shortcuts are available from anywhere in the admin panel.
 
-| Keys                                                         | Action                                      |
-| ------------------------------------------------------------ | ------------------------------------------- |
-| <kbd>?</kbd>                                                 | Open/close the keyboard shortcuts modal     |
-| <kbd>Cmd</kbd>+<kbd>K</kbd> / <kbd>Ctrl</kbd>+<kbd>K</kbd>   | Focus the global search                     |
-| <kbd>Cmd</kbd>+<kbd>\\</kbd> / <kbd>Ctrl</kbd>+<kbd>\\</kbd> | Toggle the sidebar                          |
-| <kbd>r</kbd> <kbd>r</kbd> <kbd>r</kbd>                       | Reload the page (preserves scroll position) |
-| <kbd>Esc</kbd>                                               | Close modal / unfocus field                 |
+| Keys                                                        | Action                             |
+| ----------------------------------------------------------- | ---------------------------------- |
+| <kbd>?</kbd>                                                | Open/close the keyboard shortcuts modal |
+| <kbd>Cmd</kbd>+<kbd>K</kbd> / <kbd>Ctrl</kbd>+<kbd>K</kbd>  | Focus the global search            |
+| <kbd>Shift</kbd>+<kbd>\\</kbd>                              | Toggle the sidebar                 |
+| <kbd>Shift</kbd>+<kbd>T</kbd>                               | Focus the page content (then <kbd>Tab</kbd> into it) |
+| <kbd>Shift</kbd>+<kbd>K</kbd>                               | Toggle the shortcut key badges     |
+| <kbd>B</kbd>                                                | Go back                            |
+| <kbd>r</kbd> <kbd>r</kbd> <kbd>r</kbd>                      | Reload the page (preserves scroll position) |
+| <kbd>↑</kbd> / <kbd>↓</kbd>                                 | Navigate options inside a modal    |
+| <kbd>Esc</kbd>                                              | Close modal / unfocus field        |
 
-## Page-level shortcuts
+<kbd>Shift</kbd>+<kbd>K</kbd> hides or shows the inline badges for the current browser (the choice is remembered). It only works when `show_key_badges` isn't set to `false`.
 
-### Index view
+## Appearance shortcuts
 
-| Keys                        | Action                          |
-| --------------------------- | ------------------------------- |
-| <kbd>/</kbd>                | Focus the resource search input |
-| <kbd>C</kbd>                | Create a new record             |
-| <kbd>A</kbd>                | Open the actions menu           |
-| <kbd>↑</kbd> / <kbd>↓</kbd> | Navigate table rows             |
-| <kbd>↵</kbd>                | Open the focused row            |
-| <kbd>Space</kbd>            | Select / deselect row           |
-| <kbd>Esc</kbd>              | Unfocus the current selection   |
-| <kbd>V</kbd> <kbd>T</kbd>   | Switch to table view            |
-| <kbd>V</kbd> <kbd>G</kbd>   | Switch to grid view             |
-| <kbd>V</kbd> <kbd>M</kbd>   | Switch to map view              |
+Cycle the [appearance](./appearance.html) settings from any page.
 
-### Show view
+| Keys                         | Action                                       |
+| ---------------------------- | -------------------------------------------- |
+| <kbd>Shift</kbd>+<kbd>M</kbd> | Cycle the color scheme (auto / light / dark) |
+| <kbd>Shift</kbd>+<kbd>N</kbd> | Cycle the neutral theme                      |
+| <kbd>Shift</kbd>+<kbd>A</kbd> | Cycle the accent color                       |
+
+## Index view
+
+| Keys                       | Action                                       |
+| -------------------------- | -------------------------------------------- |
+| <kbd>/</kbd>               | Focus the resource search input              |
+| <kbd>C</kbd>               | Create a new record                          |
+| <kbd>A</kbd>               | Open the actions menu                        |
+| <kbd>J</kbd> / <kbd>K</kbd> | Focus the table and move to the next / previous row |
+| <kbd>↑</kbd> / <kbd>↓</kbd> | Navigate rows (once the table is focused)    |
+| <kbd>↵</kbd>               | Open the focused record                      |
+| <kbd>Space</kbd>          | Select / deselect the row                    |
+| <kbd>Esc</kbd>            | Clear row focus / deselect rows              |
+| <kbd>V</kbd> <kbd>T</kbd> | Switch to table view                         |
+| <kbd>V</kbd> <kbd>G</kbd> | Switch to grid view                          |
+| <kbd>V</kbd> <kbd>M</kbd> | Switch to map view                           |
+
+Use <kbd>J</kbd> / <kbd>K</kbd> to jump into the table from anywhere on the page; the arrow keys take over once a row is focused.
+
+## Show view
 
 | Keys         | Action            |
 | ------------ | ----------------- |
-| <kbd>B</kbd> | Go back           |
 | <kbd>E</kbd> | Edit the record   |
 | <kbd>D</kbd> | Delete the record |
+| <kbd>A</kbd> | Open the actions menu |
+| <kbd>I</kbd> | Go back to the index |
 
-### Edit view
+## Edit view
 
 | Keys                                                       | Action                    |
 | ---------------------------------------------------------- | ------------------------- |
-| <kbd>Cmd</kbd>+<kbd>↵</kbd> / <kbd>Ctrl</kbd>+<kbd>↵</kbd> | Save / submit the form    |
+| <kbd>Cmd</kbd>+<kbd>↵</kbd> / <kbd>Ctrl</kbd>+<kbd>↵</kbd> | Submit the form           |
+| <kbd>I</kbd>                                               | Go back to the index      |
 | <kbd>Esc</kbd>                                             | Unfocus the current field |
-| <kbd>B</kbd>                                               | Go back                   |
 
-### Action modal
+## Action modal
 
-| Keys                                                       | Action                   |
-| ---------------------------------------------------------- | ------------------------ |
-| <kbd>Cmd</kbd>+<kbd>↵</kbd> / <kbd>Ctrl</kbd>+<kbd>↵</kbd> | Run the action           |
+| Keys                                                       | Action         |
+| ---------------------------------------------------------- | -------------- |
+| <kbd>Cmd</kbd>+<kbd>↵</kbd> / <kbd>Ctrl</kbd>+<kbd>↵</kbd> | Run the action |
 | <kbd>Esc</kbd>                                             | Cancel / close the modal |
 
-### Confirmation modal
+## Assign hotkeys to the sidebar menu
 
-| Keys                                | Action                   |
-| ----------------------------------- | ------------------------ |
-| <kbd>Esc</kbd>                      | Cancel / close the modal |
-| <kbd>Comma</kbd> + <kbd>Enter</kbd> | Run the action           |
-
-## Some shortcuts are hidden in association panels
-
-When a resource is rendered **inside an association panel** (i.e. as a `has_many`, `has_one`, or similar relation on another record's show page), certain shortcuts are intentionally suppressed:
-
-- **Create** (<kbd>C</kbd>) — hidden because the index panel is embedded; hitting <kbd>C</kbd> on a show page that already has its own create shortcut would be ambiguous. Also the user might have multiple create shortcuts for different has_many associations.
-- **Actions** (<kbd>A</kbd>) — hidden for the same reason.
-- **Edit** (<kbd>E</kbd>) and **Delete** (<kbd>D</kbd>) — hidden because these controls belong to the _show_ view of a top-level resource, not to an association row.
-
-Think of it as "I am nested" — and nested views never receive conflicting hotkeys.
-
-## Guard: no shortcuts while typing
-
-All shortcut handlers check that the keyboard event did not originate from a focusable input element:
-
-```js
-const TYPING_SELECTOR = "input, textarea, select, [contenteditable]";
-
-if (event.target instanceof Element && event.target.closest(TYPING_SELECTOR)) {
-  return;
-}
-```
-
-This means users can type freely in search boxes, filters, and form fields without triggering shortcuts.
-
-## Sidebar menu hotkeys
-
-The `avo-menu` DSL supports a `hotkey:` option on any item type, letting users jump directly to a sidebar section from anywhere in the admin panel.
+The [`avo-menu`](./menu-editor.html) DSL supports a `hotkey:` option on any item type, letting users jump straight to a sidebar section from anywhere in the admin panel.
 
 ```ruby
 # config/initializers/avo.rb
@@ -124,9 +114,9 @@ Avo.configure do |config|
 end
 ```
 
-The hotkey string follows `@github/hotkey` syntax — use space-separated keys for sequences.
+The menu item automatically renders a key badge next to its label and registers the binding. Hotkey strings use [`@github/hotkey`](https://github.com/github/hotkey) syntax — space-separate keys for a sequence like <kbd>g</kbd> <kbd>p</kbd>.
 
-For `resource` items, the hotkey can also be set on the resource class itself:
+For `resource` items you can set the hotkey on the resource class instead, and it applies wherever that resource appears in the menu:
 
 ```ruby
 class Avo::Resources::Post < Avo::BaseResource
@@ -134,10 +124,25 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-The menu item automatically renders a `<kbd>` badge next to the label and registers the binding.
+## Add your own shortcuts
 
-## Visual feedback
+Avo binds shortcuts declaratively through `data-hotkey` attributes, so any button or link you render in a custom tool or partial can opt in:
 
-When a hotkey fires on a button or link, Avo adds a `kbd--called` CSS class to the `<kbd>` badge for one animation frame — long enough to paint a "cold press" visual — before triggering the navigation. This gives users tactile confirmation that the shortcut was recognised.
+```html
+<a href="/avo/posts/new" data-hotkey="c">New post</a>
+```
 
-The class is cleaned up on the next `turbo:load` event.
+To offer platform alternatives (Mac vs. non-Mac), space-separate the variants:
+
+```html
+<button data-hotkey="Meta+Enter Control+Enter">Save</button>
+```
+
+Bindings are re-applied on every Turbo navigation, so they survive `turbo:load` and `turbo:frame-render` without extra work.
+
+## Shortcuts hidden inside association panels
+
+When a resource is rendered **inside an association panel** — as a `has_many`, `has_one`, or similar relation on another record's show page — some shortcuts are intentionally suppressed to avoid ambiguity:
+
+- **Create** (<kbd>C</kbd>) and **Actions** (<kbd>A</kbd>) — hidden because the show page may host several association panels, so a single <kbd>C</kbd> or <kbd>A</kbd> can't know which one to target.
+- **Edit** (<kbd>E</kbd>) and **Delete** (<kbd>D</kbd>) — hidden because they belong to the show view of the top-level record, not to an association row.

@@ -1,5 +1,7 @@
 ---
 license: community
+description: "The Files field is similar to File and enables you to upload multiple files at once using the same easy-to-use Active Storage implementation."
+fieldTags: [attachments]
 ---
 
 # Files
@@ -23,7 +25,7 @@ field :documents, as: :files
 
 Set the default `view_type`.
 
-#### Default
+#### Default value
 
 `grid`
 
@@ -36,7 +38,7 @@ Set the default `view_type`.
 
 Option to hide the view type switcher component.
 
-#### Default
+#### Default value
 
 `false`
 

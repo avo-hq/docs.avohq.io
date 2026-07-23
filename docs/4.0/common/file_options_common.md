@@ -6,7 +6,7 @@ Instructs the input to accept only a particular file type for that input using t
 field :cover_video, as: :file, accept: "image/*"
 ```
 
-#### Default
+#### Default value
 
 `nil`
 
@@ -34,7 +34,7 @@ Option that specify if the file should have the caption present or not.
 field :cover_video, as: :file, display_filename: false
 ```
 
-#### Default
+#### Default value
 
 `true`
 

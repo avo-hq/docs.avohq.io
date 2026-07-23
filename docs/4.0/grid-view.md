@@ -1,3 +1,8 @@
+---
+license: community
+outline: [2, 3]
+---
+
 # Grid view
 
 Some resources are best displayed in a grid view. We can do that with Avo using a `cover_url`, a `title`, and a `body`.
@@ -27,6 +32,8 @@ end
 
 <Image src="/assets/img/4_0/grid-view/view-switcher.webp" dark-src="/assets/img/4_0/grid-view/view-switcher-dark.webp" width="2310" height="108" alt="Avo view switcher" />
 
+The `card` block runs once per record through `Avo::ExecutionContext`, with access to `record`, `resource`, and the standard defaults (`current_user`, `params`, view helpers).
+
 ## Options
 
 Next, you should configure a few things for the grid card.
@@ -45,6 +52,8 @@ self.grid_view = {
 }
 ```
 
+- **Type:** String
+
 </Option>
 
 <Option name="`body`">
@@ -61,6 +70,8 @@ self.grid_view = {
 }
 ```
 
+- **Type:** String (HTML-safe strings are rendered as HTML)
+
 </Option>
 <Option name="`cover_url`">
 
@@ -76,7 +87,8 @@ self.grid_view = {
 }
 ```
 
-If `nil` is given, a default placeholder image will be used.
+- **Type:** String
+- **Default:** `nil` — a default placeholder image is used
 
 </Option>
 
@@ -85,6 +97,9 @@ If `nil` is given, a default placeholder image will be used.
 Optionally you may add a badge to give more context to the card or make it stand out.
 
 See [below](#grid-item-badge) a list of options you can configure for the badge.
+
+- **Type:** Hash with keys [`label`](#badge.label), [`color`](#badge.color), [`style`](#badge.style), [`title`](#badge.title), [`icon`](#badge.icon)
+- **Default:** `nil` — no badge is rendered (the badge is also skipped when both `label` and `icon` are blank)
 
 </Option>
 
@@ -97,6 +112,8 @@ class Avo::Resources::Post < Avo::BaseResource
   self.default_view_type = :grid
 end
 ```
+
+To change the default for **all** resources, set `config.default_view_type = :grid` in `config/initializers/avo.rb`. Both the global and per-resource settings accept a block, evaluated through `Avo::ExecutionContext`, if the choice depends on the request.
 
 ## Custom style
 
@@ -176,7 +193,7 @@ self.grid_view = {
 
 ### Options
 
-<Option name="`label`">
+<Option name="`badge.label`">
 
 The visible text displayed on the badge. This is the primary content that users will see on your grid items.
 
@@ -192,17 +209,13 @@ self.grid_view = {
 
 <Image src="/assets/img/4_0/grid-view/badge-label.webp" dark-src="/assets/img/4_0/grid-view/badge-label-dark.webp" width="1074" height="608" alt="Avo Grid View Badge Label" />
 
+- **Type:** String
+
 </Option>
 
-<Option name="`color`">
+<Option name="`badge.color`">
 
-Sets the badge color. Accepts a static value or a proc for dynamic coloring based on the record.
-
-#### Available colors
-
-**Base colors:** `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
-
-**Semantic colors:** `neutral`, `success`, `danger`, `warning`, `info`
+Sets the badge color.
 
 ```ruby
 self.grid_view = {
@@ -217,16 +230,21 @@ self.grid_view = {
 }
 ```
 
+- **Type:** String or Symbol
+- **Default:** `neutral`
+- **Values:**
+
+  **Base colors:** `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
+
+  **Semantic colors:** `neutral`, `success`, `danger`, `warning`, `info`
+
+  Unknown values silently fall back to `neutral`.
+
 </Option>
 
-<Option name="`style`">
+<Option name="`badge.style`">
 
 Controls the badge appearance style.
-
-#### Available styles
-
-- `subtle` - Light background with colored text (default)
-- `solid` - Solid colored background with white text
 
 ```ruby
 self.grid_view = {
@@ -242,9 +260,20 @@ self.grid_view = {
 }
 ```
 
+- **Type:** String or Symbol
+- **Default:** `subtle`
+- **Values:**
+
+| Value | Behavior |
+| --- | --- |
+| `subtle` | Light background with colored text |
+| `solid` | Solid colored background with white text |
+
+  Unknown values silently fall back to `subtle`.
+
 </Option>
 
-<Option name="`title`">
+<Option name="`badge.title`">
 
 The tooltip text that appears when users hover over the badge. Useful for providing additional context or detailed information.
 
@@ -263,9 +292,12 @@ self.grid_view = {
 
 <Image src="/assets/img/4_0/grid-view/badge-title.webp" dark-src="/assets/img/4_0/grid-view/badge-title-dark.webp" width="1074" height="608" alt="Avo Grid View Badge Title" />
 
+- **Type:** String
+- **Default:** `nil` — no tooltip
+
 </Option>
 
-<Option name="`icon`">
+<Option name="`badge.icon`">
 
 Adds an icon to the badge.
 
@@ -282,5 +314,8 @@ self.grid_view = {
   end
 }
 ```
+
+- **Type:** String — an icon path like `"tabler/outline/trending-up"` or `"heroicons/outline/arrow-path"`
+- **Default:** `nil` — no icon
 
 </Option>

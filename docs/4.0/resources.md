@@ -1,4 +1,10 @@
-# Resource options
+---
+license: community
+outline: [2, 3]
+api_docs: ./resources-api.html
+---
+
+# Resources
 
 Avo effortlessly empowers you to build an entire customer-facing interface for your Ruby on Rails application. One of the most powerful features is how easy you can administer your database records using the CRUD UI.
 
@@ -10,7 +16,21 @@ Each `Resource` maps out one of your models. There can be multiple `Resource`s a
 
 All resources are located in the `app/avo/resources` directory.
 
-## Resources from model generation
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+  end
+end
+```
+
+From this file alone, Avo infers the model (`Post`), the resource name, the routes, and adds the resource to the sidebar. Everything inferred can be overridden through the [resource options](./resources-api.html).
+
+## Generate resources
+
+### Alongside a model
 
 ```bash
 bin/rails generate model car make:string mileage:integer
@@ -46,13 +66,15 @@ end
 
 The Avo Resource should always be accompanied by a controller.
 
-This behavior can be omitted by using the argument `--skip-avo-resource`. For example if we want to generate a `Car` model but no Avo counterpart we should use the following command:
+If you don't want the Avo counterpart, pass `--skip-avo-resource`:
 
 ```bash
 bin/rails generate model car make:string kms:integer --skip-avo-resource
 ```
 
-## Manually defining resources
+### With the resource generator
+
+For an existing model, generate the resource directly:
 
 ```bash
 bin/rails generate avo:resource post
@@ -74,9 +96,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-From this config, Avo will infer a few things like the resource's model will be the `Post` model and the name of the resource is `Post`. But all of those inferred things are actually overridable.
-
-Now, let's say we already have a model `Post` well defined with attributes and associations. In that case, the Avo resource will be generated with the fields attributes and associations.
+If the `Post` model is already well defined with attributes and associations, the resource will be generated with the matching fields:
 
 ::: code-group
 
@@ -140,13 +160,13 @@ end
 
 :::
 
-It's also possible to specify the resource model class. For example, if we want to create a new resource named `MiniPost` resource using the `Post` model we can do that using the following command:
+If you want the resource to use a different model, pass `--model-class`. For example, to create a `MiniPost` resource backed by the `Post` model:
 
 ```bash
 bin/rails generate avo:resource mini-post --model-class post
 ```
 
-That command will create a new resource with the same attributes as the post resource above with specifying the `model_class`:
+That command will create a new resource with the same attributes as the post resource above, specifying [`model_class`](./resources-api.html#self.model_class):
 
 ```ruby
 class Avo::Resources::MiniPost < Avo::BaseResource
@@ -158,7 +178,7 @@ end
 You can see the result in the admin panel using this URL `/avo`. The `Post` resource will be visible on the left sidebar.
 :::
 
-## Generating resources for all models
+### For all your models
 
 To generate Avo resources for all models in your application, run:
 
@@ -166,20 +186,9 @@ To generate Avo resources for all models in your application, run:
 bin/rails generate avo:all_resources
 ```
 
-### What it does
+The generator scans your `app/models` directory, includes only classes that inherit from `ActiveRecord::Base`, excludes abstract classes (e.g. `ApplicationRecord`) and non-model files (concerns, POROs, `Current`, form objects), and runs the `avo:resource` generator for each match — printing an error message if generation fails for any model.
 
-1. Scans your `app/models` directory for model files
-2. Includes only classes that inherit from `ActiveRecord::Base` (database-backed models)
-3. Excludes abstract classes (e.g. `ApplicationRecord`)
-4. Skips non-model files (concerns, POROs, `Current`, form objects)
-5. For each match, it:
-  - Generates a corresponding Avo resource using the `avo:resource` generator
-  - Handles errors gracefully, printing error messages if generation fails for any model
-
-This is particularly useful when:
-
-- Setting up Avo in an existing Rails application
-- Ensuring all your models have corresponding Avo resources
+This is particularly useful when setting up Avo in an existing Rails application or ensuring all your models have corresponding Avo resources.
 
 ## Fields
 
@@ -218,6 +227,260 @@ Avo::Resources::PhotoComment -> /avo/resources/photo_comments
 ```
 
 If you change the resource name, you should change the generated controller name too.
+
+## Name and describe records
+
+Avo figures out a record's display name by trying the `name`, `title`, and `label` attributes in order, falling back to `id`. If that guess is wrong for your model, point [`self.title`](./resources-api.html#self.title) to another attribute:
+
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.title = :slug
+end
+```
+
+If no single attribute works as a title, assign a block instead — you have access to `record` and `resource`, so you can compose whatever reads best:
+
+```ruby
+# app/avo/resources/comment.rb
+class Avo::Resources::Comment < Avo::BaseResource
+  self.title = -> {
+    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 30
+  }
+end
+```
+
+To show a message to your users on the resource's pages, set [`self.description`](./resources-api.html#self.description) — a string for all views, or a block when the message depends on the `view`, `record`, or `current_user`:
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.description = "These are the users of the app."
+end
+```
+
+You can also set the record's avatar with [`self.avatar`](./resources-api.html#self.avatar) and the sidebar icon with [`self.icon`](./resources-api.html#self.icon):
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.avatar = :avatar
+  self.icon = "tabler/outline/user"
+end
+```
+
+## Avoid n+1 queries
+
+If a resource displays associations or attachments, eager load them with [`self.includes`](./resources-api.html#self.includes) and [`self.attachments`](./resources-api.html#self.attachments) to dodge `n+1` performance issues on the `Index` view:
+
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.includes = [:user, :tags]
+  self.attachments = [:cover_photo]
+end
+```
+
+Use [`self.single_includes`](./resources-api.html#self.single_includes) and [`self.single_attachments`](./resources-api.html#self.single_attachments) when you need the same eager loading on the <Show /> and <Edit /> views.
+
+## Control sorting
+
+Records on the `Index` view are sorted by `created_at`, descending. Change the column with [`self.default_sort_column`](./resources-api.html#self.default_sort_column) and the direction with [`self.default_sort_direction`](./resources-api.html#self.default_sort_direction):
+
+```ruby
+# app/avo/resources/task.rb
+class Avo::Resources::Task < Avo::BaseResource
+  self.default_sort_column = :position
+  self.default_sort_direction = :asc
+end
+```
+
+If your model has a `default_scope` you don't want applied on the index, unscope it with [`self.index_query`](./resources-api.html#self.index_query):
+
+```ruby
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  self.index_query = -> { query.unscoped }
+end
+```
+
+## Customize how records are fetched
+
+If your records are identified by something other than the numeric `id` — a slug from a custom `to_param` method, for example — tell Avo how to find them with [`self.find_record_method`](./resources-api.html#self.find_record_method):
+
+::: code-group
+
+```ruby [app/avo/resources/post.rb]
+class Avo::Resources::Post < Avo::BaseResource
+  self.find_record_method = -> {
+    # `id` is an Array in batch contexts (bulk actions), so return a collection there.
+    if id.is_a?(Array)
+      id.first.to_i == 0 ? query.where(slug: id) : query.where(id: id)
+    else
+      id.to_i == 0 ? query.find_by!(slug: id) : query.find(id)
+    end
+  }
+end
+```
+
+```ruby [app/models/post.rb]
+class Post < ApplicationRecord
+  before_save :update_slug
+
+  def to_param
+    slug || id
+  end
+
+  def update_slug
+    self.slug = name.parameterize
+  end
+end
+```
+
+:::
+
+If you use a gem for custom IDs you likely don't need this at all — Avo detects [FriendlyId](https://github.com/norman/friendly_id) automatically, and [prefixed_ids](https://github.com/excid3/prefixed_ids) and [hashid-rails](https://github.com/jcypret/hashid-rails) work out of the box. See the [custom IDs guide](./guides/custom-ids.html) for the setup for each gem.
+
+## Customize pagination
+
+On large tables, counting all records to render the pagination can get expensive. Switch [`self.pagination`](./resources-api.html#self.pagination) to the `:countless` type to skip the count entirely:
+
+```ruby
+# app/avo/resources/log_entry.rb
+class Avo::Resources::LogEntry < Avo::BaseResource
+  self.pagination = {
+    type: :countless
+  }
+end
+```
+
+The `slots` key controls how many page links are rendered — see the [pagination reference](./resources-api.html#self.pagination) for all the combinations.
+
+## Control the saving flow
+
+If saving deserves a second thought, set [`self.confirm_on_save`](./resources-api.html#self.confirm_on_save) to ask users for confirmation before persisting:
+
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.confirm_on_save = true
+end
+```
+
+After creating or updating a record, Avo redirects to the <Show /> view. Redirect somewhere else with [`self.after_create_path`](./resources-api.html#self.after_create_path) and [`self.after_update_path`](./resources-api.html#self.after_update_path):
+
+```ruby
+# app/avo/resources/comment.rb
+class Avo::Resources::Comment < Avo::BaseResource
+  self.after_create_path = :index
+  self.after_update_path = :edit
+end
+```
+
+For more granular control (custom paths, different responses), use the [controller methods](./controllers-api.html#after_create_path) instead.
+
+If your forms grow tall, add the `Back` and `Save` buttons to the footer too with [`config.buttons_on_form_footers`](./resources-api.html#config.buttons_on_form_footers):
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.buttons_on_form_footers = true
+end
+```
+
+If you use `devise` and update users without passing a password, stop the validation error with [`self.devise_password_optional`](./resources-api.html#self.devise_password_optional).
+
+## Tweak the Index view
+
+Display records as a grid or on a map instead of a table with [`self.default_view_type`](./resources-api.html#self.default_view_type):
+
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.default_view_type = :grid
+end
+```
+
+It also takes a block when the choice depends on the request — see the [grid view](./grid-view.html) and [map view](./map-view.html) pages for what each type needs.
+
+A few more knobs for the `Index` view:
+
+- Hide the selection checkboxes with [`self.record_selector`](./resources-api.html#self.record_selector) for resources that will never be selected.
+- Keep the filters panel open while users change filter values with [`self.keep_filters_panel_open`](./resources-api.html#self.keep_filters_panel_open).
+- For STI models, send users who click a parent record to the child record instead with [`self.link_to_child_resource`](./resources-api.html#self.link_to_child_resource).
+
+```ruby
+# app/avo/resources/comment.rb
+class Avo::Resources::Comment < Avo::BaseResource
+  self.record_selector = false
+  self.keep_filters_panel_open = true
+end
+```
+
+For resources whose records are slow to load, switch to [`self.index_view_loading = :lazy`](./resources-api.html#self.index_view_loading) so the page shell and controls paint immediately and the records stream in through a Turbo Frame:
+
+```ruby
+# app/avo/resources/order.rb
+class Avo::Resources::Order < Avo::BaseResource
+  self.index_view_loading = :lazy
+end
+```
+
+Search, filters, sorting, pagination, and view switches then stay asynchronous inside that frame while the URL keeps in sync. Loading stays eager on association indexes and on resources with a custom index component.
+
+## Record previews
+
+Let users peek at a record from the `Index` view without opening it. Add a [`preview` field](./fields/preview.html) to the resource and mark the fields you want in the popover with `show_on: :preview`.
+
+## Manage sidebar presence and shortcuts
+
+The auto-generated sidebar lists every resource. Hide the ones users shouldn't navigate to directly with [`self.visible_on_sidebar`](./resources-api.html#self.visible_on_sidebar), and give frequently visited resources a keyboard shortcut with [`self.hotkey`](./resources-api.html#self.hotkey):
+
+```ruby
+# app/avo/resources/team_membership.rb
+class Avo::Resources::TeamMembership < Avo::BaseResource
+  self.visible_on_sidebar = false
+end
+
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.hotkey = "g p"
+end
+```
+
+:::info
+`visible_on_sidebar` only affects the auto-generated menu. If you use the [menu editor](./menu-editor), control visibility with its [`visible`](./menu-editor#item-visibility) block instead.
+:::
+
+## Link to the record's public page
+
+It's often desirable to give users a link to a record's public path outside the Avo interface. Configure [`self.external_link`](./resources-api.html#self.external_link) with a block returning the URL — your app's path helpers are available:
+
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.external_link = -> {
+    main_app.post_path(record)
+  }
+end
+```
+
+Avo will display an external link button on the record that takes the user to that URL.
+
+## Swap the view components
+
+Each view is rendered by a ViewComponent (`Avo::Views::ResourceIndexComponent`, `ResourceShowComponent`, `ResourceEditComponent`). Replace any of them per resource with [`self.components`](./resources-api.html#self.components):
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  self.components = {
+    "Avo::Views::ResourceIndexComponent": Avo::Views::Users::ResourceIndexComponent
+  }
+end
+```
+
+The easiest way to create a compatible component is to [eject an existing one](./eject-views.html#scope-ejected-components). The [safely override resource components guide](./guides/safely-override-resource-components.html) walks through the whole process.
 
 ## Use multiple resources for the same model
 
@@ -336,7 +599,7 @@ class Avo::Resources::Galaxy::Planet < Avo::BaseResource
 end
 ```
 
-If the resource's namespace matches its model's namespace (`Avo::Resources::Galaxy::Planet` → `Galaxy::Planet`), Avo infers the model class automatically — no `self.model_class` needed. If it doesn't, set `model_class` explicitly, same as with a flat resource:
+If the resource's namespace matches its model's namespace (`Avo::Resources::Galaxy::Planet` → `Galaxy::Planet`), Avo infers the model class automatically — no `self.model_class` needed. If it doesn't, set [`model_class`](./resources-api.html#self.model_class) explicitly, same as with a flat resource:
 
 ```ruby
 class Avo::Resources::SuperDooperTrooperModel < Avo::BaseResource
@@ -395,10 +658,9 @@ rails g avo:resource city --parent-controller Avo::BaseResourcesController
 You can configure the `resource_parent_controller` option in the `avo.rb` initializer. This option will be used to establish the inherited controller if the `--parent-controller` argument is not passed on the generators. Here's how you can do it:
 
 ```ruby
+# config/initializers/avo.rb
 Avo.configure do |config|
-  # ...
   config.resource_parent_controller = "Avo::BaseResourcesController" # "Avo::ResourcesController" is default value
-  # ...
 end
 ```
 
@@ -428,8 +690,6 @@ This means that other resources that are not declared in this array will not sho
 
 ## Extending `Avo::BaseResource`
 
-### How to Customize `Avo::BaseResource`
-
 You can customize `Avo::BaseResource` by creating your own version in your application. This custom resource can include methods and logic that you want all your resources to inherit. Here's an example to illustrate how you can do this:
 
 ```ruby
@@ -448,747 +708,22 @@ module Avo
 end
 ```
 
-All your resources will now inherit from your custom `Avo::BaseResource`, allowing you to add common functionality across your admin interface. For instance, the above example ensures that all number fields in your resources will have their values cast to floats. You can add any other shared methods or customizations here, making it easier to maintain consistent behavior across all resources.
+All your resources will now inherit from your custom `Avo::BaseResource`, allowing you to add common functionality across your admin interface. For instance, the above example ensures that all number fields in your resources will have their values cast to floats.
 
-### Your resource files
-
-Your resource file will still look the same as it did before.
+Your resource files will still look the same as they did before.
 
 ```ruby
-# app/avo/resources/post_resource.rb
-module Avo::Resources::Post < Avo::BaseResource
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
   # Your existing configuration for the Post resource
 end
 ```
 
-## Resource Options
-
-Resources have a few options available for customization.
-
-<Option name="`self.title`">
-
-Each Avo resource will try to figure out what the title of a record is. It will try the following attributes in order `name`, `title`, `label`, and fallback to the `id`.
-
-You can change it to something more specific, like the model's `first_name` or `slug` attributes.
-
-```ruby
-class Avo::Resources::Post < Avo::BaseResource
-  self.title = :slug # it will now reference @post.slug to show the title
-end
-```
-
-### Using a computed title
-
-If you don't have a `title`, `name`, or `label` attribute in the database, you can add a getter method to your model where you compose the name.
-
-```ruby{3,8-10}
-# app/avo/resources/comment.rb
-class Avo::Resources::Comment < Avo::BaseResource
-  self.title = :tiny_name
-end
-
-# app/models/comment.rb
-class Comment < ApplicationRecord
-  def tiny_name
-    ActionView::Base.full_sanitizer.sanitize(body).truncate 30
-  end
-end
-```
-
-### `title` as a block
-
-If you prefer not to use any record methods and instead compute the resource's title directly within the resource itself, you can accomplish this by assigning a lambda function to the `title` class attribute. You'll have access to `resource` and `record`.
-
-```ruby{3-5}
-# app/avo/resources/comment.rb
-class Avo::Resources::Comment < Avo::BaseResource
-  self.title = -> {
-    ActionView::Base.full_sanitizer.sanitize(record.body).truncate 30
-  }
-end
-```
-
-</Option>
-
-<Option name="`self.description`">
-
-You might want to display information about the current resource to your users. Then, using the `description` class attribute, you can add some text to the `Index`, `Show`, `Edit`, and `New` views.
-
-:::warning
-`self.description` is rendered as HTML (`<%==`). Do not use direct user input or any value that users can edit — that can allow stored XSS attacks.
-:::
-
-:::info
-`self.description` is not displayed when the resource is rendered as an association (for example, in a `has_many` table on another resource's page). To show a description there, use the [`description` option on the association field](./associations/has_many#description).
-:::
-
-There are two ways of setting the description. The quick way as a `string` and the more customizable way as a `block`.
-
-### Set the description as a string
-
-```ruby{3}
-class Avo::Resources::User < Avo::BaseResource
-  self.title = :name
-  self.description = "These are the users of the app."
-end
-```
-
-<Image src="/assets/img/4_0/resources/description.webp" dark-src="/assets/img/4_0/resources/description-dark.webp" width="2352" height="456" alt="Avo message" />
-
-This is the quick way to set the label, and it will be displayed **on all pages**. If you want to restrict the message to custom views, use a lambda function.
-
-### Set the description as a block
-
-This is the more customizable method where you can access the `record`, `resource`, `view`, `current_user`, and `params` objects.
-
-```ruby{3-13}
-class Avo::Resources::User < Avo::BaseResource
-  self.title = :name
-  self.description = -> do
-    if view == :index
-    "These are the users of the app"
-    else
-      if current_user.is_admin?
-        "You can update all properties for this user: #{record.id}"
-      else
-        "You can update some properties for this user: #{record.id}"
-      end
-    end
-  end
-end
-```
-
-</Option>
-
-<Option name="`self.avatar`">
-
-You can set the avatar of the resource by using the `self.avatar` option.
-
-```ruby
-class Avo::Resources::User < Avo::BaseResource
-  self.avatar = :avatar
-end
-```
-
-</Option>
-
-<Option name="`self.includes`">
-
-If you regularly need access to a resource's associations, you can tell Avo to eager load those associations on the `Index` view using `includes`.
-
-That will help you avoid those nasty `n+1` performance issues.
-
-```ruby
-class Avo::Resources::Post < Avo::BaseResource
-  self.includes = [:user, :tags]
-
-  # or a very nested scenario
-  self.includes = [files_attachments: :blob, users: [:comments, :teams, post: [comments: :user]]]
-end
-```
-
-We know, the array notation looks weird, but it works.
-
-</Option>
-
-<Option name="`self.single_includes`">
-
-`single_includes` works the same as `includes` but it's going to eager load the associations on the <Show /> and <Edit /> views only.
-
-</Option>
-
-<Option name="`self.attachments`">
-
-Similar to how `includes` works, you can use `attachments` to eager load attachments on the `Index` view.
-
-:::code-group
-
-```ruby{2-4} [app/models/post.rb]
-class Post < ApplicationRecord
-  has_one_attached :cover_photo
-  has_one_attached :audio
-  has_many_attached :attachments
-end
-```
-
-```ruby{5-7} [app/avo/resources/post.rb]
-class Avo::Resources::Post < Avo::BaseResource
-  self.attachments = [:cover_photo, :audio, :attachments]
-end
-```
-
-:::
-
-</Option>
-
-<Option name="`self.single_attachments`">
-
-`single_attachments` works the same as `attachments` but it's going to eager load the attachments on the <Show /> and <Edit /> views only.
-
-</Option>
-
-<Option name="`self.confirm_on_save`">
-
-If you would like to ask for confirmation when saving a resource you can do so by setting `confirm_on_save` to `true`.
-
-That will help add friction to the saving process, avoiding human error.
-
-```ruby
-class Avo::Resources::Post < Avo::BaseResource
-  self.confirm_on_save = true
-end
-```
-
-This option defaults to false
-
-<Image src="/assets/img/4_0/customization/confirm-on-save.webp" dark-src="/assets/img/4_0/customization/confirm-on-save-dark.webp" width="2880" height="1800" alt="Confirm on save" />
-
-</Option>
-
-<Option name="`default_view_type`">
-
-On <Index />, the most common view type is `:table`, but you might have some data that you want to display in a `:grid` or `:map`. You can change that by setting `default_view_type` to `:grid` and by adding the `grid` block.
-
-```ruby{2}
-class Avo::Resources::Post < Avo::BaseResource
-  self.default_view_type = :grid
-end
-```
-
-<Image src="/assets/img/4_0/resources/grid-view.webp" dark-src="/assets/img/4_0/resources/grid-view-dark.webp" width="2330" height="1290" alt="Avo grid view" />
-
-Find out more on the [grid view documentation page](grid-view).
-
-`default_view_type` can be configured using a Proc.
-
-Within this block, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `resource` and `view`.
-
-```ruby
-class Avo::Resources::Post < Avo::BaseResource
-  self.default_view_type = -> {
-    mobile_user = request.user_agent =~ /Mobile/
-
-    mobile_user ? :table : :grid
-  }
-end
-```
-
-</Option>
-
-<Option name="`self.index_view_loading`">
-
-Controls when the <Index /> view runs its records query.
-
-With the default `:eager`, records are queried and rendered in the initial request. With `:lazy`, Avo renders the header and controls immediately, then defers the records query to a Turbo Frame request and shows a loading state until the table, grid, or other view type loads.
-
-```ruby{2}
-class Avo::Resources::Post < Avo::BaseResource
-  self.index_view_loading = :lazy
-end
-```
-
-Once the frame has loaded, search, filters, sorting, pagination, and view switches keep updating inside it asynchronously while the browser URL and query state stay current.
-
-- **Type:** Symbol
-- **Default:** `:eager`
-- **Values:** `:eager`, `:lazy`
-
-:::info
-Lazy loading applies only to a resource's own <Index /> view rendered by the default index component. Association indexes (`has_many`, `has_and_belongs_to_many`) and custom index components keep loading their records eagerly.
-:::
-
-</Option>
-
-<Option name="`self.model_class`">
-
-For some resources you might have a model that is namespaced, or you might have a secondary resource for a model. For that scenario, you can use the `self.model_class` option to tell Avo which model to reference in that resource.
-
-```ruby{2}
-class Avo::Resources::DelayedJob < Avo::BaseResource
-  self.model_class = "Delayed::Job"
-
-  def fields
-    field :id, as: :id
-  end
-end
-```
-
-</Option>
-
-<Option name="`self.devise_password_optional`">
-
-If you use `devise` and update your user models (usually `User`) without passing a password, you will get a validation error. You can use `devise_password_optional` to stop receiving that error. It will [strip out](https://stackoverflow.com/questions/5113248/devise-update-user-without-password/11676957#11676957) the `password` key from `params`.
-
-```ruby
-class Avo::Resources::User < Avo::BaseResource
-  self.devise_password_optional = true
-end
-```
-
-### Related
-
-- [Password field](./fields/password)
-
-</Option>
-
-<Option name="`self.visible_on_sidebar`">
-
-When you get started, the sidebar will be auto-generated for you with all the [dashboards](./dashboards), resources, and [custom tools](./custom-tools).
-However, you may have resources that should not appear on the sidebar, which you can hide using the `visible_on_sidebar` option.
-
-```ruby{2}
-class Avo::Resources::TeamMembership < Avo::BaseResource
-  self.visible_on_sidebar = false
-end
-```
-
-:::warning
-This option is used in the **auto-generated menu**, not in the [menu editor](./menu-editor).
-
-You'll have to use your own logic in the [`visible`](./menu-editor#item-visibility) block for that.
-:::
-
-</Option>
-
-<Option name="`self.hotkey`">
-
-Set a keyboard shortcut for this resource so users can jump to its index page from anywhere in the admin panel. The binding is used automatically when the resource appears in the sidebar via the auto-generated menu or the [menu editor](./menu-editor).
-
-```ruby{2}
-class Avo::Resources::Post < Avo::BaseResource
-  self.hotkey = "g p"
-end
-```
-
-The value follows [@github/hotkey](https://github.com/github/hotkey) syntax — space-separate keys for sequences (`"g p"` = press <kbd>g</kbd> then <kbd>p</kbd>).
-
-<RelatedList>
-  <RelatedItem href="./keyboard-shortcuts.html">Keyboard shortcuts — full reference for built-in shortcuts and patterns</RelatedItem>
-</RelatedList>
-
-</Option>
-
-<Option name="`config.buttons_on_form_footers`">
-
-If you have a lot of fields on a resource, that form might get pretty tall. So it would be useful to have the `Save` button in the footer of that form.
-
-You can do that by setting the `buttons_on_form_footers` option to `true` in your initializer. That will add the `Back` and `Save` buttons on the footer of that form for the `New` and `Edit` screens.
-
-```ruby{3}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.buttons_on_form_footers = true
-end
-```
-
-<Image src="/assets/img/4_0/resources/buttons_on_footer.webp" dark-src="/assets/img/4_0/resources/buttons_on_footer-dark.webp" width="2310" height="1000" alt="Buttons on footer" />
-
-</Option>
-
-<Option name="`after_create_path`/`after_update_path`">
-
-For some resources, it might make sense to redirect to something other than the `Show` view. With `after_create_path` and `after_update_path` you can control that.
-
-The valid options are `:show` (default), `:edit`, or `:index`.
-
-```ruby{2-3}
-class Avo::Resources::Comment < Avo::BaseResource
-  self.after_create_path = :index
-  self.after_update_path = :edit
-end
-```
-
-### Related
-
-You can go more granular and customize these paths or response more using controller methods.
-
-- [`after_create_path`](./controllers#after_create_path)
-- [`after_update_path`](./controllers#after_update_path)
-- [`after_destroy_path`](./controllers#after_destroy_path)
-</Option>
-
-<Option name="`self.record_selector`">
-
-You might have resources that will never be selected, and you do not need that checkbox to waste your horizontal space.
-
-You can hide it using the `record_selector` class_attribute.
-
-```ruby{2}
-class Avo::Resources::Comment < Avo::BaseResource
-  self.record_selector = false
-end
-```
-
-<Image src="/assets/img/4_0/resources/record_selector.webp" dark-src="/assets/img/4_0/resources/record_selector-dark.webp" width="2330" height="1090" alt="Hide the record selector." />
-</Option>
-
-<Option name="`self.link_to_child_resource`">
-
-Let's take an example. We have a `Person` model and `Sibling` and `Spouse` models that inherit from it using Single Table Inheritance (STI).
-
-When you declare this option on the parent resource `Person` it has the following effect. When a user is on the <Index /> view of your the `Person` resource and clicks to visit a `Person` record they will be redirected to a `Child` or `Spouse` record instead of a `Person` record.
-
-```ruby
-class Avo::Resources::Person < Avo::BaseResource
-  self.link_to_child_resource = true
-end
-```
-
-</Option>
-
-<Option name="`self.keep_filters_panel_open`">
-
-<DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=374" />
-
-There are scenarios where you wouldn't want to close the filters panel when you change the values. For that, you can use the `keep_filters_panel_open` resource option.
-
-```ruby{2}
-class Avo::Resources::Course < Avo::BaseResource
-  self.keep_filters_panel_open = true
-
-  def fields
-    field :id, as: :id
-    field :name, as: :text
-  end
-
-  def filters
-    filter Avo::Filters::CourseCountryFilter
-    filter Avo::Filters::CourseCityFilter
-  end
-end
-```
-
-<Image src="/assets/img/4_0/filters/keep-filters-panel-open.webm" dark-src="/assets/img/4_0/filters/keep-filters-panel-open-dark.webm" width="900" height="408" alt="Avo filters" />
-</Option>
-
-<Option name="`self.components`">
-
-By default, for each view we render a component:
-
-[Index](views.html#Index) -> `Avo::Views::ResourceIndexComponent`<br>
-[Show](views.html#Show) -> `Avo::Views::ResourceShowComponent`<br>
-[New](views.html#New), [Edit](views.html#Edit) -> `Avo::Views::ResourceEditComponent`
-
-Use the `self.components` resource option to swap any of these for your own classes. Keys must be strings that match the original component class name.
-
-```ruby
-self.components = {
-  "Avo::Views::ResourceIndexComponent": Avo::Views::Users::ResourceIndexComponent,
-  "Avo::Views::ResourceShowComponent": "Avo::Views::Users::ResourceShowComponent",
-  "Avo::Views::ResourceEditComponent": "Avo::Views::Users::ResourceEditComponent",
-  "Avo::Index::GridItemComponent": "Avo::Custom::GridItemComponent",
-  "Avo::ViewTypes::MapComponent": "Avo::Custom::MapComponent",
-  "Avo::ViewTypes::TableComponent": "Avo::Custom::TableComponent",
-  "Avo::ViewTypes::GridComponent": "Avo::Custom::GridComponent",
-  "Avo::Index::TableRowComponent": "Avo::Custom::TableRowComponent"
-}
-```
-
-A resource configured with the example above will start using the declared components instead of the default ones.
-
-:::warning
-The custom view components must ensure that their initializers are configured to receive all the arguments passed during the rendering of a component. You can verify this in our codebase through the following files:
-
-[Index](views.html#Index) -> `app/views/avo/base/index.html.erb`<br>
-[Show](views.html#Show) -> `app/views/avo/base/show.html.erb`<br>
-[New](views.html#New) -> `app/views/avo/base/new.html.erb`<br>
-[Edit](views.html#Edit) -> `app/views/avo/base/edit.html.erb`
-:::
-Creating a customized component for a view is most easily achieved by ejecting one of our pre-existing components using the `--scope` parameter. You can find step-by-step instructions in the documentation [here](./customization.html#scope).
-
-Alternatively, there is another method which requires two additional manual steps. This involves crafting a personalized component by extracting an existing one and adjusting its namespace. Although changing the namespace is not mandatory, we strongly recommend it unless you intend for all resources to adopt the extracted component.
-
-Example:
-
-1. Execute the command `bin/rails generate avo:eject --component Avo::Views::ResourceIndexComponent` to eject the specified component.<br><br>
-2. Access the newly ejected file and adjust the namespace. You can create a fresh directory like `my_dir` and transfer the component to that directory.<br><br>
-3. You have the flexibility to establish multiple directories, just ensure that the class name corresponds to the path of the directories.<br><br>
-4. Update the class namespace in the file from `Avo::Views::ResourceIndexComponent` to `Avo::MyDir::Views::ResourceIndexComponent`.<br><br>
-5. You can now utilize the customized component in a resource.
-
-```ruby
-self.components = {
-  "Avo::Views::ResourceIndexComponent": Avo::MyDir::Views::ResourceIndexComponent
-}
-```
-
-This way you can choose the whatever namespace structure you want and you assure that the initializer is accepting the right arguments.
-
-</Option>
-
-<Option name="`self.index_query`">
-
-### Unscoped queries on `Index`
-
-You might have a `default_scope` on your model that you don't want to be applied when you render the `Index` view.
-
-```ruby{2}
-class Project < ApplicationRecord
-  default_scope { order(name: :asc) }
-end
-```
-
-You can unscope the query using the `index_query` method on that resource.
-
-```ruby{3}
-class Avo::Resources::Project < Avo::BaseResource
-  self.title = :name
-  self.index_query = -> { query.unscoped }
-end
-```
-
-</Option>
-
-<Option name="`self.default_sort_column`">
-
-By default, Avo sorts records on the <Index /> view by the `created_at` attribute. However, you can customize this behavior using the `default_sort_column` option in your resource file.
-
-#### Default
-
-`:created_at`
-
-#### Possible values
-
-Any symbol representing a sortable column in your model. If the specified column doesn't exist in the model, Avo will fall back to the default sort column (`created_at`).
-
-```ruby
-class Avo::Resources::User < Avo::BaseResource
-  self.default_sort_column = :last_name
-
-  def fields
-    field :id, as: :id
-    field :last_name, as: :text
-  end
-
-  # other resource configurations...
-end
-```
-
-:::info
-When changing the default sort column, it's recommended to add an index to that column in your database for better query performance.
-
-```ruby
-# Example migration
-class AddIndexOnUsersCreatedAt < ActiveRecord::Migration[7.1]
-  def change
-    add_index :users, :last_name
-  end
-end
-```
-
-:::
-
-**Related:**
-
-- [Add an index on the `created_at` column](./best-practices#add-an-index-on-the-created-at-column)
-</Option>
-
-<Option name="`self.default_sort_direction`">
-
-By default, Avo sorts records in descending order of the [default sort column](./resources#self.default_sort_column). However, you can customize this using the `self.default_sort_direction` option in your resource file.
-
-#### Default
-
-`:desc`
-
-#### Possible values
-
-Either `:desc` (descending) or `:asc` (ascending).
-
-```ruby
-class Avo::Resources::Task < Avo::BaseResource
-  self.default_sort_column = :position
-  self.default_sort_direction = :asc
-
-  # ...
-end
-```
-
-</Option>
-
-### Modify controls placement and appearance
+## Modify controls placement and appearance
 
 <!-- @include: ./common/row_controls_config_common.md-->
 
 See [row controls configuration on table view](table-view.html#resource-configuration).
-
-<Option name="`self.pagination`">
-
-This feature is designed for managing pagination. For example on large tables of data sometimes count is inefficient and unnecessary.
-
-By setting `self.pagination[:type]` to `:countless`, you can disable the pagination count on the index page.
-
-This is especially beneficial for large datasets, where displaying the total number of items and pages may have some performance impact.
-
-```ruby
-# As block:
-self.pagination = -> do
-  {
-    type: :default,
-    slots: 9,
-  }
-end
-
-# Or as hash:
-self.pagination = {
-  type: :default,
-  slots: 9,
-}
-```
-
-The exposed pagination setting above have the default value for each key.
-
-### `type`
-
-#### Possible values
-
-`:default`, `:countless`
-
-#### Default
-
-`:default`
-
-### `slots`
-
-#### Possible values
-
-[Pagy docs - Control the page links](https://ddnexus.github.io/pagy/toolbox/helpers/series_nav/#options)
-
-#### Default
-
-`9`
-
-### Examples
-
-#### Default
-
-```ruby
-self.pagination = -> do
-  {
-    type: :default,
-    slots: 9,
-  }
-end
-```
-
-<Image src="/assets/img/4_0/resources/pagination/default.webp" dark-src="/assets/img/4_0/resources/pagination/default-dark.webp" width="2250" height="60" alt="Default pagination" />
-
-#### Countless
-
-```ruby
-self.pagination = -> do
-  {
-    type: :countless
-  }
-end
-```
-
-<Image src="/assets/img/4_0/resources/pagination/countless.webp" dark-src="/assets/img/4_0/resources/pagination/countless-dark.webp" width="2250" height="60" alt="Countless pagination" />
-
-#### Countless and "pageless"
-
-```ruby
-self.pagination = -> do
-  {
-    type: :countless,
-    slots: 0
-  }
-end
-```
-
-<Image src="/assets/img/4_0/resources/pagination/countless_empty_size.webp" dark-src="/assets/img/4_0/resources/pagination/countless_empty_size-dark.webp" width="2250" height="60" alt="Countless pagination size empty" />
-
-</Option>
-
-<Option name="`cache_hash`">
-
-The `cache_hash` method is used to compute the cache key for each row. The method looks something like this:
-
-```ruby
-def cache_hash(parent_record)
-  result = [record, file_hash]
-
-  if parent_record.present?
-    result << parent_record
-  end
-
-  result
-end
-
-def file_hash
-  content_to_be_hashed = ""
-
-  file_name = self.class.underscore_name.tr(" ", "_")
-  resource_path = Rails.root.join("app", "avo", "resources", "#{file_name}.rb").to_s
-  if File.file? resource_path
-    content_to_be_hashed += File.read(resource_path)
-  end
-
-  # policy file hash
-  policy_path = Rails.root.join("app", "policies", "#{file_name.gsub("_resource", "")}_policy.rb").to_s
-  if File.file? policy_path
-    content_to_be_hashed += File.read(policy_path)
-  end
-
-  Digest::MD5.hexdigest(content_to_be_hashed)
-end
-```
-
-It's an md5 of the resource file name, the policy file (so the cache gets busted when the rules change). We also add the `parent_record` when it's displayed in as an association, so there's a separate cache record for each association.
-
-This is the default, but if you have special requirements you can add it to your resource file and it will be used to cache your records accordingly.
-
-```ruby
-class Avo::Resources::User < Avo::BaseResource
-  def cache_hash(parent_record)
-    result = [record, file_hash, "SOMETHING_NEW"]
-
-    if parent_record.present?
-      result << parent_record
-    end
-
-    result
-  end
-
-  # fields, cards and more
-end
-```
-
-</Option>
-
-<Option name="`self.external_link`">
-
-It's often desirable to provide users with a link to the public path of a record outside of the Avo interface. The `external_link` option allows you to achieve this.
-
-### Usage
-
-To define an external link for a resource, set the `self.external_link` option with a lambda function. Within this lambda function, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `record`.
-
-```ruby{2-4}
-class Avo::Resources::Post < Avo::BaseResource
-  self.external_link = -> { # [!code focus]
-    main_app.post_path(record) # [!code focus]
-  } # [!code focus]
-end
-```
-
-<Image src="/assets/img/4_0/resources/external-link.webp" dark-src="/assets/img/4_0/resources/external-link-dark.webp" width="2264" height="264" alt="External link demonstration" />
-
-The `self.external_link` lambda should return a string representing the URL of the record.
-
-You can use path helpers from your application (e.g., `main_app.post_path`) or any external URL generator.
-
-When this option is configured, Avo will display an external link button for the resource. Clicking it will take the user to the specified URL.
-
-</Option>
-
-<Option name="`self.discreet_information`">
-
-Oftern we want to show some information about records without adding another field. `discreet_information` does exactly that 🙌
-
-More information on [`discreet_information`](./discreet-information)
-
-</Option>
 
 ## Cards
 
@@ -1218,15 +753,3 @@ end
 ```
 
 <Image src="/assets/img/4_0/resources/cards_on_resource.webp" dark-src="/assets/img/4_0/resources/cards_on_resource-dark.webp" width="2880" height="2070" alt="Cards on resources - Avo for Rails" />
-
-<Option name="`self.icon`">
-
-You can set the icon of the resource by using the `self.icon` option. This icon will be displayed on the sidebar.
-
-```ruby
-class Avo::Resources::User < Avo::BaseResource
-  self.icon = "tabler/outline/user"
-end
-```
-
-</Option>
