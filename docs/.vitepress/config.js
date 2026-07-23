@@ -200,6 +200,7 @@ const config = {
             { text: "License troubleshooting", link: "/4.0/license-troubleshooting.html" },
             { text: "Authentication", link: "/4.0/authentication.html" },
             { text: "Authorization", link: "/4.0/authorization.html" },
+            { text: "Performance", link: "/4.0/performance.html" },
           ],
         },
         {
@@ -315,32 +316,13 @@ const config = {
             },
             {
               text: "REST API",
-              link: "/4.0/rest-api/",
-              items: [
-                { text: "Overview", link: "/4.0/rest-api/" },
-                { text: "Mount", link: "/4.0/rest-api/mount.html" },
-                { text: "Generators", link: "/4.0/rest-api/generators.html" },
-                { text: "CSRF Protection", link: "/4.0/rest-api/csrf-protection.html" },
-                { text: "Authentication", link: "/4.0/rest-api/authentication.html" },
-              ],
+              link: "/4.0/rest-api.html",
             },
             {
               text: "Collaboration",
-              link: "/4.0/collaboration/overview.html",
-              items: [
-                { text: "Overview", link: "/4.0/collaboration/overview.html" },
-                { text: "Authorization", link: "/4.0/collaboration/authorization.html" },
-              ],
+              link: "/4.0/collaboration.html",
             },
           ]
-        },
-        {
-          text: "Performance",
-          collapsed: false,
-          items: [
-            { text: "Cache", link: "/4.0/cache.html" },
-            { text: "Views", link: "/4.0/views-performance.html" },
-          ],
         },
         {
           text: "Internals",

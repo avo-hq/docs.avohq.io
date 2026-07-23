@@ -892,7 +892,7 @@ config.cache_store = -> {
 - **Type:** cache store object or Proc returning one
 - **Default:** computed — `FileStore` in `tmp/cache` outside production; `Rails.cache` in production unless it's a `MemoryStore` or `NullStore`, which fall back to the `FileStore`
 
-Full guide: [Cache](./cache.html).
+Full guide: [Performance](./performance.html).
 
 </Option>
 
