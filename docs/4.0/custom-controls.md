@@ -137,6 +137,105 @@ end
 
 <Image src="/assets/img/4_0/customizable-controls/default_controls.webp" dark-src="/assets/img/4_0/customizable-controls/default_controls-dark.webp" width="441" height="52" alt="A show controls bar with a custom &quot;View on site&quot; link prepended before the default back, delete, and edit controls." prompt="show controls bar with a custom link prepended before the default controls" />
 
+## What you can put in a control
+
+Beyond the built-in buttons, a control block accepts your own links and action buttons — and because a `link_to` forwards its `data`, `class`, and `target` to the rendered `<a>`, you can drive Turbo and Stimulus straight from a control.
+
+### Links
+
+`link_to` takes a label and any path — an external URL, a Rails path helper, a `mailto:`, whatever you need:
+
+```ruby
+self.show_controls = -> do
+  # External URL in a new tab
+  link_to "Docs", "https://avohq.io/docs", icon: "heroicons/outline/book-open", target: :_blank
+
+  # Rails path helper for the current record
+  link_to "View on site", post_path(record), icon: "heroicons/outline/globe-alt"
+
+  # mailto: link
+  link_to "Email author", "mailto:#{record.author.email}", icon: "heroicons/outline/envelope"
+
+  # Icon-only — the label becomes the tooltip
+  link_to "Open in Stripe", "https://dashboard.stripe.com/customers/#{record.stripe_id}",
+    icon: "heroicons/outline/credit-card", style: :icon
+
+  default_controls
+end
+```
+
+### Built-in controls
+
+Relabel, restyle, or reorder the [built-in buttons](./custom-controls-api.html#controls) — `back_button`, `edit_button`, `show_button`, `delete_button`, and the rest:
+
+```ruby
+self.show_controls = -> do
+  back_button label: "", title: "Back"          # icon-only
+  edit_button label: "Edit this fish"
+  delete_button label: "", icon: "heroicons/outline/trash",
+    confirmation_message: "Delete this fish for good?"
+end
+```
+
+### Actions
+
+Pull an [action](./actions.html) out as its own button, pass it `arguments`, and keep the rest in the dropdown:
+
+```ruby
+self.show_controls = -> do
+  # A single action as a button
+  action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, icon: "heroicons/outline/globe"
+
+  # Send data to the action
+  action Avo::Actions::ExportSelection, arguments: { format: :csv }
+
+  # Everything else stays in the dropdown
+  actions_list exclude: [Avo::Actions::ReleaseFish], label: "More"
+
+  default_controls
+end
+```
+
+### Turbo triggers
+
+A `link_to` forwards its `data` hash to the `<a>`, so any `data-turbo-*` attribute works. Load a response into a Turbo Frame, or turn a link into a `POST`/`DELETE` button:
+
+```ruby
+self.show_controls = -> do
+  # Render the response into a Turbo Frame already on the page
+  link_to "Preview", preview_fish_path(record),
+    icon: "heroicons/outline/eye",
+    data: { turbo_frame: "fish_preview" }
+
+  # A link that submits as a POST, with a confirmation dialog
+  link_to "Archive", archive_fish_path(record),
+    icon: "heroicons/outline/archive-box",
+    data: { turbo_method: :post, turbo_confirm: "Archive this fish?" }
+
+  default_controls
+end
+```
+
+### JavaScript triggers
+
+The same `data` pass-through lets you wire a control to a [Stimulus controller](./javascript.html) — set the `controller`, `action`, and any value attributes, and Avo renders them on the link:
+
+```ruby
+self.show_controls = -> do
+  link_to "Copy API key", "#",
+    icon: "heroicons/outline/clipboard",
+    data: {
+      controller: "clipboard",
+      action: "clipboard#copy",
+      clipboard_text_value: record.api_key
+    }
+
+  default_controls
+end
+```
+
+Load the controller through your [asset pipeline](./asset-handling.html) so Stimulus picks it up.
+
 ## Group links and actions in a dropdown
 
 If you have too many controls for the bar, group your custom links and actions in a [`list`](./custom-controls-api.html#list) dropdown:
