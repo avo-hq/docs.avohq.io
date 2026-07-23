@@ -54,7 +54,7 @@ The core covers managing records. Add-ons extend it toward whatever job your app
 - [Dashboards](./dashboards.html) and [cards](./cards.html): metrics and charts at a glance.
 - [Kanban](./kanban-boards.html): drag-and-drop boards for pipelines and workflows.
 - [Notifications](./notifications.html): in-app notifications for the events that matter.
-- [Collaboration](./collaboration/overview.html): comments and status updates on records, so context stays with the data.
+- [Collaboration](./collaboration.html): comments and status updates on records, so context stays with the data.
 - [Audit Logging](./audit-logging.html): who did what, and when.
 
 **Control who can do what**

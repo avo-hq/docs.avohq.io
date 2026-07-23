@@ -1,3 +1,16 @@
+# collaboration overview + authorization merged into a single guide
+[[redirects]]
+from = "/4.0/collaboration/overview.html"
+to = "/4.0/collaboration.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/collaboration/authorization.html"
+to = "/4.0/collaboration.html#authorization"
+status = 301
+force = false
+
 # records-reordering renamed to record-reordering (singular, matches the add-on name)
 [[redirects]]
 from = "/4.0/records-reordering.html"
@@ -408,5 +421,36 @@ force = false
 [[redirects]]
 from = "/4.0/audit-logging/"
 to = "/4.0/audit-logging.html"
+status = 301
+force = false
+
+# REST API directory (overview + mount/generators/csrf/authentication) merged into a single page
+[[redirects]]
+from = "/4.0/rest-api/"
+to = "/4.0/rest-api.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/rest-api/mount.html"
+to = "/4.0/rest-api.html#mount-the-api"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/rest-api/generators.html"
+to = "/4.0/rest-api.html#custom-controllers"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/rest-api/csrf-protection.html"
+to = "/4.0/rest-api.html#csrf-protection"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/rest-api/authentication.html"
+to = "/4.0/rest-api.html#authentication"
 status = 301
 force = false

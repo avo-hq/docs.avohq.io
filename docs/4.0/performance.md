@@ -1,22 +1,17 @@
-# Cache
+# Performance
 
 Avo uses the application's cache system to enhance performance. The cache system is especially beneficial when dealing with resource index tables and license requests.
 
 ## Cache store selection
 
-The cache system dynamically selects the appropriate cache store based on the application's environment:
+Avo picks its cache store based on the environment:
 
-### Production
+- **Production** — Avo uses `Rails.cache`, unless it's one of `ActiveSupport::Cache::MemoryStore` or `ActiveSupport::Cache::NullStore`. In that case it falls back to the `:file_store` with a cache path of `tmp/cache`.
+- **All other environments** (development, test, and any custom environment) — Avo uses the `:file_store` with a cache path of `tmp/cache`.
 
-In production, if the existing cache store is one of the following: `ActiveSupport::Cache::MemoryStore` or `ActiveSupport::Cache::NullStore` it will use the default `:file_store` with a cache path of `tmp/cache`. Otherwise, the existing cache store `Rails.cache` will be used.
-
-### Test
-
-In testing, it directly uses the `Rails.cache` store.
-
-### Development and other environments
-
-In all other environments the `:memory_store` is used.
+:::warning `MemoryStore` in production
+Our recommendation is to not use `MemoryStore` in production because it will not be shared between multiple processes (when using Puma). That's why Avo rejects it and falls back to the `:file_store`.
+:::
 
 ### Custom selection
 
@@ -33,11 +28,25 @@ config.cache_store = -> {
 config.cache_store = ActiveSupport::Cache.lookup_store(:solid_cache_store)
 ```
 
-`cache_store` configuration option is expecting a cache store object, the lambda syntax can be useful if different stores are desired on different environments.
+The `cache_store` configuration option expects a cache store object. The lambda syntax can be useful if different stores are desired on different environments.
 
-:::warning `MemoryStore` in production
-Our recomendation is to not use MemoryStore in production because it will not be shared between multiple processes (when using Puma).
-:::
+## Row caching
+
+Avo caches each record on the <Index /> view (and each item on the Grid view) for improved performance.
+
+<Option name="`cache_resources_on_index_view`">
+
+Controls whether Avo caches the rows on the <Index /> view. Set it to `false` to disable row caching entirely.
+
+```ruby
+# config/initializers/avo.rb
+config.cache_resources_on_index_view = false
+```
+
+- **Type:** Boolean
+- **Default:** caching is enabled in every environment except development.
+
+</Option>
 
 <Option name="`cache_hash`">
 
@@ -48,7 +57,7 @@ More about this on the [resource options page](./resources-api#cache_hash).
 
 ## Caching caveats
 
-Avo caches each record on the <Index /> view for improved performance. However side-effects may occur from this strategy. We'll try to outline some of them below and keep this page up to date as we find them or as they get reported to us.
+Because Avo caches each record on the <Index /> view, some side-effects may occur. We'll try to outline some of them below and keep this page up to date as we find them or as they get reported to us.
 
 These are things that may happen to regular Rails apps, not just in the Avo context.
 
@@ -141,3 +150,43 @@ config.cache_store = :solid_cache_store
 ```
 
 Check [Solid Cache repository](https://github.com/rails/solid_cache) for additional valuable information.
+
+## Log ViewComponent loading times and allocations
+
+Sometimes, you may want to track the loading times and memory allocations of ViewComponents, similar to how you do with partials. Follow these two steps to enable this functionality.
+
+#### 1. Enable ViewComponent Instrumentation
+
+First, you need to enable instrumentation for ViewComponents. Add the following configuration to your `application.rb` or `development.rb` file:
+
+```ruby
+# application.rb or development.rb
+config.view_component.instrumentation_enabled = true
+```
+
+#### 2. Add Logging
+
+Next, set up logging to capture the performance data. Create or update the `config/initializers/view_component.rb` file with the following code:
+
+```ruby
+# config/initializers/view_component.rb
+module ViewComponent
+  class LogSubscriber < ActiveSupport::LogSubscriber
+    define_method :'!render' do |event|
+      info do
+        message = +"  Rendered #{event.payload[:name]}"
+        message << " (Duration: #{event.duration.round(1)}ms"
+        message << " | Allocations: #{event.allocations})"
+      end
+    end
+  end
+end
+
+ViewComponent::LogSubscriber.attach_to :view_component
+```
+
+<Image src="/assets/img/3_0/performance/views-performance/view-component-logs.webp" size="2236x 462" alt="View Component logging" />
+
+:::warning
+Enabling this logging can negatively impact your application's performance. We recommend using it in the development environment or disabling it in production once you have completed debugging.
+:::

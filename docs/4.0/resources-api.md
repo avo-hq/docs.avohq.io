@@ -746,7 +746,7 @@ end
 ```
 
 <RelatedList>
-  <RelatedItem href="./cache.html">Caching</RelatedItem>
+  <RelatedItem href="./performance.html">Caching</RelatedItem>
 </RelatedList>
 
 </Option>
