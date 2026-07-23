@@ -1,10 +1,13 @@
+---
+license: community
+outline: [2, 3]
+---
+
 # Asset manager
 
 In your plugins or custom content you might want to add a new stylesheet or javascript file to be loaded inside Avo.
 
-You can manually add them to the `_head.html.erb` or `_pre_head.html.erb` files (see [Asset handling](./asset-handling.html)), or — from library code such as a plugin — you can use the `AssetManager`.
-
-The asset manager adds them to the `<head>` element of Avo's layout file.
+The asset manager adds them to the `<head>` element of Avo's layout file, and is meant for **library code such as a plugin**. If you're adding assets from your own app, use the asset pipeline instead — see [Asset handling](./asset-handling.html).
 
 ## Add a stylesheet file
 
