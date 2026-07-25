@@ -342,6 +342,39 @@ config.sidebar_toggle_visible = false
 
 </Option>
 
+<Option name="`sidebar_default_width`" headingSize="3">
+
+Width in pixels the desktop sidebar starts at before a user drags it. See the [Resizable sidebar](./customization.html#resizable-sidebar) guide.
+
+```ruby
+config.sidebar_default_width = 320
+```
+
+Clamped into the same 200–480 range as dragging, so the handle can always drag back to it. A value Avo cannot read as an integer falls back to `256` rather than clamping to the minimum.
+
+Applies at `lg` (1024px) and wider only. Below that the sidebar is a full-height overlay and keeps its 256px default, so a wide value cannot cover a small screen. A width the user has dragged to takes precedence over this setting.
+
+- **Type:** Integer
+- **Default:** `256`
+- **Values:** `200`–`480` — values outside the range are clamped; unparseable values fall back to the default
+
+</Option>
+
+<Option name="`sidebar_resizable`" headingSize="3">
+
+Whether the sidebar's drag-to-resize handle is rendered. When `false` the handle is neither rendered nor wired up, and the sidebar stays at [`sidebar_default_width`](#sidebar_default_width).
+
+```ruby
+config.sidebar_resizable = false
+```
+
+Resizing is a drag-only gesture and so does not satisfy [WCAG 2.2 SC 2.5.7 (Dragging Movements)](https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html). Set this to `false` if you are working to an AA conformance claim or a VPAT.
+
+- **Type:** Boolean
+- **Default:** `true`
+
+</Option>
+
 <Option name="`body_classes`" headingSize="3">
 
 Custom CSS classes added to Avo's `<body>` tag.

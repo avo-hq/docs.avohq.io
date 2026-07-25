@@ -6,6 +6,30 @@ If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedica
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
+## Unreleased — resizable sidebar
+
+<Option name="Sidebar labels truncate instead of wrapping">
+
+### Breaking Change
+
+The sidebar is now [resizable](./customization.html#resizable-sidebar), and as part of that change sidebar link, section, and group labels render on a single line with an ellipsis when they overflow, instead of wrapping onto multiple lines. The full label shows in a tooltip on hover.
+
+**Action required:** None for most apps. If your navigation relied on long labels wrapping, either shorten the labels or point users at the drag handle to widen the sidebar.
+
+Hosts with an accessibility conformance obligation can disable the drag handle with [`sidebar_resizable`](./customization-api.html#sidebar_resizable).
+
+</Option>
+
+<Option name="`.container-small` is now `max-width`-based">
+
+### Breaking Change
+
+`.container-small` (the wrapper around show and edit pages) used a fixed width; it now fills its container up to a `max-width` so content adapts when the sidebar is wide. If you override `.container-small`'s `width` from your own stylesheets, the new Avo-owned `max-width` now clamps it — override `max-width` instead.
+
+**Action required:** None unless you override `.container-small`.
+
+</Option>
+
 ## Upgrade to 4.0.18
 
 <Option name="Resource and field translations are used verbatim">
