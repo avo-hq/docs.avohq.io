@@ -105,7 +105,7 @@ self.rows = 2
 
 - **Type:** Integer (or Proc returning one)
 - **Default:** `1`
-- **Values:** `1` to `6`
+- **Values:** `1` to `12`
 
 </Option>
 

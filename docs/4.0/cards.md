@@ -18,7 +18,7 @@ You can add six types of cards to your parent: `partial`, `html`, `metric`, `cha
 
 All cards have some standard settings like [`id`](./cards-api.html#self.id), which must be unique, [`label`](./cards-api.html#self.label), [`description`](./cards-api.html#self.description), and [`discreet_description`](./cards-api.html#self.discreet_description). The `label` is the title of your card, the `description` is a subtitle rendered below the title, and the `discreet_description` shows a tiny info icon at the bottom-right of the card with a tooltip containing the text.
 
-Each card has its own [`cols`](./cards-api.html#self.cols) and [`rows`](./cards-api.html#self.rows) settings to control the width and height of the card inside the parent's grid. They can have values from `1` to `6`.
+Each card has its own [`cols`](./cards-api.html#self.cols) and [`rows`](./cards-api.html#self.rows) settings to control the width and height of the card inside the parent's grid. `cols` takes values from `1` to `6`; `rows` takes values from `1` to `12`.
 
 All these settings can be set to a lambda.
 
