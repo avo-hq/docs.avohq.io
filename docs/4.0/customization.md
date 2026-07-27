@@ -299,6 +299,22 @@ Avo.configure do |config|
 end
 ```
 
+## Add a "Back to top" button
+
+On long Show or Index pages, opt into a floating ["Back to top"](./customization-api.html#back_to_top) pill with [`back_to_top`](./customization-api.html#back_to_top). It's off by default. Once enabled, the pill stays hidden near the top of the page, appears when the user scrolls back up past a threshold, and hides again on a downward scroll.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.back_to_top = {
+    enabled: true,
+    threshold: 64 # pixels from the top before an upward scroll reveals it
+  }
+end
+```
+
+Raise `threshold` if you only want the pill further down long pages. The label comes from `avo.back_to_top` — override it like any other Avo string.
+
 ## Home path
 
 When a user clicks your logo inside Avo or goes to the `/avo` URL, they will be redirected to one of your resources. Point them somewhere else — a dashboard, for example — with [`home_path`](./customization-api.html#home_path).
