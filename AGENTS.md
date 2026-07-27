@@ -1,5 +1,7 @@
 # AGENTS.md — writing Avo docs
 
+This repo holds the Avo documentation site (VitePress). Running the site locally and component details: [`readme.md`](./readme.md).
+
 Operational rules for writing and editing documentation in this repo. Humans: the prose version is [`writing-docs.md`](./docs/contributing/writing-docs.md) (published at `/contributing/writing-docs.html`). This file is the precise, copy-paste version — follow it exactly.
 
 The reference implementation for everything below is the pair
@@ -181,6 +183,7 @@ Apply it:
 - Use VitePress containers for callouts: `:::warning`, `:::info`, `:::tip`, `:::danger`.
 - Enum/lookup data goes in Markdown tables, not prose.
 - One feature, one guide page. Split large guides by task with `##` headings rather than creating many files.
+- **No blur in code blocks.** Don't use the `[!code focus]` marker — it blurs every unfocused line, which we don't want. Emphasize lines with highlights instead (`[!code highlight]`, or `[!code ++]` / `[!code --]` for diffs). If you think a specific block genuinely needs focus/blur, don't add it silently — point it out and ask.
 
 ## Available components
 
@@ -189,6 +192,10 @@ Apply it:
 - `<Option name="`x`">…</Option>` — reference option block.
 - `<Demo link="https://avodemo.com" label="See the demo" />` — `label` optional.
 - `:::warning` / `:::info` / `:::tip` / `:::danger` — callouts.
+
+## The Concepts sidebar section
+
+**It's a curated static list**, not a dynamic one. It lives in `.vitepress/config.js` (the `text: "Concepts"` block). Add a page by hand as `{ text, link }`, keeping the flat `/4.0/<page>.html` URL so nothing breaks — don't move pages into a `concepts/` folder and don't convert the section to the dynamic `getFiles()` pattern (that would change URLs and break inbound links, and it loses the custom titles/order). Only list pages that describe a system spanning the whole admin (breadcrumbs, tooltips, icons, resource controllers…); anything scoped to a single resource or field stays in its own docs.
 
 ## Renaming or moving a page
 
