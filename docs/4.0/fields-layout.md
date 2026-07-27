@@ -243,7 +243,7 @@ end
 
 <Image src="/assets/img/4_0/tabs/show.webp" dark-src="/assets/img/4_0/tabs/show-dark.webp" width="2144" height="780" alt="An Avo User show page with id and User Email in the main panel, a tab switcher listing User information, Teams, People, Spouses and Projects, and the User information panel showing first name, last name and the Is active boolean." prompt="User show page with id and User Email in the main panel, tab switcher with User information Teams People Spouses and Projects tabs, and the User information panel showing first name last name and Is active" />
 
-The tab [`title`](./fields-layout-api.html#title) is mandatory and labels the switcher; the [`description`](./fields-layout-api.html#description) shows as a tooltip on hover. Both `tabs` groups and individual `tab`s accept a [`visible`](./fields-layout-api.html#visible) boolean or lambda, and the whole group takes its own `title` and `description`.
+The tab [`title`](./fields-layout-api.html#title) is mandatory and labels the switcher; the [`description`](./fields-layout-api.html#description) shows as a tooltip on hover. Both `tabs` groups and individual `tab`s accept a [`visible`](./fields-layout-api.html#visible) boolean or lambda, and the whole group takes its own `title` and `description`. Add a [`badge`](./fields-layout-api.html#badge) to a tab — a string or a renderable like `Avo::UI::CountComponent` — to show a count or status pill next to its label. Tab and panel titles also [localize through the resource's translation key](./i18n.html#localizing-tabs-and-panels).
 
 ### Loading behavior on Show and Edit
 
