@@ -135,7 +135,7 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
 end
 ```
 
-Entries are scoped to the current user and tenant, so a card querying `current_user` is safe to cache. Each [range](#ranges) is cached separately too, and on a resource card each record gets its own entry. If your `query` varies on something else, override `cache_hash` as shown in the [reference](./cards-api.html#self.cache_for).
+Entries are scoped to the current user and tenant, so a card querying `current_user` is safe to cache. Each [range](#ranges) is cached separately too, and on a resource card each record gets its own entry. If your `query` varies on something else, override `cache_key` as shown in the [reference](./cards-api.html#self.cache_for).
 
 :::warning
 Partial and HTML cards build their content at render time instead of running a `query`, so `cache_for` does nothing for them. Wrap the markup in Rails' own `cache` block instead.

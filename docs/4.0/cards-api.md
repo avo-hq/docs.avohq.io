@@ -185,10 +185,10 @@ Cards with no `query` — [HTML](#html-card) and [partial](#self.partial) cards 
 :::info
 `arguments` is deliberately not part of the key. It's fixed at registration time, so a card's position already separates two registrations of the same class.
 
-If your `query` reads something the key doesn't cover, override `cache_hash`:
+If your `query` reads something the key doesn't cover, override `cache_key`:
 
 ```ruby
-def cache_hash
+def cache_key
   super + [Current.account.id]
 end
 ```
