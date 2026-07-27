@@ -152,6 +152,56 @@ On [table](#self.fields)/[list](#self.fields) cards a refresh reloads the whole 
 
 </Option>
 
+<Option name="`self.cache_for`" headingSize="3">
+
+Caches the result of the card's `query` for that duration. Within the window the query is skipped entirely and the stored result is replayed — useful for cards whose `query` is expensive.
+
+```ruby
+class Avo::Cards::UsersCount < Avo::Cards::MetricCard
+  self.cache_for = 5.minutes # [!code focus]
+
+  def query
+    result User.where(active: true).count
+  end
+end
+```
+
+Avo caches through `Avo.configuration.cache_store`. The key is scoped to the current user and tenant, so a card querying `current_user` never serves one user's data to another. In full, it covers:
+
+| Part | Why |
+| --- | --- |
+| Card class, parent, and position | Separates cards, and two registrations of the same class |
+| [`range`](#self.ranges) and the dashboard's global range | Each range is its own result |
+| Current user and tenant | Keeps per-user and per-tenant queries apart |
+| The resource's view and record | A [resource card](./cards.html) caches per record and per view |
+
+- **Type:** `ActiveSupport::Duration` (or seconds as an Integer), or a Proc returning one
+- **Default:** `nil` (no caching)
+
+:::warning
+Cards with no `query` — [HTML](#html-card) and [partial](#self.partial) cards — build their content at render time, so `cache_for` does nothing for them. Wrap the markup in Rails' own `cache` block instead.
+:::
+
+:::info
+`arguments` is deliberately not part of the key. It's fixed at registration time, so a card's position already separates two registrations of the same class.
+
+If your `query` reads something the key doesn't cover, override `cache_key`:
+
+```ruby
+def cache_key
+  super + [Current.account.id]
+end
+```
+
+Returning a narrower key is how you opt *into* sharing one entry across users.
+:::
+
+:::warning
+Outside production `Avo.configuration.cache_store` defaults to a file store under `tmp/cache`, which isn't shared between machines — on a multi-server staging environment each server caches on its own. Set `config.cache_store` in the Avo initializer to share it.
+:::
+
+</Option>
+
 ## Ranges
 
 Let the user query data across different time ranges via a dropdown in the card header.
@@ -484,12 +534,13 @@ def cards
     rows: 2,
     visible: -> { true },
     refresh_every: 2.minutes,
+    cache_for: 5.minutes,
     chart_options: {library: {plugins: {legend: {display: true}}}},
     arguments: {active_users: true}
 end
 ```
 
-- **Overridable keys:** `label`, `description`, `discreet_description`, `cols`, `rows`, `refresh_every`, `visible`, `chart_options`, `arguments`
+- **Overridable keys:** `label`, `description`, `discreet_description`, `cols`, `rows`, `refresh_every`, `cache_for`, `visible`, `chart_options`, `arguments`
 
 </Option>
 
