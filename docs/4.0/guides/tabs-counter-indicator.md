@@ -1,40 +1,60 @@
 # Display counter indicator on tabs switcher
 
-When a tab contains an association field you may want to show some counter indicator about how many records are on that particular tab. You can include that information inside tab's name.
+When a tab wraps an association, you often want a count next to the label so users can see how many records sit behind it before they open the tab.
 
 <Image src="/assets/img/4_0/guides/tabs-counter-indicator/tabs_counter.webp" dark-src="/assets/img/4_0/guides/tabs-counter-indicator/tabs_counter-dark.webp" width="522" height="85" alt="A tabs switcher whose Teams and People labels show a grey record-count badge" />
 
-```ruby{7,10,16-23}
+Pass [`badge`](../fields-layout-api.html#badge) on the `tab` and hand it an `Avo::UI::CountComponent` — the same accent-tinted count pill Avo uses on filters and scopes:
+
+```ruby
+# app/avo/resources/user.rb
 class Avo::Resources::User < Avo::BaseResource
   def fields
-    main_panel do
+    panel do
+      field :id, as: :id
+      field :name, as: :text
     end
 
     tabs do
-      tab name_with_counter("Teams", record&.teams&.size) do
+      tab title: "Teams", badge: Avo::UI::CountComponent.new(count: record&.teams&.size) do
         field :teams, as: :has_and_belongs_to_many
       end
-      tab name_with_counter("People", record&.people&.size) do
+
+      tab title: "People", badge: Avo::UI::CountComponent.new(count: record&.people&.size) do
         field :people, as: :has_many
       end
     end
   end
+end
+```
 
-  def name_with_counter(name, counter)
+`CountComponent` also accepts `label:` (rendered as `aria-label` when the visible count is abbreviated), plus `data:` and `classes:` for the pill.
+
+:::warning
+`record.association.size` runs a count query on every page load — once per badged tab. Prefer a [counter cache](https://guides.rubyonrails.org/association_basics.html#options-for-belongs-to-counter-cache) when the association is large, or compute the count only when you need it.
+:::
+
+## Custom badge content
+
+`badge` accepts any ViewComponent instance or an HTML-safe string, so you can render your own markup when `CountComponent` isn't the right fit:
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    tabs do
+      tab title: "Teams", badge: teams_badge do
+        field :teams, as: :has_and_belongs_to_many
+      end
+    end
+  end
+
+  def teams_badge
     view_context.sanitize(
-      "#{name} " \
-      "<span class='bg-gray-500 ml-1 px-1 text-white text-xs rounded font-semibold'>" \
-        "#{counter}" \
-      "</span>"
+      "<span class='count'>#{record.teams.size}</span>"
     )
   end
 end
 ```
 
-We are also using the `sanitize` method to return it as HTML.
-
-In order to make the counter stand out, we're using some Tailwind CSS classes that we have available in Avo. If you're trying different classes and they are not applying, you should consider adding the [Tailwind CSS integration](../tailwindcss-integration).
-
-:::warning
-This approach will have some performance implications as it will run the `count` query on every page load.
-:::
+If you invent your own CSS classes for the pill, wire up the [Tailwind CSS integration](../tailwindcss-integration.html) so they are compiled into the host build.

@@ -46,7 +46,7 @@ Groups related fields inside a titled container. Declared at the root level or i
 
 <Option name="`title`" headingSize="3">
 
-The panel's title, rendered at the top of the panel.
+The panel's title, rendered at the top of the panel. When no `translation_key:` is set, Avo also looks up `#{resource.translation_key}.panels.<parameterized_title>` — see [Localizing tabs and panels](./i18n.html#localizing-tabs-and-panels).
 
 ```ruby
 panel title: "User information" do
@@ -55,7 +55,7 @@ panel title: "User information" do
 end
 ```
 
-- **Type:** String
+- **Type:** String or Proc (evaluated in a resource execution context)
 - **Default:** `nil` (untitled panel)
 
 </Option>
@@ -91,7 +91,7 @@ end
 
 </Option>
 
-Panels also accept the standard view-visibility options (`only_on`, `except_on`, `show_on`, `hide_on`) — see [field options](./field-options.html).
+Panels also accept the standard view-visibility options (`only_on`, `except_on`, `show_on`, `hide_on`) — see [field options](./field-options.html). Pass `translation_key:` to override the generated panel-title locale key — see [Localizing tabs and panels](./i18n.html#localizing-tabs-and-panels).
 
 </Option>
 
@@ -174,7 +174,7 @@ tabs title: "Tabs group title" do
 end
 ```
 
-- **Type:** String
+- **Type:** String or Proc (evaluated in a resource execution context)
 - **Default:** `nil` for the group; **required** for each `tab`
 
 </Option>
@@ -227,7 +227,32 @@ end
 tab(title:, **args, &block)
 ```
 
-An individual tab inside a `tabs` group. `title` is required; it also accepts `description` and `visible` (see [`tabs`](#tabs)), plus the two loading options below. Standalone fields placed directly in a tab are auto-wrapped in a card, so a `panel` or `card` is optional — add one only to attach a title or description.
+An individual tab inside a `tabs` group. `title` is required; it also accepts `description`, `visible` (see [`tabs`](#tabs)), [`badge`](#badge), `translation_key:`, and the two loading options below. Standalone fields placed directly in a tab are auto-wrapped in a card, so a `panel` or `card` is optional — add one only to attach a title or description.
+
+When no `translation_key:` is set, Avo looks up `#{resource.translation_key}.tabs.<parameterized_title>` before falling back to `title` — see [Localizing tabs and panels](./i18n.html#localizing-tabs-and-panels).
+
+<Option name="`badge`" headingSize="3">
+
+Renders next to the tab label on the switcher — typically a count pill for an association tab. Pass an `Avo::UI::CountComponent` instance for the accent-tinted count style Avo uses elsewhere, or any ViewComponent / HTML-safe string.
+
+```ruby
+tabs do
+  tab title: "Teams", badge: Avo::UI::CountComponent.new(count: record&.teams&.size) do
+    field :teams, as: :has_and_belongs_to_many
+  end
+end
+```
+
+`CountComponent` also accepts `label:` (an `aria-label` when the visible count is abbreviated) and `data:` / `classes:` for the pill.
+
+- **Type:** ViewComponent instance (responds to `render_in`) or an HTML-safe String
+- **Default:** `nil` — no badge
+
+:::info
+Computing `record.association.size` on every page load runs a count query per badged tab. Prefer a cached counter column, or see the [tabs counter indicator recipe](./guides/tabs-counter-indicator.html) for the full pattern.
+:::
+
+</Option>
 
 <Option name="`lazy_load`" headingSize="3">
 

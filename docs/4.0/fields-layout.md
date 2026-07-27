@@ -245,6 +245,21 @@ end
 
 The tab [`title`](./fields-layout-api.html#title) is mandatory and labels the switcher; the [`description`](./fields-layout-api.html#description) shows as a tooltip on hover. Both `tabs` groups and individual `tab`s accept a [`visible`](./fields-layout-api.html#visible) boolean or lambda, and the whole group takes its own `title` and `description`.
 
+### Show a count on a tab
+
+Pass [`badge`](./fields-layout-api.html#badge) to render a pill next to the tab label — `Avo::UI::CountComponent` matches the accent-tinted count style Avo uses on filters and scopes:
+
+```ruby
+# app/avo/resources/user.rb
+tabs do
+  tab title: "Teams", badge: Avo::UI::CountComponent.new(count: record&.teams&.size) do
+    field :teams, as: :has_and_belongs_to_many
+  end
+end
+```
+
+For the full recipe (and the performance trade-off of counting on every page load), see [Display counter indicator on tabs](./guides/tabs-counter-indicator.html).
+
 ### Loading behavior on Show and Edit
 
 On the **Show** page, `has_many`-type fields and tools inside tabs lazy-load only when their tab is displayed, keeping the initial page light. For heavy tabs you'd rather not fetch on every view, set [`loading: :manual`](./fields-layout-api.html#loading) to render a **Load** button and defer the fetch until the user asks for it. A tab's own content renders eagerly by default; set [`lazy_load`](./fields-layout-api.html#lazy_load) to defer it until the tab is first revealed.
@@ -260,8 +275,6 @@ tabs id: :some_random_uniq_id do
   field :posts, as: :has_many, show_on: :edit
 end
 ```
-
-To add a record-count badge to association tabs, see the [tabs counter indicator recipe](guides/tabs-counter-indicator.html).
 
 ## Position labels: inline vs. stacked
 
