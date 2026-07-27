@@ -227,7 +227,32 @@ end
 tab(title:, **args, &block)
 ```
 
-An individual tab inside a `tabs` group. `title` is required; it also accepts `description` and `visible` (see [`tabs`](#tabs)), plus the two loading options below. Standalone fields placed directly in a tab are auto-wrapped in a card, so a `panel` or `card` is optional — add one only to attach a title or description.
+An individual tab inside a `tabs` group. `title` is required; it also accepts `description` and `visible` (see [`tabs`](#tabs)), plus the `badge` and loading options below. Standalone fields placed directly in a tab are auto-wrapped in a card, so a `panel` or `card` is optional — add one only to attach a title or description.
+
+<Option name="`badge`" headingSize="3">
+
+Renders a small pill next to the tab's label on the switcher — handy for a count or a status hint. Pass a string, or any renderable component (Avo ships `Avo::UI::CountComponent` for count pills).
+
+```ruby{2}
+tabs do
+  tab title: "Orders", badge: Avo::UI::CountComponent.new(count: 3) do
+    field :orders, as: :has_many
+  end
+end
+```
+
+A plain string works too:
+
+```ruby
+tab title: "Reviews", badge: "new" do
+  # ...
+end
+```
+
+- **Type:** String or a renderable component (responds to `render_in`)
+- **Default:** `nil` (no badge)
+
+</Option>
 
 <Option name="`lazy_load`" headingSize="3">
 
