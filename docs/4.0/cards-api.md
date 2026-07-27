@@ -166,7 +166,14 @@ class Avo::Cards::UsersCount < Avo::Cards::MetricCard
 end
 ```
 
-Avo caches through `Avo.configuration.cache_store`, and the key covers the card class, its parent, its position, the current [range](#self.ranges), and — for a [resource card](./cards.html) — the record being viewed.
+Avo caches through `Avo.configuration.cache_store`. The key is scoped to the current user and tenant, so a card querying `current_user` never serves one user's data to another. In full, it covers:
+
+| Part | Why |
+| --- | --- |
+| Card class, parent, and position | Separates cards, and two registrations of the same class |
+| [`range`](#self.ranges) and the dashboard's global range | Each range is its own result |
+| Current user and tenant | Keeps per-user and per-tenant queries apart |
+| The resource's view and record | A [resource card](./cards.html) caches per record and per view |
 
 - **Type:** `ActiveSupport::Duration` (or seconds as an Integer), or a Proc returning one
 - **Default:** `nil` (no caching)
@@ -176,13 +183,21 @@ Cards with no `query` — [HTML](#html-card) and [partial](#self.partial) cards 
 :::
 
 :::info
-If your `query` reads anything the key doesn't cover — `params`, `current_user` — override `cache_key` so those variants don't share an entry:
+`arguments` is deliberately not part of the key. It's fixed at registration time, so a card's position already separates two registrations of the same class.
+
+If your `query` reads something the key doesn't cover, override `cache_hash`:
 
 ```ruby
-def cache_key
-  super + [current_user.id]
+def cache_hash
+  super + [Current.account.id]
 end
 ```
+
+Returning a narrower key is how you opt *into* sharing one entry across users.
+:::
+
+:::warning
+Outside production `Avo.configuration.cache_store` defaults to a file store under `tmp/cache`, which isn't shared between machines — on a multi-server staging environment each server caches on its own. Set `config.cache_store` in the Avo initializer to share it.
 :::
 
 </Option>
