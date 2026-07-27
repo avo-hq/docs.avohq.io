@@ -120,6 +120,27 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
 end
 ```
 
+## Cache an expensive query
+
+When a card's `query` is slow — an aggregate over a large table, a call to an external service — you rarely need it recomputed on every page load. Give it [`cache_for`](./cards-api.html#self.cache_for) and Avo stores the result for that long, skipping the query entirely until it expires.
+
+```ruby{3}
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.id = 'users_metric'
+  self.cache_for = 5.minutes
+
+  def query
+    result User.where(active: true).count
+  end
+end
+```
+
+Each [range](#ranges) is cached separately, and on a resource card each record gets its own entry. If your `query` reads anything else that should vary the result — `params`, the current user — override `cache_key` as shown in the [reference](./cards-api.html#self.cache_for).
+
+:::warning
+Partial and HTML cards build their content at render time instead of running a `query`, so `cache_for` does nothing for them. Wrap the markup in Rails' own `cache` block instead.
+:::
+
 ## Hide the header
 
 In cases where you need to embed some content that should fill the whole card (like a map, for example), you can choose to hide the label and ranges dropdown with [`display_header`](./cards-api.html#self.display_header).
