@@ -185,12 +185,21 @@ for this modifier when you're already passing a `class` string.
 Tightens the padding of the wrapper that surrounds the header, body, and footer.
 </Option>
 
-<Option name="`card--compact-header`">
+<Option name="`card--compact-header-y`">
 
-Reduces only the header padding, leaving the body spacing untouched.
+Shortens the header — reduces its vertical padding only, leaving the horizontal
+padding and the body spacing untouched.
+</Option>
+
+<Option name="`card--compact-header-x`">
+
+Narrows the header — reduces its horizontal padding only.
+
+Split per axis so a card can shorten its header without also narrowing it.
+Compose the two when you want both:
 
 ```erb
-<%= render ui.card(title: "Editor", class: "card--compact-wrapper card--compact-header") do %>
+<%= render ui.card(title: "Editor", class: "card--compact-header-y card--compact-header-x") do %>
   ...
 <% end %>
 ```
