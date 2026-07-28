@@ -207,7 +207,7 @@ link_to "Fish.com", "https://fish.com", icon: "heroicons/outline/academic-cap", 
 
 - **Options:** [`title`](#title), [`style`](#style), [`color`](#color), [`icon`](#icon), [`size`](#size), `target`, `data`, `class`
 
-Only these options are rendered on the link — any other argument (`rel: "noopener"`, etc.) is ignored. Use [`data`](#data) for `data-*` attributes, including the Turbo and Stimulus ones.
+Any argument that isn't a control option — `rel: "noopener"`, `id:`, and so on — is forwarded to the rendered `<a>` tag. Use [`data`](#data) for `data-*` attributes, including the Turbo and Stimulus ones.
 
 #### `target`
 
@@ -246,6 +246,8 @@ end
 - **Default color:** `:primary`
 
 Within the block the permitted elements are `link_to`, `action`, and [`divider`](#divider). Unlike a directly declared `action` control, actions inside a `list` do respect the action's `visible` block.
+
+The dropdown styles its own items, so [`style`](#style), [`color`](#color), and [`size`](#size) have no effect on a nested `link_to` or `action`. [`icon`](#icon), [`label`](#label), and a link's `target`, `data`, `class`, and forwarded HTML attributes all still apply.
 
 :::warning
 Button controls like `back_button` or `edit_button` are not allowed inside a `list` block — in development they raise an error.
