@@ -150,6 +150,10 @@ self.refresh_every = 10.minutes
 On [table](#self.fields)/[list](#self.fields) cards a refresh reloads the whole card, resetting the scroll position of a tall table. Prefer it on short cards.
 :::
 
+:::info
+This controls the interval only. Every card also renders a manual refresh control that needs no configuration — see [Refresh a card on demand](./cards.html#refresh-a-card-on-demand). Refreshing by hand restarts this countdown.
+:::
+
 </Option>
 
 <Option name="`self.cache_for`" headingSize="3">

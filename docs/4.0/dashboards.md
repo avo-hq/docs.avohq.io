@@ -81,6 +81,26 @@ end
 
 Each entry is a number of days; its button label comes from the `avo.<days>` translation key. The default is an empty array (no global range bar).
 
+## Refresh every card at once
+
+Every card [refreshes on its own](cards#refresh-a-card-on-demand) without any setup. A dashboard can also carry a single control that refreshes all of them together — useful on a screen someone leaves up all day. Turn it on with [`refresh_button`](dashboards-api#self.refresh_button):
+
+```ruby{4}
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
+  self.id = "dashy"
+  self.name = "Dashy"
+  self.refresh_button = true
+
+  def cards
+    card Avo::Cards::UsersCount
+  end
+end
+```
+
+The control appears next to the dashboard's title and reloads each card in place, so the page never navigates — scroll position and every card's selected range survive the refresh.
+
+This one is off by default, unlike the per-card control. Refreshing a whole dashboard runs every card's query at once, so it's worth opting in deliberately on dashboards with expensive cards.
+
 ## Cards
 
 Dashboards host cards — metrics, charts, tables, lists, and custom content. You declare them in the `cards` method, as shown in the [generated dashboard](#generate-a-dashboard) above.
