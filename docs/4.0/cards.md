@@ -128,7 +128,7 @@ The control sits at the end of the card header, next to the ranges dropdown. On 
 
 A manual refresh re-runs only that card's query and swaps that card in place — the rest of the page is untouched. It keeps whatever range the viewer has selected rather than snapping back to `initial_range`, and preserves any dashboard filters that are applied.
 
-On a card that also sets `refresh_every`, refreshing by hand restarts that countdown.
+On a card that also sets `refresh_every`, refreshing by hand restarts that countdown. On one that sets [`cache_for`](#cache-an-expensive-query), it bypasses the cache and re-runs the query.
 
 ## Cache an expensive query
 
@@ -146,6 +146,8 @@ end
 ```
 
 Entries are scoped to the current user and tenant, so a card querying `current_user` is safe to cache. Each [range](#ranges) is cached separately too, and on a resource card each record gets its own entry. If your `query` varies on something else, override `cache_key` as shown in the [reference](./cards-api.html#self.cache_for).
+
+Someone clicking the card's [refresh control](#refresh-a-card-on-demand) is asking for current data, so that click re-runs the `query` and rewrites the entry — but only their own, since the key is per user. Automatic `refresh_every` polling still respects `cache_for`, which is what makes the two worth pairing: poll often, query rarely.
 
 :::warning
 Partial and HTML cards build their content at render time instead of running a `query`, so `cache_for` does nothing for them. Wrap the markup in Rails' own `cache` block instead.
