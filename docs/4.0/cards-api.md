@@ -153,7 +153,26 @@ On [table](#self.fields)/[list](#self.fields) cards a refresh reloads the whole 
 :::
 
 :::info
-This controls the interval only. Every card also renders a manual refresh control that needs no configuration — see [Refresh a card on demand](./cards.html#refresh-a-card-on-demand). Refreshing by hand restarts this countdown.
+This controls the interval only. A card can also carry a manual refresh control — see [`self.refresh_button`](#self.refresh_button). Refreshing by hand restarts this countdown.
+:::
+
+</Option>
+
+<Option name="`self.refresh_button`" headingSize="3">
+
+Renders a manual refresh control on the card, so a viewer can bring that one card up to date without reloading the page.
+
+```ruby
+self.refresh_button = true
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+The control sits at the end of the card header, or in the card's top corner when it renders no header. See [Refresh a card on demand](./cards.html#refresh-a-card-on-demand) for how it behaves.
+
+:::info
+Same name and same default as the dashboard's [`refresh_button`](./dashboards-api.html#self.refresh_button), which refreshes every card at once. Setting it on a dashboard does not turn it on for that dashboard's cards — the two are independent.
 :::
 
 </Option>
