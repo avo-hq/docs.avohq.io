@@ -24,7 +24,7 @@ All these settings can be set to a lambda.
 
 The lambda will be executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent`, `resource`, `dashboard` and `card`.
 
-```ruby{2-7}
+```ruby{2-8}
 class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = "users_metric"
   self.label = -> { "Users count" }
@@ -32,12 +32,9 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.discreet_description = -> { "How this number is calculated" }
   self.cols = 1
   self.rows = 1
+  self.display_header = true
 end
 ```
-
-:::warning
-Not every card setting takes a lambda. [`display_header`](./cards-api.html#self.display_header) is a plain boolean — a lambda is always truthy, so `-> { false }` would keep the header. Check the [API reference](./cards-api.html) for each option's type.
-:::
 
 <Image src="/assets/img/4_0/cards/metric.webp" dark-src="/assets/img/4_0/cards/metric-dark.webp" width="353" height="182" alt="An Avo metric card titled “Users count” showing a large number with a range dropdown in its header." />
 
@@ -163,6 +160,12 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = 'users_metric'
   self.display_header = false
 end
+```
+
+Like the other base settings it also takes a block, so the header can come and go with the viewer or the card's parent.
+
+```ruby
+self.display_header = -> { !parent.is_a?(Avo::Dashboards::Kiosk) }
 ```
 
 <Image src="/assets/img/4_0/cards/map.webp" dark-src="/assets/img/4_0/cards/map-dark.webp" width="1428" height="1056" alt="An Avo partial card embedding a Google Maps view of Manhattan, rendered flush to the card edges because the card header is hidden." />

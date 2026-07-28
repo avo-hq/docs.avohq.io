@@ -117,7 +117,9 @@ Whether the card header (label and ranges dropdown) is rendered. Set it to `fals
 self.display_header = false
 ```
 
-- **Type:** Boolean
+As a Proc it has access to `card`, `parent`, `dashboard` (nil when the parent is a resource), and `resource` (nil when the parent is a dashboard).
+
+- **Type:** Boolean (or Proc returning one)
 - **Default:** `true`
 
 </Option>
