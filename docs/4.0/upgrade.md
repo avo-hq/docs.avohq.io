@@ -16,7 +16,7 @@ The sidebar is now [resizable](./customization.html#resizable-sidebar), and as p
 
 **Action required:** None for most apps. If your navigation relied on long labels wrapping, either shorten the labels or point users at the drag handle to widen the sidebar.
 
-Hosts with an accessibility conformance obligation can disable the drag handle with [`sidebar_resizable`](./customization-api.html#sidebar_resizable).
+Hosts with an accessibility conformance obligation can disable the drag handle with [`sidebar[:resizable]`](./customization-api.html#sidebar).
 
 </Option>
 

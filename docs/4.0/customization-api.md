@@ -329,49 +329,30 @@ When a specific key and a group alias target the same view, the specific key win
 
 </Option>
 
-<Option name="`sidebar_toggle_visible`" headingSize="3">
+<Option name="`sidebar`" headingSize="3">
 
-Shows or hides the navbar button that collapses the sidebar on desktop. When `false`, the sidebar stays permanently open on desktop. On mobile the toggle is always visible.
-
-```ruby
-config.sidebar_toggle_visible = false
-```
-
-- **Type:** Boolean
-- **Default:** `true`
-
-</Option>
-
-<Option name="`sidebar_default_width`" headingSize="3">
-
-Width in pixels the desktop sidebar starts at before a user drags it. See the [Resizable sidebar](./customization.html#resizable-sidebar) guide.
+The sidebar's three knobs, in one hash merged over the defaults.
 
 ```ruby
-config.sidebar_default_width = 320
+config.sidebar = {
+  toggle_visible: true, # show the navbar button that collapses the sidebar on desktop
+  resizable: true,      # render the drag-to-resize handle
+  default_width: 256    # width in pixels the desktop sidebar starts at
+}
 ```
 
-Clamped into the same 200–480 range as dragging, so the handle can always drag back to it. A value Avo cannot read as an integer falls back to `256` rather than clamping to the minimum.
+`toggle_visible` — when `false` the sidebar stays permanently open on desktop. On mobile the toggle is always visible.
 
-Applies at `lg` (1024px) and wider only. Below that the sidebar is a full-height overlay and keeps its 256px default, so a wide value cannot cover a small screen. A width the user has dragged to takes precedence over this setting.
+`resizable` — when `false` the handle is neither rendered nor wired up, and the sidebar stays at `default_width`. Resizing is a drag-only gesture and so does not satisfy [WCAG 2.2 SC 2.5.7 (Dragging Movements)](https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html). Set this to `false` if you are working to an AA conformance claim or a VPAT.
 
-- **Type:** Integer
-- **Default:** `256`
-- **Values:** `200`–`480` — values outside the range are clamped; unparseable values fall back to the default
+`default_width` — where the sidebar starts before a user drags it. See the [Resizable sidebar](./customization.html#resizable-sidebar) guide. Clamped into the same 200–480 range as dragging, so the handle can always drag back to it. A value Avo cannot read as an integer falls back to `256` rather than clamping to the minimum. It applies at `lg` (1024px) and wider only — below that the sidebar is a full-height overlay and keeps its 256px default, so a wide value cannot cover a small screen. A width the user has dragged to takes precedence.
 
-</Option>
+- **Type:** Hash, merged over the defaults
+- **Default:** `{ toggle_visible: true, resizable: true, default_width: 256 }`
 
-<Option name="`sidebar_resizable`" headingSize="3">
-
-Whether the sidebar's drag-to-resize handle is rendered. When `false` the handle is neither rendered nor wired up, and the sidebar stays at [`sidebar_default_width`](#sidebar_default_width).
-
-```ruby
-config.sidebar_resizable = false
-```
-
-Resizing is a drag-only gesture and so does not satisfy [WCAG 2.2 SC 2.5.7 (Dragging Movements)](https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html). Set this to `false` if you are working to an AA conformance claim or a VPAT.
-
-- **Type:** Boolean
-- **Default:** `true`
+:::info Replaces `sidebar_toggle_visible`
+`config.sidebar_toggle_visible = false` still works and writes into `config.sidebar[:toggle_visible]`, but `config.sidebar` is the canonical home.
+:::
 
 </Option>
 
