@@ -122,7 +122,16 @@ end
 
 ### Refresh a card on demand
 
-Sometimes an interval is the wrong tool — someone runs an action, comes back, and wants that one number brought up to date now. Every card renders a refresh control for exactly that. There is nothing to configure and no way to opt a card out; it is there on every card type.
+Sometimes an interval is the wrong tool — someone runs an action, comes back, and wants that one number brought up to date now. A card can carry a refresh control for exactly that. Turn it on with [`refresh_button`](./cards-api.html#self.refresh_button):
+
+```ruby{3}
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.id = 'users_metric'
+  self.refresh_button = true
+end
+```
+
+It's off by default, matching the [dashboard-wide button](./dashboards.html#refresh-every-card-at-once). Put it on the cards where re-running the query means something — an HTML or partial card re-renders identical content, so a control there does nothing.
 
 The control sits at the end of the card header, next to the ranges dropdown. On a card that renders no header at all — one with no label, description, or ranges, or one that [hides its header](#hide-the-header) — it floats in the card's top corner instead, so the card keeps its original height.
 

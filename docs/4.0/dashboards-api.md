@@ -113,7 +113,7 @@ self.refresh_button = true
 - **Default:** `false`
 
 :::info
-Off by default because refreshing a dashboard runs every card's query at once. The [per-card control](./cards.html#refresh-a-card-on-demand) needs no opt-in and is always present.
+Off by default because refreshing a dashboard runs every card's query at once. The [per-card control](./cards-api.html#self.refresh_button) is a separate opt-in under the same name — setting one does not set the other.
 :::
 
 </Option>

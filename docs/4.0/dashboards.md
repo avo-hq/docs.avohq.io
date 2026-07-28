@@ -83,7 +83,7 @@ Each entry is a number of days; its button label comes from the `avo.<days>` tra
 
 ## Refresh every card at once
 
-Every card [refreshes on its own](cards#refresh-a-card-on-demand) without any setup. A dashboard can also carry a single control that refreshes all of them together — useful on a screen someone leaves up all day. Turn it on with [`refresh_button`](dashboards-api#self.refresh_button):
+A card can carry [its own refresh control](cards#refresh-a-card-on-demand). A dashboard can also carry a single control that refreshes all of them together — useful on a screen someone leaves up all day. Turn it on with [`refresh_button`](dashboards-api#self.refresh_button):
 
 ```ruby{4}
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
@@ -99,7 +99,9 @@ end
 
 The control appears next to the dashboard's title and reloads each card in place, so the page never navigates — scroll position and every card's selected range survive the refresh.
 
-This one is off by default, unlike the per-card control. Refreshing a whole dashboard runs every card's query at once, so it's worth opting in deliberately on dashboards with expensive cards.
+It's off by default, as the [per-card control](cards-api#self.refresh_button) is. Refreshing a whole dashboard runs every card's query at once, so it's worth opting in deliberately on dashboards with expensive cards.
+
+Setting it here does not turn on the per-card controls; the two are independent, and a dashboard button reloads every card whether or not the cards carry one.
 
 ## Cards
 
