@@ -68,7 +68,7 @@ changes. It's equivalent to adding the `card--padded` CSS modifier via `class`.
 <Option name="`class`">
 
 A list of CSS classes applied to the outer `.card` container. This is also how you
-apply the built-in [variants](#variants).
+apply the built-in [modifiers](#modifiers).
 
 ```erb
 <%= render ui.card(title: "Card", class: "ring-2 ring-blue-500") do %>
@@ -170,9 +170,9 @@ The lowest area of the card, rendered under the body. Handy for actions or pagin
 ```
 </Option>
 
-## Variants
+## Modifiers
 
-Variants are applied through the `class` option. Combine them as needed.
+Modifiers are applied through the `class` option. Combine them as needed.
 
 <Option name="`card--padded`">
 
@@ -180,22 +180,17 @@ Adds the standard body padding. Equivalent to the [`padded`](#padded) option —
 for this modifier when you're already passing a `class` string.
 </Option>
 
-<Option name="`card--compact`">
+<Option name="`card--compact-wrapper`">
 
-Tightens the spacing of the wrapper and header for a denser card.
+Tightens the padding of the wrapper that surrounds the header, body, and footer.
 </Option>
 
 <Option name="`card--compact-header`">
 
 Reduces only the header padding, leaving the body spacing untouched.
-</Option>
-
-<Option name="`card--full-width`">
-
-Makes the card span the full width of its container.
 
 ```erb
-<%= render ui.card(title: "Editor", class: "card--full-width card--compact-header") do %>
+<%= render ui.card(title: "Editor", class: "card--compact-wrapper card--compact-header") do %>
   ...
 <% end %>
 ```
