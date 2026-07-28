@@ -203,12 +203,12 @@ config.container_width = { single: :full, show: :small }
 
 ## Toggle the sidebar button visibility
 
-By default, Avo displays a toggle button in the navbar that allows users to collapse and expand the sidebar on desktop. Hide it with [`sidebar_toggle_visible`](./customization-api.html#sidebar_toggle_visible) — the sidebar then stays permanently open on desktop. On mobile, the sidebar toggle is always visible regardless of this setting.
+By default, Avo displays a toggle button in the navbar that allows users to collapse and expand the sidebar on desktop. Hide it with [`sidebar[:toggle_visible]`](./customization-api.html#sidebar) — the sidebar then stays permanently open on desktop. On mobile, the sidebar toggle is always visible regardless of this setting.
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.sidebar_toggle_visible = false
+  config.sidebar = {toggle_visible: false}
 end
 ```
 
@@ -234,12 +234,12 @@ Resizing is desktop-only. Below the `lg` breakpoint (1024px) the sidebar is a fu
 
 ### Change the starting width
 
-Set [`sidebar_default_width`](./customization-api.html#sidebar_default_width) to change where the sidebar starts before a user drags it — useful when your resource names are consistently long.
+Set [`sidebar[:default_width]`](./customization-api.html#sidebar) to change where the sidebar starts before a user drags it — useful when your resource names are consistently long.
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.sidebar_default_width = 320 # [!code focus]
+  config.sidebar = {default_width: 320} # [!code focus]
 end
 ```
 
@@ -247,12 +247,12 @@ The value is in pixels and is clamped to the same 200–480 range as dragging, s
 
 ### Turn resizing off
 
-Set [`sidebar_resizable`](./customization-api.html#sidebar_resizable) to `false` to remove the handle entirely. The sidebar then stays at its configured width and behaves exactly as it did before.
+Set [`sidebar[:resizable]`](./customization-api.html#sidebar) to `false` to remove the handle entirely. The sidebar then stays at its configured width and behaves exactly as it did before.
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.sidebar_resizable = false # [!code focus]
+  config.sidebar = {resizable: false} # [!code focus]
 end
 ```
 
