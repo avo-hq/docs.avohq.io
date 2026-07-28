@@ -101,6 +101,23 @@ self.global_ranges = [7, 30, 60, 365]
 
 </Option>
 
+<Option name="`self.refresh_button`" headingSize="3">
+
+Renders a control next to the dashboard's title that reloads every card at once. Cards reload in place, so the page never navigates and each card keeps its selected range.
+
+```ruby
+self.refresh_button = true
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+:::info
+Off by default because refreshing a dashboard runs every card's query at once. The [per-card control](./cards.html#refresh-a-card-on-demand) needs no opt-in and is always present.
+:::
+
+</Option>
+
 ## Visibility and authorization
 
 <Option name="`self.visible`" headingSize="3">

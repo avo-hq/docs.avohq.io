@@ -120,6 +120,39 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
 end
 ```
 
+### Refresh a card on demand
+
+Sometimes an interval is the wrong tool — someone runs an action, comes back, and wants that one number brought up to date now. Every card renders a refresh control for exactly that. There is nothing to configure and no way to opt a card out; it is there on every card type.
+
+The control sits at the end of the card header, next to the ranges dropdown. On a card that renders no header at all — one with no label, description, or ranges, or one that [hides its header](#hide-the-header) — it floats in the card's top corner instead, so the card keeps its original height.
+
+A manual refresh re-runs only that card's query and swaps that card in place — the rest of the page is untouched. It keeps whatever range the viewer has selected rather than snapping back to `initial_range`, and preserves any dashboard filters that are applied.
+
+On a card that also sets `refresh_every`, refreshing by hand restarts that countdown. On one that sets [`cache_for`](#cache-an-expensive-query), it bypasses the cache and re-runs the query.
+
+## Cache an expensive query
+
+When a card's `query` is slow — an aggregate over a large table, a call to an external service — you rarely need it recomputed on every page load. Give it [`cache_for`](./cards-api.html#self.cache_for) and Avo stores the result for that long, skipping the query entirely until it expires.
+
+```ruby{3}
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.id = 'users_metric'
+  self.cache_for = 5.minutes
+
+  def query
+    result User.where(active: true).count
+  end
+end
+```
+
+Entries are scoped to the current user and tenant, so a card querying `current_user` is safe to cache. Each [range](#ranges) is cached separately too, and on a resource card each record gets its own entry. If your `query` varies on something else, override `cache_key` as shown in the [reference](./cards-api.html#self.cache_for).
+
+Someone clicking the card's [refresh control](#refresh-a-card-on-demand) is asking for current data, so that click re-runs the `query` and rewrites the entry — but only their own, since the key is per user. Automatic `refresh_every` polling still respects `cache_for`, which is what makes the two worth pairing: poll often, query rarely.
+
+:::warning
+Partial and HTML cards build their content at render time instead of running a `query`, so `cache_for` does nothing for them. Wrap the markup in Rails' own `cache` block instead.
+:::
+
 ## Hide the header
 
 In cases where you need to embed some content that should fill the whole card (like a map, for example), you can choose to hide the label and ranges dropdown with [`display_header`](./cards-api.html#self.display_header).
@@ -129,6 +162,12 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = 'users_metric'
   self.display_header = false
 end
+```
+
+Like the other base settings it also takes a block, so the header can come and go with the viewer or the card's parent.
+
+```ruby
+self.display_header = -> { !parent.is_a?(Avo::Dashboards::Kiosk) }
 ```
 
 <Image src="/assets/img/4_0/cards/map.webp" dark-src="/assets/img/4_0/cards/map-dark.webp" width="1428" height="1056" alt="An Avo partial card embedding a Google Maps view of Manhattan, rendered flush to the card edges because the card header is hidden." />
@@ -382,7 +421,7 @@ class Avo::Cards::ExampleCustomPartial < Avo::Cards::PartialCard
   self.cols = 1
   self.rows = 4
   self.partial = "avo/cards/custom_card"
-  # self.display_header = true
+  # self.display_header = false
 end
 ```
 

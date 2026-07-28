@@ -117,7 +117,9 @@ Whether the card header (label and ranges dropdown) is rendered. Set it to `fals
 self.display_header = false
 ```
 
-- **Type:** Boolean
+As a Proc it has access to `card`, `parent`, `dashboard` (nil when the parent is a resource), and `resource` (nil when the parent is a dashboard).
+
+- **Type:** Boolean (or Proc returning one)
 - **Default:** `true`
 
 </Option>
@@ -148,6 +150,64 @@ self.refresh_every = 10.minutes
 
 :::warning
 On [table](#self.fields)/[list](#self.fields) cards a refresh reloads the whole card, resetting the scroll position of a tall table. Prefer it on short cards.
+:::
+
+:::info
+This controls the interval only. Every card also renders a manual refresh control that needs no configuration — see [Refresh a card on demand](./cards.html#refresh-a-card-on-demand). Refreshing by hand restarts this countdown.
+:::
+
+</Option>
+
+<Option name="`self.cache_for`" headingSize="3">
+
+Caches the result of the card's `query` for that duration. Within the window the query is skipped entirely and the stored result is replayed — useful for cards whose `query` is expensive.
+
+```ruby
+class Avo::Cards::UsersCount < Avo::Cards::MetricCard
+  self.cache_for = 5.minutes # [!code focus]
+
+  def query
+    result User.where(active: true).count
+  end
+end
+```
+
+Avo caches through `Avo.configuration.cache_store`. The key is scoped to the current user and tenant, so a card querying `current_user` never serves one user's data to another. In full, it covers:
+
+| Part | Why |
+| --- | --- |
+| Card class, parent, and position | Separates cards, and two registrations of the same class |
+| [`range`](#self.ranges) and the dashboard's global range | Each range is its own result |
+| Current user and tenant | Keeps per-user and per-tenant queries apart |
+| The resource's view and record | A [resource card](./cards.html) caches per record and per view |
+
+- **Type:** `ActiveSupport::Duration` (or seconds as an Integer), or a Proc returning one
+- **Default:** `nil` (no caching)
+
+:::info
+The card's [refresh control](./cards.html#refresh-a-card-on-demand) bypasses the cache: clicking it re-runs the `query` and rewrites the entry, so the card never animates over a stale value. Because the key is per user, that only busts the clicker's own entry. [`self.refresh_every`](#self.refresh_every) polling does *not* bypass it — pair the two to poll a card often while querying rarely.
+:::
+
+:::warning
+Cards with no `query` — [HTML](#html-card) and [partial](#self.partial) cards — build their content at render time, so `cache_for` does nothing for them. Wrap the markup in Rails' own `cache` block instead.
+:::
+
+:::info
+`arguments` is deliberately not part of the key. It's fixed at registration time, so a card's position already separates two registrations of the same class.
+
+If your `query` reads something the key doesn't cover, override `cache_key`:
+
+```ruby
+def cache_key
+  super + [Current.account.id]
+end
+```
+
+Returning a narrower key is how you opt *into* sharing one entry across users.
+:::
+
+:::warning
+Outside production `Avo.configuration.cache_store` defaults to a file store under `tmp/cache`, which isn't shared between machines — on a multi-server staging environment each server caches on its own. Set `config.cache_store` in the Avo initializer to share it.
 :::
 
 </Option>
@@ -484,12 +544,13 @@ def cards
     rows: 2,
     visible: -> { true },
     refresh_every: 2.minutes,
+    cache_for: 5.minutes,
     chart_options: {library: {plugins: {legend: {display: true}}}},
     arguments: {active_users: true}
 end
 ```
 
-- **Overridable keys:** `label`, `description`, `discreet_description`, `cols`, `rows`, `refresh_every`, `visible`, `chart_options`, `arguments`
+- **Overridable keys:** `label`, `description`, `discreet_description`, `cols`, `rows`, `refresh_every`, `cache_for`, `visible`, `chart_options`, `arguments`
 
 </Option>
 
