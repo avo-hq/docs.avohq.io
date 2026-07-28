@@ -182,6 +182,10 @@ Avo caches through `Avo.configuration.cache_store`. The key is scoped to the cur
 - **Type:** `ActiveSupport::Duration` (or seconds as an Integer), or a Proc returning one
 - **Default:** `nil` (no caching)
 
+:::info
+The card's [refresh control](./cards.html#refresh-a-card-on-demand) bypasses the cache: clicking it re-runs the `query` and rewrites the entry, so the card never animates over a stale value. Because the key is per user, that only busts the clicker's own entry. [`self.refresh_every`](#self.refresh_every) polling does *not* bypass it — pair the two to poll a card often while querying rarely.
+:::
+
 :::warning
 Cards with no `query` — [HTML](#html-card) and [partial](#self.partial) cards — build their content at render time, so `cache_for` does nothing for them. Wrap the markup in Rails' own `cache` block instead.
 :::
