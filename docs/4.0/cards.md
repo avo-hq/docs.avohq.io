@@ -124,7 +124,7 @@ end
 
 Sometimes an interval is the wrong tool — someone runs an action, comes back, and wants that one number brought up to date now. Every card renders a refresh control for exactly that. There is nothing to configure and no way to opt a card out; it is there on every card type.
 
-The control sits at the end of the card header, next to the ranges dropdown. On a card that renders no header at all, it floats in the card's top corner instead, so the card keeps its original height.
+The control sits at the end of the card header, next to the ranges dropdown. On a card that renders no header at all — one with no label, description, or ranges, or one that [hides its header](#hide-the-header) — it floats in the card's top corner instead, so the card keeps its original height.
 
 A manual refresh re-runs only that card's query and swaps that card in place — the rest of the page is untouched. It keeps whatever range the viewer has selected rather than snapping back to `initial_range`, and preserves any dashboard filters that are applied.
 
@@ -160,6 +160,12 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
   self.id = 'users_metric'
   self.display_header = false
 end
+```
+
+Like the other base settings it also takes a block, so the header can come and go with the viewer or the card's parent.
+
+```ruby
+self.display_header = -> { !parent.is_a?(Avo::Dashboards::Kiosk) }
 ```
 
 <Image src="/assets/img/4_0/cards/map.webp" dark-src="/assets/img/4_0/cards/map-dark.webp" width="1428" height="1056" alt="An Avo partial card embedding a Google Maps view of Manhattan, rendered flush to the card edges because the card header is hidden." />
@@ -413,7 +419,7 @@ class Avo::Cards::ExampleCustomPartial < Avo::Cards::PartialCard
   self.cols = 1
   self.rows = 4
   self.partial = "avo/cards/custom_card"
-  # self.display_header = true
+  # self.display_header = false
 end
 ```
 
