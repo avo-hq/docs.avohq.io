@@ -75,6 +75,25 @@ end
 
 You can purchase a license from the [pricing](https://avohq.io/pricing) page.
 
+## Trials
+
+A trial is a fully valid license. Every add-on it covers behaves exactly as it does on a paid license for as long as the trial runs, and nothing in your app is gated or degraded while it does.
+
+The [license status page](./license-troubleshooting.html#check-the-license-status-page) is where the trial reports itself: when access stops, and whether a payment method is on file. It also says when this app last checked in with Avo HQ, because the state you're reading is the one from that check.
+
+### Fix a trial at risk
+
+The **Avo Status** indicator in the sidebar footer is green while everything is in order, amber while a trial needs attention, and orange when the license is invalid. Amber means one of two things, and the remedy is different for each:
+
+- **No payment method on file.** Access stops on the trial's end date. Add a payment method on the [Avo HQ Licenses](https://avohq.io/licenses) page.
+- **The subscription behind the trial was cancelled.** Access stops on the cancellation date, which the status page reports as the trial's end date. Adding a payment method does not change that — resume the subscription, or resubscribe, on the same page.
+
+The status page spells out which of the two you're in and lists the steps for it. Once you've done them, press **Refresh license** on that page: Avo caches the license response between checks, so the app can show older billing state than avohq.io until it refreshes.
+
+:::info
+Trial state requires `avo-licensing` `4.0.10` or newer. The amber indicator requires Avo `4.0.20` or newer — an older Avo renders the dot without color rather than breaking.
+:::
+
 ## License validation
 
 ### "Phone home" mechanism

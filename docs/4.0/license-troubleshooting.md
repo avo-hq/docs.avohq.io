@@ -30,6 +30,14 @@ In order to check that, use the status page described above.
 
 </Option>
 
+<Option name="The sidebar status indicator is amber">
+
+Amber is not a license failure — it's a running trial that needs attention, either because no payment method is on file or because the subscription behind it was cancelled. Access continues until the date the status page reports.
+
+The status page names which of the two applies and lists the steps. See [Licensing → Fix a trial at risk](./licensing.html#fix-a-trial-at-risk) for the full picture.
+
+</Option>
+
 <Option name="License check blocked in the test suite">
 
 Avo 4 verifies the license through an outbound request to `clerk-1.avohq.io` (falling back to `clerk-2.avohq.io`). If your test suite disables outbound network connections (for example with WebMock or VCR `disable_net_connect!`), that request is blocked and unrelated tests fail with `WebMock::NetConnectNotAllowedError`.
