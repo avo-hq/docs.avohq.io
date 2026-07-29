@@ -30,6 +30,32 @@ Hosts with an accessibility conformance obligation can disable the drag handle w
 
 </Option>
 
+## Upgrade to `avo-dashboards` `4.0.9`
+
+<Option name="The per-card refresh control is opt-in">
+
+### Breaking Change
+
+`avo-dashboards` `4.0.8` rendered a [refresh control](./cards.html#refresh-a-card-on-demand) on every card, with no way to remove it — including on `html` and static `partial` cards, where refreshing re-renders identical content. The control is now off by default and turns on per card with [`refresh_button`](./cards-api.html#self.refresh_button), the same name and the same default as the [dashboard-wide control](./dashboards-api.html#self.refresh_button) that shipped alongside it.
+
+**Action required:** None unless you were on `4.0.8` and want the control kept on a card.
+
+### Maintaining Previous Behavior
+
+Turn it back on for each card that should keep it:
+
+```ruby
+# app/avo/cards/users_metric.rb
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.id = 'users_metric'
+  self.refresh_button = true # [!code ++]
+end
+```
+
+Setting it on a dashboard does not turn it on for that dashboard's cards — the two controls are independent opt-ins under the same name.
+
+</Option>
+
 ## Upgrade to 4.0.18
 
 <Option name="Resource and field translations are used verbatim">
