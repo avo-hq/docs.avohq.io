@@ -159,12 +159,13 @@ RubyLLM forwards these through `with_thinking`. Provider behavior varies:
 ## Limiting the assistant to your application
 
 The assistant is meant to answer questions about **your app's data**, not to be a general-purpose
-chatbot. That boundary is set by the system prompt — `Avo::Intelligence::ChatResponseJob::INSTRUCTIONS`,
-the one place that governs what the assistant is willing to talk about. Its `Scope` section tells the
-model to only help with things one of its tools could serve — querying, creating, updating, and
-deleting the records exposed by your Avo resources — and to decline everything else (general
-knowledge, coding help, creative writing, math, opinions, role-play) in one sentence and redirect
-back to the app.
+chatbot. That boundary is set by the `Scope` section of the system prompt, which tells the model to
+only help with things one of its tools could serve — querying, creating, updating, and deleting the
+records exposed by your Avo resources — and to decline everything else (general knowledge, coding
+help, creative writing, math, opinions, role-play) in one sentence and redirect back to the app.
+
+See [Prompt management](./intelligence-prompt-management.html) for how to change that text: append
+to it, replace it, eject the file and edit it, or run with no prompt at all.
 
 :::warning
 This is a prompt-level (soft) boundary, not a hard gate. It reliably keeps the assistant on task for
@@ -188,9 +189,10 @@ Worth knowing if you customize the prompt:
   call that gates out-of-scope prompts with a canned reply. The prompt alone can't promise it.
 
 :::info
-The response job runs `:async` — inside the web process by default — so **restart the server** after
-editing the instructions, and test the change in a **fresh chat**. An existing thread replays its
-history and can mask the new behavior.
+Editing a prompt file needs **no restart** — it is read on every render, and nothing in the chain
+caches it. Do test changes in a **fresh chat** though: an existing thread replays its history and
+can mask the new behavior. Editing the *initializer* does need a restart, since
+`Avo::Intelligence.configure` only runs at boot.
 :::
 
 ## What you get
@@ -219,3 +221,13 @@ Admin CRUD resources for browsing that data ship in the add-on too, namespaced u
 
 They aren't added to your `main_menu` automatically — the install generator prints a snippet for
 that.
+
+## Customizing the assistant
+
+Two parts of the add-on carry enough configuration to have their own pages:
+
+- [Prompt management](./intelligence-prompt-management.html) — appending to the system prompt,
+  replacing it, ejecting the ERB files to edit our wording, or swapping the agent class outright.
+- [Resource scoping](./intelligence-resource-scoping.html) — `config.excluded_resources`, which
+  takes a resource off the assistant's map entirely. Enforced in the tools, not asked for in the
+  prompt.
