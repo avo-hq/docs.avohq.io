@@ -349,6 +349,10 @@ const config = {
               text: "Collaboration",
               link: "/4.0/collaboration.html",
             },
+            {
+              text: "Intelligence",
+              link: "/4.0/intelligence.html",
+            },
           ]
         },
         {
