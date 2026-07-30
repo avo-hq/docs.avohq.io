@@ -106,6 +106,61 @@ Each option falls back to an environment variable when unset, so you can configu
 
 When both are unset, no thinking parameters are sent to the provider.
 
+## Customize the assistant's instructions
+
+The assistant's system prompt is built from ERB files that ship inside the gem, under `app/prompts/`. They resolve like Rails views: a file in your application at the same relative path replaces the gem's copy. If you configure nothing, the shipped prompt is used as is.
+
+:::warning
+Instructions are guidance for the model, not a security boundary. What the assistant can actually read and write is enforced by its tools and your Avo authorization policies — never rely on prompt text to hide or protect data.
+:::
+
+### Add your own instructions
+
+To add rules on top of the shipped prompt, eject the `extra_instructions` file:
+
+```bash
+bin/rails generate avo:intelligence:eject extra_instructions
+```
+
+This creates `app/prompts/avo/intelligence/chat_agent/extra_instructions.txt.erb` in your application. Whatever you write in it is appended to the end of the chat assistant's system prompt. The gem's own copy is empty, so until you edit the file nothing changes.
+
+This is the place for the things the assistant can't learn from your schema:
+
+```erb
+<%# app/prompts/avo/intelligence/chat_agent/extra_instructions.txt.erb %>
+Domain vocabulary:
+- "Churned" customers are those with a cancelled subscription — use the
+  Customer resource's cancelled scope, not a column filter.
+- When the user says "orders", they mean the Purchase resource.
+
+Style:
+- Amounts are stored in cents. Always display them as EUR.
+- Answer in the same language the user writes in.
+```
+
+The file is ERB, so you can interpolate anything your app knows — `Rails.application.credentials`, `ENV`, your own configuration. Two locals are also available: `user`, the signed-in user the chat belongs to, and `chat`, the `Avo::Intelligence::Chat` record. That makes per-role instructions a conditional:
+
+```erb
+<%# app/prompts/avo/intelligence/chat_agent/extra_instructions.txt.erb %>
+<% if user.support_agent? %>
+Only suggest read-only queries; never offer to change records.
+<% end %>
+```
+
+Interpolate specific attributes — `<%= user.first_name %>` — never the whole object; only what you interpolate ends up in the prompt.
+
+### Replace the shipped prompts
+
+For full control, eject every prompt file the gem ships:
+
+```bash
+bin/rails generate avo:intelligence:eject instructions
+```
+
+This copies all prompt files — the chat assistant's instructions and sub-prompts, plus the conversation-renamer's — into `app/prompts/avo/intelligence/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
+
+The shipped `instructions.txt.erb` ends with an `<%= extra_instructions %>` slot. If you replace it, your copy decides whether to keep that slot — remove the line and the `extra_instructions` file is ignored.
+
 ## Debug levels
 
 How much of the assistant's internal work a viewer may see is an authorization decision, not a preference — the people chatting may be your customers, and the system prompt contains the rules that defend against jailbreaks.
@@ -130,5 +185,7 @@ No policy, no `#debug_level` method, an unrecognized value, or any error inside 
 ## What the assistant can do
 
 The assistant works through tools that run against your actual data: querying records, inspecting them, and creating, updating, or deleting them. Writes go through a confirmation flow — the assistant shows a card describing the pending change and only executes after you confirm. Every executed write is recorded in an audit log with undo support.
+
+A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message.
 
 Tool calls respect your Avo authorization setup: per-resource and per-field policies apply to what the assistant can read and write, scoped to the signed-in user who owns the chat.
