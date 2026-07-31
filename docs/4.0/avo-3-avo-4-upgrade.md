@@ -72,7 +72,7 @@ Assuming you are upgrading your Avo 3 app, you need to do three things:
 
 ### Upgrade your Ruby version
 
-Avo 4 requires **Ruby 3.2 or newer**, up from 3.1 in Avo 3.
+Avo 4 requires **Ruby 3.2 or newer**.
 
 Avo 4 depends on [`pagy`](https://rubygems.org/gems/pagy) `>= 43.0` for pagination, and every `pagy 43` release requires Ruby `>= 3.2`.
 
