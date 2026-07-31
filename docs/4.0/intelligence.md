@@ -265,9 +265,27 @@ The list is scoped to the signed-in user. It's not an admin view of everyone's c
 
 ## Dictate a message
 
-The microphone in the composer transcribes speech into the message box: click to start, click to stop. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
+The microphone in every composer — the bar, the new-chat page, and open conversations — transcribes speech into the message box: click to start, click to stop. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
 
-It uses the browser's built-in speech recognition, so it needs no API key and sends nothing to your provider. The button only appears in browsers that support the Web Speech API — Chrome, Edge, and Safari today; in Firefox there's no microphone in the toolbar.
+Minimizing the chat window ends an open session, so the mic never keeps listening behind a closed window.
+
+It dictates in your admin's language: the recognizer follows the page's `lang` attribute, falling back to the browser's own language setting.
+
+### Browser support, and where the audio goes
+
+Dictation is the browser's built-in [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API), not something the assistant does. There's no API key to set, and neither Avo nor your LLM provider ever sees the audio — they only get the finished text, and only when you send the message. Who *does* see it depends entirely on the browser, and they don't answer alike:
+
+| Browser         | Support                | Where recognition runs                                                                                                                                     |
+| --------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Safari          | 14.1+ macOS, 14.5+ iOS | Apple's speech stack — on device where the language and hardware allow it, Apple's servers otherwise. Safari asks the first time, and the prompt says as much. |
+| Chrome, Edge    | Yes                    | Google's speech service: the audio is uploaded, so dictation needs a connection. Chrome 139 added an opt-in on-device mode, which Avo doesn't request.        |
+| Firefox         | No                     | Nowhere — unimplemented, behind a disabled `dom.webspeech.recognition.enable` flag.                                                                          |
+
+The microphone only renders where the API exists, so Firefox users get a composer with no mic rather than a button that does nothing.
+
+:::warning
+In Chrome and Edge, dictating means uploading admin-panel audio to Google. If that doesn't fit your compliance story, tell your admins to dictate in Safari — there's no gem setting that changes it, because the browser owns the audio path.
+:::
 
 ## Copy a message
 
@@ -275,9 +293,9 @@ Hover any message and a copy button appears beneath it. It copies the raw text t
 
 ## Choose which models people can use
 
-By default a new chat runs on the model you configured in `config/initializers/ruby_llm.rb`, and there is no model picker — the RubyLLM registry is thousands of models long, which is not a dropdown.
+By default a chat runs on the model you configured in `config/initializers/ruby_llm.rb`, and there is no model picker — the RubyLLM registry is thousands of models long, which is not a dropdown.
 
-Give your `Avo::Intelligence::ChatPolicy` an `#available_models` method to curate a shortlist. The composer then shows a picker with exactly those models:
+Give your `Avo::Intelligence::ChatPolicy` an `#available_models` method to curate a shortlist. Every composer — the bar, the new-chat page, and open conversations — then shows a picker with exactly those models:
 
 ```ruby
 # app/policies/avo/intelligence/chat_policy.rb
@@ -285,25 +303,73 @@ class Avo::Intelligence::ChatPolicy < ApplicationPolicy
   def available_models
     return nil if user.admin? # every model in the registry
 
-    ["gpt-4o-mini", "claude-haiku-4-5", "gemini-2.5-flash"]
+    [
+      {model: "claude-haiku-4-5", provider: :anthropic},
+      {model: "claude-sonnet-5", provider: :anthropic},
+      {model: "gpt-4o-mini", provider: :openai},
+      {model: "claude-opus-4-8", provider: :anthropic},
+      {model: "gemini-2.5-flash", provider: :gemini}
+    ]
   end
 end
 ```
 
-The values are RubyLLM registry model ids. Browse the ones your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all`.
+Each entry names a RubyLLM registry model, and `provider:` says which provider serves it. Browse what your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all.map { |m| [m.id, m.provider] }`.
 
-| Return value                   | What happens                                                                  |
-| ------------------------------ | ----------------------------------------------------------------------------- |
-| `nil`, or no method at all     | Every model in the registry, no picker, new chats use the configured default.  |
-| A list of two or more ids      | The picker offers exactly those.                                              |
-| A list of one id               | No picker — there's no choice to make — and every new chat runs on that model. |
-| A list matching no known model | Ignored, with a warning in the logs, so a typo can't lock the assistant up.    |
+A bare id works too — `"gpt-4o-mini"` instead of the pair — and is the shorter thing to write when the id is unambiguous. Naming the provider is worth the extra keys anyway: several ids are served by more than one provider, and [pinning](#pinning-the-provider) is how you say which one your app talks to.
 
-The list is enforced when the chat is created, not just in the picker — a user can't start a chat on a model you withheld by crafting the request themselves. The configured default model stays available only if your list includes it.
+| Return value                        | What happens                                                                  |
+| ----------------------------------- | ----------------------------------------------------------------------------- |
+| `nil`, or no method at all          | Every model in the registry, no picker, chats use the configured default.      |
+| Two or more entries                 | The picker offers exactly those, in the order you listed them.                 |
+| One entry                           | No picker — there's no choice to make — and every chat runs on that model.     |
+| A list containing an unknown entry  | That entry is dropped; the rest of the list stands. The log names it.          |
+| A list of nothing but unknown entries | No model to start a chat on, and chat creation is refused.                   |
+
+Your list is taken **exactly**. Three things follow from that, and they're the ones worth knowing:
+
+- **Order is yours.** The picker reads back in the order you wrote, not alphabetically, and **the first entry is what a new chat starts on**. Put the model you want people reaching for at the top. There's no "the configured default" entry in the picker — it would only ever name a model already in your list.
+- **Ids must match character for character.** No aliases, no near matches. `claude-sonnet-4-8` doesn't become `claude-sonnet-4-6` because you meant it to.
+- **An unknown entry is simply absent.** It doesn't widen the catalog back to the whole registry — the log names it (`ChatPolicy#available_models lists unknown chat models: …`) and the rest of your list stands. A list of nothing but typos leaves no model to chat on, and chat creation is refused rather than quietly falling back to one you never granted.
+
+The list is enforced on every chat create **and** every message, not just in the picker — the picker is UI, the server re-checks. A user can't start a chat on, or switch a chat onto, a model you withheld by crafting the request themselves.
+
+### Pinning the provider
+
+`provider:` is what makes the pair worth writing. Several ids are served by more than one provider — `gemini-2.5-flash` comes through both Gemini and VertexAI, and much of Anthropic's catalog is also on Bedrock and VertexAI — and the key says which one your app talks to.
+
+Leave it off and the id still resolves, just not to a provider you chose: RubyLLM picks by its own preference order (OpenAI, Anthropic, Gemini, VertexAI, Bedrock, OpenRouter, …), exactly as if you had handed the bare id to `RubyLLM.chat`.
+
+```ruby
+def available_models
+  [
+    "gpt-4o-mini", # whichever provider RubyLLM prefers for this id
+    {model: "gemini-2.5-flash", provider: :vertexai} # [!code focus] VertexAI's, not Gemini's
+  ]
+end
+```
+
+Provider is its own key rather than part of the string — the same shape RubyLLM uses everywhere (`RubyLLM.chat(model:, provider:)`), and the only workable one here, since real model ids already contain both `/` (OpenRouter) and `@` (VertexAI).
+
+Each id appears once in the picker either way: pinned, it's the provider you named; unpinned, it's the one RubyLLM prefers. Both the chat and each of its messages store the provider alongside the model, so the transcript says where every answer came from.
 
 :::info
-This governs which models a chat can be *started* on. It doesn't re-home existing conversations: a chat already running on a model keeps running on it, even if you later drop that model from the list.
+A pinned pair whose provider doesn't carry that model is dropped like any other unknown entry, and the log names both halves — `model-id (provider)`.
 :::
+
+:::warning
+Pin only a provider you have configured. RubyLLM validates the provider's credentials when the chat is created, so pinning `provider: :vertexai` without VertexAI keys in `config/initializers/ruby_llm.rb` raises `RubyLLM::ConfigurationError` on the first chat rather than at boot.
+:::
+
+### Switching model mid-conversation
+
+The picker stays in the composer once the chat exists, so a conversation can change models partway through: pick another model and send.
+
+The switch takes effect from that message on. The transcript so far is replayed to the new model — nothing is lost, and the new model answers with the whole conversation in view — and each message records which model wrote it.
+
+The picker is disabled while the assistant is responding; the model is yours to change on your turn.
+
+A chat keeps running on its model even if you later drop that model from `#available_models`. Its own picker still lists it — otherwise the dropdown would misreport what the next message runs on — and re-picking it is a no-op, so the conversation is never stranded. But nobody can switch a chat *onto* a model you've withdrawn.
 
 ## Who can delete a chat
 
