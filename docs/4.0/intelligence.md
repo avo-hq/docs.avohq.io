@@ -43,6 +43,17 @@ bin/rails db:migrate
 
 This creates the `avo_intelligence_*` tables and writes `config/initializers/ruby_llm.rb` (skipped if it already exists).
 
+:::warning Already installed an earlier alpha?
+The installer only ever writes the initial migration, so a schema created by an earlier version won't pick up columns added since. `avo_intelligence_chats.attached_context` is the current one — it's where a chat stores [the record it was started from](#the-record-you-start-from). Add it by hand:
+
+```bash
+bin/rails generate migration AddAttachedContextToAvoIntelligenceChats attached_context:jsonb
+bin/rails db:migrate
+```
+
+Without it, starting a chat raises on the unknown attribute.
+:::
+
 ### 3. Set your provider API key
 
 The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by default and pins `model_registry_class` to `Avo::Intelligence::Model` — that setting is required, don't remove it.
@@ -106,6 +117,20 @@ Each option falls back to an environment variable when unset, so you can configu
 
 When both are unset, no thinking parameters are sent to the provider.
 
+## How the assistant works
+
+Every message you send starts a fresh turn against the provider, built from three things: a system prompt, the conversation so far, and a set of tools. The model can't see your database — it only ever learns about your data by calling a tool and reading what comes back.
+
+**The system prompt is rebuilt on every turn.** It's assembled from the ERB files under `app/prompts/`, so it always reflects the current date, the signed-in user, the record the chat is attached to, and any instructions you've added. Nothing about your schema is baked in ahead of time.
+
+**It inspects before it queries.** The first time a conversation touches a resource, the assistant asks for that resource's real columns, associations, and scopes, then builds its query from the answer. This is enforced by the tools, not merely requested in the prompt: the query and write tools refuse to run against a resource that hasn't been inspected in this conversation. It's why the first question about a resource takes an extra beat, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters.
+
+**Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. When a query returns exactly one record, the UI renders a card for it — title and a link — and the assistant is told not to repeat the fields in prose.
+
+**Writing.** Updates and deletes show you a card describing the change and run only when you click Confirm; the click applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
+
+**Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
+
 ## Customize the assistant's instructions
 
 The assistant's system prompt is built from ERB files that ship inside the gem, under `app/prompts/`. They resolve like Rails views: a file in your application at the same relative path replaces the gem's copy. If you configure nothing, the shipped prompt is used as is.
@@ -149,6 +174,21 @@ Only suggest read-only queries; never offer to change records.
 
 Interpolate specific attributes — `<%= user.first_name %>` — never the whole object; only what you interpolate ends up in the prompt.
 
+### Rename the assistant
+
+Out of the box the assistant introduces itself as Avo. Its name and one-line role live in a prompt file of their own, so you can rebrand it without replacing the rest of the instructions. Create the file at the same relative path in your application:
+
+```erb
+<%# app/prompts/avo/intelligence/chat_agent/identity.txt.erb %>
+You are Ada, an assistant embedded in the Acme admin panel. You answer questions
+about the application's data using the tools available to you. If the user asks
+your name or who you are, say you are Ada.
+```
+
+Your copy replaces the shipped one entirely. Keep the "answer using your tools" sentence in some form — it anchors the assistant to the app's data — and change the name freely.
+
+The avocado next to the name is a view, not a prompt — see [Replace the assistant's icon](#replace-the-assistant-s-icon).
+
 ### Replace the shipped prompts
 
 For full control, eject every prompt file the gem ships:
@@ -160,6 +200,133 @@ bin/rails generate avo:intelligence:eject instructions
 This copies all prompt files — the chat assistant's instructions and sub-prompts, plus the conversation-renamer's — into `app/prompts/avo/intelligence/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
 
 The shipped `instructions.txt.erb` ends with an `<%= extra_instructions %>` slot. If you replace it, your copy decides whether to keep that slot — remove the line and the `extra_instructions` file is ignored.
+
+## Replace the assistant's icon
+
+The avocado is a single partial, rendered everywhere the assistant appears: the **Agent** button, the collapsed bar, the empty state on new and full-page chats, and the *Open in assistant bar* button on a chat's record page. Create the same path in your application and all of them change at once:
+
+```erb
+<%# app/views/avo/intelligence/_avocado_icon.html.erb %>
+<%= svg "tabler/outline/robot", class: local_assigns.fetch(:classes, "size-4") %>
+```
+
+An image file works the same way:
+
+```erb
+<%# app/views/avo/intelligence/_avocado_icon.html.erb %>
+<%= image_tag "assistant-mark.svg", class: local_assigns.fetch(:classes, "size-4") %>
+```
+
+Each place that renders the icon passes a `classes` local, because the sizes differ — `size-4` in the bar, `size-6` on the empty states. Pass it through to whatever you render, as both examples do, or the icon comes out the wrong size in half of them.
+
+The icon on the chat pages' breadcrumb isn't part of the partial and stays an avocado.
+
+## The record you start from
+
+Start a conversation from a record's page and the assistant already knows which record you mean. You can ask "who owns this?", "what is this?", or "rename this to Q3 pricing" without naming the record or waiting for a lookup.
+
+A ribbon above the composer names the record, so it's never a guess: the resource and the record's title, sitting behind the message box. On pages that aren't a single record — an index, a dashboard, a new-record form — there is no ribbon and no button, because there is nothing to attach.
+
+**The record stays attached for the whole conversation.** It's the record the chat was *started from*, so you're asked once, when the chat begins — that's why the ribbon is on the new-chat composer only. Every later message still resolves "this record", "it", or a question with no subject at all against the same record. Ask "what is this?" as the fifth message and it works exactly as it does as the first.
+
+Dismiss the ribbon with the ✕ at its end and the chat starts without it. The button next to send toggles it back on, and lights up whenever the record is attached, so the ribbon and the button always agree about what the chat will carry. Every fresh compose view offers the record again: the ✕ applies to the chat you're writing, not to the feature.
+
+It respects your policies, on every message. Only a reference is kept — the resource name and the record id, never the title or any field value. That reference is resolved again on each turn, through the same authorization the assistant's other tools use (`index?` plus your Pundit scope), and the record's title is read fresh at that moment. So a record the user loses access to, or that gets deleted mid-conversation, simply drops out of the prompt instead of lingering as a stale copy of something they can no longer see. The attachment is only a starting point either way — every read and write the assistant then performs is authorized on its own.
+
+The wording lives in a prompt file like the rest, so you can change how the assistant treats it:
+
+```bash
+bin/rails generate avo:intelligence:eject instructions
+```
+
+Then edit `app/prompts/avo/intelligence/chat_agent/attached_context.txt.erb`. It receives an `attached_record` local — `{resource:, record_id:, label:}`, or `nil` when the conversation wasn't started from a record — and rendering nothing is a valid way to turn the feature off.
+
+## Open the chat
+
+The chat bar sits at the bottom of every Avo page. **Cmd+J** (or **Ctrl+J**) opens it from anywhere, including from inside a field you're typing in — that's the point, so you can pull the assistant up mid-edit without losing your place. Clicking **Agent** does the same.
+
+Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. Drag a pill to reorder them. The chat window lines its end edge up with the pill it was opened from and slides across when you switch, so it's always clear which conversation you're looking at. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. The open chats, their order, and the collapsed state are all remembered per device.
+
+Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way.
+
+To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Back to chat window** hands the conversation back to the floating bar and returns you to the page you opened it from. It only appears when there's somewhere to go back to — open a chat page directly, from a link or a bookmark, and there's no back control.
+
+A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message.
+
+:::info
+Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {enabled: false}` in `config/initializers/avo.rb`, the shortcut is off along with the rest — the Agent button still works.
+:::
+
+## Full-page chats
+
+Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` with the default mount). The list shows every chat you own — its model, message count, and age — and links to the conversation. It's the same chat as in the bar: same messages, same tools, same streaming, with room to read.
+
+The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Intelligence::Chat` resource from the sidebar.
+
+## Dictate a message
+
+The microphone in the composer transcribes speech into the message box: click to start, click to stop. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
+
+It uses the browser's built-in speech recognition, so it needs no API key and sends nothing to your provider. The button only appears in browsers that support the Web Speech API — Chrome, Edge, and Safari today; in Firefox there's no microphone in the toolbar.
+
+## Copy a message
+
+Hover any message and a copy button appears beneath it. It copies the raw text the assistant produced — the markdown it wrote, not the rendered HTML — so pasting it into an issue or an editor keeps the formatting.
+
+## Choose which models people can use
+
+By default a new chat runs on the model you configured in `config/initializers/ruby_llm.rb`, and there is no model picker — the RubyLLM registry is thousands of models long, which is not a dropdown.
+
+Give your `Avo::Intelligence::ChatPolicy` an `#available_models` method to curate a shortlist. The composer then shows a picker with exactly those models:
+
+```ruby
+# app/policies/avo/intelligence/chat_policy.rb
+class Avo::Intelligence::ChatPolicy < ApplicationPolicy
+  def available_models
+    return nil if user.admin? # every model in the registry
+
+    ["gpt-4o-mini", "claude-haiku-4-5", "gemini-2.5-flash"]
+  end
+end
+```
+
+The values are RubyLLM registry model ids. Browse the ones your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all`.
+
+| Return value                   | What happens                                                                  |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| `nil`, or no method at all     | Every model in the registry, no picker, new chats use the configured default.  |
+| A list of two or more ids      | The picker offers exactly those.                                              |
+| A list of one id               | No picker — there's no choice to make — and every new chat runs on that model. |
+| A list matching no known model | Ignored, with a warning in the logs, so a typo can't lock the assistant up.    |
+
+The list is enforced when the chat is created, not just in the picker — a user can't start a chat on a model you withheld by crafting the request themselves. The configured default model stays available only if your list includes it.
+
+:::info
+This governs which models a chat can be *started* on. It doesn't re-home existing conversations: a chat already running on a model keeps running on it, even if you later drop that model from the list.
+:::
+
+## Who can delete a chat
+
+Chats are owner-scoped already — nobody sees anyone else's — so by default a person can delete their own. Give your `Avo::Intelligence::ChatPolicy` a `#destroy?` method to take that away:
+
+```ruby
+# app/policies/avo/intelligence/chat_policy.rb
+class Avo::Intelligence::ChatPolicy < ApplicationPolicy
+  def destroy?
+    user.admin?
+  end
+end
+```
+
+Withheld, the delete entry disappears everywhere it appears: the chat bar's ⋯ menu, the chat page's ⋯ menu, and the rows on **All chats** — a button that would only 403 is worse than no button. The controller checks the same policy on the `DELETE` itself, so hiding the entries isn't what enforces it.
+
+It's decided per chat, so a policy that allows deleting some and not others is honored: the bar reads the answer for whichever conversation is loaded, not once for the session.
+
+No policy, or no `#destroy?` method, leaves deletion open: an app that never had a policy keeps the behavior it had before one existed. An error raised inside the policy fails closed, unlike [debug levels](#debug-levels) — this one is destructive.
+
+:::warning
+Deletion is permanent, and it takes everything belonging to the conversation with it: the messages, the tool calls, any unconfirmed writes, and the audit log of the writes it executed. The records the assistant created or changed are untouched — it's the history of *who asked for what* that goes. If you need that history to outlive the chat, withhold `#destroy?` and archive instead.
+:::
 
 ## Debug levels
 
@@ -182,10 +349,4 @@ end
 
 No policy, no `#debug_level` method, an unrecognized value, or any error inside the policy all fail closed to `:off`.
 
-## What the assistant can do
-
-The assistant works through tools that run against your actual data: querying records, inspecting them, and creating, updating, or deleting them. Writes go through a confirmation flow — the assistant shows a card describing the pending change and only executes after you confirm. Every executed write is recorded in an audit log with undo support.
-
-A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message.
-
-Tool calls respect your Avo authorization setup: per-resource and per-field policies apply to what the assistant can read and write, scoped to the signed-in user who owns the chat.
+Viewers who get `:tools` also get a **bug** button — in the panel's title bar, and in the chat page's ⋯ menu — that hides those rows without leaving the conversation. It's a display preference, remembered per device and shared by both places. Nobody on `:off` sees the button, because none of those rows reach their browser to begin with.
