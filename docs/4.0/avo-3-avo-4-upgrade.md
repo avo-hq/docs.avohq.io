@@ -31,6 +31,7 @@ Inventory before editing
 - Many chapters won't apply. Mark each APPLIES / NOT USED / NEEDS REVIEW. Never apply a change for an API the app doesn't use.
 
 Gems first
+- Avo 4 requires Ruby >= 3.3. Check the app's Ruby version and bump it BEFORE bundling — on an older Ruby, Bundler silently resolves `pagy` back to a pre-43.5 release instead of failing.
 - Update the Gemfile to >= 4.0.0 for `avo` and every `avo-*` gem in use (check for avo-nested, avo-rhino_field, avo-dynamic_filters, etc.), move private gems under the packager.dev source block, run bundle, and boot the app before touching app code.
 - Nested forms now need the separate avo-nested gem — add it if has_many/has_one/habtm use `nested`.
 
@@ -68,6 +69,29 @@ Assuming you are upgrading your Avo 3 app, you need to do three things:
 2. Upgrade your Avo gems
 
 3. Use this guide to upgrade your app to Avo 4.
+
+### Upgrade your Ruby version
+
+Avo 4 requires **Ruby 3.3 or newer**. Avo 3 required 3.1.
+
+The driver is [`pagy`](https://rubygems.org/gems/pagy), which Avo uses for pagination. Avo 3 depended on `pagy >= 7.0.0, < 43`; Avo 4 moved to `pagy >= 43.0`. `pagy 43.0.0` requires Ruby `>= 3.2`, and from `pagy 43.5.0` onwards the floor is Ruby `>= 3.3`.
+
+```ruby
+# .ruby-version
+3.3.1
+```
+
+:::warning Bump Ruby before you bundle
+Because Avo's constraint is a range and not a pin, Bundler doesn't fail on an older Ruby — it resolves `pagy` backwards until it finds a version your interpreter accepts.
+
+| Your Ruby | The `pagy` you get                            |
+| --------- | --------------------------------------------- |
+| 3.1       | none — no `pagy 43.x` is installable           |
+| 3.2       | `43.4.4`, the last release before the bump     |
+| 3.3+      | the current release                            |
+
+On Ruby 3.2 the app boots and the tests pass while pinned to a stale pagination gem, so the problem surfaces much later. Bump Ruby first, then run the gem upgrade below.
+:::
 
 ### Upgrade your gems
 
@@ -742,6 +766,8 @@ The searchable association picker was rewritten in Avo 4 using Hotwire (Stimulus
 If you customized the v3 picker via CSS targeting Algolia's class names (`.aa-Input`, `.aa-Panel`, etc.), those selectors no longer match anything — the v4 picker uses Avo's own markup, and the Algolia stylesheet is no longer bundled.
 
 ## Pagination
+
+Avo 4 runs on `pagy 43`, which is what moves the minimum Ruby version to 3.3 — see [Upgrade your Ruby version](#upgrade-your-ruby-version).
 
 ### Replace `size` with `slots`
 
