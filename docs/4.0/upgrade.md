@@ -6,6 +6,42 @@ If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedica
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
+## Unreleased — minimum Ruby version
+
+<Option name="Avo requires Ruby >= 3.3">
+
+### Breaking Change
+
+Avo's minimum supported Ruby version moves from `3.1` to `3.3`.
+
+The driver is [`pagy`](https://rubygems.org/gems/pagy), which Avo depends on for pagination. `pagy` `43.0.0` already requires Ruby `>= 3.2`, and starting with `pagy` `43.5.0` the floor is Ruby `>= 3.3`. Avo depends on `pagy >= 43.0`, so on anything older than Ruby 3.3 Bundler silently resolves `pagy` back to a `43.4.x` release instead of the current one — you keep booting, but you're pinned to a stale pagination gem and drift further behind with every Avo release.
+
+### Action Required
+
+Run Avo on Ruby `3.3` or newer.
+
+```ruby
+# .ruby-version
+3.3.1
+```
+
+```ruby
+# Gemfile
+ruby ">= 3.3" # [!code ++]
+```
+
+Then re-resolve so `pagy` picks up the current release:
+
+```bash
+bundle update pagy
+```
+
+:::info
+Ruby 3.1 reached end-of-life in March 2025 and Ruby 3.2 in March 2026, so 3.3 is the oldest version still receiving security fixes.
+:::
+
+</Option>
+
 ## Unreleased — resizable sidebar
 
 <Option name="Sidebar labels truncate instead of wrapping">
