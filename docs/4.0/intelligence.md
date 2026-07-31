@@ -269,7 +269,23 @@ The microphone in every composer — the bar, the new-chat page, and open conver
 
 Minimizing the chat window ends an open session, so the mic never keeps listening behind a closed window.
 
-It uses the browser's built-in speech recognition, so it needs no API key and sends nothing to your provider. The button only appears in browsers that support the Web Speech API — Chrome, Edge, and Safari today; in Firefox there's no microphone in the toolbar.
+It dictates in your admin's language: the recognizer follows the page's `lang` attribute, falling back to the browser's own language setting.
+
+### Browser support, and where the audio goes
+
+Dictation is the browser's built-in [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API), not something the assistant does. There's no API key to set, and neither Avo nor your LLM provider ever sees the audio — they only get the finished text, and only when you send the message. Who *does* see it depends entirely on the browser, and they don't answer alike:
+
+| Browser         | Support                | Where recognition runs                                                                                                                                     |
+| --------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Safari          | 14.1+ macOS, 14.5+ iOS | Apple's speech stack — on device where the language and hardware allow it, Apple's servers otherwise. Safari asks the first time, and the prompt says as much. |
+| Chrome, Edge    | Yes                    | Google's speech service: the audio is uploaded, so dictation needs a connection. Chrome 139 added an opt-in on-device mode, which Avo doesn't request.        |
+| Firefox         | No                     | Nowhere — unimplemented, behind a disabled `dom.webspeech.recognition.enable` flag.                                                                          |
+
+The microphone only renders where the API exists, so Firefox users get a composer with no mic rather than a button that does nothing.
+
+:::warning
+In Chrome and Edge, dictating means uploading admin-panel audio to Google. If that doesn't fit your compliance story, tell your admins to dictate in Safari — there's no gem setting that changes it, because the browser owns the audio path.
+:::
 
 ## Copy a message
 
