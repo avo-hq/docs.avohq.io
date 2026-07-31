@@ -31,7 +31,7 @@ Inventory before editing
 - Many chapters won't apply. Mark each APPLIES / NOT USED / NEEDS REVIEW. Never apply a change for an API the app doesn't use.
 
 Gems first
-- Avo 4 requires Ruby >= 3.3. Check the app's Ruby version and bump it if needed before updating the gems.
+- Avo 4 requires Ruby >= 3.2. Check the app's Ruby version and bump it if needed before updating the gems.
 - Update the Gemfile to >= 4.0.0 for `avo` and every `avo-*` gem in use (check for avo-nested, avo-rhino_field, avo-dynamic_filters, etc.), move private gems under the packager.dev source block, run bundle, and boot the app before touching app code.
 - Nested forms now need the separate avo-nested gem — add it if has_many/has_one/habtm use `nested`.
 
@@ -72,14 +72,18 @@ Assuming you are upgrading your Avo 3 app, you need to do three things:
 
 ### Upgrade your Ruby version
 
-Avo 4 requires **Ruby 3.3 or newer**.
+Avo 4 requires **Ruby 3.2 or newer**, up from 3.1 in Avo 3.
 
-Avo 4 depends on [`pagy`](https://rubygems.org/gems/pagy) `>= 43.0` for pagination, and `pagy` requires Ruby `>= 3.3` from `43.5.0` onwards.
+Avo 4 depends on [`pagy`](https://rubygems.org/gems/pagy) `>= 43.0` for pagination, and every `pagy 43` release requires Ruby `>= 3.2`.
 
 ```ruby
 # .ruby-version
-3.3.1
+3.2.0
 ```
+
+:::info
+On Ruby 3.2 you get the `43.4.x` line of `pagy` — `pagy 43.5.0` and later require Ruby `>= 3.3`. Both work with Avo 4; run Ruby 3.3 or newer if you want the latest `pagy`.
+:::
 
 ### Upgrade your gems
 
@@ -755,7 +759,7 @@ If you customized the v3 picker via CSS targeting Algolia's class names (`.aa-In
 
 ## Pagination
 
-Avo 4 runs on `pagy 43`, which is what moves the minimum Ruby version to 3.3 — see [Upgrade your Ruby version](#upgrade-your-ruby-version).
+Avo 4 runs on `pagy 43`, which is what moves the minimum Ruby version to 3.2 — see [Upgrade your Ruby version](#upgrade-your-ruby-version).
 
 ### Replace `size` with `slots`
 
