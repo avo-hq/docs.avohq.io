@@ -43,6 +43,17 @@ bin/rails db:migrate
 
 This creates the `avo_intelligence_*` tables and writes `config/initializers/ruby_llm.rb` (skipped if it already exists).
 
+:::warning Already installed an earlier alpha?
+The installer only ever writes the initial migration, so a schema created by an earlier version won't pick up columns added since. `avo_intelligence_chats.attached_context` is the current one — it's where a chat stores [the record it was started from](#the-record-you-start-from). Add it by hand:
+
+```bash
+bin/rails generate migration AddAttachedContextToAvoIntelligenceChats attached_context:jsonb
+bin/rails db:migrate
+```
+
+Without it, starting a chat raises on the unknown attribute.
+:::
+
 ### 3. Set your provider API key
 
 The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by default and pins `model_registry_class` to `Avo::Intelligence::Model` — that setting is required, don't remove it.
@@ -234,9 +245,11 @@ Then edit `app/prompts/avo/intelligence/chat_agent/attached_context.txt.erb`. It
 
 The chat bar sits at the bottom of every Avo page. **Cmd+J** (or **Ctrl+J**) opens it from anywhere, including from inside a field you're typing in — that's the point, so you can pull the assistant up mid-edit without losing your place. Clicking **Agent** does the same.
 
-Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. Both the open chats and the collapsed state are remembered per device.
+Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. Drag a pill to reorder them. The chat window lines its end edge up with the pill it was opened from and slides across when you switch, so it's always clear which conversation you're looking at. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. The open chats, their order, and the collapsed state are all remembered per device.
 
-To give a conversation the whole window, use **Open in full page** in the panel's title bar. It's a normal link, so cmd-click opens it in a new tab.
+Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way.
+
+To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Back to chat window** hands the conversation back to the floating bar and returns you to the page you opened it from. It only appears when there's somewhere to go back to — open a chat page directly, from a link or a bookmark, and there's no back control.
 
 A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message.
 
