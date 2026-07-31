@@ -1,5 +1,5 @@
 ---
-prompt: Use this page (${link}) to set up my AI coding agent to work with Avo — add the LLM docs context, install the Avo skills, and connect the MCP server.
+prompt: Use this page (${link}) to set up my AI coding agent to work with Avo — add the LLM docs context, install the Avo skills loader, and connect the MCP server.
 ---
 
 # Agentic engineering
@@ -20,15 +20,27 @@ AI agents generate better code when they have up-to-date Avo documentation in th
 
 Skills are pre-built instruction sets that teach your agent how to perform specific Avo workflows. Instead of prompting from scratch each time, you install a skill and the agent follows a proven, repeatable process.
 
-The [avo-hq/skills](https://github.com/avo-hq/skills) repository contains the official skill collection. Install all of them with:
+The skills ship **inside the `avo` gem**, so they describe the version your app has locked rather than whatever version a globally-installed copy happened to be written for. Install the loader that finds them:
 
-<CustomCode content="npx skills add avo-hq/skills" />
+<CustomCode content="rails g avo:skills" />
 
-Or install just one, for example:
-
-<CustomCode content="npx skills add avo-hq/avo-menu-icons" />
+That writes one small file into `.claude/skills/avo/`, `.agents/skills/avo/`, and `.cursor/skills/avo/`. The skills themselves are never copied into your repo — the loader resolves them from the installed gem when a task actually needs them.
 
 Skills are organized by **vertical** — a whole feature area, not a single task — so one skill covers creating, configuring, and troubleshooting that part of Avo.
+
+### Keeping them current
+
+Run `bundle update avo` and the skills update with it. There is nothing to copy and nothing that can drift out of sync with your app.
+
+Re-run `rails g avo:skills` after upgrading Avo to refresh the loader itself; it warns when its own copy is older than the gem.
+
+:::warning Remove any older global install
+If you previously installed the skills with `npx skills add avo-hq/skills`, a Claude Code plugin, or a manual symlink, remove that copy. It can shadow the gem-shipped skills and silently serve instructions for a different Avo version.
+:::
+
+:::info Avo 3
+Gem-shipped skills start in Avo 4.1.0. On an earlier version the loader tells you so and stops rather than guessing — use the [docs](https://docs.avohq.io) directly.
+:::
 
 ### Core
 
@@ -82,7 +94,9 @@ Separately-licensed gems (paid add-on or Enterprise). `avo-media-library` is Com
 - `avo-aware` — keep the admin in sync when you change a Rails model, even when the request never mentions Avo
 - `avo-troubleshoot` — diagnose a broken or misbehaving Avo app, organized by symptom
 
-Skills work with Claude Code, Cursor, Windsurf, Goose, and any other agent that supports a skills/rules system. See the [repo README](https://github.com/avo-hq/skills) for installation instructions for each tool.
+Paid add-on skills arrive with their gems — install `avo-kanban` and its skill comes with it. The loader lists what your app actually has, and names the add-on for anything it does not, so an agent never describes a feature you cannot use.
+
+The loader is installed for Claude Code, Cursor, and any agent that reads `.agents/skills/`. Use `--only claude`, `--only cursor`, or `--only agents` to install just one, or `--path` to install somewhere else.
 
 ## MCP server
 
@@ -97,6 +111,6 @@ Each editor's [setup page](#pick-your-tool) covers how to add it to that tool. T
 ## Suggested workflow
 
 1. Set up your editor with the Avo LLM context — [see above](#code-editors-and-llm-setup).
-2. Install the Avo skills from [github.com/avo-hq/skills](https://github.com/avo-hq/skills).
+2. Install the Avo skills loader — run `rails g avo:skills` in your app.
 3. Describe what you want to build. The agent will follow the skill workflow and reference the docs automatically.
 4. Optionally connect the [Context7 MCP server](#mcp-server) so the agent can query Avo's docs directly.
