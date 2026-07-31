@@ -31,7 +31,7 @@ Inventory before editing
 - Many chapters won't apply. Mark each APPLIES / NOT USED / NEEDS REVIEW. Never apply a change for an API the app doesn't use.
 
 Gems first
-- Avo 4 requires Ruby >= 3.3. Check the app's Ruby version and bump it BEFORE bundling — on an older Ruby, Bundler silently resolves `pagy` back to a pre-43.5 release instead of failing.
+- Avo 4 requires Ruby >= 3.3. Check the app's Ruby version and bump it if needed before updating the gems.
 - Update the Gemfile to >= 4.0.0 for `avo` and every `avo-*` gem in use (check for avo-nested, avo-rhino_field, avo-dynamic_filters, etc.), move private gems under the packager.dev source block, run bundle, and boot the app before touching app code.
 - Nested forms now need the separate avo-nested gem — add it if has_many/has_one/habtm use `nested`.
 
@@ -72,26 +72,14 @@ Assuming you are upgrading your Avo 3 app, you need to do three things:
 
 ### Upgrade your Ruby version
 
-Avo 4 requires **Ruby 3.3 or newer**. Avo 3 required 3.1.
+Avo 4 requires **Ruby 3.3 or newer**.
 
-The driver is [`pagy`](https://rubygems.org/gems/pagy), which Avo uses for pagination. Avo 3 depended on `pagy >= 7.0.0, < 43`; Avo 4 moved to `pagy >= 43.0`. `pagy 43.0.0` requires Ruby `>= 3.2`, and from `pagy 43.5.0` onwards the floor is Ruby `>= 3.3`.
+Avo 4 depends on [`pagy`](https://rubygems.org/gems/pagy) `>= 43.0` for pagination, and `pagy` requires Ruby `>= 3.3` from `43.5.0` onwards.
 
 ```ruby
 # .ruby-version
 3.3.1
 ```
-
-:::warning Bump Ruby before you bundle
-Because Avo's constraint is a range and not a pin, Bundler doesn't fail on an older Ruby — it resolves `pagy` backwards until it finds a version your interpreter accepts.
-
-| Your Ruby | The `pagy` you get                            |
-| --------- | --------------------------------------------- |
-| 3.1       | none — no `pagy 43.x` is installable           |
-| 3.2       | `43.4.4`, the last release before the bump     |
-| 3.3+      | the current release                            |
-
-On Ruby 3.2 the app boots and the tests pass while pinned to a stale pagination gem, so the problem surfaces much later. Bump Ruby first, then run the gem upgrade below.
-:::
 
 ### Upgrade your gems
 
