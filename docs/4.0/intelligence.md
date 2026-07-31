@@ -303,12 +303,20 @@ class Avo::Intelligence::ChatPolicy < ApplicationPolicy
   def available_models
     return nil if user.admin? # every model in the registry
 
-    ["gpt-4o-mini", "claude-haiku-4-5", "gemini-2.5-flash"]
+    [
+      {model: "claude-haiku-4-5", provider: :anthropic},
+      {model: "claude-sonnet-5", provider: :anthropic},
+      {model: "gpt-4o-mini", provider: :openai},
+      {model: "claude-opus-4-8", provider: :anthropic},
+      {model: "gemini-2.5-flash", provider: :gemini}
+    ]
   end
 end
 ```
 
-Entries are RubyLLM registry model ids. Browse the ones your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all.map(&:id)`.
+Each entry names a RubyLLM registry model, and `provider:` says which provider serves it. Browse what your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all.map { |m| [m.id, m.provider] }`.
+
+A bare id works too — `"gpt-4o-mini"` instead of the pair — and is the shorter thing to write when the id is unambiguous. Naming the provider is worth the extra keys anyway: several ids are served by more than one provider, and [pinning](#pinning-the-provider) is how you say which one your app talks to.
 
 | Return value                        | What happens                                                                  |
 | ----------------------------------- | ----------------------------------------------------------------------------- |
@@ -328,16 +336,15 @@ The list is enforced on every chat create **and** every message, not just in the
 
 ### Pinning the provider
 
-Some models are served by more than one provider — `gemini-2.5-flash` comes through both Gemini and VertexAI, and much of Anthropic's catalog is also on Bedrock and VertexAI. A bare id resolves to whichever provider RubyLLM itself would pick (its own preference order: OpenAI, Anthropic, Gemini, VertexAI, Bedrock, OpenRouter, …), exactly as if you had handed that id to `RubyLLM.chat`.
+`provider:` is what makes the pair worth writing. Several ids are served by more than one provider — `gemini-2.5-flash` comes through both Gemini and VertexAI, and much of Anthropic's catalog is also on Bedrock and VertexAI — and the key says which one your app talks to.
 
-To say which one your app talks to, give a `{model:, provider:}` pair instead of a plain string:
+Leave it off and the id still resolves, just not to a provider you chose: RubyLLM picks by its own preference order (OpenAI, Anthropic, Gemini, VertexAI, Bedrock, OpenRouter, …), exactly as if you had handed the bare id to `RubyLLM.chat`.
 
 ```ruby
 def available_models
   [
-    "gpt-4o-mini",
-    "claude-haiku-4-5",
-    {model: "gemini-2.5-flash", provider: :vertexai} # [!code focus]
+    "gpt-4o-mini", # whichever provider RubyLLM prefers for this id
+    {model: "gemini-2.5-flash", provider: :vertexai} # [!code focus] VertexAI's, not Gemini's
   ]
 end
 ```
