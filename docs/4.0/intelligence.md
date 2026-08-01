@@ -131,6 +131,8 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
+For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./intelligence-agents-and-tools.html).
+
 ## Customize the assistant's instructions
 
 The assistant's system prompt is built from ERB files that ship inside the gem, under `app/prompts/`. They resolve like Rails views: a file in your application at the same relative path replaces the gem's copy. If you configure nothing, the shipped prompt is used as is.
