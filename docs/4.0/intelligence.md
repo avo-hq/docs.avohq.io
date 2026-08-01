@@ -133,6 +133,29 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./intelligence-agents-and-tools.html).
 
+## Files and attachments
+
+The assistant reports on your Active Storage usage, so you can ask about files the way you ask about records:
+
+| Ask                              | What you get                                                      |
+| -------------------------------- | ----------------------------------------------------------------- |
+| "How much storage are we using?" | Totals by storage service, content type, and resource             |
+| "Any orphaned uploads?"          | Blobs attached to nothing — count, bytes, and the oldest one      |
+| "Do we have duplicate files?"    | Files sharing a checksum, and the bytes de-duplicating would free |
+| "Is storage growing?"            | Uploads per month                                                 |
+| "What are the biggest files?"    | The largest files and which records they belong to                |
+| "Which products have no image?"  | Records missing an attachment                                     |
+
+Ask it to **show** a file — "show me this post's cover", "what's on this product?" — and the reply carries the file itself: images render inline, video and audio get a player, and anything else comes back as a link that opens in a new tab.
+
+You can also name the file instead of the record — "show me dummy-video.mp4", or just "show me the beach photo". The assistant searches for it across everything you're allowed to see and tells you which record each match belongs to, so you never have to know where a file lives before asking for it. Every file comes back with its blob id, which is what you reference when asking for a change.
+
+It can also attach and detach files on a record — "attach blob 42 to this post's cover", "take the cover off this post". Files are referenced by their blob id, so the assistant only ever links something already in your Media Library: it never uploads bytes and never fetches a file from a URL.
+
+Attach and detach apply immediately rather than through the confirmation card that record writes use. Detaching only unlinks the file — the blob stays in the Media Library and the assistant can re-attach it with the same id. Purging a file is never something the assistant can do; deleting the file itself stays a manual action.
+
+Both respect your policies: file reports only count blobs attached to resources you are allowed to list, and attaching or detaching goes through the same `upload_<name>?` and `delete_<name>?` policy methods the Avo UI checks.
+
 ## Customize the assistant's instructions
 
 The assistant's system prompt is built from ERB files that ship inside the gem, under `app/prompts/`. They resolve like Rails views: a file in your application at the same relative path replaces the gem's copy. If you configure nothing, the shipped prompt is used as is.
