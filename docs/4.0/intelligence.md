@@ -186,6 +186,29 @@ No policy, no `#debug_level` method, an unrecognized value, or any error inside 
 
 The assistant works through tools that run against your actual data: querying records, inspecting them, and creating, updating, or deleting them. Writes go through a confirmation flow — the assistant shows a card describing the pending change and only executes after you confirm. Every executed write is recorded in an audit log with undo support.
 
+### Files and attachments
+
+The assistant reports on your Active Storage usage, so you can ask about files the way you ask about records:
+
+| Ask                              | What you get                                                      |
+| -------------------------------- | ----------------------------------------------------------------- |
+| "How much storage are we using?" | Totals by storage service, content type, and resource             |
+| "Any orphaned uploads?"          | Blobs attached to nothing — count, bytes, and the oldest one      |
+| "Do we have duplicate files?"    | Files sharing a checksum, and the bytes de-duplicating would free |
+| "Is storage growing?"            | Uploads per month                                                 |
+| "What are the biggest files?"    | The largest files and which records they belong to                |
+| "Which products have no image?"  | Records missing an attachment                                     |
+
+Ask it to **show** a file — "show me this post's cover", "what's on this product?" — and the reply carries the file itself: images render inline, video and audio get a player, and anything else comes back as a link that opens in a new tab.
+
+You can also name the file instead of the record — "show me dummy-video.mp4", or just "show me the beach photo". The assistant searches for it across everything you're allowed to see and tells you which record each match belongs to, so you never have to know where a file lives before asking for it. Every file comes back with its blob id, which is what you reference when asking for a change.
+
+It can also attach and detach files on a record — "attach blob 42 to this post's cover", "take the cover off this post". Files are referenced by their blob id, so the assistant only ever links something already in your Media Library: it never uploads bytes and never fetches a file from a URL.
+
+Attach and detach apply immediately rather than through the confirmation card that record writes use. Detaching only unlinks the file — the blob stays in the Media Library and the assistant can re-attach it with the same id. Purging a file is never something the assistant can do; deleting the file itself stays a manual action.
+
+Both respect your policies: file reports only count blobs attached to resources you are allowed to list, and attaching or detaching goes through the same `upload_<name>?` and `delete_<name>?` policy methods the Avo UI checks.
+
 A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message.
 
 Tool calls respect your Avo authorization setup: per-resource and per-field policies apply to what the assistant can read and write, scoped to the signed-in user who owns the chat.
