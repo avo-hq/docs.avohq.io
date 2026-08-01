@@ -275,10 +275,6 @@ The files stay attached to the message and the model sees them again on every la
 
 The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
 
-## View an image larger
-
-Click any image in a conversation — one you attached or one the assistant rendered — and it opens centered over the page. Click anywhere, or press Escape, to close it. Other attachment types don't get the treatment: their chips are download links.
-
 ## Dictate a message
 
 The microphone in every composer — the bar, the new-chat page, and open conversations — transcribes speech into the message box: click to start, click to stop. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
