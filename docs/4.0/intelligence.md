@@ -288,6 +288,18 @@ Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` 
 
 The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Intelligence::Chat` resource from the sidebar.
 
+## Write a message
+
+The composer is a rich text box, not a bare textarea. The usual markdown shortcuts work as you type — `**bold**`, `# heading`, `- list`, backticks for code — and formatting survives a paste. **Enter** sends the message, **Shift+Enter** starts a new line, and on an empty composer **Up** recalls your previously sent messages, shell-style. The assistant receives the message as markdown, structure intact.
+
+## Send files with a message
+
+Every composer takes files: click the paperclip, drag them in, or paste them from the clipboard. Files upload as you add them — through Active Storage's direct upload, into the storage service your app already uses — preview in the draft, and go to the model with the message, so "summarize the attached CSV" and "what's in this screenshot?" work the way you'd expect.
+
+The files stay attached to the message and the model sees them again on every later turn — you can keep asking about a file for the rest of the conversation, not just in the message it rode in on.
+
+The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
+
 ## Dictate a message
 
 The microphone in every composer — the bar, the new-chat page, and open conversations — transcribes speech into the message box: click to start, click to stop. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
