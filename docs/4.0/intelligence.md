@@ -147,9 +147,11 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-Ask for it in whatever words you'd use with a colleague — "archive the Orbit project" — and the assistant finds the matching action, reads the inputs it declares, and shows you a confirmation card naming the action, the record, and the exact values it will be handed. Nothing runs until you click **Run**; the click executes it, not the model, exactly as with updates and deletes.
+Ask for it in whatever words you'd use with a colleague — "archive the Orbit project" — and the assistant finds the matching action, reads the inputs it declares, and shows you a confirmation card naming the action and the record, with the action's own fields rendered right on the card. They're the same fields its modal would show — a tags field is a tags field here too — prefilled with the values the assistant took from your message and the action's own `default`s, and every one of them is editable before you run. Nothing runs until you click **Run**, and what runs is exactly what the fields hold at that moment; the click executes it, not the model, exactly as with updates and deletes.
 
-**It asks rather than guesses.** An input your action marks `required: true` is one the assistant will ask you for if you didn't say. It never fills one in — an action does real work with that value. Inputs you leave out fall back to the action's own `default`, and the value that will be used is on the card before you confirm.
+**It collects rather than guesses.** An input your action marks `required: true` that you didn't mention arrives on the card as an empty field for you to fill — the assistant never invents a value, because an action does real work with it. A run submitted with a required field still blank isn't performed; the card simply asks for it again.
+
+**The action's messages are the outcome.** Whatever your action reports — `succeed`, `warn`, `inform`, `error` — lands on the card once it has run, each with its severity, the same messages the Avo UI would toast. An action may report several at once, and an `error` message is part of the outcome, not a failure of the run. The values the action was handed stay on the settled card too, folded behind a click.
 
 [Actions that run without records](./actions.html#run-an-action-without-records) work too — the assistant runs them with no record at all.
 
