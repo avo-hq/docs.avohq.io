@@ -129,9 +129,60 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Writing.** Updates and deletes show you a card describing the change and run only when you click Confirm; the click applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
+**Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
+
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
 For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./intelligence-agents-and-tools.html).
+
+## Your actions, from the chat
+
+Setting `published_at` is not the same as publishing. Your [actions](./actions.html) are where the operation actually lives — the notification it sends, the record it stamps, the service it calls — so the assistant runs them rather than reconstructing their effect field by field.
+
+It works from the actions each resource registers. Nothing is exposed by default beyond what you already declare in `def actions`, and nothing extra is needed to opt in:
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+  def actions
+    action Avo::Actions::ArchiveProject
+  end
+end
+```
+
+Ask for it in whatever words you'd use with a colleague — "archive the Orbit project" — and the assistant finds the matching action, reads the inputs it declares, and shows you a confirmation card naming the action and the record, with the action's own fields rendered right on the card. They're the same fields its modal would show — a tags field is a tags field here too — prefilled with the values the assistant took from your message and the action's own `default`s, and every one of them is editable before you run. Nothing runs until you click **Run**, and what runs is exactly what the fields hold at that moment; the click executes it, not the model, exactly as with updates and deletes.
+
+**It collects rather than guesses.** An input your action marks `required: true` that you didn't mention arrives on the card as an empty field for you to fill — the assistant never invents a value, because an action does real work with it. A run submitted with a required field still blank isn't performed; the card simply asks for it again.
+
+**The action's messages are the outcome.** Whatever your action reports — `succeed`, `warn`, `inform`, `error` — lands on the card once it has run, each with its severity, the same messages the Avo UI would toast. An action may report several at once, and an `error` message is part of the outcome, not a failure of the run. The values the action was handed stay on the settled card too, folded behind a click.
+
+[Actions that run without records](./actions.html#run-an-action-without-records) work too — the assistant runs them with no record at all.
+
+### What it's allowed to run
+
+Two gates, both yours, both checked when the run is proposed and again when you confirm it:
+
+- **`act_on?` on the record**, the same policy method that decides whether the Actions dropdown appears in the UI. It's checked per record, so an owner-gated policy behaves in the chat exactly as it does on the page.
+- **The action's own `self.authorize` block**, evaluated with the record in place.
+
+:::warning A policy with no `act_on?` refuses every action
+`act_on?` fails closed. If a resource has a policy that doesn't define it, the assistant can't run that resource's actions — the same way Avo hides the Actions dropdown. Add `act_on?` to the policy to allow it.
+:::
+
+A record id the signed-in user can't reach reports as "not found", never as "not allowed", so the chat can't be used to discover which records exist.
+
+### Undoing a run
+
+Every run against a record is written to the same audit log as the assistant's other writes, and whether it can be undone is decided by what it actually left behind, not by what it claimed:
+
+| The run… | In the history | Undo |
+| ------------------------------- | -------------------------------- | ----------------------------------------- |
+| changed columns on the record | recorded with a before/after diff | restores those columns |
+| deleted the record | recorded as a delete | re-creates it |
+| changed nothing you store | recorded, marked not undoable | not offered |
+
+That last row is the point. An action that emails a customer or calls another service leaves nothing to restore, and the assistant says so plainly instead of offering an undo it can't honour. Even where an undo *is* offered, it restores the columns and nothing else — the card says as much before you confirm.
+
+Standalone runs aren't written to the audit log at all: it records what happened to a record, and a standalone action has none. The card in the conversation is the record of it.
 
 ## Files and attachments
 
