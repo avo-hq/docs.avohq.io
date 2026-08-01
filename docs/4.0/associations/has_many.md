@@ -40,6 +40,18 @@ field :members,
   as: :has_many,
   through: :memberships
 ```
+
+Attach and detach go through the association itself, so a scope on the through association is respected: attaching stamps the scope's attributes on the new join record, and detaching destroys only the join record that association points at, leaving other rows linking the same two records alone.
+
+```ruby{2}
+class Team < ApplicationRecord
+  has_many :admin_memberships, -> { where level: :admin }, class_name: "TeamMembership"
+  has_many :admins, through: :admin_memberships, source: :user
+end
+```
+
+With the association above, attaching a user writes `level: "admin"` on the join record, and detaching them removes that row without touching a `level: "member"` row for the same user.
+
 <Option name="`attach_fields`">
 
 If you have extra fields defined in the through table and would like to display them when attaching use the `attach_fields` option.
