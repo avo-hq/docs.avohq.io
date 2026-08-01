@@ -133,6 +133,8 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
+For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./intelligence-agents-and-tools.html).
+
 ## Your actions, from the chat
 
 Setting `published_at` is not the same as publishing. Your [actions](./actions.html) are where the operation actually lives — the notification it sends, the record it stamps, the service it calls — so the assistant runs them rather than reconstructing their effect field by field.
@@ -181,6 +183,29 @@ Every run against a record is written to the same audit log as the assistant's o
 That last row is the point. An action that emails a customer or calls another service leaves nothing to restore, and the assistant says so plainly instead of offering an undo it can't honour. Even where an undo *is* offered, it restores the columns and nothing else — the card says as much before you confirm.
 
 Standalone runs aren't written to the audit log at all: it records what happened to a record, and a standalone action has none. The card in the conversation is the record of it.
+
+## Files and attachments
+
+The assistant reports on your Active Storage usage, so you can ask about files the way you ask about records:
+
+| Ask                              | What you get                                                      |
+| -------------------------------- | ----------------------------------------------------------------- |
+| "How much storage are we using?" | Totals by storage service, content type, and resource             |
+| "Any orphaned uploads?"          | Blobs attached to nothing — count, bytes, and the oldest one      |
+| "Do we have duplicate files?"    | Files sharing a checksum, and the bytes de-duplicating would free |
+| "Is storage growing?"            | Uploads per month                                                 |
+| "What are the biggest files?"    | The largest files and which records they belong to                |
+| "Which products have no image?"  | Records missing an attachment                                     |
+
+Ask it to **show** a file — "show me this post's cover", "what's on this product?" — and the reply carries the file itself: images render inline, video and audio get a player, and anything else comes back as a link that opens in a new tab.
+
+You can also name the file instead of the record — "show me dummy-video.mp4", or just "show me the beach photo". The assistant searches for it across everything you're allowed to see and tells you which record each match belongs to, so you never have to know where a file lives before asking for it. Every file comes back with its blob id, which is what you reference when asking for a change.
+
+It can also attach and detach files on a record — "attach blob 42 to this post's cover", "take the cover off this post". Files are referenced by their blob id, so the assistant only ever links something already in your Media Library: it never uploads bytes and never fetches a file from a URL.
+
+Attach and detach apply immediately rather than through the confirmation card that record writes use. Detaching only unlinks the file — the blob stays in the Media Library and the assistant can re-attach it with the same id. Purging a file is never something the assistant can do; deleting the file itself stays a manual action.
+
+Both respect your policies: file reports only count blobs attached to resources you are allowed to list, and attaching or detaching goes through the same `upload_<name>?` and `delete_<name>?` policy methods the Avo UI checks.
 
 ## Customize the assistant's instructions
 
@@ -313,6 +338,18 @@ Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {en
 Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` with the default mount). The list shows every chat you own — its model, message count, and age — and links to the conversation. It's the same chat as in the bar: same messages, same tools, same streaming, with room to read.
 
 The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Intelligence::Chat` resource from the sidebar.
+
+## Write a message
+
+The composer is a rich text box, not a bare textarea. The usual markdown shortcuts work as you type — `**bold**`, `# heading`, `- list`, backticks for code — and formatting survives a paste. **Enter** sends the message, **Shift+Enter** starts a new line, and on an empty composer **Up** recalls your previously sent messages, shell-style. The assistant receives the message as markdown, structure intact.
+
+## Send files with a message
+
+Every composer takes files: click the paperclip, drag them in, or paste them from the clipboard. Files upload as you add them — through Active Storage's direct upload, into the storage service your app already uses — preview in the draft, and go to the model with the message, so "summarize the attached CSV" and "what's in this screenshot?" work the way you'd expect.
+
+The files stay attached to the message and the model sees them again on every later turn — you can keep asking about a file for the rest of the conversation, not just in the message it rode in on.
+
+The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
 
 ## Dictate a message
 
