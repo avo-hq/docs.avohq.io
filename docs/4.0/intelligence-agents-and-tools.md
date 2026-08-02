@@ -43,6 +43,7 @@ Tool names below are how calls appear in the Tool calls resource and in the chat
 | `create_record`              | Creates a record                                                                                                     | immediately       |
 | `update_record`              | Changes a record's attributes                                                                                        | after you confirm |
 | `delete_record`              | Deletes a record                                                                                                     | after you confirm |
+| `run_action`                 | Lists the [actions](./actions.html) a resource registers, and proposes running one on the records you name           | after you confirm |
 | `write_history`              | Lists the writes made earlier in the conversation and proposes undoing one                                           | after you confirm |
 | `rename_conversation`        | Renames the current conversation — with your exact title, or by regenerating one                                     | immediately       |
 
@@ -57,6 +58,8 @@ That is a deliberate security boundary. There is no argument the model could inv
 ### The inspection gate
 
 The query and write tools refuse to touch a resource until `resource_inspector` has run for it in the conversation. The gate is enforced in the tools — not merely requested in the prompt — and is what makes the assistant work from your real columns and scopes instead of guessed ones.
+
+`run_action` sits behind the same gate, and adds two of its own: the resource's `act_on?` policy method and the action's `self.authorize` block, both checked when the run is proposed and again when you confirm it. See [What it's allowed to run](./intelligence.html#what-it-s-allowed-to-run).
 
 ## Renaming conversations
 
