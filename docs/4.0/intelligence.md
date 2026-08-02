@@ -150,11 +150,21 @@ Ask it to **show** a file — "show me this post's cover", "what's on this produ
 
 You can also name the file instead of the record — "show me dummy-video.mp4", or just "show me the beach photo". The assistant searches for it across everything you're allowed to see and tells you which record each match belongs to, so you never have to know where a file lives before asking for it. Every file comes back with its blob id, which is what you reference when asking for a change.
 
-It can also attach and detach files on a record — "attach blob 42 to this post's cover", "take the cover off this post". Files are referenced by their blob id, so the assistant only ever links something already in your Media Library: it never uploads bytes and never fetches a file from a URL.
+It can also attach and detach files on a record — "attach blob 42 to this post's cover", "take the cover off this post". Files are referenced by their blob id, so the assistant links files already in your Media Library rather than uploading bytes itself.
 
 Attach and detach apply immediately rather than through the confirmation card that record writes use. Detaching only unlinks the file — the blob stays in the Media Library and the assistant can re-attach it with the same id. Purging a file is never something the assistant can do; deleting the file itself stays a manual action.
 
 Both respect your policies: file reports only count blobs attached to resources you are allowed to list, and attaching or detaching goes through the same `upload_<name>?` and `delete_<name>?` policy methods the Avo UI checks.
+
+### Getting new files in
+
+Two paths bring a file that isn't in your Media Library yet onto a record:
+
+**Upload it in the chat.** Drop a file into the composer and send it — the assistant sees the file and knows its blob id, so "attach the file I just sent to this post's cover" is a one-step ask. Files uploaded this way are private to their conversation: the assistant can't reach uploads from anyone else's chats, and other users can't reach yours.
+
+**Give it a link.** Ask the assistant to attach a file by URL — "attach https://example.com/logo.png as this post's cover" — and it proposes the download on a confirmation card showing the URL, the filename, and the record. Nothing is fetched until you click **Attach**; the assistant can't fetch anything on its own, which is what keeps a malicious link that slipped into your data from ever being followed unseen.
+
+The download itself is hardened: only public `https://` URLs are accepted (private and internal addresses are rejected, on every redirect too), the size is capped, and the file's content type is read from its bytes rather than trusted from the server. The undo is the same as for any attachment — detach it; the file stays in the Media Library.
 
 ## Customize the assistant's instructions
 
