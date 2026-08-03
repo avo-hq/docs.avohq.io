@@ -18,6 +18,7 @@ end
 | --- | --- |
 | `belongs_to` | [Belongs to](./associations/belongs_to) |
 | `has_one` | [Has one](./associations/has_one) |
+| `has_one :through` | [Has one](./associations/has_one#has-one-through) |
 | `has_many` | [Has many](./associations/has_many) |
 | `has_many :through` | [Has many](./associations/has_many#has-many-through) |
 | `has_and_belongs_to_many` | [Has and belongs to many](./associations/has_and_belongs_to_many) |
@@ -47,13 +48,13 @@ Association fields share most of their options. Each ✓ links to that option's 
 | `reloadable` | – | [✓](./associations/has_one#Reloadable) | [✓](./associations/has_many#Reloadable) | [✓](./associations/has_and_belongs_to_many#Reloadable) |
 | `nested` | – | [✓](./associations/has_one#nested) | [✓](./associations/has_many#nested) | [✓](./associations/has_and_belongs_to_many#nested) |
 | `attach_using` | – | – | [✓](./associations/has_many#attach_using) | [✓](./associations/has_and_belongs_to_many#attach_using) |
-| `attach_fields` | – | – | [✓](./associations/has_many#attach_fields) | – |
+| `attach_fields` | – | [✓](./associations/has_one#attach_fields) | [✓](./associations/has_many#attach_fields) | – |
 | `discreet_pagination` | – | – | [✓](./associations/has_many#discreet_pagination) | [✓](./associations/has_and_belongs_to_many#discreet_pagination) |
 | `hide_search_input` | – | – | [✓](./associations/has_many#hide_search_input) | [✓](./associations/has_and_belongs_to_many#hide_search_input) |
 | `hide_filter_button` | – | – | [✓](./associations/has_many#hide_filter_button) | [✓](./associations/has_and_belongs_to_many#hide_filter_button) |
 | `link_to_child_resource` | [✓](./associations/belongs_to#link_to_child_resource) | – | [✓](./associations/has_many#link_to_child_resource) | [✓](./associations/has_and_belongs_to_many#link_to_child_resource) |
 
-A few options belong to a single field type: [`polymorphic_as` + `types`](./associations/belongs_to#polymorphic_as), [`polymorphic_help`](./associations/belongs_to#polymorphic_help), [`can_create`](./associations/belongs_to#can_create), [`allow_via_detaching`](./associations/belongs_to#allow_via_detaching), and [`link_to_record`](./associations/belongs_to#link_to_record) are all on `belongs_to`. `attach_fields` only persists its values on `has_many :through` associations, so it's documented there.
+A few options belong to a single field type: [`polymorphic_as` + `types`](./associations/belongs_to#polymorphic_as), [`polymorphic_help`](./associations/belongs_to#polymorphic_help), [`can_create`](./associations/belongs_to#can_create), [`allow_via_detaching`](./associations/belongs_to#allow_via_detaching), and [`link_to_record`](./associations/belongs_to#link_to_record) are all on `belongs_to`. `attach_fields` only persists its values on `:through` associations, where there's a join record to write to — see [`has_many`](./associations/has_many#attach_fields) and [`has_one`](./associations/has_one#attach_fields).
 
 ## Show or hide the association buttons
 
