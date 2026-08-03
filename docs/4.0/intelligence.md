@@ -327,6 +327,8 @@ Clicking the window's own title bar minimizes it — the conversation stays in t
 
 To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Back to chat window** hands the conversation back to the floating bar and returns you to the page you opened it from. It only appears when there's somewhere to go back to — open a chat page directly, from a link or a bookmark, and there's no back control.
 
+The button is there before you've sent anything, too. On the new-chat view it points at the full-page composer instead, so you can start a long message with the whole window rather than the panel.
+
 A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message.
 
 :::info
@@ -374,6 +376,20 @@ The microphone only renders where the API exists, so Firefox users get a compose
 :::warning
 In Chrome and Edge, dictating means uploading admin-panel audio to Google. If that doesn't fit your compliance story, tell your admins to dictate in Safari — there's no gem setting that changes it, because the browser owns the audio path.
 :::
+
+## While the assistant is replying
+
+Your message lands on the transcript the moment you send it, with a **Thinking** indicator underneath — it's saved as part of the send, not by the background job, so it never blinks out for the second or two the queue takes. Starting a fresh conversation keeps the composer you typed into on screen until the conversation is ready, then trades one for the other, so there's no empty panel in between. A second **Enter** while that's happening doesn't start a second chat.
+
+The indicator is read from the conversation itself rather than from what your browser happened to witness. Reload mid-reply, or open the chat in full page while it's working, and the indicator is still there waiting on the same reply — the answer streams in wherever you're watching from when it lands. It clears when the assistant's reply arrives, when a card or a question hands the turn back to you, or when the run errors out.
+
+## When each message was sent
+
+A divider marks the start of every day in the transcript: **Today**, **Yesterday**, the weekday name for anything else inside the past week, then a date — `Jul 26`, and `Sep 24, 2025` once it isn't this year — each followed by the clock time of that day's first message.
+
+Day and month names come from your locale, and the **Today** and **Yesterday** words are locale keys (`avo.intelligence.messages.today` and `avo.intelligence.messages.yesterday`), so a translated admin panel gets translated dividers.
+
+Dividers are worked out when the page renders, not as each message arrives. Leave a conversation open across midnight and it picks up the new day's divider on the next full load.
 
 ## Copy a message
 
