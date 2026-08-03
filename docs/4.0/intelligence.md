@@ -106,9 +106,15 @@ Avo.configure do |config|
   # Token budget for the model's thinking trace (positive integer).
   config.intelligence.thinking_budget = 2048
 
-  # Ceiling on a file downloaded from a URL (see "Getting new files in").
-  # Defaults to 25 megabytes.
-  config.intelligence.max_remote_file_size = 25.megabytes
+  # What a download from a URL may cost (see "Getting new files in").
+  # Set only the keys you want to change; the rest keep their defaults.
+  config.intelligence.remote_file = {
+    max_size: 25.megabytes, # ceiling on the downloaded file
+    open_timeout: 5,        # seconds to connect
+    read_timeout: 10,       # seconds per read
+    deadline: 30,           # seconds for the whole download
+    max_redirects: 3
+  }
 end
 ```
 
@@ -168,7 +174,7 @@ Two paths bring a file that isn't in your Media Library yet onto a record:
 
 **Give it a link.** Ask the assistant to attach a file by URL — "attach https://example.com/logo.png as this post's cover" — and it proposes the download on a confirmation card showing the URL, the filename, and the record. When the link points at an image the card previews it, so you are approving a picture you have seen rather than an address you had to read. Nothing is fetched until you click **Attach**; the assistant can't fetch anything on its own, which is what keeps a malicious link that slipped into your data from ever being followed unseen.
 
-The download itself is hardened: only public `https://` URLs are accepted (private and internal addresses are rejected, on every redirect too), the file's content type is read from its bytes rather than trusted from the server, and anything over `config.intelligence.max_remote_file_size` (25 MB by default) is refused mid-download. The undo is the same as for any attachment — detach it; the file stays in the Media Library.
+The download itself is hardened: only public `https://` URLs are accepted (private and internal addresses are rejected, on every redirect too), the file's content type is read from its bytes rather than trusted from the server, and anything over the configured size ceiling (25 MB by default) is refused mid-download rather than after it. If your files are bigger than that, or your source is slow, raise the matching keys under `config.intelligence.remote_file` — see [Configuration](#configuration). The undo is the same as for any attachment — detach it; the file stays in the Media Library.
 
 ## Customize the assistant's instructions
 
