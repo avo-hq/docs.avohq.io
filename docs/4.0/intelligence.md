@@ -8,6 +8,8 @@ outline: [2, 3]
 
 Avo Intelligence adds an AI assistant to your admin panel. It ships a floating chat bar on every Avo page, a set of tools the assistant uses to query, create, update, and delete records on your behalf, and admin resources for browsing chats, messages, tool calls, and models.
 
+New here, or wondering what to type into it? [What you can ask](./intelligence-what-you-can-ask.html) is the catalog of everything the assistant does, with a sample prompt for each.
+
 :::warning
 The feature and docs are both work in progress.
 :::
