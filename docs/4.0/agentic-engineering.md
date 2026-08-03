@@ -34,8 +34,10 @@ Run `bundle update avo` and the skills update with it. There is nothing to copy 
 
 Re-run `rails g avo:skills` after upgrading Avo to refresh the loader itself; it warns when its own copy is older than the gem.
 
-:::warning Remove any older global install
-If you previously installed the skills with `npx skills add avo-hq/skills`, a Claude Code plugin, or a manual symlink, remove that copy. It can shadow the gem-shipped skills and silently serve instructions for a different Avo version.
+:::warning Older global installs
+If you previously installed the skills with `npx skills add avo-hq/skills`, a Claude Code plugin, or a manual symlink, that copy can shadow the gem-shipped skills and silently serve instructions for a different Avo version.
+
+`rails g avo:skills` detects those leftovers and asks whether to remove the ones in your project. Pass `--clean-legacy` to skip the prompt, or `--no-clean-legacy` to keep them. Anything in `~/.claude/skills` is reported but never deleted — that directory is shared with your other projects.
 :::
 
 :::info Avo 3
