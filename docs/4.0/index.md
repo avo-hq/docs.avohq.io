@@ -98,7 +98,7 @@ Avo ships as a [gem](https://rubygems.org/gems/avo), so none of its internals li
 bin/rails avo:update
 ```
 
-That resolves every Avo gem you have — core plus any add-ons — and updates them together, conservatively, so a `belongs_to` picker from one gem never ends up a release behind the resource it lives on. `bundle update avo` moves core alone and quietly leaves the rest where they were.
+That resolves every Avo gem you have — core plus any add-ons — and updates them together, conservatively.
 
 ## Start here
 
