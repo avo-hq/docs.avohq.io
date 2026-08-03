@@ -102,6 +102,16 @@ Paid add-on skills arrive with their gems — install `avo-kanban` and its skill
 
 The loader is installed for Claude Code, Cursor, and any agent that reads `.agents/skills/`. Use `--only claude`, `--only cursor`, or `--only agents` to install just one, or `--path` to install somewhere else.
 
+### One loader for every project
+
+Pass `--global` to install into your home directory instead:
+
+<CustomCode content="rails g avo:skills --global" />
+
+The loader carries no version knowledge — it finds the app by walking up from the working directory and reads that app's `Gemfile.lock` — so a single copy serves every Avo project on the machine, each resolving its own version. Install once and you are done.
+
+The per-app install is still worth it for a team: the loader is two small files you commit, so everyone gets it on `git pull` rather than each person installing it themselves.
+
 ## MCP server
 
 For agents that support MCP, the [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) serves up-to-date docs for many libraries, including Avo. The agent queries it for the exact docs it needs while building features, instead of relying on stale training data.
