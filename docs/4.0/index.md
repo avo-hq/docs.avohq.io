@@ -92,7 +92,13 @@ We lean into it. Point your agent at the [docs map](https://docs.avohq.io/4.0/do
 
 ## Seamless upgrades
 
-Avo ships as a [gem](https://rubygems.org/gems/avo), so none of its internals live in your app. Upgrading is `bundle update avo`: no file conflicts, no generated code drifting out of date.
+Avo ships as a [gem](https://rubygems.org/gems/avo), so none of its internals live in your app: no file conflicts, no generated code drifting out of date.
+
+```bash
+bin/rails avo:update
+```
+
+That resolves every Avo gem you have — core plus any add-ons — and updates them together, conservatively.
 
 ## Start here
 
