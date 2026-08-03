@@ -135,6 +135,61 @@ GET    /api/resources/v1/teams/:id/members   # Records of the `members` associat
 
 The path segment is the resource's `route_key` (e.g. `blog_posts`, `product_categories`). No per-resource controllers are required — a single catch-all controller serves every resource.
 
+## Discovery
+
+One endpoint describes everything the API version exposes, so a client doesn't have to be told which resources exist or what fields they carry:
+
+```
+GET    /api/resources/v1/_schema
+```
+
+It authenticates and authorizes like any other endpoint: a resource whose `index?` policy denies the current user is left out of the payload entirely, so the schema never advertises what that user can't reach.
+
+```json
+{
+  "schema_version": 1,
+  "api_version": "v1",
+  "resources": [
+    {
+      "route_key": "teams",
+      "singular_name": "Team",
+      "plural_name": "Teams",
+      "model_name": "Team",
+      "fields": [
+        {
+          "id": "id",
+          "name": "ID",
+          "type": "id",
+          "required": false,
+          "readonly": true,
+          "visible_on": ["index", "show"]
+        },
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "text",
+          "required": true,
+          "readonly": false,
+          "visible_on": ["index", "show", "new", "edit"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+| Key | Meaning |
+|-----|---------|
+| `schema_version` | The shape of this payload, not the API version. It changes only when the keys below change, so a client can refuse a payload it doesn't understand. |
+| `api_version` | The version namespace the request came through. |
+| `visible_on` | The views the field appears in. A resource can declare different fields per view (`index_fields`, `edit_fields`, …) — this reflects the result. |
+| `required` | Read from the model's presence validators. |
+| `readonly` | `null` when the resource sets it with a block, because a block is evaluated per record and discovery has none. |
+
+:::info
+Use `visible_on` to decide which fields a `POST` or `PATCH` body may carry: a field that isn't visible on `new` or `edit` is not writable.
+:::
+
 ## Authentication
 
 Every API request authenticates through one of two paths, checked in this order:
