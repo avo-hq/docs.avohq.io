@@ -7,9 +7,9 @@ outline: [2, 3]
 
 # REST API
 
-The `avo-api` add-on exposes a JSON REST API for every Avo resource. It reuses your resources' field definitions, visibility rules, and authorization, so a resource you already built for the admin panel is instantly available over HTTP — list, read, create, update, and delete, plus read-only association traversal.
+The `avo-api` add-on exposes a JSON REST API for every Avo resource. It reuses your resources' field definitions, view visibility rules, and Pundit policies, so a resource you already built for the admin panel is available over HTTP — list, read, create, update, and delete.
 
-This single page is the full guide **and** reference: installation, mounting, authentication, permissions, the request/response format, and the configuration surface.
+This page covers installation, mounting, authentication, how the current user is established, authorization, and the request/response format.
 
 :::info Add-on
 The REST API ships as the separate `avo-api` gem. [See the add-on page →](https://avohq.io/addons/json-api)
@@ -28,43 +28,25 @@ gem "avo-api", source: "https://packager.dev/avo-hq/"
 bundle install
 ```
 
-Run the install generator:
+Then generate the controllers:
 
 ```bash
-rails generate avo_api:install
+rails generate avo_api:generate
 ```
 
-The generator:
+This creates one controller per Avo resource under `app/controllers/avo/api/resources/v1/`, plus a `BaseResourcesController` that all of them inherit from. The base controller is where you put authentication and any global customization.
 
-- Copies a migration that creates the `avo_api_tokens` and `avo_api_permission_grants` tables (API tokens and their permission grants).
-- Appends an `Avo::Api.configure` block to `config/initializers/avo.rb` with the `manage_tokens_if` gate and token-pepper instructions.
+:::danger The generator is required, not optional
+The API's routes are drawn by globbing your app's `app/controllers/avo/api/resources/*` directory. If you never run the generator, that directory doesn't exist, the glob returns nothing, and **no API routes are drawn at all** — every request 404s. There is no catch-all controller that serves resources you haven't generated.
 
-Then run the migration:
-
-```bash
-rails db:migrate
-```
-
-### Set the token pepper
-
-API tokens are stored as HMAC-SHA256 digests, keyed with a server-side **pepper** you must provide. Token creation and authentication **fail closed** (raise) until it's set. Generate a secret and add it to your Rails credentials:
-
-```bash
-rails secret          # prints a long random value
-rails credentials:edit
-```
-
-```yaml
-# config/credentials.yml.enc (via `rails credentials:edit`)
-avo_api:
-  token_pepper: <the value from `rails secret`>
-```
-
-Alternatively set the `AVO_API_TOKEN_PEPPER` environment variable. Prefer credentials in production.
-
-:::warning
-Changing the pepper invalidates every existing token — they can no longer be authenticated. Treat it like a signing key: set it once and keep it stable.
+The same applies to resources you add later: generate a controller for each new resource, or it won't be reachable over the API.
 :::
+
+Pass `--version` to namespace under something other than `v1`:
+
+```bash
+rails generate avo_api:generate --version v2
+```
 
 ## Mount the API
 
@@ -82,13 +64,13 @@ end
 ```
 
 :::danger Mount the API outside your authentication block
-If `mount_avo` lives inside an `authenticate :user do … end` block, `mount_avo_api` **must** be mounted outside and before it. Mounting the API inside the block forces every API request through your web session authentication, which breaks token-based access for external clients.
+If `mount_avo` lives inside an `authenticate :user do … end` block, `mount_avo_api` **must** be mounted outside and before it. Mounting the API inside the block forces every API request through your web session authentication, which breaks access for external clients.
 
 This does not mean the API is unauthenticated — it authenticates itself (see [Authentication](#authentication)). It just must not inherit the web interface's session guard.
 :::
 
 ```ruby
-# ❌ Don't — the API inherits web session auth and token access breaks
+# ❌ Don't — the API inherits web session auth and external access breaks
 Rails.application.routes.draw do
   authenticate :user do
     mount_avo_api
@@ -99,9 +81,11 @@ end
 
 ### Mount options
 
-`mount_avo_api` accepts a mount path and forwards any option Rails' `mount` accepts. See the [`mount_avo_api` reference](#mount_avo_api) for the full list.
+`mount_avo_api` accepts a mount path and forwards any option Rails' `mount` accepts.
 
 ```ruby
+# config/routes.rb
+
 # Mount under Avo's root path (e.g. /admin/api)
 mount_avo_api at: "#{Avo.configuration.root_path}/api"
 
@@ -116,7 +100,7 @@ end
 
 ## Endpoints
 
-For each resource, the API exposes standard RESTful endpoints under `resources/v1`. For a `teams` resource mounted at the default `/api`:
+Each generated resource controller gets standard RESTful endpoints under `resources/v1`. For a `teams` resource mounted at the default `/api`:
 
 ```
 GET    /api/resources/v1/teams        # List teams
@@ -127,116 +111,160 @@ PUT    /api/resources/v1/teams/:id    # Update a team
 DELETE /api/resources/v1/teams/:id    # Delete a team
 ```
 
-Read-only association traversal is also available:
-
-```
-GET    /api/resources/v1/teams/:id/members   # Records of the `members` association
-```
-
-The path segment is the resource's `route_key` (e.g. `blog_posts`, `product_categories`). No per-resource controllers are required — a single catch-all controller serves every resource.
+The path segment is the resource's `route_key` (e.g. `blog_posts`, `product_categories`).
 
 ## Authentication
 
-Every API request authenticates through one of two paths, checked in this order:
+Every request runs through `setup_authentication`, a hook on `BaseResourcesController`. **The default implementation raises**, so the API is closed until you override it — every request gets `401 Unauthorized`:
 
-1. **Bearer token** — an `Authorization: Bearer <token>` header. This is the primary mechanism, designed for external and server-to-server clients. Tokens are managed from the Avo UI.
-2. **Code hook** — when no Bearer token is presented, the request falls through to the `setup_authentication` hook, which you override to plug in your own scheme (HTTP Basic, session, etc.).
+```json
+{ "error": "Unauthorized" }
+```
 
-A Bearer token always wins when present. A malformed or invalid token is a uniform `401 Unauthorized` with no fall-through — it never silently degrades to the code hook. With no override and no valid token, every request is denied (`401`), so the API is closed by default.
+Raise `Avo::Api::AuthenticationError` anywhere in the hook to reject a request with that response.
 
-### Managing API tokens
+:::warning No built-in token authentication
+`avo-api` ships no token model, no `Authorization: Bearer` handling, and no API-key store. `setup_authentication` is the single extension point — the credential scheme is yours to implement. The examples below show the common ones.
+:::
 
-Tokens are standalone Bearer credentials managed through a dedicated Avo resource. Who can see and manage them is gated by [`manage_tokens_if`](#manage_tokens_if), which **defaults to deny** — opt specific users in:
+### Set the current user
+
+Authenticating the *request* is only half the job. Avo's authorization — Pundit policies and policy scopes — runs against `Avo::Current.user`, and **`setup_authentication` does not set it**. If you verify a credential but never establish a user, `Avo::Current.user` stays `nil` and every policy scope receives `nil`.
+
+`Avo::Current.user` is assigned from whatever [`config.current_user_method`](./authentication.html) resolves to, evaluated in the controller instance:
 
 ```ruby
 # config/initializers/avo.rb
-Avo::Api.configure do |config|
-  config.manage_tokens_if = ->(user) { user.admin? }
+Avo.configure do |config|
+  config.current_user_method = :current_user
 end
 ```
 
-Once enabled, an **API Tokens** entry appears in the Avo sidebar. From there you can:
-
-- **Create a token** with a name and an optional expiry (leave expiry blank for a token that never expires).
-- **Copy the secret** — the raw token is shown **exactly once**, immediately after creation, on a one-time reveal screen. It's never stored or shown again. If lost, revoke it and create a new one.
-- **Disable / enable** a token to temporarily deactivate it (reversible).
-- **Revoke** a token to deactivate it permanently (terminal — a revoked token cannot be re-enabled).
-
-A token's `status` is one of `Active`, `Disabled`, `Expired`, or `Revoked`. Only `Active` tokens authenticate. The UI also tracks `last_used_at` so you can spot stale tokens.
-
-Use the secret as a Bearer token:
-
-```bash
-curl https://example.com/api/resources/v1/teams \
-  -H "Authorization: Bearer avo_xxxxxxxxxxxxxxxxxxxx"
-```
-
-:::warning
-A token grants nothing on its own — you must also grant it permissions (see [Permissions](#permissions)). A brand-new token with no grants is denied (`403`) on every resource.
-:::
-
-### The `setup_authentication` code hook
-
-When no Bearer token is presented, the request calls `setup_authentication`. By default it raises and the request is rejected. Override it in a resource controller (generate one first — see [Custom controllers](#custom-controllers)) to authenticate with your own scheme.
-
-**Disable authentication** for a resource (public, unauthenticated reads):
+So with the default setting, **the API controller's `current_user` method is what the policies see**. Make that method return the authenticated user:
 
 ```ruby
-# app/controllers/avo/api/resources/v1/users_controller.rb
-class UsersController < BaseResourcesController
-  def setup_authentication
-    # Leave empty to disable the code-auth check
-  end
-end
-```
+# app/controllers/avo/api/resources/v1/base_resources_controller.rb
+module Avo::Api::Resources::V1
+  class BaseResourcesController < ResourcesController
+    def setup_authentication
+      token = request.headers["Authorization"].to_s.delete_prefix("Bearer ")
+      @api_user = User.find_by(api_token: token) if token.present?
 
-**API key** (server-to-server):
+      raise Avo::Api::AuthenticationError if @api_user.nil?
+    end
 
-```ruby
-# app/controllers/avo/api/resources/v1/users_controller.rb
-class UsersController < BaseResourcesController
-  def setup_authentication
-    expected = ENV.fetch("API_KEY")
-    provided = request.headers["Authorization"]&.sub(/^ApiKey /, "")
-    unless ActiveSupport::SecurityUtils.secure_compare(provided.to_s, expected)
-      raise Avo::Api::AuthenticationError
+    # This is what `config.current_user_method` resolves to,
+    # and therefore what Pundit receives.
+    def current_user
+      @api_user
     end
   end
 end
 ```
 
-**HTTP Basic:**
+:::warning Assigning `Avo::Current.user` directly does not work
+`setup_authentication` runs *before* Avo's `init_app` callback, and `init_app` then overwrites `Avo::Current.user` with whatever `config.current_user_method` returns. Setting `Avo::Current.user = user` inside the hook is silently discarded. Always go through `current_user` (or whichever method you configured).
+:::
+
+A global `config.current_user_method do … end` block is the alternative, but it's evaluated for the admin UI too, so you'd have to branch on the request. Overriding `current_user` in the API controller keeps the two paths separate.
+
+### Authentication examples
+
+**Bearer token**, resolving to a user — see the snippet above.
+
+**HTTP Basic** with Devise. `sign_in(user, store: false)` is what makes `current_user` return the user for the rest of the request, so no `current_user` override is needed here:
 
 ```ruby
-# app/controllers/avo/api/resources/v1/users_controller.rb
-class UsersController < BaseResourcesController
-  def setup_authentication
-    raise Avo::Api::AuthenticationError unless authenticate_with_http_basic do |email, password|
-      user = User.find_by(email: email)
-      user&.valid_password?(password) ? sign_in(user, store: false) : false
+# app/controllers/avo/api/resources/v1/base_resources_controller.rb
+module Avo::Api::Resources::V1
+  class BaseResourcesController < ResourcesController
+    def setup_authentication
+      raise Avo::Api::AuthenticationError unless authenticate_with_http_basic do |email, password|
+        user = User.find_by(email: email)
+        user&.valid_password?(password) ? sign_in(user, store: false) : false
+      end
     end
   end
 end
 ```
 
-Raise `Avo::Api::AuthenticationError` to reject a request; it renders `{ "error": "Unauthorized" }` with status `401`.
+**Shared API key** for a trusted server-to-server integration. A single shared key identifies no particular user, so pick the account the request should act as — otherwise your policies get `nil`:
 
-:::info Token path vs. code-auth path
-The two paths behave differently for authorization: **token** requests are governed entirely by the [permission matrix](#permissions) and Pundit row-scoping is off. **Code-auth** requests keep your Pundit policies and draw from the read-only default permissions list. Pick tokens for external clients and the code hook for trusted internal integrations.
+```ruby
+# app/controllers/avo/api/resources/v1/base_resources_controller.rb
+module Avo::Api::Resources::V1
+  class BaseResourcesController < ResourcesController
+    def setup_authentication
+      provided = request.headers["Authorization"].to_s.delete_prefix("ApiKey ")
+
+      unless ActiveSupport::SecurityUtils.secure_compare(provided, ENV.fetch("API_KEY"))
+        raise Avo::Api::AuthenticationError
+      end
+    end
+
+    def current_user
+      @current_user ||= User.find_by!(email: "integration@example.com")
+    end
+  end
+end
+```
+
+**Disable authentication** for one resource — public, unauthenticated reads:
+
+```ruby
+# app/controllers/avo/api/resources/v1/users_controller.rb
+module Avo::Api::Resources::V1
+  class UsersController < BaseResourcesController
+    skip_before_action :setup_authentication
+  end
+end
+```
+
+:::warning A public endpoint still has a `nil` user
+Skipping authentication leaves `Avo::Current.user` as `nil`. Any policy scope that calls a method on `user` (`user.admin?`) raises `NoMethodError` and the request 500s. Guard for `nil` in your scopes before exposing an endpoint this way.
 :::
 
-## Permissions
+## Authorization
 
-Authorization is **opt-in from zero**: nothing is reachable until a grant exists. Each grant is a `resource × verb` pair (`teams` × `index`, `teams` × `create`, …), where verbs map 1:1 to the REST actions: `index`, `show`, `create`, `update`, `destroy`.
+Your existing Pundit policies apply to the API automatically — the same `Scope` classes and policy methods that protect the admin panel filter the API response. Nothing API-specific to configure.
 
-There are two grant sets:
+- **Index** resolves through the resource's `Scope`, so `GET /api/resources/v1/comments` returns only the records that user may see.
+- **Show, update, and destroy** look the record up through the same scope, so a record outside it is **`404 Not Found`**, not a `403` — the API doesn't confirm that an out-of-scope record exists.
 
-- **Per-token grants** — govern a specific Bearer token. Edit them from that token's page. Token requests draw only from their own grants and can be granted any verb, including writes.
-- **The default permissions list** — governs the code-auth path (requests authenticated via `setup_authentication`). Manage it at **API Settings** (`/<root_path>/avo_api/settings`). This list is **read-only**: it may grant `index` and `show` only. Writes always require a Bearer token.
+```ruby
+# app/policies/comment_policy.rb
+class CommentPolicy < ApplicationPolicy
+  class Scope < ApplicationPolicy::Scope
+    def resolve
+      user.admin? ? scope.all : scope.where(user:)
+    end
+  end
+end
+```
 
-A request with no matching grant gets `403 Forbidden`. The `403` is checked before record loading, so an ungranted client can't probe whether a record exists.
+With that policy, an admin's `GET /api/resources/v1/comments` returns every comment; a regular user's returns only their own.
 
-For the code-auth path, your existing **Pundit policies still apply** on top of the grant — the same `Scope`/policy methods that protect your admin panel scope and filter the API response. For token requests, Pundit row-scoping is bypassed and the grant matrix is authoritative.
+Policy scoping requires all of the following. If any is missing, the query is **not** scoped and every record is returned:
+
+| Requirement | Where |
+| --- | --- |
+| The `avo-authorization` add-on installed | `Gemfile` |
+| The `avo-authorization` feature enabled on your license | Your Avo plan |
+| An authorization client configured | `config.authorization_client = :pundit` |
+| A user resolved by `config.current_user_method` | See [Set the current user](#set-the-current-user) |
+
+:::warning A denied action redirects instead of rendering JSON
+Policy *methods* (`index?`, `update?`, …) returning `false` raise `Avo::NotAuthorizedError`, which Avo handles by setting a flash message and issuing a **302 redirect** — behavior meant for the HTML admin panel. An API client sees a redirect to your root URL, not a JSON error.
+
+Policy **scopes** are unaffected and are the reliable way to restrict API access. If you need JSON for denied actions, add a `rescue_from Avo::NotAuthorizedError` to your `BaseResourcesController`:
+
+```ruby
+# app/controllers/avo/api/resources/v1/base_resources_controller.rb
+rescue_from Avo::NotAuthorizedError do
+  render json: { error: "Forbidden" }, status: :forbidden
+end
+```
+:::
 
 ## Reading data
 
@@ -261,13 +289,17 @@ For the code-auth path, your existing **Pundit policies still apply** on top of 
 }
 ```
 
-**Pagination** (index only): `page` (default `1`) and `per_page` (default from your Avo configuration).
+**Pagination**: `page` (default `1`) and `per_page` (default `config.per_page`).
 
-**Sorting** (index only): `sort_by` (field) and `sort_direction` (`asc` / `desc`).
+**Sorting**: `sort_by` (field) and `sort_direction` (`asc` / `desc`).
 
 ```bash
 GET /api/resources/v1/teams?page=2&per_page=10&sort_by=name&sort_direction=asc
 ```
+
+:::info `per_page` is remembered in a cookie
+Avo stores `per_page` in a cookie so the admin panel remembers the reader's choice. A client that keeps cookies between requests (a browser, or a scripted session with a cookie jar) will keep the last `per_page` it sent even when it omits the parameter. Send `per_page` explicitly on every request if you need a fixed page size.
+:::
 
 ### Show
 
@@ -285,21 +317,6 @@ GET /api/resources/v1/teams?page=2&per_page=10&sort_by=name&sort_direction=asc
 }
 ```
 
-### Association traversal
-
-`GET /api/resources/v1/teams/1/members` returns the records of an association, serialized with the **target** resource's `:index` fields:
-
-```json
-{
-  "records": [
-    { "id": 5, "name": "John Doe" },
-    { "id": 8, "name": "Jane Roe" }
-  ]
-}
-```
-
-This is read-only. The actor must be granted `index` (or `show`) on the target resource; otherwise the response is `403`.
-
 ### Field serialization
 
 Fields are respected according to their view visibility, and typed values are serialized per field type:
@@ -310,14 +327,6 @@ Fields are respected according to their view visibility, and typed values are se
 | `belongs_to` | `{ "id": 5, "label": "John Doe" }` |
 | `has_many`, `has_one` | `{ "count": 12 }` (or `{ "id": 5 }` for a single loaded record) |
 | `file`, `files` | `{ "filename": "…", "content_type": "…", "byte_size": 1234, "url": "…" }` |
-
-:::info Association visibility
-An association key is **omitted entirely** when the actor isn't granted read access to the target resource — the response never leaks a foreign key or the existence of an ungranted record.
-:::
-
-:::info File URLs for token requests
-For **token** actors, file `url`s are signed and expiring (valid for a few minutes) rather than permanent, so a leaked response can't be replayed after the token is revoked. Code-auth requests get the standard attachment URL.
-:::
 
 Field visibility follows your resource's view settings, so you can shape the API per view:
 
@@ -335,6 +344,10 @@ class Avo::Resources::Team < Avo::BaseResource
 end
 ```
 
+:::info File URLs are permanent
+`file` and `files` fields serialize the standard attachment URL. These are not signed or expiring — anyone who obtains the URL can fetch the file. Keep that in mind before exposing attachments to clients you don't control.
+:::
+
 ## Writing data
 
 Send field data under the resource's singular key. Requests use JSON.
@@ -343,7 +356,7 @@ Send field data under the resource's singular key. Requests use JSON.
 
 ```bash
 curl -X POST https://example.com/api/resources/v1/teams \
-  -H "Authorization: Bearer avo_xxxx" \
+  -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{ "team": { "name": "Mobile Team", "url": "https://mobile.company.com", "admin_id": 5 } }'
 ```
@@ -371,7 +384,7 @@ On validation failure it's `422 Unprocessable Entity`:
 
 ```bash
 curl -X PATCH https://example.com/api/resources/v1/teams/1 \
-  -H "Authorization: Bearer avo_xxxx" \
+  -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{ "team": { "name": "Updated Mobile Team" } }'
 ```
@@ -380,7 +393,7 @@ curl -X PATCH https://example.com/api/resources/v1/teams/1 \
 
 ```bash
 curl -X DELETE https://example.com/api/resources/v1/teams/1 \
-  -H "Authorization: Bearer avo_xxxx"
+  -H "Authorization: Bearer <token>"
 ```
 
 Success (`200 OK`):
@@ -412,36 +425,38 @@ Different field types accept the formats you'd expect:
 
 ## CSRF protection
 
-API controllers use Rails' `:null_session` CSRF strategy by default — the right choice for stateless, token-authenticated clients that don't carry a CSRF token. Requests without a valid token get a fresh empty session for the request; no `InvalidAuthenticityToken` exception is raised.
+API controllers use Rails' `:null_session` CSRF strategy by default — the right choice for stateless clients that don't carry a CSRF token. Requests without a valid token get a fresh empty session for the request; no `InvalidAuthenticityToken` exception is raised.
 
-Override `self.setup_csrf_protection` in a controller to change it:
+Override `self.setup_csrf_protection` to change it:
 
 ```ruby
 # app/controllers/avo/api/resources/v1/users_controller.rb
-class UsersController < BaseResourcesController
-  def self.setup_csrf_protection
-    protect_from_forgery with: :exception   # or leave empty to disable entirely
+module Avo::Api::Resources::V1
+  class UsersController < BaseResourcesController
+    def self.setup_csrf_protection
+      protect_from_forgery with: :exception   # or leave empty to disable entirely
+    end
   end
 end
 ```
 
 ## Custom controllers
 
-You don't need any controllers for the standard behavior — the catch-all controller serves every resource. Generate a controller only when you want to **override** behavior for a specific resource (a custom `setup_authentication`, `setup_csrf_protection`, response shape, or serialization).
-
-Generate one for a single resource:
+`rails generate avo_api:generate` creates every controller for you. Two narrower generators exist for later use:
 
 ```bash
+# One controller for a single resource
 rails generate avo_api:controller User
-```
 
-Or one for every existing resource at once:
-
-```bash
+# Controllers for every resource, without re-exporting BaseResourcesController
 rails generate avo_api:controllers
 ```
 
-Both create controllers under `app/controllers/avo/api/resources/v1/` that inherit from `BaseResourcesController`. Naming follows Rails conventions:
+:::warning `avo_api:controllers` does not create the base controller
+It generates resource controllers that inherit from `BaseResourcesController` but doesn't create that class. Run `avo_api:generate` first (or on its own — it invokes `avo_api:controllers` and then exports the base controller).
+:::
+
+Naming follows Rails conventions:
 
 | Avo resource | Generated controller |
 | --- | --- |
@@ -449,13 +464,11 @@ Both create controllers under `app/controllers/avo/api/resources/v1/` that inher
 | `Avo::Resources::BlogPost` | `Avo::Api::Resources::V1::BlogPostsController` |
 | `Avo::Resources::ProductCategory` | `Avo::Api::Resources::V1::ProductCategoriesController` |
 
-The route for a resource that has an override controller is drawn first, so it wins over the catch-all. A controller subclassing `BaseResourcesController` keeps authentication and the permission gate; one that inherits a plain `ActionController` is a full-bypass escape hatch (public, unauthenticated, ungated) — use it deliberately.
-
 ### Overridable methods
 
 `BaseResourcesController` exposes these hooks:
 
-- **Actions:** `index`, `show`, `create`, `update`, `destroy`, `related`
+- **Actions:** `index`, `show`, `create`, `update`, `destroy`
 - **Result callbacks:** `create_success_action`, `create_fail_action`, `update_success_action`, `update_fail_action`, `destroy_success_action`, `destroy_fail_action`
 - **Serialization:** `serialize_records(resources, view)`, `serialize_record(resource, view)`, `serialize_field_value(field)`
 - **Auth hooks:** `setup_authentication`, `self.setup_csrf_protection`
@@ -464,30 +477,32 @@ Call `super` and adjust, or replace outright:
 
 ```ruby
 # app/controllers/avo/api/resources/v1/users_controller.rb
-class UsersController < BaseResourcesController
-  def create_success_action
-    render json: {
-      record: serialize_record(@resource, :show),
-      message: "Welcome! Your account has been created."
-    }, status: :created
+module Avo::Api::Resources::V1
+  class UsersController < BaseResourcesController
+    def create_success_action
+      render json: {
+        record: serialize_record(@resource, :show),
+        message: "Welcome! Your account has been created."
+      }, status: :created
+    end
   end
 end
 ```
 
+Put customization that should apply everywhere in `BaseResourcesController` instead — every resource controller inherits from it.
+
 ## Error handling
 
-The API returns standard HTTP status codes:
+The API returns these status codes:
 
 | Status | Meaning |
 | --- | --- |
 | `200` | Success |
 | `201` | Created |
-| `401` | Unauthorized (authentication failed or missing) |
-| `403` | Forbidden (no permission grant) |
-| `404` | Not Found |
-| `422` | Unprocessable Entity (validation errors) |
-
----
+| `302` | A policy method denied the action — a redirect, not JSON (see [Authorization](#authorization)) |
+| `401` | Authentication failed or missing |
+| `404` | Record not found, out of policy scope, or the `avo-api` feature isn't enabled on your license |
+| `422` | Validation errors |
 
 ## Configuration reference
 
@@ -502,35 +517,7 @@ mount_avo_api at: "/api", constraints: { subdomain: "api" } do
 end
 ```
 
+- **Type:** route helper, available inside `Rails.application.routes.draw`.
 - **`at:`** — String, the mount path. Default: `"api"`.
 - **Rails `mount` options** — any option `mount` accepts is forwarded, e.g. `via:` (restrict HTTP methods), `constraints:`, `defaults:`.
 - **Block** — optional; defines custom routes inside the API engine.
-
-### `manage_tokens_if`
-
-Gate deciding which users may manage API tokens and the default permissions list. Applied to every token surface (resource, one-time reveal, and lifecycle actions).
-
-```ruby
-# config/initializers/avo.rb
-Avo::Api.configure do |config|
-  config.manage_tokens_if = ->(user) { user.admin? }
-end
-```
-
-- **Type:** Proc — a one-arg lambda `->(user) { … }`, or a zero-arg Avo block `-> { current_user.admin? }` (evaluated with `current_user`/`user` available).
-- **Default:** `->(_user) { false }` — deny everyone.
-- **Behavior:** Fail-closed. Any result other than `true` — including a raised exception (e.g. a `nil` user) — denies access.
-
-### Token pepper
-
-Not an Avo config value — a secret read from Rails credentials or the environment, used to HMAC token digests.
-
-```yaml
-# config/credentials.yml.enc
-avo_api:
-  token_pepper: <a long random secret>
-```
-
-- **Source:** `avo_api.token_pepper` in Rails credentials (preferred), or the `AVO_API_TOKEN_PEPPER` environment variable.
-- **Required:** yes — token creation and authentication raise until it's set.
-- **Stability:** changing it invalidates every existing token.

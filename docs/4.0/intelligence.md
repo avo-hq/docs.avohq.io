@@ -8,6 +8,8 @@ outline: [2, 3]
 
 Avo Intelligence adds an AI assistant to your admin panel. It ships a floating chat bar on every Avo page, a set of tools the assistant uses to query, create, update, and delete records on your behalf, and admin resources for browsing chats, messages, tool calls, and models.
 
+New here, or wondering what to type into it? [What you can ask](./intelligence-what-you-can-ask.html) is the catalog of everything the assistant does, with a sample prompt for each.
+
 :::warning
 The feature and docs are both work in progress.
 :::
@@ -106,6 +108,9 @@ Avo.configure do |config|
   # Token budget for the model's thinking trace (positive integer).
   config.intelligence.thinking_budget = 2048
 
+  # Clock format for chat timestamps: :auto (default), :h12, or :h24.
+  config.intelligence.time_format = :h24
+
   # What a download from a URL may cost (see "Getting new files in").
   # Set only the keys you want to change; the rest keep their defaults.
   config.intelligence.remote_file = {
@@ -118,7 +123,7 @@ Avo.configure do |config|
 end
 ```
 
-The thinking options each fall back to an environment variable when unset, so you can configure them through the environment instead:
+The two thinking options fall back to an environment variable when unset, so you can configure them through the environment instead:
 
 | Option | Environment variable | Default |
 | ----------------- | ---------------------------------- | ------- |
@@ -126,6 +131,28 @@ The thinking options each fall back to an environment variable when unset, so yo
 | `thinking_budget` | `AVO_INTELLIGENCE_THINKING_BUDGET` | unset |
 
 When both are unset, no thinking parameters are sent to the provider.
+
+### Timestamps
+
+Every timestamp in a conversation is written by the browser, not the server: message stamps and
+day dividers ("Today 1:43 PM") render in the reader's own timezone, and the day dividers group by
+the reader's calendar. A conversation is stamped the same whether it's read from Bucharest or
+Denver, and no timezone configuration is involved.
+
+`time_format` decides only whether the clock is 12- or 24-hour — the timezone is always the
+reader's own:
+
+| Value   | Clock                                                                                                         |
+| ------- | ------------------------------------------------------------------------------------------------------------- |
+| `:auto` | **Default.** Each reader's browser locale decides — an `en-GB` reader sees `21:42`, an `en-US` one `09:42 PM`. |
+| `:h12`  | `09:42 PM` for everyone.                                                                                       |
+| `:h24`  | `21:42` for everyone.                                                                                          |
+
+Leave it on `:auto` unless the admin should read the same for everyone regardless of who's
+signed in.
+
+"Today" and "Yesterday" are plain translations under
+`avo.intelligence.messages.today` / `.yesterday`.
 
 ## How the assistant works
 
@@ -139,9 +166,60 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Writing.** Updates and deletes show you a card describing the change and run only when you click Confirm; the click applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
+**Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
+
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
 For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./intelligence-agents-and-tools.html).
+
+## Your actions, from the chat
+
+Setting `published_at` is not the same as publishing. Your [actions](./actions.html) are where the operation actually lives — the notification it sends, the record it stamps, the service it calls — so the assistant runs them rather than reconstructing their effect field by field.
+
+It works from the actions each resource registers. Nothing is exposed by default beyond what you already declare in `def actions`, and nothing extra is needed to opt in:
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+  def actions
+    action Avo::Actions::ArchiveProject
+  end
+end
+```
+
+Ask for it in whatever words you'd use with a colleague — "archive the Orbit project" — and the assistant finds the matching action, reads the inputs it declares, and shows you a confirmation card naming the action and the record, with the action's own fields rendered right on the card. They're the same fields its modal would show — a tags field is a tags field here too — prefilled with the values the assistant took from your message and the action's own `default`s, and every one of them is editable before you run. Nothing runs until you click **Run**, and what runs is exactly what the fields hold at that moment; the click executes it, not the model, exactly as with updates and deletes.
+
+**It collects rather than guesses.** An input your action marks `required: true` that you didn't mention arrives on the card as an empty field for you to fill — the assistant never invents a value, because an action does real work with it. A run submitted with a required field still blank isn't performed; the card simply asks for it again.
+
+**The action's messages are the outcome.** Whatever your action reports — `succeed`, `warn`, `inform`, `error` — lands on the card once it has run, each with its severity, the same messages the Avo UI would toast. An action may report several at once, and an `error` message is part of the outcome, not a failure of the run. The values the action was handed stay on the settled card too, folded behind a click.
+
+[Actions that run without records](./actions.html#run-an-action-without-records) work too — the assistant runs them with no record at all.
+
+### What it's allowed to run
+
+Two gates, both yours, both checked when the run is proposed and again when you confirm it:
+
+- **`act_on?` on the record**, the same policy method that decides whether the Actions dropdown appears in the UI. It's checked per record, so an owner-gated policy behaves in the chat exactly as it does on the page.
+- **The action's own `self.authorize` block**, evaluated with the record in place.
+
+:::warning A policy with no `act_on?` refuses every action
+`act_on?` fails closed. If a resource has a policy that doesn't define it, the assistant can't run that resource's actions — the same way Avo hides the Actions dropdown. Add `act_on?` to the policy to allow it.
+:::
+
+A record id the signed-in user can't reach reports as "not found", never as "not allowed", so the chat can't be used to discover which records exist.
+
+### Undoing a run
+
+Every run against a record is written to the same audit log as the assistant's other writes, and whether it can be undone is decided by what it actually left behind, not by what it claimed:
+
+| The run… | In the history | Undo |
+| ------------------------------- | -------------------------------- | ----------------------------------------- |
+| changed columns on the record | recorded with a before/after diff | restores those columns |
+| deleted the record | recorded as a delete | re-creates it |
+| changed nothing you store | recorded, marked not undoable | not offered |
+
+That last row is the point. An action that emails a customer or calls another service leaves nothing to restore, and the assistant says so plainly instead of offering an undo it can't honour. Even where an undo *is* offered, it restores the columns and nothing else — the card says as much before you confirm.
+
+Standalone runs aren't written to the audit log at all: it records what happened to a record, and a standalone action has none. The card in the conversation is the record of it.
 
 ## Files and attachments
 
@@ -294,7 +372,7 @@ Every chat you open becomes a pill in the dock, newest first, so several convers
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way.
 
-To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Back to chat window** hands the conversation back to the floating bar and returns you to the page you opened it from. It only appears when there's somewhere to go back to — open a chat page directly, from a link or a bookmark, and there's no back control.
+To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Minimize to the chat bar** hands the conversation back to the floating bar. If you got there through **Open in full page**, it returns you to the page you came from and its tooltip names it; a chat page opened directly — from a link, the chat list, or a bookmark — has no such page, so it takes you home instead.
 
 A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message.
 
@@ -307,6 +385,18 @@ Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {en
 Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` with the default mount). The list shows every chat you own — its model, message count, and age — and links to the conversation. It's the same chat as in the bar: same messages, same tools, same streaming, with room to read.
 
 The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Intelligence::Chat` resource from the sidebar.
+
+## Write a message
+
+The composer is a rich text box, not a bare textarea. The usual markdown shortcuts work as you type — `**bold**`, `# heading`, `- list`, backticks for code — and formatting survives a paste. **Enter** sends the message, **Shift+Enter** starts a new line, and on an empty composer **Up** recalls your previously sent messages, shell-style. The assistant receives the message as markdown, structure intact.
+
+## Send files with a message
+
+Every composer takes files: click the paperclip, drag them in, or paste them from the clipboard. Files upload as you add them — through Active Storage's direct upload, into the storage service your app already uses — preview in the draft, and go to the model with the message, so "summarize the attached CSV" and "what's in this screenshot?" work the way you'd expect.
+
+The files stay attached to the message and the model sees them again on every later turn — you can keep asking about a file for the rest of the conversation, not just in the message it rode in on.
+
+The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
 
 ## Dictate a message
 
