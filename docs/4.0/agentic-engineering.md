@@ -30,7 +30,9 @@ Skills are organized by **vertical** — a whole feature area, not a single task
 
 ### Keeping them current
 
-Run `bundle update avo` and the skills update with it. There is nothing to copy and nothing that can drift out of sync with your app.
+Run `bin/rails avo:update` and the skills update with the gems. There is nothing to copy and nothing that can drift out of sync with your app.
+
+Use that task rather than `bundle update avo`: skills ship in every Avo gem, not just core, so bumping core alone leaves each add-on's skills behind. `avo:update` resolves every installed Avo gem and updates them together, conservatively — and the [`avo-update` skill](#skills) walks the upgrade guide for the versions you crossed.
 
 Re-run `rails g avo:skills` after upgrading Avo to refresh the loader itself; it warns when its own copy is older than the gem.
 
