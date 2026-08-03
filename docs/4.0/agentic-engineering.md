@@ -43,7 +43,7 @@ If you previously installed the skills with `npx skills add avo-hq/skills`, a Cl
 :::
 
 :::info Avo 3
-Gem-shipped skills start in Avo 4.1.0. On an earlier version the loader tells you so and stops rather than guessing — use the [docs](https://docs.avohq.io) directly.
+Older versions of Avo do not ship skills. If yours predates them the loader says so and stops rather than guessing — run `bin/rails avo:update` to get a version that has them, or use the [docs](https://docs.avohq.io) directly in the meantime.
 :::
 
 ### Core
