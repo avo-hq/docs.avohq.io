@@ -105,10 +105,13 @@ Avo.configure do |config|
 
   # Token budget for the model's thinking trace (positive integer).
   config.intelligence.thinking_budget = 2048
+
+  # Clock format for chat timestamps: :auto (default), :h12, or :h24.
+  config.intelligence.time_format = :h24
 end
 ```
 
-Each option falls back to an environment variable when unset, so you can configure through the environment instead:
+The two thinking options fall back to an environment variable when unset, so you can configure them through the environment instead:
 
 | Option | Environment variable | Default |
 | ----------------- | ---------------------------------- | ------- |
@@ -116,6 +119,28 @@ Each option falls back to an environment variable when unset, so you can configu
 | `thinking_budget` | `AVO_INTELLIGENCE_THINKING_BUDGET` | unset |
 
 When both are unset, no thinking parameters are sent to the provider.
+
+### Timestamps
+
+Every timestamp in a conversation is written by the browser, not the server: message stamps and
+day dividers ("Today 1:43 PM") render in the reader's own timezone, and the day dividers group by
+the reader's calendar. A conversation is stamped the same whether it's read from Bucharest or
+Denver, and no timezone configuration is involved.
+
+`time_format` decides only whether the clock is 12- or 24-hour — the timezone is always the
+reader's own:
+
+| Value   | Clock                                                                                                         |
+| ------- | ------------------------------------------------------------------------------------------------------------- |
+| `:auto` | **Default.** Each reader's browser locale decides — an `en-GB` reader sees `21:42`, an `en-US` one `09:42 PM`. |
+| `:h12`  | `09:42 PM` for everyone.                                                                                       |
+| `:h24`  | `21:42` for everyone.                                                                                          |
+
+Leave it on `:auto` unless the admin should read the same for everyone regardless of who's
+signed in.
+
+"Today" and "Yesterday" are plain translations under
+`avo.intelligence.messages.today` / `.yesterday`.
 
 ## How the assistant works
 
@@ -325,7 +350,7 @@ Every chat you open becomes a pill in the dock, newest first, so several convers
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way.
 
-To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Back to chat window** hands the conversation back to the floating bar and returns you to the page you opened it from. It only appears when there's somewhere to go back to — open a chat page directly, from a link or a bookmark, and there's no back control.
+To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Minimize to the chat bar** hands the conversation back to the floating bar. If you got there through **Open in full page**, it returns you to the page you came from and its tooltip names it; a chat page opened directly — from a link, the chat list, or a bookmark — has no such page, so it takes you home instead.
 
 A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message.
 
