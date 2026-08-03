@@ -127,16 +127,20 @@ day dividers ("Today 1:43 PM") render in the reader's own timezone, and the day 
 the reader's calendar. A conversation is stamped the same whether it's read from Bucharest or
 Denver, and no timezone configuration is involved.
 
-`time_format` decides only whether the clock is 12- or 24-hour:
+`time_format` decides only whether the clock is 12- or 24-hour — the timezone is always the
+reader's own:
 
-| Value  | Clock                                                                    |
-| ------ | ------------------------------------------------------------------------ |
+| Value   | Clock                                                                                                         |
+| ------- | ------------------------------------------------------------------------------------------------------------- |
 | `:auto` | **Default.** Each reader's browser locale decides — an `en-GB` reader sees `21:42`, an `en-US` one `09:42 PM`. |
-| `:h12` | `09:42 PM` for everyone.                                                  |
-| `:h24` | `21:42` for everyone.                                                     |
+| `:h12`  | `09:42 PM` for everyone.                                                                                       |
+| `:h24`  | `21:42` for everyone.                                                                                          |
 
 Leave it on `:auto` unless the admin should read the same for everyone regardless of who's
 signed in.
+
+"Today" and "Yesterday" are plain translations under
+`avo.intelligence.messages.today` / `.yesterday`.
 
 ## How the assistant works
 
