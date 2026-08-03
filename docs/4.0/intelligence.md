@@ -158,13 +158,13 @@ The assistant reports on your Active Storage usage, so you can ask about files t
 
 Ask it to **show** a file — "show me this post's cover", "what's on this product?" — and the reply carries the file itself: images render inline, video and audio get a player, and anything else comes back as a link that opens in a new tab.
 
-You can also name the file instead of the record — "show me dummy-video.mp4", or just "show me the beach photo". The assistant searches for it across everything you're allowed to see and tells you which record each match belongs to, so you never have to know where a file lives before asking for it. Every file comes back with its blob id, which is what you reference when asking for a change.
+You can also name the file instead of the record — "show me dummy-video.mp4", or just "show me the beach photo". The assistant searches for it across everything you're allowed to see and tells you which record each match belongs to, so you never have to know where a file lives before asking for it. Files sitting in the Media Library attached to nothing are searched too, and come back marked as such. Every file comes back with its blob id, which is what you reference when asking for a change.
 
-It can also attach and detach files on a record — "attach blob 42 to this post's cover", "take the cover off this post". Files are referenced by their blob id, so the assistant links files already in your Media Library rather than uploading bytes itself.
+It can also attach and detach files on a record — "attach blob 42 to this post's cover", "take the cover off this post". Files are referenced by their blob id, so the assistant links files already in your Media Library rather than uploading bytes itself. A Media Library URL carries that id — `/avo/media-library/260/edit` is blob 260 — so "attach 260 to this post's cover" works straight off the link.
 
 Attach and detach apply immediately rather than through the confirmation card that record writes use. Detaching only unlinks the file — the blob stays in the Media Library and the assistant can re-attach it with the same id. Purging a file is never something the assistant can do; deleting the file itself stays a manual action.
 
-Both respect your policies: file reports only count blobs attached to resources you are allowed to list, and attaching or detaching goes through the same `upload_<name>?` and `delete_<name>?` policy methods the Avo UI checks.
+Both respect your policies: file reports only count blobs attached to resources you are allowed to list, and attaching or detaching goes through the same `upload_<name>?` and `delete_<name>?` policy methods the Avo UI checks. The file itself is judged by who owns it, not by what the Media Library shows: the library lists every blob, but a file already attached to a record you're not allowed to read can't be attached from the chat — otherwise anyone could lift another user's private upload onto a record of their own and read it there.
 
 ### Getting new files in
 
