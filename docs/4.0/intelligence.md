@@ -110,6 +110,16 @@ Avo.configure do |config|
 
   # Clock format for chat timestamps: :auto (default), :h12, or :h24.
   config.intelligence.time_format = :h24
+
+  # What a download from a URL may cost (see "Getting new files in").
+  # Set only the keys you want to change; the rest keep their defaults.
+  config.intelligence.remote_file = {
+    max_size: 25.megabytes, # ceiling on the downloaded file
+    open_timeout: 5,        # seconds to connect
+    read_timeout: 10,       # seconds per read
+    deadline: 30,           # seconds for the whole download
+    max_redirects: 3
+  }
 end
 ```
 
@@ -226,13 +236,23 @@ The assistant reports on your Active Storage usage, so you can ask about files t
 
 Ask it to **show** a file — "show me this post's cover", "what's on this product?" — and the reply carries the file itself: images render inline, video and audio get a player, and anything else comes back as a link that opens in a new tab.
 
-You can also name the file instead of the record — "show me dummy-video.mp4", or just "show me the beach photo". The assistant searches for it across everything you're allowed to see and tells you which record each match belongs to, so you never have to know where a file lives before asking for it. Every file comes back with its blob id, which is what you reference when asking for a change.
+You can also name the file instead of the record — "show me dummy-video.mp4", or just "show me the beach photo". The assistant searches for it across everything you're allowed to see and tells you which record each match belongs to, so you never have to know where a file lives before asking for it. Files sitting in the Media Library attached to nothing are searched too, and come back marked as such. Every file comes back with its blob id, which is what you reference when asking for a change.
 
-It can also attach and detach files on a record — "attach blob 42 to this post's cover", "take the cover off this post". Files are referenced by their blob id, so the assistant only ever links something already in your Media Library: it never uploads bytes and never fetches a file from a URL.
+It can also attach and detach files on a record — "attach blob 42 to this post's cover", "take the cover off this post". Files are referenced by their blob id, so the assistant links files already in your Media Library rather than uploading bytes itself. A Media Library URL carries that id — `/avo/media-library/260/edit` is blob 260 — so "attach 260 to this post's cover" works straight off the link.
 
 Attach and detach apply immediately rather than through the confirmation card that record writes use. Detaching only unlinks the file — the blob stays in the Media Library and the assistant can re-attach it with the same id. Purging a file is never something the assistant can do; deleting the file itself stays a manual action.
 
-Both respect your policies: file reports only count blobs attached to resources you are allowed to list, and attaching or detaching goes through the same `upload_<name>?` and `delete_<name>?` policy methods the Avo UI checks.
+Both respect your policies: file reports only count blobs attached to resources you are allowed to list, and attaching or detaching goes through the same `upload_<name>?` and `delete_<name>?` policy methods the Avo UI checks. The file itself is judged by who owns it, not by what the Media Library shows: the library lists every blob, but a file already attached to a record you're not allowed to read can't be attached from the chat — otherwise anyone could lift another user's private upload onto a record of their own and read it there.
+
+### Getting new files in
+
+Two paths bring a file that isn't in your Media Library yet onto a record:
+
+**Upload it in the chat.** Drop a file into the composer and send it — the assistant sees the file and knows its blob id, so "attach the file I just sent to this post's cover" is a one-step ask. Files uploaded this way are private to their conversation: the assistant can't reach uploads from anyone else's chats, and other users can't reach yours.
+
+**Give it a link.** Ask the assistant to attach a file by URL — "attach https://example.com/logo.png as this post's cover" — and it proposes the download on a confirmation card showing the URL, the filename, and the record. When the link points at an image the card previews it, so you are approving a picture you have seen rather than an address you had to read. Nothing is fetched until you click **Attach**; the assistant can't fetch anything on its own, which is what keeps a malicious link that slipped into your data from ever being followed unseen.
+
+The download itself is hardened: only public `https://` URLs are accepted (private and internal addresses are rejected, on every redirect too), the file's content type is read from its bytes rather than trusted from the server, and anything over the configured size ceiling (25 MB by default) is refused mid-download rather than after it. If your files are bigger than that, or your source is slow, raise the matching keys under `config.intelligence.remote_file` — see [Configuration](#configuration). The undo is the same as for any attachment — detach it; the file stays in the Media Library.
 
 ## Customize the assistant's instructions
 

@@ -112,11 +112,14 @@ Required inputs you didn't mention arrive as empty fields on the card for you to
 | "What are the biggest files?"           | The largest files and which records they belong to        |
 | "Which products have no image?"         | Records missing an attachment                             |
 | "Show me this post's cover"             | The file itself — images inline, video and audio with a player |
-| "Show me the beach photo"               | A search across everything you can see, by filename       |
+| "Show me the beach photo"               | A search by filename across everything you can see, Media Library files included |
 | "Attach blob 42 to this post's cover"   | The file linked to the record                             |
+| "Attach 260 to this post's cover"       | The same, from a [Media Library](./media-library.html) URL — its id is the blob id |
+| "Attach the file I just sent to the cover" | A file you uploaded in this chat, linked to the record |
+| "Attach https://example.com/logo.png as the cover" | A confirmation card with the URL and a preview — nothing is fetched until you click **Attach** |
 | "Take the cover off this post"          | The file unlinked — the blob stays in the Media Library   |
 
-Files are referenced by blob id, so the assistant only ever links something already in your [Media Library](./media-library.html): it never uploads bytes and never fetches from a URL. Purging a file stays a manual action. See [Files and attachments](./intelligence.html#files-and-attachments).
+Files are referenced by blob id, and the Media Library URL carries one: `/avo/media-library/260/edit` is blob 260. The assistant never uploads bytes itself — a file gets in either by riding along on your message or through a URL you confirm. Purging a file stays a manual action. See [Files and attachments](./intelligence.html#files-and-attachments) and [Getting new files in](./intelligence.html#getting-new-files-in).
 
 ## Ask about the record you're on
 

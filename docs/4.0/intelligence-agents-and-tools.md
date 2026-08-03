@@ -39,7 +39,7 @@ Tool names below are how calls appear in the Tool calls resource and in the chat
 | `resource_inspector`         | Reads one resource's real columns, associations, and scopes; unlocks querying and writing that resource              | read-only         |
 | `active_record_query`        | Runs read-only, paginated, policy-scoped queries against a resource                                                  | read-only         |
 | `active_storage_insights`    | Storage reports — totals, orphans, duplicates, growth, biggest files — and finding/showing files                     | read-only         |
-| `active_storage_attachment`  | Attaches or detaches a Media Library blob on a record's attachment                                                   | immediately       |
+| `active_storage_attachment`  | Attaches or detaches a Media Library blob (or a chat upload) on a record's attachment; can also fetch a URL onto one | immediately¹      |
 | `create_record`              | Creates a record                                                                                                     | immediately       |
 | `update_record`              | Changes a record's attributes                                                                                        | after you confirm |
 | `delete_record`              | Deletes a record                                                                                                     | after you confirm |
@@ -47,6 +47,8 @@ Tool names below are how calls appear in the Tool calls resource and in the chat
 | `rename_conversation`        | Renames the current conversation — with your exact title, or by regenerating one                                     | immediately       |
 
 "After you confirm" means the tool call produces a card describing the pending change; your click applies it, not the model. "Immediately" is reserved for actions that are reversible (a detached file can be re-attached, a conversation can be renamed again) or additive (creating a record).
+
+¹ Attaching and detaching existing blobs apply immediately; the `attach_from_url` operation is the exception — a server-side download always goes through a confirmation card showing the URL, and nothing is fetched until you click **Attach**. See [Getting new files in](./intelligence.html#getting-new-files-in).
 
 ### Where tools get their context
 
