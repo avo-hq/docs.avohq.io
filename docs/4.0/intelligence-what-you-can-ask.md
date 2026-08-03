@@ -1,0 +1,161 @@
+---
+license: addon
+betaStatus: Beta
+outline: [2, 3]
+---
+
+# What you can ask
+
+A catalog of what the Avo Intelligence assistant can do, with a prompt for each one. Everything here works in plain language — you never name a tool, and you never have to phrase a request a particular way.
+
+The resource and field names in the examples are placeholders. Substitute your own: the assistant reads your resources, your columns, and your scopes at the moment you ask, so the vocabulary that works is the vocabulary of your admin.
+
+For how a turn actually unfolds — inspect-first, confirmation cards, authorization — see [How the assistant works](./intelligence.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./intelligence-agents-and-tools.html).
+
+## Find records
+
+| Ask                                              | What you get                                                             |
+| ------------------------------------------------ | ------------------------------------------------------------------------ |
+| "Find the user with the email ada@example.com"   | The matching record, as a card with a link to open it                    |
+| "Show me the 5 most recent posts"                | A short list, sorted by the timestamp that matches what you asked about  |
+| "Which users signed up in the last 7 days?"      | A date-filtered list, resolved against the real current time             |
+| "List projects whose name contains 'orbit'"      | A partial-match list                                                     |
+| "Show me every column for post 42"               | The full record, not just the common columns                             |
+| "Who signed up last?"                            | One record, rendered as a card                                           |
+
+Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders over $500", "users older than 26", "posts with no author", "projects in draft or review".
+
+**Your scopes are part of the vocabulary.** Domain words like "admins", "active", or "published" are usually named scopes on the model rather than columns, and the assistant prefers the scope over guessing at a filter — so "list the published posts" runs `Post.published`, whatever that scope actually does.
+
+**Associations, without SQL.** "Which teams have no members?" and "show me users who have at least one order" are answered by checking whether the association exists, scoped to the child records you're allowed to see.
+
+When a query returns exactly one record, you get a card with its title and a link rather than a paragraph repeating its fields.
+
+## Count and break down
+
+Counts come from the real total, never from counting the rows on screen.
+
+| Ask                                          | What you get                                    |
+| -------------------------------------------- | ----------------------------------------------- |
+| "How many orders do we have?"                | The total, even when only a page of rows was read |
+| "How many posts per status?"                 | A count per value                               |
+| "Which team has the most members?"           | Grouped counts, highest first                   |
+| "Which author has published the fewest posts?" | Grouped counts, lowest first                   |
+
+If a list is longer than one page, the assistant says so — "showing 25 of 54" — instead of quietly presenting a subset as the whole.
+
+## Look around your admin
+
+| Ask                                        | What you get                                                        |
+| ------------------------------------------ | ------------------------------------------------------------------- |
+| "What can you help me with?"               | A short description of what it does here                            |
+| "Which resources are there?"               | Every resource you're allowed to see                                |
+| "What fields does the Post resource have?" | Fields with their types, plus associations, scopes, and attachments |
+| "What columns are on the users table?"     | Columns, indexes, and foreign keys                                  |
+| "Which actions can I run on projects?"     | The actions that resource registers, and the inputs each takes      |
+
+All of it is scoped to what you could already reach in the Avo UI. A resource your policies hide doesn't show up here either.
+
+## Create records
+
+Creates apply immediately — there's nothing to preview for a record that doesn't exist yet.
+
+- **"Create a project called Orbit"** — the assistant asks only for values it genuinely needs, and never for optional fields you didn't mention.
+- **"Add a user named Ada with the email ada@example.com and the admin role"** — several fields in one sentence.
+- **"Add 15 cities"** — creating is the one write it repeats. It creates all fifteen without stopping to ask between them, filling required fields with sensible values, and closes with one line.
+
+Each created record gets its own card with a link.
+
+## Change and delete records
+
+Both work one record at a time and both end in a card you click.
+
+- **"Set the Orbit project's status to active"** — a card shows the record and each field's before → after value, with **Confirm** and **Cancel**.
+- **"Rename the post 'Hello' to 'Hello world'"** — same card.
+- **"Delete the test project"** — a card names the record and asks you to confirm.
+
+**Your click applies the change, not the model.** The assistant can propose a write, but it cannot perform one — and it can't talk its way past a Cancel.
+
+**Ambiguity stops the write.** If "the Orbit project" matches three records, the assistant lists them and asks which one rather than picking. Bulk changes aren't offered at all: ask to update or delete many records and it will say it works one at a time.
+
+## Undo something
+
+Every executed write is recorded, so undo doesn't depend on the change still being visible in the conversation.
+
+| Ask                                     | What happens                                               |
+| --------------------------------------- | ---------------------------------------------------------- |
+| "What have you changed in this chat?"    | The writes made here, newest first                        |
+| "Undo that"                              | A card describing the undo, for you to confirm            |
+| "Revert the status change on Orbit"      | The same, for a specific earlier write                    |
+
+Undoing a create deletes the record it made; undoing an update restores the values it overwrote; undoing a delete re-creates the record. A write can only be undone once, and a change that left nothing behind to restore is reported as not undoable rather than attempted.
+
+## Run your actions
+
+The assistant runs the [actions](./actions.html) your resources register, so operations keep their business logic instead of being reconstructed field by field.
+
+- **"Archive the Orbit project"** — finds the matching action, reads its inputs, and shows a confirmation card with the action's own fields rendered on it, editable before you run.
+- **"Publish this post"** — runs your publish action, notifications and all, rather than setting `published_at` behind its back.
+- **"Export the users as CSV"** — [actions that run without records](./actions.html#run-an-action-without-records) work too.
+- **"Which actions does this resource have?"** — lists them with their inputs when you'd rather look first.
+
+Required inputs you didn't mention arrive as empty fields on the card for you to fill; the assistant never invents a value for them. Full detail in [Your actions, from the chat](./intelligence.html#your-actions-from-the-chat).
+
+## Work with files
+
+| Ask                                     | What you get                                              |
+| --------------------------------------- | --------------------------------------------------------- |
+| "How much storage are we using?"        | Totals by service, content type, and resource             |
+| "Any orphaned uploads?"                 | Blobs attached to nothing                                 |
+| "Do we have duplicate files?"           | Files sharing a checksum, and what de-duplicating frees   |
+| "Is storage growing?"                   | Uploads per month                                         |
+| "What are the biggest files?"           | The largest files and which records they belong to        |
+| "Which products have no image?"         | Records missing an attachment                             |
+| "Show me this post's cover"             | The file itself — images inline, video and audio with a player |
+| "Show me the beach photo"               | A search across everything you can see, by filename       |
+| "Attach blob 42 to this post's cover"   | The file linked to the record                             |
+| "Take the cover off this post"          | The file unlinked — the blob stays in the Media Library   |
+
+Files are referenced by blob id, so the assistant only ever links something already in your [Media Library](./media-library.html): it never uploads bytes and never fetches from a URL. Purging a file stays a manual action. See [Files and attachments](./intelligence.html#files-and-attachments).
+
+## Ask about the record you're on
+
+Start a chat from a record's page and "this" is already resolved — for the whole conversation, not just the first message.
+
+- **"What is this?"**
+- **"Who owns it?"**
+- **"Set its status to active"**
+- **"Is anything missing here?"**
+
+A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it. See [The record you start from](./intelligence.html#the-record-you-start-from).
+
+## Ask about a file you sent
+
+Attach files to your message — paperclip, drag, or paste — and ask about them directly:
+
+- **"Summarize the attached CSV"**
+- **"What's in this screenshot?"**
+- **"Create a project for each row in this spreadsheet"**
+
+The files stay on the message, so you can keep asking about them later in the conversation. Reading an image or a PDF takes a vision-capable model. See [Send files with a message](./intelligence.html#send-files-with-a-message).
+
+## Manage the conversation
+
+- **"Rename this conversation to 'Q3 invoices'"** — your exact wording, applied everywhere the title shows.
+- **"Rename this conversation"** — with no name given, a fresh title is generated from where the conversation actually went.
+
+New conversations title themselves after your first message. See [Renaming conversations](./intelligence-agents-and-tools.html#renaming-conversations).
+
+## What it won't do
+
+Knowing the edges saves a round trip:
+
+| It won't                                  | Because                                                                 |
+| ----------------------------------------- | ----------------------------------------------------------------------- |
+| Update or delete many records at once     | Writes are one record at a time; it will ask you to pick                |
+| Apply its own updates, deletes, or undos  | The confirmation card is yours to click                                  |
+| Delete a file from storage                | It can detach, never purge                                               |
+| Touch anything your policies hide         | Every read and write is authorized for the signed-in user                |
+| Answer questions unrelated to this app    | General knowledge, coding help, and writing tasks are out of scope       |
+
+A record you can't reach reports as "not found" rather than "not allowed", so the chat can't be used to probe for what exists.
