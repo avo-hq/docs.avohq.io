@@ -24,7 +24,22 @@ The skills ship **inside the `avo` gem**, so they describe the version your app 
 
 <CustomCode content="rails g avo:skills" />
 
-That writes one small file into `.claude/skills/avo/`, `.agents/skills/avo/`, and `.cursor/skills/avo/`. The skills themselves are never copied into your repo — the loader resolves them from the installed gem when a task actually needs them.
+An install panel asks where it should go and which agents to set up:
+
+```
+  Where
+    (•) This app         committed, so the whole team gets it
+    ( ) This machine     one install, every Avo project
+
+  Which agents
+    [x] .claude/skills   Claude Code
+    [x] .agents/skills   Codex, Gemini CLI, Goose, Amp, OpenCode
+    [x] .cursor/skills   Cursor
+
+  ↑↓ move   space select   enter install   q cancel
+```
+
+It writes one small markdown file per agent directory you pick. The skills themselves are never copied into your repo — the loader resolves them from the installed gem when a task actually needs them.
 
 Skills are organized by **vertical** — a whole feature area, not a single task — so one skill covers creating, configuring, and troubleshooting that part of Avo.
 
@@ -100,17 +115,17 @@ Separately-licensed gems (paid add-on or Enterprise). `avo-media-library` is Com
 
 Paid add-on skills arrive with their gems — install `avo-kanban` and its skill comes with it. The loader lists what your app actually has, and names the add-on for anything it does not, so an agent never describes a feature you cannot use.
 
-The loader is installed for Claude Code, Cursor, and any agent that reads `.agents/skills/`. Use `--only claude`, `--only cursor`, or `--only agents` to install just one, or `--path` to install somewhere else.
+Pick the agent directories in the panel, or skip it with flags: `--only claude`, `--only cursor`, `--only agents`, or `--path` to install somewhere else. Any flag, or a non-interactive shell, skips the panel and installs the defaults.
 
 ### One loader for every project
 
-Pass `--global` to install into your home directory instead:
+Choose **This machine** in the panel, or pass the flag:
 
 <CustomCode content="rails g avo:skills --global" />
 
 The loader carries no version knowledge — it finds the app by walking up from the working directory and reads that app's `Gemfile.lock` — so a single copy serves every Avo project on the machine, each resolving its own version. Install once and you are done.
 
-The per-app install is still worth it for a team: the loader is two small files you commit, so everyone gets it on `git pull` rather than each person installing it themselves.
+The per-app install is still worth it for a team: the loader is one small file you commit, so everyone gets it on `git pull` rather than each person installing it themselves.
 
 ## MCP server
 
