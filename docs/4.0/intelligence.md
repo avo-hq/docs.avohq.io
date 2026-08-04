@@ -388,6 +388,19 @@ Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` 
 
 The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Intelligence::Chat` resource from the sidebar.
 
+## The conversation menu
+
+The ⋯ button next to a conversation's title opens its menu. It's in the chat window's title bar and on the full-page chat, and both carry the same two rename entries:
+
+- **Rename chat** makes the title editable in place — the panel's header in the bar, the last breadcrumb on a chat page. **Enter** commits and **Esc** cancels in both. Clicking away differs: in the bar it cancels the edit, on the chat page it commits it. An empty title is refused, so a conversation always keeps a name.
+- **Rename again with AI** hands the conversation back to the [renamer agent](./intelligence-agents-and-tools.html#renaming-conversations) for a fresh title, without going through the assistant. The title shimmers while the renamer runs, and the new name lands everywhere the old one showed.
+
+Renaming needs no policy of its own — owning the chat is the entire permission, and you only ever see your own.
+
+The bar's menu carries one more entry. **Copy as markdown** puts the whole conversation on your clipboard as plain markdown: the chat's title as a heading, then every turn labelled **User:** or **Assistant:**. Only what was actually said is copied — tool cards, confirmation cards, and debug rows stay behind, so what you paste into an issue or a PR is the conversation, not the machinery.
+
+The menu's other entries have their own sections: [deleting a chat](#who-can-delete-a-chat), and — for viewers whose policy allows it — [the debug toggle](#debug-levels).
+
 ## Write a message
 
 The composer is a rich text box, not a bare textarea. The usual markdown shortcuts work as you type — `**bold**`, `# heading`, `- list`, backticks for code — and formatting survives a paste. **Enter** sends the message, **Shift+Enter** starts a new line, and on an empty composer **Up** recalls your previously sent messages, shell-style. The assistant receives the message as markdown, structure intact.
