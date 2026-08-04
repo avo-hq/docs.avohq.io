@@ -25,7 +25,7 @@ A second, much smaller agent does exactly one job: reading a conversation's mess
 It runs on three occasions:
 
 - automatically, after the first message of a new conversation
-- when you pick **Rename again with AI** from the chat page's menu
+- when you pick **Rename again with AI** from the ⋯ menu, in the chat bar or on a chat page
 - when you ask the assistant to rename the conversation without giving it a name
 
 ## The tools
@@ -71,7 +71,8 @@ After that, renaming is a chat feature like any other:
 
 - **"rename this conversation to 'Q3 invoices'"** — the assistant passes your exact wording to `rename_conversation` and the title applies immediately.
 - **"rename this conversation"** — with no name given, the assistant triggers the renamer agent instead of inventing a title itself. The regenerated title reflects where the conversation actually went, not just how it started.
-- **Rename again with AI** in the chat page's menu does the same regeneration without involving the assistant.
+- **Rename again with AI** does the same regeneration without involving the assistant. It sits in the ⋯ menu, both in the chat bar and on a full-page chat.
+- **Rename chat**, in the same menu, skips the model entirely: the title becomes editable in place and what you type is what it's called. See [The conversation menu](./intelligence.html#the-conversation-menu).
 
 Wherever the conversation's name is on screen, it updates live when a rename lands — the chat's tab in the floating bar, the breadcrumb on its full-page view, and the title, name field, and breadcrumb on its resource page.
 

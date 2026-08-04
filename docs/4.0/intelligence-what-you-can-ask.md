@@ -149,6 +149,8 @@ The files stay on the message, so you can keep asking about them later in the co
 
 New conversations title themselves after your first message. See [Renaming conversations](./intelligence-agents-and-tools.html#renaming-conversations).
 
+You don't have to ask, either. The ⋯ menu next to the title renames the conversation without the assistant — **Rename chat** to type the title yourself, **Rename again with AI** to have one generated — and the bar's menu adds **Copy as markdown**, which puts the conversation on your clipboard as plain text. See [The conversation menu](./intelligence.html#the-conversation-menu).
+
 ## What it won't do
 
 Knowing the edges saves a round trip:
