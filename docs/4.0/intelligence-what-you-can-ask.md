@@ -68,13 +68,13 @@ Each created record gets its own card with a link.
 
 ## Change and delete records
 
-Both work one record at a time and both end in a card you click.
+Both work one record at a time and both end in a card you confirm.
 
 - **"Set the Orbit project's status to active"** — a card shows the record and each field's before → after value, with **Confirm** and **Cancel**.
 - **"Rename the post 'Hello' to 'Hello world'"** — same card.
 - **"Delete the test project"** — a card names the record and asks you to confirm.
 
-**Your click applies the change, not the model.** The assistant can propose a write, but it cannot perform one — and it can't talk its way past a Cancel.
+**Your confirmation applies the change, not the model.** Confirm a card by clicking its button or by telling the assistant to go ahead — "do it", "run it", "yes" — which counts the same because the words are yours. Either way the assistant can propose a write but never perform one, and it can't talk its way past a Cancel.
 
 **Ambiguity stops the write.** If "the Orbit project" matches three records, the assistant lists them and asks which one rather than picking. Bulk changes aren't offered at all: ask to update or delete many records and it will say it works one at a time.
 
@@ -94,7 +94,7 @@ Undoing a create deletes the record it made; undoing an update restores the valu
 
 The assistant runs the [actions](./actions.html) your resources register, so operations keep their business logic instead of being reconstructed field by field.
 
-- **"Archive the Orbit project"** — finds the matching action, reads its inputs, and shows a confirmation card with the action's own fields rendered on it, editable before you run.
+- **"Archive the Orbit project"** — finds the matching action, reads its inputs, and shows a confirmation card with the action's own fields rendered on it, prefilled with any values you named ("...reason: budget cut") and editable before you run.
 - **"Publish this post"** — runs your publish action, notifications and all, rather than setting `published_at` behind its back.
 - **"Export the users as CSV"** — [actions that run without records](./actions.html#run-an-action-without-records) work too.
 - **"Which actions does this resource have?"** — lists them with their inputs when you'd rather look first.
@@ -158,7 +158,7 @@ Knowing the edges saves a round trip:
 | It won't                                  | Because                                                                 |
 | ----------------------------------------- | ----------------------------------------------------------------------- |
 | Update or delete many records at once     | Writes are one record at a time; it will ask you to pick                |
-| Apply its own updates, deletes, or undos  | The confirmation card is yours to click                                  |
+| Apply its own updates, deletes, or undos  | The card is yours to confirm — a click, or a quick "do it" in your own words |
 | Delete a file from storage                | It can detach, never purge                                               |
 | Touch anything your policies hide         | Every read and write is authorized for the signed-in user                |
 | Answer questions unrelated to this app    | General knowledge, coding help, and writing tasks are out of scope       |
