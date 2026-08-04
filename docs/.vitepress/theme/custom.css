@@ -122,3 +122,12 @@ pre code span.line:not(:last-child) {
   height: 100%;
   margin-top: 0 !important;
 }
+
+/* Skills catalog (4.0/agentic-engineering) — the first column is a bare skill
+   name, and a name broken across two lines stops the column being scannable,
+   which is the only reason it is a column. VitePress already gives .vp-doc
+   table `overflow-x: auto`, so a long name scrolls the table rather than
+   forcing the page sideways. */
+.skills-catalog .vp-doc td:first-child code {
+  white-space: nowrap;
+}
