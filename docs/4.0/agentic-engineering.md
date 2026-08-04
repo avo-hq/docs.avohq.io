@@ -24,22 +24,46 @@ The skills ship **inside the `avo` gem**, so they describe the version your app 
 
 <CustomCode content="rails g avo:skills" />
 
-An install panel asks where it should go and which agents to set up:
+An install panel asks one question at a time. Arrow keys move, <kbd>enter</kbd> continues, <kbd>←</kbd> goes back to change an earlier answer:
 
 ```
-  Where
-    (•) This app         committed, so the whole team gets it
-    ( ) This machine     one install, every Avo project
+  Where should the Avo skills loader go?
+  It finds the gem from the working directory, so one copy serves every project correctly.
 
-  Which agents
-    [x] .claude/skills   Claude Code
-    [x] .agents/skills   Codex, Gemini CLI, Goose, Amp, OpenCode
-    [x] .cursor/skills   Cursor
+  › (•) This app (recommended)  commit it, your team gets it
+    ( ) This machine            one install, every Avo project
 
-  ↑↓ move   space select   enter install   q cancel
+  ↑↓ move   enter continue   q cancel
 ```
 
-It writes one small markdown file per agent directory you pick. The skills themselves are never copied into your repo — the loader resolves them from the installed gem when a task actually needs them.
+```
+  Which agents should read it?
+
+  › [x] .agents/skills  Codex, Gemini CLI, Goose, Amp, OpenCode
+    [x] .claude/skills  Claude Code
+    [x] .cursor/skills  Cursor
+
+  ↑↓ move   space toggle   enter continue   ← back   q cancel
+```
+
+Nothing is written until the last screen shows what it is about to do:
+
+```
+  Run the installation?
+
+    Install to    this app
+    Directories   .agents/skills, .claude/skills, .cursor/skills
+    Extra copies  symlinked to .agents/skills
+
+  › (•) Yes, install (recommended)
+    ( ) No, cancel
+
+  ↑↓ move   enter continue   ← back   q cancel
+```
+
+It writes one small markdown file. The skills themselves are never copied into your repo — the loader resolves them from the installed gem when a task actually needs them.
+
+Pick more than one agent directory and you get **one real file, symlinked from the rest**, so updating the loader is a single edit and the directories cannot drift apart. `.agents/skills` holds the file. On a filesystem without symlinks the generator notices and writes copies instead.
 
 Skills are organized by **vertical** — a whole feature area, not a single task — so one skill covers creating, configuring, and troubleshooting that part of Avo.
 
@@ -54,7 +78,17 @@ Re-run `rails g avo:skills` after upgrading Avo to refresh the loader itself; it
 :::warning Older global installs
 If you previously installed the skills with `npx skills add avo-hq/skills`, a Claude Code plugin, or a manual symlink, that copy can shadow the gem-shipped skills and silently serve instructions for a different Avo version.
 
-`rails g avo:skills` detects those leftovers and asks whether to remove the ones in your project. Pass `--clean-legacy` to skip the prompt, or `--no-clean-legacy` to keep them. Anything in `~/.claude/skills` is reported but never deleted — that directory is shared with your other projects.
+`rails g avo:skills` finds those leftovers and offers to remove them — screens you only see when there is actually something to remove:
+
+```
+  Remove the 2 skills left by an earlier install?
+  They are not version-pinned and can shadow the skills that ship with your gem.
+
+  › (•) Yes, remove them (recommended)
+    ( ) No, leave them
+```
+
+Your project and `~/.claude/skills` are asked separately, since that second directory is shared with every other project on the machine. Decline either and the generator prints the `rm -rf` you would need to do it later.
 :::
 
 :::info Avo 3
@@ -115,13 +149,9 @@ Separately-licensed gems (paid add-on or Enterprise). `avo-media-library` is Com
 
 Paid add-on skills arrive with their gems — install `avo-kanban` and its skill comes with it. The loader lists what your app actually has, and names the add-on for anything it does not, so an agent never describes a feature you cannot use.
 
-Pick the agent directories in the panel, or skip it with flags: `--only claude`, `--only cursor`, `--only agents`, or `--path` to install somewhere else. Any flag, or a non-interactive shell, skips the panel and installs the defaults.
-
 ### One loader for every project
 
-Choose **This machine** in the panel, or pass the flag:
-
-<CustomCode content="rails g avo:skills --global" />
+Answer **This machine** on the first screen.
 
 The loader carries no version knowledge — it finds the app by walking up from the working directory and reads that app's `Gemfile.lock` — so a single copy serves every Avo project on the machine, each resolving its own version. Install once and you are done.
 
