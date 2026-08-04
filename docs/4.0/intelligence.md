@@ -46,14 +46,15 @@ bin/rails db:migrate
 This creates the `avo_intelligence_*` tables and writes `config/initializers/ruby_llm.rb` (skipped if it already exists).
 
 :::warning Already installed an earlier alpha?
-The installer only ever writes the initial migration, so a schema created by an earlier version won't pick up columns added since. `avo_intelligence_chats.attached_context` is the current one — it's where a chat stores [the record it was started from](#the-record-you-start-from). Add it by hand:
+The installer only ever writes the initial migration, so a schema created by an earlier version won't pick up columns added since. Two are current, both on `avo_intelligence_chats`: `attached_context` stores [the record the chat was started from](#the-record-you-start-from), and `responding_at` tracks [whether a chat is being answered right now](#while-the-assistant-is-replying). Add them by hand:
 
 ```bash
 bin/rails generate migration AddAttachedContextToAvoIntelligenceChats attached_context:jsonb
+bin/rails generate migration AddRespondingAtToAvoIntelligenceChats responding_at:datetime
 bin/rails db:migrate
 ```
 
-Without it, starting a chat raises on the unknown attribute.
+Without them, starting a chat raises on the unknown attribute.
 :::
 
 ### 3. Set your provider API key
@@ -370,7 +371,7 @@ The chat bar sits at the bottom of every Avo page. **Cmd+J** (or **Ctrl+J**) ope
 
 Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. Drag a pill to reorder them. The chat window lines its end edge up with the pill it was opened from and slides across when you switch, so it's always clear which conversation you're looking at. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. The open chats, their order, and the collapsed state are all remembered per device.
 
-Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way.
+Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way. The **×** in the title bar does the same thing: it closes the window, not the conversation. To take a chat out of the dock, use the × on its own pill; the conversation itself is kept either way, and it's still on your [chat list](#full-page-chats).
 
 To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Minimize to the chat bar** hands the conversation back to the floating bar. If you got there through **Open in full page**, it returns you to the page you came from and its tooltip names it; a chat page opened directly — from a link, the chat list, or a bookmark — has no such page, so it takes you home instead.
 
@@ -440,6 +441,10 @@ In Chrome and Edge, dictating means uploading admin-panel audio to Google. If th
 ## While the assistant is replying
 
 Your message lands on the transcript the moment you send it, with a **Thinking** indicator underneath — it's saved as part of the send, not by the background job, so it never blinks out for the second or two the queue takes. Starting a fresh conversation keeps the composer you typed into on screen until the conversation is ready, then trades one for the other, so there's no empty panel in between. A second **Enter** while that's happening doesn't start a second chat.
+
+You can keep typing while it works. A message sent before the current answer lands doesn't interrupt it — it waits in a short list above the composer, in the order you sent it, and goes out on its own the moment the assistant finishes. One turn at a time, so two replies never race each other in the same conversation.
+
+While a message waits you can move it to the front of the line or drop it, which is the point of showing you the wait rather than hiding it. The list belongs to the page you typed on: reloading clears it, the same way it clears anything else you'd typed but not sent.
 
 The indicator is read from the conversation itself rather than from what your browser happened to witness. Reload mid-reply, or open the chat in full page while it's working, and the indicator is still there waiting on the same reply — the answer streams in wherever you're watching from when it lands. It clears when the assistant's reply arrives, when a card or a question hands the turn back to you, or when the run errors out.
 
