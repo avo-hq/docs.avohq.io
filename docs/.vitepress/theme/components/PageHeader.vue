@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { useData } from 'vitepress'
 
 const props = defineProps({
@@ -19,6 +19,25 @@ const apiDocs = computed(() => frontmatter.value.api_docs)
 const guide = computed(() => frontmatter.value.guide)
 
 const shouldHide = computed(() => [feedbackId, license, version, demoVideo, demo, betaStatus].every((i) => i.value === undefined))
+
+// The callout is pinned under the nav, so anchored headings have to clear it too.
+// Publish its height (+ the 0.5rem gap it sits at) for the scroll-margin rule in
+// custom.css. Measured because the callout wraps to two lines on narrow screens.
+const callout = ref(null)
+const setCalloutHeight = (px) => document.documentElement.style.setProperty('--api-callout-height', px)
+const observer = typeof ResizeObserver === 'undefined' ? null
+  : new ResizeObserver(([entry]) => setCalloutHeight(`${entry.target.offsetHeight + 8}px`))
+
+const stopObserving = () => {
+  observer?.disconnect()
+  document.documentElement.style.removeProperty('--api-callout-height')
+}
+
+watch(callout, (el) => {
+  stopObserving()
+  if (el) observer?.observe(el)
+})
+onUnmounted(stopObserving)
 </script>
 
 <template>
@@ -30,7 +49,7 @@ const shouldHide = computed(() => [feedbackId, license, version, demoVideo, demo
     <Demo :link="demo" v-if="demo" />
     <BetaStatus :label="betaStatus" v-if="betaStatus" />
   </div>
-  <a v-if="apiDocs" :href="apiDocs" class="api-docs-callout" title="View the per-option API reference">
+  <a v-if="apiDocs" ref="callout" :href="apiDocs" class="api-docs-callout" title="View the per-option API reference">
     <div class="api-docs-callout__icon" aria-hidden="true">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
@@ -43,7 +62,7 @@ const shouldHide = computed(() => [feedbackId, license, version, demoVideo, demo
       <span class="api-docs-callout__subtitle">See the full API reference &rarr;</span>
     </div>
   </a>
-  <a v-if="guide" :href="guide" class="api-docs-callout api-docs-callout--back" title="See the guides">
+  <a v-if="guide" ref="callout" :href="guide" class="api-docs-callout api-docs-callout--back" title="See the guides">
     <div class="api-docs-callout__icon" aria-hidden="true">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">

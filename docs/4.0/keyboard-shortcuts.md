@@ -55,6 +55,16 @@ Cycle the [appearance](./appearance.html) settings from any page.
 | <kbd>Shift</kbd>+<kbd>N</kbd> | Cycle the neutral theme                      |
 | <kbd>Shift</kbd>+<kbd>A</kbd> | Cycle the accent color                       |
 
+## Assistant
+
+Requires the [Intelligence](./intelligence.html) add-on. Without it, the shortcut isn't bound and doesn't show up in the <kbd>?</kbd> modal.
+
+| Keys                                                       | Action             |
+| ---------------------------------------------------------- | ------------------ |
+| <kbd>Cmd</kbd>+<kbd>J</kbd> / <kbd>Ctrl</kbd>+<kbd>J</kbd> | Open the assistant |
+
+This is the one shortcut that still fires while you're typing in a field — pulling the assistant up mid-edit is the point. It follows `enabled` like the rest, so `config.hotkeys = {enabled: false}` turns it off along with everything else.
+
 ## Index view
 
 | Keys                       | Action                                       |

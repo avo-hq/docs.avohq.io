@@ -31,6 +31,7 @@ Inventory before editing
 - Many chapters won't apply. Mark each APPLIES / NOT USED / NEEDS REVIEW. Never apply a change for an API the app doesn't use.
 
 Gems first
+- Avo 4 requires Ruby >= 3.2. Check the app's Ruby version and bump it if needed before updating the gems.
 - Update the Gemfile to >= 4.0.0 for `avo` and every `avo-*` gem in use (check for avo-nested, avo-rhino_field, avo-dynamic_filters, etc.), move private gems under the packager.dev source block, run bundle, and boot the app before touching app code.
 - Nested forms now need the separate avo-nested gem — add it if has_many/has_one/habtm use `nested`.
 
@@ -68,6 +69,15 @@ Assuming you are upgrading your Avo 3 app, you need to do three things:
 2. Upgrade your Avo gems
 
 3. Use this guide to upgrade your app to Avo 4.
+
+### Upgrade your Ruby version
+
+Avo 4 requires **Ruby 3.2 or newer**, following the minimum its dependencies support.
+
+```ruby
+# .ruby-version
+3.2.0
+```
 
 ### Upgrade your gems
 

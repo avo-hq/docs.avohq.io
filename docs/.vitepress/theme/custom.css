@@ -105,6 +105,15 @@ pre code span.line:not(:last-child) {
 .vp-doc h1 + .aspect-ratio-box {
   margin-top: 2.5rem;
 }
+/* VitePress' scroll-margin only clears the nav (+ the version bar). PageHeader's
+  sticky api/guide callout also covers the top of the page, so add its height —
+  measured there, 0 when no callout is on the page. */
+.vp-doc :is(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: calc(
+    var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px +
+      var(--api-callout-height, 0px)
+  );
+}
 .aspect-ratio-box-inside {
   position: absolute;
   top: 0;

@@ -97,7 +97,7 @@ We don't use it as much in our plugins as we do in the `avo_boot` hook.
 
 ## Registration API
 
-Everything a plugin contributes is registered through `Avo.plugin_manager`, from inside the [`avo_boot`](#hooks) hook so it runs once on boot.
+Everything a plugin contributes is registered through `Avo.plugin_manager`, from inside the [`avo_boot`](#hooks) hook so it runs once on boot. The one exception is `register_configuration`, which has to run before the app's initializers — see [Let apps configure your plugin](#let-apps-configure-your-plugin).
 
 <Option name="`register(name, priority: 10)`">
 
@@ -140,6 +140,18 @@ end
 
 </Option>
 
+<Option name="`register_configuration(name, klass)`">
+
+Adds a `config.<name>` namespace to `Avo::Configuration`, backed by an instance of `klass`, so apps configure your plugin from their own `config/initializers/avo.rb`. See [Let apps configure your plugin](#let-apps-configure-your-plugin) for the full pattern.
+
+```ruby
+Avo.plugin_manager.register_configuration :feed_view, Avo::FeedView::Configuration
+```
+
+Unlike the rest of this API, it must run *before* the app's initializers — from an engine initializer ordered `before: :load_config_initializers`, not from the `avo_boot` hook.
+
+</Option>
+
 <Option name="`installed?(name)`">
 
 Returns whether a plugin registered under `name` is present. Use it to make your plugin adapt to what else is installed.
@@ -161,6 +173,74 @@ Avo.plugin_manager.mount_engine Avo::FeedView::Engine, at: "/feed_view"
 ```
 
 </Option>
+
+## Let apps configure your plugin
+
+Register a configuration namespace and your plugin's settings live on Avo's own configuration object, so an app configures it from the same `config/initializers/avo.rb` it already uses for everything else — no second initializer, no extra constant to remember.
+
+Start with a plain configuration class. It's yours, so it can hold defaults, coerce values, or fall back to environment variables.
+
+```ruby
+# lib/avo/feed_view/configuration.rb
+module Avo
+  module FeedView
+    class Configuration
+      attr_accessor :items_per_page
+      attr_writer :api_key
+
+      def initialize
+        @items_per_page = 25
+      end
+
+      # Falling back to an env var keeps deployments that never touch the
+      # initializer working.
+      def api_key
+        @api_key || ENV["AVO_FEED_VIEW_API_KEY"]
+      end
+    end
+  end
+end
+```
+
+Register it under a namespace from an engine initializer:
+
+```ruby
+# lib/avo/feed_view/engine.rb
+module Avo
+  module FeedView
+    class Engine < ::Rails::Engine
+      isolate_namespace Avo::FeedView
+
+      initializer "avo-feed-view.register_configuration", before: :load_config_initializers do
+        Avo.plugin_manager.register_configuration :feed_view, Avo::FeedView::Configuration
+      end
+    end
+  end
+end
+```
+
+Apps now set your options alongside Avo's:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.feed_view.items_per_page = 50
+end
+```
+
+And your plugin reads them back off `Avo.configuration`:
+
+```ruby
+Avo.configuration.feed_view.items_per_page # => 50
+```
+
+:::warning
+Register the configuration from an engine initializer ordered `before: :load_config_initializers` (or at require time) — **not** from the `avo_boot` hook. The app's `config/initializers/avo.rb` reads the accessor while initializers run, which is before Avo boots, so registering any later blows up in the app's own initializer.
+:::
+
+Namespaces are exclusive. `register_configuration` raises an `ArgumentError` if the name collides with a method `Avo::Configuration` already defines, or with a namespace another plugin took first. Re-registering the same name with the same class is fine, so a boot that happens more than once is harmless.
+
+Instances are memoized per configuration object, which means replacing `Avo.configuration` resets your plugin's config along with everything else — useful when you need a clean slate in tests.
 
 ## Add asset files
 
