@@ -1,4 +1,5 @@
 ---
+pageClass: skills-catalog
 prompt: Use this page (${link}) to set up my AI coding agent to work with Avo — add the LLM docs context, install the Avo skills loader, and connect the MCP server.
 ---
 
