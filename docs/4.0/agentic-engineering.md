@@ -20,75 +20,33 @@ AI agents generate better code when they have up-to-date Avo documentation in th
 
 Skills are pre-built instruction sets that teach your agent how to perform specific Avo workflows. Instead of prompting from scratch each time, you install a skill and the agent follows a proven, repeatable process.
 
-The skills ship **inside the `avo` gem**, so they describe the version your app has locked rather than whatever version a globally-installed copy happened to be written for. Install the loader that finds them:
+The skills ship **inside the `avo` gem**, so they describe the version your app has locked rather than whatever version a globally-installed copy happened to be written for.
+
+Install the loader that finds them with **`rails g avo:skills`**:
 
 <CustomCode content="rails g avo:skills" />
 
-An install panel asks one question at a time. Arrow keys move, <kbd>enter</kbd> continues, <kbd>←</kbd> goes back to change an earlier answer:
+That starts a short interactive installer. It explains each choice as you go and shows you exactly what it will do before writing anything. It:
 
-```
-  Where should the Avo skills loader go?
-  It finds the gem from the working directory, so one copy serves every project correctly.
-
-  › (•) This app (recommended)  commit it, your team gets it
-    ( ) This machine            one install, every Avo project
-
-  ↑↓ move   enter continue   q cancel
-```
-
-```
-  Which agents should read it?
-
-  › [x] .agents/skills  Codex, Gemini CLI, Goose, Amp, OpenCode
-    [x] .claude/skills  Claude Code
-    [x] .cursor/skills  Cursor
-
-  ↑↓ move   space toggle   enter continue   ← back   q cancel
-```
-
-Nothing is written until the last screen shows what it is about to do:
-
-```
-  Run the installation?
-
-    Install to    this app
-    Directories   .agents/skills, .claude/skills, .cursor/skills
-    Extra copies  symlinked to .agents/skills
-
-  › (•) Yes, install (recommended)
-    ( ) No, cancel
-
-  ↑↓ move   enter continue   ← back   q cancel
-```
+- installs into this app, or into your home directory so one copy serves every Avo project
+- sets up any of `.agents/skills`, `.claude/skills`, and `.cursor/skills`
+- writes one real file and symlinks the others to it, so they cannot drift apart
+- offers to remove skills left behind by an older, unversioned install
 
 It writes one small markdown file. The skills themselves are never copied into your repo — the loader resolves them from the installed gem when a task actually needs them.
-
-Pick more than one agent directory and you get **one real file, symlinked from the rest**, so updating the loader is a single edit and the directories cannot drift apart. `.agents/skills` holds the file. On a filesystem without symlinks the generator notices and writes copies instead.
 
 Skills are organized by **vertical** — a whole feature area, not a single task — so one skill covers creating, configuring, and troubleshooting that part of Avo.
 
 ### Keeping them current
 
-Run `bin/rails avo:update` and the skills update with the gems. There is nothing to copy and nothing that can drift out of sync with your app.
+They are always current. The skills come from the gem your app has locked, so there is nothing to copy and nothing that can fall behind.
 
-Use that task rather than `bundle update avo`: skills ship in every Avo gem, not just core, so bumping core alone leaves each add-on's skills behind. `avo:update` resolves every installed Avo gem and updates them together, conservatively — and the [`avo-update` skill](#skills) walks the upgrade guide for the versions you crossed.
-
-Re-run `rails g avo:skills` after upgrading Avo to refresh the loader itself; it warns when its own copy is older than the gem.
+Update your Avo gems with `bin/rails avo:update` and the skills come with them. Use that task rather than `bundle update avo`, which moves core alone and leaves each add-on's skills on the version they were already pinned to.
 
 :::warning Older global installs
 If you previously installed the skills with `npx skills add avo-hq/skills`, a Claude Code plugin, or a manual symlink, that copy can shadow the gem-shipped skills and silently serve instructions for a different Avo version.
 
-`rails g avo:skills` finds those leftovers and offers to remove them — screens you only see when there is actually something to remove:
-
-```
-  Remove the 2 skills left by an earlier install?
-  They are not version-pinned and can shadow the skills that ship with your gem.
-
-  › (•) Yes, remove them (recommended)
-    ( ) No, leave them
-```
-
-Your project and `~/.claude/skills` are asked separately, since that second directory is shared with every other project on the machine. Decline either and the generator prints the `rm -rf` you would need to do it later.
+The installer finds those leftovers and offers to remove them, asking about your project and `~/.claude/skills` separately — that second directory is shared with every other project on your machine. Decline either and it prints the `rm -rf` you would need to do it later.
 :::
 
 :::info Avo 3
@@ -151,7 +109,7 @@ Paid add-on skills arrive with their gems — install `avo-kanban` and its skill
 
 ### One loader for every project
 
-Answer **This machine** on the first screen.
+Choose **This machine** when the installer asks where the loader should go.
 
 The loader carries no version knowledge — it finds the app by walking up from the working directory and reads that app's `Gemfile.lock` — so a single copy serves every Avo project on the machine, each resolving its own version. Install once and you are done.
 
