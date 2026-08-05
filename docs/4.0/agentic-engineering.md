@@ -19,6 +19,8 @@ AI agents generate better code when they have up-to-date Avo documentation in th
 
 ## Skills
 
+<VersionReq version="4.1.1" />
+
 Skills are pre-built instruction sets that teach your agent how to perform specific Avo workflows. Instead of prompting from scratch each time, you install a skill and the agent follows a proven, repeatable process.
 
 The skills ship **inside the `avo` gem**, so they describe the version your app has locked rather than whatever version a globally-installed copy happened to be written for.
@@ -27,7 +29,7 @@ Install the loader that finds them with **`rails g avo:skills`**:
 
 <CustomCode content="rails g avo:skills" />
 
-That starts a short interactive installer. It explains each choice as you go and shows you exactly what it will do before writing anything. It:
+That starts a short interactive installer — one question per screen, all answered up front, with a summary of exactly what it will do before it writes anything (Avo 4.1.3 and later). It:
 
 - installs into this app, or into your home directory so one copy serves every Avo project
 - sets up any of `.agents/skills`, `.claude/skills`, and `.cursor/skills`
@@ -50,11 +52,12 @@ Update your Avo gems with `bin/rails avo:update` and the skills come with them. 
 | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `avo-resources`           | generate and configure resources — title, includes, sorting, pagination, cover/avatar, array (non-DB) resources |
 | `avo-fields`              | add and configure fields in `def fields` — pick the `as:` type, options, formatting, layout                     |
-| `avo-associations`        | wire `belongs_to` / `has_many` / `has_one` / HABTM fields, searchable pickers, polymorphism, STI                |
+| `avo-associations`        | wire `belongs_to` / `has_many` / `has_one` / HABTM fields, polymorphism, STI, nested create-in-form             |
 | `avo-actions`             | build actions that run Ruby on selected, single, or no records — bulk ops, forms, modals, responses             |
-| `avo-filters`             | filter and segment the index — basic filters, dynamic filters, and scopes                                       |
+| `avo-filters`             | basic filters on the index — dynamic filters and scopes ship as their own add-on skills                         |
 | `avo-index-views`         | control how the index renders — table styling, grid cards, map markers, view types                              |
-| `avo-menu-icons`          | auto-populate menu items with semantically appropriate Tabler icons                                             |
+| `avo-custom-fields`       | build a brand-new field type — generator plus its Edit/Show/Index view components                               |
+| `avo-menu-icons`          | pick semantically appropriate Tabler icons and set them on resources and dashboards                             |
 
 ### Config & ops
 
@@ -63,29 +66,26 @@ Update your Avo gems with `bin/rails avo:update` and the skills come with them. 
 | `avo-setup`               | install Avo, mount it, authenticate the private gem server, and set the license key            |
 | `avo-update`              | bump the Avo gems and apply every upgrade-guide step for the versions crossed, with a log      |
 | `avo-authentication`      | tell Avo who the current user is, gate access, and wire roles / profile / sign-out             |
-| `avo-authorization`       | restrict who sees and does what with Pundit policies — resources, actions, associations, files |
 | `avo-admin-config`        | global initializer knobs — app name, per-page, container width, density, home path             |
 | `avo-performance`         | caching and stale-row fixes to make the admin fast                                             |
 | `avo-testing`             | unblock the license check in the test suite and use Avo's test helpers                         |
+| `avo-multitenancy`        | scope the admin per tenant — route- or session-based, with an account switcher                 |
 
 ### Customization
 
 | Skill                     | What it covers                                                                                                           |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `avo-branding-appearance` | make the admin look like the product — logo, favicon, color scheme, palettes, CSS re-skin, icons                         |
-| `avo-navigation-search`   | menus, breadcrumbs, keyboard shortcuts, per-resource search, and the <kbd>Cmd</kbd> + <kbd>K</kbd> global search palette |
+| `avo-navigation-search`   | per-resource search, breadcrumbs, keyboard shortcuts, and the auto-generated sidebar                                     |
 | `avo-custom-ui`           | build custom pages, embedded panels, dynamic/nested forms, eject views, JS/Stimulus, Tailwind                            |
-| `avo-custom-fields`       | build a brand-new field type — generator plus its Edit/Show/Index view components                                        |
 | `avo-i18n`                | translate and localize the admin — labels, locale switching, RTL                                                         |
-| `avo-multitenancy`        | scope the admin per tenant — route- or session-based, with an account switcher                                           |
-| `avo-record-reordering`   | persistent up/down and drag-and-drop record ordering                                                                     |
-| `avo-custom-controls`     | take over the show/edit/index/row button bars — relabel, remove, add links/actions/dropdowns                             |
+| `avo-media-library`       | turn on the central asset browser and the picker inside rich-text editors                                                |
 | `avo-controllers`         | override per-resource CRUD controller hooks and safely extend Avo's `ApplicationController`                              |
 | `avo-engine-internals`    | engine plumbing for custom Ruby — `main_app`/`avo` helpers, `Avo::Current`, `ExecutionContext`, reserved names           |
 
 ### Add-ons
 
-Separately-licensed gems (paid add-on or Enterprise). `avo-media-library` is Community but off by default.
+Separately-licensed gems (paid add-on or Enterprise). These skills ship inside their own gem, not inside `avo`.
 
 | Skill                     | What it covers                                                                                     |
 | ------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -96,12 +96,14 @@ Separately-licensed gems (paid add-on or Enterprise). `avo-media-library` is Com
 | `avo-kanban`              | DB-backed drag-and-drop boards across resources                                                    |
 | `avo-audit-logging`       | track who changed and viewed what — timeline, diffs, revert                                        |
 | `avo-collaboration`       | comments, reactions, and an automatic change-log on a record                                       |
-| `avo-media-library`       | central asset browser and a picker inside rich-text editors                                        |
+| `avo-authorization`       | restrict who sees and does what with Pundit policies — resources, actions, associations, files     |
 | `avo-http-resource`       | back a resource with an external HTTP API instead of Active Record                                 |
 | `avo-menu`                | build the sidebar with the menu editor DSL — sections, dividers, links, icons, per-user visibility |
 | `avo-scopes`              | one-click segment tabs above the index, with counts and a default view                             |
 | `avo-dynamic-filters`     | let end users build their own ad-hoc filters from a filters bar                                    |
 | `avo-advanced-search`     | the <kbd>Cmd</kbd> + <kbd>K</kbd> global search palette, and type-to-search association pickers    |
+| `avo-record-reordering`   | persistent up/down and drag-and-drop record ordering                                               |
+| `avo-custom-controls`     | take over the show/edit/index/row button bars — relabel, remove, add links/actions/dropdowns       |
 
 ### Cross-cutting
 
