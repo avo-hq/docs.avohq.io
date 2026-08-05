@@ -518,7 +518,7 @@ end
 
 <Option name="`reload_records`" headingSize="3">
 
-Refreshes only the affected table rows or grid cards via Turbo Streams instead of reloading the whole page. Accepts an array of records or a single record, and defaults to the records the action is running on when called with no argument; `reload_record` is an alias.
+Refreshes only the affected table rows or grid cards via Turbo Streams instead of reloading the whole page. Accepts an array of records or a single record, and defaults to the records the action is running on when called with no argument (Avo 4.1.2 and later); `reload_record` is an alias.
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/6b9ae6a3968c447f98ac4f9a161fe781?sid=17f08010-6a56-4e8c-8b80-692424327b55" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 
