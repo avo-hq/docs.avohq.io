@@ -65,6 +65,12 @@ end
 field :body, as: :lexxy
 ```
 
+## Media Library
+
+When the [Media Library](../media-library) is enabled, the editor's toolbar gets a button that opens the library in a modal. Picking an asset inserts it into the content — images as Action Text attachments, other files as links.
+
+The button is hidden when the field has attachments disabled (which is the default on plain `string`/`text` columns), since there is nothing to attach the blob to.
+
 ## Editor configuration
 
 Lexxy's element attributes (`markdown`, `rich-text`, `headings`, `permitted-attachment-types`, etc.) are documented in the [Lexxy docs](https://lexxy.dev/docs/) and can be configured globally through `Lexxy.configure` presets in your JavaScript, or per field through the field's `html` option.

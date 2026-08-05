@@ -14,7 +14,7 @@ If you run an asset-intensive app, having one place to view and manage all those
 The Media Library has two goals in mind.
 
 1. Browse and manage all your assets
-2. Use it to inject assets in all three of Avo's rich text editors ([trix](./fields/trix), [rhino](./fields/rhino), and [markdown](./fields/markdown)).
+2. Use it to inject assets in Avo's rich text editors ([trix](./fields/trix), [rhino](./fields/rhino), [markdown](./fields/markdown), and [lexxy](./fields/lexxy)).
 
 :::warning
 The Media Library feature is still in alpha and future releases might contain breaking changes so keep an eye out for the upgrade guide.
@@ -91,6 +91,7 @@ The Media Library will seamlessly integrate with all the rich text editors.
 field :body, as: :trix
 field :body, as: :rhino
 field :body, as: :markdown
+field :body, as: :lexxy
 ```
 
 The editors will each have a button to open the Media Library modal.
@@ -104,4 +105,4 @@ The [`markdown`](./fields/markdown) field accepts a `media_library` option (defa
 field :body, as: :markdown, media_library: false
 ```
 
-This is a `markdown`-only option; the `trix` and `rhino` fields don't support per-field toggling.
+This is a `markdown`-only option; the `trix` and `rhino` fields don't support per-field toggling. The [`lexxy`](./fields/lexxy) field hides the button when its attachments are disabled (`attachments_disabled: true`).
