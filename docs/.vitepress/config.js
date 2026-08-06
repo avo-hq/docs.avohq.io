@@ -307,12 +307,6 @@ const config = {
             },
           ],
         },
-        // {
-        //   text: "MCP (Model Context Protocol)",
-        //   items: [
-        //     { text: "Overview", link: "/4.0/mcp.html" },
-        //   ],
-        // },
         {
           text: "Concepts",
           items: [
@@ -348,6 +342,10 @@ const config = {
             {
               text: "Collaboration",
               link: "/4.0/collaboration.html",
+            },
+            {
+              text: "MCP Server",
+              link: "/4.0/mcp.html",
             },
           ]
         },
