@@ -202,6 +202,14 @@ Admins see and revoke their own connections. Because listing and revoking run th
 
 Access tokens are short-lived and refreshed by the client with no admin involvement. The connection itself lasts until someone revokes it.
 
+### Rate limiting
+
+The authorize, token, and client registration endpoints are rate-limited per IP. They're reachable by anyone who knows your panel's URL, so this bounds what an unauthenticated caller can do with them.
+
+:::warning The limit rides on your cache store
+Rate limiting uses `Rails.cache`. On a host configured with `:null_store`, the limits are inert. Two consequences worth checking: if you sit behind a proxy that collapses client IPs, legitimate traffic shares one bucket; and if your cache is a null store, there is no limit at all.
+:::
+
 ## Trace changes back to an admin
 
 When [Audit Logging](./audit-logging.html) is installed and enabled, a change made through a connection is recorded against the admin who authorized that connection.
