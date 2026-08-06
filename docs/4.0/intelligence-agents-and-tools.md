@@ -34,7 +34,7 @@ Tool names below are how calls appear in the Tool calls resource and in the chat
 
 | Tool                         | What it does                                                                                                        | Writes apply      |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| `ask_user`                   | Asks you one clarifying question, optionally with clickable answer options, then ends the turn                       | —                 |
+| `ask_user`                   | Asks you one clarifying question — free-form, or with clickable options — then ends the turn                         | —                 |
 | `schema_inspector`           | Reports the database structure — scoped to the resources the signed-in user is allowed to see                        | read-only         |
 | `resource_inspector`         | Reads one resource's real columns, associations, and scopes; unlocks querying and writing that resource              | read-only         |
 | `active_record_query`        | Runs read-only, paginated, policy-scoped queries against a resource                                                  | read-only         |
@@ -50,6 +50,21 @@ Tool names below are how calls appear in the Tool calls resource and in the chat
 "After you confirm" means the tool call produces a card describing the pending change; your click applies it, not the model. "Immediately" is reserved for actions that are reversible (a detached file can be re-attached, a conversation can be renamed again) or additive (creating a record).
 
 ¹ Attaching and detaching existing blobs apply immediately; the `attach_from_url` operation is the exception — a server-side download always goes through a confirmation card showing the URL, and nothing is fetched until you click **Attach**. See [Getting new files in](./intelligence.html#getting-new-files-in).
+
+### The shapes an ask can take
+
+Every ask is one card, but the card takes a few shapes — the model chooses per question, through the arguments it passes:
+
+| Arguments                          | The card                                                                                   |
+| ---------------------------------- | ------------------------------------------------------------------------------------------ |
+| the question alone                 | A plain question; you answer in the composer                                                |
+| plus `options` (up to 10, short)   | Numbered options you can click — or reply with an option's number — beside a free-text box  |
+| plus `free_text: false`            | The options only, for questions whose answer set really is closed (yes/no, an enum's values) |
+| plus `multiple: true`              | Checkboxes and a text box, sent together as one comma-separated reply                       |
+
+Both flags only mean anything alongside `options`: a question with none is a free-form ask, and closing that off would leave nothing to answer with.
+
+Clicking an option posts the option's *text* through the same path a typed reply takes, so answering a card is an ordinary turn — one that can never confirm a pending write, even when the option reads "Yes". See [Answering the assistant's questions](./intelligence.html#answering-the-assistant-s-questions).
 
 ### Where tools get their context
 
