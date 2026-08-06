@@ -71,7 +71,11 @@ Rails.application.routes.draw do
 end
 ```
 
-`mount_avo_mcp_server` draws three things: the two OAuth discovery documents, always at the origin root because the protocol requires them there; the token endpoint; and the JSON-RPC endpoint clients call, at `/avo/mcp` by default. Pass `at:` to serve the JSON-RPC endpoint somewhere else.
+`mount_avo_mcp_server` draws four things: the two OAuth discovery documents, always at the origin root because the protocol requires them there; the client registration endpoint, which is unauthenticated by design so clients that don't support metadata documents can still register; the token endpoint; and the JSON-RPC endpoint clients call, at `/avo/mcp` by default. Pass `at:` to serve the JSON-RPC endpoint somewhere else.
+
+:::warning `at:` and `resource_identifier` must agree
+If you pass `at:`, the path must match the path in `resource_identifier`. Booting with the two out of step raises a configuration error rather than starting, because the alternative is worse: discovery keeps answering while the endpoints it advertises return 404, which looks from the client side like the connection dying at token exchange with no error text.
+:::
 
 The authorize page and the connections screen are not part of this — they're mounted inside the panel with the rest of Avo's chrome, so they inherit your existing sign-in.
 
