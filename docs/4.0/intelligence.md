@@ -167,13 +167,27 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
-**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card.
+**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions).
 
 **Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
 
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
 For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./intelligence-agents-and-tools.html).
+
+## Answering the assistant's questions
+
+When the assistant genuinely can't proceed — a required value you didn't mention, or which of three matching records you meant — it asks you, and the question arrives as a card rather than as a sentence buried in a reply. The card *is* the message: the turn ends there and waits on you. It asks one thing at a time, and it asks instead of guessing; it won't use a question to chase optional values you never brought up.
+
+**A plain question.** With no options to offer, the card is the question and nothing else. Answer it in the composer the way you'd answer anything else.
+
+**Question with options.** When the answer is one of a small known set — a status, a yes/no, the titles of the records it matched — the card lists them, numbered `1`, `2`, `3…`. Click one and it replies with that option's own text, so the conversation reads back as what you actually said ("Published"), not as an opaque "2". The numbers are there for typing: reply `2` in the composer and it lands on the second option.
+
+**The box beside them.** Options are usually a shortcut rather than the whole truth, so most cards keep a free-text box next to them — *Or answer in your own words…* — with its own **Send**. When the options really are the entire answer space, the assistant closes that box off and the buttons become the only way to answer.
+
+**Picking several at once.** Some questions take more than one answer — which fields to fill in, which of the matched records to include. Those render as checkboxes instead of buttons, with one **Send** under them and an *Add anything else…* box alongside. Everything goes back as a single reply: the labels you ticked, plus whatever you typed, separated by commas.
+
+Answering a question card is an ordinary turn, never a confirmation. An option can quite legitimately read "Yes", and clicking it answers the question it belongs to — it can't reach back and confirm an update or a delete waiting further up the conversation.
 
 ## Your actions, from the chat
 
