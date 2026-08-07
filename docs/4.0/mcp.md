@@ -145,6 +145,8 @@ Nothing in this release detects or prevents that:
 - there is no live feed showing what a connected agent is doing while it does it;
 - the audit entry is deliberately indistinguishable from the admin's own panel activity, so it can't be attributed to the agent afterwards either.
 
+Nor does the tool itself pause. `run_action` runs the action immediately, and `delete_record` deletes immediately — there is no proposal step, no second confirmation, and nothing for a human to click. Granting the capability at consent **is** the confirmation, collected once, in advance, for every call the connection will ever make. That is precisely why those two are unselected by default.
+
 This is a documented, accepted limitation rather than an oversight, and the mitigation is the consent screen itself: delete and run actions are unselected by default, so granting them is always a deliberate act. Grant them to clients you trust, on data you control, and keep everything else read-only.
 :::
 
@@ -171,6 +173,42 @@ The server exposes nine tools covering the full range of admin operations.
 | `delete_record` | Delete a record                               |
 | `run_action`    | Execute an Avo action on one or more records  |
 
+### Arguments each tool takes
+
+| Tool             | Required                       | Optional                                        |
+| ---------------- | ------------------------------ | ----------------------------------------------- |
+| `list_resources` | —                              | —                                               |
+| `list_records`   | `resource`                     | `page`, `per_page`, `sort_by`, `sort_direction` |
+| `show_record`    | `resource`, `id`               | —                                               |
+| `search_records` | `query`                        | `resource`, `limit`                             |
+| `list_actions`   | `resource`                     | —                                               |
+| `create_record`  | `resource`, `attributes`       | —                                               |
+| `update_record`  | `resource`, `id`, `attributes` | —                                               |
+| `delete_record`  | `resource`, `id`               | —                                               |
+| `run_action`     | `resource`, `action`           | `record_ids`, `fields`                          |
+
+`resource` is always a resource name as `list_resources` reports it — `"Post"`, not a table name — and `id` is the record's primary key, accepted as a string or an integer.
+
+Paging is 1-based. `per_page` defaults to 25 and is capped at 100, and `search_records`' `limit` behaves the same way, per resource searched. `sort_by` has to name a real column on the model; it's checked against the model's columns rather than passed through to SQL, and a name that isn't one is refused with the list of columns that are. `sort_direction` is `asc` or `desc`. Leave either out and the resource's own default sorting stands.
+
+`attributes` on `create_record` and `update_record` is an object mapping field names to values. Use the field names `list_resources` reports or the raw column names — a `belongs_to` can be written either way, as `user` or as `user_id`. `update_record` changes only the attributes you pass and leaves the rest alone.
+
+`run_action` takes the `action` id from `list_actions` (the class name, e.g. `"Avo::Actions::TogglePublished"`), and `fields` is the same object shape for that action's inputs, keyed by the input names `list_actions` reports. An input you leave out falls back to the action's own default. `record_ids` is the set of records to act on: a standalone action takes none and is refused if given any, and every other action needs at least one. Every id is authorized individually, so a partly-allowed batch is refused rather than partly run.
+
+### What a record's associations look like
+
+`show_record` returns associations as something an agent can follow, not as nested records. A `belongs_to` comes back as the record it points at — its id and a human title — so naming it doesn't cost a second call. A `has_many` comes back as a count plus up to 25 ids.
+
+Those ids are already narrowed by the associated model's own policy scope. An association is a second read path into a different resource, and without that scoping, `show_record` on a parent would be the way around `list_records` on the child.
+
+### Searching a resource that has no search configured
+
+`search_records` runs each resource's own `self.search` block — the same search the panel's search box runs — and has nothing else to fall back on.
+
+Naming such a resource directly is an error. In an all-resource search it's skipped and reported under `unsearchable` in the result, so a client can tell "no matches" apart from "not searchable" and reach for `list_records` instead.
+
+It never falls back to returning the resource's records. That fallback is the tempting one, and it would turn "this resource can't be searched" into "here is everything in it" — silently widening the widest read surface the add-on has.
+
 ## Every call stays inside the admin's own permissions
 
 Every tool call passes two gates, in this order:
@@ -181,6 +219,18 @@ Every tool call passes two gates, in this order:
 A connection therefore can never do anything its owning admin couldn't do by hand in the panel. Granting a capability is permission to *try*; the policy still decides.
 
 Because the admin is re-resolved on every request, a change to their permissions takes effect on the connection's next tool call. Demote an admin to read-only and their connected client stops being able to write, with nobody revoking or re-authorizing anything.
+
+### Field visibility applies to reads *and* writes
+
+Those two gates decide whether an admin may touch a **record**. Which of its **fields** they may touch is a separate decision, made by the same `visible:` blocks your resources already declare — and it applies in both directions.
+
+A field the panel hides from this admin is not returned by `show_record`, `list_records`, or `search_records`, and `list_resources` doesn't name it among the resource's fields either. Naming a field the admin can't see would hand an agent a column it's about to be refused on, which reads as a bug rather than as a permission.
+
+The same field also **cannot be written**, even on a record they may otherwise edit. An admin can pass `update?` on a record and still be refused a column their own panel doesn't render for them — that is what a `visible:` block on a field means, and a tool that checked only the record-level policy would let an agent write straight past it. A field the panel renders read-only is refused for the same reason.
+
+Two more sets of columns are never writable, whatever the policy says: the system-managed `id`, `created_at`, and `updated_at`, and any column whose name looks like it holds a credential (`password`, `token`, `secret`, `digest`).
+
+A refused attribute is never quietly dropped. The call fails, and the error names both what was refused and what this admin can actually write — an ignored attribute reads to an agent as a write that happened, and the next thing it does is report success.
 
 ### Authorization has to be licensed
 
@@ -227,11 +277,14 @@ Refusals come back as JSON-RPC errors rather than as exceptions or as a successf
 | `-32000` | The connection wasn't granted the capability this tool requires                 |
 | `-32001` | The capability was granted, but the owning admin's policy forbids the operation |
 | `-32002` | Authorization isn't being enforced, so nothing was attempted                    |
-| `-32602` | The tool, resource, or record doesn't exist, or a parameter is missing or invalid |
+| `-32003` | The model rejected the write — a failed validation, or a `destroy` that halted  |
+| `-32004` | The named resource has no `self.search` configured, so there's nothing to search |
+| `-32005` | The resource isn't backed by an Active Record model — an array resource, usually |
+| `-32602` | The tool, resource, or record doesn't exist, or an argument names something the resource doesn't have |
 | `-32020` | An `Mcp-Method`, `Mcp-Name`, or `Mcp-Protocol-Version` header disagrees with the request body, or is missing |
 | `-32022` | The request declared a protocol revision this server doesn't implement          |
 
-The first three are Avo's own and sit in the `-32000` to `-32019` band that the MCP specification leaves to implementations. The rest are the specification's, so they mean the same thing here as on any other MCP server.
+The first six are Avo's own and sit in the `-32000` to `-32019` band that the MCP specification leaves to implementations. The rest are the specification's, so they mean the same thing here as on any other MCP server.
 
 `-32000` is the one most agents meet first, since two of the four capabilities are unselected at consent by design. It names both the capability that was withheld and the ones the connection does hold, so the client can tell the admin exactly what to re-authorize:
 
@@ -271,7 +324,50 @@ It's checked before anything else, so a refused call never reads or writes a rec
 
 `-32002` is not about this call at all — it's the licensing problem described above, surfacing per request. It means no policy ran and none would have, so the server refused instead of answering. Check the license before looking at the tool or the record.
 
+`-32003` is a write your own model refused: a validation that failed on `create_record` or `update_record`, or a `destroy` halted by a dependent record or a callback. Nothing was changed. Its `data` is shaped for an agent that should correct its own call rather than hand the failure back to the person who asked:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32003,
+    "message": "Post could not be saved: Title can't be blank",
+    "data": {
+      "validationErrors": ["Title can't be blank"],
+      "fieldErrors": { "title": ["can't be blank"] },
+      "requiredAttributes": ["title", "user_id"],
+      "optionalAttributes": ["body", "published_at"],
+      "missingRequiredAttributes": ["title"]
+    }
+  }
+}
+```
+
+`requiredAttributes` is read off the real schema and model rather than guessed from field names — a `NOT NULL` column with no default, an unconditional presence validator, or a non-optional `belongs_to` — which is what makes `missingRequiredAttributes` worth acting on.
+
+`-32004` and `-32005` both name the resource in `data.resource`. The first says the resource exists and every other read tool works on it, but nobody configured `self.search`, so search is the one thing it can't answer. The second says there's no database table behind the resource at all — an Avo array resource serves a hardcoded list — so there is nothing to query or write.
+
+`-32602` covers everything a client got structurally wrong: an unknown tool, an unknown resource, a record it can't reach, and any argument naming something the resource doesn't have. In that last case the `data` carries the real list, which is what lets an agent fix its own call instead of giving up:
+
+| The argument that didn't resolve                  | The list in `data` |
+| ------------------------------------------------- | ------------------ |
+| An attribute on `create_record` / `update_record` | `writableFields`   |
+| The `action` on `run_action`                      | `availableActions` |
+| An input name in `run_action`'s `fields`          | `availableInputs`  |
+| `sort_by` on `list_records`                       | `sortableColumns`  |
+
+An attribute refused for being system-managed, credential-shaped, or hidden from this admin comes back with `fields` naming the ones that were refused, rather than with the full writable list.
+
 A result that isn't an error carries `"resultType": "complete"`, which the `2026-07-28` revision requires on every result.
+
+### Not found versus unauthorized
+
+A record outside the admin's policy scope reports as **not found** (`-32602`), identical to an id that never existed. A resource they may not list reports as **unauthorized** (`-32001`), and says so.
+
+The asymmetry is deliberate, so nobody files it as an inconsistency. A row's existence is worth keeping secret: if a hidden id errored differently from a missing one, every read tool would become a way to test for records a policy hides, and that difference is the leak. A resource's existence isn't worth keeping secret — the caller is an administrator of this panel who can already see the sidebar, so hiding one buys nothing, while answering "you may not list Users" instead of "no such resource" is the difference between a fixable answer and a wild goose chase.
+
+A resource name no resource answers to is a `-32602` either way, and points at `list_resources` as the way to find the real one.
 
 ## Options reference
 
