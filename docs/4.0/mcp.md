@@ -220,39 +220,58 @@ Audit logging is optional here. With the add-on absent or disabled, tools still 
 
 ## Errors a client receives
 
-All tools return structured errors rather than raising:
+Refusals come back as JSON-RPC errors rather than as exceptions or as a successful result carrying an error flag. Every one has a numeric `code`, a human-readable `message`, and a `data` object with the detail a client can act on.
 
-| Error type           | When it occurs                                                                  |
-| -------------------- | ------------------------------------------------------------------------------- |
-| `missing_capability` | The connection wasn't granted the capability this tool requires                 |
-| `invalid_params`     | Required parameters are missing or invalid                                      |
-| `not_found`          | The requested resource or record doesn't exist                                  |
-| `not_authorized`     | The capability was granted, but the owning admin's policy forbids the operation |
-| `validation_error`   | Record validation failed (includes field errors)                                |
-| `internal_error`     | An unexpected error occurred                                                    |
+| Code     | When it occurs                                                                  |
+| -------- | ------------------------------------------------------------------------------- |
+| `-32000` | The connection wasn't granted the capability this tool requires                 |
+| `-32001` | The capability was granted, but the owning admin's policy forbids the operation |
+| `-32002` | Authorization isn't being enforced, so nothing was attempted                    |
+| `-32602` | The tool, resource, or record doesn't exist, or a parameter is missing or invalid |
+| `-32020` | An `Mcp-Method`, `Mcp-Name`, or `Mcp-Protocol-Version` header disagrees with the request body, or is missing |
+| `-32022` | The request declared a protocol revision this server doesn't implement          |
 
-`missing_capability` is the one most agents meet first, since two of the four capabilities are unselected at consent by design. It names the capability that was withheld, so the client can tell the admin what to re-authorize:
+The first three are Avo's own and sit in the `-32000` to `-32019` band that the MCP specification leaves to implementations. The rest are the specification's, so they mean the same thing here as on any other MCP server.
+
+`-32000` is the one most agents meet first, since two of the four capabilities are unselected at consent by design. It names both the capability that was withheld and the ones the connection does hold, so the client can tell the admin exactly what to re-authorize:
 
 ```json
 {
-  "error_type": "missing_capability",
-  "capability": "avo:delete",
-  "tool": "delete_record",
-  "message": "This connection was not granted the delete capability."
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32000,
+    "message": "This connection was not granted avo:delete, which is required by delete_record.",
+    "data": {
+      "requiredCapability": "avo:delete",
+      "grantedCapabilities": ["avo:read", "avo:write"]
+    }
+  }
 }
 ```
 
 It's checked before anything else, so a refused call never reads or writes a record.
 
-`not_authorized` means the opposite: the capability was there, and your app's policy said no.
+`-32001` means the opposite: the capability was there, and your app's policy said no.
 
 ```json
 {
-  "error_type": "not_authorized",
-  "action": "destroy",
-  "message": "You are not authorized to perform this action."
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32001,
+    "message": "The connected admin is not authorized to destroy Post.",
+    "data": {
+      "action": "destroy",
+      "subject": "Post"
+    }
+  }
 }
 ```
+
+`-32002` is not about this call at all — it's the licensing problem described above, surfacing per request. It means no policy ran and none would have, so the server refused instead of answering. Check the license before looking at the tool or the record.
+
+A result that isn't an error carries `"resultType": "complete"`, which the `2026-07-28` revision requires on every result.
 
 ## Options reference
 
