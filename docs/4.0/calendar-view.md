@@ -31,8 +31,8 @@ Add `:calendar` to the resource's `view_types`:
 
 ```ruby
 class Avo::Resources::Event < Avo::BaseResource
-  self.view_types = [:table, :calendar]
-  self.default_view_type = :calendar # optional
+  self.view_types = [:table, :calendar] # [!code ++]
+  self.default_view_type = :calendar # optional # [!code ++]
 
   def fields
     field :id, as: :id
