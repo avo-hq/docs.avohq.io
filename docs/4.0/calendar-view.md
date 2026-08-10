@@ -1,5 +1,6 @@
 ---
-license: add_on
+license: addon
+addon_link: https://avohq.io/addons/calendar-view
 betaStatus: Beta
 outline: [2, 3]
 ---
