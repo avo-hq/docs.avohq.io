@@ -205,13 +205,110 @@ end
 
 if defined?(Avo::DynamicFilters)
   Avo::DynamicFilters.configure do |config|
-    config.button_label = "Advanced filters"
+    config.button_label = -> { I18n.t("my.filters") } # [!code focus]
     config.always_expanded = false
   end
 end
 ```
 
-See [`button_label`](./dynamic-filters-api#button_label), [`always_expanded`](./dynamic-filters-api#always_expanded), and [`param_key`](./dynamic-filters-api#param_key) in the API reference.
+Pass `button_label` a proc rather than a string. The initializer runs once at boot, so a string is pinned for every request afterwards — see [`button_label`](./dynamic-filters-api#button_label). Also [`always_expanded`](./dynamic-filters-api#always_expanded) and [`param_key`](./dynamic-filters-api#param_key) in the API reference.
+
+## Localization
+
+Every built-in string in the filters bar resolves through `I18n` on each request, under the `avo.dynamic_filters.*` namespace. The gem ships English only — add a file per locale in your app, the same way you do for Avo's own `avo.*` keys.
+
+Copy this tree, rename the root key to your locale, and translate the values:
+
+```yaml
+# config/locales/avo.dynamic_filters.sv.yml
+sv:
+  avo:
+    dynamic_filters:
+      apply: Apply
+      remove_filter: Remove filter
+      remove_tag: Remove tag
+      save_scope: Save scope
+      conditions:
+        defaults:
+          array_contained_in: Contained in
+          array_contains: Contain
+          array_is: Are
+          array_overlap: Overlap
+          contains: Contains
+          does_not_contain: Does not contain
+          ends_with: Ends with
+          gt: ">"
+          gte: ">="
+          is: Is
+          is_blank: Is blank
+          is_false: Is false
+          is_not: Is not
+          is_not_null: Is not null
+          is_null: Is null
+          is_present: Is present
+          is_true: Is true
+          is_within: Is within
+          lt: "<"
+          lte: "<="
+          starts_with: Starts with
+        date:
+          gte: Is on or after
+          lte: Is on or before
+        number:
+          is: "="
+          is_not: "!="
+      pill_conditions:
+        defaults:
+          array_contained_in: contained in
+          array_contains: contain
+          array_is: are
+          array_overlap: overlap
+          contains: contains
+          does_not_contain: does not contain
+          ends_with: ends with
+          gt: ">"
+          gte: ">="
+          is: is
+          is_blank: blank
+          is_empty: empty
+          is_false: "false"
+          is_not: is not
+          is_not_empty: not empty
+          is_not_null: not null
+          is_null: "null"
+          is_present: present
+          is_true: "true"
+          is_within: is within
+          lt: "<"
+          lte: "<="
+          starts_with: starts with
+```
+
+### How the keys resolve
+
+**Condition labels** — the entries in the condition dropdown — resolve per filter type first, then fall back to `defaults`. That is why a number filter shows `=` where a text filter shows `Is`, without you having to repeat every shared label under all six types. Override a type only where it differs.
+
+**Pill conditions** are the inline phrase inside a filter pill: the `is` in `Name is "Oradea"`. They resolve `pill_conditions.<type>` → `pill_conditions.defaults` → the dropdown label, so translating only `conditions` still gets you a localized pill — you just get the dropdown's capitalization inside the sentence. A menu item and a mid-sentence fragment often inflect differently, which is why the two are separate.
+
+:::warning Condition labels must be unique within a filter type
+The condition dropdown is built from a `label => condition_key` hash, so two conditions that translate to the same string would collapse into one and quietly disappear from the dropdown. Avo raises `Avo::DynamicFilters::DuplicateConditionLabelError` instead, naming the filter type and the duplicated label.
+
+Watch for this on nullable text fields, which offer `Is null`, `Is not null`, `Is present` and `Is blank` together — four database distinctions that are easy to collapse into two phrases.
+:::
+
+A `conditions:` hash you pass yourself is used exactly as written and never translated — you own those strings. Call `I18n.t` directly: `filters` runs on every request, so the lookups follow the request locale with no lambda needed.
+
+```ruby
+def filters
+  dynamic_filter :first_name,
+    conditions: {
+      case_sensitive: I18n.t("my.filters.case_sensitive"),
+      not_case_sensitive: I18n.t("my.filters.not_case_sensitive")
+    }.invert
+end
+```
+
+The pill for a custom condition is lowercased from your label, so write the label the way you want it to read in the dropdown.
 
 ## Caveats
 
