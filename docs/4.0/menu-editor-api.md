@@ -87,7 +87,7 @@ link_to "Google", path: "https://google.com", target: :_blank
 | `method` | Non-GET HTTP method, submitted through Turbo. Honored in the profile and header menus. |
 | `params` | Extra query parameters appended to the path. Honored in the profile and header menus. |
 
-Also accepts the shared [`icon`](#icon), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options.
+Also accepts the shared [`icon`](#icon), [`color`](#color), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options.
 
 `active` controls when the link is highlighted as active:
 
@@ -118,7 +118,7 @@ resource :posts, params: { status: "published" }
 | `label` | Overrides the resource's navigation label. |
 | `params` | Hash of query params appended to the link, or a Proc returning one (evaluated with access to `resource`). |
 
-Also accepts the shared [`icon`](#icon), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options. When no `hotkey` is given, the resource class's own `self.hotkey` is used as a fallback. When no `icon` is given, the resource class's `self.icon` is used.
+Also accepts the shared [`icon`](#icon), [`color`](#color), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options. When no `hotkey` is given, the resource class's own `self.hotkey` is used as a fallback. When no `icon` is given, the resource class's `self.icon` is used, and when no `color` is given, the resource class's `self.color` is used.
 
 Passing a block nests sub-items under the resource — see the [sub-items guide](./menu-editor.html#sub-items). Any item type can be nested; nested items don't render icons, and a nested `action` inherits the enclosing resource.
 
@@ -144,7 +144,7 @@ dashboard :dashy
 dashboard "Sales", label: "Sales dashboard"
 ```
 
-- **Options:** `label` (overrides the dashboard's navigation label), plus the shared [`icon`](#icon), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options
+- **Options:** `label` (overrides the dashboard's navigation label), plus the shared [`icon`](#icon), [`color`](#color), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options
 - **Validation:** raises `Failed to find "..." dashboard used in the menu.` at render time when no dashboard matches the given `id` or `name`
 
 </Option>
@@ -189,7 +189,7 @@ Generates a link to one of your [kanban boards](./kanban-boards.html). Pass the 
 board 1
 ```
 
-- **Options:** the shared [`icon`](#icon), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options; the label is the board's name
+- **Options:** the shared [`icon`](#icon), [`color`](#color), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options; the label is the board's name
 - **Availability:** provided by the [`avo-kanban`](./kanban-boards.html) add-on
 
 </Option>
@@ -351,6 +351,22 @@ resource :reviews, icon: "heroicons/outline/star"
 - **Not supported on:** `group` and sub-items nested inside a `resource` block
 
 Icons come from [Tabler Icons](https://tabler.io/icons) (preferred in Avo 4) or [Heroicons](https://heroicons.com/) (`outline` and `solid` variants).
+
+</Option>
+
+<Option name="`color`" headingSize="3">
+
+Tints the item's icon with a color from Avo's palette. Only the icon stroke is colored — the label and the hover and active backgrounds stay neutral. Give related items the same color to visually group them.
+
+```ruby
+resource :reviews, icon: "heroicons/outline/star", color: :amber
+```
+
+- **Type:** Symbol or String — one of `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
+- **Default:** `nil`; for `resource` items, falls back to the resource class's [`self.color`](./resources-api.html#self.color) — a menu-entry `color:` always wins over it
+- **Supported on:** `resource`, `link_to`, `dashboard`, and `board` items
+
+Colors adapt automatically to the light and dark themes. An unknown color name renders the default neutral icon.
 
 </Option>
 

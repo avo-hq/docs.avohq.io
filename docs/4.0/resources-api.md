@@ -160,6 +160,26 @@ end
 
 </Option>
 
+<Option name="`self.color`" headingSize="3">
+
+Tints the resource's sidebar icon with a color from Avo's palette. Only the icon stroke is colored — the label and the hover and active backgrounds stay neutral. Use it to make a resource recognizable at a glance, or give related resources the same color to visually group them.
+
+The color follows the resource beyond the sidebar: the initials chip in the breadcrumbs is tinted too, and with [Advanced Search](./search.html) installed, so are the resource group headers in global search results (which also show the resource's `self.icon`).
+
+```ruby
+class Avo::Resources::User < Avo::BaseResource
+  self.icon = "tabler/outline/user"
+  self.color = :purple
+end
+```
+
+- **Type:** Symbol or String — one of `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
+- **Default:** `nil` — the neutral icon color
+
+Colors adapt automatically to the light and dark themes. An unknown color name renders the default neutral icon. A [`color:`](./menu-editor-api.html#color) set on the menu entry overrides this value.
+
+</Option>
+
 <Option name="`self.model_class`" headingSize="3">
 
 The model this resource references. Set it when the model is namespaced, when the class can't be inferred from the resource name, or when the resource is a [secondary resource for a model](./resources.html#use-multiple-resources-for-the-same-model).
