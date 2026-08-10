@@ -60,7 +60,8 @@ class Avo::Resources::Event < Avo::BaseResource
     week_start: :monday,         # or :sunday (default :monday)
     default_period: :month,        # or :week — which grid opens first
     hide_weekends: false,        # true renders Monday–Friday only
-    color: -> { record.status == "urgent" ? :red : :blue } # optional chip color
+    color: -> { record.status == "urgent" ? :red : :blue }, # optional chip color
+    on_click: :preview           # or :show / :edit — what clicking an event opens
   }
 end
 ```
@@ -128,6 +129,19 @@ A proc returning the chip's color token, evaluated with `record` in scope. Valid
 
 </Option>
 
+<Option name="`on_click`">
+
+What clicking an event chip opens:
+
+- `:preview` — a popover with the record's preview fields (see [Event previews](#event-previews))
+- `:show` — the record's <Show /> page
+- `:edit` — the record's <Edit /> page
+
+- **Type:** Symbol (`:preview`, `:show`, or `:edit`)
+- **Default:** `:preview`
+
+</Option>
+
 ## All-day and hour-based events
 
 The event kind is inferred from the column type:
@@ -157,6 +171,8 @@ The header's Month/Week toggle switches between a month grid and a week view wit
 ## Event previews
 
 Clicking an event chip opens a popover with the record's preview — the fields marked `show_on: :preview` — and a link to the record. Cmd/Ctrl-click still opens the record directly.
+
+If you'd rather skip the popover, set `on_click: :show` or `on_click: :edit` to navigate straight to the record's <Show /> or <Edit /> page.
 
 ## Navigation and filtering
 
