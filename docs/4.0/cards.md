@@ -222,12 +222,10 @@ Separately from your card titles, the Dashboards gem renders a few strings of it
 sv:
   avo:
     cards:
-      open_in_editor: Open card in your editor
       refresh: Refresh card
       refresh_labeled: Refresh %{label}
       dashboard:
         learn_more: Learn more
-        open_in_editor: Open dashboard in your editor
         refresh: Refresh all cards
 ```
 
@@ -239,7 +237,15 @@ sv:
 The dashboard refresh control reads `avo.cards.dashboard.refresh` and falls back to `avo.refresh_dashboard` before the shipped English. That older key was never defined by Avo, so an app that wanted a translated dashboard refresh button had to define it itself — those translations keep working, and there is no rush to move them.
 :::
 
-Two more strings the gem renders come from core's namespace, not its own, so they are already translated in every locale Avo ships: `avo.no_cards_present` and `avo.no_item_found` (a table or list card's empty state, overridable per card with `self.empty_message`).
+Three more strings the gem renders come from core's namespace, not its own, so they are already translated in every locale Avo ships — override them there rather than under `avo.cards`:
+
+| Key | Where it appears |
+| --- | --- |
+| `avo.open_in_your_editor` | the development-only editor link on a card and on a dashboard |
+| `avo.no_cards_present` | a dashboard with no visible cards |
+| `avo.no_item_found` | a table or list card's empty state, overridable per card with `self.empty_message` |
+
+`avo.open_in_your_editor` is deliberately entity-free — it does not name the card or dashboard it opens. That is not an oversight to work around by interpolating the noun: the tooltip is attached to the thing it opens, and a noun interpolated into a sentence goes wrong in inflected languages, as Avo's own `%{item}` keys show (Polish fixes the adjective to one gender; German has to invert the sentence).
 
 ## Hide the header
 
