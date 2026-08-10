@@ -6,11 +6,11 @@ outline: [2, 3]
 
 # What you can ask
 
-A catalog of what the Avo Intelligence assistant can do, with a prompt for each one. Everything here works in plain language — you never name a tool, and you never have to phrase a request a particular way.
+A catalog of what the Avo AI assistant can do, with a prompt for each one. Everything here works in plain language — you never name a tool, and you never have to phrase a request a particular way.
 
 The resource and field names in the examples are placeholders. Substitute your own: the assistant reads your resources, your columns, and your scopes at the moment you ask, so the vocabulary that works is the vocabulary of your admin.
 
-For how a turn actually unfolds — inspect-first, confirmation cards, authorization — see [How the assistant works](./intelligence.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./intelligence-agents-and-tools.html).
+For how a turn actually unfolds — inspect-first, confirmation cards, authorization — see [How the assistant works](./ai.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./ai-agents-and-tools.html).
 
 ## Find records
 
@@ -102,7 +102,7 @@ The assistant runs the [actions](./actions.html) your resources register, so ope
 - **"Export the users as CSV"** — [actions that run without records](./actions.html#run-an-action-without-records) work too.
 - **"Which actions does this resource have?"** — lists them with their inputs when you'd rather look first.
 
-Required inputs you didn't mention arrive as empty fields on the card for you to fill; the assistant never invents a value for them. Full detail in [Your actions, from the chat](./intelligence.html#your-actions-from-the-chat).
+Required inputs you didn't mention arrive as empty fields on the card for you to fill; the assistant never invents a value for them. Full detail in [Your actions, from the chat](./ai.html#your-actions-from-the-chat).
 
 ## Work with files
 
@@ -122,7 +122,7 @@ Required inputs you didn't mention arrive as empty fields on the card for you to
 | "Attach https://example.com/logo.png as the cover" | A confirmation card with the URL and a preview — nothing is fetched until you click **Attach** |
 | "Take the cover off this post"          | The file unlinked — the blob stays in the Media Library   |
 
-Files are referenced by blob id, and the Media Library URL carries one: `/avo/media-library/260/edit` is blob 260. The assistant never uploads bytes itself — a file gets in either by riding along on your message or through a URL you confirm. Purging a file stays a manual action. See [Files and attachments](./intelligence.html#files-and-attachments) and [Getting new files in](./intelligence.html#getting-new-files-in).
+Files are referenced by blob id, and the Media Library URL carries one: `/avo/media-library/260/edit` is blob 260. The assistant never uploads bytes itself — a file gets in either by riding along on your message or through a URL you confirm. Purging a file stays a manual action. See [Files and attachments](./ai.html#files-and-attachments) and [Getting new files in](./ai.html#getting-new-files-in).
 
 ## Ask about the record you're on
 
@@ -133,7 +133,7 @@ Start a chat from a record's page and "this" is already resolved — for the who
 - **"Set its status to active"**
 - **"Is anything missing here?"**
 
-A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it. See [The record you start from](./intelligence.html#the-record-you-start-from).
+A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it. See [The record you start from](./ai.html#the-record-you-start-from).
 
 ## Ask about a file you sent
 
@@ -143,16 +143,16 @@ Attach files to your message — paperclip, drag, or paste — and ask about the
 - **"What's in this screenshot?"**
 - **"Create a project for each row in this spreadsheet"**
 
-The files stay on the message, so you can keep asking about them later in the conversation. Reading an image or a PDF takes a vision-capable model. See [Send files with a message](./intelligence.html#send-files-with-a-message).
+The files stay on the message, so you can keep asking about them later in the conversation. Reading an image or a PDF takes a vision-capable model. See [Send files with a message](./ai.html#send-files-with-a-message).
 
 ## Manage the conversation
 
 - **"Rename this conversation to 'Q3 invoices'"** — your exact wording, applied everywhere the title shows.
 - **"Rename this conversation"** — with no name given, a fresh title is generated from where the conversation actually went.
 
-New conversations title themselves after your first message. See [Renaming conversations](./intelligence-agents-and-tools.html#renaming-conversations).
+New conversations title themselves after your first message. See [Renaming conversations](./ai-agents-and-tools.html#renaming-conversations).
 
-You don't have to ask, either. The ⋯ menu next to the title renames the conversation without the assistant — **Rename chat** to type the title yourself, **Rename again with AI** to have one generated — and the bar's menu adds **Copy as markdown**, which puts the conversation on your clipboard as plain text. See [The conversation menu](./intelligence.html#the-conversation-menu).
+You don't have to ask, either. The ⋯ menu next to the title renames the conversation without the assistant — **Rename chat** to type the title yourself, **Rename again with AI** to have one generated — and the bar's menu adds **Copy as markdown**, which puts the conversation on your clipboard as plain text. See [The conversation menu](./ai.html#the-conversation-menu).
 
 ## What it won't do
 

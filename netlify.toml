@@ -1,3 +1,22 @@
+# the avo-intelligence add-on was renamed to avo-ai
+[[redirects]]
+from = "/4.0/intelligence.html"
+to = "/4.0/ai.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/intelligence-agents-and-tools.html"
+to = "/4.0/ai-agents-and-tools.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/intelligence-what-you-can-ask.html"
+to = "/4.0/ai-what-you-can-ask.html"
+status = 301
+force = false
+
 # collaboration overview + authorization merged into a single guide
 [[redirects]]
 from = "/4.0/collaboration/overview.html"
