@@ -57,6 +57,21 @@ config.timezone = "UTC"
 
 </Option>
 
+<Option name="`use_browser_timezone`" headingSize="3">
+
+Render server-side dates and times in each visitor's own time zone instead of the app's `Time.zone`. **On by default** — set it to `false` to render everyone in the app's configured zone.
+
+Avo detects the browser's IANA time zone with JavaScript, stores it in the `avo.browser_timezone` cookie, and wraps every Avo request in `Time.use_zone` with it. The very first page a browser ever loads still renders in the app zone — no HTTP header carries the time zone — so Avo soft-reloads that one page through Turbo and shows an alert telling the user times are now displayed in their zone. Browsers with cookies disabled keep the app zone and never reload.
+
+```ruby
+config.use_browser_timezone = false
+```
+
+- **Type:** Boolean
+- **Default:** `true`
+
+</Option>
+
 <Option name="`currency`" headingSize="3">
 
 The global currency used when displaying `currency` fields that don't set their own.
