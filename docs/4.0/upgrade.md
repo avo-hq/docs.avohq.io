@@ -71,7 +71,7 @@ Then grep your app for what's left. Each of these is a rename you have to make b
 | `config.intelligence` | `config.ai` | `config/initializers/avo.rb` |
 | `AVO_INTELLIGENCE_` | `AVO_AI_` | Environment variables for the two thinking options |
 | `avo_intelligence/` | `avo_ai/` | Menu resource names |
-| `avo/intelligence/` | `avo/ai/` | Ejected prompts, policies, and the assistant's icon partial under `app/` |
+| `avo/intelligence/` | `avo/ai/` | Ejected prompts, policies, and any of the add-on's views you overrode under `app/` |
 | `avo.intelligence.` | `avo.ai.` | Locale files overriding the add-on's strings |
 | `avo_intelligence_` | `avo_ai_` | Table names, and the add-on's CSS classes if you style them |
 
@@ -84,8 +84,10 @@ Directories move with the namespace. Three kinds of file are affected, and all t
 | `app/views/avo/intelligence/_avocado_icon.html.erb` | `app/views/avo/ai/_avocado_icon.html.erb` |
 
 :::info
-The gem helps you catch the first two: on boot it checks `app/prompts/avo/intelligence/` and `app/policies/avo/intelligence/` and logs a warning naming any files it finds there and the path they belong at now. It fires once per boot, though, which is easy to miss in a busy log — and the icon partial isn't covered — so treat this as a move to make deliberately rather than one to wait for a warning about.
+The gem checks all three directories on boot and logs a warning naming any files still sitting in them and the path they belong at now. Treat that as a safety net rather than the plan: it fires once per boot, which is easy to miss in a busy log.
 :::
+
+Overrides that work by constant rather than by path need no such care — a subclass of anything under `Avo::Intelligence::` raises a `NameError` on boot, so you can't miss it.
 
 :::info
 The constant is `Avo::Ai`, not `Avo::AI` — Zeitwerk's default inflector maps `ai.rb` to `Ai`, and spelling it `AI` would need a custom inflection for nothing. The product is written **Avo AI** in prose either way.
