@@ -43,7 +43,7 @@ bin/rails generate avo:intelligence install
 bin/rails db:migrate
 ```
 
-This creates the `avo_intelligence_*` tables and writes `config/initializers/ruby_llm.rb` (skipped if it already exists).
+This creates the `avo_intelligence_*` tables and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every intelligence setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.intelligence`, it's left untouched.
 
 :::warning Already installed an earlier alpha?
 The installer only ever writes the initial migration, so a schema created by an earlier version won't pick up columns added since. Two are current, both on `avo_intelligence_chats`: `attached_context` stores [the record the chat was started from](#the-record-you-start-from), and `responding_at` tracks [whether a chat is being answered right now](#while-the-assistant-is-replying). Add them by hand:
