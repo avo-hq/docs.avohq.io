@@ -486,7 +486,7 @@ With the default key, a filtered URL looks like `/avo/resources/users?filters[fi
 
 Each filter type ships a set of conditions the user picks from. The tables below list each condition's key (used in URL params and as a reference for the [`conditions`](#conditions) option), its English label, and the i18n key that label resolves from.
 
-i18n keys are relative to `avo.dynamic_filters.conditions`, and resolve per filter type before falling back to `defaults` — so `number.is` overrides `defaults.is` for number filters only. See [Localization](./dynamic-filters.html#localization) for the full tree and the matching `pill_conditions` phrases.
+i18n keys are relative to `avo.dynamic_filters.conditions` — `defaults.is_null` in the tables below is `avo.dynamic_filters.conditions.defaults.is_null` in a locale file. They resolve per filter type before falling back to `defaults`, so `number.is` overrides `defaults.is` for number filters only. See [Localization](./dynamic-filters.html#localization) for the full tree and the matching `pill_conditions` phrases.
 
 :::info Null conditions appear only on nullable columns
 The `Is null` / `Is not null` conditions (and `Is present` / `Is blank` on text filters) are offered only when the underlying database column is nullable — on columns with a `NOT NULL` constraint they're omitted, since they could never match anything.
@@ -494,7 +494,7 @@ The `Is null` / `Is not null` conditions (and `Is present` / `Is blank` on text 
 
 ### Boolean
 
-| Key | Label | i18n key |
+| Key | Label | i18n key, under `avo.dynamic_filters.conditions` |
 | --- | --- | --- |
 | `is_true` | Is true | `defaults.is_true` |
 | `is_false` | Is false | `defaults.is_false` |
@@ -509,7 +509,7 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_adm
 
 Covers the `:date`, `:date_time`, and `:time` types — same conditions, different picker: `:date_time` adds time selection to the calendar and `:time` shows a time-only picker (no calendar).
 
-| Key | Label | i18n key |
+| Key | Label | i18n key, under `avo.dynamic_filters.conditions` |
 | --- | --- | --- |
 | `is` | Is | `defaults.is` |
 | `is_not` | Is not | `defaults.is_not` |
@@ -525,7 +525,7 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[create
 
 ### Number
 
-| Key | Label | i18n key |
+| Key | Label | i18n key, under `avo.dynamic_filters.conditions` |
 | --- | --- | --- |
 | `is` | `=` (equals) | `number.is` |
 | `is_not` | `!=` (is different) | `number.is_not` |
@@ -543,7 +543,7 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gt
 
 ### Select
 
-| Key | Label | i18n key |
+| Key | Label | i18n key, under `avo.dynamic_filters.conditions` |
 | --- | --- | --- |
 | `is` | Is | `defaults.is` |
 | `is_not` | Is not | `defaults.is_not` |
@@ -556,7 +556,7 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[coun
 
 ### Text
 
-| Key | Label | i18n key |
+| Key | Label | i18n key, under `avo.dynamic_filters.conditions` |
 | --- | --- | --- |
 | `contains` | Contains | `defaults.contains` |
 | `does_not_contain` | Does not contain | `defaults.does_not_contain` |
@@ -575,7 +575,7 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_
 
 ### Tags
 
-| Key | Label | i18n key |
+| Key | Label | i18n key, under `avo.dynamic_filters.conditions` |
 | --- | --- | --- |
 | `array_is` | Are | `defaults.array_is` |
 | `array_contains` | Contain | `defaults.array_contains` |
