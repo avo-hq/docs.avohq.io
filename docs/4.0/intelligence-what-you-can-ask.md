@@ -17,6 +17,7 @@ For how a turn actually unfolds — inspect-first, confirmation cards, authoriza
 | Ask                                              | What you get                                                             |
 | ------------------------------------------------ | ------------------------------------------------------------------------ |
 | "Find the user with the email ada@example.com"   | The matching record, as a card with a link to open it                    |
+| "Find the user called John Deere"                | The record — found by search, even when the name lives across several columns |
 | "Show me the 5 most recent posts"                | A short list, sorted by the timestamp that matches what you asked about  |
 | "Which users signed up in the last 7 days?"      | A date-filtered list, resolved against the real current time             |
 | "List projects whose name contains 'orbit'"      | A partial-match list                                                     |
@@ -24,6 +25,8 @@ For how a turn actually unfolds — inspect-first, confirmation cards, authoriza
 | "Who signed up last?"                            | One record, rendered as a card                                           |
 
 Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders over $500", "users older than 26", "posts with no author", "projects in draft or review".
+
+**Naming a record in words is enough.** "The user called John Deere", "the post about pricing", "find Acme" — the assistant looks the record up the way your admin does: a resource that [configures search](./search.html) gets that exact search, and one that doesn't is matched across every text column you're allowed to read. A multi-word name still finds the record when its words live in different columns, so a first and last name stored separately aren't a problem. And "no such record" is only ever reported after that search came back empty — never off a guessed column filter.
 
 **Your scopes are part of the vocabulary.** Domain words like "admins", "active", or "published" are usually named scopes on the model rather than columns, and the assistant prefers the scope over guessing at a filter — so "list the published posts" runs `Post.published`, whatever that scope actually does.
 

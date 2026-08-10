@@ -37,7 +37,7 @@ Tool names below are how calls appear in the Tool calls resource and in the chat
 | `ask_user`                   | Asks you one clarifying question — free-form, or with clickable options — then ends the turn                         | —                 |
 | `schema_inspector`           | Reports the database structure — scoped to the resources the signed-in user is allowed to see                        | read-only         |
 | `resource_inspector`         | Reads one resource's real columns, associations, and scopes; unlocks querying and writing that resource              | read-only         |
-| `active_record_query`        | Runs read-only, paginated, policy-scoped queries against a resource                                                  | read-only         |
+| `active_record_query`        | Runs read-only, paginated, policy-scoped queries against a resource — filters, scopes, grouping, and free-text search through the resource's own [configured search](./search.html) | read-only         |
 | `active_storage_insights`    | Storage reports — totals, orphans, duplicates, growth, biggest files — and finding/showing files                     | read-only         |
 | `active_storage_attachment`  | Attaches or detaches a Media Library blob (or a chat upload) on a record's attachment; can also fetch a URL onto one | immediately¹      |
 | `create_record`              | Creates a record                                                                                                     | immediately       |

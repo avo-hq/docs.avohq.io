@@ -43,7 +43,7 @@ bin/rails generate avo:intelligence install
 bin/rails db:migrate
 ```
 
-This creates the `avo_intelligence_*` tables and writes `config/initializers/ruby_llm.rb` (skipped if it already exists).
+This creates the `avo_intelligence_*` tables and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every intelligence setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.intelligence`, it's left untouched.
 
 :::warning Already installed an earlier alpha?
 The installer only ever writes the initial migration, so a schema created by an earlier version won't pick up columns added since. Two are current, both on `avo_intelligence_chats`: `attached_context` stores [the record the chat was started from](#the-record-you-start-from), and `responding_at` tracks [whether a chat is being answered right now](#while-the-assistant-is-replying). Add them by hand:
@@ -106,8 +106,9 @@ Avo.configure do |config|
   # Only sent to models that support reasoning; ignored otherwise.
   config.intelligence.thinking_effort = "medium"
 
-  # Token budget for the model's thinking trace (positive integer).
+  # Token budget for the model's thinking trace (positive integer, min 1024).
   config.intelligence.thinking_budget = 2048
+  # Set both — see "Thinking" below. A model takes one knob or the other.
 
   # Clock format for chat timestamps: :auto (default), :h12, or :h24.
   config.intelligence.time_format = :h24
@@ -132,6 +133,49 @@ The two thinking options fall back to an environment variable when unset, so you
 | `thinking_budget` | `AVO_INTELLIGENCE_THINKING_BUDGET` | unset |
 
 When both are unset, no thinking parameters are sent to the provider.
+
+### Thinking
+
+Set **both** options. They are not alternatives, and they are not a fallback pair — they are two
+different knobs, and each model accepts exactly one of them. Its provider rejects the other
+outright.
+
+This is not an Anthropic quirk — the split runs across providers, and which knob a model takes is a
+property of the model, not of the company that made it:
+
+| Knob              | Models that take it                                           |
+| ----------------- | ------------------------------------------------------------- |
+| `thinking_budget` | `claude-haiku-4-5`, `claude-sonnet-4-6`, Gemini 2.5            |
+| `thinking_effort` | `claude-opus-5`, Gemini 3, OpenAI reasoning models (`gpt-5`, …) |
+
+Avo reads the answer from the model's own registry entry and sends only that knob, preferring the
+budget where a model takes both. So a picker offering Haiku and Opus needs both values set —
+configure only `thinking_effort` and every Haiku conversation quietly answers with no thinking at
+all, with nothing in the logs to say so.
+
+Both options reach every provider RubyLLM supports thinking for, which is most of them: Anthropic,
+OpenAI, Gemini, VertexAI, Bedrock, Azure, Mistral, Perplexity, OpenRouter, Ollama, and GPUStack. A
+few of those don't take direction — Mistral's Magistral models always think and ignore what you
+send, and local Ollama or GPUStack models get the values passed through untranslated. For the
+current per-provider picture, RubyLLM documents it at
+[rubyllm.com/thinking](https://rubyllm.com/thinking/).
+
+Effort is passed to the provider exactly as written, so the accepted strings are the provider's,
+not Avo's. `"low"`, `"medium"`, and `"high"` are understood everywhere effort applies; OpenAI also
+takes `"minimal"`, Gemini 3 takes only `"low"` and `"high"`, and `"none"` turns thinking off on
+Anthropic. A value the provider doesn't recognise fails on the first request, not at boot. Budgets
+are thinking tokens, minimum 1024 on Anthropic; zero or negative reads as unset.
+
+The same two knobs are how you size the reasoning readers see above a reply: a bigger budget or a
+higher effort buys a longer, deeper trace; a smaller one keeps it to a line or two. On budget
+models the trace is the model's own reasoning verbatim, so the budget bounds it directly. On
+effort models what renders is the provider's summary of the reasoning — its length loosely follows
+the effort, and its wording isn't steerable from your side.
+
+:::info
+Thinking only reaches models that declare reasoning support. Sending it to a plain chat model like
+`gpt-4o-mini` would have the provider reject the whole request, so Avo doesn't.
+:::
 
 ### Timestamps
 
@@ -458,6 +502,10 @@ In Chrome and Edge, dictating means uploading admin-panel audio to Google. If th
 
 Your message lands on the transcript the moment you send it, with a **Thinking** indicator underneath — it's saved as part of the send, not by the background job, so it never blinks out for the second or two the queue takes. Starting a fresh conversation keeps the composer you typed into on screen until the conversation is ready, then trades one for the other, so there's no empty panel in between. A second **Enter** while that's happening doesn't start a second chat.
 
+When answering takes real work — a lookup, an inspection, a write — the assistant leaves short progress hints while it works: *Inspecting the schema*, *Checking today's signups*. They render small and muted, alongside the reasoning trace, so they read as status rather than replies — and they name the goal in your terms, never the tool it reaches for. It's what you read while the work happens instead of watching an empty panel.
+
+When the answer lands, the worked trail folds up: everything between your question and the reply — the reasoning, the hints — collapses into a single **Worked for 12 seconds** row above the answer, so a settled conversation reads question, one quiet row, answer. Open the row to see how the assistant got there; viewers with the [`:tools` debug level](#debug-levels) find the tool calls in there too.
+
 You can keep typing while it works. A message sent before the current answer lands doesn't interrupt it — it waits in a short list above the composer, in the order you sent it, and goes out on its own the moment the assistant finishes. One turn at a time, so two replies never race each other in the same conversation.
 
 While a message waits you can move it to the front of the line or drop it, which is the point of showing you the wait rather than hiding it. The list belongs to the page you typed on: reloading clears it, the same way it clears anything else you'd typed but not sent.
@@ -585,8 +633,12 @@ How much of the assistant's internal work a viewer may see is an authorization d
 
 There are two levels:
 
-- `:off` — the conversation only: replies, record cards, confirmation buttons, the assistant's questions, and the "Thinking…" indicator. The default.
-- `:tools` — everything above plus the system prompt, the raw thinking trace, the tool calls, and the raw tool output.
+- `:off` — the conversation: replies, record cards, confirmation buttons, the assistant's questions, the "Thinking…" indicator, and the collapsed trail with its reasoning trace and progress hints. The default.
+- `:tools` — everything above plus the system prompt, the tool calls, and the raw tool output.
+
+The reasoning trace deliberately sits on the `:off` side of the line: it narrates the answer the
+viewer is already allowed to read, not the machinery. The system prompt and the raw tool traffic
+stay gated because they are the defenses.
 
 The level is decided by your app's policy for `Avo::Intelligence::Chat`. It's never stored and never switchable from the chat UI:
 
@@ -600,4 +652,4 @@ end
 
 No policy, no `#debug_level` method, an unrecognized value, or any error inside the policy all fail closed to `:off`.
 
-Viewers who get `:tools` also get a **bug** button — in the panel's title bar, and in the chat page's ⋯ menu — that hides those rows without leaving the conversation. It's a display preference, remembered per device and shared by both places. Nobody on `:off` sees the button, because none of those rows reach their browser to begin with.
+Viewers who get `:tools` also get a **bug** button — in the panel's title bar, and beside the ⋯ menu on the chat page — that hides those rows without leaving the conversation. It's a display preference, remembered per device and shared by both places. Nobody on `:off` sees the button, because none of those rows reach their browser to begin with.
