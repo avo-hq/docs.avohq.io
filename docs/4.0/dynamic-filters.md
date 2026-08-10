@@ -237,6 +237,8 @@ sv:
           contains: Contains
           does_not_contain: Does not contain
           ends_with: Ends with
+          gt: ">"
+          gte: ">="
           is: Is
           is_blank: Is blank
           is_false: Is false
@@ -246,17 +248,15 @@ sv:
           is_present: Is present
           is_true: Is true
           is_within: Is within
+          lt: "<"
+          lte: "<="
           starts_with: Starts with
         date:
           gte: Is on or after
           lte: Is on or before
         number:
-          gt: ">"
-          gte: ">="
           is: "="
           is_not: "!="
-          lt: "<"
-          lte: "<="
       pill_conditions:
         defaults:
           array_contained_in: contained in

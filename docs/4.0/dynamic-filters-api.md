@@ -529,10 +529,10 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[create
 | --- | --- | --- |
 | `is` | `=` (equals) | `number.is` |
 | `is_not` | `!=` (is different) | `number.is_not` |
-| `gt` | `>` (greater than) | `number.gt` |
-| `gte` | `>=` (greater than or equal to) | `number.gte` |
-| `lt` | `<` (lower than) | `number.lt` |
-| `lte` | `<=` (lower than or equal to) | `number.lte` |
+| `gt` | `>` (greater than) | `defaults.gt` |
+| `gte` | `>=` (greater than or equal to) | `defaults.gte` |
+| `lt` | `<` (lower than) | `defaults.lt` |
+| `lte` | `<=` (lower than or equal to) | `defaults.lte` |
 | `is_within` | Is within | `defaults.is_within` |
 | `is_null` | Is null | `defaults.is_null` |
 | `is_not_null` | Is not null | `defaults.is_not_null` |
