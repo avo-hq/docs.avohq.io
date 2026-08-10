@@ -231,7 +231,13 @@ sv:
         refresh: Refresh all cards
 ```
 
-`refresh_labeled` names the card being refreshed and is used when the card has a label; `refresh` is the fallback for a card without one. **Keep the `%{label}` placeholder** — a translation that drops it renders the sentence without the card name rather than raising.
+`refresh_labeled` names the card being refreshed and is used when the card has a label; `refresh` is the fallback for a card without one.
+
+**Keep the `%{label}` placeholder.** Dropping it is harmless — the sentence just renders without the card name. *Renaming* it (to `%{card}`, say) is what I18n treats as an error, and Avo catches that and falls back to `refresh` plus the label rather than letting one translation break the dashboard header.
+
+:::info Already translated `avo.refresh_dashboard`?
+The dashboard refresh control reads `avo.cards.dashboard.refresh` and falls back to `avo.refresh_dashboard` before the shipped English. That older key was never defined by Avo, so an app that wanted a translated dashboard refresh button had to define it itself — those translations keep working, and there is no rush to move them.
+:::
 
 Two more strings the gem renders come from core's namespace, not its own, so they are already translated in every locale Avo ships: `avo.no_cards_present` and `avo.no_item_found` (a table or list card's empty state, overridable per card with `self.empty_message`).
 
