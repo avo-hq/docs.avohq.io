@@ -30,6 +30,31 @@ Hosts with an accessibility conformance obligation can disable the drag handle w
 
 </Option>
 
+## Upgrade to 4.1.4
+
+<Option name="The back to top pill is enabled by default">
+
+### Breaking Change
+
+The ["Back to top" pill](./customization.html#send-the-user-back-to-the-top) used to be off by default and only revealed itself when the user scrolled back up. It's now **on by default** and its visibility depends only on how far down the page is scrolled, not on the scroll direction. The [`threshold`](./customization-api.html#back_to_top) default moved from `64` to `400` pixels so the pill stays out of the way on short scrolls.
+
+**Action required:** None, unless you don't want the pill in your app. Every app that doesn't configure `back_to_top` gets it after this upgrade ([#4705](https://github.com/avo-hq/avo/pull/4705)).
+
+### Maintaining Previous Behavior
+
+Turn it off from the initializer. Keys you leave out fall back to the defaults, so `enabled` is enough:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.back_to_top = {enabled: false} # [!code ++]
+end
+```
+
+The direction-aware reveal is gone for good — `threshold` is now the only thing that decides when the pill shows up.
+
+</Option>
+
 ## Upgrade to `avo-dashboards` `4.0.9`
 
 <Option name="The per-card refresh control is opt-in">

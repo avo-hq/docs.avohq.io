@@ -299,6 +299,30 @@ Avo.configure do |config|
 end
 ```
 
+## Send the user back to the top
+
+Long index tables and record pages leave the user far from the navbar. Avo renders a "Back to top" pill centered under the navbar that scrolls the page back up when clicked.
+
+The pill shows up once the page is scrolled 400 pixels down and hides again near the top — the direction the user scrolls in doesn't change that. If you'd rather it appeared later, or not at all, configure [`back_to_top`](./customization-api.html#back_to_top).
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.back_to_top = {threshold: 1000}
+end
+```
+
+To remove it, disable it. Any key you leave out of the hash keeps its default, so this is all you need:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.back_to_top = {enabled: false}
+end
+```
+
+The label comes from the `avo.back_to_top` translation key, so you can rename it from your locale files. Read more on the [localization page](./i18n.html).
+
 ## Home path
 
 When a user clicks your logo inside Avo or goes to the `/avo` URL, they will be redirected to one of your resources. Point them somewhere else — a dashboard, for example — with [`home_path`](./customization-api.html#home_path).
