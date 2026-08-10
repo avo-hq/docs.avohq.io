@@ -6,6 +6,29 @@ If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedica
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
+## Unreleased — browser time zone on by default
+
+<Option name="`use_browser_timezone` now defaults to `true`">
+
+### Breaking Change
+
+Server-side dates and times now render in [each visitor's own time zone](./customization.html#time-and-currency) by default instead of the app's `Time.zone`. Avo detects the browser's zone via a cookie; the first page a browser loads soft-reloads once through Turbo and shows a one-time alert that times are now displayed in the visitor's zone.
+
+**Action required:** None if per-visitor times are what you want — most apps do. Displayed values only change for users whose browser zone differs from the app zone; nothing about stored data changes.
+
+### Maintaining Previous Behavior
+
+Pin every visitor to the app's configured zone:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.use_browser_timezone = false # [!code ++]
+end
+```
+
+</Option>
+
 ## Unreleased — resizable sidebar
 
 <Option name="Sidebar labels truncate instead of wrapping">
