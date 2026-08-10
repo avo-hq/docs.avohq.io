@@ -435,14 +435,20 @@ Set these through `Avo::DynamicFilters.configure` in `config/initializers/avo.rb
 The label on the button that expands the filters bar.
 
 ```ruby
-config.button_label = "Advanced filters"
+config.button_label = -> { I18n.t("my.filters") }
 ```
 
-- **Type:** String or Proc
-- **Default:** the translated default
+- **Type:** Proc or String
+- **Default:** `-> { I18n.t("avo.filters") }`
 - **i18n key:** `avo.filters` ("Filters")
 
 The button only renders when [`always_expanded`](#always_expanded) is `false`.
+
+:::warning A plain string is fixed for the life of the process
+The initializer runs once at boot and the configuration object lives for the whole process, so a string is pinned for every request afterwards. `config.button_label = I18n.t("my.filters")` has the same problem — it looks translated, but it is evaluated at boot like any other expression.
+
+Pass a proc and it is re-evaluated on every render, so it follows the request locale. Left unset, the default is already a proc, so a localized app usually needs nothing here.
+:::
 
 </Option>
 
@@ -478,7 +484,9 @@ With the default key, a filtered URL looks like `/avo/resources/users?filters[fi
 
 ## Filter types and their conditions
 
-Each filter type ships a set of conditions the user picks from. The tables below list each condition's key (used in URL params and as a reference for the [`conditions`](#conditions) option) and its label.
+Each filter type ships a set of conditions the user picks from. The tables below list each condition's key (used in URL params and as a reference for the [`conditions`](#conditions) option), its English label, and the i18n key that label resolves from.
+
+i18n keys are relative to `avo.dynamic_filters.conditions`, and resolve per filter type before falling back to `defaults` — so `number.is` overrides `defaults.is` for number filters only. See [Localization](./dynamic-filters.html#localization) for the full tree and the matching `pill_conditions` phrases.
 
 :::info Null conditions appear only on nullable columns
 The `Is null` / `Is not null` conditions (and `Is present` / `Is blank` on text filters) are offered only when the underlying database column is nullable — on columns with a `NOT NULL` constraint they're omitted, since they could never match anything.
@@ -486,12 +494,12 @@ The `Is null` / `Is not null` conditions (and `Is present` / `Is blank` on text 
 
 ### Boolean
 
-| Key | Label |
-| --- | --- |
-| `is_true` | Is true |
-| `is_false` | Is false |
-| `is_null` | Is null |
-| `is_not_null` | Is not null |
+| Key | Label | i18n key |
+| --- | --- | --- |
+| `is_true` | Is true | `defaults.is_true` |
+| `is_false` | Is false | `defaults.is_false` |
+| `is_null` | Is null | `defaults.is_null` |
+| `is_not_null` | Is not null | `defaults.is_not_null` |
 
 <Image src="/assets/img/4_0/dynamic-filters/boolean.webp" dark-src="/assets/img/4_0/dynamic-filters/boolean-dark.webp" width="3268" height="1082" alt="Avo Users index: the Is active dynamic filter pill and open card showing the Is true condition and Apply button, zoomed in over a short three-row table with pagination." />
 
@@ -501,15 +509,15 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_adm
 
 Covers the `:date`, `:date_time`, and `:time` types — same conditions, different picker: `:date_time` adds time selection to the calendar and `:time` shows a time-only picker (no calendar).
 
-| Key | Label |
-| --- | --- |
-| `is` | Is |
-| `is_not` | Is not |
-| `lte` | Is on or before |
-| `gte` | Is on or after |
-| `is_within` | Is within |
-| `is_null` | Is null |
-| `is_not_null` | Is not null |
+| Key | Label | i18n key |
+| --- | --- | --- |
+| `is` | Is | `defaults.is` |
+| `is_not` | Is not | `defaults.is_not` |
+| `lte` | Is on or before | `date.lte` |
+| `gte` | Is on or after | `date.gte` |
+| `is_within` | Is within | `defaults.is_within` |
+| `is_null` | Is null | `defaults.is_null` |
+| `is_not_null` | Is not null | `defaults.is_not_null` |
 
 <Image src="/assets/img/4_0/dynamic-filters/date3.webp" dark-src="/assets/img/4_0/dynamic-filters/date3-dark.webp" width="3268" height="2032" alt="Avo Teams index with a short three-row table: the Created at dynamic filter with flatpickr calendar and time picker open over the table." />
 
@@ -517,17 +525,17 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[create
 
 ### Number
 
-| Key | Label |
-| --- | --- |
-| `is` | `=` (equals) |
-| `is_not` | `!=` (is different) |
-| `gt` | `>` (greater than) |
-| `gte` | `>=` (greater than or equal to) |
-| `lt` | `<` (lower than) |
-| `lte` | `<=` (lower than or equal to) |
-| `is_within` | Is within |
-| `is_null` | Is null |
-| `is_not_null` | Is not null |
+| Key | Label | i18n key |
+| --- | --- | --- |
+| `is` | `=` (equals) | `number.is` |
+| `is_not` | `!=` (is different) | `number.is_not` |
+| `gt` | `>` (greater than) | `number.gt` |
+| `gte` | `>=` (greater than or equal to) | `number.gte` |
+| `lt` | `<` (lower than) | `number.lt` |
+| `lte` | `<=` (lower than or equal to) | `number.lte` |
+| `is_within` | Is within | `defaults.is_within` |
+| `is_null` | Is null | `defaults.is_null` |
+| `is_not_null` | Is not null | `defaults.is_not_null` |
 
 <Image src="/assets/img/4_0/dynamic-filters/number.webp" dark-src="/assets/img/4_0/dynamic-filters/number-dark.webp" width="3268" height="1082" alt="Avo Teams index with a short three-row table: the ID dynamic filter pill and open card over the table." />
 
@@ -535,12 +543,12 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/teams?filters[id][gt
 
 ### Select
 
-| Key | Label |
-| --- | --- |
-| `is` | Is |
-| `is_not` | Is not |
-| `is_null` | Is null |
-| `is_not_null` | Is not null |
+| Key | Label | i18n key |
+| --- | --- | --- |
+| `is` | Is | `defaults.is` |
+| `is_not` | Is not | `defaults.is_not` |
+| `is_null` | Is null | `defaults.is_null` |
+| `is_not_null` | Is not null | `defaults.is_not_null` |
 
 <Image src="/assets/img/4_0/dynamic-filters/select.webp" dark-src="/assets/img/4_0/dynamic-filters/select-dark.webp" width="3268" height="1082" alt="Avo Courses index with a short three-row table: the Country dynamic filter pill and open card over the table." />
 
@@ -548,18 +556,18 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/courses?filters[coun
 
 ### Text
 
-| Key | Label |
-| --- | --- |
-| `contains` | Contains |
-| `does_not_contain` | Does not contain |
-| `is` | Is |
-| `is_not` | Is not |
-| `starts_with` | Starts with |
-| `ends_with` | Ends with |
-| `is_null` | Is null |
-| `is_not_null` | Is not null |
-| `is_present` | Is present |
-| `is_blank` | Is blank |
+| Key | Label | i18n key |
+| --- | --- | --- |
+| `contains` | Contains | `defaults.contains` |
+| `does_not_contain` | Does not contain | `defaults.does_not_contain` |
+| `is` | Is | `defaults.is` |
+| `is_not` | Is not | `defaults.is_not` |
+| `starts_with` | Starts with | `defaults.starts_with` |
+| `ends_with` | Ends with | `defaults.ends_with` |
+| `is_null` | Is null | `defaults.is_null` |
+| `is_not_null` | Is not null | `defaults.is_not_null` |
+| `is_present` | Is present | `defaults.is_present` |
+| `is_blank` | Is blank | `defaults.is_blank` |
 
 <Image src="/assets/img/4_0/dynamic-filters/text.webp" dark-src="/assets/img/4_0/dynamic-filters/text-dark.webp" width="3268" height="1082" alt="Avo Users index with a short three-row table: the First name dynamic filter pill and open card over the table." />
 
@@ -567,12 +575,12 @@ Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[first_
 
 ### Tags
 
-| Key | Label |
-| --- | --- |
-| `array_is` | Are |
-| `array_contains` | Contain |
-| `array_overlap` | Overlap |
-| `array_contained_in` | Contained in |
+| Key | Label | i18n key |
+| --- | --- | --- |
+| `array_is` | Are | `defaults.array_is` |
+| `array_contains` | Contain | `defaults.array_contains` |
+| `array_overlap` | Overlap | `defaults.array_overlap` |
+| `array_contained_in` | Contained in | `defaults.array_contained_in` |
 
 :::warning
 `array_contained_in` requires the [`active_record_extended`](https://github.com/GeorgeKaraszi/ActiveRecordExtended) gem and is not offered on fields using the `acts-as-taggable-on` gem.
