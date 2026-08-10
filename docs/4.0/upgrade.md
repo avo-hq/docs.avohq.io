@@ -33,7 +33,15 @@ bin/rails generate avo:ai install
 bin/rails db:migrate
 ```
 
-The old `avo_intelligence_*` tables are left where they are, and nothing copies their contents across — the chats, messages, and tool calls recorded during the alpha stay behind in tables the new gem never reads. Drop them yourself once you're satisfied you don't want that history.
+The old `avo_intelligence_*` tables are left where they are, and nothing copies their contents across — everything recorded during the alpha stays behind in tables the new gem never reads. There are six of them, two more than the docs have ever mentioned:
+
+```
+avo_intelligence_chats           avo_intelligence_write_logs
+avo_intelligence_messages        avo_intelligence_pending_writes
+avo_intelligence_tool_calls      avo_intelligence_models
+```
+
+Drop them yourself once you're satisfied you don't want that history.
 
 Rename the settings in your initializer:
 
@@ -63,11 +71,21 @@ Then grep your app for what's left. Each of these is a rename you have to make b
 | `config.intelligence` | `config.ai` | `config/initializers/avo.rb` |
 | `AVO_INTELLIGENCE_` | `AVO_AI_` | Environment variables for the two thinking options |
 | `avo_intelligence/` | `avo_ai/` | Menu resource names |
-| `avo/intelligence/` | `avo/ai/` | Ejected prompts, views, and policies under `app/` |
+| `avo/intelligence/` | `avo/ai/` | Ejected prompts, policies, and the assistant's icon partial under `app/` |
 | `avo.intelligence.` | `avo.ai.` | Locale files overriding the add-on's strings |
 | `avo_intelligence_` | `avo_ai_` | Table names, and the add-on's CSS classes if you style them |
 
-Directories move with the namespace: an ejected prompt at `app/prompts/avo/intelligence/chat_agent/extra_instructions.txt.erb` belongs at `app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb`, and a policy at `app/policies/avo/intelligence/chat_policy.rb` at `app/policies/avo/ai/chat_policy.rb`. A file left at the old path is silently ignored rather than erroring — the gem's own copy is used and your customization quietly stops applying.
+Directories move with the namespace. Three kinds of file are affected, and all three fail the same quiet way — the gem ships its own copy at the new path, so a file left behind at the old one is simply never consulted and your customization stops applying without an error:
+
+| Left at | Belongs at |
+| ------------------------------------------------------ | ------------------------------------------ |
+| `app/prompts/avo/intelligence/chat_agent/…` | `app/prompts/avo/ai/chat_agent/…` |
+| `app/policies/avo/intelligence/chat_policy.rb` | `app/policies/avo/ai/chat_policy.rb` |
+| `app/views/avo/intelligence/_avocado_icon.html.erb` | `app/views/avo/ai/_avocado_icon.html.erb` |
+
+:::info
+The gem helps you catch the first two: on boot it checks `app/prompts/avo/intelligence/` and `app/policies/avo/intelligence/` and logs a warning naming any files it finds there and the path they belong at now. It fires once per boot, though, which is easy to miss in a busy log — and the icon partial isn't covered — so treat this as a move to make deliberately rather than one to wait for a warning about.
+:::
 
 :::info
 The constant is `Avo::Ai`, not `Avo::AI` — Zeitwerk's default inflector maps `ai.rb` to `Ai`, and spelling it `AI` would need a custom inflection for nothing. The product is written **Avo AI** in prose either way.
