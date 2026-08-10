@@ -44,6 +44,8 @@ end
 
 That adds the calendar to the view switcher next to table, grid, and map.
 
+<Image src="/assets/img/4_0/calendar-view/index.webp" dark-src="/assets/img/4_0/calendar-view/index-dark.webp" width="1456" height="830" alt="The Events resource in calendar view — the month grid with timed chips, a multi-day event spanning four days, and the Month/Week switcher." />
+
 ## Configuration
 
 Configure which attributes drive the calendar with `calendar_view`:
@@ -149,6 +151,8 @@ end
 ## Month and week views
 
 The header's Month/Week toggle switches between a month grid and a week view with an all-day lane plus hour rows (carried in the `calendar_period` query param). In the week view, all-day and multi-day events sit in the all-day lane; hour-based events land on their start hour.
+
+<Image src="/assets/img/4_0/calendar-view/week.webp" dark-src="/assets/img/4_0/calendar-view/week-dark.webp" width="1456" height="830" alt="The week view — a multi-day event in the all-day lane and hour-based events on their start hours." />
 
 ## Event previews
 
