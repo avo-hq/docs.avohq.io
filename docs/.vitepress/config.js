@@ -328,6 +328,16 @@ const config = {
         {
           text: "Add-ons",
           items: [
+            {
+              text: "Avo AI",
+              link: "/4.0/ai.html",
+              collapsed: false,
+              items: [
+                { text: "Overview", link: "/4.0/ai.html" },
+                { text: "What you can ask", link: "/4.0/ai-what-you-can-ask.html" },
+                { text: "Agents and tools", link: "/4.0/ai-agents-and-tools.html" },
+              ],
+            },
             { text: "Notifications", link: "/4.0/notifications.html" },
             { text: "Media Library", link: "/4.0/media-library.html" },
             { text: "Audit Logging", link: "/4.0/audit-logging.html" },

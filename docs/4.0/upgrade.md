@@ -6,6 +6,75 @@ If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedica
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
+## Unreleased — `avo-intelligence` is now `avo-ai`
+
+<Option name="The `avo-intelligence` add-on is renamed to `avo-ai`">
+
+### Breaking Change
+
+The add-on is now called [Avo AI](./ai.html), and the rename runs all the way through: the gem, the `Avo::Ai` namespace, the `avo_ai_*` tables, the `config.ai` settings, and the generators. Nothing aliases the old names, so an app on an `avo-intelligence` alpha won't boot until it's updated.
+
+**Action required:** Yes — every item below. The add-on only ever shipped `4.0.0.alpha.*` releases, so there is no supported upgrade path from a stable version and no rename migration ships with the gem.
+
+### Steps to Update
+
+Point your `Gemfile` at the new gem:
+
+```ruby
+# Gemfile
+gem "avo-intelligence", source: "https://packager.dev/avo-hq/" # [!code --]
+gem "avo-ai", source: "https://packager.dev/avo-hq/" # [!code ++]
+```
+
+Re-run the installer to create the `avo_ai_*` tables:
+
+```bash
+bin/rails generate avo:ai install
+bin/rails db:migrate
+```
+
+The old `avo_intelligence_*` tables are left where they are, and nothing copies their contents across — the chats, messages, and tool calls recorded during the alpha stay behind in tables the new gem never reads. Drop them yourself once you're satisfied you don't want that history.
+
+Rename the settings in your initializer:
+
+```ruby
+# config/initializers/avo.rb
+config.intelligence.thinking_effort = "medium" # [!code --]
+config.ai.thinking_effort = "medium" # [!code ++]
+```
+
+And the menu section that lists the add-on's resources:
+
+```ruby
+# config/initializers/avo.rb
+section "Intelligence", icon: "heroicons/outline/sparkles" do # [!code --]
+section "AI", icon: "heroicons/outline/sparkles" do # [!code ++]
+  resource "avo_intelligence/chats" # [!code --]
+  resource "avo_ai/chats" # [!code ++]
+  # …and the same for messages, tool_calls, and models
+end
+```
+
+Then grep your app for what's left. Each of these is a rename you have to make by hand:
+
+| Grep for | Replace with | Where it turns up |
+| ---------------------- | -------------- | ------------------------------------------------------------------ |
+| `Avo::Intelligence` | `Avo::Ai` | Policies, the RubyLLM `model_registry_class`, anything referencing `Chat` |
+| `config.intelligence` | `config.ai` | `config/initializers/avo.rb` |
+| `AVO_INTELLIGENCE_` | `AVO_AI_` | Environment variables for the two thinking options |
+| `avo_intelligence/` | `avo_ai/` | Menu resource names |
+| `avo/intelligence/` | `avo/ai/` | Ejected prompts, views, and policies under `app/` |
+| `avo.intelligence.` | `avo.ai.` | Locale files overriding the add-on's strings |
+| `avo_intelligence_` | `avo_ai_` | Table names, and the add-on's CSS classes if you style them |
+
+Directories move with the namespace: an ejected prompt at `app/prompts/avo/intelligence/chat_agent/extra_instructions.txt.erb` belongs at `app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb`, and a policy at `app/policies/avo/intelligence/chat_policy.rb` at `app/policies/avo/ai/chat_policy.rb`. A file left at the old path is silently ignored rather than erroring — the gem's own copy is used and your customization quietly stops applying.
+
+:::info
+The constant is `Avo::Ai`, not `Avo::AI` — Zeitwerk's default inflector maps `ai.rb` to `Ai`, and spelling it `AI` would need a custom inflection for nothing. The product is written **Avo AI** in prose either way.
+:::
+
+</Option>
+
 ## Unreleased — browser time zone on by default
 
 <Option name="`use_browser_timezone` now defaults to `true`">
