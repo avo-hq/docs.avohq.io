@@ -53,7 +53,7 @@ self.label = "Users count"
 - **Type:** String or Proc
 - **Default:** `nil`
 
-A Proc is resolved on every render in the requesting user's locale, which is how you localize the title:
+To localize this, prefer the `avo.card_translations.<class_path>.label` key — see [Localization](./cards.html#localization). A Proc remains the fallback and is resolved on every render in the requesting user's locale:
 
 ```ruby
 self.label = -> { I18n.t("avo.cards.users_metric.label", default: "Users count") }

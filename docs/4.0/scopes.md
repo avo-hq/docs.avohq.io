@@ -136,6 +136,34 @@ See the [execution context reference](./scopes-api.html#execution-context) for w
 
 ## Localization
 
+The shortest path is a locale key. Avo resolves `avo.scope_translations.<class_path>.{name,description}` before falling back to the class attribute, the same way it does for [resources and actions](./i18n.html#localizing-scopes-cards-and-dashboards):
+
+```yaml
+# config/locales/avo.sv.yml
+sv:
+  avo:
+    scope_translations:
+      admins:
+        name: Administratörer
+        description: Endast administratörer
+```
+
+```ruby
+# app/avo/scopes/admins.rb
+class Avo::Scopes::Admins < Avo::Scopes::BaseScope
+  self.name = "Admins"          # the fallback when no translation is present
+  self.scope = :admins
+  # Optional. Defaults to avo.scope_translations.admins
+  # self.translation_key = "avo.scope_translations.admins"
+end
+```
+
+A namespaced scope uses the slash-joined path — `Avo::Scopes::Admin::Archived` resolves to `avo.scope_translations.admin/archived`.
+
+### Or assign a callable
+
+The class attribute stays available and still resolves per request, which is what you want when the label depends on something the locale file cannot know:
+
 A scope's `name` and `description` accept a callable, and it is resolved on **every render** in the requesting user's locale. That is all it takes to translate a tab bar: assign a lambda that calls `I18n.t`.
 
 ```ruby{3-4}

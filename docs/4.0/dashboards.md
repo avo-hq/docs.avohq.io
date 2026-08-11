@@ -83,6 +83,34 @@ Each entry's button label resolves the `avo.<value>` translation key, falling ba
 
 ## Localization
 
+The shortest path is a locale key. Avo resolves `avo.dashboard_translations.<class_path>.{name,description}` before falling back to the class attribute, the same way it does for [resources and actions](./i18n.html#localizing-scopes-cards-and-dashboards):
+
+```yaml
+# config/locales/avo.sv.yml
+sv:
+  avo:
+    dashboard_translations:
+      dashy:
+        name: Instrumentpanel
+        description: Nyckeltal
+```
+
+```ruby
+# app/avo/dashboards/dashy.rb
+class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
+  self.id = "dashy"
+  self.name = "Dashy"           # the fallback when no translation is present
+  # Optional. Defaults to avo.dashboard_translations.dashy
+  # self.translation_key = "avo.dashboard_translations.dashy"
+end
+```
+
+Note the namespace: `avo.dashboard_translations`, **not** a subtree under `avo.dashboards` — see the warning below for why that distinction matters.
+
+### Or assign a callable
+
+The class attribute stays available and still resolves per request:
+
 A dashboard's `name` and `description` accept a callable, resolved on **every render** in the requesting user's locale. Assign a lambda that calls `I18n.t`:
 
 ```ruby{4-5}

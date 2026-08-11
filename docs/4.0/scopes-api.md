@@ -64,7 +64,7 @@ end
 - **Type:** String or Proc
 - **Default:** `nil`
 
-A Proc is resolved on every render in the requesting user's locale, which is how you localize the label:
+To localize this, prefer the `avo.scope_translations.<class_path>.name` key — see [Localization](./scopes.html#localization). A Proc remains the fallback and is resolved on every render in the requesting user's locale:
 
 ```ruby
 # app/avo/scopes/admins.rb

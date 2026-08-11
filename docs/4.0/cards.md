@@ -164,6 +164,40 @@ Partial and HTML cards build their content at render time instead of running a `
 
 ## Localization
 
+The shortest path is a locale key. Avo resolves `avo.card_translations.<class_path>.{label,description,discreet_description}` before falling back to the class attribute, the same way it does for [resources and actions](./i18n.html#localizing-scopes-cards-and-dashboards):
+
+```yaml
+# config/locales/avo.sv.yml
+sv:
+  avo:
+    card_translations:
+      users_metric:
+        label: Antal användare
+        description: Över alla team
+```
+
+```ruby
+# app/avo/cards/users_metric.rb
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.id = "users_metric"
+  self.label = "Users count"    # the fallback when no translation is present
+  # Optional. Defaults to avo.card_translations.users_metric
+  # self.translation_key = "avo.card_translations.users_metric"
+end
+```
+
+The key is derived from the **class path**, not from `self.id` — two registrations of one card class share an id, and a card placed on a resource has no dashboard to scope an id against. A namespaced card uses the slash-joined path: `Avo::Cards::Sales::Monthly` resolves to `avo.card_translations.sales/monthly`.
+
+:::warning A label set at registration wins over the key
+`card Avo::Cards::UsersMetric, label: "Active users"` is more specific than a per-class translation, so it wins — otherwise a dashboard registering the same card twice would collapse both to one string. Pass a lambda if that override also needs translating.
+:::
+
+A [dashboard's](./dashboards.html#localization) own `name` and `description` work the same way, under `avo.dashboard_translations.*`.
+
+### Or assign a callable
+
+The class attribute stays available and still resolves per request, which is what you want when the title depends on something the locale file cannot know:
+
 A card's `label`, `description` and `discreet_description` all accept a callable, and it is resolved on **every render** in the requesting user's locale. That is all it takes to translate a card's chrome: assign a lambda that calls `I18n.t`.
 
 ```ruby{3-5}

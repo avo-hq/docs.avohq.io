@@ -57,7 +57,7 @@ self.name = -> { I18n.t("avo.dashboard_titles.dashy.name", default: "Dashy") }
 - **Type:** String or Proc
 - **Default:** `nil`
 
-A Proc is resolved on every render in the requesting user's locale — see [Localization](./dashboards.html#localization). Note the namespace: core defines `avo.dashboards` as a *string* (the sidebar heading), so nesting keys under it replaces that string with a Hash and breaks the heading. Use `avo.dashboard_titles.*` or any other namespace.
+To localize this, prefer the `avo.dashboard_translations.<class_path>.name` key — see [Localization](./dashboards.html#localization). A Proc remains the fallback and is resolved on every render in the requesting user's locale. Note the namespace: core defines `avo.dashboards` as a *string* (the sidebar heading), so nesting keys under it replaces that string with a Hash and breaks the heading. Use `avo.dashboard_titles.*` or any other namespace.
 
 </Option>
 
