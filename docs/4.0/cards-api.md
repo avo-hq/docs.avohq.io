@@ -53,6 +53,14 @@ self.label = "Users count"
 - **Type:** String or Proc
 - **Default:** `nil`
 
+A Proc is resolved on every render in the requesting user's locale, which is how you localize the title:
+
+```ruby
+self.label = -> { I18n.t("avo.cards.users_metric.label", default: "Users count") }
+```
+
+The String `default:` matters — without one, a locale you have not translated renders `Translation missing: …` as the title. See [Localization](./cards.html#localization).
+
 </Option>
 
 <Option name="`self.description`" headingSize="3">
@@ -66,6 +74,8 @@ self.description = "Across all teams and workspaces"
 - **Type:** String or Proc
 - **Default:** `nil`
 
+Like `self.label`, a Proc is resolved per request, so `-> { I18n.t("avo.cards.users_metric.description", default: "Across all teams and workspaces") }` follows the user's locale. See [Localization](./cards.html#localization).
+
 </Option>
 
 <Option name="`self.discreet_description`" headingSize="3">
@@ -78,6 +88,8 @@ self.discreet_description = "Counts only active, non-deleted users."
 
 - **Type:** String or Proc
 - **Default:** `nil`
+
+Like `self.label`, a Proc is resolved per request, so `-> { I18n.t("avo.cards.users_metric.discreet_description", default: "Counts only active, non-deleted users.") }` follows the user's locale. See [Localization](./cards.html#localization).
 
 </Option>
 
@@ -191,13 +203,14 @@ class Avo::Cards::UsersCount < Avo::Cards::MetricCard
 end
 ```
 
-Avo caches through `Avo.configuration.cache_store`. The key is scoped to the current user and tenant, so a card querying `current_user` never serves one user's data to another. In full, it covers:
+Avo caches through `Avo.configuration.cache_store`. The key is scoped to the current user, tenant and locale, so a card querying `current_user` never serves one user's data to another, and a card whose result depends on the language never serves one locale's text to another. In full, it covers:
 
 | Part | Why |
 | --- | --- |
 | Card class, parent, and position | Separates cards, and two registrations of the same class |
 | [`range`](#self.ranges) and the dashboard's global range | Each range is its own result |
 | Current user and tenant | Keeps per-user and per-tenant queries apart |
+| Current locale | A [localized](./cards.html#localization) card, or a `query` returning translated content, caches per language |
 | The resource's view and record | A [resource card](./cards.html) caches per record and per view |
 
 - **Type:** `ActiveSupport::Duration` (or seconds as an Integer), or a Proc returning one

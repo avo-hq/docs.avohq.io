@@ -51,11 +51,13 @@ The title shown to the user at the top of the dashboard.
 ```ruby
 self.name = "Dashy"
 # or
-self.name = -> { I18n.t("avo.dashboards.dashy.name") }
+self.name = -> { I18n.t("avo.dashboard_titles.dashy.name", default: "Dashy") }
 ```
 
 - **Type:** String or Proc
 - **Default:** `nil`
+
+A Proc is resolved on every render in the requesting user's locale — see [Localization](./dashboards.html#localization). Note the namespace: core defines `avo.dashboards` as a *string* (the sidebar heading), so nesting keys under it replaces that string with a Hash and breaks the heading. Use `avo.dashboard_titles.*` or any other namespace.
 
 </Option>
 
@@ -69,6 +71,8 @@ self.description = "Key metrics at a glance"
 
 - **Type:** String or Proc
 - **Default:** `nil`
+
+Like `self.name`, a Proc is resolved per request, so `-> { I18n.t("avo.dashboard_titles.dashy.description", default: "Key metrics at a glance") }` follows the user's locale. See [Localization](./dashboards.html#localization).
 
 </Option>
 
