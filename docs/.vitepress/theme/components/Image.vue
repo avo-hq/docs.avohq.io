@@ -86,6 +86,11 @@ const style = computed(() => {
 })
 const parent = ref(null)
 
+// Native <dialog> lightbox, same pattern as avo-intelligence's lightbox_controller:
+// click an image to see it large; Escape (native) or click anywhere closes.
+const lightbox = ref(null)
+const openLightbox = () => lightbox.value?.showModal()
+
 onMounted(() => {
   mounted.value = true
   if (!isPlaceholder.value && parent.value) checkParentWidth()
@@ -130,7 +135,24 @@ const checkParentWidth = () => {
       playsinline
       preload="metadata"
     ></video>
-    <img v-else :src="src" :alt="alt" loading="lazy" class="aspect-ratio-box-inside">
+    <img
+      v-else
+      :src="src"
+      :alt="alt"
+      loading="lazy"
+      class="aspect-ratio-box-inside image-lightbox-trigger"
+      role="button"
+      tabindex="0"
+      aria-label="View image full size"
+      @click="openLightbox"
+      @keydown.enter="openLightbox"
+    >
+    <!-- Teleported so the top layer renders it over everything; mounted guard keeps SSR happy. -->
+    <Teleport v-if="mounted && !isVideo" to="body">
+      <dialog ref="lightbox" class="image-lightbox" @click="lightbox.close()">
+        <img :src="src" :alt="alt" class="image-lightbox__image">
+      </dialog>
+    </Teleport>
     <!-- Overlaid on the image so it takes no vertical space; revealed on hover
         (always visible, icons only, on touch devices). -->
     <div v-if="hasBothVariants" class="image-theme-switch" role="group" aria-label="Preview this image in light or dark mode">
@@ -161,6 +183,62 @@ const checkParentWidth = () => {
 </template>
 
 <style scoped>
+.image-lightbox-trigger {
+  cursor: zoom-in;
+}
+
+/* The lightbox: a native <dialog> in the top layer, nothing but the image over a
+   dimmed backdrop. Escape and click-anywhere both close it. */
+.image-lightbox {
+  /* Dead-center, spelled out rather than trusting the UA dialog stylesheet. */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  max-inline-size: min(92vw, 72rem);
+  max-block-size: 92vh;
+  cursor: zoom-out;
+}
+
+/* [open] lands on every showModal(), so the entrance replays per view. */
+.image-lightbox[open] {
+  animation: image-lightbox-zoom 0.28s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.image-lightbox::backdrop {
+  background: rgb(0 0 0 / 0.75);
+  animation: image-lightbox-fade 0.28s ease;
+}
+
+@keyframes image-lightbox-zoom {
+  from {
+    opacity: 0;
+    scale: 0.94;
+  }
+}
+
+@keyframes image-lightbox-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-lightbox[open],
+  .image-lightbox::backdrop {
+    animation: none;
+  }
+}
+
+.image-lightbox__image {
+  display: block;
+  max-inline-size: 100%;
+  max-block-size: 92vh;
+  border-radius: 8px;
+}
+
 .image-prompt-placeholder {
   display: flex;
   flex-direction: column;
