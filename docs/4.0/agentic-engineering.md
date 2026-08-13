@@ -7,6 +7,13 @@ prompt: Use this page (${link}) to set up my AI coding agent to work with Avo �
 
 Avo is designed to work well with AI coding agents. This page covers the tools and setup that let you build Avo features faster by pairing with agents like Claude Code, Cursor, Windsurf, and others.
 
+<!-- Uncomment when avo-ai is published (AVO-1665). The page exists on this branch,
+so this line builds fine — it stays commented only because the add-on isn't buyable yet.
+This page is about agents in your editor; readers looking for the in-app chat land here first.
+
+Looking for the AI assistant *inside* your admin panel rather than in your editor? That's [Avo AI](./ai.html).
+-->
+
 ## Code editors and LLM setup
 
 AI agents generate better code when they have up-to-date Avo documentation in their context. Point your tool at <code><a href="https://docs.avohq.io/4.0/docs-map.md" target="_blank">https://docs.avohq.io/4.0/docs-map.md</a></code> — a map of every Avo 4 docs page and its headings, with links — and the agent will fetch exactly the pages it needs to generate accurate resources, fields, actions, filters, and more.
