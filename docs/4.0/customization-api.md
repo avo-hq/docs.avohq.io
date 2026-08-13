@@ -67,8 +67,12 @@ Avo detects the browser's IANA time zone with JavaScript, stores it in the `avo.
 config.use_browser_timezone = false
 ```
 
+:::info Off in the test environment
+The option defaults to `false` when `Rails.env.test?`, because the first-load soft reload races browser tests — assertions run against a page that is about to be replaced. Enable it explicitly in a test if you are testing the time zone behavior itself.
+:::
+
 - **Type:** Boolean
-- **Default:** `true`
+- **Default:** `true` (`false` in the test environment)
 
 </Option>
 

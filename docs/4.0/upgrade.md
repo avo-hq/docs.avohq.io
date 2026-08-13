@@ -44,6 +44,8 @@ Server-side dates and times now render in [each visitor's own time zone](./custo
 
 **Action required:** None if per-visitor times are what you want — most apps do. Displayed values only change for users whose browser zone differs from the app zone; nothing about stored data changes.
 
+The option defaults to `false` in the test environment, so browser/system tests are unaffected — the first-load soft reload would otherwise race them.
+
 ### Maintaining Previous Behavior
 
 Pin every visitor to the app's configured zone:
