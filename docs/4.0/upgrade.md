@@ -12,7 +12,9 @@ Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4
 
 ### Breaking Change
 
-The add-on is now called [Avo AI](./ai.html), and the rename runs all the way through: the gem, the `Avo::Ai` namespace, the `avo_ai_*` tables, the `config.ai` settings, and the generators. Nothing aliases the old names, so an app on an `avo-intelligence` alpha won't boot until it's updated.
+The add-on is now called [Avo AI](./ai.html), and the rename runs all the way through: the gem, the `Avo::Ai` namespace, the `avo_ai_*` tables, the `config.ai` settings, and the generators. Nothing aliases the old names, so there's no half-migrated state that works — swap the gem without renaming your own references and the app stops booting.
+
+Staying put isn't free either. Avo core now recognizes `avo-ai` only, so an app left on an `avo-intelligence` alpha goes on working but quietly loses the **Open the assistant** row from the <kbd>?</kbd> [shortcuts modal](./keyboard-shortcuts.html#assistant) — the shortcut itself included. That's the one symptom of the rename you'll see before touching anything.
 
 **Action required:** Yes — every item below. The add-on only ever shipped `4.0.0.alpha.*` releases, so there is no supported upgrade path from a stable version and no rename migration ships with the gem.
 
