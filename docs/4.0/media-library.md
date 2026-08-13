@@ -42,9 +42,11 @@ end
 This is the killswitch of the whole feature.
 When disabled, the Media Library will not be available to anyone. It will hide the menu item, block all the routes, and hide the Media Library icons from the editors.
 
-## Hide menu item
+## Control who can use it
 
-You can hide the menu item from the sidebar by setting the `visible` option to `false`.
+`visible` decides who may use the Media Library. It gates the sidebar item, the Media Library button in the rich text editors, and the Media Library routes themselves — a user it returns `false` for gets a 404 on every one of them.
+
+Turn it off for everyone with a Boolean:
 
 ```ruby
 # config/initializers/avo.rb
@@ -55,7 +57,7 @@ if defined?(Avo::MediaLibrary)
 end
 ```
 
-You may also use a [block](./execution-context) to conditionally show the menu item. You'll have access to the `Avo::Current` object and you can use it to show the menu item based on the current user.
+Or restrict it per user with a [block](./execution-context), which has access to the `Avo::Current` object:
 
 ```ruby
 # config/initializers/avo.rb
@@ -66,7 +68,13 @@ if defined?(Avo::MediaLibrary)
 end
 ```
 
-This will hide the menu item from the sidebar if the current user is not a developer.
+Anyone who isn't a developer then has no Media Library at all — no menu item, no button in the editors, and a 404 on every Media Library URL.
+
+`visible` defaults to `true`, so an enabled Media Library is available to everyone who can sign in to Avo. Leave it there only if every Avo user may browse, rename and delete every uploaded asset.
+
+:::warning
+Before Avo 4.1.7, `visible` hid the menu item but left the routes reachable by URL, so any authenticated Avo user could browse, rename and delete every asset. See [GHSA-cff8-4h3c-9r4q](https://github.com/avo-hq/avo/security/advisories/GHSA-cff8-4h3c-9r4q).
+:::
 
 ## Add it to the menu editor
 
@@ -96,6 +104,8 @@ field :body, as: :lexxy
 
 The editors will each have a button to open the Media Library modal.
 Once open, after the user selects the asset, it will be injected into the editor.
+
+The button follows `visible` too, so a user the Media Library is not visible to won't see it.
 
 ### Disable it on a single markdown field
 

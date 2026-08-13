@@ -4,6 +4,34 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to 4.1.7
+
+<Option name="`config.visible` now controls Media Library access, not just the menu item">
+
+### Breaking Change
+
+`Avo::MediaLibrary.configuration.visible` used to hide the sidebar item and the rich text editor button while leaving every Media Library route reachable by URL. It is now enforced on the routes as well: a user the block returns `false` for gets a 404 from `/media-library` and `/attach-media`.
+
+This closes [GHSA-cff8-4h3c-9r4q](https://github.com/avo-hq/avo/security/advisories/GHSA-cff8-4h3c-9r4q), where any authenticated Avo user could browse, rename and permanently delete every Active Storage blob in the application.
+
+### Action Required
+
+**If you set `config.visible`**, check that it returns `true` for everyone who is meant to use the Media Library, including through the rich text editors. Anyone it rejects now loses access entirely rather than only losing the menu item.
+
+**If you don't set it**, nothing changes on upgrade — `visible` defaults to `true`. That also means the Media Library stays available to every user who can sign in to Avo, so set it if that isn't what you want:
+
+```ruby
+# config/initializers/avo.rb
+if defined?(Avo::MediaLibrary)
+  Avo::MediaLibrary.configure do |config|
+    config.visible = -> { Avo::Current.user.is_developer? }
+  end
+end
+```
+
+</Option>
+
+
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
 ## Unreleased — browser time zone on by default
