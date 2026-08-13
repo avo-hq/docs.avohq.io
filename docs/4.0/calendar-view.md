@@ -9,6 +9,8 @@ outline: [2, 3]
 
 Display a resource's records on a month or week calendar, right on the <Index /> view. Hour-based events show their start time, all-day events render as filled bars (and land in the week view's all-day lane), and multi-day events span every day they cover. Clicking an event opens a preview popover with the fields marked `show_on: :preview`.
 
+<Image src="/assets/img/4_0/calendar-view/month.webp" dark-src="/assets/img/4_0/calendar-view/month-dark.webp" width="1175" height="771" alt="The month calendar — timed event chips, a month-long all-day bar, a multi-day event spanning three days, and the Month/Week switcher." />
+
 ## Requirements
 
 - Avo 4
