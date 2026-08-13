@@ -12,7 +12,7 @@ Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4
 
 ### Breaking Change
 
-The add-on is now called [Avo AI](./ai.html), and the rename runs all the way through: the gem, the `Avo::Ai` namespace, the `avo_ai_*` tables, the `config.ai` settings, and the generators. Nothing aliases the old names, so there's no half-migrated state that works — swap the gem without renaming your own references and the app stops booting.
+The add-on is now called [Avo AI](./ai.html), and the rename runs all the way through: the gem, the `Avo::AI` namespace, the `avo_ai_*` tables, the `config.ai` settings, and the generators. Nothing aliases the old names, so there's no half-migrated state that works — swap the gem without renaming your own references and the app stops booting.
 
 Staying put isn't free either. Avo core now recognizes `avo-ai` only, so an app left on an `avo-intelligence` alpha goes on working but quietly loses the **Open the assistant** row from the <kbd>?</kbd> [shortcuts modal](./keyboard-shortcuts.html#assistant) — the shortcut itself included. That's the one symptom of the rename you'll see before touching anything.
 
@@ -71,7 +71,7 @@ Then grep your app for what's left. Each of these is a rename you have to make b
 
 | Grep for | Replace with | Where it turns up |
 | ---------------------- | -------------- | ------------------------------------------------------------------ |
-| `Avo::Intelligence` | `Avo::Ai` | Policies, the RubyLLM `model_registry_class`, anything referencing `Chat` |
+| `Avo::Intelligence` | `Avo::AI` | Policies, the RubyLLM `model_registry_class`, anything referencing `Chat` |
 | `config.intelligence` | `config.ai` | `config/initializers/avo.rb` |
 | `AVO_INTELLIGENCE_` | `AVO_AI_` | Environment variables for the two thinking options |
 | `avo_intelligence/` | `avo_ai/` | Menu resource names |
@@ -93,8 +93,10 @@ The gem checks all three directories on boot and logs a warning naming any files
 
 Overrides that work by constant rather than by path need no such care — a subclass of anything under `Avo::Intelligence::` raises a `NameError` on boot, so you can't miss it.
 
-:::info
-The constant is `Avo::Ai`, not `Avo::AI` — Zeitwerk's default inflector maps `ai.rb` to `Ai`, and spelling it `AI` would need a custom inflection for nothing. The product is written **Avo AI** in prose either way.
+:::info Watch the capitalization
+The constant is `Avo::AI` — both letters capitalized — while the paths that carry it stay lowercase (`app/policies/avo/ai/chat_policy.rb`), the gem is `avo-ai`, and the config is `config.ai`. So a policy file at `app/policies/avo/ai/chat_policy.rb` declares `class Avo::AI::ChatPolicy`. Write it `Avo::Ai` and Avo never finds the class.
+
+One exception worth not "correcting": the resources are `Avo::Resources::AvoAi::Chat`, single-capital, because that name derives from a directory called `avo_ai` rather than `ai`. Menu entries are unaffected — they're the lowercase `avo_ai/chats` paths either way.
 :::
 
 </Option>
