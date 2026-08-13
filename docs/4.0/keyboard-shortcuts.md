@@ -57,7 +57,7 @@ Cycle the [appearance](./appearance.html) settings from any page.
 
 ## Assistant
 
-Requires the [Intelligence](./intelligence.html) add-on. Without it, the shortcut isn't bound and doesn't show up in the <kbd>?</kbd> modal.
+Requires the [Avo AI](./ai.html) add-on. Without it, the shortcut isn't bound and doesn't show up in the <kbd>?</kbd> modal.
 
 | Keys                                                       | Action             |
 | ---------------------------------------------------------- | ------------------ |
