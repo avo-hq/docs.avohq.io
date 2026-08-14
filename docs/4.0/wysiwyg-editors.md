@@ -39,6 +39,20 @@ field :body, as: :rhino, always_show: true # full content, no toggle
 
 All of these fields render their value through the same collapsible wrapper (the field wrapper's `collapsable` option, backed by `Avo::Fields::Common::CollapsableContentComponent`), so switching between editors doesn't change how records read on the `Show` view.
 
+## Resizable editors
+
+On forms, every editor's viewport can be resized vertically by dragging its bottom-end resize handle. The height is remembered per resource and field (in the browser's local storage) and restored the next time the form renders.
+
+Custom editor fields can opt in from their field class:
+
+```ruby
+class Avo::Fields::MyEditorField < Avo::Fields::BaseField
+  resizable_editor target: ".my-editor__content"
+end
+```
+
+The `target` is a CSS selector for the editor's scrollable viewport, resolved inside the field wrapper after the editor boots — client-rendered editors work too.
+
 ## Usage
 
 ```ruby
