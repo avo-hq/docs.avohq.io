@@ -215,6 +215,34 @@ section "Resources", icon: "tabler/outline/building-store" do
 end
 ```
 
+## Icon colors
+
+The [`color`](./menu-editor-api.html#color) option tints an item's icon with a color from Avo's palette — only the icon stroke is colored; the label and the hover and active backgrounds stay neutral. It's supported on `resource`, `link_to`, `dashboard`, and `board` items. Give related items the same color to visually group them into "namespaces".
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    section "Content", icon: "tabler/outline/files" do
+      resource :posts, color: :teal
+      resource :categories, color: :teal
+      link_to "Analytics", path: "/avo/analytics", color: :sky
+    end
+  }
+end
+```
+
+Pick from `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, and `rose` — as Symbols or Strings. Colors adapt automatically to the light and dark themes, and an unknown name renders the default neutral icon.
+
+For `resource` items you can also set the color on the resource class itself with [`self.color`](./resources-api.html#self.color), which acts as a fallback when no `color:` is passed to the menu item — a menu-entry `color:` always overrides it:
+
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  self.color = :teal
+end
+```
+
 ## Keyboard shortcuts on menu items
 
 Any menu item accepts a [`hotkey:`](./menu-editor-api.html#hotkey) option. When set, Avo renders a `<kbd>` badge next to the label and registers the key binding so users can jump straight to that item from anywhere in the admin panel.

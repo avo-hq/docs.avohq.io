@@ -244,14 +244,19 @@ end
 
 With that policy, an admin's `GET /api/resources/v1/comments` returns every comment; a regular user's returns only their own.
 
-Policy scoping requires all of the following. If any is missing, the query is **not** scoped and every record is returned:
+Policy scoping requires all three of the following. If any is missing, the query is handed back untouched — it is **not** scoped, every record is returned, and nothing raises:
 
 | Requirement | Where |
 | --- | --- |
 | The `avo-authorization` add-on installed | `Gemfile` |
 | The `avo-authorization` feature enabled on your license | Your Avo plan |
 | An authorization client configured | `config.authorization_client = :pundit` |
-| A user resolved by `config.current_user_method` | See [Set the current user](#set-the-current-user) |
+
+:::info A `nil` user fails differently
+Those three are configuration — miss one and the query is silently unscoped. A missing **user** is the opposite failure: with Pundit configured, scoping still runs, so `nil` reaches your `Scope#resolve` and the usual `user.admin?` raises `NoMethodError`. You get a 500, not a leak — the same trap described under [Authentication examples](#authentication-examples).
+
+Both have one cure: make sure [`config.current_user_method`](#set-the-current-user) resolves to a real user on every API request.
+:::
 
 :::warning A denied action redirects instead of rendering JSON
 Policy *methods* (`index?`, `update?`, …) returning `false` raise `Avo::NotAuthorizedError`, which Avo handles by setting a flash message and issuing a **302 redirect** — behavior meant for the HTML admin panel. An API client sees a redirect to your root URL, not a JSON error.

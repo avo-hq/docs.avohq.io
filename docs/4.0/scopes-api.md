@@ -64,8 +64,19 @@ end
 - **Type:** String or Proc
 - **Default:** `nil`
 
+To localize this, prefer the `avo.scope_translations.<class_path>.name` key — see [Localization](./scopes.html#localization). A Proc remains the fallback and is resolved on every render in the requesting user's locale:
+
+```ruby
+# app/avo/scopes/admins.rb
+class Avo::Scopes::Admins < Avo::Scopes::BaseScope
+  self.name = -> { I18n.t("avo.scopes.admins.name", default: "Admins") }
+end
+```
+
+The String `default:` matters — without one, a locale you have not translated renders `Translation missing: …` as the label. See [Localization](./scopes.html#localization). Translating `name` cannot change the scope's URL slug, which is derived from the scope's class path by `self.param`, not from `name`.
+
 :::tip Record counts
-To show a record count next to the scope, use the built-in [`counter`](#counter) option instead of computing it inside `name`. It supports lazy loading so it won't slow down the page.
+To show a record count next to the scope, use the built-in [`counter`](#counter) option instead of computing it inside `name`. It supports lazy loading so it won't slow down the page. A Proc here runs on every render, so keep it cheap.
 :::
 
 </Option>
@@ -83,6 +94,8 @@ end
 
 - **Type:** String or Proc
 - **Default:** `nil`
+
+Like `name`, a Proc is resolved per request, so `self.description = -> { I18n.t("avo.scopes.even_id.description", default: "Only records that have an even ID.") }` follows the user's locale. See [Localization](./scopes.html#localization).
 
 </Option>
 

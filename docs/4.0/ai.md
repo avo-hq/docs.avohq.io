@@ -4,11 +4,11 @@ betaStatus: Beta
 outline: [2, 3]
 ---
 
-# Intelligence
+# Avo AI
 
-Avo Intelligence adds an AI assistant to your admin panel. It ships a floating chat bar on every Avo page, a set of tools the assistant uses to query, create, update, and delete records on your behalf, and admin resources for browsing chats, messages, tool calls, and models.
+Avo AI adds an AI assistant to your admin panel. It ships a floating chat bar on every Avo page, a set of tools the assistant uses to query, create, update, and delete records on your behalf, and admin resources for browsing chats, messages, tool calls, and models.
 
-New here, or wondering what to type into it? [What you can ask](./intelligence-what-you-can-ask.html) is the catalog of everything the assistant does, with a sample prompt for each.
+New here, or wondering what to type into it? [What you can ask](./ai-what-you-can-ask.html) is the catalog of everything the assistant does, with a sample prompt for each.
 
 :::warning
 The feature and docs are both work in progress.
@@ -27,7 +27,7 @@ The feature and docs are both work in progress.
 Add the gem to your application's `Gemfile`:
 
 ```ruby
-gem "avo-intelligence", source: "https://packager.dev/avo-hq/"
+gem "avo-ai", source: "https://packager.dev/avo-hq/"
 ```
 
 Then run:
@@ -39,18 +39,18 @@ bundle install
 ### 2. Run the installer
 
 ```bash
-bin/rails generate avo:intelligence install
+bin/rails generate avo:ai install
 bin/rails db:migrate
 ```
 
-This creates the `avo_intelligence_*` tables and writes `config/initializers/ruby_llm.rb` (skipped if it already exists).
+This creates the `avo_ai_*` tables and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
 
 :::warning Already installed an earlier alpha?
-The installer only ever writes the initial migration, so a schema created by an earlier version won't pick up columns added since. Two are current, both on `avo_intelligence_chats`: `attached_context` stores [the record the chat was started from](#the-record-you-start-from), and `responding_at` tracks [whether a chat is being answered right now](#while-the-assistant-is-replying). Add them by hand:
+The installer only ever writes the initial migration, so a schema created by an earlier version won't pick up columns added since. Two are current, both on `avo_ai_chats`: `attached_context` stores [the record the chat was started from](#the-record-you-start-from), and `responding_at` tracks [whether a chat is being answered right now](#while-the-assistant-is-replying). Add them by hand:
 
 ```bash
-bin/rails generate migration AddAttachedContextToAvoIntelligenceChats attached_context:jsonb
-bin/rails generate migration AddRespondingAtToAvoIntelligenceChats responding_at:datetime
+bin/rails generate migration AddAttachedContextToAvoAiChats attached_context:jsonb
+bin/rails generate migration AddRespondingAtToAvoAiChats responding_at:datetime
 bin/rails db:migrate
 ```
 
@@ -59,7 +59,7 @@ Without them, starting a chat raises on the unknown attribute.
 
 ### 3. Set your provider API key
 
-The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by default and pins `model_registry_class` to `Avo::Intelligence::Model` — that setting is required, don't remove it.
+The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by default and pins `model_registry_class` to `Avo::Ai::Model` — that setting is required, don't remove it.
 
 ```ruby
 RubyLLM.configure do |config|
@@ -67,7 +67,7 @@ RubyLLM.configure do |config|
   # config.anthropic_api_key = ENV.fetch("ANTHROPIC_API_KEY", nil)
   # config.gemini_api_key = ENV.fetch("GEMINI_API_KEY", nil)
 
-  config.model_registry_class = "Avo::Intelligence::Model"
+  config.model_registry_class = "Avo::Ai::Model"
 end
 ```
 
@@ -78,11 +78,11 @@ Store the key in your environment or `Rails.application.credentials` — never h
 In `config/initializers/avo.rb`, inside the `config.main_menu` block:
 
 ```ruby
-section "Intelligence", icon: "heroicons/outline/sparkles" do
-  resource "avo_intelligence/chats"
-  resource "avo_intelligence/messages"
-  resource "avo_intelligence/tool_calls"
-  resource "avo_intelligence/models"
+section "AI", icon: "heroicons/outline/sparkles" do
+  resource "avo_ai/chats"
+  resource "avo_ai/messages"
+  resource "avo_ai/tool_calls"
+  resource "avo_ai/models"
 end
 ```
 
@@ -91,30 +91,31 @@ The resources and controllers ship inside the gem — there's nothing to generat
 ### 5. Verify
 
 ```bash
-bin/rails runner "puts Avo::Intelligence::Chat.count"
+bin/rails runner "puts Avo::Ai::Chat.count"
 ```
 
-Expect `0` and no error. Restart your server and the chat bar appears on every Avo page, with an **Intelligence** section in the sidebar.
+Expect `0` and no error. Restart your server and the chat bar appears on every Avo page, with an **AI** section in the sidebar.
 
 ## Configuration
 
-Avo Intelligence registers its settings on Avo's own configuration, so everything lives in `config/initializers/avo.rb` under the `intelligence` namespace:
+Avo AI registers its settings on Avo's own configuration, so everything lives in `config/initializers/avo.rb` under the `ai` namespace:
 
 ```ruby
 Avo.configure do |config|
   # Reasoning effort for thinking-capable models ("low", "medium", "high").
   # Only sent to models that support reasoning; ignored otherwise.
-  config.intelligence.thinking_effort = "medium"
+  config.ai.thinking_effort = "medium"
 
-  # Token budget for the model's thinking trace (positive integer).
-  config.intelligence.thinking_budget = 2048
+  # Token budget for the model's thinking trace (positive integer, min 1024).
+  config.ai.thinking_budget = 2048
+  # Set both — see "Thinking" below. A model takes one knob or the other.
 
   # Clock format for chat timestamps: :auto (default), :h12, or :h24.
-  config.intelligence.time_format = :h24
+  config.ai.time_format = :h24
 
   # What a download from a URL may cost (see "Getting new files in").
   # Set only the keys you want to change; the rest keep their defaults.
-  config.intelligence.remote_file = {
+  config.ai.remote_file = {
     max_size: 25.megabytes, # ceiling on the downloaded file
     open_timeout: 5,        # seconds to connect
     read_timeout: 10,       # seconds per read
@@ -126,12 +127,55 @@ end
 
 The two thinking options fall back to an environment variable when unset, so you can configure them through the environment instead:
 
-| Option | Environment variable | Default |
-| ----------------- | ---------------------------------- | ------- |
-| `thinking_effort` | `AVO_INTELLIGENCE_THINKING_EFFORT` | unset |
-| `thinking_budget` | `AVO_INTELLIGENCE_THINKING_BUDGET` | unset |
+| Option            | Environment variable       | Default |
+| ----------------- | -------------------------- | ------- |
+| `thinking_effort` | `AVO_AI_THINKING_EFFORT`   | unset   |
+| `thinking_budget` | `AVO_AI_THINKING_BUDGET`   | unset   |
 
 When both are unset, no thinking parameters are sent to the provider.
+
+### Thinking
+
+Set **both** options. They are not alternatives, and they are not a fallback pair — they are two
+different knobs, and each model accepts exactly one of them. Its provider rejects the other
+outright.
+
+This is not an Anthropic quirk — the split runs across providers, and which knob a model takes is a
+property of the model, not of the company that made it:
+
+| Knob              | Models that take it                                           |
+| ----------------- | ------------------------------------------------------------- |
+| `thinking_budget` | `claude-haiku-4-5`, `claude-sonnet-4-6`, Gemini 2.5            |
+| `thinking_effort` | `claude-opus-5`, Gemini 3, OpenAI reasoning models (`gpt-5`, …) |
+
+Avo reads the answer from the model's own registry entry and sends only that knob, preferring the
+budget where a model takes both. So a picker offering Haiku and Opus needs both values set —
+configure only `thinking_effort` and every Haiku conversation quietly answers with no thinking at
+all, with nothing in the logs to say so.
+
+Both options reach every provider RubyLLM supports thinking for, which is most of them: Anthropic,
+OpenAI, Gemini, VertexAI, Bedrock, Azure, Mistral, Perplexity, OpenRouter, Ollama, and GPUStack. A
+few of those don't take direction — Mistral's Magistral models always think and ignore what you
+send, and local Ollama or GPUStack models get the values passed through untranslated. For the
+current per-provider picture, RubyLLM documents it at
+[rubyllm.com/thinking](https://rubyllm.com/thinking/).
+
+Effort is passed to the provider exactly as written, so the accepted strings are the provider's,
+not Avo's. `"low"`, `"medium"`, and `"high"` are understood everywhere effort applies; OpenAI also
+takes `"minimal"`, Gemini 3 takes only `"low"` and `"high"`, and `"none"` turns thinking off on
+Anthropic. A value the provider doesn't recognise fails on the first request, not at boot. Budgets
+are thinking tokens, minimum 1024 on Anthropic; zero or negative reads as unset.
+
+The same two knobs are how you size the reasoning readers see above a reply: a bigger budget or a
+higher effort buys a longer, deeper trace; a smaller one keeps it to a line or two. On budget
+models the trace is the model's own reasoning verbatim, so the budget bounds it directly. On
+effort models what renders is the provider's summary of the reasoning — its length loosely follows
+the effort, and its wording isn't steerable from your side.
+
+:::info
+Thinking only reaches models that declare reasoning support. Sending it to a plain chat model like
+`gpt-4o-mini` would have the provider reject the whole request, so Avo doesn't.
+:::
 
 ### Timestamps
 
@@ -153,7 +197,7 @@ Leave it on `:auto` unless the admin should read the same for everyone regardles
 signed in.
 
 "Today" and "Yesterday" are plain translations under
-`avo.intelligence.messages.today` / `.yesterday`.
+`avo.ai.messages.today` / `.yesterday`.
 
 ## How the assistant works
 
@@ -165,13 +209,29 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. When a query returns exactly one record, the UI renders a card for it — title and a link — and the assistant is told not to repeat the fields in prose.
 
-**Writing.** Updates and deletes show you a card describing the change and run only when you click Confirm; the click applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
+**Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
+
+**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions).
 
 **Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
 
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
-For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./intelligence-agents-and-tools.html).
+For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./ai-agents-and-tools.html).
+
+## Answering the assistant's questions
+
+When the assistant genuinely can't proceed — a required value you didn't mention, or which of three matching records you meant — it asks you, and the question arrives as a card rather than as a sentence buried in a reply. The card *is* the message: the turn ends there and waits on you. It asks one thing at a time, and it asks instead of guessing; it won't use a question to chase optional values you never brought up.
+
+**A plain question.** With no options to offer, the card is the question and nothing else. Answer it in the composer the way you'd answer anything else.
+
+**Question with options.** When the answer is one of a small known set — a status, a yes/no, the titles of the records it matched — the card lists them, numbered `1`, `2`, `3…`. Click one and it replies with that option's own text, so the conversation reads back as what you actually said ("Published"), not as an opaque "2". The numbers are there for typing: reply `2` in the composer and it lands on the second option.
+
+**The box beside them.** Options are usually a shortcut rather than the whole truth, so most cards keep a free-text box next to them — *Or answer in your own words…* — with its own **Send**. When the options really are the entire answer space, the assistant closes that box off and the buttons become the only way to answer.
+
+**Picking several at once.** Some questions take more than one answer — which fields to fill in, which of the matched records to include. Those render as checkboxes instead of buttons, with one **Send** under them and an *Add anything else…* box alongside. Everything goes back as a single reply: the labels you ticked, plus whatever you typed, separated by commas.
+
+Answering a question card is an ordinary turn, never a confirmation. An option can quite legitimately read "Yes", and clicking it answers the question it belongs to — it can't reach back and confirm an update or a delete waiting further up the conversation.
 
 ## Your actions, from the chat
 
@@ -187,7 +247,7 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-Ask for it in whatever words you'd use with a colleague — "archive the Orbit project" — and the assistant finds the matching action, reads the inputs it declares, and shows you a confirmation card naming the action and the record, with the action's own fields rendered right on the card. They're the same fields its modal would show — a tags field is a tags field here too — prefilled with the values the assistant took from your message and the action's own `default`s, and every one of them is editable before you run. Nothing runs until you click **Run**, and what runs is exactly what the fields hold at that moment; the click executes it, not the model, exactly as with updates and deletes.
+Ask for it in whatever words you'd use with a colleague — "archive the Orbit project" — and the assistant finds the matching action, reads the inputs it declares, and shows you a confirmation card naming the action and the record, with the action's own fields rendered right on the card. They're the same fields its modal would show — a tags field is a tags field here too — prefilled with the values the assistant took from your message and the action's own `default`s. When you name a value it's the one on the card: "extend the trial by 3 days" lands `3` where the action would default to 7, "don't notify the user" leaves that box unchecked. Every field is editable before you run. Nothing runs until you confirm it — click **Run**, or tell the assistant to go ahead — and what runs is exactly what the fields hold at that moment; your confirmation executes it, not the model, exactly as with updates and deletes.
 
 **It collects rather than guesses.** An input your action marks `required: true` that you didn't mention arrives on the card as an empty field for you to fill — the assistant never invents a value, because an action does real work with it. A run submitted with a required field still blank isn't performed; the card simply asks for it again.
 
@@ -253,7 +313,7 @@ Two paths bring a file that isn't in your Media Library yet onto a record:
 
 **Give it a link.** Ask the assistant to attach a file by URL — "attach https://example.com/logo.png as this post's cover" — and it proposes the download on a confirmation card showing the URL, the filename, and the record. When the link points at an image the card previews it, so you are approving a picture you have seen rather than an address you had to read. Nothing is fetched until you click **Attach**; the assistant can't fetch anything on its own, which is what keeps a malicious link that slipped into your data from ever being followed unseen.
 
-The download itself is hardened: only public `https://` URLs are accepted (private and internal addresses are rejected, on every redirect too), the file's content type is read from its bytes rather than trusted from the server, and anything over the configured size ceiling (25 MB by default) is refused mid-download rather than after it. If your files are bigger than that, or your source is slow, raise the matching keys under `config.intelligence.remote_file` — see [Configuration](#configuration). The undo is the same as for any attachment — detach it; the file stays in the Media Library.
+The download itself is hardened: only public `https://` URLs are accepted (private and internal addresses are rejected, on every redirect too), the file's content type is read from its bytes rather than trusted from the server, and anything over the configured size ceiling (25 MB by default) is refused mid-download rather than after it. If your files are bigger than that, or your source is slow, raise the matching keys under `config.ai.remote_file` — see [Configuration](#configuration). The undo is the same as for any attachment — detach it; the file stays in the Media Library.
 
 ## Customize the assistant's instructions
 
@@ -268,15 +328,15 @@ Instructions are guidance for the model, not a security boundary. What the assis
 To add rules on top of the shipped prompt, eject the `extra_instructions` file:
 
 ```bash
-bin/rails generate avo:intelligence:eject extra_instructions
+bin/rails generate avo:ai:eject extra_instructions
 ```
 
-This creates `app/prompts/avo/intelligence/chat_agent/extra_instructions.txt.erb` in your application. Whatever you write in it is appended to the end of the chat assistant's system prompt. The gem's own copy is empty, so until you edit the file nothing changes.
+This creates `app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb` in your application. Whatever you write in it is appended to the end of the chat assistant's system prompt. The gem's own copy is empty, so until you edit the file nothing changes.
 
 This is the place for the things the assistant can't learn from your schema:
 
 ```erb
-<%# app/prompts/avo/intelligence/chat_agent/extra_instructions.txt.erb %>
+<%# app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb %>
 Domain vocabulary:
 - "Churned" customers are those with a cancelled subscription — use the
   Customer resource's cancelled scope, not a column filter.
@@ -287,10 +347,10 @@ Style:
 - Answer in the same language the user writes in.
 ```
 
-The file is ERB, so you can interpolate anything your app knows — `Rails.application.credentials`, `ENV`, your own configuration. Two locals are also available: `user`, the signed-in user the chat belongs to, and `chat`, the `Avo::Intelligence::Chat` record. That makes per-role instructions a conditional:
+The file is ERB, so you can interpolate anything your app knows — `Rails.application.credentials`, `ENV`, your own configuration. Two locals are also available: `user`, the signed-in user the chat belongs to, and `chat`, the `Avo::Ai::Chat` record. That makes per-role instructions a conditional:
 
 ```erb
-<%# app/prompts/avo/intelligence/chat_agent/extra_instructions.txt.erb %>
+<%# app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb %>
 <% if user.support_agent? %>
 Only suggest read-only queries; never offer to change records.
 <% end %>
@@ -303,7 +363,7 @@ Interpolate specific attributes — `<%= user.first_name %>` — never the whole
 Out of the box the assistant introduces itself as Avo. Its name and one-line role live in a prompt file of their own, so you can rebrand it without replacing the rest of the instructions. Create the file at the same relative path in your application:
 
 ```erb
-<%# app/prompts/avo/intelligence/chat_agent/identity.txt.erb %>
+<%# app/prompts/avo/ai/chat_agent/identity.txt.erb %>
 You are Ada, an assistant embedded in the Acme admin panel. You answer questions
 about the application's data using the tools available to you. If the user asks
 your name or who you are, say you are Ada.
@@ -318,10 +378,10 @@ The avocado next to the name is a view, not a prompt — see [Replace the assist
 For full control, eject every prompt file the gem ships:
 
 ```bash
-bin/rails generate avo:intelligence:eject instructions
+bin/rails generate avo:ai:eject instructions
 ```
 
-This copies all prompt files — the chat assistant's instructions and sub-prompts, plus the conversation-renamer's — into `app/prompts/avo/intelligence/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
+This copies all prompt files — the chat assistant's instructions and sub-prompts, plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
 
 The shipped `instructions.txt.erb` ends with an `<%= extra_instructions %>` slot. If you replace it, your copy decides whether to keep that slot — remove the line and the `extra_instructions` file is ignored.
 
@@ -330,14 +390,14 @@ The shipped `instructions.txt.erb` ends with an `<%= extra_instructions %>` slot
 The avocado is a single partial, rendered everywhere the assistant appears: the **Agent** button, the collapsed bar, the empty state on new and full-page chats, and the *Open in assistant bar* button on a chat's record page. Create the same path in your application and all of them change at once:
 
 ```erb
-<%# app/views/avo/intelligence/_avocado_icon.html.erb %>
+<%# app/views/avo/ai/_avocado_icon.html.erb %>
 <%= svg "tabler/outline/robot", class: local_assigns.fetch(:classes, "size-4") %>
 ```
 
 An image file works the same way:
 
 ```erb
-<%# app/views/avo/intelligence/_avocado_icon.html.erb %>
+<%# app/views/avo/ai/_avocado_icon.html.erb %>
 <%= image_tag "assistant-mark.svg", class: local_assigns.fetch(:classes, "size-4") %>
 ```
 
@@ -360,10 +420,10 @@ It respects your policies, on every message. Only a reference is kept — the re
 The wording lives in a prompt file like the rest, so you can change how the assistant treats it:
 
 ```bash
-bin/rails generate avo:intelligence:eject instructions
+bin/rails generate avo:ai:eject instructions
 ```
 
-Then edit `app/prompts/avo/intelligence/chat_agent/attached_context.txt.erb`. It receives an `attached_record` local — `{resource:, record_id:, label:}`, or `nil` when the conversation wasn't started from a record — and rendering nothing is a valid way to turn the feature off.
+Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives an `attached_record` local — `{resource:, record_id:, label:}`, or `nil` when the conversation wasn't started from a record — and rendering nothing is a valid way to turn the feature off.
 
 ## Open the chat
 
@@ -387,14 +447,14 @@ Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {en
 
 Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` with the default mount). The list shows every chat you own — its model, message count, and age — and links to the conversation. It's the same chat as in the bar: same messages, same tools, same streaming, with room to read.
 
-The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Intelligence::Chat` resource from the sidebar.
+The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Ai::Chat` resource from the sidebar.
 
 ## The conversation menu
 
 The ⋯ button next to a conversation's title opens its menu. It's in the chat window's title bar and on the full-page chat, and both carry the same two rename entries:
 
 - **Rename chat** makes the title editable in place — the panel's header in the bar, the last breadcrumb on a chat page. **Enter** commits and **Esc** cancels in both. Clicking away differs: in the bar it cancels the edit, on the chat page it commits it. An empty title is refused, so a conversation always keeps a name.
-- **Rename again with AI** hands the conversation back to the [renamer agent](./intelligence-agents-and-tools.html#renaming-conversations) for a fresh title, without going through the assistant. The title shimmers while the renamer runs, and the new name lands everywhere the old one showed.
+- **Rename again with AI** hands the conversation back to the [renamer agent](./ai-agents-and-tools.html#renaming-conversations) for a fresh title, without going through the assistant. The title shimmers while the renamer runs, and the new name lands everywhere the old one showed.
 
 Renaming needs no policy of its own — owning the chat is the entire permission, and you only ever see your own.
 
@@ -442,6 +502,10 @@ In Chrome and Edge, dictating means uploading admin-panel audio to Google. If th
 
 Your message lands on the transcript the moment you send it, with a **Thinking** indicator underneath — it's saved as part of the send, not by the background job, so it never blinks out for the second or two the queue takes. Starting a fresh conversation keeps the composer you typed into on screen until the conversation is ready, then trades one for the other, so there's no empty panel in between. A second **Enter** while that's happening doesn't start a second chat.
 
+When answering takes real work — a lookup, an inspection, a write — the assistant leaves short progress hints while it works: *Inspecting the schema*, *Checking today's signups*. They render small and muted, alongside the reasoning trace, so they read as status rather than replies — and they name the goal in your terms, never the tool it reaches for. It's what you read while the work happens instead of watching an empty panel.
+
+When the answer lands, the worked trail folds up: everything between your question and the reply — the reasoning, the hints — collapses into a single **Worked for 12 seconds** row above the answer, so a settled conversation reads question, one quiet row, answer. Open the row to see how the assistant got there; viewers with the [`:tools` debug level](#debug-levels) find the tool calls in there too.
+
 You can keep typing while it works. A message sent before the current answer lands doesn't interrupt it — it waits in a short list above the composer, in the order you sent it, and goes out on its own the moment the assistant finishes. One turn at a time, so two replies never race each other in the same conversation.
 
 While a message waits you can move it to the front of the line or drop it, which is the point of showing you the wait rather than hiding it. The list belongs to the page you typed on: reloading clears it, the same way it clears anything else you'd typed but not sent.
@@ -452,7 +516,7 @@ The indicator is read from the conversation itself rather than from what your br
 
 A divider marks the start of every day in the transcript: **Today**, **Yesterday**, the weekday name for anything else inside the past week, then a date — `Jul 26`, and `Sep 24, 2025` once it isn't this year — each followed by the clock time of that day's first message.
 
-Day and month names come from your locale, and the **Today** and **Yesterday** words are locale keys (`avo.intelligence.messages.today` and `avo.intelligence.messages.yesterday`), so a translated admin panel gets translated dividers.
+Day and month names come from your locale, and the **Today** and **Yesterday** words are locale keys (`avo.ai.messages.today` and `avo.ai.messages.yesterday`), so a translated admin panel gets translated dividers.
 
 Dividers are worked out when the page renders, not as each message arrives. Leave a conversation open across midnight and it picks up the new day's divider on the next full load.
 
@@ -464,11 +528,11 @@ Hover any message and a copy button appears beneath it. It copies the raw text t
 
 By default a chat runs on the model you configured in `config/initializers/ruby_llm.rb`, and there is no model picker — the RubyLLM registry is thousands of models long, which is not a dropdown.
 
-Give your `Avo::Intelligence::ChatPolicy` an `#available_models` method to curate a shortlist. Every composer — the bar, the new-chat page, and open conversations — then shows a picker with exactly those models:
+Give your `Avo::Ai::ChatPolicy` an `#available_models` method to curate a shortlist. Every composer — the bar, the new-chat page, and open conversations — then shows a picker with exactly those models:
 
 ```ruby
-# app/policies/avo/intelligence/chat_policy.rb
-class Avo::Intelligence::ChatPolicy < ApplicationPolicy
+# app/policies/avo/ai/chat_policy.rb
+class Avo::Ai::ChatPolicy < ApplicationPolicy
   def available_models
     return nil if user.admin? # every model in the registry
 
@@ -482,6 +546,12 @@ class Avo::Intelligence::ChatPolicy < ApplicationPolicy
   end
 end
 ```
+
+:::info Why the namespace is `Avo::Ai`, not `Avo::AI`
+The constant is spelled `Avo::Ai` on purpose — it's what Rails derives from the `avo/ai` path on its own. Early alphas used `Avo::AI`, and that acronym never came for free: Zeitwerk camelizes `ai` to `Ai`, so every app defining its own classes in the namespace — exactly what you're doing here with `app/policies/avo/ai/chat_policy.rb` — had to add an inflection to its `config/initializers/inflections.rb` to make the constant resolve. With standard camelization there is nothing to configure.
+
+Upgrading from an earlier alpha? Rename `Avo::AI` to `Avo::Ai` wherever your app references it (policies, ejected prompts, `model_registry_class` in `config/initializers/ruby_llm.rb`) and delete any `inflect("ai" => "AI")` line you added for the gem.
+:::
 
 Each entry names a RubyLLM registry model, and `provider:` says which provider serves it. Browse what your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all.map { |m| [m.id, m.provider] }`.
 
@@ -542,11 +612,11 @@ A chat keeps running on its model even if you later drop that model from `#avail
 
 ## Who can delete a chat
 
-Chats are owner-scoped already — nobody sees anyone else's — so by default a person can delete their own. Give your `Avo::Intelligence::ChatPolicy` a `#destroy?` method to take that away:
+Chats are owner-scoped already — nobody sees anyone else's — so by default a person can delete their own. Give your `Avo::Ai::ChatPolicy` a `#destroy?` method to take that away:
 
 ```ruby
-# app/policies/avo/intelligence/chat_policy.rb
-class Avo::Intelligence::ChatPolicy < ApplicationPolicy
+# app/policies/avo/ai/chat_policy.rb
+class Avo::Ai::ChatPolicy < ApplicationPolicy
   def destroy?
     user.admin?
   end
@@ -569,13 +639,18 @@ How much of the assistant's internal work a viewer may see is an authorization d
 
 There are two levels:
 
-- `:off` — the conversation only: replies, record cards, confirmation buttons, the assistant's questions, and the "Thinking…" indicator. The default.
-- `:tools` — everything above plus the system prompt, the raw thinking trace, the tool calls, and the raw tool output.
+- `:off` — the conversation: replies, record cards, confirmation buttons, the assistant's questions, the "Thinking…" indicator, and the collapsed trail with its reasoning trace and progress hints. The default.
+- `:tools` — everything above plus the system prompt, the tool calls, and the raw tool output.
 
-The level is decided by your app's policy for `Avo::Intelligence::Chat`. It's never stored and never switchable from the chat UI:
+The reasoning trace deliberately sits on the `:off` side of the line: it narrates the answer the
+viewer is already allowed to read, not the machinery. The system prompt and the raw tool traffic
+stay gated because they are the defenses.
+
+The level is decided by your app's policy for `Avo::Ai::Chat`. It's never stored and never switchable from the chat UI:
 
 ```ruby
-class Avo::Intelligence::ChatPolicy < ApplicationPolicy
+# app/policies/avo/ai/chat_policy.rb
+class Avo::Ai::ChatPolicy < ApplicationPolicy
   def debug_level
     user.admin? ? :tools : :off
   end
@@ -584,4 +659,4 @@ end
 
 No policy, no `#debug_level` method, an unrecognized value, or any error inside the policy all fail closed to `:off`.
 
-Viewers who get `:tools` also get a **bug** button — in the panel's title bar, and in the chat page's ⋯ menu — that hides those rows without leaving the conversation. It's a display preference, remembered per device and shared by both places. Nobody on `:off` sees the button, because none of those rows reach their browser to begin with.
+Viewers who get `:tools` also get a **bug** button — in the panel's title bar, and beside the ⋯ menu on the chat page — that hides those rows without leaving the conversation. It's a display preference, remembered per device and shared by both places. Nobody on `:off` sees the button, because none of those rows reach their browser to begin with.

@@ -259,13 +259,14 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-You can also set the record's avatar with [`self.avatar`](./resources-api.html#self.avatar) and the sidebar icon with [`self.icon`](./resources-api.html#self.icon):
+You can also set the record's avatar with [`self.avatar`](./resources-api.html#self.avatar) and the sidebar icon with [`self.icon`](./resources-api.html#self.icon). To make the resource easier to spot — or to visually group related resources — tint the sidebar icon with [`self.color`](./resources-api.html#self.color):
 
 ```ruby
 # app/avo/resources/user.rb
 class Avo::Resources::User < Avo::BaseResource
   self.avatar = :avatar
   self.icon = "tabler/outline/user"
+  self.color = :purple
 end
 ```
 

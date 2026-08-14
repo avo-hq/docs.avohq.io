@@ -134,6 +134,93 @@ end
 
 See the [execution context reference](./scopes-api.html#execution-context) for what each option's proc has access to.
 
+## Localization
+
+The shortest path is a locale key. Avo resolves `avo.scope_translations.<class_path>.{name,description}` before falling back to the class attribute, the same way it does for [resources and actions](./i18n.html#localizing-scopes-cards-and-dashboards):
+
+```yaml
+# config/locales/avo.sv.yml
+sv:
+  avo:
+    scope_translations:
+      admins:
+        name: Administratörer
+        description: Endast administratörer
+```
+
+```ruby
+# app/avo/scopes/admins.rb
+class Avo::Scopes::Admins < Avo::Scopes::BaseScope
+  self.name = "Admins"          # the fallback when no translation is present
+  self.scope = :admins
+  # Optional. Defaults to avo.scope_translations.admins
+  # self.translation_key = "avo.scope_translations.admins"
+end
+```
+
+A namespaced scope uses the slash-joined path — `Avo::Scopes::Admin::Archived` resolves to `avo.scope_translations.admin/archived`.
+
+### Or assign a callable
+
+The class attribute stays available and still resolves per request, which is what you want when the label depends on something the locale file cannot know:
+
+A scope's `name` and `description` accept a callable, and it is resolved on **every render** in the requesting user's locale. That is all it takes to translate a tab bar: assign a lambda that calls `I18n.t`.
+
+```ruby{3-4}
+# app/avo/scopes/admins.rb
+class Avo::Scopes::Admins < Avo::Scopes::BaseScope
+  self.name = -> { I18n.t("avo.scopes.admins.name", default: "Admins") }
+  self.description = -> { I18n.t("avo.scopes.admins.description", default: "Admins only") }
+  self.scope = :admins
+end
+```
+
+```yaml
+# config/locales/avo.scopes.sv.yml
+sv:
+  avo:
+    scopes:
+      admins:
+        name: Administratörer
+        description: Endast administratörer
+```
+
+The key path is spelled in full above on purpose: the lookups are `avo.scopes.admins.name` and `avo.scopes.admins.description`.
+
+:::info The namespace is yours
+Pick a key namespace your app owns. `avo.scopes.*` reads well beside Avo's own keys and is safe — the Scopes gem itself only ships `avo.scopes.record_count` — but nothing requires it. Any namespace works.
+:::
+
+:::warning Always pass a String `default:`
+Under a locale your app has not translated, a lookup with no `default:` renders `Translation missing: …` as the tab label, and Avo does not fall back to English for you unless you have configured `config.i18n.fallbacks`.
+:::
+
+A Symbol is **not** resolved as an i18n key. `self.name = :admins` sets the literal label `:admins` — use a callable.
+
+### Translating a label cannot break scope selection
+
+A scope's URL slug comes from its class path through `self.param`, never from `name`. So `?scope=admins` is identical in every locale, and a bookmark made in one language keeps working in another. You can translate `name` freely.
+
+### The cost of a callable
+
+Because it re-resolves per request — which is exactly what makes it follow the locale — anything expensive inside `name` runs on every page load. An `I18n.t` lookup is cheap. A query is not: to show a record count, use the [`counter`](./scopes-api.html#counter) option rather than computing it in `name`.
+
+### Translating the gem's own chrome
+
+Separately from your tab labels, the Scopes gem renders one string of its own — the accessible name on a [count pill](#show-record-counts) — and it ships **English only**:
+
+```yaml
+# config/locales/avo.scopes.sv.yml
+sv:
+  avo:
+    scopes:
+      record_count:
+        one: "%{count} record"
+        other: "%{count} records"
+```
+
+**Keep the `%{count}` placeholder.** The `All` tab's label is core's `avo.default_scope`, which is already translated in every locale Avo ships — override it there, not under `avo.scopes`.
+
 ## Limit index columns per scope
 
 A scope normally changes which **records** appear on the index. It can also change which **columns** appear while it's active — only on the <Index /> view; the show, new, and edit views keep the resource's normal fields.

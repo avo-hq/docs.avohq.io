@@ -154,13 +154,132 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
 end
 ```
 
-Entries are scoped to the current user and tenant, so a card querying `current_user` is safe to cache. Each [range](#ranges) is cached separately too, and on a resource card each record gets its own entry. If your `query` varies on something else, override `cache_key` as shown in the [reference](./cards-api.html#self.cache_for).
+Entries are scoped to the current user, tenant and **locale**, so a card querying `current_user` — or returning translated content — is safe to cache. Each [range](#ranges) is cached separately too, and on a resource card each record gets its own entry. If your `query` varies on something else, override `cache_key` as shown in the [reference](./cards-api.html#self.cache_for).
 
 Someone clicking the card's [refresh control](#refresh-a-card-on-demand) is asking for current data, so that click re-runs the `query` and rewrites the entry — but only their own, since the key is per user. Automatic `refresh_every` polling still respects `cache_for`, which is what makes the two worth pairing: poll often, query rarely.
 
 :::warning
 Partial and HTML cards build their content at render time instead of running a `query`, so `cache_for` does nothing for them. Wrap the markup in Rails' own `cache` block instead.
 :::
+
+## Localization
+
+The shortest path is a locale key. Avo resolves `avo.card_translations.<class_path>.{label,description,discreet_description}` before falling back to the class attribute, the same way it does for [resources and actions](./i18n.html#localizing-scopes-cards-and-dashboards):
+
+```yaml
+# config/locales/avo.sv.yml
+sv:
+  avo:
+    card_translations:
+      users_metric:
+        label: Antal användare
+        description: Över alla team
+```
+
+```ruby
+# app/avo/cards/users_metric.rb
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.id = "users_metric"
+  self.label = "Users count"    # the fallback when no translation is present
+  # Optional. Defaults to avo.card_translations.users_metric
+  # self.translation_key = "avo.card_translations.users_metric"
+end
+```
+
+The key is derived from the **class path**, not from `self.id` — two registrations of one card class share an id, and a card placed on a resource has no dashboard to scope an id against. A namespaced card uses the slash-joined path: `Avo::Cards::Sales::Monthly` resolves to `avo.card_translations.sales/monthly`.
+
+:::warning A label set at registration wins over the key
+`card Avo::Cards::UsersMetric, label: "Active users"` is more specific than a per-class translation, so it wins — otherwise a dashboard registering the same card twice would collapse both to one string. Pass a lambda if that override also needs translating.
+:::
+
+A [dashboard's](./dashboards.html#localization) own `name` and `description` work the same way, under `avo.dashboard_translations.*`.
+
+### Or assign a callable
+
+The class attribute stays available and still resolves per request, which is what you want when the title depends on something the locale file cannot know:
+
+A card's `label`, `description` and `discreet_description` all accept a callable, and it is resolved on **every render** in the requesting user's locale. That is all it takes to translate a card's chrome: assign a lambda that calls `I18n.t`.
+
+```ruby{3-5}
+# app/avo/cards/users_metric.rb
+class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
+  self.id = "users_metric"
+  self.label = -> { I18n.t("avo.cards.users_metric.label", default: "Users count") }
+  self.description = -> { I18n.t("avo.cards.users_metric.description", default: "Across all teams") }
+  self.discreet_description = -> { I18n.t("avo.cards.users_metric.discreet_description", default: "Active users only") }
+
+  def query
+    result User.where(active: true).count
+  end
+end
+```
+
+```yaml
+# config/locales/avo.cards.sv.yml
+sv:
+  avo:
+    cards:
+      users_metric:
+        label: Antal användare
+        description: Över alla team
+        discreet_description: Endast aktiva användare
+```
+
+The key paths are spelled in full above on purpose: the lookups are `avo.cards.users_metric.label`, `avo.cards.users_metric.description` and `avo.cards.users_metric.discreet_description`.
+
+A [dashboard's](./dashboards.html#localization) `name` and `description` work the same way.
+
+:::info The namespace is yours
+Pick a key namespace your app owns. `avo.cards.*` reads well beside Avo's own keys, though note the Dashboards gem ships its own chrome strings under `avo.cards.*` too — see the table in [Localization](./i18n.html#add-on-gems). Keys nested under your card's id, as above, cannot collide with them.
+:::
+
+:::warning Always pass a String `default:`
+Under a locale your app has not translated, a lookup with no `default:` renders `Translation missing: …` as the card title, and Avo does not fall back to English for you unless you have configured `config.i18n.fallbacks`.
+:::
+
+A Symbol is **not** resolved as an i18n key. `self.label = :users_count` sets the literal label `:users_count` — use a callable.
+
+### It holds on the refresh path too
+
+A card reloading through its own Turbo frame — whether from the [refresh control](#refresh-a-card-on-demand) or `refresh_every` polling — goes through Avo's normal controller stack, which wraps every request in the reader's locale. So a refreshed card comes back translated, not in the server's default language.
+
+### The cost of a callable
+
+Because it re-resolves per request — which is exactly what makes it follow the locale — anything expensive inside `label` runs on every render. An `I18n.t` lookup is cheap. A query is not: that is what `query` is for.
+
+### Translating the gem's own chrome
+
+Separately from your card titles, the Dashboards gem renders a few strings of its own — the refresh controls, the empty state, the editor links. Those resolve under `avo.cards.*`, and the gem ships **English only**. Copy this tree, rename the root key to your locale, and translate the values:
+
+```yaml
+# config/locales/avo.cards.sv.yml
+sv:
+  avo:
+    cards:
+      refresh: Refresh card
+      refresh_labeled: Refresh %{label}
+      dashboard:
+        learn_more: Learn more
+        refresh: Refresh all cards
+```
+
+`refresh_labeled` names the card being refreshed and is used when the card has a label; `refresh` is the fallback for a card without one.
+
+**Keep the `%{label}` placeholder.** Dropping it is harmless — the sentence just renders without the card name. *Renaming* it (to `%{card}`, say) is what I18n treats as an error, and Avo catches that and falls back to `refresh` plus the label rather than letting one translation break the dashboard header.
+
+:::info Already translated `avo.refresh_dashboard`?
+The dashboard refresh control reads `avo.cards.dashboard.refresh` and falls back to `avo.refresh_dashboard` before the shipped English. That older key was never defined by Avo, so an app that wanted a translated dashboard refresh button had to define it itself — those translations keep working, and there is no rush to move them.
+:::
+
+Three more strings the gem renders come from core's namespace, not its own, so they are already translated in every locale Avo ships — override them there rather than under `avo.cards`:
+
+| Key | Where it appears |
+| --- | --- |
+| `avo.open_in_your_editor` | the development-only editor link on a card and on a dashboard |
+| `avo.no_cards_present` | a dashboard with no visible cards |
+| `avo.no_item_found` | a table or list card's empty state, overridable per card with `self.empty_message` |
+
+`avo.open_in_your_editor` is deliberately entity-free — it does not name the card or dashboard it opens. That is not an oversight to work around by interpolating the noun: the tooltip is attached to the thing it opens, and a noun interpolated into a sentence goes wrong in inflected languages, as Avo's own `%{item}` keys show (Polish fixes the adjective to one gender; German has to invert the sentence).
 
 ## Hide the header
 

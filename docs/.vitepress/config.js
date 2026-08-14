@@ -338,6 +338,10 @@ const config = {
               link: "/4.0/kanban-boards.html",
             },
             {
+              text: "Calendar view",
+              link: "/4.0/calendar-view.html",
+            },
+            {
               text: "Forms and pages",
               link: "/4.0/forms-and-pages.html",
             },

@@ -4,7 +4,60 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to 4.1.7
+
+<Option name="`config.visible` now controls Media Library access, not just the menu item">
+
+### Breaking Change
+
+`Avo::MediaLibrary.configuration.visible` used to hide the sidebar item and the rich text editor button while leaving every Media Library route reachable by URL. It is now enforced on the routes as well: a user the block returns `false` for gets a 404 from `/media-library` and `/attach-media`.
+
+This closes [GHSA-cff8-4h3c-9r4q](https://github.com/avo-hq/avo/security/advisories/GHSA-cff8-4h3c-9r4q), where any authenticated Avo user could browse, rename and permanently delete every Active Storage blob in the application.
+
+### Action Required
+
+**If you set `config.visible`**, check that it returns `true` for everyone who is meant to use the Media Library, including through the rich text editors. Anyone it rejects now loses access entirely rather than only losing the menu item.
+
+**If you don't set it**, nothing changes on upgrade — `visible` defaults to `true`. That also means the Media Library stays available to every user who can sign in to Avo, so set it if that isn't what you want:
+
+```ruby
+# config/initializers/avo.rb
+if defined?(Avo::MediaLibrary)
+  Avo::MediaLibrary.configure do |config|
+    config.visible = -> { Avo::Current.user.is_developer? }
+  end
+end
+```
+
+</Option>
+
+
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
+
+## Unreleased — browser time zone on by default
+
+<Option name="`use_browser_timezone` now defaults to `true`">
+
+### Breaking Change
+
+Server-side dates and times now render in [each visitor's own time zone](./customization.html#time-and-currency) by default instead of the app's `Time.zone`. Avo detects the browser's zone via a cookie; the first page a browser loads soft-reloads once through Turbo and shows a one-time alert that times are now displayed in the visitor's zone.
+
+**Action required:** None if per-visitor times are what you want — most apps do. Displayed values only change for users whose browser zone differs from the app zone; nothing about stored data changes.
+
+The option defaults to `false` in the test environment, so browser/system tests are unaffected — the first-load soft reload would otherwise race them.
+
+### Maintaining Previous Behavior
+
+Pin every visitor to the app's configured zone:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.use_browser_timezone = false # [!code ++]
+end
+```
+
+</Option>
 
 ## Unreleased — resizable sidebar
 
@@ -27,6 +80,31 @@ Hosts with an accessibility conformance obligation can disable the drag handle w
 `.container-small` (the wrapper around show and edit pages) used a fixed width; it now fills its container up to a `max-width` so content adapts when the sidebar is wide. If you override `.container-small`'s `width` from your own stylesheets, the new Avo-owned `max-width` now clamps it — override `max-width` instead.
 
 **Action required:** None unless you override `.container-small`.
+
+</Option>
+
+## Upgrade to 4.1.4
+
+<Option name="The back to top pill is enabled by default">
+
+### Breaking Change
+
+The ["Back to top" pill](./customization.html#send-the-user-back-to-the-top) used to be off by default and only revealed itself when the user scrolled back up. It's now **on by default** and its visibility depends only on how far down the page is scrolled, not on the scroll direction. The [`threshold`](./customization-api.html#back_to_top) default moved from `64` to `400` pixels so the pill stays out of the way on short scrolls.
+
+**Action required:** None, unless you don't want the pill in your app. Every app that doesn't configure `back_to_top` gets it after this upgrade ([#4705](https://github.com/avo-hq/avo/pull/4705)).
+
+### Maintaining Previous Behavior
+
+Turn it off from the initializer. Keys you leave out fall back to the defaults, so `enabled` is enough:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.back_to_top = {enabled: false} # [!code ++]
+end
+```
+
+The direction-aware reveal is gone for good — `threshold` is now the only thing that decides when the pill shows up.
 
 </Option>
 

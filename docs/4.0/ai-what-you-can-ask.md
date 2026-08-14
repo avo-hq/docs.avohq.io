@@ -6,17 +6,18 @@ outline: [2, 3]
 
 # What you can ask
 
-A catalog of what the Avo Intelligence assistant can do, with a prompt for each one. Everything here works in plain language — you never name a tool, and you never have to phrase a request a particular way.
+A catalog of what the Avo AI assistant can do, with a prompt for each one. Everything here works in plain language — you never name a tool, and you never have to phrase a request a particular way.
 
 The resource and field names in the examples are placeholders. Substitute your own: the assistant reads your resources, your columns, and your scopes at the moment you ask, so the vocabulary that works is the vocabulary of your admin.
 
-For how a turn actually unfolds — inspect-first, confirmation cards, authorization — see [How the assistant works](./intelligence.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./intelligence-agents-and-tools.html).
+For how a turn actually unfolds — inspect-first, confirmation cards, authorization — see [How the assistant works](./ai.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./ai-agents-and-tools.html).
 
 ## Find records
 
 | Ask                                              | What you get                                                             |
 | ------------------------------------------------ | ------------------------------------------------------------------------ |
 | "Find the user with the email ada@example.com"   | The matching record, as a card with a link to open it                    |
+| "Find the user called John Deere"                | The record — found by search, even when the name lives across several columns |
 | "Show me the 5 most recent posts"                | A short list, sorted by the timestamp that matches what you asked about  |
 | "Which users signed up in the last 7 days?"      | A date-filtered list, resolved against the real current time             |
 | "List projects whose name contains 'orbit'"      | A partial-match list                                                     |
@@ -24,6 +25,8 @@ For how a turn actually unfolds — inspect-first, confirmation cards, authoriza
 | "Who signed up last?"                            | One record, rendered as a card                                           |
 
 Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders over $500", "users older than 26", "posts with no author", "projects in draft or review".
+
+**Naming a record in words is enough.** "The user called John Deere", "the post about pricing", "find Acme" — the assistant looks the record up the way your admin does: a resource that [configures search](./search.html) gets that exact search, and one that doesn't is matched across every text column you're allowed to read. A multi-word name still finds the record when its words live in different columns, so a first and last name stored separately aren't a problem. And "no such record" is only ever reported after that search came back empty — never off a guessed column filter.
 
 **Your scopes are part of the vocabulary.** Domain words like "admins", "active", or "published" are usually named scopes on the model rather than columns, and the assistant prefers the scope over guessing at a filter — so "list the published posts" runs `Post.published`, whatever that scope actually does.
 
@@ -68,13 +71,13 @@ Each created record gets its own card with a link.
 
 ## Change and delete records
 
-Both work one record at a time and both end in a card you click.
+Both work one record at a time and both end in a card you confirm.
 
 - **"Set the Orbit project's status to active"** — a card shows the record and each field's before → after value, with **Confirm** and **Cancel**.
 - **"Rename the post 'Hello' to 'Hello world'"** — same card.
 - **"Delete the test project"** — a card names the record and asks you to confirm.
 
-**Your click applies the change, not the model.** The assistant can propose a write, but it cannot perform one — and it can't talk its way past a Cancel.
+**Your confirmation applies the change, not the model.** Confirm a card by clicking its button or by telling the assistant to go ahead — "do it", "run it", "yes" — which counts the same because the words are yours. Either way the assistant can propose a write but never perform one, and it can't talk its way past a Cancel.
 
 **Ambiguity stops the write.** If "the Orbit project" matches three records, the assistant lists them and asks which one rather than picking. Bulk changes aren't offered at all: ask to update or delete many records and it will say it works one at a time.
 
@@ -94,12 +97,12 @@ Undoing a create deletes the record it made; undoing an update restores the valu
 
 The assistant runs the [actions](./actions.html) your resources register, so operations keep their business logic instead of being reconstructed field by field.
 
-- **"Archive the Orbit project"** — finds the matching action, reads its inputs, and shows a confirmation card with the action's own fields rendered on it, editable before you run.
+- **"Archive the Orbit project"** — finds the matching action, reads its inputs, and shows a confirmation card with the action's own fields rendered on it, prefilled with any values you named ("...reason: budget cut") and editable before you run.
 - **"Publish this post"** — runs your publish action, notifications and all, rather than setting `published_at` behind its back.
 - **"Export the users as CSV"** — [actions that run without records](./actions.html#run-an-action-without-records) work too.
 - **"Which actions does this resource have?"** — lists them with their inputs when you'd rather look first.
 
-Required inputs you didn't mention arrive as empty fields on the card for you to fill; the assistant never invents a value for them. Full detail in [Your actions, from the chat](./intelligence.html#your-actions-from-the-chat).
+Required inputs you didn't mention arrive as empty fields on the card for you to fill; the assistant never invents a value for them. Full detail in [Your actions, from the chat](./ai.html#your-actions-from-the-chat).
 
 ## Work with files
 
@@ -119,7 +122,7 @@ Required inputs you didn't mention arrive as empty fields on the card for you to
 | "Attach https://example.com/logo.png as the cover" | A confirmation card with the URL and a preview — nothing is fetched until you click **Attach** |
 | "Take the cover off this post"          | The file unlinked — the blob stays in the Media Library   |
 
-Files are referenced by blob id, and the Media Library URL carries one: `/avo/media-library/260/edit` is blob 260. The assistant never uploads bytes itself — a file gets in either by riding along on your message or through a URL you confirm. Purging a file stays a manual action. See [Files and attachments](./intelligence.html#files-and-attachments) and [Getting new files in](./intelligence.html#getting-new-files-in).
+Files are referenced by blob id, and the Media Library URL carries one: `/avo/media-library/260/edit` is blob 260. The assistant never uploads bytes itself — a file gets in either by riding along on your message or through a URL you confirm. Purging a file stays a manual action. See [Files and attachments](./ai.html#files-and-attachments) and [Getting new files in](./ai.html#getting-new-files-in).
 
 ## Ask about the record you're on
 
@@ -130,7 +133,7 @@ Start a chat from a record's page and "this" is already resolved — for the who
 - **"Set its status to active"**
 - **"Is anything missing here?"**
 
-A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it. See [The record you start from](./intelligence.html#the-record-you-start-from).
+A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it. See [The record you start from](./ai.html#the-record-you-start-from).
 
 ## Ask about a file you sent
 
@@ -140,16 +143,16 @@ Attach files to your message — paperclip, drag, or paste — and ask about the
 - **"What's in this screenshot?"**
 - **"Create a project for each row in this spreadsheet"**
 
-The files stay on the message, so you can keep asking about them later in the conversation. Reading an image or a PDF takes a vision-capable model. See [Send files with a message](./intelligence.html#send-files-with-a-message).
+The files stay on the message, so you can keep asking about them later in the conversation. Reading an image or a PDF takes a vision-capable model. See [Send files with a message](./ai.html#send-files-with-a-message).
 
 ## Manage the conversation
 
 - **"Rename this conversation to 'Q3 invoices'"** — your exact wording, applied everywhere the title shows.
 - **"Rename this conversation"** — with no name given, a fresh title is generated from where the conversation actually went.
 
-New conversations title themselves after your first message. See [Renaming conversations](./intelligence-agents-and-tools.html#renaming-conversations).
+New conversations title themselves after your first message. See [Renaming conversations](./ai-agents-and-tools.html#renaming-conversations).
 
-You don't have to ask, either. The ⋯ menu next to the title renames the conversation without the assistant — **Rename chat** to type the title yourself, **Rename again with AI** to have one generated — and the bar's menu adds **Copy as markdown**, which puts the conversation on your clipboard as plain text. See [The conversation menu](./intelligence.html#the-conversation-menu).
+You don't have to ask, either. The ⋯ menu next to the title renames the conversation without the assistant — **Rename chat** to type the title yourself, **Rename again with AI** to have one generated — and the bar's menu adds **Copy as markdown**, which puts the conversation on your clipboard as plain text. See [The conversation menu](./ai.html#the-conversation-menu).
 
 ## What it won't do
 
@@ -158,7 +161,7 @@ Knowing the edges saves a round trip:
 | It won't                                  | Because                                                                 |
 | ----------------------------------------- | ----------------------------------------------------------------------- |
 | Update or delete many records at once     | Writes are one record at a time; it will ask you to pick                |
-| Apply its own updates, deletes, or undos  | The confirmation card is yours to click                                  |
+| Apply its own updates, deletes, or undos  | The card is yours to confirm — a click, or a quick "do it" in your own words |
 | Delete a file from storage                | It can detach, never purge                                               |
 | Touch anything your policies hide         | Every read and write is authorized for the signed-in user                |
 | Answer questions unrelated to this app    | General knowledge, coding help, and writing tasks are out of scope       |
