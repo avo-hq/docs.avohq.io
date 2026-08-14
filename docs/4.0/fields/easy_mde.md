@@ -25,12 +25,7 @@ The `easy_mde` field is hidden from the **Index** view.
 
 ## Options
 
-<Option name="`always_show`">
-
-By default, the content of the `easy_mde` field is not visible on the `Show` view, instead, it's hidden under a `Show Content` link that, when clicked, displays the content. You can set `easy_mde` to always display the content by setting `always_show` to `true`.
-
-<!-- @include: ./../common/default_boolean_false.md-->
-</Option>
+<!-- @include: ./../common/field_options/always_show.md-->
 
 <Option name="`height`">
 
