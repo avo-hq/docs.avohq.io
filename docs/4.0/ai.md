@@ -547,6 +547,12 @@ class Avo::Ai::ChatPolicy < ApplicationPolicy
 end
 ```
 
+:::info Why the namespace is `Avo::Ai`, not `Avo::AI`
+The constant is spelled `Avo::Ai` on purpose — it's what Rails derives from the `avo/ai` path on its own. Early alphas used `Avo::AI`, and that acronym never came for free: Zeitwerk camelizes `ai` to `Ai`, so every app defining its own classes in the namespace — exactly what you're doing here with `app/policies/avo/ai/chat_policy.rb` — had to add an inflection to its `config/initializers/inflections.rb` to make the constant resolve. With standard camelization there is nothing to configure.
+
+Upgrading from an earlier alpha? Rename `Avo::AI` to `Avo::Ai` wherever your app references it (policies, ejected prompts, `model_registry_class` in `config/initializers/ruby_llm.rb`) and delete any `inflect("ai" => "AI")` line you added for the gem.
+:::
+
 Each entry names a RubyLLM registry model, and `provider:` says which provider serves it. Browse what your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all.map { |m| [m.id, m.provider] }`.
 
 A bare id works too — `"gpt-4o-mini"` instead of the pair — and is the shorter thing to write when the id is unambiguous. Naming the provider is worth the extra keys anyway: several ids are served by more than one provider, and [pinning](#pinning-the-provider) is how you say which one your app talks to.
