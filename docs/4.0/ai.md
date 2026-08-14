@@ -59,7 +59,7 @@ Without them, starting a chat raises on the unknown attribute.
 
 ### 3. Set your provider API key
 
-The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by default and pins `model_registry_class` to `Avo::AI::Model` — that setting is required, don't remove it.
+The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by default and pins `model_registry_class` to `Avo::Ai::Model` — that setting is required, don't remove it.
 
 ```ruby
 RubyLLM.configure do |config|
@@ -67,7 +67,7 @@ RubyLLM.configure do |config|
   # config.anthropic_api_key = ENV.fetch("ANTHROPIC_API_KEY", nil)
   # config.gemini_api_key = ENV.fetch("GEMINI_API_KEY", nil)
 
-  config.model_registry_class = "Avo::AI::Model"
+  config.model_registry_class = "Avo::Ai::Model"
 end
 ```
 
@@ -91,7 +91,7 @@ The resources and controllers ship inside the gem — there's nothing to generat
 ### 5. Verify
 
 ```bash
-bin/rails runner "puts Avo::AI::Chat.count"
+bin/rails runner "puts Avo::Ai::Chat.count"
 ```
 
 Expect `0` and no error. Restart your server and the chat bar appears on every Avo page, with an **AI** section in the sidebar.
@@ -347,7 +347,7 @@ Style:
 - Answer in the same language the user writes in.
 ```
 
-The file is ERB, so you can interpolate anything your app knows — `Rails.application.credentials`, `ENV`, your own configuration. Two locals are also available: `user`, the signed-in user the chat belongs to, and `chat`, the `Avo::AI::Chat` record. That makes per-role instructions a conditional:
+The file is ERB, so you can interpolate anything your app knows — `Rails.application.credentials`, `ENV`, your own configuration. Two locals are also available: `user`, the signed-in user the chat belongs to, and `chat`, the `Avo::Ai::Chat` record. That makes per-role instructions a conditional:
 
 ```erb
 <%# app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb %>
@@ -447,7 +447,7 @@ Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {en
 
 Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` with the default mount). The list shows every chat you own — its model, message count, and age — and links to the conversation. It's the same chat as in the bar: same messages, same tools, same streaming, with room to read.
 
-The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::AI::Chat` resource from the sidebar.
+The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Ai::Chat` resource from the sidebar.
 
 ## The conversation menu
 
@@ -528,11 +528,11 @@ Hover any message and a copy button appears beneath it. It copies the raw text t
 
 By default a chat runs on the model you configured in `config/initializers/ruby_llm.rb`, and there is no model picker — the RubyLLM registry is thousands of models long, which is not a dropdown.
 
-Give your `Avo::AI::ChatPolicy` an `#available_models` method to curate a shortlist. Every composer — the bar, the new-chat page, and open conversations — then shows a picker with exactly those models:
+Give your `Avo::Ai::ChatPolicy` an `#available_models` method to curate a shortlist. Every composer — the bar, the new-chat page, and open conversations — then shows a picker with exactly those models:
 
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
-class Avo::AI::ChatPolicy < ApplicationPolicy
+class Avo::Ai::ChatPolicy < ApplicationPolicy
   def available_models
     return nil if user.admin? # every model in the registry
 
@@ -546,6 +546,12 @@ class Avo::AI::ChatPolicy < ApplicationPolicy
   end
 end
 ```
+
+:::info Why the namespace is `Avo::Ai`, not `Avo::AI`
+The constant is spelled `Avo::Ai` on purpose — it's what Rails derives from the `avo/ai` path on its own. Early alphas used `Avo::AI`, and that acronym never came for free: Zeitwerk camelizes `ai` to `Ai`, so every app defining its own classes in the namespace — exactly what you're doing here with `app/policies/avo/ai/chat_policy.rb` — had to add an inflection to its `config/initializers/inflections.rb` to make the constant resolve. With standard camelization there is nothing to configure.
+
+Upgrading from an earlier alpha? Rename `Avo::AI` to `Avo::Ai` wherever your app references it (policies, ejected prompts, `model_registry_class` in `config/initializers/ruby_llm.rb`) and delete any `inflect("ai" => "AI")` line you added for the gem.
+:::
 
 Each entry names a RubyLLM registry model, and `provider:` says which provider serves it. Browse what your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all.map { |m| [m.id, m.provider] }`.
 
@@ -606,11 +612,11 @@ A chat keeps running on its model even if you later drop that model from `#avail
 
 ## Who can delete a chat
 
-Chats are owner-scoped already — nobody sees anyone else's — so by default a person can delete their own. Give your `Avo::AI::ChatPolicy` a `#destroy?` method to take that away:
+Chats are owner-scoped already — nobody sees anyone else's — so by default a person can delete their own. Give your `Avo::Ai::ChatPolicy` a `#destroy?` method to take that away:
 
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
-class Avo::AI::ChatPolicy < ApplicationPolicy
+class Avo::Ai::ChatPolicy < ApplicationPolicy
   def destroy?
     user.admin?
   end
@@ -640,11 +646,11 @@ The reasoning trace deliberately sits on the `:off` side of the line: it narrate
 viewer is already allowed to read, not the machinery. The system prompt and the raw tool traffic
 stay gated because they are the defenses.
 
-The level is decided by your app's policy for `Avo::AI::Chat`. It's never stored and never switchable from the chat UI:
+The level is decided by your app's policy for `Avo::Ai::Chat`. It's never stored and never switchable from the chat UI:
 
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
-class Avo::AI::ChatPolicy < ApplicationPolicy
+class Avo::Ai::ChatPolicy < ApplicationPolicy
   def debug_level
     user.admin? ? :tools : :off
   end
