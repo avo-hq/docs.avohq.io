@@ -239,7 +239,6 @@ const config = {
             { text: "Field discovery", link: "/4.0/field-discovery.html" },
 
             { text: "Layout", link: "/4.0/fields-layout.html" },
-            { text: "WYSIWYG & Markdown editors", link: "/4.0/fields.html#wysiwyg-markdown-editors" },
             {
               text: "Field types",
               collapsed: true,
