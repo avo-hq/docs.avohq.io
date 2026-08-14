@@ -1,6 +1,6 @@
 <Option name="`always_show`">
 
-By default, the content of the field is not visible on the `Show` view; instead, it's hidden under a `Show Content` link that, when clicked, displays the content. You can set it to display the content by setting `always_show` to `true`.
+By default, the content of the field is collapsed to a short, faded preview on the `Show` view, with a `More content` link that expands it (and a `Less content` link to collapse it back). Set `always_show` to `true` to always display the full content instead.
 
 <!-- @include: ./../default_boolean_false.md-->
 </Option>

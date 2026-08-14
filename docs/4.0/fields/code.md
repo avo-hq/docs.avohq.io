@@ -16,6 +16,8 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css'
 
 ## Options
 
+<!-- @include: ./../common/field_options/always_show.md-->
+
 <Option name="`theme`">
 
 Customize the color theme used in light mode. In dark mode Avo always uses the `monokai` theme, regardless of this setting.
