@@ -354,17 +354,13 @@ progress[value]::-moz-progress-bar {
 }
 ```
 
-## Use pre-built Stimulus controllers
+## Collapse long content on `Show`
 
-Avo ships with a few Stimulus controllers that help you build more dynamic fields.
-
-### Hidden input controller
-
-This controller allows you to hide your content and add a trigger to show it. You'll find it in the Trix field.
+If your field renders something tall — rich text, a rendered document, a long code listing — hand `collapsable: true` to the field wrapper. Avo clips the value to a short, faded preview with a `More content` link that expands it (and a `Less content` link that collapses it back), the same wrapper every [WYSIWYG and markdown field](./fields.html#wysiwyg-markdown-editors) uses, so your field reads like the built-in ones.
 
 <Image src="/assets/img/4_0/stimulus/hidden_input_trix.webm" dark-src="/assets/img/4_0/stimulus/hidden_input_trix-dark.webm" width="1000" height="278" alt="A Trix field on an Avo Show view with long content collapsed behind a “More content” link that, when clicked, reveals the rich text." prompt="the Trix field hiding long content behind a more content link on show" />
 
-You should add the `:always_show` `attr_reader` and `@always_show` instance variables to your field.
+Give users a way out of the collapsing by accepting the `always_show` option on your field, the way the built-in rich text fields do:
 
 ```ruby{3,8}
 # app/avo/fields/color_picker_field.rb
@@ -379,12 +375,48 @@ class Avo::Fields::ColorPickerField < Avo::Fields::BaseField
 end
 ```
 
-Next, in your fields `Show` component, you need to do a few things.
+Then pass it through, inverted, from the field's `Show` component:
 
-1. Wrap the field inside a controller tag
-1. Add the trigger that will show the content.
-1. Wrap the value in a div with the `hidden` class applied if the condition `@field.always_show` is `false`.
-1. Add the `content` target (`data-hidden-input-target="content"`) to that div.
+```erb{3}
+<%# app/components/avo/fields/color_picker_field/show_component.html.erb %>
+
+<%= field_wrapper(**field_wrapper_args, collapsable: !@field.always_show) do %>
+  <div style="background-color: <%= @field.value %>"
+    class="h-6 px-1 rounded-md text-white text-sm flex items-center justify-center leading-none"
+  >
+    <%= @field.value %>
+  </div>
+<% end %>
+```
+
+The wrapper only reveals the toggle when the content is actually taller than the preview, so short values render in full with no link.
+
+:::info
+`collapsable` applies on the `Show` view only — the field wrapper ignores it on `Index` and `Edit`.
+:::
+
+## Make an editor field resizable
+
+If your field renders an editor on forms, declare the CSS selector of its scrollable viewport. Avo turns that element into a vertically resizable one with a drag handle, and remembers the height per field in the browser's local storage:
+
+```ruby{3}
+# app/avo/fields/my_editor_field.rb
+class Avo::Fields::MyEditorField < Avo::Fields::BaseField
+  resizable_editor target: ".my-editor__content"
+end
+```
+
+The selector is resolved inside the field wrapper *after* the editor boots, so editors that render themselves client-side work too.
+
+## Use pre-built Stimulus controllers
+
+Avo ships with a few Stimulus controllers that help you build more dynamic fields.
+
+### Hidden input controller
+
+This controller hides content behind a trigger that reveals it — a one-way reveal, unlike the collapsable wrapper above, and it makes no assumptions about how tall the content is. Avo uses it on the getting started screen.
+
+Wrap the field in the controller tag, add the trigger, and give the value's container the `content` target plus the `hidden` class when `always_show` is `false`:
 
 ```erb{4-7,8}
 <%# app/components/avo/fields/color_picker_field/show_component.html.erb %>
