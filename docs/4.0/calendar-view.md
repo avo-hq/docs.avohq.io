@@ -171,6 +171,10 @@ The header's Month/Week toggle switches between a month grid and a week view wit
 
 <Image src="/assets/img/4_0/calendar-view/week.webp" dark-src="/assets/img/4_0/calendar-view/week-dark.webp" width="1456" height="830" alt="The week view — a multi-day event in the all-day lane and hour-based events on their start hours." />
 
+### Read a crowded day
+
+A month cell shows as many event lanes as fit its row and collapses the rest behind a **+N more** toggle. Activate it and the week row expands in place to reveal every event it holds — the other rows keep their height and the page scrolls — then **Show less** fits it back. Expansion is view state only: navigating or reloading resets it.
+
 ## Event previews
 
 Clicking an event chip opens a popover with the record's preview — the fields marked `show_on: :preview` — and a link to the record. Cmd/Ctrl-click still opens the record directly.

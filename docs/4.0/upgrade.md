@@ -34,6 +34,16 @@ end
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
+## Unreleased — `avo-calendar` "+N more" expands the row in place
+
+<Option name="`+N more` no longer opens the week view">
+
+In the month view, the **+N more** toggle under a crowded day now expands that week row in place to reveal every event, with a **Show less** control to fit it back. It previously navigated to that day's week view. See [Read a crowded day](./calendar-view.html#read-a-crowded-day).
+
+**Action required:** None — the behavior change is visual only, and the week view stays one click away in the header's Month/Week toggle.
+
+</Option>
+
 ## Unreleased — browser time zone on by default
 
 <Option name="`use_browser_timezone` now defaults to `true`">
