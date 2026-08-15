@@ -69,6 +69,8 @@ Then load RubyLLM's model registry, and re-run it periodically (or call `RubyLLM
 bin/rails ruby_llm:load_models
 ```
 
+Later refreshes don't need the terminal: the Models resource (added to the menu below) ships a standalone **Refresh models** action that pulls the published catalog plus the latest models from every configured provider. There's nothing to restart after a refresh — a background job that meets a model its process doesn't know yet re-reads the registry and retries on its own.
+
 ### 4. Add the admin resources to the menu
 
 In `config/initializers/avo.rb`, inside the `config.main_menu` block:
@@ -77,6 +79,7 @@ In `config/initializers/avo.rb`, inside the `config.main_menu` block:
 section "AI", icon: "heroicons/outline/sparkles" do
   resource "avo_ai/chats"
   resource "avo_ai/messages"
+  resource "avo_ai/models"
 end
 ```
 
@@ -547,7 +550,7 @@ The constant is spelled `Avo::Ai` on purpose — it's what Rails derives from th
 Upgrading from an earlier alpha? Rename `Avo::AI` to `Avo::Ai` wherever your app references it (policies, ejected prompts) and delete any `inflect("ai" => "AI")` line you added for the gem.
 :::
 
-Each entry names a RubyLLM registry model, and `provider:` says which provider serves it. Browse what your app knows about in the console with `RubyLLM.models.chat_models.all.map { |m| [m.id, m.provider] }`.
+Each entry names a RubyLLM registry model, and `provider:` says which provider serves it. Browse what your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all.map { |m| [m.id, m.provider] }`.
 
 A bare id works too — `"gpt-4o-mini"` instead of the pair — and is the shorter thing to write when the id is unambiguous. Naming the provider is worth the extra keys anyway: several ids are served by more than one provider, and [pinning](#pinning-the-provider) is how you say which one your app talks to.
 
