@@ -415,8 +415,12 @@ A name that isn't one of the twelve raises `ArgumentError` at boot, listing the 
 
 Nothing is protected. `ask_user` and `write_history` are chat infrastructure rather than data tools, and excluding them is allowed: the assistant loses the ability to ask you a clarifying question, or to list and undo the writes it made in the conversation. That's a decision you're free to make — just make it deliberately.
 
+Excluding `resource_inspector` takes the [inspection gate](./ai-agents-and-tools.html#the-inspection-gate) with it: the tool is the only way the gate can ever be satisfied, so with it gone, queries and writes proceed without an inspection instead of refusing forever. Less introspection, not a dead assistant — but the assistant now works from guessed columns rather than real ones.
+
 :::warning Excluding `rename_conversation` turns AI titling off entirely
 That tool is what applies a title, so removing it stops the [conversation renamer](./ai-agents-and-tools.html#renaming-conversations) too, not just the assistant's ability to rename on request: new conversations are no longer auto-titled after the first message, and **Rename again with AI** stops having an effect. Conversations keep the *Untitled chat* placeholder until someone names them. **Rename chat** still works — that one never goes through a model.
+
+The exception is a replacement: register your own tool under the `rename_conversation` wire name — which is exactly what [ejecting it](#replace-a-shipped-tool-with-your-own-copy) sets up — and titling continues through your copy.
 :::
 
 ### Bring your own tool
@@ -463,7 +467,7 @@ Three things the server decides for you, whatever the entry says:
 - **Two tools can't share a wire name.** Registering a tool whose name collides with a shipped one raises when the roster is built. To replace a shipped tool, exclude it first — that's what [ejecting](#replace-a-shipped-tool-with-your-own-copy) does for you.
 
 :::warning What a tool returns goes to your model provider
-Everything `execute` returns is sent to the provider on that turn and on every later turn of the conversation, and it's stored on the tool call. Return the minimum that answers the question — no API keys, no credentials, and no personal data the question didn't call for. Read secrets from `ENV` or `Rails.application.credentials`; never write one into the tool file or the initializer.
+Everything `execute` returns is sent to the provider on that turn and on every later turn of the conversation, and it's stored on the tool call. Return the minimum that answers the question — no API keys, no credentials, and no personal data the question didn't call for. Read secrets from `ENV` or `Rails.application.credentials`; never write one into the tool file or the initializer. When an entry fails to resolve, the error names the entry by its class and key names only — the values never reach a log, the error tracker, or the **Agent tools** field.
 :::
 
 ### Replace a shipped tool with your own copy

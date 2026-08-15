@@ -28,7 +28,7 @@ It runs on three occasions:
 - when you pick **Rename again with AI** from the ⋯ menu, in the chat bar or on a chat page
 - when you ask the assistant to rename the conversation without giving it a name
 
-All three go through the `rename_conversation` tool, so [excluding that tool](./ai.html#take-a-tool-away) switches the renamer off along with it. Naming a chat by hand keeps working.
+All three go through the `rename_conversation` tool, so [excluding that tool](./ai.html#take-a-tool-away) switches the renamer off along with it — unless you registered a replacement under the same wire name (as [ejecting it](./ai.html#replace-a-shipped-tool-with-your-own-copy) does), in which case the renamer uses your copy. Naming a chat by hand keeps working.
 
 ## The tools
 
@@ -82,7 +82,7 @@ That is a deliberate security boundary. There is no argument the model could inv
 
 ### The inspection gate
 
-The query and write tools refuse to touch a resource until `resource_inspector` has run for it in the conversation. The gate is enforced in the tools — not merely requested in the prompt — and is what makes the assistant work from your real columns and scopes instead of guessed ones.
+The query and write tools refuse to touch a resource until `resource_inspector` has run for it in the conversation. The gate is enforced in the tools — not merely requested in the prompt — and is what makes the assistant work from your real columns and scopes instead of guessed ones. Excluding `resource_inspector` turns the gate off along with the tool — the queries and writes then proceed uninspected rather than refusing.
 
 `run_action` sits behind the same gate, and adds two of its own: the resource's `act_on?` policy method and the action's `self.authorize` block, both checked when the run is proposed and again when you confirm it. See [What it's allowed to run](./ai.html#what-it-s-allowed-to-run).
 
