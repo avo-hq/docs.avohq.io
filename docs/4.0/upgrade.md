@@ -34,13 +34,21 @@ end
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
-## Unreleased — `avo-calendar` "+N more" expands the row in place
+## Unreleased — `avo-calendar` month and week view changes
 
 <Option name="`+N more` no longer opens the week view">
 
 In the month view, the **+N more** toggle under a crowded day now expands that week row in place to reveal every event, with a **Show less** control to fit it back. It previously navigated to that day's week view. See [Read a crowded day](./calendar-view.html#read-a-crowded-day).
 
 **Action required:** None — the behavior change is visual only, and the week view stays one click away in the header's Month/Week toggle.
+
+</Option>
+
+<Option name="Week view becomes a scrollable time grid">
+
+Hour-based events now stretch to their duration — overlapping events share the day column side by side — instead of rendering as fixed chips on their start hour, and the grid scrolls inside the viewport, opening at 07:00 under a pinned day-header row. See [Month and week views](./calendar-view.html#month-and-week-views).
+
+**Action required:** None — the change is visual only. An event without an `ends_at` renders as a one-hour block.
 
 </Option>
 
