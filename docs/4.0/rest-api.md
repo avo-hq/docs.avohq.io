@@ -9,7 +9,7 @@ outline: [2, 3]
 
 The `avo-api` add-on exposes a JSON REST API for every Avo resource. It reuses your resources' field definitions, view visibility rules, and Pundit policies, so a resource you already built for the admin panel is available over HTTP — list, read, create, update, and delete.
 
-This page covers installation, mounting, authentication, how the current user is established, authorization, and the request/response format.
+This page covers installation, mounting, API tokens, authentication, how the current user is established, authorization, and the request/response format.
 
 :::info Add-on
 The REST API ships as the separate `avo-api` gem. [See the add-on page →](https://avohq.io/addons/json-api)
@@ -47,6 +47,21 @@ Pass `--version` to namespace under something other than `v1`:
 ```bash
 rails generate avo_api:generate --version v2
 ```
+
+### Install the API tokens table
+
+Then install the credential store:
+
+```bash
+rails generate avo_api:install
+rails db:migrate
+```
+
+This writes one migration, creating the `avo_api_tokens` table. There is no initializer setting, environment variable, or credential to add — the feature needs none.
+
+:::info This step is additive
+`avo_api:install` does not replace `avo_api:generate`. One delivers the resource controllers, the other the tokens table, and a working API wants both. Skip it only if your app brings its own credential scheme and wants no tokens at all — and then [replace the authentication hook](#bring-your-own-authentication) too, so nothing goes looking for a token that can't exist.
+:::
 
 ## Mount the API
 
@@ -113,9 +128,13 @@ DELETE /api/resources/v1/teams/:id    # Delete a team
 
 The path segment is the resource's `route_key` (e.g. `blog_posts`, `product_categories`).
 
+:::info API tokens are not served over the API
+The token resource is skipped when routes are drawn, so no version namespace gets a `tokens` endpoint. Tokens are managed in the panel only — a credential can neither mint nor revoke credentials, and so cannot outlive being revoked.
+:::
+
 ## Authentication
 
-Every request runs through `setup_authentication`, a hook on `BaseResourcesController`. **The default implementation raises**, so the API is closed until you override it — every request gets `401 Unauthorized`:
+Every request runs through `setup_authentication`, a hook on `BaseResourcesController`. **The default implementation accepts a valid API token** and rejects everything else with `401 Unauthorized`:
 
 ```json
 { "error": "Unauthorized" }
@@ -123,13 +142,103 @@ Every request runs through `setup_authentication`, a hook on `BaseResourcesContr
 
 Raise `Avo::Api::AuthenticationError` anywhere in the hook to reject a request with that response.
 
-:::warning No built-in token authentication
-`avo-api` ships no token model, no `Authorization: Bearer` handling, and no API-key store. `setup_authentication` is the single extension point — the credential scheme is yours to implement. The examples below show the common ones.
+### Create a token
+
+Once the [tokens table is installed](#install-the-api-tokens-table), an **API tokens** entry appears in the Avo sidebar. Create a token there with a name and, optionally, an expiry date.
+
+The token belongs to whoever created it. The form has no owner field, and a token cannot be moved to another owner afterwards, so a crafted request cannot mint a credential belonging to somebody else.
+
+**The secret is shown once**, on the new token's page immediately after creation, with a copy button. Only a digest of it is stored, so nothing can show it again — not a console, not a support tool, not a database dump. Miss it and there is no recovery beyond minting a replacement and revoking the one you lost.
+
+What the list shows afterwards is a short leading slice of the secret (`avo_a1B2c3D4...`), enough to tell two tokens apart and far too little to guess one.
+
+### Send the token
+
+Present the secret as a bearer credential in the `Authorization` header, over HTTPS:
+
+```bash
+curl https://example.com/api/resources/v1/teams \
+  -H "Authorization: Bearer avo_a1B2c3D4e5F6g7H8i9J0k1L2m3N4o5P6q7R8s9T0u1V"
+```
+
+:::danger Use TLS, always
+A token is a replayable, full-privilege bearer credential: anyone holding it acts as its owner, with all of that owner's access, until the token expires or is revoked. There is nothing bound to a device, an IP, or a request body to stop a copy of it working. Send it only to `https://` endpoints.
+:::
+
+Only that header, and only that scheme, is read. A credential in a query string is not read at all, so the request is rejected exactly like one carrying no credential.
+
+:::warning A token sent in a URL is already compromised
+Rejecting it doesn't undo the disclosure — by the time the request reached Avo it was in your web server's access log, and likely in a proxy log and a browser history too. Treat any token that has appeared in a URL as leaked: revoke it and mint a replacement.
+:::
+
+### Token lifecycle
+
+A token's status is derived from two timestamps, never stored, so there is no lifecycle field to drift out of step:
+
+| Status | When | Authenticates |
+| --- | --- | --- |
+| **Active** | Not revoked, and either no expiry or an expiry still in the future | Yes |
+| **Expired** | The expiry instant has passed | No |
+| **Revoked** | The Revoke action was run on it | No |
+
+Expiry is optional — leave it blank and the token never expires. Revocation is permanent: the **Revoke** action on the token resource marks the token and keeps the record, and nothing can un-revoke it. A token that is both revoked and past its expiry reports **Revoked**.
+
+Each successful request stamps the token's **Last used** column, which is the fastest way to tell a token that was never wired up from one that stopped working.
+
+Deleting a token's owner also stops the token: a token whose owner can no longer be resolved is rejected, so a request never proceeds with nobody attached to it.
+
+:::info Every rejection looks the same
+Absent, malformed, unknown, expired, revoked, and orphaned credentials all produce the identical `401` and `{ "error": "Unauthorized" }` body — the response tells a caller nothing about which one it was.
+
+So debug a `401` from the panel, not from the response. Check the token's **Status** first (expired and revoked are the common answers), then whether its owner still exists, then **Last used** to see whether the request reached this token at all.
+:::
+
+### A token acts as its owner
+
+An authenticated request runs as the token's owner, and **every policy that owner is subject to applies to it unchanged**. That is the whole access model: there is no per-token scoping, no permission ceiling, and no grant matrix to configure.
+
+Two things follow. A token is exactly as powerful as the person who created it — an administrator's token reaches everything an administrator reaches. And restricting what a token can do means restricting its owner, or giving it an owner with less access; see [Authorization](#authorization).
+
+### Your app's own authentication still runs
+
+Token traffic is not exempt from whatever you put in [`config.authenticate_with`](./authentication.html). Avo can't tell an authentication check there from an IP allowlist, a tenant assignment, or a maintenance gate, so the block is **satisfied rather than skipped**: where Devise is present and the token's owner is a Devise-mapped model, the owner is signed in for that one request (`store: false`, so no session is written) and a standard session check passes on its own terms. Everything else in the block still runs, and a token request your rules reject stays rejected.
+
+If your block can't be satisfied that way — another authentication library, or a check against a scope the owner isn't in — guard it yourself:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.authenticate_with do
+    next if Avo::Api.token_request? # [!code highlight]
+
+    authenticate_user!
+  end
+end
+```
+
+`Avo::Api.token_request?` is supported public API and returns `true` while a valid API token is authenticating the request in flight. Guard on it rather than on anything inside the gem's controllers.
+
+### Keep the credential safe
+
+Three rules, two of them above: send it only over TLS, and treat a token that has appeared in a URL as leaked. The third is about the one moment the plaintext exists at all.
+
+:::warning The one-time reveal transits your session store
+The plaintext secret is never written to the tokens table, but it does ride the flash from the create request to the page that displays it. That means it passes through whatever session store the app is configured with. Rails' default cookie store keeps it in the visitor's own encrypted cookie; a **server-side store writes it to disk** (or to Redis) for that one hop. The page itself is sent `Cache-Control: no-store` and opts out of Turbo's snapshot cache, but neither reaches your session store.
+:::
+
+Who may mint and revoke tokens is your app's authorization decision, and the default is permissive — see [Who may manage tokens](#who-may-manage-tokens).
+
+## Bring your own authentication
+
+Override `setup_authentication` on `BaseResourcesController` to use a different scheme. Your override wins by ordinary inheritance, and omitting `super` opts out of tokens entirely.
+
+:::warning `super` changed meaning
+In an override of `setup_authentication`, `super` used to **reject** the request. It now **accepts a valid API token**. Check every existing override before upgrading — see the [upgrade note](./upgrade.html).
 :::
 
 ### Set the current user
 
-Authenticating the *request* is only half the job. Avo's authorization — Pundit policies and policy scopes — runs against `Avo::Current.user`, and **`setup_authentication` does not set it**. If you verify a credential but never establish a user, `Avo::Current.user` stays `nil` and every policy scope receives `nil`.
+Authenticating the *request* is only half the job. Avo's authorization — Pundit policies and policy scopes — runs against `Avo::Current.user`, and **a hand-rolled `setup_authentication` does not set it**. If you verify a credential but never establish a user, `Avo::Current.user` stays `nil` and every policy scope receives `nil`. (The built-in token path does this for you: a token resolves to its owner, and a token whose owner can't be resolved is rejected rather than let through as nobody.)
 
 `Avo::Current.user` is assigned from whatever [`config.current_user_method`](./authentication.html) resolves to, evaluated in the controller instance:
 
@@ -170,7 +279,7 @@ A global `config.current_user_method do … end` block is the alternative, but i
 
 ### Authentication examples
 
-**Bearer token**, resolving to a user — see the snippet above.
+**Your own bearer token**, resolving to a user — see the snippet above. Use this when the credential lives in your app rather than in Avo's tokens table.
 
 **HTTP Basic** with Devise. `sign_in(user, store: false)` is what makes `current_user` return the user for the rest of the request, so no `current_user` override is needed here:
 
@@ -270,6 +379,58 @@ rescue_from Avo::NotAuthorizedError do
 end
 ```
 :::
+
+### Who may manage tokens
+
+`avo-api` adds no setting for this. The token resource obeys your app's existing authorization exactly like any other resource, and the gem ships no policy and generates none — policy method names are configurable and the client need not be Pundit, so a supplied file would be wrong for those apps.
+
+:::danger Without an authorization client, every panel user can mint a token
+And a token carries its owner's full privileges over every record. If `avo-authorization` isn't installed, isn't enabled on your license, or no `config.authorization_client` is set, nothing stands between a user who can sign in to Avo and a credential that reaches your whole API. That's your app's configuration rather than anything this feature decides, but decide it deliberately.
+:::
+
+The opposite is just as true. With [`config.explicit_authorization`](./authorization.html#explicit_authorization) at its default of `true`, a resource whose policy class is missing is **denied**, so the token resource is unreachable until you write one — the same rule that applies to every other resource in that app.
+
+Each built-in action is gated by its own policy method, and that one method controls both whether the action renders and whether it can be run — a hidden Revoke button cannot be run by a direct request either. Write the policy as you would for any model:
+
+```ruby
+# app/policies/avo/api/token_policy.rb
+class Avo::Api::TokenPolicy < ApplicationPolicy
+  def index?   = true
+  def show?    = true
+  def create?  = true          # anyone who may create one gets a token owned by themselves
+  def new?     = create?
+  def update?  = mine?
+  def edit?    = update?
+  def destroy? = mine?
+  def act_on?  = true          # gates the Actions menu as a whole
+  def revoke?  = mine?         # gates the Revoke action specifically
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = user.admin? ? scope.all : scope.where(owner: user)
+  end
+
+  private
+
+  def mine?
+    return true if user.admin?
+    # Avo asks this against the model class, not a row, when it decides whether
+    # to offer an action on an index view. There is nothing to own yet, so the
+    # honest answer is "yes, in principle" — the per-record check that runs
+    # before the action touches anything is what actually decides.
+    return true unless record.is_a?(ActiveRecord::Base)
+
+    record.owner == user
+  end
+end
+```
+
+That grants administrators every token while limiting everyone else to their own — they see, edit, and revoke the tokens they created and nothing more.
+
+:::info This is one client's shape
+The example is Pundit's. Other authorization clients express the same rules their own way, and if you renamed methods through [`config.authorization_methods`](./authorization.html#using-different-policy-methods), use your names — the gem checks through the resource's authorization service, not through any particular library.
+:::
+
+Tokens record their owner polymorphically, so `scope.where(owner: user)` works whatever your user model is called.
 
 ## Reading data
 
@@ -505,7 +666,7 @@ The API returns these status codes:
 | `200` | Success |
 | `201` | Created |
 | `302` | A policy method denied the action — a redirect, not JSON (see [Authorization](#authorization)) |
-| `401` | Authentication failed or missing |
+| `401` | Authentication failed or missing — an absent, malformed, unknown, expired, revoked, or orphaned token all look the same ([why](#token-lifecycle)) |
 | `404` | Record not found, out of policy scope, or the `avo-api` feature isn't enabled on your license |
 | `422` | Validation errors |
 

@@ -34,6 +34,55 @@ end
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
+## Unreleased — `avo-api` API tokens
+
+<Option name="`super` in a `setup_authentication` override now accepts a valid API token">
+
+### Breaking Change
+
+`avo-api` ships [API tokens](./rest-api.html#authentication). The default `setup_authentication` on `BaseResourcesController` used to raise, closing the API until you replaced it. It now **accepts a request carrying a valid API token**, authenticated as that token's owner, and rejects everything else.
+
+That changes what `super` means inside an existing override.
+
+### Action Required
+
+Grep `app/controllers/avo/api/` for `setup_authentication` and check every override that calls `super`. An override that never calls it is unaffected.
+
+Drop the `super` call to opt out of tokens entirely and leave your own scheme in sole charge:
+
+```ruby
+# app/controllers/avo/api/resources/v1/base_resources_controller.rb
+def setup_authentication
+  super # [!code --]
+  authenticate_with_my_scheme!
+end
+```
+
+Keep it to accept tokens alongside your scheme — but note a token then reaches everything its owner reaches, since [a token acts as its owner](./rest-api.html#a-token-acts-as-its-owner).
+
+</Option>
+
+<Option name="`avo-api` now ships a migration">
+
+### Breaking Change
+
+The tokens table is new, and the token resource appears in the Avo sidebar by default as soon as the gem is upgraded — before the table exists.
+
+### Action Required
+
+Install it:
+
+```bash
+rails generate avo_api:install
+rails db:migrate
+```
+
+Until you do, opening the **API tokens** screen, or sending any request with an `Authorization: Bearer …` header, queries a table that isn't there and errors. This is additive to `avo_api:generate`, which still owns the resource controllers.
+
+If you don't want tokens at all, [replace the authentication hook](./rest-api.html#bring-your-own-authentication) so the token lookup never runs.
+
+</Option>
+
 ## Unreleased — browser time zone on by default
 
 <Option name="`use_browser_timezone` now defaults to `true`">
