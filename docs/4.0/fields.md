@@ -168,7 +168,17 @@ All of these fields render their value through the same collapsible wrapper (the
 
 ### Resizable editors
 
-On forms, every editor's viewport can be resized vertically by dragging its bottom-end resize handle. The height is remembered per resource and field (in the browser's local storage) and restored the next time the form renders.
+On forms, every editor's viewport can be resized vertically by dragging its bottom-end resize handle. It opens 20rem tall and never goes below 11rem. The height is remembered in the browser's local storage — scoped to the Avo mount path, the resource (or action) and the field — and restored the next time that form renders.
+
+Change the two heights by defining the CSS custom properties in a [stylesheet you register with Avo](./asset-manager):
+
+```css
+/* app/assets/stylesheets/avo_custom.css */
+:root {
+  --avo-resizable-editor-default-height: 30rem;
+  --avo-resizable-editor-min-height: 15rem;
+}
+```
 
 Custom editor fields can opt in from their field class:
 
