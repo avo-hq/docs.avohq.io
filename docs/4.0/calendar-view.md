@@ -167,7 +167,7 @@ end
 
 ## Month and week views
 
-The header's Month/Week toggle switches between a month grid and a week time grid (carried in the `calendar_period` query param). In the week view, all-day and multi-day events sit in the all-day lane at the top, and hour-based events render as blocks stretched to their duration — an event without an end renders as one hour. Overlapping events share the day column side by side, each block showing its title under the start time. The grid scrolls under a pinned day-header row and opens at 07:00.
+The header's Month/Week toggle switches between a month grid and a week time grid (carried in the `calendar_period` query param). In the week view, all-day and multi-day events sit in the all-day lane at the top, and hour-based events render as blocks stretched to their duration — an event without an end renders as one hour. Overlapping events share the day column side by side, each block showing its title under the start time. The grid scrolls under the pinned day-header row and all-day lane, and opens at 07:00.
 
 <Image src="/assets/img/4_0/calendar-view/week.webp" dark-src="/assets/img/4_0/calendar-view/week-dark.webp" width="1456" height="806" alt="The week view — event blocks stretched to their duration, three overlapping events sharing a day column side by side." />
 
