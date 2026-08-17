@@ -44,6 +44,41 @@ Hour-based events now stretch to their duration — overlapping events share the
 
 </Option>
 
+## Upgrade to 4.1.10
+
+<Option name="`code` and `easy_mde` collapse their content on `Show`">
+
+The `code` and `easy_mde` fields now render on the <Show /> view through the same collapsible wrapper the rich text fields use: the value is clipped to a short, faded preview with a **More content** link that expands it and a **Less content** link that collapses it back. They previously rendered the full value.
+
+**Action required:** None unless you want the full value visible on load. Pass `always_show: true` on the field to skip the collapsing:
+
+```ruby
+# app/avo/resources/product.rb
+field :custom_css, as: :code, always_show: true # [!code ++]
+```
+
+See [WYSIWYG & Markdown editors](./fields.html#wysiwyg-markdown-editors) for the behavior every editor field now shares.
+
+</Option>
+
+<Option name="Editors render in a bounded, resizable viewport on forms">
+
+On <Edit /> and <New />, every editor field (`trix`, `rhino`, `lexxy`, `markdown`, `easy_mde`, `tip_tap` and `code`) now renders inside a viewport that opens 20rem tall, scrolls its overflow, and can be dragged taller or shorter by its bottom-end handle. Editors previously grew with their content. Each height is stored in the browser's local storage and restored the next time that form renders.
+
+**Action required:** None. If the default size doesn't suit your content, set the heights globally in a [stylesheet you register with Avo](./asset-manager):
+
+```css
+/* app/assets/stylesheets/avo_custom.css */
+:root {
+  --avo-resizable-editor-default-height: 30rem; /* [!code ++] */
+  --avo-resizable-editor-min-height: 15rem; /* [!code ++] */
+}
+```
+
+Note that the `code` field's [`height`](./fields/code.html#height) option now only applies on the <Show /> view — on forms the viewport's height wins.
+
+</Option>
+
 ## Upgrade to 4.1.7
 
 <Option name="`config.visible` now controls Media Library access, not just the menu item">
