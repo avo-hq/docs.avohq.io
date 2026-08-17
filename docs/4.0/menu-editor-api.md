@@ -45,7 +45,7 @@ section "Resources", icon: "heroicons/outline/academic-cap" do
 end
 ```
 
-- **Options:** [`icon`](#icon), [`collapsable`](#collapsable), [`collapsed`](#collapsed), [`visible`](#visible)
+- **Options:** [`icon`](#icon), [`collapsable`](#collapsable), [`collapsed`](#collapsed), [`visible`](#visible), [`data`](#data)
 - **Default `name`:** `nil` — the name may be omitted for an unlabeled section
 
 </Option>
@@ -61,7 +61,7 @@ group "Blog", collapsable: true, collapsed: true do
 end
 ```
 
-- **Options:** [`collapsable`](#collapsable), [`collapsed`](#collapsed), [`visible`](#visible)
+- **Options:** [`collapsable`](#collapsable), [`collapsed`](#collapsed), [`visible`](#visible), [`data`](#data)
 - **Not supported:** `icon`
 
 A group automatically hides itself when every item inside it is invisible (for example, when all of them fail their `visible` checks).
@@ -387,12 +387,23 @@ resource :post, hotkey: "g p"
 
 Arbitrary `data` attributes added to the item's HTML element — for example `data: { turbo: false }` to make a link perform a regular request, or `data: { turbo_method: :delete }` to send a non-GET request.
 
+On a `section` or a `group` the attributes land on the container's root element, so they're available to a Stimulus controller that needs to reach the whole branch rather than a single link.
+
 ```ruby
 resource :users, data: { turbo: false }
+
+section "Content", data: { controller: "analytics", analytics_area_value: "content" } do
+  resource :posts
+end
 ```
 
 - **Type:** Hash
 - **Default:** `{}`
+- **Supported on:** every item type, plus `section` and `group`
+
+:::warning
+On a [`collapsable`](#collapsable) `section` or `group`, Avo sets its own `controller`, `menu_target`, `menu_key_param`, and `menu_default_collapsed_state` attributes on that same root element, and your `data` hash is merged on top of them. Reusing one of those keys overwrites Avo's value and breaks collapsing — namespace your own keys, or attach the controller to a non-collapsible container.
+:::
 
 </Option>
 

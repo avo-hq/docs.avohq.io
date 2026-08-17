@@ -199,6 +199,24 @@ Avo.configure do |config|
 end
 ```
 
+`section` and `group` take the same option, and their attributes land on the container's root element. That's the hook to reach for when a [Stimulus controller](./javascript.html) needs the whole branch — every item inside it — rather than one link.
+
+```ruby{4}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    section "Content", icon: "tabler/outline/files", data: { controller: "analytics", analytics_area_value: "content" } do
+      resource :posts
+      resource :comments
+    end
+  }
+end
+```
+
+:::warning
+A [collapsable](./menu-editor-api.html#collapsable) section or group already carries Avo's own `controller`, `menu_target`, `menu_key_param`, and `menu_default_collapsed_state` attributes on that element, and yours are merged over them. Reusing one of those keys breaks collapsing, so keep your own keys namespaced.
+:::
+
 ## Icons
 
 The [`icon`](./menu-editor-api.html#icon) option is supported on `section` and on individual menu items (`link_to`, `resource`, `dashboard`, `page`, `form`, `board`, `action`). It is not supported on `group` or on sub-items nested inside a `resource` block.
