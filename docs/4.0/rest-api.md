@@ -317,7 +317,7 @@ Scopes constrain **resources and actions**. They do not constrain rows or attrib
 :::warning Renaming a resource class orphans its grants
 Grants are stored under the Avo resource's class name (`Avo::Resources::Order`). Rename that class and the grant no longer matches anything, so the token is **refused** on the renamed resource — the safe direction, but a silent one.
 
-The panel pins the orphaned row to the top of the grid, marked as no longer a registered resource, and offers only its current level and None — so you can set it to None to drop it, and grant the new name in the same apply.
+The grid doesn't show it, and doesn't lose it. It lists only resources the token's owner can currently reach, so a grant on a class that no longer exists — or on one the owner's policies stopped letting them index — is held without a row and left untouched by every apply. Grant the new name like any other resource; **Make unrestricted** is what clears the leftovers.
 :::
 
 ## Bring your own authentication
