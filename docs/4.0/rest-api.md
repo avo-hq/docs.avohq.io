@@ -306,6 +306,7 @@ Scopes constrain **resources and actions**. They do not constrain rows or attrib
 
 - **Which records come back** is still your policy scopes' job, unchanged. A token granted Read on Orders sees exactly the orders its owner sees — no more, and no fewer.
 - **Which fields are serialized** is still the resource's per-view visibility (`only_on:` / `hide_on:`).
+- **Custom controller actions.** A grant holds the five REST actions; an action you route onto a generated controller yourself is refused for every scoped token — only an unscoped token reaches it.
 
 :::warning Renaming a resource class orphans its grants
 Grants are stored under the Avo resource's class name (`Avo::Resources::Order`). Rename that class and the grant no longer matches anything, so the token is **refused** on the renamed resource — the safe direction, but a silent one.
