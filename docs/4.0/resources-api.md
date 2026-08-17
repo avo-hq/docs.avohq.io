@@ -164,7 +164,7 @@ end
 
 Tints the resource's sidebar icon with a color from Avo's palette. Only the icon stroke is colored — the label and the hover and active backgrounds stay neutral. Use it to make a resource recognizable at a glance, or give related resources the same color to visually group them.
 
-The color follows the resource beyond the sidebar: the initials chip in the breadcrumbs is tinted too, and with [Advanced Search](./search.html) installed, so are the resource group headers in global search results (which also show the resource's `self.icon`).
+The color follows the resource beyond the sidebar: the [initials chip in the breadcrumbs](./breadcrumbs.html#color) is tinted too, and with [Advanced Search](./search.html) installed, so are the resource group headers in global search results (which also show the resource's `self.icon`).
 
 ```ruby
 class Avo::Resources::User < Avo::BaseResource
