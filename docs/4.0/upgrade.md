@@ -4,6 +4,24 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-calendar` `4.0.3`
+
+<Option name="`+N more` no longer opens the week view">
+
+In the month view, the **+N more** toggle under a crowded day now expands that week row in place to reveal every event, with a **Show less** control to fit it back. It previously navigated to that day's week view. See [Read a crowded day](./calendar-view.html#read-a-crowded-day).
+
+**Action required:** None — the behavior change is visual only, and the week view stays one click away in the header's Month/Week toggle.
+
+</Option>
+
+<Option name="Week view becomes a scrollable time grid">
+
+Hour-based events now stretch to their duration — overlapping events share the day column side by side — instead of rendering as fixed chips on their start hour, and the grid scrolls inside the viewport, opening at 07:00 under a pinned day-header row. See [Month and week views](./calendar-view.html#month-and-week-views).
+
+**Action required:** None — the change is visual only. An event without an `ends_at` renders as a one-hour block.
+
+</Option>
+
 ## Upgrade to 4.1.7
 
 <Option name="`config.visible` now controls Media Library access, not just the menu item">
@@ -34,73 +52,6 @@ end
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
-## Unreleased — `avo-calendar` month and week view changes
-
-<Option name="`+N more` no longer opens the week view">
-
-In the month view, the **+N more** toggle under a crowded day now expands that week row in place to reveal every event, with a **Show less** control to fit it back. It previously navigated to that day's week view. See [Read a crowded day](./calendar-view.html#read-a-crowded-day).
-
-**Action required:** None — the behavior change is visual only, and the week view stays one click away in the header's Month/Week toggle.
-
-</Option>
-
-<Option name="Week view becomes a scrollable time grid">
-
-Hour-based events now stretch to their duration — overlapping events share the day column side by side — instead of rendering as fixed chips on their start hour, and the grid scrolls inside the viewport, opening at 07:00 under a pinned day-header row. See [Month and week views](./calendar-view.html#month-and-week-views).
-
-**Action required:** None — the change is visual only. An event without an `ends_at` renders as a one-hour block.
-
-</Option>
-
-## Unreleased — browser time zone on by default
-
-<Option name="`use_browser_timezone` now defaults to `true`">
-
-### Breaking Change
-
-Server-side dates and times now render in [each visitor's own time zone](./customization.html#time-and-currency) by default instead of the app's `Time.zone`. Avo detects the browser's zone via a cookie; the first page a browser loads soft-reloads once through Turbo and shows a one-time alert that times are now displayed in the visitor's zone.
-
-**Action required:** None if per-visitor times are what you want — most apps do. Displayed values only change for users whose browser zone differs from the app zone; nothing about stored data changes.
-
-The option defaults to `false` in the test environment, so browser/system tests are unaffected — the first-load soft reload would otherwise race them.
-
-### Maintaining Previous Behavior
-
-Pin every visitor to the app's configured zone:
-
-```ruby
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.use_browser_timezone = false # [!code ++]
-end
-```
-
-</Option>
-
-## Unreleased — resizable sidebar
-
-<Option name="Sidebar labels truncate instead of wrapping">
-
-### Breaking Change
-
-The sidebar is now [resizable](./customization.html#resizable-sidebar), and as part of that change sidebar link, section, and group labels render on a single line with an ellipsis when they overflow, instead of wrapping onto multiple lines. The full label shows in a tooltip on hover.
-
-**Action required:** None for most apps. If your navigation relied on long labels wrapping, either shorten the labels or point users at the drag handle to widen the sidebar.
-
-Hosts with an accessibility conformance obligation can disable the drag handle with [`sidebar[:resizable]`](./customization-api.html#sidebar).
-
-</Option>
-
-<Option name="`.container-small` is now `max-width`-based">
-
-### Breaking Change
-
-`.container-small` (the wrapper around show and edit pages) used a fixed width; it now fills its container up to a `max-width` so content adapts when the sidebar is wide. If you override `.container-small`'s `width` from your own stylesheets, the new Avo-owned `max-width` now clamps it — override `max-width` instead.
-
-**Action required:** None unless you override `.container-small`.
-
-</Option>
-
 ## Upgrade to 4.1.4
 
 <Option name="The back to top pill is enabled by default">
@@ -123,6 +74,29 @@ end
 ```
 
 The direction-aware reveal is gone for good — `threshold` is now the only thing that decides when the pill shows up.
+
+</Option>
+
+<Option name="`use_browser_timezone` now defaults to `true`">
+
+### Breaking Change
+
+Server-side dates and times now render in [each visitor's own time zone](./customization.html#time-and-currency) by default instead of the app's `Time.zone`. Avo detects the browser's zone via a cookie; the first page a browser loads soft-reloads once through Turbo and shows a one-time alert that times are now displayed in the visitor's zone.
+
+**Action required:** None if per-visitor times are what you want — most apps do. Displayed values only change for users whose browser zone differs from the app zone; nothing about stored data changes.
+
+Since `4.1.8` the option defaults to `false` in the test environment, so browser/system tests are unaffected — the first-load soft reload would otherwise race them. On `4.1.4` through `4.1.7` it is on in test as well; set `config.use_browser_timezone = !Rails.env.test?` if you stay on one of those and your system specs started flaking.
+
+### Maintaining Previous Behavior
+
+Pin every visitor to the app's configured zone:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.use_browser_timezone = false # [!code ++]
+end
+```
 
 </Option>
 
@@ -149,6 +123,30 @@ end
 ```
 
 Setting it on a dashboard does not turn it on for that dashboard's cards — the two controls are independent opt-ins under the same name.
+
+</Option>
+
+## Upgrade to 4.0.20
+
+<Option name="Sidebar labels truncate instead of wrapping">
+
+### Breaking Change
+
+The sidebar is now [resizable](./customization.html#resizable-sidebar), and as part of that change sidebar link, section, and group labels render on a single line with an ellipsis when they overflow, instead of wrapping onto multiple lines. The full label shows in a tooltip on hover.
+
+**Action required:** None for most apps. If your navigation relied on long labels wrapping, either shorten the labels or point users at the drag handle to widen the sidebar.
+
+Hosts with an accessibility conformance obligation can disable the drag handle. The off-switch was `config.sidebar_resizable` on `4.0.20` and `4.0.21`; from `4.0.22` it moved into the grouped config as [`sidebar[:resizable]`](./customization-api.html#sidebar) and the old name no longer works.
+
+</Option>
+
+<Option name="`.container-small` is now `max-width`-based">
+
+### Breaking Change
+
+`.container-small` (the wrapper around show and edit pages) used a fixed width; it now fills its container up to a `max-width` so content adapts when the sidebar is wide. If you override `.container-small`'s `width` from your own stylesheets, the new Avo-owned `max-width` now clamps it — override `max-width` instead.
+
+**Action required:** None unless you override `.container-small`.
 
 </Option>
 
