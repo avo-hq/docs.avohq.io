@@ -4,6 +4,28 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to 4.1.11
+
+<Option name="`stacked: false` now opts a field out of sidebar and width stacking">
+
+### Breaking Change
+
+A field declared `stacked: false` used to be ignored in the places Avo stacks on its own — inside a `sidebar`, in the record preview, and on any field with a `width` below `100`. The field's own declaration now wins over those defaults, so such a field renders inline. See [`stacked`](./field-options-api.html#stacked).
+
+### Action Required
+
+**If you never pass `stacked: false`**, nothing changes — the defaults are untouched.
+
+**If you do**, the fields that carry it move from stacked to inline. Drop the option to keep them stacked.
+
+```ruby
+# app/avo/resources/user.rb
+field :name, as: :text, stacked: false # [!code --]
+field :name, as: :text # [!code ++]
+```
+
+</Option>
+
 ## Upgrade to 4.1.7
 
 <Option name="`config.visible` now controls Media Library access, not just the menu item">
@@ -33,28 +55,6 @@ end
 
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
-
-## Unreleased — `stacked: false` is honored everywhere
-
-<Option name="`stacked: false` now opts a field out of sidebar and width stacking">
-
-### Breaking Change
-
-A field declared `stacked: false` used to be ignored in the places Avo stacks on its own — inside a `sidebar`, in the record preview, and on any field with a `width` below `100`. The field's own declaration now wins over those defaults, so such a field renders inline. See [`stacked`](./field-options-api.html#stacked).
-
-### Action Required
-
-**If you never pass `stacked: false`**, nothing changes — the defaults are untouched.
-
-**If you do**, the fields that carry it move from stacked to inline. Drop the option to keep them stacked.
-
-```ruby
-# app/avo/resources/user.rb
-field :name, as: :text, stacked: false # [!code --]
-field :name, as: :text # [!code ++]
-```
-
-</Option>
 
 ## Unreleased — `avo-calendar` month and week view changes
 
