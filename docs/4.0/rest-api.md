@@ -557,6 +557,10 @@ sv:
 
 The whole key tree is in the gem's `config/locales/en.yml`. See [Localization](./i18n.html) for how Avo resolves keys and what else can go under `avo.`.
 
+:::info Relative times need `rails-i18n`
+The lifecycle chips say "3 minutes ago" through Rails' own `datetime.distance_in_words` strings, which Rails ships in English only. Add the [rails-i18n](https://github.com/svenfuchs/rails-i18n) gem for translated relative times — without it, chips in other languages show the exact timestamp instead.
+:::
+
 ## Reading data
 
 ### Index
