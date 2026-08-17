@@ -428,7 +428,7 @@ field :last_name,  width: 50
 Unlisted values fall back to the full row width.
 
 :::info
-Any `width` below `100` automatically marks the field as [`stacked`](#stacked).
+Any `width` below `100` automatically marks the field as [`stacked`](#stacked), unless you declare `stacked: false` yourself.
 :::
 
 </Option>
@@ -443,6 +443,8 @@ field :meta, as: :key_value, stacked: true
 
 - **Type:** Boolean
 - **Default:** `nil` — falls back to the `config.field_wrapper_layout` initializer option (`:inline` unless changed to `:stacked`)
+
+A declaration on the field always wins. Places that stack by default — sidebars, the record preview, a field with a `width` below `100` — honour `stacked: false`.
 
 </Option>
 
