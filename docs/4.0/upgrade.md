@@ -83,6 +83,39 @@ If you don't want tokens at all, [replace the authentication hook](./rest-api.ht
 
 </Option>
 
+## Unreleased — `avo-api` token scopes
+
+<Option name="A denied policy method answers `403` JSON instead of a `302` redirect">
+
+### Breaking Change
+
+Policy *methods* (`index?`, `update?`, …) returning `false` raise `Avo::NotAuthorizedError`, which Avo handled with a flash message and a redirect to your root URL — right for the HTML panel, unreadable for a JSON client. The API now renders JSON instead:
+
+```json
+{ "error": "Forbidden", "reason": "policy" }
+```
+
+A [token scope refusal](./rest-api.html#tell-the-three-refusals-apart) is also a `403`, and `reason` is what tells the two apart.
+
+**Action required:** None for most apps — this replaces a redirect no API client could act on. Two cases to check:
+
+- **A client that read the `302` as "denied"** now gets a `403`. One that followed the redirect and parsed the resulting HTML now gets JSON.
+- **A `rescue_from Avo::NotAuthorizedError` you added to your own `BaseResourcesController`** still wins over the gem's, so your response shape is unchanged. Delete it to adopt the gem's, or keep it.
+
+</Option>
+
+<Option name="Tokens can now be scoped, and are unrestricted until they are">
+
+### Breaking Change
+
+None — this is additive. Existing tokens carry no grants, and a token with no grants [reaches everything its owner can](./rest-api.html#scope-a-token), exactly as before.
+
+**Action required:** None. Worth knowing before you use it: granting a token *anything* restricts it to what you granted, including against resources you deploy later, and removing the last grant leaves a token that refuses everything rather than one that is unscoped again. **Make unrestricted** in the token's **Scopes** panel is the way back.
+
+Editing scopes is gated by an `edit_scopes?` policy method, which — like every other token policy method — [answers yes when no authorization client is configured](./rest-api.html#who-may-change-scopes).
+
+</Option>
+
 ## Unreleased — browser time zone on by default
 
 <Option name="`use_browser_timezone` now defaults to `true`">

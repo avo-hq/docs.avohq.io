@@ -9,7 +9,7 @@ outline: [2, 3]
 
 The `avo-api` add-on exposes a JSON REST API for every Avo resource. It reuses your resources' field definitions, view visibility rules, and Pundit policies, so a resource you already built for the admin panel is available over HTTP — list, read, create, update, and delete.
 
-This page covers installation, mounting, API tokens, authentication, how the current user is established, authorization, and the request/response format.
+This page covers installation, mounting, API tokens, authentication, token scopes, how the current user is established, authorization, and the request/response format.
 
 :::info Add-on
 The REST API ships as the separate `avo-api` gem. [See the add-on page →](https://avohq.io/addons/json-api)
@@ -195,9 +195,9 @@ So debug a `401` from the panel, not from the response. Check the token's **Stat
 
 ### A token acts as its owner
 
-An authenticated request runs as the token's owner, and **every policy that owner is subject to applies to it unchanged**. That is the whole access model: there is no per-token scoping, no permission ceiling, and no grant matrix to configure.
+An authenticated request runs as the token's owner, and **every policy that owner is subject to applies to it unchanged**. That is the ceiling: a token is never more powerful than the person who created it, so an administrator's token reaches everything an administrator reaches.
 
-Two things follow. A token is exactly as powerful as the person who created it — an administrator's token reaches everything an administrator reaches. And restricting what a token can do means restricting its owner, or giving it an owner with less access; see [Authorization](#authorization).
+A token can be less powerful, though. [Scopes](#scope-a-token) narrow it to a chosen set of resources and actions — always a subset of what the owner may already do, never an addition to it. A token nobody scoped reaches everything its owner does.
 
 ### Your app's own authentication still runs
 
@@ -227,6 +227,91 @@ The plaintext secret is never written to the tokens table, but it does ride the 
 :::
 
 Who may mint and revoke tokens is your app's authorization decision, and the default is permissive — see [Who may manage tokens](#who-may-manage-tokens).
+
+## Scope a token
+
+A token starts out able to do everything its owner can. **Scopes** narrow it: an allowlist, held on the token itself, of the resources it may reach and what it may do on each. Set them in the **Scopes** panel on the token's page — there's no initializer setting and nothing to configure globally, because scoping is per token.
+
+Each granted resource is held at one of two levels:
+
+| Level | API actions it permits |
+| --- | --- |
+| **Read** | `index`, `show` |
+| **Read & Write** | `index`, `show`, `create`, `update`, `destroy` |
+
+:::warning Granting one resource restricts every other one
+A token with **no grants at all** is unrestricted — it reaches everything its owner's policies allow. That's every token minted without anyone opening the panel.
+
+Grant anything, and that list becomes the whole of what the token may reach. Every resource you didn't grant is refused — **including resources your app ships later**. A deploy never widens a token; widening one is always a deliberate act in the panel.
+:::
+
+### Grant a resource
+
+The panel lists the token's current grants first, each with its level and a control to remove it. Below that, a search box finds a resource to add, and a bulk control sets every resource the owner can reach to one level in a single step — useful for "read-only across the board".
+
+Two things are never offered:
+
+- **Resources the token's owner can't reach.** The list is resolved through the owner's own policies, so an administrator scoping somebody else's token can't grant past what that person already sees.
+- **The API tokens resource itself.** It has no API endpoint at all ([why](#endpoints)), so granting it would promise something no route can keep.
+
+### Take a token back to unrestricted
+
+Removing grants one by one does not land where you started. A token whose last grant you removed is scoped to *nothing* — it refuses every request. That's a legitimate thing to want, and it is not the same as never having scoped the token at all.
+
+**Make unrestricted** is the way back: it drops every grant and returns the token to reaching everything its owner can. The panel states which of the two states a token is in, so you never have to infer it from an empty list.
+
+### Scopes sit in front of your policies, never instead of them
+
+The check runs on the way in — before any record is loaded and before your authorization runs — and it can only ever subtract. A granted request then goes through your policies and policy scopes exactly as the same request would without a token.
+
+So a token granted **Read & Write** on Orders still cannot destroy an order its owner's policy protects: the grant opens the door, the policy still decides. There is no grant that lets a token exceed its owner.
+
+Two consequences worth knowing:
+
+- **A refusal can't be used to probe for records.** Because the gate runs before anything loads, an ungranted request gets the identical response whether the id exists or not.
+- **Only gem-issued tokens are gated.** If your `setup_authentication` [replaces the built-in one](#bring-your-own-authentication) without calling `super`, no token is in flight and no scope check runs — your scheme is in sole charge.
+
+### Tell the three refusals apart
+
+A refused request answers one of three ways, and they're deliberately distinguishable:
+
+| Response | What happened | Where you fix it |
+| --- | --- | --- |
+| `401` `{ "error": "Unauthorized" }` | The credential didn't authenticate — absent, malformed, unknown, expired, revoked, or orphaned ([all identical on purpose](#token-lifecycle)) | Mint or rotate the token |
+| `403` `{ "error": "Forbidden", "reason": "token_scope" }` | The credential authenticated fine; the token's grants don't cover this resource or this action | The token's **Scopes** panel |
+| `403` `{ "error": "Forbidden", "reason": "policy" }` | The grants allow it; the owner's policy denied it | Your policy classes, or the token's owner |
+
+`reason` is the whole point of the split: it tells an operator holding the response which lever to pull — widen the token, or fix the policy — without having to reproduce the request from the panel.
+
+### Who may change scopes
+
+Editing a token's scopes is gated by its own policy method, `edit_scopes?`, exactly like [`revoke?`](#who-may-manage-tokens) gates the Revoke action:
+
+```ruby
+# app/policies/avo/api/token_policy.rb
+class Avo::Api::TokenPolicy < ApplicationPolicy
+  def edit_scopes? = user.admin?
+end
+```
+
+Denied, the panel renders the grants **read-only** rather than disappearing — so someone who can see a token can always see what it reaches, and is told plainly that they can't change it.
+
+:::danger Without an authorization client, everyone may scope every token
+`edit_scopes?` is asked through the resource's authorization service, and with no client configured every such question answers yes — the same permissive default that applies to [minting and revoking](#who-may-manage-tokens). Nothing in the gem restricts scope editing on its own.
+:::
+
+### What scopes don't cover
+
+Scopes constrain **resources and actions**. They do not constrain rows or attributes:
+
+- **Which records come back** is still your policy scopes' job, unchanged. A token granted Read on Orders sees exactly the orders its owner sees — no more, and no fewer.
+- **Which fields are serialized** is still the resource's per-view visibility (`only_on:` / `hide_on:`).
+
+:::warning Renaming a resource class orphans its grants
+Grants are stored under the Avo resource's class name (`Avo::Resources::Order`). Rename that class and the grant no longer matches anything, so the token is **refused** on the renamed resource — the safe direction, but a silent one.
+
+The panel keeps showing the orphaned row, marked as no longer a registered resource, so you can remove it and grant the new name.
+:::
 
 ## Bring your own authentication
 
@@ -367,17 +452,16 @@ Those three are configuration — miss one and the query is silently unscoped. A
 Both have one cure: make sure [`config.current_user_method`](#set-the-current-user) resolves to a real user on every API request.
 :::
 
-:::warning A denied action redirects instead of rendering JSON
-Policy *methods* (`index?`, `update?`, …) returning `false` raise `Avo::NotAuthorizedError`, which Avo handles by setting a flash message and issuing a **302 redirect** — behavior meant for the HTML admin panel. An API client sees a redirect to your root URL, not a JSON error.
+:::info A denied policy method answers `403`, and says so
+Policy *methods* (`index?`, `update?`, …) returning `false` raise `Avo::NotAuthorizedError`, which the API renders as JSON:
 
-Policy **scopes** are unaffected and are the reliable way to restrict API access. If you need JSON for denied actions, add a `rescue_from Avo::NotAuthorizedError` to your `BaseResourcesController`:
-
-```ruby
-# app/controllers/avo/api/resources/v1/base_resources_controller.rb
-rescue_from Avo::NotAuthorizedError do
-  render json: { error: "Forbidden" }, status: :forbidden
-end
+```json
+{ "error": "Forbidden", "reason": "policy" }
 ```
+
+The `reason` is what separates this from a [scope refusal](#tell-the-three-refusals-apart), which is also a `403`. Policy **scopes** are unaffected — they keep filtering the index silently, with no error at all.
+
+This used to be a **302 redirect** to your root URL, behavior meant for the HTML admin panel; see the [upgrade note](./upgrade.html). A `rescue_from Avo::NotAuthorizedError` you added to your own `BaseResourcesController` to work around that still wins, so your response shape is unchanged.
 :::
 
 ### Who may manage tokens
@@ -404,6 +488,9 @@ class Avo::Api::TokenPolicy < ApplicationPolicy
   def destroy? = mine?
   def act_on?  = true          # gates the Actions menu as a whole
   def revoke?  = mine?         # gates the Revoke action specifically
+
+  # Gates the Scopes panel — read-only where this is false. See "Scope a token".
+  def edit_scopes? = user.admin?
 
   class Scope < ApplicationPolicy::Scope
     def resolve = user.admin? ? scope.all : scope.where(owner: user)
@@ -665,8 +752,8 @@ The API returns these status codes:
 | --- | --- |
 | `200` | Success |
 | `201` | Created |
-| `302` | A policy method denied the action — a redirect, not JSON (see [Authorization](#authorization)) |
 | `401` | Authentication failed or missing — an absent, malformed, unknown, expired, revoked, or orphaned token all look the same ([why](#token-lifecycle)) |
+| `403` | Refused on permission. `reason` says which: `token_scope` (outside the token's [grants](#scope-a-token)) or `policy` (a policy method denied it) |
 | `404` | Record not found, out of policy scope, or the `avo-api` feature isn't enabled on your license |
 | `422` | Validation errors |
 
