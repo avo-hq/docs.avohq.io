@@ -275,7 +275,7 @@ field :last_name,  width: 50
 field :years_of_experience # full width
 ```
 
-Setting any `width` below `100` automatically marks the field as [`stacked`](./field-options-api.html#stacked) — the label moves above the value so the field fits the narrower column. See the [supported values](./field-options-api.html#width) in the reference.
+Setting any `width` below `100` automatically marks the field as [`stacked`](./field-options-api.html#stacked) — the label moves above the value so the field fits the narrower column. Declare `stacked: false` on the field if you'd rather keep the label beside the value. See the [supported values](./field-options-api.html#width) in the reference.
 
 ### Stack the label above the value
 
@@ -283,6 +283,12 @@ For some fields, it might make more sense to use all of the horizontal area to d
 
 ```ruby
 field :meta, as: :key_value, stacked: true
+```
+
+The option works the other way around too. Avo stacks fields on its own in a few places — inside a [`sidebar`](./fields-layout.html#move-compact-fields-to-a-sidebar), in the record preview, and whenever a field has a `width` below `100` — and `stacked: false` opts a field out of all of them.
+
+```ruby
+field :name, as: :text, stacked: false
 ```
 
 #### `inline` layout (default)
