@@ -291,7 +291,7 @@ A refused request answers one of three ways, and they're deliberately distinguis
 
 ### Who may change scopes
 
-Editing a token's scopes is gated by its own policy method, `edit_scopes?`, exactly like [`revoke?`](#who-may-manage-tokens) gates the Revoke action:
+Editing a token's scopes is gated by its own policy method, `edit_scopes?`, exactly like [`revoke?`](#what-each-policy-method-controls) gates the Revoke action:
 
 ```ruby
 # app/policies/avo/api/token_policy.rb
@@ -471,9 +471,48 @@ The `reason` is what separates this from a [scope refusal](#tell-the-three-refus
 This used to be a **302 redirect** to your root URL, behavior meant for the HTML admin panel; see the [upgrade note](./upgrade.html). A `rescue_from Avo::NotAuthorizedError` you added to your own `BaseResourcesController` to work around that still wins, so your response shape is unchanged.
 :::
 
+## Manage tokens in the panel
+
+Tokens are minted, scoped, and revoked in Avo — never over the API. The resource ships with the gem, so there is nothing to generate. Two things decide whether it works for your team: whether people can **reach** it, and what they may **do** once they are there.
+
+### Put it in the menu
+
+Out of the box, nothing to do. Avo builds the sidebar from your registered resources, so an **API tokens** entry appears on its own — already filtered by the [`index?` policy](#what-each-policy-method-controls), so a user who may not list tokens never sees it.
+
+A custom [`config.main_menu`](./menu-editor.html) replaces that generated sidebar with exactly what you list, and the entry disappears until you add it back:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.main_menu = -> {
+    # your other sections and resources
+
+    section "API", icon: "tabler/outline/plug" do
+      resource :"avo_api/token"
+    end
+  }
+end
+```
+
+The name is the resource's own path — `avo_api/token`, written as a quoted symbol because of the slash. `:token` and `:avo_api_token` don't resolve.
+
+:::warning A name that doesn't resolve is dropped in silence
+The menu builder looks the resource up and skips the item when it finds nothing — no error, no log line. The entry is simply absent from the sidebar, which looks exactly like a permissions problem. If it doesn't appear, check the name before you go auditing policies.
+:::
+
+**A hand-listed item is not policy-filtered.** The generated sidebar hides a resource whose `index?` is `false`; an item you list yourself renders for everyone, and the refusal only arrives after the click. Put the rule back with [`visible:`](./menu-editor.html#item-visibility) — the [`authorize` helper](./menu-editor.html#authorization) reuses the policy you already wrote instead of restating it:
+
+```ruby
+resource :"avo_api/token", visible: -> {
+  authorize current_user, Avo::Api::Token, "index?", raise_exception: false
+}
+```
+
 ### Who may manage tokens
 
 `avo-api` adds no setting for this. The token resource obeys your app's existing authorization exactly like any other resource, and the gem ships no policy and generates none — policy method names are configurable and the client need not be Pundit, so a supplied file would be wrong for those apps.
+
+The model is `Avo::Api::Token`, so the policy is `Avo::Api::TokenPolicy` at `app/policies/avo/api/token_policy.rb` — the ordinary derivation, with nothing registered on the resource to redirect it.
 
 :::danger Without an authorization client, every panel user can mint a token
 And a token carries its owner's full privileges over every record. If `avo-authorization` isn't installed, isn't enabled on your license, or no `config.authorization_client` is set, nothing stands between a user who can sign in to Avo and a credential that reaches your whole API. That's your app's configuration rather than anything this feature decides, but decide it deliberately.
@@ -481,32 +520,66 @@ And a token carries its owner's full privileges over every record. If `avo-autho
 
 The opposite is just as true. With [`config.explicit_authorization`](./authorization.html#explicit_authorization) at its default of `true`, a resource whose policy class is missing is **denied**, so the token resource is unreachable until you write one — the same rule that applies to every other resource in that app.
 
-Each built-in action is gated by its own policy method, and that one method controls both whether the action renders and whether it can be run — a hidden Revoke button cannot be run by a direct request either. Write the policy as you would for any model:
+### What each policy method controls
+
+Each one gates both whether the control renders and whether it can be run, so a hidden **Revoke** button can't be reached by a direct request either.
+
+| Method | What it gates |
+| --- | --- |
+| `index?` | The token list — and, in the generated sidebar, whether the **API tokens** entry appears at all |
+| `show?` | A single token's page |
+| `create?` · `new?` | Minting a token. The owner is assigned, never chosen, so this is "may you have a token", not "whose" |
+| `update?` · `edit?` | The edit form |
+| `destroy?` | Deleting the record outright — a different question from revoking it, which keeps the row |
+| `act_on?` | The Actions menu as a whole |
+| `revoke?` | The **Revoke** action. Offered only on an *active* token whatever this returns — an expired or revoked one has nothing left to withdraw |
+| `edit_scopes?` | The [Scopes](#scope-a-token) grid. Denying it renders the grid **read-only** rather than hiding it, and the form's write path strips what it refuses, so what is shown and what is accepted can't drift apart |
+
+The last three aren't Avo's standard CRUD set, but they're asked exactly the same way — through the resource's authorization service, so a client other than Pundit answers them in its own idiom, and names you remapped through [`config.authorization_methods`](./authorization.html#using-different-policy-methods) are honored.
+
+### Everyone manages their own tokens
+
+The common shape: each person mints and revokes their own credentials, administrators oversee all of them. Copy this and adjust the admin test to whatever your app uses.
 
 ```ruby
 # app/policies/avo/api/token_policy.rb
 class Avo::Api::TokenPolicy < ApplicationPolicy
-  def index?   = true
-  def show?    = true
-  def create?  = true          # anyone who may create one gets a token owned by themselves
-  def new?     = create?
+  # Open, because the Scope below is what makes "list" mean "mine". Minting is
+  # open for the same reason — a new token belongs to whoever created it.
+  def index?  = true
+  def create? = true
+  def new?    = create?
+
+  # Everything that touches a token that already exists follows ownership.
+  def show?    = mine?
   def update?  = mine?
   def edit?    = update?
   def destroy? = mine?
-  def act_on?  = true          # gates the Actions menu as a whole
-  def revoke?  = mine?         # gates the Revoke action specifically
 
-  # Gates the Scopes panel — read-only where this is false. See "Scope a token".
-  def edit_scopes? = user.admin?
+  # The Actions menu as a whole. Revoke is the only action here and gates
+  # itself, so there's nothing to gain by closing the menu around it.
+  def act_on? = true
+
+  # Revoking is permanent, and changing what a token reaches is just as
+  # consequential — both follow ownership rather than the looser browse rules.
+  def revoke?      = mine?
+  def edit_scopes? = mine?
 
   class Scope < ApplicationPolicy::Scope
-    def resolve = user.admin? ? scope.all : scope.where(owner: user)
+    def resolve
+      return scope.all if user.admin?
+
+      # `owner` is polymorphic, so this matches owner_id *and* owner_type —
+      # it works whatever your user model is called.
+      scope.where(owner: user)
+    end
   end
 
   private
 
   def mine?
     return true if user.admin?
+
     # Avo asks this against the model class, not a row, when it decides whether
     # to offer an action on an index view. There is nothing to own yet, so the
     # honest answer is "yes, in principle" — the per-record check that runs
@@ -518,13 +591,19 @@ class Avo::Api::TokenPolicy < ApplicationPolicy
 end
 ```
 
-That grants administrators every token while limiting everyone else to their own — they see, edit, and revoke the tokens they created and nothing more.
+Administrators get every token; everyone else sees, edits, and revokes the ones they created and nothing more.
 
 :::info This is one client's shape
-The example is Pundit's. Other authorization clients express the same rules their own way, and if you renamed methods through [`config.authorization_methods`](./authorization.html#using-different-policy-methods), use your names — the gem checks through the resource's authorization service, not through any particular library.
+The example is Pundit's. Other authorization clients express the same rules their own way — the gem asks through the resource's authorization service, not through any particular library.
 :::
 
-Tokens record their owner polymorphically, so `scope.where(owner: user)` works whatever your user model is called.
+### Who sees the owner
+
+The **Owner** column is part of the resource the gem ships, and it renders for anyone who can see a token. There is **no per-field policy in Avo** to turn it off for some users: field-level authorization exists only for file fields (upload, delete, download) and association frames, and a plain text field like this one has no such hook.
+
+In practice you don't need one. The `Scope` above already decides this: a non-admin only ever sees tokens they own, so the column tells them nothing they didn't know, and the only people reading somebody else's owner are the administrators who should. Scoping the list is the answer to "who sees the owner", not a field option.
+
+If you genuinely must change the field list, a file at `app/avo/resources/avo_api/token.rb` in your own app takes precedence over the gem's copy. Weigh it first: it **replaces** the resource rather than extending it, so the one-time reveal, the scopes grid, the lifecycle strip, and every field become yours to maintain against future versions of the gem. Scoping is almost always the better trade.
 
 ## Works better with
 
