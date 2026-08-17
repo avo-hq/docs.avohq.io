@@ -230,7 +230,7 @@ Who may mint and revoke tokens is your app's authorization decision, and the def
 
 ## Scope a token
 
-A token starts out able to do everything its owner can. **Scopes** narrow it: an allowlist, held on the token itself, of the resources it may reach and what it may do on each. Set them in the **Scopes** panel on the token's page — there's no initializer setting and nothing to configure globally, because scoping is per token.
+A token starts out able to do everything its owner can. **Scopes** narrow it: an allowlist, held on the token itself, of the resources it may reach and what it may do on each. Set them in the **Scopes** panel — on the token's page, and on the create and edit forms — there's no initializer setting and nothing to configure globally, because scoping is per token.
 
 Each granted resource is held at one of two levels:
 
@@ -247,18 +247,24 @@ Grant anything, and that list becomes the whole of what the token may reach. Eve
 
 ### Grant a resource
 
-The panel lists the token's current grants first, each with its level and a control to remove it. Below that, a search box finds a resource to add, and a bulk control sets every resource the owner can reach to one level in a single step — useful for "read-only across the board".
+Every resource the token's owner can reach is a row, set to **None**, **Read**, or **Read & Write**. None means not granted — there's no separate list of grants and nothing to remove.
 
-Two things are never offered:
+Above the rows, a search box narrows the list as you type, and **Set all shown** applies one level to whatever the search is currently showing: "read-only across the board" is one click, "read-only on everything matching `order`" is a search away.
 
-- **Resources the token's owner can't reach.** The list is resolved through the owner's own policies, so an administrator scoping somebody else's token can't grant past what that person already sees.
+Clicking a level changes nothing on its own. The moment the grid differs from what's stored, **Apply changes** and **Undo** appear — Apply writes the whole grid at once, Undo snaps back. On the create and edit forms it's the same grid, and your **Save** is what commits it, so a token can be scoped as it's minted rather than sitting unrestricted until you come back to it.
+
+An unrestricted token shows one line instead of the grid. **Fine-tune** opens it with every row already at Read & Write — which is what unrestricted means for this owner — so you narrow from there instead of building the list up from nothing. Nothing is stored until you apply or save.
+
+Two things never get a row:
+
+- **Resources the token's owner can't reach.** The rows are resolved through the owner's own policies, so an administrator scoping somebody else's token can't grant past what that person already sees.
 - **The API tokens resource itself.** It has no API endpoint at all ([why](#endpoints)), so granting it would promise something no route can keep.
 
 ### Take a token back to unrestricted
 
-Removing grants one by one does not land where you started. A token whose last grant you removed is scoped to *nothing* — it refuses every request. That's a legitimate thing to want, and it is not the same as never having scoped the token at all.
+Setting every row to None does not land where you started. A token with nothing granted is scoped to *nothing* — it refuses every request. That's a legitimate thing to want, and it is not the same as never having scoped the token at all.
 
-**Make unrestricted** is the way back: it drops every grant and returns the token to reaching everything its owner can. The panel states which of the two states a token is in, so you never have to infer it from an empty list.
+**Make unrestricted** is the way back: it drops every grant and returns the token to reaching everything its owner can. The panel says which of the two states a token is in rather than leaving you to infer it — a collapsed **Unrestricted** line, or a footer counting what's granted against what could be.
 
 ### Scopes sit in front of your policies, never instead of them
 
@@ -294,7 +300,7 @@ class Avo::Api::TokenPolicy < ApplicationPolicy
 end
 ```
 
-Denied, the panel renders the grants **read-only** rather than disappearing — so someone who can see a token can always see what it reaches, and is told plainly that they can't change it.
+Denied, the panel renders the grid **read-only** rather than disappearing — so someone who can see a token can always see what it reaches, and is told plainly that they can't change it.
 
 :::danger Without an authorization client, everyone may scope every token
 `edit_scopes?` is asked through the resource's authorization service, and with no client configured every such question answers yes — the same permissive default that applies to [minting and revoking](#who-may-manage-tokens). Nothing in the gem restricts scope editing on its own.
@@ -311,7 +317,7 @@ Scopes constrain **resources and actions**. They do not constrain rows or attrib
 :::warning Renaming a resource class orphans its grants
 Grants are stored under the Avo resource's class name (`Avo::Resources::Order`). Rename that class and the grant no longer matches anything, so the token is **refused** on the renamed resource — the safe direction, but a silent one.
 
-The panel keeps showing the orphaned row, marked as no longer a registered resource, so you can remove it and grant the new name.
+The panel pins the orphaned row to the top of the grid, marked as no longer a registered resource, and offers only its current level and None — so you can set it to None to drop it, and grant the new name in the same apply.
 :::
 
 ## Bring your own authentication
