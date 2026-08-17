@@ -526,6 +526,13 @@ The example is Pundit's. Other authorization clients express the same rules thei
 
 Tokens record their owner polymorphically, so `scope.where(owner: user)` works whatever your user model is called.
 
+## Works better with
+
+Nothing on this page needs another add-on. Two of them change what the feature can do.
+
+- **[`avo-authorization`](./authorization.html)** — the layer every question here defers to. It decides which tokens a user sees on the index, whether they may revoke one (`revoke?`) or change what it reaches (`edit_scopes?`), and it is what makes scopes *subtractive*: a scope narrows what a token's owner could already do and can never widen it. Without it, Avo's authorization service answers `true` to every question and hands the index query back unfiltered — [Authorization](#authorization) has the exact failure modes.
+- **[`avo-custom_controls`](./custom-controls.html)** — promotes **Revoke** out of the Actions dropdown. On a token's page it becomes a button beside Edit; on the index it becomes an icon at the end of every row, so working down a list of tokens costs one click each instead of a round trip. It appears only where the Actions menu would have offered it anyway — the control is filtered by the same `revoke?` policy and the same active-token check, so an expired or already-revoked token shows nothing.
+
 ## Reading data
 
 ### Index
