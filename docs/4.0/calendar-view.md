@@ -14,7 +14,7 @@ Display a resource's records on a month or week calendar, right on the <Index />
 ## Requirements
 
 - Avo 4
-- `avo-calendar` gem (paid add-on)
+- `avo-calendar_view` gem (paid add-on)
 
 ## Installation
 
@@ -22,7 +22,7 @@ Display a resource's records on a month or week calendar, right on the <Index />
 
 ```ruby
 # Gemfile
-gem "avo-calendar", source: "https://packager.dev/avo-hq/"
+gem "avo-calendar_view", source: "https://packager.dev/avo-hq/"
 ```
 
 Then run `bundle install`.
