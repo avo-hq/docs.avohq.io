@@ -593,6 +593,36 @@ end
 
 Administrators get every token; everyone else sees, edits, and revokes the ones they created and nothing more.
 
+#### Freezing a revoked token
+
+Revocation is permanent, and a revoked token can never authenticate again whatever its expiry says — so editing one changes only what a dead credential would have been allowed to do. Some teams would rather it stopped being editable at all, which is a policy question rather than a gem rule: your app decides whether a finished token is a record to close or one to keep annotating.
+
+Add it to the same policy — `record.try(:revoked_at)` rather than `record.revoked_at?`, for the reason `mine?` guards against above:
+
+```ruby
+class Avo::Api::TokenPolicy < ApplicationPolicy
+  # …everything above, plus:
+
+  # `try`, because Avo asks these against the model *class* on an index view,
+  # and a class has no `revoked_at`. On the class this is nil, so the rule
+  # falls through to ownership and the per-record check decides.
+  def edit?        = update?
+  def update?      = mine? && !revoked?
+  def destroy?     = mine? && !revoked?
+  def edit_scopes? = mine? && !revoked?
+
+  private
+
+  def revoked? = record.try(:revoked_at).present?
+end
+```
+
+With that in place the Edit button disappears from a revoked token, its scopes grid renders read-only, and a crafted request to either is refused — the panel and the tool ask the same policy, so there is one answer and no way around it. Leave `show?` alone: reading what a revoked token used to reach is exactly what someone investigating it needs.
+
+:::warning Expiry is not revocation
+Resist adding `expires_at` to that rule. An expiry can be extended, so a lapsed token can be brought back — and it needs its name, expiry and scopes editable in order to come back usefully. Revocation has no such path: the model refuses to un-revoke.
+:::
+
 :::info This is one client's shape
 The example is Pundit's. Other authorization clients express the same rules their own way — the gem asks through the resource's authorization service, not through any particular library.
 :::
