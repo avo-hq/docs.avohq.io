@@ -7,7 +7,7 @@ outline: [2, 3]
 
 # Calendar view
 
-Display a resource's records on a month or week calendar, right on the <Index /> view. Hour-based events show their start time — and stretch to their duration in the week view — all-day events render as filled bars (and land in the week view's all-day lane), and multi-day events span every day they cover. Clicking an event opens a preview popover with the fields marked `show_on: :preview`.
+Display a resource's records on a month or week calendar, right on the <Index /> view. Hour-based events show their start time behind a dot of their color — and stretch to their duration in the week view — all-day events render as filled bars (and land in the week view's all-day lane), and multi-day events span every day they cover as filled pills. Clicking an event opens a preview popover with the fields marked `show_on: :preview`.
 
 <Image src="/assets/img/4_0/calendar-view/month.webp" dark-src="/assets/img/4_0/calendar-view/month-dark.webp" width="1175" height="771" alt="The month calendar — timed event chips, a month-long all-day bar, a multi-day event spanning three days, and the Month/Week switcher." />
 
@@ -125,7 +125,7 @@ Renders Monday–Friday only. Events falling on a weekend are not displayed.
 
 <Option name="`color`">
 
-A proc returning the chip's color token, evaluated with `record` in scope. Valid tokens: `:blue`, `:green`, `:red`, `:orange`, `:purple`, `:pink`, `:teal`, `:gray` — anything else renders the default chip.
+A proc returning the chip's color token, evaluated with `record` in scope. Valid tokens: `:blue`, `:green`, `:red`, `:orange`, `:purple`, `:pink`, `:teal`, `:gray` — anything else renders the default chip. The color tints filled pills and sets the dot on single-day hour-based chips.
 
 - **Type:** Proc
 - **Default:** `nil` (neutral chips)
@@ -151,6 +151,8 @@ The event kind is inferred from the column type:
 
 - a `date` column renders **all-day** chips
 - a `datetime` column renders **hour-based** chips with an `HH:MM` label
+
+On the month grid, an hour-based event that fits one day renders unfilled with a dot of its color — the way calendar apps mark timed events — while all-day and multi-day events keep the filled bar.
 
 ```ruby
 class Avo::Resources::Holiday < Avo::BaseResource
