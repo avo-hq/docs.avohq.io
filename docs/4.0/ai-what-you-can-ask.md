@@ -135,6 +135,16 @@ Start a chat from a record's page and "this" is already resolved — for the who
 
 A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it. See [The record you start from](./ai.html#the-record-you-start-from).
 
+## Ask about the Media Library file you're on
+
+Open a file in the [Media Library](./media-library.html) and start a chat there, and "this" is that file — no blob id to copy:
+
+- **"What is this?"**
+- **"Where is this used?"**
+- **"Attach it to the latest post's cover"**
+
+The same ribbon names the file, with its thumbnail. See [The Media Library file you start from](./ai.html#the-media-library-file-you-start-from).
+
 ## Ask about a file you sent
 
 Attach files to your message — paperclip, drag, or paste — and ask about them directly:

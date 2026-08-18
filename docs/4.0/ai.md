@@ -416,7 +416,19 @@ The wording lives in a prompt file like the rest, so you can change how the assi
 bin/rails generate avo:ai:eject instructions
 ```
 
-Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives an `attached_record` local — `{resource:, record_id:, label:}`, or `nil` when the conversation wasn't started from a record — and rendering nothing is a valid way to turn the feature off.
+Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives an `attached_record` local — `{resource:, record_id:, label:}`, or `nil` when the conversation wasn't started from a record — and rendering nothing is a valid way to turn the feature off. The same file receives `attached_file` for the Media Library case below.
+
+## The Media Library file you start from
+
+The [Media Library](./media-library.html) is the other place where the page is about one thing, so it works the same way. Open a file and start a chat, and the assistant knows which file you mean:
+
+- **"What is this?"**
+- **"Where is this used?"**
+- **"Attach it to the latest post's cover"**
+
+The ribbon names the file — its thumbnail, "Media Library", and the filename — and the ✕ and the toggle next to send behave exactly as they do for a record. The file stays attached for the whole conversation, and the index of files isn't a single file, so no ribbon appears there.
+
+Only the file's id is kept. It's resolved again on every message, behind the same gate as the Media Library itself: turn the library off, or write a `visible` block that withholds it from someone, and the file drops out of their prompts on the next message. The filename in the prompt is read fresh each time, so renaming a file is picked up immediately.
 
 ## Open the chat
 
