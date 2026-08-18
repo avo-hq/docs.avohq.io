@@ -28,13 +28,15 @@ gem "avo-api", source: "https://packager.dev/avo-hq/"
 bundle install
 ```
 
-Then generate the controllers:
+Then install:
 
 ```bash
-rails generate avo_api:generate
+rails generate avo_api:install
 ```
 
-This creates one controller per Avo resource under `app/controllers/avo/api/resources/v1/`, plus a `BaseResourcesController` that all of them inherit from. The base controller is where you put authentication and any global customization.
+This creates one controller per Avo resource under `app/controllers/avo/api/resources/v1/`, plus a `BaseResourcesController` that all of them inherit from, and the migration for the API tokens table. The base controller is where you put authentication and any global customization.
+
+Two narrower generators exist for later: `avo_api:generate` regenerates the controllers alone, and `avo_api:tokens` adds the tokens table to an app that already has controllers.
 
 :::danger The generator is required, not optional
 The API's routes are drawn by globbing your app's `app/controllers/avo/api/resources/*` directory. If you never run the generator, that directory doesn't exist, the glob returns nothing, and **no API routes are drawn at all** — every request 404s. There is no catch-all controller that serves resources you haven't generated.
@@ -45,22 +47,28 @@ The same applies to resources you add later: generate a controller for each new 
 Pass `--version` to namespace under something other than `v1`:
 
 ```bash
-rails generate avo_api:generate --version v2
+rails generate avo_api:install --version v2
 ```
 
 ### Install the API tokens table
 
-Then install the credential store:
+`avo_api:install` above already wrote the migration for the `avo_api_tokens` table, so a first install needs only:
 
 ```bash
-rails generate avo_api:install
 rails db:migrate
 ```
 
-This writes one migration, creating the `avo_api_tokens` table. There is no initializer setting, environment variable, or credential to add — the feature needs none.
+**Already running the API from an earlier version?** Your app has controllers but no tokens table. Add it without touching them:
 
-:::info This step is additive
-`avo_api:install` does not replace `avo_api:generate`. One delivers the resource controllers, the other the tokens table, and a working API wants both. Skip it only if your app brings its own credential scheme and wants no tokens at all — and then [replace the authentication hook](#bring-your-own-authentication) too, so nothing goes looking for a token that can't exist.
+```bash
+rails generate avo_api:tokens
+rails db:migrate
+```
+
+There is no initializer setting, environment variable, or credential to add — the feature needs none. Running it twice is a no-op rather than an error.
+
+:::info Skipping tokens entirely
+Only if your app brings its own credential scheme. Then [replace the authentication hook](#bring-your-own-authentication) too, so nothing goes looking for a token that cannot exist.
 :::
 
 ## Mount the API
@@ -225,6 +233,17 @@ Three rules, two of them above: send it only over TLS, and treat a token that ha
 :::warning The one-time reveal transits your session store
 The plaintext secret is never written to the tokens table, but it does ride the flash from the create request to the page that displays it. That means it passes through whatever session store the app is configured with. Rails' default cookie store keeps it in the visitor's own encrypted cookie; a **server-side store writes it to disk** (or to Redis) for that one hop. The page itself is sent `Cache-Control: no-store` and opts out of Turbo's snapshot cache, but neither reaches your session store.
 :::
+
+### How the secret is stored
+
+**The token itself is never stored.** The table keeps a SHA-256 digest of it and a short leading slice for display — nothing a database dump, a backup, a replica, or a leaked SQL log can be turned back into a working credential. Authentication hashes what arrives and looks the digest up, so the plaintext exists only in transit and in whatever the caller saved it to.
+
+A few consequences worth knowing:
+
+- **A leaked database yields no usable tokens.** Reversing SHA-256 is not feasible, and neither is guessing: a secret is 43 random alphanumeric characters, about 256 bits of entropy, so there is no dictionary or rainbow table to try. Rotation after a leak is prudent, not urgent.
+- **No pepper or key to manage.** Peppering defends short, low-entropy secrets like passwords. These are neither, so the digest is unkeyed — nothing to configure, nothing to rotate, nothing that breaks every token if it is lost.
+- **Nothing can show a secret again.** Not the panel, not a console, not support. If it was not copied at creation, mint a replacement and revoke the old one.
+- **The digest column is uniquely indexed**, so the lookup is a single indexed read and two tokens cannot collide.
 
 Who may mint and revoke tokens is your app's authorization decision, and the default is permissive — see [Who may manage tokens](#who-may-manage-tokens).
 
@@ -846,9 +865,15 @@ end
 
 ## Custom controllers
 
-`rails generate avo_api:generate` creates every controller for you. Two narrower generators exist for later use:
+`rails generate avo_api:install` creates every controller for you, along with the tokens table. Narrower generators exist for later use:
 
 ```bash
+# Controllers and the base controller, without touching the tokens table
+rails generate avo_api:generate
+
+# The tokens table, without touching the controllers
+rails generate avo_api:tokens
+
 # One controller for a single resource
 rails generate avo_api:controller User
 
