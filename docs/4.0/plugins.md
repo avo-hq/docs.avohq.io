@@ -238,7 +238,9 @@ Avo.configuration.feed_view.items_per_page # => 50
 Register the configuration from an engine initializer ordered `before: :load_config_initializers` (or at require time) — **not** from the `avo_boot` hook. The app's `config/initializers/avo.rb` reads the accessor while initializers run, which is before Avo boots, so registering any later blows up in the app's own initializer.
 :::
 
-Namespaces are exclusive. `register_configuration` raises an `ArgumentError` if the name collides with a method `Avo::Configuration` already defines, or with a namespace another plugin took first. Re-registering the same name with the same class is fine, so a boot that happens more than once is harmless.
+Namespaces are exclusive. `register_configuration` raises an `ArgumentError` if the name collides with a method `Avo::Configuration` defines itself, or with a namespace another plugin took first. Re-registering the same name with the same class is fine, so a boot that happens more than once is harmless.
+
+Only Avo's own options count as collisions. Gems that mix helpers into every object don't reserve a namespace: `amazing_print` defines `Kernel#ai`, so `Avo::Configuration` responds to `ai` in any app that bundles it, but the name is still yours to take — shadowing a global helper on the configuration object is harmless. <VersionReq version="4.1.9" />
 
 Instances are memoized per configuration object, which means replacing `Avo.configuration` resets your plugin's config along with everything else — useful when you need a clean slate in tests.
 

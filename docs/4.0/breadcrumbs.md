@@ -128,6 +128,22 @@ add_breadcrumb title: @resource.record_title, avatar: @resource.avatar
 
 </Option>
 
+<Option name="`color`" headingSize="3">
+
+Tints the crumb's initials chip with a color from Avo's palette. Only the chip is colored — the title, the icon, and an image `avatar` are unaffected — so it's the breadcrumb counterpart of the color you give a resource's sidebar icon.
+
+```ruby
+add_breadcrumb title: "John Doe", initials: "JD", color: :purple, path: avo.resources_user_path(@user)
+```
+
+- **Type:** Symbol or String — one of `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
+- **Default:** `nil` — the neutral chip color
+- **Note:** an unknown color name renders the neutral chip, as if no color was given
+
+Colors adapt automatically to the light and dark themes. Avo passes this by hand only on custom crumbs — resource crumbs are tinted for you from the resource's [`self.color`](./resources-api.html#self.color).
+
+</Option>
+
 ## Breadcrumbs for custom pages
 
 Add breadcrumbs to a [custom page](./custom-tools.html) from its controller action:

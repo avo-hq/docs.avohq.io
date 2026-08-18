@@ -46,7 +46,9 @@ Customize the syntax highlighting using the language method.
 
 <Option name="`height`">
 
-Customize the height of the editor.
+Customize the height of the editor on the <Show /> view.
+
+On <Edit /> and <New /> the editor renders in a [resizable viewport](./../fields.html#resizable-editors) instead, so this option doesn't apply there — the height comes from the viewport's default (or whatever height the user last dragged it to).
 
 #### Default value
 

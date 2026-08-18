@@ -43,35 +43,29 @@ bin/rails generate avo:ai install
 bin/rails db:migrate
 ```
 
-This creates the `avo_ai_*` tables and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
-
-:::warning Already installed an earlier alpha?
-The installer only ever writes the initial migration, so a schema created by an earlier version won't pick up columns added since. Two are current, both on `avo_ai_chats`: `attached_context` stores [the record the chat was started from](#the-record-you-start-from), and `responding_at` tracks [whether a chat is being answered right now](#while-the-assistant-is-replying). Add them by hand:
-
-```bash
-bin/rails generate migration AddAttachedContextToAvoAiChats attached_context:jsonb
-bin/rails generate migration AddRespondingAtToAvoAiChats responding_at:datetime
-bin/rails db:migrate
-```
-
-Without them, starting a chat raises on the unknown attribute.
-:::
+This creates the `avo_ai_*` tables — plus RubyLLM 2.0's internal `ruby_llm_*` tables (model registry, tool calls, usage ledger, batches), unless the app already has them — and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
 
 ### 3. Set your provider API key
 
-The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by default and pins `model_registry_class` to `Avo::Ai::Model` — that setting is required, don't remove it.
+The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by default.
 
 ```ruby
 RubyLLM.configure do |config|
   config.openai_api_key = ENV.fetch("OPENAI_API_KEY", nil) # [!code focus]
   # config.anthropic_api_key = ENV.fetch("ANTHROPIC_API_KEY", nil)
   # config.gemini_api_key = ENV.fetch("GEMINI_API_KEY", nil)
-
-  config.model_registry_class = "Avo::Ai::Model"
 end
 ```
 
 Store the key in your environment or `Rails.application.credentials` — never hardcode it in the initializer.
+
+Then load RubyLLM's model registry, and re-run it periodically (or call `RubyLLM.models.refresh!`) to keep model labels and pricing current:
+
+```bash
+bin/rails ruby_llm:load_models
+```
+
+Later refreshes don't need the terminal: the Models resource (added to the menu below) ships a standalone **Refresh models** action that pulls the published catalog plus the latest models from every configured provider. There's nothing to restart after a refresh — a background job that meets a model its process doesn't know yet re-reads the registry and retries on its own.
 
 ### 4. Add the admin resources to the menu
 
@@ -81,7 +75,6 @@ In `config/initializers/avo.rb`, inside the `config.main_menu` block:
 section "AI", icon: "heroicons/outline/sparkles" do
   resource "avo_ai/chats"
   resource "avo_ai/messages"
-  resource "avo_ai/tool_calls"
   resource "avo_ai/models"
 end
 ```
@@ -548,9 +541,7 @@ end
 ```
 
 :::info Why the namespace is `Avo::Ai`, not `Avo::AI`
-The constant is spelled `Avo::Ai` on purpose — it's what Rails derives from the `avo/ai` path on its own. Early alphas used `Avo::AI`, and that acronym never came for free: Zeitwerk camelizes `ai` to `Ai`, so every app defining its own classes in the namespace — exactly what you're doing here with `app/policies/avo/ai/chat_policy.rb` — had to add an inflection to its `config/initializers/inflections.rb` to make the constant resolve. With standard camelization there is nothing to configure.
-
-Upgrading from an earlier alpha? Rename `Avo::AI` to `Avo::Ai` wherever your app references it (policies, ejected prompts, `model_registry_class` in `config/initializers/ruby_llm.rb`) and delete any `inflect("ai" => "AI")` line you added for the gem.
+The constant is spelled `Avo::Ai` on purpose — it's what Rails derives from the `avo/ai` path on its own. An acronym constant never comes for free: Zeitwerk camelizes `ai` to `Ai`, so every app defining its own classes in the namespace — exactly what you're doing here with `app/policies/avo/ai/chat_policy.rb` — would need an inflection in its `config/initializers/inflections.rb` to make the constant resolve. With standard camelization there is nothing to configure.
 :::
 
 Each entry names a RubyLLM registry model, and `provider:` says which provider serves it. Browse what your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all.map { |m| [m.id, m.provider] }`.
