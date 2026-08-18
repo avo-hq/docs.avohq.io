@@ -45,10 +45,6 @@ bin/rails db:migrate
 
 This creates the `avo_ai_*` tables — plus RubyLLM 2.0's internal `ruby_llm_*` tables (model registry, tool calls, usage ledger, batches), unless the app already has them — and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
 
-:::warning Installed an earlier alpha (ruby_llm 1.x)?
-The schema changed with ruby_llm 2.0: the app-owned models and tool-calls tables are gone, token columns moved into RubyLLM's usage ledger, and the chat's model is stored as plain `model_id`/`provider` strings. Earlier alphas ran on a pre-2.0 schema with no upgrade path shipped — drop the old `avo_ai_*` tables and reinstall.
-:::
-
 ### 3. Set your provider API key
 
 The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by default.
@@ -545,9 +541,7 @@ end
 ```
 
 :::info Why the namespace is `Avo::Ai`, not `Avo::AI`
-The constant is spelled `Avo::Ai` on purpose — it's what Rails derives from the `avo/ai` path on its own. Early alphas used `Avo::AI`, and that acronym never came for free: Zeitwerk camelizes `ai` to `Ai`, so every app defining its own classes in the namespace — exactly what you're doing here with `app/policies/avo/ai/chat_policy.rb` — had to add an inflection to its `config/initializers/inflections.rb` to make the constant resolve. With standard camelization there is nothing to configure.
-
-Upgrading from an earlier alpha? Rename `Avo::AI` to `Avo::Ai` wherever your app references it (policies, ejected prompts) and delete any `inflect("ai" => "AI")` line you added for the gem.
+The constant is spelled `Avo::Ai` on purpose — it's what Rails derives from the `avo/ai` path on its own. An acronym constant never comes for free: Zeitwerk camelizes `ai` to `Ai`, so every app defining its own classes in the namespace — exactly what you're doing here with `app/policies/avo/ai/chat_policy.rb` — would need an inflection in its `config/initializers/inflections.rb` to make the constant resolve. With standard camelization there is nothing to configure.
 :::
 
 Each entry names a RubyLLM registry model, and `provider:` says which provider serves it. Browse what your app knows about through the **Models** resource in the sidebar, or in the console with `RubyLLM.models.chat_models.all.map { |m| [m.id, m.provider] }`.
