@@ -133,7 +133,14 @@ Start a chat from a record's page and "this" is already resolved — for the who
 - **"Set its status to active"**
 - **"Is anything missing here?"**
 
-A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it. See [The record you start from](./ai.html#the-record-you-start-from).
+A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it.
+
+Walked to another record since? Press the button next to send and it joins the same conversation, so you can say:
+
+- **"Move this one under that project too"**
+- **"Give it the same status as the one we just looked at"**
+
+See [The record you start from](./ai.html#the-record-you-start-from).
 
 ## Ask about a file you sent
 

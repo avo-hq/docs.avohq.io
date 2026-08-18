@@ -404,11 +404,25 @@ Start a conversation from a record's page and the assistant already knows which 
 
 A ribbon above the composer names the record, so it's never a guess: the resource and the record's title, sitting behind the message box. On pages that aren't a single record — an index, a dashboard, a new-record form — there is no ribbon and no button, because there is nothing to attach.
 
-**The record stays attached for the whole conversation.** It's the record the chat was *started from*, so you're asked once, when the chat begins — that's why the ribbon is on the new-chat composer only. Every later message still resolves "this record", "it", or a question with no subject at all against the same record. Ask "what is this?" as the fifth message and it works exactly as it does as the first.
+**The record stays attached for the whole conversation.** Every later message still resolves "this record", "it", or a question with no subject at all against it. Ask "what is this?" as the fifth message and it works exactly as it does as the first.
 
 Dismiss the ribbon with the ✕ at its end and the chat starts without it. The button next to send toggles it back on, and lights up whenever the record is attached, so the ribbon and the button always agree about what the chat will carry. Every fresh compose view offers the record again: the ✕ applies to the chat you're writing, not to the feature.
 
-It respects your policies, on every message. Only a reference is kept — the resource name and the record id, never the title or any field value. That reference is resolved again on each turn, through the same authorization the assistant's other tools use (`index?` plus your Pundit scope), and the record's title is read fresh at that moment. So a record the user loses access to, or that gets deleted mid-conversation, simply drops out of the prompt instead of lingering as a stale copy of something they can no longer see. The attachment is only a starting point either way — every read and write the assistant then performs is authorized on its own.
+The message that brought a record in shows it, right above what you typed — so scrolling back through a conversation tells you which record joined it where.
+
+### Adding another record mid-conversation
+
+A conversation isn't stuck with the record it started from. Keep the chat window open, walk to another record's page, and the composer offers that record too: press the button next to send, and it goes along with your next message.
+
+That's what makes "move this one under that parent as well" work. The parent is already in the conversation, the record you just opened joins it, and both stay in play — the assistant acts on the one you attached most recently when you say "this" or "it", and can still reach the earlier ones when you name them.
+
+Inside an open conversation the record is only ever *offered*: the ribbon stays down until you put it up, so leaving a chat window open while you walk through the admin doesn't quietly attach every record you pass. It also comes back down once the message is sent — the conversation keeps the record from then on, so there's nothing to re-attach.
+
+### Authorization
+
+It respects your policies, on every message. Only a reference is kept — the resource name and the record id, never the title or any field value. That reference is resolved again on each turn, through the same authorization the assistant's other tools use (`index?` plus your Pundit scope), and the record's title is read fresh at that moment. So a record the user loses access to, or that gets deleted mid-conversation, simply drops out of the prompt instead of lingering as a stale copy of something they can no longer see. The same check runs before a record is attached at all, so a hand-rolled request can only ever name a record that user could already open in the admin. The attachment is only a starting point either way — every read and write the assistant then performs is authorized on its own.
+
+### Change the wording
 
 The wording lives in a prompt file like the rest, so you can change how the assistant treats it:
 
@@ -416,7 +430,12 @@ The wording lives in a prompt file like the rest, so you can change how the assi
 bin/rails generate avo:ai:eject instructions
 ```
 
-Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives an `attached_record` local — `{resource:, record_id:, label:}`, or `nil` when the conversation wasn't started from a record — and rendering nothing is a valid way to turn the feature off.
+Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives two locals:
+
+- `attached_records` — every record attached to the conversation, oldest first, each `{resource:, record_id:, label:}`. Empty when nothing is attached.
+- `attached_record` — the last of them, which is the one "this" resolves to. `nil` when nothing is attached.
+
+Rendering nothing is a valid way to turn the feature off.
 
 ## Open the chat
 
