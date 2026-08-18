@@ -271,7 +271,7 @@ Every field has two layout modes for how its label sits relative to its value. *
 field :meta, as: :key_value, stacked: true
 ```
 
-Fields inside a `sidebar` are stacked automatically. To stack every field across the app, set `config.field_wrapper_layout = :stacked`. See [`stacked`](./field-options-api#stacked) in the field options reference and [global stacked layout](./field-options#global-stacked-layout) in the guide for the full details.
+Fields inside a `sidebar` are stacked automatically — pass `stacked: false` on a field to keep its label beside the value. To stack every field across the app, set `config.field_wrapper_layout = :stacked`. See [`stacked`](./field-options-api#stacked) in the field options reference and [global stacked layout](./field-options#global-stacked-layout) in the guide for the full details.
 
 ## Multi-column rows with `width`
 

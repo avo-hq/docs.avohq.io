@@ -204,7 +204,42 @@ The delay before a keystroke fires the search request is controlled by [`config.
 
 ## Custom search providers
 
-When the [`query`](#query) proc returns an Array instead of a relation, each element must be a hash with this structure:
+Only [global search](#global-search-configuration) and [searchable associations](./associations/searchable) accept an Array. Both render the hashes directly as a result list. The resource index search bar and the [kanban board](./kanban-boards) card picker do not — they build a table from database records, sorting, filtering, scoping, and paginating the result, so they require an `ActiveRecord::Relation`.
+
+| Surface | Array | Relation |
+|---|---|---|
+| Global search (⌘K palette and its results page) | Yes | Yes |
+| [Searchable associations](./associations/searchable) | Yes | Yes |
+| Resource index search bar | No | Yes |
+| [Kanban board](./kanban-boards) card picker | No | Yes |
+
+:::warning
+Returning an Array to the resource index raises `NoMethodError: undefined method 'order' for an instance of Array`. Typing in the index search box hides that error — the request fails and the list silently keeps showing the previous, unfiltered rows.
+:::
+
+Branch on [`search_type`](#search_type) so the Array is only returned where it is rendered, and every other surface gets a relation:
+
+```ruby
+# app/avo/resources/comment.rb
+self.search = {
+  query: -> do
+    case search_type
+    when :global, :association
+      [
+        {_id: 1, _label: "Record One", _url: "https://example.com/1"},
+        {_id: 2, _label: "Record Two", _url: "https://example.com/2"},
+        {_id: 3, _label: "Record Three", _url: "https://example.com/3"}
+      ]
+    else # the resource index and kanban card picker — these require a relation
+      query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+    end
+  end
+}
+```
+
+Branching this way round matters: the relation is the fallback, so a surface that doesn't inject `search_type` still gets a query it can use.
+
+When the [`query`](#query) proc returns an Array, each element must be a hash with this structure:
 
 ```ruby
 {

@@ -169,3 +169,7 @@ field :body, as: :markdown, extra_preview_params: { foo: :bar }
 </Option>
 
 <!-- @include: ./../common/field_options/always_show.md-->
+
+:::info
+The collapsed preview is rendered by the Marksmith editor itself, so it needs `marksmith` **0.6.0 or newer**. On older versions the field always shows its full content and `always_show` has nothing to do.
+:::

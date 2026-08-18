@@ -7,14 +7,14 @@ outline: [2, 3]
 
 # Calendar view
 
-Display a resource's records on a month or week calendar, right on the <Index /> view. Hour-based events show their start time, all-day events render as filled bars (and land in the week view's all-day lane), and multi-day events span every day they cover. Clicking an event opens a preview popover with the fields marked `show_on: :preview`.
+Display a resource's records on a month or week calendar, right on the <Index /> view. Hour-based events show their start time behind a dot of their color — and stretch to their duration in the week view — all-day events render as filled bars (and land in the week view's all-day lane), and multi-day events span every day they cover as filled pills. Clicking an event opens a preview popover with the fields marked `show_on: :preview`.
 
 <Image src="/assets/img/4_0/calendar-view/month.webp" dark-src="/assets/img/4_0/calendar-view/month-dark.webp" width="1175" height="771" alt="The month calendar — timed event chips, a month-long all-day bar, a multi-day event spanning three days, and the Month/Week switcher." />
 
 ## Requirements
 
 - Avo 4
-- `avo-calendar` gem (paid add-on)
+- `avo-calendar_view` gem (paid add-on)
 
 ## Installation
 
@@ -22,7 +22,7 @@ Display a resource's records on a month or week calendar, right on the <Index />
 
 ```ruby
 # Gemfile
-gem "avo-calendar", source: "https://packager.dev/avo-hq/"
+gem "avo-calendar_view", source: "https://packager.dev/avo-hq/"
 ```
 
 Then run `bundle install`.
@@ -125,7 +125,7 @@ Renders Monday–Friday only. Events falling on a weekend are not displayed.
 
 <Option name="`color`">
 
-A proc returning the chip's color token, evaluated with `record` in scope. Valid tokens: `:blue`, `:green`, `:red`, `:orange`, `:purple`, `:pink`, `:teal`, `:gray` — anything else renders the default chip.
+A proc returning the chip's color token, evaluated with `record` in scope. Valid tokens: `:blue`, `:green`, `:red`, `:orange`, `:purple`, `:pink`, `:teal`, `:gray` — anything else renders the default chip. The color tints filled pills and sets the dot on single-day hour-based chips.
 
 - **Type:** Proc
 - **Default:** `nil` (neutral chips)
@@ -152,6 +152,8 @@ The event kind is inferred from the column type:
 - a `date` column renders **all-day** chips
 - a `datetime` column renders **hour-based** chips with an `HH:MM` label
 
+On the month grid, an hour-based event that fits one day renders unfilled with a dot of its color — the way calendar apps mark timed events — while all-day and multi-day events keep the filled bar.
+
 ```ruby
 class Avo::Resources::Holiday < Avo::BaseResource
   self.view_types = [:table, :calendar]
@@ -167,15 +169,19 @@ end
 
 ## Month and week views
 
-The header's Month/Week toggle switches between a month grid and a week view with an all-day lane plus hour rows (carried in the `calendar_period` query param). In the week view, all-day and multi-day events sit in the all-day lane; hour-based events land on their start hour.
+The header's Month/Week toggle switches between a month grid and a week time grid (carried in the `calendar_period` query param). In the week view, all-day and multi-day events sit in the all-day lane at the top, and hour-based events render as blocks stretched to their duration — an event without an end renders as one hour. Overlapping events share the day column side by side, each block showing its title under the start time. The grid scrolls under the pinned day-header row and all-day lane, and opens with the current time centred. When the week on screen is the current one, a red line runs across the day columns at the current time — a dot marking today's — and keeps itself up to date.
 
-<Image src="/assets/img/4_0/calendar-view/week.webp" dark-src="/assets/img/4_0/calendar-view/week-dark.webp" width="1456" height="830" alt="The week view — a multi-day event in the all-day lane and hour-based events on their start hours." />
+<Image src="/assets/img/4_0/calendar-view/week.webp" dark-src="/assets/img/4_0/calendar-view/week-dark.webp" width="1456" height="806" alt="The week view — event blocks stretched to their duration, three overlapping events sharing a day column side by side." />
+
+### Read a crowded day
+
+A month cell shows as many event lanes as fit its row and collapses the rest behind a **+N more** toggle. Activate it and the week row expands in place to reveal every event it holds — the other rows keep their height and the page scrolls — then **Show less** fits it back. Expansion is view state only: navigating or reloading resets it.
 
 ## Event previews
 
 Clicking an event chip opens a popover with the record's preview — the fields marked `show_on: :preview` — and a link to the record. Cmd/Ctrl-click still opens the record directly.
 
-If you'd rather skip the popover, set `on_click: :show` or `on_click: :edit` to navigate straight to the record's <Show /> or <Edit /> page.
+If you'd rather skip the popover, set `on_click: :show` or `on_click: :edit` to navigate straight to the record's <Show /> or <Edit /> page. Without the popover, hovering a chip shows a tooltip with the full title, so truncated chips stay readable.
 
 ## Navigation and filtering
 
