@@ -39,9 +39,9 @@ This creates one controller per Avo resource under `app/controllers/avo/api/reso
 Two narrower generators exist for later: `avo_api:generate` regenerates the controllers alone, and `avo_api:tokens` adds the tokens table to an app that already has controllers.
 
 :::danger The generator is required, not optional
-The API's routes are drawn by globbing your app's `app/controllers/avo/api/resources/*` directory. If you never run the generator, that directory doesn't exist, the glob returns nothing, and **no API routes are drawn at all** — every request 404s. There is no catch-all controller that serves resources you haven't generated.
+The API's routes are drawn from the controllers in your app's `app/controllers/avo/api/resources/*` directory. If you never run the generator, that directory doesn't exist and **no API routes are drawn at all** — every request 404s. There is no catch-all controller that serves resources you haven't generated.
 
-The same applies to resources you add later: generate a controller for each new resource, or it won't be reachable over the API.
+The same applies to resources you add later: **a resource with no controller gets no route**, so generate one for each new resource or it won't be reachable over the API. It also won't be offered in a token's [Scopes](#scope-a-token) panel, since there is nothing there to grant.
 :::
 
 Pass `--version` to namespace under something other than `v1`:
