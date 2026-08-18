@@ -82,15 +82,27 @@ The block is evaluated through [`Avo::ExecutionContext`](./execution-context) wi
 
 <Option name="`self.empty_message`" headingSize="3">
 
-The message shown in the panel when [`options`](#options) returns an empty collection.
+A string each filter type puts to its own use: an empty-state message on boolean filters, the blank option's label on select filters, and the input placeholder on text and date/time filters.
 
 ```ruby
 self.empty_message = "Please select a country to view options."
 ```
 
+| Base class | Where `empty_message` renders |
+| --- | --- |
+| `Avo::Filters::BooleanFilter` | The message shown in the panel when [`options`](#options) returns an empty collection |
+| `Avo::Filters::SelectFilter` | The label of the blank option at the top of the dropdown |
+| `Avo::Filters::MultipleSelectFilter` | Not used |
+| `Avo::Filters::TextFilter` | The text input's placeholder |
+| `Avo::Filters::DateTimeFilter` | The picker input's placeholder |
+
 - **Type:** String
-- **Default:** `nil` — falls back to the translated default
-- **i18n key:** `avo.no_options_available` ("No options available")
+- **Default:** `nil` — the boolean filter's empty state falls back to the translated default, the select filter's blank option to `"—"`; text and date/time inputs render no placeholder
+- **i18n key:** `avo.no_options_available` ("No options available") — the boolean filter's empty-state fallback
+
+:::warning
+The select filter's blank option is always rendered — `empty_message` only labels it. A falsy value doesn't remove the option; its label falls back to `"—"`.
+:::
 
 </Option>
 
