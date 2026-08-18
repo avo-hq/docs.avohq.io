@@ -191,55 +191,6 @@ Editing scopes is gated by an `edit_scopes?` policy method, which — like every
 
 </Option>
 
-## Unreleased — browser time zone on by default
-
-<Option name="`use_browser_timezone` now defaults to `true`">
-
-### Breaking Change
-
-Server-side dates and times now render in [each visitor's own time zone](./customization.html#time-and-currency) by default instead of the app's `Time.zone`. Avo detects the browser's zone via a cookie; the first page a browser loads soft-reloads once through Turbo and shows a one-time alert that times are now displayed in the visitor's zone.
-
-**Action required:** None if per-visitor times are what you want — most apps do. Displayed values only change for users whose browser zone differs from the app zone; nothing about stored data changes.
-
-The option defaults to `false` in the test environment, so browser/system tests are unaffected — the first-load soft reload would otherwise race them.
-
-### Maintaining Previous Behavior
-
-Pin every visitor to the app's configured zone:
-
-```ruby
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.use_browser_timezone = false # [!code ++]
-end
-```
-
-</Option>
-
-## Unreleased — resizable sidebar
-
-<Option name="Sidebar labels truncate instead of wrapping">
-
-### Breaking Change
-
-The sidebar is now [resizable](./customization.html#resizable-sidebar), and as part of that change sidebar link, section, and group labels render on a single line with an ellipsis when they overflow, instead of wrapping onto multiple lines. The full label shows in a tooltip on hover.
-
-**Action required:** None for most apps. If your navigation relied on long labels wrapping, either shorten the labels or point users at the drag handle to widen the sidebar.
-
-Hosts with an accessibility conformance obligation can disable the drag handle with [`sidebar[:resizable]`](./customization-api.html#sidebar).
-
-</Option>
-
-<Option name="`.container-small` is now `max-width`-based">
-
-### Breaking Change
-
-`.container-small` (the wrapper around show and edit pages) used a fixed width; it now fills its container up to a `max-width` so content adapts when the sidebar is wide. If you override `.container-small`'s `width` from your own stylesheets, the new Avo-owned `max-width` now clamps it — override `max-width` instead.
-
-**Action required:** None unless you override `.container-small`.
-
-</Option>
-
 ## Upgrade to 4.1.4
 
 <Option name="The back to top pill is enabled by default">
