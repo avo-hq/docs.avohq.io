@@ -419,7 +419,7 @@ Checking that the current filter is `blank?` matters: it keeps the user's own se
 
 <DemoVideo demo-video="https://youtu.be/M2RsNPPFOio?t=347" />
 
-When `options` returns an empty collection — for example, the cities filter before a country is selected — Avo shows a generic "no options" message. Customize it with `self.empty_message`:
+On a boolean filter, when `options` returns an empty collection — for example, the cities filter before a country is selected — Avo shows a generic "no options" message. Customize it with [`self.empty_message`](./basic-filters-api#self.empty_message):
 
 ```ruby{4}
 # app/avo/filters/course_city.rb
@@ -430,6 +430,8 @@ class Avo::Filters::CourseCity < Avo::Filters::BooleanFilter
   # ...
 end
 ```
+
+The other filter types put `self.empty_message` to different uses — the blank option's label on select filters, the input placeholder on text and date/time filters. See [the per-type breakdown](./basic-filters-api#self.empty_message) in the API reference.
 
 ## Show or hide a filter conditionally
 
