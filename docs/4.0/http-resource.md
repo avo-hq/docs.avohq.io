@@ -87,6 +87,8 @@ self.http_adapter = {
 
 If the headers must be computed at request time — rotating tokens, per-user credentials — pass a proc returning the hash instead.
 
+Every request carries them: index, show, and count, as well as the create, update, and destroy requests the controller makes.
+
 ## Map sorting and filtering to query params
 
 If you want Avo's sorting UI (or any UI state) forwarded to the API, build the query string with [`query_params`](./http-resource-api.html#query_params). The proc has access to controller `params`, and its result is merged into the request's query string:
@@ -136,7 +138,7 @@ The controller rescues the exception and displays the message as a flash error i
 
 ## Customize create, update, and destroy
 
-Out of the box, the HTTP controller persists changes through the resource's client — `POST` to the endpoint on create, `PATCH` to `endpoint/:id` on update, and `DELETE` to `endpoint/:id` on destroy. The default implementation looks like this:
+Out of the box, the HTTP controller persists changes through the resource's client — `POST` to the endpoint on create, `PATCH` to `endpoint/:id` on update, and `DELETE` to `endpoint/:id` on destroy, each carrying the resource's [`headers`](#send-authentication-headers). The default implementation looks like this:
 
 ```ruby
 def save_record
@@ -162,20 +164,26 @@ If your API needs different paths, extra parameters, or conditional logic, overr
 # app/controllers/avo/authors_controller.rb
 class Avo::AuthorsController < Avo::Core::Controllers::Http
   def save_record
-    auth_headers = {
-      "Authorization" => "Bearer #{ENV.fetch("API_KEY")}"
-    }
+    # Build the URL from the resource's own endpoint, and evaluate its headers
+    # the same way the client does — `headers` may be a proc.
+    endpoint = resource.endpoint
+    headers = Avo::ExecutionContext.new(target: resource.headers).handle
+    body = { author: @record.as_json }
 
     response = if action_name == "create"
-      MyCustomApi.post("/authors", body: @record.as_json, headers: auth_headers)
+      HTTParty.post(endpoint, body: body, headers: headers)
     else
-      MyCustomApi.patch("/authors/#{@record.id}", body: @record.as_json, headers: auth_headers)
+      HTTParty.patch("#{endpoint}/#{@record.id}", body: body, headers: headers)
     end
 
     response.success?
   end
 end
 ```
+
+:::warning Request an absolute URL
+Avo configures no `base_uri`, so a relative path — `HTTParty.post("/authors", ...)` — has no host to connect to and fails inside `Net::HTTP` on a nil address, long after the form was submitted. Always request the resource's full `endpoint`.
+:::
 
 ## Debug console
 
