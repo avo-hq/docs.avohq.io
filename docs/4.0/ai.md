@@ -115,6 +115,10 @@ Avo.configure do |config|
     deadline: 30,           # seconds for the whole download
     max_redirects: 3
   }
+
+  # Which tools the assistant gets (see "Choose which tools the assistant gets").
+  config.ai.excluded_tools = [:delete_record]
+  config.ai.extra_tools = ["CrmTool"]
 end
 ```
 
@@ -377,6 +381,129 @@ bin/rails generate avo:ai:eject instructions
 This copies all prompt files — the chat assistant's instructions and sub-prompts, plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
 
 The shipped `instructions.txt.erb` ends with an `<%= extra_instructions %>` slot. If you replace it, your copy decides whether to keep that slot — remove the line and the `extra_instructions` file is ignored.
+
+## Choose which tools the assistant gets
+
+What the assistant can do is exactly the set of [tools](./ai-agents-and-tools.html#the-tools) it's handed on each run. Two settings shape that set: `excluded_tools` takes shipped tools away, and `extra_tools` adds tools you wrote yourself.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.ai.excluded_tools = [:delete_record, :run_action]
+  config.ai.extra_tools = ["CrmTool"]
+end
+```
+
+Set neither and the assistant gets the twelve tools the gem ships. The roster is assembled per run, so once the app has restarted, the next message in an existing conversation already reflects the change — nothing is baked into a chat.
+
+### Take a tool away
+
+```ruby
+# config/initializers/avo.rb
+config.ai.excluded_tools = [:delete_record, :update_record]
+```
+
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of twelve; symbols and strings are both accepted.
+
+An excluded tool is filtered out by name before it's ever built, so it isn't attached to the conversation and the model never learns it exists. It doesn't refuse the request — there's nothing there to refuse with.
+
+A name that isn't one of the twelve raises `ArgumentError` at boot, listing the ones it knows. A typo that quietly left deletes attached is exactly the failure worth being loud about.
+
+:::warning It's a denylist, so tools added later arrive switched on
+`excluded_tools` says what to remove, not what to allow. A future avo-ai release that ships a new tool — a write tool included — hands it to every app that hasn't named it here. Read the release notes when you upgrade, and exclude anything you don't want.
+:::
+
+Nothing is protected. `ask_user` and `write_history` are chat infrastructure rather than data tools, and excluding them is allowed: the assistant loses the ability to ask you a clarifying question, or to list and undo the writes it made in the conversation. That's a decision you're free to make — just make it deliberately.
+
+Excluding `resource_inspector` takes the [inspection gate](./ai-agents-and-tools.html#the-inspection-gate) with it: the tool is the only way the gate can ever be satisfied, so with it gone, queries and writes proceed without an inspection instead of refusing forever. Less introspection, not a dead assistant — but the assistant now works from guessed columns rather than real ones.
+
+:::warning Excluding `rename_conversation` turns AI titling off entirely
+That tool is what applies a title, so removing it stops the [conversation renamer](./ai-agents-and-tools.html#renaming-conversations) too, not just the assistant's ability to rename on request: new conversations are no longer auto-titled after the first message, and **Rename again with AI** stops having an effect. Conversations keep the *Untitled chat* placeholder until someone names them. **Rename chat** still works — that one never goes through a model.
+
+The exception is a replacement: register your own tool under the `rename_conversation` wire name — which is exactly what [ejecting it](#replace-a-shipped-tool-with-your-own-copy) sets up — and titling continues through your copy.
+:::
+
+### Bring your own tool
+
+Scaffold one:
+
+```bash
+bin/rails generate avo:ai:tool crm
+```
+
+That writes `app/tools/crm_tool.rb`, defining `CrmTool` — a `RubyLLM::Tool` the model calls `crm`. The file arrives with the same three mixins the shipped tools use, and TODOs where your part goes:
+
+| Mixin | What it gives you |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `Avo::Ai::ToolSupport` | `json_result` for the reply shape, plus resource lookup and schema introspection helpers |
+| `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!` |
+| `Avo::Ai::InspectionAware` | `inspection_tracker`, the per-run record of which resources have been inspected |
+
+Fill in the `description` — the model reads it to decide whether to call the tool, and a vague one is the usual reason a tool never gets called — then the `parameters` schema and `execute`.
+
+Then register the class in your initializer:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.extra_tools = ["CrmTool"]
+```
+
+A tool that takes settings of its own is registered as a Hash instead. Its `tool:` key names the class and every other key is passed to the tool's initializer:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.extra_tools = [
+  "CrmTool",
+  {tool: "InvoiceTool", api_key: ENV["INVOICE_API_KEY"]}
+]
+```
+
+Entries are class **names**, not constants: this initializer runs before your own classes are loadable, so the name is resolved when a chat runs. The upside is that reloading works normally in development; the trade-off is that a typo surfaces on a chat's first message rather than at boot — the chat's [Agent tools](#see-what-a-conversation-will-get) field is where you'll read the error.
+
+Three things the server decides for you, whatever the entry says:
+
+- **The acting user, the conversation, and the inspection tracker are injected server-side.** `user:` is passed to your initializer when it accepts one, and `chat` / `inspection_tracker` are set afterwards if your tool declares the accessors (the generated one declares `chat`). `user:`, `chat:` and `inspection_tracker:` keys in an `extra_tools` entry are stripped, so the initializer can't hand your tool a different user than the one who's chatting.
+- **Authorization is yours to call.** Nothing in the gem stops a tool reading the whole table — reach data through `authorized_relation` and `authorize_record_action!` so your tool sees exactly what the signed-in user sees in Avo, and rescue `Avo::Ai::ToolAuthorization::IdentityError` to report "not allowed" as a result instead of failing the run.
+- **Two tools can't share a wire name.** Registering a tool whose name collides with a shipped one raises when the roster is built. To replace a shipped tool, exclude it first — that's what [ejecting](#replace-a-shipped-tool-with-your-own-copy) does for you.
+
+:::warning What a tool returns goes to your model provider
+Everything `execute` returns is sent to the provider on that turn and on every later turn of the conversation, and it's stored on the tool call. Return the minimum that answers the question — no API keys, no credentials, and no personal data the question didn't call for. Read secrets from `ENV` or `Rails.application.credentials`; never write one into the tool file or the initializer. When an entry fails to resolve, the error names the entry by its class and key names only — the values never reach a log, the error tracker, or the **Agent tools** field.
+:::
+
+### Replace a shipped tool with your own copy
+
+To change how a shipped tool behaves, eject it:
+
+```bash
+bin/rails generate avo:ai:eject tool delete_record
+```
+
+This copies the gem's tool into `app/tools/delete_record_tool.rb` as a plain top-level class you own, then wires both halves of the swap into the `Avo.configure` block in `config/initializers/avo.rb`:
+
+```ruby
+# config/initializers/avo.rb
+# delete_record ejected to app/tools/delete_record_tool.rb — the copy replaces the tool avo-ai ships.
+config.ai.excluded_tools += ["delete_record"]
+config.ai.extra_tools += ["DeleteRecordTool"]
+```
+
+Both lines are needed, and neither works alone: the exclusion takes the shipped tool away, and the extra entry puts your copy back under the same wire name. The copy keeps its `def self.tool_name`, so tool calls, icons, and result cards are unchanged — to the model and to your stored history, it's still `delete_record`.
+
+A tool the gem builds with an argument of its own is registered carrying it, so your copy is constructed exactly as the shipped one was. Ejecting `rename_conversation` writes `{tool: "RenameConversationTool", rescan: true}` for that reason.
+
+The generator refuses rather than surprising you. It won't overwrite an existing `app/tools/…` file, and it won't run twice — an initializer that already excludes the name is read as "ejected already", and nothing is written.
+
+:::warning An ejected copy stops receiving gem updates
+It's a fork. Every later fix that lands in avo-ai's own copy — authorization hardening included — stays there. Diff yours against the gem's `app/tools/avo/ai/<tool>_tool.rb` when you upgrade, and eject only the tools you actually mean to change.
+:::
+
+:::danger If the generator can't find your `Avo.configure` block
+It won't edit an initializer it doesn't recognize — a mangled initializer takes the app down at boot. Instead it prints the two lines, exits with a non-zero status, and says so: **the copy is on disk but is not active**. Until you paste those lines into `config/initializers/avo.rb` yourself, the assistant keeps calling the tool the gem ships, not yours.
+:::
+
+### See what a conversation will get
+
+Open a chat in the **Chats** resource and read its **Agent tools** field: it's computed by the same code the chat runs, for that chat's owner and model, so it's the answer to "did my configuration take effect?" See [Seeing a conversation's roster](./ai-agents-and-tools.html#seeing-a-conversation-s-roster) for how to read an empty or unexpected list.
 
 ## Replace the assistant's icon
 
