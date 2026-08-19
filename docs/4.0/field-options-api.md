@@ -193,7 +193,7 @@ Formatter blocks are executed in [`Avo::ExecutionContext`](./execution-context.h
 Formats the field's value on **every** view — including the value rendered inside inputs on the form views.
 
 ```ruby
-field :price, as: :number, format_using: -> { view_context.number_to_currency(value) }
+field :code, as: :text, format_using: -> { value.to_s.upcase }
 ```
 
 - **Type:** Proc
@@ -220,6 +220,7 @@ View-scoped variants of [`format_using`](#format_using). Each one formats the va
 
 ```ruby
 field :is_writer, format_display_using: -> { value.present? ? "👍" : "👎" }
+field :price, as: :number, format_display_using: -> { number_to_currency(value) }
 ```
 
 - **Type:** Proc
