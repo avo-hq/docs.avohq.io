@@ -1,8 +1,8 @@
 ## Displaying images
 
-Avo displays an attachment browsers can paint — PNG, JPEG, GIF, and anything else listed in `Rails.application.config.active_storage.web_image_content_types` — straight from storage.
+Avo displays an attachment straight from storage — PNG, JPEG, GIF, WebP, AVIF, and everything else browsers know how to paint.
 
-Every other format Active Storage counts as an image (HEIC and HEIF straight off an iPhone, TIFF, PSD) is displayed through an Active Storage variant, which renders it as PNG. Only Safari decodes HEIC, so the original would be a broken image in Chrome, Edge, and Firefox.
+Four formats they don't get converted first: `image/heic` and `image/heif` (what an iPhone shoots by default), `image/tiff`, and `image/vnd.adobe.photoshop`. Avo displays those through an Active Storage variant, which renders them as PNG. Only Safari decodes HEIC, so the original would be a broken image in Chrome, Edge, and Firefox.
 
 :::warning
 Converting needs an image processor installed — [libvips](https://github.com/libvips/libvips) built with `libheif`, or ImageMagick with the HEIC delegate. Without one the variant can't be processed and the image won't render. See [Active Storage's requirements](https://guides.rubyonrails.org/active_storage_overview.html#requirements).
