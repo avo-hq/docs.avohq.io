@@ -439,7 +439,7 @@ That writes `app/tools/crm_tool.rb`, defining `CrmTool` — a `RubyLLM::Tool` th
 | `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!` |
 | `Avo::Ai::InspectionAware` | `inspection_tracker`, the per-run record of which resources have been inspected |
 
-Fill in the `description` — the model reads it to decide whether to call the tool, and a vague one is the usual reason a tool never gets called — then the `params` schema and `execute`.
+Fill in the `description` — the model reads it to decide whether to call the tool, and a vague one is the usual reason a tool never gets called — then the `parameters` schema and `execute`.
 
 Then register the class in your initializer:
 
@@ -487,7 +487,7 @@ config.ai.excluded_tools += ["delete_record"]
 config.ai.extra_tools += ["DeleteRecordTool"]
 ```
 
-Both lines are needed, and neither works alone: the exclusion takes the shipped tool away, and the extra entry puts your copy back under the same wire name. The copy keeps its `def name`, so tool calls, icons, and result cards are unchanged — to the model and to your stored history, it's still `delete_record`.
+Both lines are needed, and neither works alone: the exclusion takes the shipped tool away, and the extra entry puts your copy back under the same wire name. The copy keeps its `def self.tool_name`, so tool calls, icons, and result cards are unchanged — to the model and to your stored history, it's still `delete_record`.
 
 A tool the gem builds with an argument of its own is registered carrying it, so your copy is constructed exactly as the shipped one was. Ejecting `rename_conversation` writes `{tool: "RenameConversationTool", rescan: true}` for that reason.
 
