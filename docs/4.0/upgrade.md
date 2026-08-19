@@ -4,6 +4,53 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-calendar_view` `4.0.9`
+
+<Option name="Single-day timed events render with a dot instead of a filled chip">
+
+On the month grid, an hour-based event that fits inside one day box now renders unfilled, with its [`color`](./calendar-view.html#color) shown as a dot beside the time — the way calendar apps mark timed events. It previously rendered as a filled chip tinted with that color. All-day and multi-day events are unchanged and keep the filled pill. See [All-day and hour-based events](./calendar-view.html#all-day-and-hour-based-events).
+
+**Action required:** None — the change is visual only, and no option changed its meaning.
+
+</Option>
+
+## Upgrade to `avo-calendar_view` `4.0.8`
+
+<Option name="The `avo-calendar` gem is renamed to `avo-calendar_view`">
+
+### Breaking Change
+
+The calendar add-on now ships under the gem name `avo-calendar_view`. `avo-calendar` stops at `4.0.7` and gets no further releases, so `bundle update` won't pick this up on its own — the Gemfile has to be edited by hand.
+
+Only the packaging changes. The view type is still `:calendar`, and [`self.calendar_view`](./calendar-view.html#configuration) keeps every option it had.
+
+### Action Required
+
+Rename the gem in your `Gemfile` and run `bundle install`:
+
+```ruby
+# Gemfile
+gem "avo-calendar", source: "https://packager.dev/avo-hq/" # [!code --]
+gem "avo-calendar_view", source: "https://packager.dev/avo-hq/" # [!code ++]
+```
+
+Resources that enable the calendar need no edit:
+
+```ruby
+# app/avo/resources/event.rb
+self.view_types = [:table, :calendar]
+self.calendar_view = {
+  starts_at: :starts_at,
+  ends_at: :ends_at
+}
+```
+
+:::info
+Only the documented DSL above is covered by this guarantee. If your app reaches into the gem's internals — a stylesheet targeting `avo-calendar/application`, or a reference to the `Avo::Calendar` namespace — those are now `avo-calendar_view/application` and `Avo::CalendarView`.
+:::
+
+</Option>
+
 ## Upgrade to 4.1.11
 
 <Option name="`stacked: false` now opts a field out of sidebar and width stacking">
