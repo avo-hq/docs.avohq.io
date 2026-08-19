@@ -63,7 +63,7 @@ Formats the value on the <Index /> and <Show /> views. Form inputs always keep t
 
 #### Possible values
 
-`:delimited`, `:currency`, `:percentage`, or `:human`.
+`:delimited`, `:percentage`, or `:human`.
 </Option>
 
 ## Formatting numbers
@@ -72,16 +72,17 @@ Use `format` for the common display formats provided by Rails:
 
 ```ruby
 field :population, as: :number, format: :delimited
-field :price, as: :number, format: :currency
 field :margin, as: :number, format: :percentage
 field :downloads, as: :number, format: :human
 ```
 
-`format: :currency` uses `Avo.configuration.currency`. The other punctuation and wording come from Rails i18n, so delimiters and decimal separators follow the current locale.
+The punctuation and wording come from Rails i18n, so delimiters and decimal separators follow the current locale.
+
+There is no `:currency` format. For monetary values use the [`money`](./money) field, which handles the currency itself, or reach for `format_display_using` below.
 
 On the <Index /> view, formatted numbers and their headers are end-aligned. Bare number fields remain unformatted and start-aligned, which is useful for identifier- or year-shaped values. All number columns use tabular figures so their digits line up between rows.
 
-For formatting that these four values do not cover, use [`format_display_using`](../field-options.html#on-specific-views). Rails helpers are available directly inside the block:
+For formatting that these three values do not cover, use [`format_display_using`](../field-options.html#on-specific-views). Rails helpers are available directly inside the block:
 
 ```ruby
 field :price_in_cents,
