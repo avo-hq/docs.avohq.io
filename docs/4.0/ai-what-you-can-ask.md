@@ -164,6 +164,8 @@ Knowing the edges saves a round trip:
 | Apply its own updates, deletes, or undos  | The card is yours to confirm — a click, or a quick "do it" in your own words |
 | Delete a file from storage                | It can detach, never purge                                               |
 | Touch anything your policies hide         | Every read and write is authorized for the signed-in user                |
-| Answer questions unrelated to this app    | General knowledge, coding help, and writing tasks are out of scope       |
+| Take on substantial work unrelated to this app | Writing your blog post, debugging a codebase, a long translation, or a research report is someone else's job — it says so and offers what it can do instead |
+
+Short of that it is good company: small talk, a joke, a quick factual aside, or a question about a file you dropped into the conversation all get a straight answer before it steers back to your data. Anything you put in front of it — an uploaded file, the Media Library file you started the chat from, text you pasted — counts as part of the conversation, so "what does this show?" is answered rather than declined.
 
 A record you can't reach reports as "not found" rather than "not allowed", so the chat can't be used to probe for what exists.
