@@ -437,7 +437,11 @@ That writes `app/tools/crm_tool.rb`, defining `CrmTool` — a `RubyLLM::Tool` th
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | `Avo::Ai::ToolSupport` | `json_result` for the reply shape, plus resource lookup and schema introspection helpers |
 | `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!` |
-| `Avo::Ai::InspectionAware` | Answers with the touched resource's real columns, scopes, and required attributes under `resource_schema` — once per run per resource |
+| `Avo::Ai::InspectionAware` | Answers with the touched resource's real columns, scopes, and required attributes under `resource_schema` — once per run per resource. It reads the resource name from your tool's own `resource:` argument |
+
+:::warning Include `InspectionAware` in the tool class itself
+It wraps your `execute` by prepending to the class it's included in. Included in a concern your tools share, the wrapper ends up *behind* each tool's own `execute` and never runs — no error, just results that quietly arrive without their schema.
+:::
 
 Fill in the `description` — the model reads it to decide whether to call the tool, and a vague one is the usual reason a tool never gets called — then the `parameters` schema and `execute`.
 
