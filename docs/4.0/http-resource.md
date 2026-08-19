@@ -175,7 +175,10 @@ class Avo::AuthorsController < Avo::Core::Controllers::Http
     response = if action_name == "create"
       HTTParty.post(endpoint, body: body, headers: headers, timeout: 10)
     else
-      HTTParty.patch("#{endpoint}/#{@record.id}", body: body, headers: headers, timeout: 10)
+      # `to_param` + encoding, like the client: a raw id breaks the moment a
+      # resource obfuscates it (see `model_class_eval`) or it contains a
+      # reserved character.
+      HTTParty.patch("#{endpoint}/#{ERB::Util.url_encode(@record.to_param)}", body: body, headers: headers, timeout: 10)
     end
 
     response.success?
