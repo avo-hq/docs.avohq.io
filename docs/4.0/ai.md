@@ -403,7 +403,7 @@ Set neither and the assistant gets the twelve tools the gem ships. The roster is
 config.ai.excluded_tools = [:delete_record, :update_record]
 ```
 
-The names are **wire names** — what the model sees, and what every call is stored under in the Tool calls resource. [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of twelve; symbols and strings are both accepted.
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of twelve; symbols and strings are both accepted.
 
 An excluded tool is filtered out by name before it's ever built, so it isn't attached to the conversation and the model never learns it exists. It doesn't refuse the request — there's nothing there to refuse with.
 

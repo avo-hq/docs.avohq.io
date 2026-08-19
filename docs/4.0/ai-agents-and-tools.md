@@ -32,7 +32,7 @@ All three go through the `rename_conversation` tool, so [excluding that tool](./
 
 ## The tools
 
-Tool names below are how calls appear in the Tool calls resource and in the chat's debug view (see [Debug levels](./ai.html#debug-levels)).
+Tool names below are how calls appear in a message's **Tool calls** field and in the chat's debug view (see [Debug levels](./ai.html#debug-levels)).
 
 A tool's name is the stable part of it: the model calls the tool by that name, every stored tool call keeps it, and it's how you name a tool in configuration. The roster isn't fixed either — you can take any of these away, add tools of your own, or replace one with an editable copy. See [Choose which tools the assistant gets](./ai.html#choose-which-tools-the-assistant-gets).
 
@@ -54,10 +54,6 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 "After you confirm" means the tool call produces a card describing the pending change; your click applies it, not the model. "Immediately" is reserved for actions that are reversible (a detached file can be re-attached, a conversation can be renamed again) or additive (creating a record).
 
 ¹ Attaching and detaching existing blobs apply immediately; the `attach_from_url` operation is the exception — a server-side download always goes through a confirmation card showing the URL, and nothing is fetched until you click **Attach**. See [Getting new files in](./ai.html#getting-new-files-in).
-
-:::warning Upgrading from an earlier alpha?
-The Ruby classes behind these tools are now namespaced: `Avo::Ai::DeleteRecordTool`, not a top-level `DeleteRecordTool`. Nothing else moved — the names in the table above, the tool calls already in your database, the icons, and the result cards are all unchanged. If your application references one of these classes by constant anywhere, add the `Avo::Ai::` prefix. A tool you [ejected](./ai.html#replace-a-shipped-tool-with-your-own-copy) is unaffected: an ejected copy is your own top-level class by design.
-:::
 
 ### The shapes an ask can take
 
