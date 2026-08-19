@@ -51,6 +51,10 @@ self.http_adapter = {
 Unlike the other adapter options, `endpoint` is used verbatim — it does not accept a proc and is not evaluated through `Avo::ExecutionContext`.
 :::
 
+:::warning Must be absolute
+The endpoint needs a host. A missing, blank, or relative value (`nil`, `""`, `"/users"`) raises [`Avo::HttpError`](./http-resource.html#handle-api-errors) before any request is sent, so the controller shows a flash message instead of failing inside `Net::HTTP` on a nil address.
+:::
+
 :::info Request behavior
 Index requests always carry `page` and `per_page` query parameters — the names are not configurable. Use [`query_params`](#query_params) to send additional parameters. Requests time out after 10 seconds and raise an error.
 :::
