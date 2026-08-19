@@ -170,10 +170,12 @@ class Avo::AuthorsController < Avo::Core::Controllers::Http
     headers = Avo::ExecutionContext.new(target: resource.headers).handle
     body = { author: @record.as_json }
 
+    # HTTParty has no default timeout — the client sets one on its own class, so
+    # a hand-rolled request has to bound itself.
     response = if action_name == "create"
-      HTTParty.post(endpoint, body: body, headers: headers)
+      HTTParty.post(endpoint, body: body, headers: headers, timeout: 10)
     else
-      HTTParty.patch("#{endpoint}/#{@record.id}", body: body, headers: headers)
+      HTTParty.patch("#{endpoint}/#{@record.id}", body: body, headers: headers, timeout: 10)
     end
 
     response.success?
