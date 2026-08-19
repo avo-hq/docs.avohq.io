@@ -202,7 +202,7 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **The system prompt is rebuilt on every turn.** It's assembled from the ERB files under `app/prompts/`, so it always reflects the current date, the signed-in user, the record the chat is attached to, and any instructions you've added. Nothing about your schema is baked in ahead of time.
 
-**It inspects before it queries.** The first time a conversation touches a resource, the assistant asks for that resource's real columns, associations, and scopes, then builds its query from the answer. This is enforced by the tools, not merely requested in the prompt: the query and write tools refuse to run against a resource that hasn't been inspected in this conversation. It's why the first question about a resource takes an extra beat, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters.
+**It works from your real schema, not a guess at it.** Every query, write, and action result carries the resource's real columns, model scopes, and required attributes back to the assistant — so it builds what comes next from your names. This is done by the tools, not merely requested in the prompt: it arrives with the answer rather than being asked for first, which is why a question rarely spends a round trip on structure, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters. A query that gets a column wrong comes back with the real ones attached, so the retry is built from names too.
 
 **Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. When a query returns exactly one record, the UI renders a card for it — title and a link — and the assistant is told not to repeat the fields in prose.
 
@@ -415,10 +415,10 @@ A name that isn't one of the twelve raises `ArgumentError` at boot, listing the 
 
 Nothing is protected. `ask_user` and `write_history` are chat infrastructure rather than data tools, and excluding them is allowed: the assistant loses the ability to ask you a clarifying question, or to list and undo the writes it made in the conversation. That's a decision you're free to make — just make it deliberately.
 
-Excluding `resource_inspector` takes the [inspection gate](./ai-agents-and-tools.html#the-inspection-gate) with it: the tool is the only way the gate can ever be satisfied, so with it gone, queries and writes proceed without an inspection instead of refusing forever. Less introspection, not a dead assistant — but the assistant now works from guessed columns rather than real ones.
+Excluding `resource_inspector` costs less than it sounds like it should. The [schema every result carries](./ai-agents-and-tools.html#schema-comes-back-with-the-answer) doesn't come from that tool, so queries and writes still work from your real columns and scopes. What you lose is the deeper report — field types, a resource's actions and filters, its associations and attachments — for the questions where the assistant wants structure a result can't give it.
 
 :::warning Excluding `rename_conversation` turns AI titling off entirely
-That tool is what applies a title, so removing it stops the [conversation renamer](./ai-agents-and-tools.html#renaming-conversations) too, not just the assistant's ability to rename on request: new conversations are no longer auto-titled after the first message, and **Rename again with AI** stops having an effect. Conversations keep the *Untitled chat* placeholder until someone names them. **Rename chat** still works — that one never goes through a model.
+That tool is what applies a title, so removing it stops the [conversation renamer](./ai-agents-and-tools.html#renaming-conversations) too, not just the assistant's ability to rename on request: new conversations are no longer auto-titled after the first message, and **Rename with AI** stops having an effect. Conversations keep the *Untitled chat* placeholder until someone names them. **Rename chat** still works — that one never goes through a model.
 
 The exception is a replacement: register your own tool under the `rename_conversation` wire name — which is exactly what [ejecting it](#replace-a-shipped-tool-with-your-own-copy) sets up — and titling continues through your copy.
 :::
@@ -437,7 +437,7 @@ That writes `app/tools/crm_tool.rb`, defining `CrmTool` — a `RubyLLM::Tool` th
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | `Avo::Ai::ToolSupport` | `json_result` for the reply shape, plus resource lookup and schema introspection helpers |
 | `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!` |
-| `Avo::Ai::InspectionAware` | `inspection_tracker`, the per-run record of which resources have been inspected |
+| `Avo::Ai::InspectionAware` | Answers with the touched resource's real columns, scopes, and required attributes under `resource_schema` — once per run per resource |
 
 Fill in the `description` — the model reads it to decide whether to call the tool, and a vague one is the usual reason a tool never gets called — then the `parameters` schema and `execute`.
 
@@ -462,7 +462,7 @@ Entries are class **names**, not constants: this initializer runs before your ow
 
 Three things the server decides for you, whatever the entry says:
 
-- **The acting user, the conversation, and the inspection tracker are injected server-side.** `user:` is passed to your initializer when it accepts one, and `chat` / `inspection_tracker` are set afterwards if your tool declares the accessors (the generated one declares `chat`). `user:`, `chat:` and `inspection_tracker:` keys in an `extra_tools` entry are stripped, so the initializer can't hand your tool a different user than the one who's chatting.
+- **The acting user, the conversation, and the inspection tracker are injected server-side.** `user:` is passed to your initializer when it accepts one, and `chat` / `inspection_tracker` are set afterwards if your tool declares the accessors (the generated one declares `chat` and picks up `inspection_tracker` from `Avo::Ai::InspectionAware`). `user:`, `chat:` and `inspection_tracker:` keys in an `extra_tools` entry are stripped, so the initializer can't hand your tool a different user than the one who's chatting.
 - **Authorization is yours to call.** Nothing in the gem stops a tool reading the whole table — reach data through `authorized_relation` and `authorize_record_action!` so your tool sees exactly what the signed-in user sees in Avo, and rescue `Avo::Ai::ToolAuthorization::IdentityError` to report "not allowed" as a result instead of failing the run.
 - **Two tools can't share a wire name.** Registering a tool whose name collides with a shipped one raises when the roster is built. To replace a shipped tool, exclude it first — that's what [ejecting](#replace-a-shipped-tool-with-your-own-copy) does for you.
 
@@ -574,7 +574,7 @@ The list is scoped to the signed-in user. It's not an admin view of everyone's c
 The ⋯ button next to a conversation's title opens its menu. It's in the chat window's title bar and on the full-page chat, and both carry the same two rename entries:
 
 - **Rename chat** makes the title editable in place — the panel's header in the bar, the last breadcrumb on a chat page. **Enter** commits and **Esc** cancels in both. Clicking away differs: in the bar it cancels the edit, on the chat page it commits it. An empty title is refused, so a conversation always keeps a name.
-- **Rename again with AI** hands the conversation back to the [renamer agent](./ai-agents-and-tools.html#renaming-conversations) for a fresh title, without going through the assistant. The title shimmers while the renamer runs, and the new name lands everywhere the old one showed.
+- **Rename with AI** hands the conversation back to the [renamer agent](./ai-agents-and-tools.html#renaming-conversations) for a fresh title, without going through the assistant. The title shimmers while the renamer runs, and the new name lands everywhere the old one showed.
 
 Renaming needs no policy of its own — owning the chat is the entire permission, and you only ever see your own.
 

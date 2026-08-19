@@ -10,7 +10,7 @@ A catalog of what the Avo AI assistant can do, with a prompt for each one. Every
 
 The resource and field names in the examples are placeholders. Substitute your own: the assistant reads your resources, your columns, and your scopes at the moment you ask, so the vocabulary that works is the vocabulary of your admin.
 
-For how a turn actually unfolds — inspect-first, confirmation cards, authorization — see [How the assistant works](./ai.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./ai-agents-and-tools.html).
+For how a turn actually unfolds — schema, confirmation cards, authorization — see [How the assistant works](./ai.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./ai-agents-and-tools.html).
 
 ## Find records
 
@@ -152,7 +152,7 @@ The files stay on the message, so you can keep asking about them later in the co
 
 New conversations title themselves after your first message. See [Renaming conversations](./ai-agents-and-tools.html#renaming-conversations).
 
-You don't have to ask, either. The ⋯ menu next to the title renames the conversation without the assistant — **Rename chat** to type the title yourself, **Rename again with AI** to have one generated — and the bar's menu adds **Copy as markdown**, which puts the conversation on your clipboard as plain text. See [The conversation menu](./ai.html#the-conversation-menu).
+You don't have to ask, either. The ⋯ menu next to the title renames the conversation without the assistant — **Rename chat** to type the title yourself, **Rename with AI** to have one generated — and the bar's menu adds **Copy as markdown**, which puts the conversation on your clipboard as plain text. See [The conversation menu](./ai.html#the-conversation-menu).
 
 ## What it won't do
 
