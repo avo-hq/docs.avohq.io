@@ -5,124 +5,154 @@ betaStatus: "Not yet released"
 outline: [2, 3]
 ---
 
-# MCP (Model Context Protocol)
+# MCP Server
 
-The `avo-mcp` gem exposes your Avo admin panel as an MCP server, allowing LLM-powered tools like Claude Desktop, Claude Code, or any MCP-compatible client to browse and manage your admin data through natural language.
+The `avo-mcp_server` add-on turns your Avo panel into a remote [MCP](https://modelcontextprotocol.io) server, so an AI client like Claude or ChatGPT can browse and manage your admin data in natural language. An admin connects by pasting your app's MCP server URL into their client and approving a consent screen served by your own panel — no credential is ever copied by hand — and everything the client does afterwards runs as that admin, under the policies they already have.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.mcp_server.enabled = true
+  config.mcp_server.resource_identifier = "https://app.example.com/avo/mcp"
+end
+```
+
+The server is **off by default**. Adding the gem to your `Gemfile` changes nothing until you enable it, mount it, and hold a license for both this add-on and [Authorization](./authorization.html).
 
 ## Requirements
 
 - Avo `>= 4.0`
-- Ruby `>= 3.0`
-- Rails `>= 6.1`
+- A license for this add-on **and** for the [Authorization](./authorization.html) add-on. Both must be enabled on the license — see [Authorization has to be licensed](#authorization-has-to-be-licensed).
+- The panel reachable over HTTPS at a stable public URL. Consent and token exchange happen in the admin's browser, from the client's side of the internet.
+- An MCP client that supports **remote** servers with OAuth authorization. Verified at launch against Claude and ChatGPT.
+
+:::info Remote clients only
+There is no local (stdio) transport and no shared token to paste into a client's config file. A local process can't be redirected to a consent page, so every connection is made over the network and goes through the panel's authorize page in a browser. A client that can only launch a local command cannot connect.
+:::
+
+:::warning Protocol revision `2026-07-28`
+The server implements MCP revision **`2026-07-28`**, and only that revision. That revision removed protocol sessions and the `initialize` handshake, added the mandatory `server/discover` call, and made `resultType` required on every result — so a client still speaking `2025-11-25` or earlier has no version to negotiate and the connection fails before the first tool call.
+
+If a client refuses to connect and you've ruled out the URL, check which revision it speaks before anything else.
+:::
 
 ## Installation
 
-### 1. Add the gem
+### 1. Install the gem
 
 ```ruby
-gem "avo-mcp", source: "https://packager.dev/avo-hq/"
+# Gemfile
+gem "avo-mcp_server", source: "https://packager.dev/avo-hq/"
 ```
-
-### 2. Install dependencies
 
 ```bash
 bundle install
 ```
 
-### 3. Configure
+### 2. Run the installer
 
-Add the following to your `config/initializers/avo.rb`:
+```bash
+bin/rails generate avo:mcp_server install
+bin/rails db:migrate
+```
+
+This creates the `avo_mcp_server_*` tables — the connections admins authorize, the single-use codes they're created through, and the tokens issued against them — and appends the configuration block to `config/initializers/avo.rb`.
+
+### 3. Mount the protocol endpoints
 
 ```ruby
-Avo::Mcp.configure do |config|
-  config.enabled = true # [!code highlight]
-  config.token = ENV["AVO_MCP_TOKEN"] # [!code highlight]
-  config.mount_path = "/avo-mcp"
-  config.transport = :both # :stdio, :http, or :both
-  config.current_user = ->(token) { User.find_by(mcp_token: token) } # [!code highlight]
+# config/routes.rb
+Rails.application.routes.draw do
+  mount_avo_mcp_server # [!code ++]
+
+  authenticate :user do
+    mount_avo
+  end
 end
 ```
 
-## Configuration
+`mount_avo_mcp_server` draws four things: the two OAuth discovery documents, always at the origin root because the protocol requires them there; the client registration endpoint, which is unauthenticated by design so clients that don't support metadata documents can still register; the token endpoint; and the JSON-RPC endpoint clients call, at `/avo/mcp` by default. Pass `at:` to serve the JSON-RPC endpoint somewhere else.
 
-| Option         | Default      | Description                                                                                                |
-| -------------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
-| `enabled`      | `true`       | Enable or disable the MCP server                                                                           |
-| `token`        | `nil`        | Authentication token. Falls back to `ENV["AVO_MCP_TOKEN"]` if not set. Can be a `Proc` for lazy evaluation |
-| `mount_path`   | `"/avo-mcp"` | The HTTP endpoint path where the MCP server is mounted                                                     |
-| `transport`    | `:both`      | Transport mode: `:stdio`, `:http`, or `:both`                                                              |
-| `current_user` | `nil`        | A `Proc` that receives the token and returns a user object for authorization                               |
+:::warning `at:` and `resource_identifier` must agree
+If you pass `at:`, the path must match the path in `resource_identifier`. Booting with the two out of step raises a configuration error rather than starting, because the alternative is worse: discovery keeps answering while the endpoints it advertises return 404, which looks from the client side like the connection dying at token exchange with no error text.
+:::
 
-## Transport modes
+The authorize page and the connections screen are not part of this — they're mounted inside the panel with the rest of Avo's chrome, so they inherit your existing sign-in.
 
-Avo MCP supports two transport modes that can be used independently or together.
+:::danger Mount it outside your authentication block
+If `mount_avo` lives inside an `authenticate :user do … end` block, `mount_avo_mcp_server` **must** be mounted outside and before it. A connected client calls the token and JSON-RPC endpoints with a bearer token and no browser session, so putting them behind your web session guard makes every call fail.
 
-### Stdio
+This doesn't leave anything unauthenticated. Those endpoints authenticate themselves against the token the client holds, and an unauthenticated call is answered with a `401` that points the client at the consent flow.
+:::
 
-The stdio transport is ideal for local development with tools like Claude Desktop or Claude Code. It communicates over stdin/stdout using JSON-RPC.
+### 4. Enable the server
 
-Run it from your Rails app root:
-
-```bash
-bundle exec avo-mcp
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.mcp_server.enabled = true # [!code ++]
+  config.mcp_server.resource_identifier = "https://app.example.com/avo/mcp" # [!code ++]
+end
 ```
 
-### HTTP
+:::warning `resource_identifier` is a constant, not something derived from the request
+It must be the full public URL of your JSON-RPC endpoint — the same URL an admin pastes into their client. The `resource` field of the discovery document, the audience stamped on every token issued, and the audience checked on every incoming call all read from this one value, and they have to agree byte for byte.
 
-The HTTP transport mounts an endpoint in your Rails app that accepts JSON-RPC requests. It supports both single JSON responses and SSE streaming.
+That's why it isn't derived from the request. Host, scheme, and forwarding headers drift behind a proxy, differ between the discovery hit and the token hit, and let a caller influence the audience it's then checked against. A request arriving on a host that doesn't match is refused with a clear error rather than failing discovery silently, which is the failure mode you want here — a discovery mismatch surfaces client-side as nothing at all.
+:::
 
-Requests must include the authentication token:
+## Connect an AI client
 
-```bash
-curl -X POST http://localhost:3000/avo-mcp \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer your-token-here" \
-  -d '{"jsonrpc": "2.0", "method": "tools/list", "id": 1}'
-```
+1. Copy your app's MCP server URL — the value of `resource_identifier`, also shown on the connections screen in the panel.
+2. Add it to the AI client as a remote MCP server.
+3. The client sends the admin to an authorize page served by your own panel. If they aren't signed in, they go through your normal Avo sign-in and come back.
+4. They review who is asking, pick the capabilities to grant, and approve.
+5. The client is connected.
 
-## Connecting to Claude Desktop
+Nothing is copied by hand at any point. The client obtains a short-lived token through that redirect and refreshes it on its own, and declining creates nothing at all.
 
-Add the following to your Claude Desktop MCP configuration:
+### What the authorize page shows
 
-```json
-{
-  "mcpServers": {
-    "avo": {
-      "command": "bundle",
-      "args": ["exec", "avo-mcp"],
-      "cwd": "/path/to/your/rails/app"
-    }
-  }
-}
-```
+- **The origin of the requesting client's identifier**, as the primary identity.
+- The client's display name, shown as *claimed by the client*.
+- The admin identity currently signed in — the person the connection will act as.
+- The four capabilities, as checkboxes.
 
-## Connecting to Claude Code
+:::warning Read the origin, not the name
+Every attribute a client says about itself is unverified. A client's display name is whatever it puts in its own metadata, so an attacker can publish one that calls itself Claude and ask for delete access. The origin of the client identifier is the one attribute they'd have to control a domain to forge, which is why the page leads with it.
 
-Add the MCP server to your Claude Code configuration:
+Check the origin before approving — especially on a request that asks for delete or run actions.
+:::
 
-```json
-{
-  "mcpServers": {
-    "avo": {
-      "command": "bundle",
-      "args": ["exec", "avo-mcp"],
-      "cwd": "/path/to/your/rails/app"
-    }
-  }
-}
-```
+## Choose what a connection can do
 
-Once connected, you can ask Claude questions like:
+Four capabilities cover the whole surface. They're global: a capability applies across every resource, and there's no per-resource or per-action selection.
 
-- "List all users"
-- "Show me the last 10 orders sorted by created_at"
-- "Search for users named John"
-- "Create a new post with title 'Hello World'"
-- "Run the 'Archive' action on post 42"
+| Capability            | Scope         | Tools it unlocks                                                                  | At consent     |
+| --------------------- | ------------- | --------------------------------------------------------------------------------- | -------------- |
+| **Read**              | `avo:read`    | `list_resources`, `list_records`, `show_record`, `search_records`, `list_actions` | Selected       |
+| **Create and update** | `avo:write`   | `create_record`, `update_record`                                                  | Selected       |
+| **Delete**            | `avo:delete`  | `delete_record`                                                                   | *Not* selected |
+| **Run actions**       | `avo:actions` | `run_action`                                                                      | *Not* selected |
+
+A capability can only ever narrow what a connection may do. Granting delete doesn't let the connection delete anything its owning admin couldn't delete by hand — see [Every call stays inside the admin's own permissions](#every-call-stays-inside-the-admin-s-own-permissions).
+
+:::danger Granting delete or run actions accepts a prompt-injection risk
+An AI agent can't reliably tell your data apart from instructions aimed at it. Any text that reaches a record the connected admin can read — a signup name, a support ticket body, a customer note — is read by the agent as part of its input, and text written to look like an instruction can steer it. With delete or run actions granted, that steering can end in destructive tool calls made under the admin's own identity and permissions.
+
+Nothing in this release detects or prevents that:
+
+- there is no live feed showing what a connected agent is doing while it does it;
+- the audit entry is deliberately indistinguishable from the admin's own panel activity, so it can't be attributed to the agent afterwards either.
+
+Nor does the tool itself pause. `run_action` runs the action immediately, and `delete_record` deletes immediately — there is no proposal step, no second confirmation, and nothing for a human to click. Granting the capability at consent **is** the confirmation, collected once, in advance, for every call the connection will ever make. That is precisely why those two are unselected by default.
+
+This is a documented, accepted limitation rather than an oversight, and the mitigation is the consent screen itself: delete and run actions are unselected by default, so granting them is always a deliberate act. Grant them to clients you trust, on data you control, and keep everything else read-only.
+:::
 
 ## Available tools
 
-Avo MCP exposes 9 tools that cover the full range of admin operations.
+The server exposes nine tools covering the full range of admin operations.
 
 ### Read-only tools
 
@@ -134,7 +164,7 @@ Avo MCP exposes 9 tools that cover the full range of admin operations.
 | `search_records` | Search across one or all resources using the configured search query          |
 | `list_actions`   | Discover available actions for a resource                                     |
 
-### Write tools
+### Mutating tools
 
 | Tool            | Description                                   |
 | --------------- | --------------------------------------------- |
@@ -143,32 +173,207 @@ Avo MCP exposes 9 tools that cover the full range of admin operations.
 | `delete_record` | Delete a record                               |
 | `run_action`    | Execute an Avo action on one or more records  |
 
-## Authorization
+### Arguments each tool takes
 
-Avo MCP respects your existing Avo authorization setup. Every tool checks permissions before executing:
+| Tool             | Required                       | Optional                                        |
+| ---------------- | ------------------------------ | ----------------------------------------------- |
+| `list_resources` | —                              | —                                               |
+| `list_records`   | `resource`                     | `page`, `per_page`, `sort_by`, `sort_direction` |
+| `show_record`    | `resource`, `id`               | —                                               |
+| `search_records` | `query`                        | `resource`, `limit`                             |
+| `list_actions`   | `resource`                     | —                                               |
+| `create_record`  | `resource`, `attributes`       | —                                               |
+| `update_record`  | `resource`, `id`, `attributes` | —                                               |
+| `delete_record`  | `resource`, `id`               | —                                               |
+| `run_action`     | `resource`, `action`           | `record_ids`, `fields`                          |
 
-- **Token authentication** — Requests are validated using constant-time comparison against the configured token.
-- **User resolution** — The `current_user` proc maps a token to a user object. If no proc is configured, tools run without a user context.
-- **Policy checks** — Each tool invokes `Avo::Services::AuthorizationService.authorize` with the resolved user, so your existing Pundit (or other) policies apply.
+`resource` is always a resource name as `list_resources` reports it — `"Post"`, not a table name — and `id` is the record's primary key, accepted as a string or an integer.
 
-If a user is not authorized for an operation, the tool returns a structured error:
+Paging is 1-based. `per_page` defaults to 25 and is capped at 100, and `search_records`' `limit` behaves the same way, per resource searched. `sort_by` has to name a real column on the model; it's checked against the model's columns rather than passed through to SQL, and a name that isn't one is refused with the list of columns that are. `sort_direction` is `asc` or `desc`. Leave either out and the resource's own default sorting stands.
+
+`attributes` on `create_record` and `update_record` is an object mapping field names to values. Use the field names `list_resources` reports or the raw column names — a `belongs_to` can be written either way, as `user` or as `user_id`. `update_record` changes only the attributes you pass and leaves the rest alone.
+
+`run_action` takes the `action` id from `list_actions` (the class name, e.g. `"Avo::Actions::TogglePublished"`), and `fields` is the same object shape for that action's inputs, keyed by the input names `list_actions` reports. An input you leave out falls back to the action's own default. `record_ids` is the set of records to act on: a standalone action takes none and is refused if given any, and every other action needs at least one. Every id is authorized individually, so a partly-allowed batch is refused rather than partly run.
+
+### What a record's associations look like
+
+`show_record` returns associations as something an agent can follow, not as nested records. A `belongs_to` comes back as the record it points at — its id and a human title — so naming it doesn't cost a second call. A `has_many` comes back as a count plus up to 25 ids.
+
+Those ids are already narrowed by the associated model's own policy scope. An association is a second read path into a different resource, and without that scoping, `show_record` on a parent would be the way around `list_records` on the child.
+
+### Searching a resource that has no search configured
+
+`search_records` runs each resource's own `self.search` block — the same search the panel's search box runs — and has nothing else to fall back on.
+
+Naming such a resource directly is an error. In an all-resource search it's skipped and reported under `unsearchable` in the result, so a client can tell "no matches" apart from "not searchable" and reach for `list_records` instead.
+
+It never falls back to returning the resource's records. That fallback is the tempting one, and it would turn "this resource can't be searched" into "here is everything in it" — silently widening the widest read surface the add-on has.
+
+## Every call stays inside the admin's own permissions
+
+Every tool call passes two gates, in this order:
+
+1. **The capability gate.** If the connection wasn't granted the capability the tool needs, the call is refused before any data is touched, and the error names the missing capability.
+2. **Avo's authorization.** The owning admin is re-resolved from your app on every request, and the operation runs through your Avo authorization for that admin — the same policies the panel uses.
+
+A connection therefore can never do anything its owning admin couldn't do by hand in the panel. Granting a capability is permission to *try*; the policy still decides.
+
+Because the admin is re-resolved on every request, a change to their permissions takes effect on the connection's next tool call. Demote an admin to read-only and their connected client stops being able to write, with nobody revoking or re-authorizing anything.
+
+### Field visibility applies to reads *and* writes
+
+Those two gates decide whether an admin may touch a **record**. Which of its **fields** they may touch is a separate decision, made by the same `visible:` blocks your resources already declare — and it applies in both directions.
+
+A field the panel hides from this admin is not returned by `show_record`, `list_records`, or `search_records`, and `list_resources` doesn't name it among the resource's fields either. Naming a field the admin can't see would hand an agent a column it's about to be refused on, which reads as a bug rather than as a permission.
+
+The same field also **cannot be written**, even on a record they may otherwise edit. An admin can pass `update?` on a record and still be refused a column their own panel doesn't render for them — that is what a `visible:` block on a field means, and a tool that checked only the record-level policy would let an agent write straight past it. A field the panel renders read-only is refused for the same reason.
+
+Two more sets of columns are never writable, whatever the policy says: the system-managed `id`, `created_at`, and `updated_at`, and any column whose name looks like it holds a credential (`password`, `token`, `secret`, `digest`).
+
+A refused attribute is never quietly dropped. The call fails, and the error names both what was refused and what this admin can actually write — an ignored attribute reads to an agent as a write that happened, and the next thing it does is report success.
+
+### Authorization has to be licensed
+
+:::danger `avo-authorization` must be licensed, not merely installed
+Policy enforcement lives in the [Authorization](./authorization.html) add-on. Its service checks your license before it checks a policy: when `avo-authorization` isn't among the license's enabled features, it skips authorization entirely and returns `true` for every check. (Avo core ships a same-named service that also returns `true` unconditionally — it's a stub, and it is not what enforces anything.)
+
+`avo-mcp_server` depends on the authorization gem, but a gemspec dependency only puts code on the load path. **It grants no entitlement.** A panel licensed for MCP but not for Authorization would authorize every tool call unconditionally — failing open in exactly the deployment where an admin believes their policies still apply.
+
+Rather than degrade quietly, the server refuses to serve tool calls at all unless **both** features are licensed, and answers with a configuration error. If clients connect successfully but every call comes back as a configuration error, check the license first.
+:::
+
+## Review and revoke connections
+
+The panel lists an admin's connections with the client name, the capabilities granted, when it was authorized, and when it was last used. That last-used timestamp is what answers "was this connection ever actually used?" after a suspected token theft. The screen also shows the server URL, so an admin connecting a second client doesn't need this page to find it.
+
+Revoking takes effect on the next tool call: the client's tokens stop validating, and reconnecting means a fresh trip through the authorize page.
+
+Admins see and revoke their own connections. Because listing and revoking run through Avo's authorization, you can widen that with a policy — an owner-level admin who sees every connection in the app, say — without this add-on inventing a role of its own.
+
+Access tokens are short-lived and refreshed by the client with no admin involvement. The connection itself lasts until someone revokes it.
+
+### Rate limiting
+
+The authorize, token, and client registration endpoints are rate-limited per IP. They're reachable by anyone who knows your panel's URL, so this bounds what an unauthenticated caller can do with them.
+
+:::warning The limit rides on your cache store
+Rate limiting uses `Rails.cache`. On a host configured with `:null_store`, the limits are inert. Two consequences worth checking: if you sit behind a proxy that collapses client IPs, legitimate traffic shares one bucket; and if your cache is a null store, there is no limit at all.
+:::
+
+## Trace changes back to an admin
+
+When [Audit Logging](./audit-logging.html) is installed and enabled, a change made through a connection is recorded against the admin who authorized that connection.
+
+The entry is deliberately indistinguishable from the same change made by hand in the panel — this release adds no MCP-specific marker. The audit log tells you **who** a change belongs to, not **what** made it. Read that together with the [prompt-injection note](#choose-what-a-connection-can-do) above.
+
+Audit logging is optional here. With the add-on absent or disabled, tools still work and nothing is recorded.
+
+## Errors a client receives
+
+Refusals come back as JSON-RPC errors rather than as exceptions or as a successful result carrying an error flag. Every one has a numeric `code`, a human-readable `message`, and a `data` object with the detail a client can act on.
+
+| Code     | When it occurs                                                                  |
+| -------- | ------------------------------------------------------------------------------- |
+| `-32000` | The connection wasn't granted the capability this tool requires                 |
+| `-32001` | The capability was granted, but the owning admin's policy forbids the operation |
+| `-32002` | Authorization isn't being enforced, so nothing was attempted                    |
+| `-32003` | The model rejected the write — a failed validation, or a `destroy` that halted  |
+| `-32004` | The named resource has no `self.search` configured, so there's nothing to search |
+| `-32005` | The resource isn't backed by an Active Record model — an array resource, usually |
+| `-32602` | The tool, resource, or record doesn't exist, or an argument names something the resource doesn't have |
+| `-32020` | An `Mcp-Method`, `Mcp-Name`, or `Mcp-Protocol-Version` header disagrees with the request body, or is missing |
+| `-32022` | The request declared a protocol revision this server doesn't implement          |
+
+The first six are Avo's own and sit in the `-32000` to `-32019` band that the MCP specification leaves to implementations. The rest are the specification's, so they mean the same thing here as on any other MCP server.
+
+`-32000` is the one most agents meet first, since two of the four capabilities are unselected at consent by design. It names both the capability that was withheld and the ones the connection does hold, so the client can tell the admin exactly what to re-authorize:
 
 ```json
 {
-  "error_type": "not_authorized",
-  "action": "index",
-  "message": "You are not authorized to perform this action."
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32000,
+    "message": "This connection was not granted avo:delete, which is required by delete_record.",
+    "data": {
+      "requiredCapability": "avo:delete",
+      "grantedCapabilities": ["avo:read", "avo:write"]
+    }
+  }
 }
 ```
 
-## Error handling
+It's checked before anything else, so a refused call never reads or writes a record.
 
-All tools return structured error responses when something goes wrong:
+`-32001` means the opposite: the capability was there, and your app's policy said no.
 
-| Error type         | When it occurs                                   |
-| ------------------ | ------------------------------------------------ |
-| `invalid_params`   | Required parameters are missing or invalid       |
-| `not_found`        | The requested resource or record doesn't exist   |
-| `not_authorized`   | The current user lacks permission for the action |
-| `validation_error` | Record validation failed (includes field errors) |
-| `internal_error`   | An unexpected error occurred                     |
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32001,
+    "message": "The connected admin is not authorized to destroy Post.",
+    "data": {
+      "action": "destroy",
+      "subject": "Post"
+    }
+  }
+}
+```
+
+`-32002` is not about this call at all — it's the licensing problem described above, surfacing per request. It means no policy ran and none would have, so the server refused instead of answering. Check the license before looking at the tool or the record.
+
+`-32003` is a write your own model refused: a validation that failed on `create_record` or `update_record`, or a `destroy` halted by a dependent record or a callback. Nothing was changed. Its `data` is shaped for an agent that should correct its own call rather than hand the failure back to the person who asked:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32003,
+    "message": "Post could not be saved: Title can't be blank",
+    "data": {
+      "validationErrors": ["Title can't be blank"],
+      "fieldErrors": { "title": ["can't be blank"] },
+      "requiredAttributes": ["title", "user_id"],
+      "optionalAttributes": ["body", "published_at"],
+      "missingRequiredAttributes": ["title"]
+    }
+  }
+}
+```
+
+`requiredAttributes` is read off the real schema and model rather than guessed from field names — a `NOT NULL` column with no default, an unconditional presence validator, or a non-optional `belongs_to` — which is what makes `missingRequiredAttributes` worth acting on.
+
+`-32004` and `-32005` both name the resource in `data.resource`. The first says the resource exists and every other read tool works on it, but nobody configured `self.search`, so search is the one thing it can't answer. The second says there's no database table behind the resource at all — an Avo array resource serves a hardcoded list — so there is nothing to query or write.
+
+`-32602` covers everything a client got structurally wrong: an unknown tool, an unknown resource, a record it can't reach, and any argument naming something the resource doesn't have. In that last case the `data` carries the real list, which is what lets an agent fix its own call instead of giving up:
+
+| The argument that didn't resolve                  | The list in `data` |
+| ------------------------------------------------- | ------------------ |
+| An attribute on `create_record` / `update_record` | `writableFields`   |
+| The `action` on `run_action`                      | `availableActions` |
+| An input name in `run_action`'s `fields`          | `availableInputs`  |
+| `sort_by` on `list_records`                       | `sortableColumns`  |
+
+An attribute refused for being system-managed, credential-shaped, or hidden from this admin comes back with `fields` naming the ones that were refused, rather than with the full writable list.
+
+A result that isn't an error carries `"resultType": "complete"`, which the `2026-07-28` revision requires on every result.
+
+### Not found versus unauthorized
+
+A record outside the admin's policy scope reports as **not found** (`-32602`), identical to an id that never existed. A resource they may not list reports as **unauthorized** (`-32001`), and says so.
+
+The asymmetry is deliberate, so nobody files it as an inconsistency. A row's existence is worth keeping secret: if a hidden id errored differently from a missing one, every read tool would become a way to test for records a policy hides, and that difference is the leak. A resource's existence isn't worth keeping secret — the caller is an administrator of this panel who can already see the sidebar, so hiding one buys nothing, while answering "you may not list Users" instead of "no such resource" is the difference between a fixable answer and a wild goose chase.
+
+A resource name no resource answers to is a `-32602` either way, and points at `list_resources` as the way to find the real one.
+
+## Options reference
+
+Both options live under `config.mcp_server` inside `Avo.configure`, in `config/initializers/avo.rb`.
+
+| Option                | Type      | Default | Description                                                                                                                |
+| --------------------- | --------- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `enabled`             | `Boolean` | `false` | Turns the whole server on. Off by default — installing the gem never starts answering protocol requests on its own.         |
+| `resource_identifier` | `String`  | `nil`   | **Required.** The canonical public URL of this MCP server, e.g. `"https://app.example.com/avo/mcp"`. Never request-derived. |
