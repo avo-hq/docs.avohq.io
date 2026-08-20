@@ -364,7 +364,7 @@ config.container_width = { index: :full }
 | `:full` | —         | —           | Full viewport width                             |
 | `:lg`   | 1536px    | 1536px      | Constrained container (default for index)       |
 | `:md`   | 960px     | 1280px      | Narrower container (default for show / forms)   |
-| `:sm`   | 720px     | 1024px      | Narrow, single-column screens                   |
+| `:sm`   | 720px     | 768px       | Narrow, single-column screens                   |
 
 Below its clamp point a width spans the content area, so `:sm` is the only value
 that narrows anything on a typical laptop.
