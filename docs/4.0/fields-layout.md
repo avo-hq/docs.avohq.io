@@ -212,7 +212,7 @@ end
 
 <Image src="/assets/img/4_0/resource-sidebar/sidebar.webp" dark-src="/assets/img/4_0/resource-sidebar/sidebar-dark.webp" width="980" height="461" alt="Resource Show view with a main panel on the left and a sidebar on the right holding the avatar and Is active fields" />
 
-Sidebar fields are always stacked — label above value — because the narrower column requires it.
+Sidebar fields stack by default — label above value — because the narrower column requires it. A field declaring [`stacked: false`](./field-options-api#stacked) keeps its label beside the value even there.
 
 ## Organize fields under tabs
 

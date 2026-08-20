@@ -115,6 +115,10 @@ Avo.configure do |config|
     deadline: 30,           # seconds for the whole download
     max_redirects: 3
   }
+
+  # Which tools the assistant gets (see "Choose which tools the assistant gets").
+  config.ai.excluded_tools = [:delete_record]
+  config.ai.extra_tools = ["CrmTool"]
 end
 ```
 
@@ -196,11 +200,11 @@ signed in.
 
 Every message you send starts a fresh turn against the provider, built from three things: a system prompt, the conversation so far, and a set of tools. The model can't see your database — it only ever learns about your data by calling a tool and reading what comes back.
 
-**The system prompt is rebuilt on every turn.** It's assembled from the ERB files under `app/prompts/`, so it always reflects the current date, the signed-in user, the record the chat is attached to, and any instructions you've added. Nothing about your schema is baked in ahead of time.
+**The system prompt is rebuilt on every turn.** It's assembled from the ERB files under `app/prompts/`, so it always reflects the current date, the signed-in user, [what the chat was started from](#what-you-start-the-chat-from), and any instructions you've added. Nothing about your schema is baked in ahead of time.
 
-**It inspects before it queries.** The first time a conversation touches a resource, the assistant asks for that resource's real columns, associations, and scopes, then builds its query from the answer. This is enforced by the tools, not merely requested in the prompt: the query and write tools refuse to run against a resource that hasn't been inspected in this conversation. It's why the first question about a resource takes an extra beat, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters.
+**It works from your real schema, not a guess at it.** Every query, write, and action result carries the resource's real columns, model scopes, and required attributes back to the assistant — so it builds what comes next from your names. This is done by the tools, not merely requested in the prompt: it arrives with the answer rather than being asked for first, which is why a question rarely spends a round trip on structure, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters. A query that gets a column wrong comes back with the real ones attached, so the retry is built from names too.
 
-**Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. When a query returns exactly one record, the UI renders a card for it — title and a link — and the assistant is told not to repeat the fields in prose.
+**Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
 
 **Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
@@ -211,6 +215,150 @@ Every message you send starts a fresh turn against the provider, built from thre
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
 For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./ai-agents-and-tools.html).
+
+### Record chips
+
+A record the assistant mentions is drawn inline as a **chip** — its picture, its title, and
+whatever status you choose to put on it — and clicking it opens that record. The chip is part of
+the sentence, so an answer reads as one thought rather than as a paragraph followed by a card.
+
+A chip appears because the assistant named that record. A count or a total names none, so it brings
+no chip with it.
+
+**A set of records comes back as a list of rows.** When the answer *is* a set — "the last three
+users", "which projects are running", "show me the cities" — the assistant names one record per
+line, and the transcript draws those lines as a stack of rows instead of a bulleted paragraph: the
+same chip, given the whole width, so each row is scannable and clickable end to end the way an
+index table's rows are. A line that carries a sentence beside its record stays an ordinary bullet —
+there the record really is a word in a sentence.
+
+:::warning `def chip` is alpha
+The DSL is new and still moving. Expect it to change before it settles — the part vocabulary, the
+tones, and the names on this page are all still up for revision — and expect at least one change
+that a chip you wrote today will not survive untouched. Every one of them will be written down: a
+breaking change to `chip` ships with the release note that says what to do about it, the same as
+any other Avo API. Declare a chip where it earns its keep today, and plan on revisiting those
+declarations at an upgrade.
+:::
+
+**Declare what it carries.** A chip is a row of parts. Every resource has a default one — the
+record's picture and its title — and `def chip` replaces it, declaring one `part` per piece, the
+same shape as [`fields`](./resources.html#fields):
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+  def chip # [!code focus]
+    part resource.avatar # [!code focus]
+    part resource.record_title # [!code focus]
+    part record.status, tone: :danger # [!code focus]
+  end # [!code focus]
+end
+```
+
+`chip` is an ordinary instance method, so **`record` and `resource` are in scope** — the same two
+names Avo injects into every lambda you write on a resource. Everything a part is built from is
+reached through one of them, so a declaration says out loud where each piece came from and there
+is nothing new to learn:
+
+```ruby
+part resource.avatar              # the picture, or the initials Avo derives
+part resource.record_title        # what Avo calls this record
+part record.status                # anything the record answers to
+part "in review"                  # a literal
+part record.status, tone: :danger # coloured
+part icon: "tabler/outline/moon"  # a glyph, alone or beside text
+```
+
+Because it is an instance method on the hydrated resource, the rest of what Avo hands a lambda is
+there too — `view`, `params`, `request`, `context`, `current_user`, `view_context`, `main_app`,
+`avo`, `helpers` and `t`. Nothing is injected for them; the resource already delegates them.
+
+```ruby
+def chip
+  part resource.avatar
+  part resource.record_title
+  part view_context.number_to_currency(record.budget), tone: :muted # [!code focus]
+  part t("my_app.draft"), tone: :muted if record.draft? # [!code focus]
+end
+```
+
+:::info
+The one thing a `def chip` body does *not* get is a lambda's implicit forwarding to the view
+context, so a bare `number_to_currency(...)` won't resolve — name `view_context`, as above, or
+reach your app's own helpers through `helpers`.
+:::
+
+**A chip renders in two places**, and that is worth knowing before you reach for anything
+request-scoped — it is drawn by two different things:
+
+| When | Rendered by |
+| ---- | ----------- |
+| The answer streaming in, live | a background job, broadcasting over Turbo Stream |
+| Opening or reloading the conversation | the usual controller and request |
+
+The whole vocabulary above works in **both** — including `view_context`, `main_app` and `avo`,
+which Avo lends the chip when there is no request to take them from. Your declaration behaves the
+same whether you watched the answer arrive or came back to the conversation a day later, which is
+the point: a chip that worked on every reload and came back empty mid-stream would be a miserable
+thing to catch.
+
+**Where the title sits is just where you declare it** — there is no "before" or "after" option,
+only order, and no limit on either side:
+
+```ruby
+class Avo::Resources::Issue < Avo::BaseResource
+  def chip
+    part resource.avatar
+    part icon: "tabler/outline/circle-dot", tone: :success # [!code focus]
+    part record.identifier, tone: :muted # [!code focus]
+    part resource.record_title # [!code focus]
+    part record.assignee_name, tone: :muted # [!code focus]
+  end
+end
+```
+
+Because the body is ordinary Ruby against those two objects, a part can be computed rather than
+read off a column. Keep the computing on the model, though, and let the declaration say only how
+the answer looks — "is it night there?" is a question about a city, not about how one is drawn.
+The chip is rarely the only place that wants the answer, either: the same `night?` can feed a
+[discreet information](./discreet-information.html) entry on the record's header without
+computing it twice.
+
+```ruby
+class City < ApplicationRecord
+  def night? # [!code focus]
+    local_hour < 6 || local_hour >= 20 # [!code focus]
+  end # [!code focus]
+end
+
+class Avo::Resources::City < Avo::BaseResource
+  def chip
+    part resource.avatar
+    part icon: record.night? ? "tabler/outline/moon" : "tabler/outline/sun", # [!code focus]
+         tone: record.night? ? :info : :warning # [!code focus]
+    part resource.record_title
+    part record.local_time, tone: :muted
+  end
+end
+```
+
+| Argument       | Values                                                                                          |
+| -------------- | ----------------------------------------------------------------------------------------------- |
+| first argument | The part's text — anything, used verbatim. `resource.avatar` is the one value that draws a picture instead |
+| `icon:`        | An [icon](./icons.html) name, e.g. `tabler/outline/moon`                                        |
+| `tone:`        | `:neutral` (default, the record's own ink), `:muted`, `:success`, `:warning`, `:danger`, `:info` |
+
+:::warning
+Defining `chip` replaces the default entirely — including the picture and the title. Declare
+`part resource.avatar` and `part resource.record_title` if you want them, and an empty `def chip`
+renders an empty chip.
+:::
+
+:::info
+A part with neither text nor an icon is skipped, so `part(record.draft? ? "draft" : nil)` is a
+normal thing to write. An unknown `tone:` falls back to `:neutral`. And if `chip` raises, the
+record still renders as a link rather than taking the answer down with it.
+:::
 
 ## Answering the assistant's questions
 
@@ -225,6 +373,8 @@ When the assistant genuinely can't proceed — a required value you didn't menti
 **Picking several at once.** Some questions take more than one answer — which fields to fill in, which of the matched records to include. Those render as checkboxes instead of buttons, with one **Send** under them and an *Add anything else…* box alongside. Everything goes back as a single reply: the labels you ticked, plus whatever you typed, separated by commas.
 
 Answering a question card is an ordinary turn, never a confirmation. An option can quite legitimately read "Yes", and clicking it answers the question it belongs to — it can't reach back and confirm an update or a delete waiting further up the conversation.
+
+**Once you answer, the card settles.** Its options come off and it goes flat, the way a write card does once you confirm it. The question itself stays above your reply — it is the transcript's record of what was asked — and a page you left open on that card can't answer the same question a second time.
 
 ## Your actions, from the chat
 
@@ -247,6 +397,18 @@ Ask for it in whatever words you'd use with a colleague — "archive the Orbit p
 **The action's messages are the outcome.** Whatever your action reports — `succeed`, `warn`, `inform`, `error` — lands on the card once it has run, each with its severity, the same messages the Avo UI would toast. An action may report several at once, and an `error` message is part of the outcome, not a failure of the run. The values the action was handed stay on the settled card too, folded behind a click.
 
 [Actions that run without records](./actions.html#run-an-action-without-records) work too — the assistant runs them with no record at all.
+
+### Finding an action without naming its resource
+
+People ask in verbs. "Refresh the models", "send the welcome email", "export everything" — none of those name a resource, and none of them need to. The assistant can list every action registered across the application, each beside the resource that owns it, pick the one that matches what you asked, and run it from there.
+
+This is why an action lands even when the noun in your sentence isn't one of your records. "Refresh the models" reads like a question about your database until you know that `Avo::Resources::AvoAi::Model` registers a **Refresh models** action — and knowing that is the assistant's job, not yours.
+
+The list is scoped like everything else: it only contains actions from resources the signed-in user is allowed to list, so it can never surface an operation from a corner of the app that user can't reach. It's also fetched only when a request looks like an operation — a conversation about editing a blog post never pays for it.
+
+:::info An action two resources share needs you to say which
+Naming the action alone is enough when one resource registers it. When two do, the assistant asks which resource you mean instead of choosing — two resources registering the same action class are two tables with two policies, and the run lands on exactly one of them.
+:::
 
 ### What it's allowed to run
 
@@ -378,6 +540,133 @@ This copies all prompt files — the chat assistant's instructions and sub-promp
 
 The shipped `instructions.txt.erb` ends with an `<%= extra_instructions %>` slot. If you replace it, your copy decides whether to keep that slot — remove the line and the `extra_instructions` file is ignored.
 
+## Choose which tools the assistant gets
+
+What the assistant can do is exactly the set of [tools](./ai-agents-and-tools.html#the-tools) it's handed on each run. Two settings shape that set: `excluded_tools` takes shipped tools away, and `extra_tools` adds tools you wrote yourself.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.ai.excluded_tools = [:delete_record, :run_action]
+  config.ai.extra_tools = ["CrmTool"]
+end
+```
+
+Set neither and the assistant gets the twelve tools the gem ships. The roster is assembled per run, so once the app has restarted, the next message in an existing conversation already reflects the change — nothing is baked into a chat.
+
+### Take a tool away
+
+```ruby
+# config/initializers/avo.rb
+config.ai.excluded_tools = [:delete_record, :update_record]
+```
+
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of twelve; symbols and strings are both accepted.
+
+An excluded tool is filtered out by name before it's ever built, so it isn't attached to the conversation and the model never learns it exists. It doesn't refuse the request — there's nothing there to refuse with.
+
+A name that isn't one of the twelve raises `ArgumentError` at boot, listing the ones it knows. A typo that quietly left deletes attached is exactly the failure worth being loud about.
+
+:::warning It's a denylist, so tools added later arrive switched on
+`excluded_tools` says what to remove, not what to allow. A future avo-ai release that ships a new tool — a write tool included — hands it to every app that hasn't named it here. Read the release notes when you upgrade, and exclude anything you don't want.
+:::
+
+Nothing is protected. `ask_user` and `write_history` are chat infrastructure rather than data tools, and excluding them is allowed: the assistant loses the ability to ask you a clarifying question, or to list and undo the writes it made in the conversation. That's a decision you're free to make — just make it deliberately.
+
+Excluding `resource_inspector` costs less than it sounds like it should. The [schema every result carries](./ai-agents-and-tools.html#schema-comes-back-with-the-answer) doesn't come from that tool, so queries and writes still work from your real columns and scopes. What you lose is the deeper report — field types, a resource's actions and filters, its associations and attachments — for the questions where the assistant wants structure a result can't give it.
+
+:::warning Excluding `rename_conversation` turns AI titling off entirely
+That tool is what applies a title, so removing it stops the [conversation renamer](./ai-agents-and-tools.html#renaming-conversations) too, not just the assistant's ability to rename on request: new conversations are no longer auto-titled after the first message, and **Rename with AI** stops having an effect. Conversations keep the *Untitled chat* placeholder until someone names them. **Rename chat** still works — that one never goes through a model.
+
+The exception is a replacement: register your own tool under the `rename_conversation` wire name — which is exactly what [ejecting it](#replace-a-shipped-tool-with-your-own-copy) sets up — and titling continues through your copy.
+:::
+
+### Bring your own tool
+
+Scaffold one:
+
+```bash
+bin/rails generate avo:ai:tool crm
+```
+
+That writes `app/tools/crm_tool.rb`, defining `CrmTool` — a `RubyLLM::Tool` the model calls `crm`. The file arrives with the same three mixins the shipped tools use, and TODOs where your part goes:
+
+| Mixin | What it gives you |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `Avo::Ai::ToolSupport` | `json_result` for the reply shape, plus resource lookup and schema introspection helpers |
+| `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!` |
+| `Avo::Ai::InspectionAware` | Answers with the touched resource's real columns, scopes, and required attributes under `resource_schema` — once per run per resource. It reads the resource name from your tool's own `resource:` argument |
+
+:::warning Include `InspectionAware` in the tool class itself
+It wraps your `execute` by prepending to the class it's included in. Included in a concern your tools share, the wrapper ends up *behind* each tool's own `execute` and never runs — no error, just results that quietly arrive without their schema.
+:::
+
+Fill in the `description` — the model reads it to decide whether to call the tool, and a vague one is the usual reason a tool never gets called — then the `parameters` schema and `execute`.
+
+Then register the class in your initializer:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.extra_tools = ["CrmTool"]
+```
+
+A tool that takes settings of its own is registered as a Hash instead. Its `tool:` key names the class and every other key is passed to the tool's initializer:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.extra_tools = [
+  "CrmTool",
+  {tool: "InvoiceTool", api_key: ENV["INVOICE_API_KEY"]}
+]
+```
+
+Entries are class **names**, not constants: this initializer runs before your own classes are loadable, so the name is resolved when a chat runs. The upside is that reloading works normally in development; the trade-off is that a typo surfaces on a chat's first message rather than at boot — the chat's [Agent tools](#see-what-a-conversation-will-get) field is where you'll read the error.
+
+Three things the server decides for you, whatever the entry says:
+
+- **The acting user, the conversation, and the inspection tracker are injected server-side.** `user:` is passed to your initializer when it accepts one, and `chat` / `inspection_tracker` are set afterwards if your tool declares the accessors (the generated one declares `chat` and picks up `inspection_tracker` from `Avo::Ai::InspectionAware`). `user:`, `chat:` and `inspection_tracker:` keys in an `extra_tools` entry are stripped, so the initializer can't hand your tool a different user than the one who's chatting.
+- **Authorization is yours to call.** Nothing in the gem stops a tool reading the whole table — reach data through `authorized_relation` and `authorize_record_action!` so your tool sees exactly what the signed-in user sees in Avo, and rescue `Avo::Ai::ToolAuthorization::IdentityError` to report "not allowed" as a result instead of failing the run.
+- **Two tools can't share a wire name.** Registering a tool whose name collides with a shipped one raises when the roster is built. To replace a shipped tool, exclude it first — that's what [ejecting](#replace-a-shipped-tool-with-your-own-copy) does for you.
+
+:::warning What a tool returns goes to your model provider
+Everything `execute` returns is sent to the provider on that turn and on every later turn of the conversation, and it's stored on the tool call. Return the minimum that answers the question — no API keys, no credentials, and no personal data the question didn't call for. Read secrets from `ENV` or `Rails.application.credentials`; never write one into the tool file or the initializer. When an entry fails to resolve, the error names the entry by its class and key names only — the values never reach a log, the error tracker, or the **Agent tools** field.
+:::
+
+### Replace a shipped tool with your own copy
+
+To change how a shipped tool behaves, eject it:
+
+```bash
+bin/rails generate avo:ai:eject tool delete_record
+```
+
+This copies the gem's tool into `app/tools/delete_record_tool.rb` as a plain top-level class you own, then wires both halves of the swap into the `Avo.configure` block in `config/initializers/avo.rb`:
+
+```ruby
+# config/initializers/avo.rb
+# delete_record ejected to app/tools/delete_record_tool.rb — the copy replaces the tool avo-ai ships.
+config.ai.excluded_tools += ["delete_record"]
+config.ai.extra_tools += ["DeleteRecordTool"]
+```
+
+Both lines are needed, and neither works alone: the exclusion takes the shipped tool away, and the extra entry puts your copy back under the same wire name. The copy keeps its `def self.tool_name`, so tool calls, icons, and result cards are unchanged — to the model and to your stored history, it's still `delete_record`.
+
+A tool the gem builds with an argument of its own is registered carrying it, so your copy is constructed exactly as the shipped one was. Ejecting `rename_conversation` writes `{tool: "RenameConversationTool", rescan: true}` for that reason.
+
+The generator refuses rather than surprising you. It won't overwrite an existing `app/tools/…` file, and it won't run twice — an initializer that already excludes the name is read as "ejected already", and nothing is written.
+
+:::warning An ejected copy stops receiving gem updates
+It's a fork. Every later fix that lands in avo-ai's own copy — authorization hardening included — stays there. Diff yours against the gem's `app/tools/avo/ai/<tool>_tool.rb` when you upgrade, and eject only the tools you actually mean to change.
+:::
+
+:::danger If the generator can't find your `Avo.configure` block
+It won't edit an initializer it doesn't recognize — a mangled initializer takes the app down at boot. Instead it prints the two lines, exits with a non-zero status, and says so: **the copy is on disk but is not active**. Until you paste those lines into `config/initializers/avo.rb` yourself, the assistant keeps calling the tool the gem ships, not yours.
+:::
+
+### See what a conversation will get
+
+Open a chat in the **Chats** resource and read its **Agent tools** field: it's computed by the same code the chat runs, for that chat's owner and model, so it's the answer to "did my configuration take effect?" See [Seeing a conversation's roster](./ai-agents-and-tools.html#seeing-a-conversation-s-roster) for how to read an empty or unexpected list.
+
 ## Replace the assistant's icon
 
 The avocado is a single partial, rendered everywhere the assistant appears: the **Agent** button, the collapsed bar, the empty state on new and full-page chats, and the *Open in assistant bar* button on a chat's record page. Create the same path in your application and all of them change at once:
@@ -398,30 +687,43 @@ Each place that renders the icon passes a `classes` local, because the sizes dif
 
 The icon on the chat pages' breadcrumb isn't part of the partial and stays an avocado.
 
-## What the chat starts from
+## What you start the chat from
 
-Start a conversation from anywhere in Avo and the assistant already knows where you were and what you were looking at. Ask "who owns this?", "what am I looking at?", or "how many of these are unpaid?" without naming anything and without waiting for a lookup.
+Start a conversation from a page whose subject is one thing and the assistant already knows what you mean. You can ask "who owns this?", "what is this?", or "rename this to Q3 pricing" without naming it or waiting for a lookup. Three kinds of page carry a subject:
 
-A ribbon above the composer shows exactly what a new chat will carry, so it is never a guess.
+| Started from                                        | What the chat carries               | What "this", "it", or a question with no subject resolves to |
+| --------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------ |
+| A record's page                                     | The resource name and the record id | That record                                                   |
+| A [Media Library](./media-library.html) file's page | The Active Storage blob id          | That file                                                     |
+| A conversation's page                               | The chat, itself a record           | That conversation                                             |
+| **Any** Avo page                                    | That page's title and path          | The page itself, for "what is this page?"                     |
+| A page with rows checked                            | Every checked row, by resource and id | Those records, for "these" and "the selected ones"           |
+
+The last two are not subjects of their own — they ride along with whichever subject the page has, and with each other. A record's page carries the record *and* the page; a course's page with three links checked in a has-many panel carries the course, the page, *and* the links.
+
+A ribbon above the composer shows exactly what a new chat will carry, so it's never a guess: the subject, the page's path, and how many rows are checked. A record shows its avatar or its initials — the same pair the breadcrumbs show — and a file shows its own thumbnail when it has one.
 
 <Image src="/assets/img/4_0/ai/context-ribbon.webp" dark-src="/assets/img/4_0/ai/context-ribbon-dark.webp" width="1110" height="140" alt="The chat composer on a course's page. A ribbon above the empty message box reads: Course, Computer Science 382, #1, then the page's path, with a ✕ at its end." prompt="the chat composer's context ribbon on a record page" />
 
-Four things can ride along, and they compose rather than compete — a record's page attaches the record *and* the page it is on; an index with rows checked attaches the page *and* the rows:
+It is one ribbon with one ✕: "what is this about" and "where was I" are not two decisions worth making separately. An index, a dashboard or a new-record form has no subject of its own, but it still has a page and it may have rows checked, so the ribbon is there too.
 
-| Where you start                | What the chat carries                        |
-| ------------------------------ | -------------------------------------------- |
-| Any Avo page                   | The page's title and path                    |
-| A record's page                | That record, by resource and id              |
-| A Media Library file's page    | That file, by blob id                        |
-| A page with rows checked       | Every checked row, by resource and id        |
+**What is attached stays attached for the whole conversation.** It's what the chat was *started from*, so you're asked once, when the chat begins — that's why the ribbon is on the new-chat composer only. Every later message still resolves "this record", "this file", "it", or a question with no subject at all against the same thing. Ask "what is this?" as the fifth message and it works exactly as it does as the first.
 
-It is one ribbon with one ✕: "what is this about" and "where was I" are not two decisions worth making separately. Dismiss it and the chat starts with none of it. The button next to send toggles it back on and lights up whenever something is attached, so the ribbon and the button always agree about what the chat will carry. Every fresh compose view offers it again — the ✕ applies to the message you are writing, not to the feature.
+Dismiss the ribbon with the ✕ at its end, or press <kbd>Backspace</kbd> in an empty composer, and the chat starts without it. Backspace only ever removes — pressing it again can't attach the subject back — so clearing the message box can't put back something you meant to drop. The button next to send toggles it back on, and lights up whenever the subject is attached, so the ribbon and the button always agree about what the chat will carry. Every fresh compose view offers the subject again: the ✕ applies to the chat you're writing, not to the feature.
 
-**What is attached stays attached for the whole conversation.** It is what the chat was *started from*, so you are asked once, when the chat begins — which is why the ribbon is on the new-chat composer only. Every later message still resolves "this record", "these", "it", or a question with no subject at all against the same thing. Ask "what is this?" as the fifth message and it works exactly as it does as the first.
+It respects your policies, on every message. Only references are kept — a resource name and a record id, a blob id, a title and a path — never a field value, and never the labels you see in the ribbon. That reference is resolved again on each turn, through the same authorization the page itself applies — `index?` plus your Pundit scope for a record, Media Library access for a file — and the label is read fresh at that moment. So a subject the user loses access to, or that gets deleted mid-conversation, simply drops out of the prompt instead of lingering as a stale copy of something they can no longer see. A checked row that was never theirs to read is not attached at all — the chat carries the subset they could have selected in the UI, never the set the browser asked for. The attachment is only a starting point either way — every read and write the assistant then performs is authorized on its own.
 
-### The record you start from
+### Starting from a Media Library file
 
-On a record's page, "this record", "this post", "this", "it", and "here" all mean that record — and so does a question that names no subject at all. "What is this?", "summarize", "who owns it?" and "is this ok?" are answered about the record rather than met with "which record do you mean?".
+Open one file in the [Media Library](./media-library.html) and start a chat from its page: that file is the subject. "What is this?", "where is this used?", and "attach this to the latest post" all resolve to it — and "where is this used?" comes back naming every record the file is attached to, which is the question a file's page most often raises.
+
+The gate is Media Library access, and it's the same one the page itself applies: a user who can open the library can open any file's page in it, so there is no narrower per-file check to add on top. Turn the Media Library off, or narrow its [`visible`](./media-library.html#control-who-can-use-it) block to fewer admins, and the file drops out of every prompt at once rather than the context outliving the access it was granted under.
+
+Only the blob id is stored. The filename and content type are read off the blob on each turn, so a file renamed mid-conversation is named correctly on the very next message.
+
+### Starting from a conversation
+
+A chat is stored as a record, so its own page offers it the way any record's page does. Open a conversation, start a *new* chat from the bar, and "summarize this", "what did we decide here?", or "who was this with?" resolve to the conversation you were reading — no copying and pasting a transcript into the new chat.
 
 ### The rows you checked
 
@@ -445,14 +747,6 @@ Every Avo page contributes its own title and path. That is what makes "what is t
 
 It is a label, not a description: the page origin says *where* the conversation started and never what was on screen. The assistant still queries before stating anything about your data, and page titles are passed to the model as untrusted values, so a record whose name reads like an instruction is text rather than a command.
 
-### It respects your policies, on every message
-
-Only references are kept — a resource name and a record id, a blob id, a title and a path. Never a field value, and never the labels you see in the ribbon.
-
-Those references are resolved again on **every turn**, through the same authorization the assistant's other tools use (`index?` plus your Pundit scope), and each title is read fresh at that moment. So a record someone loses access to, or that is deleted mid-conversation, drops out of the prompt instead of lingering as a stale copy of something they can no longer see. A checked row that was never theirs to read is not attached at all — the chat carries the subset they could have selected in the UI, never the set the browser asked for.
-
-The attachment is only a starting point either way: every read and write the assistant then performs is authorized on its own.
-
 ### Change how it reads
 
 The wording lives in a prompt file like the rest, so you can change how the assistant treats any of it:
@@ -461,16 +755,16 @@ The wording lives in a prompt file like the rest, so you can change how the assi
 bin/rails generate avo:ai:eject instructions
 ```
 
-Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives four locals, each `nil` when the conversation did not start from that thing:
+Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives one local per source, each `nil` when the conversation did not start from that thing:
 
-| Local                | Shape                                                                  |
-| -------------------- | ---------------------------------------------------------------------- |
-| `attached_record`    | `{resource:, record_id:, label:}`                                      |
-| `attached_file`      | `{blob_id:, filename:, content_type:}`                                 |
-| `attached_page`      | `{title:, path:}`                                                      |
-| `attached_selection` | `{groups: [{resource:, records: [{record_id:, label:}]}], capped:}`    |
+| Local                | Shape                                                               | Present on                       |
+| -------------------- | ------------------------------------------------------------------- | -------------------------------- |
+| `attached_record`    | `{resource:, record_id:, label:}`                                   | A record's page                  |
+| `attached_file`      | `{blob_id:, filename:, content_type:}`                              | A Media Library file's page      |
+| `attached_page`      | `{title:, path:}`                                                   | Any Avo page                     |
+| `attached_selection` | `{groups: [{resource:, records: [{record_id:, label:}]}], capped:}` | A page with rows checked         |
 
-Rendering nothing is a valid way to turn any of it off.
+A page offers at most one of the first two. Rendering nothing is a valid way to turn any of it off.
 
 ## Open the chat
 
@@ -501,7 +795,7 @@ The list is scoped to the signed-in user. It's not an admin view of everyone's c
 The ⋯ button next to a conversation's title opens its menu. It's in the chat window's title bar and on the full-page chat, and both carry the same two rename entries:
 
 - **Rename chat** makes the title editable in place — the panel's header in the bar, the last breadcrumb on a chat page. **Enter** commits and **Esc** cancels in both. Clicking away differs: in the bar it cancels the edit, on the chat page it commits it. An empty title is refused, so a conversation always keeps a name.
-- **Rename again with AI** hands the conversation back to the [renamer agent](./ai-agents-and-tools.html#renaming-conversations) for a fresh title, without going through the assistant. The title shimmers while the renamer runs, and the new name lands everywhere the old one showed.
+- **Rename with AI** hands the conversation back to the [renamer agent](./ai-agents-and-tools.html#renaming-conversations) for a fresh title, without going through the assistant. The title shimmers while the renamer runs, and the new name lands everywhere the old one showed.
 
 Renaming needs no policy of its own — owning the chat is the entire permission, and you only ever see your own.
 
@@ -684,7 +978,7 @@ How much of the assistant's internal work a viewer may see is an authorization d
 
 There are two levels:
 
-- `:off` — the conversation: replies, record cards, confirmation buttons, the assistant's questions, the "Thinking…" indicator, and the collapsed trail with its reasoning trace and progress hints. The default.
+- `:off` — the conversation: replies, record chips, confirmation buttons, the assistant's questions, the "Thinking…" indicator, and the collapsed trail with its reasoning trace and progress hints. The default.
 - `:tools` — everything above plus the system prompt, the tool calls, and the raw tool output.
 
 The reasoning trace deliberately sits on the `:off` side of the line: it narrates the answer the

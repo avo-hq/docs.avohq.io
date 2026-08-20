@@ -174,6 +174,39 @@ config.default_view_type = :grid
 
 </Option>
 
+<Option name="`map_view`">
+
+Defaults for the [map view](./map-view.html) and the [`location`](./fields/location.html) and [`area`](./fields/area.html) fields, which render the same maps.
+
+```ruby
+config.map_view = {
+  styles: :mapbox
+}
+```
+
+<Option name="`styles`" headingSize="4">
+
+The light/dark pair Avo renders maps with. Avo picks a provider on its own — [OpenFreeMap](https://openfreemap.org), free with no account and no API key, or Mapbox when `MAPBOX_ACCESS_TOKEN` is set. Set this to pin one regardless, or to supply your own pair.
+
+```ruby
+config.map_view = {
+  styles: {
+    light: "https://tiles.openfreemap.org/styles/liberty",
+    dark: "https://tiles.openfreemap.org/styles/dark"
+  }
+}
+```
+
+Avo swaps between the two as the color scheme changes. A single map can still override the style with `mapkick_options: {style: "..."}` — that's one style rather than a pair, so Avo leaves that map alone in dark mode.
+
+- **Type:** Symbol or Hash with `light` and `dark` keys
+- **Default:** `nil` — resolves to `:mapbox` when `MAPBOX_ACCESS_TOKEN` is set, `:open_free_map` otherwise
+- **Values:** `:open_free_map`, `:mapbox`, or a `{light:, dark:}` Hash of style URLs
+
+</Option>
+
+</Option>
+
 <Option name="`first_sorting_option`" headingSize="3">
 
 The direction applied the first time a user sorts a column on the <Index /> view.
