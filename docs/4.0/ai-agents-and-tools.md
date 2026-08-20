@@ -14,7 +14,7 @@ This page is the reference for both — which agents exist, what every tool does
 
 ### The chat agent
 
-The chat agent powers every conversation — the floating bar, full-page chats, and chats attached to a record. On every message it rebuilds its system prompt from the ERB files under `app/prompts/` (which is what keeps the current date, signed-in user, and attached record fresh) and assembles its tool roster for the signed-in user who owns the chat.
+The chat agent powers every conversation — the floating bar, full-page chats, and chats attached to a record. On every message it rebuilds its system prompt from the ERB files under `app/prompts/` (which is what keeps the current date, signed-in user, and [attached subject](./ai.html#what-you-start-the-chat-from) fresh) and assembles its tool roster for the signed-in user who owns the chat.
 
 The roster is built per run, not baked in: what the assistant can do in a conversation always reflects your current [tool configuration](./ai.html#choose-which-tools-the-assistant-gets), and every call it then makes is authorized against your policies at that moment.
 
@@ -85,6 +85,8 @@ The query and write tools refuse to touch a resource until `resource_inspector` 
 ## Renaming conversations
 
 A new conversation starts without a name and gets one automatically after your first message — the renamer reads the opening of the conversation and titles it.
+
+The renamer is its own agent and never receives the conversation's images, so it's given the names of any files you attached alongside the text. A message whose whole subject is the file it carries — "what do you see here?" — is titled from the filename rather than from a question that names nothing. A reply that isn't a plausible title (one that asks a question, or runs long) is dropped instead of applied, so the conversation stays *Untitled chat* rather than being named after the model's request to see the image.
 
 After that, renaming is a chat feature like any other:
 

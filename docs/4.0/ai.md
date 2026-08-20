@@ -200,7 +200,7 @@ signed in.
 
 Every message you send starts a fresh turn against the provider, built from three things: a system prompt, the conversation so far, and a set of tools. The model can't see your database — it only ever learns about your data by calling a tool and reading what comes back.
 
-**The system prompt is rebuilt on every turn.** It's assembled from the ERB files under `app/prompts/`, so it always reflects the current date, the signed-in user, the record the chat is attached to, and any instructions you've added. Nothing about your schema is baked in ahead of time.
+**The system prompt is rebuilt on every turn.** It's assembled from the ERB files under `app/prompts/`, so it always reflects the current date, the signed-in user, [what the chat was started from](#what-you-start-the-chat-from), and any instructions you've added. Nothing about your schema is baked in ahead of time.
 
 **It inspects before it queries.** The first time a conversation touches a resource, the assistant asks for that resource's real columns, associations, and scopes, then builds its query from the answer. This is enforced by the tools, not merely requested in the prompt: the query and write tools refuse to run against a resource that hasn't been inspected in this conversation. It's why the first question about a resource takes an extra beat, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters.
 
@@ -525,25 +525,50 @@ Each place that renders the icon passes a `classes` local, because the sizes dif
 
 The icon on the chat pages' breadcrumb isn't part of the partial and stays an avocado.
 
-## The record you start from
+## What you start the chat from
 
-Start a conversation from a record's page and the assistant already knows which record you mean. You can ask "who owns this?", "what is this?", or "rename this to Q3 pricing" without naming the record or waiting for a lookup.
+Start a conversation from a page whose subject is one thing and the assistant already knows what you mean. You can ask "who owns this?", "what is this?", or "rename this to Q3 pricing" without naming it or waiting for a lookup. Three kinds of page carry a subject:
 
-A ribbon above the composer names the record, so it's never a guess: the resource and the record's title, sitting behind the message box. On pages that aren't a single record — an index, a dashboard, a new-record form — there is no ribbon and no button, because there is nothing to attach.
+| Started from                                        | What the chat carries               | What "this", "it", or a question with no subject resolves to |
+| --------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------ |
+| A record's page                                     | The resource name and the record id | That record                                                   |
+| A [Media Library](./media-library.html) file's page | The Active Storage blob id          | That file                                                     |
+| A conversation's page                               | The chat, itself a record           | That conversation                                             |
 
-**The record stays attached for the whole conversation.** It's the record the chat was *started from*, so you're asked once, when the chat begins — that's why the ribbon is on the new-chat composer only. Every later message still resolves "this record", "it", or a question with no subject at all against the same record. Ask "what is this?" as the fifth message and it works exactly as it does as the first.
+A ribbon above the composer names the subject, so it's never a guess: what it is and what it's called, sitting behind the message box. A record shows its avatar or its initials — the same pair the breadcrumbs show — and a file shows its own thumbnail when it has one. On pages that aren't about a single subject — an index, a dashboard, a new-record form — there is no ribbon and no button, because there is nothing to attach.
 
-Dismiss the ribbon with the ✕ at its end and the chat starts without it. The button next to send toggles it back on, and lights up whenever the record is attached, so the ribbon and the button always agree about what the chat will carry. Every fresh compose view offers the record again: the ✕ applies to the chat you're writing, not to the feature.
+**The subject stays attached for the whole conversation.** It's what the chat was *started from*, so you're asked once, when the chat begins — that's why the ribbon is on the new-chat composer only. Every later message still resolves "this record", "this file", "it", or a question with no subject at all against the same thing. Ask "what is this?" as the fifth message and it works exactly as it does as the first.
 
-It respects your policies, on every message. Only a reference is kept — the resource name and the record id, never the title or any field value. That reference is resolved again on each turn, through the same authorization the assistant's other tools use (`index?` plus your Pundit scope), and the record's title is read fresh at that moment. So a record the user loses access to, or that gets deleted mid-conversation, simply drops out of the prompt instead of lingering as a stale copy of something they can no longer see. The attachment is only a starting point either way — every read and write the assistant then performs is authorized on its own.
+Dismiss the ribbon with the ✕ at its end, or press <kbd>Backspace</kbd> in an empty composer, and the chat starts without it. Backspace only ever removes — pressing it again can't attach the subject back — so clearing the message box can't put back something you meant to drop. The button next to send toggles it back on, and lights up whenever the subject is attached, so the ribbon and the button always agree about what the chat will carry. Every fresh compose view offers the subject again: the ✕ applies to the chat you're writing, not to the feature.
 
-The wording lives in a prompt file like the rest, so you can change how the assistant treats it:
+It respects your policies, on every message. Only a reference is kept — the resource name and the record id, or the blob id — never a title, a filename, or any field value. That reference is resolved again on each turn, through the same authorization the page itself applies — `index?` plus your Pundit scope for a record, Media Library access for a file — and the label is read fresh at that moment. So a subject the user loses access to, or that gets deleted mid-conversation, simply drops out of the prompt instead of lingering as a stale copy of something they can no longer see. The attachment is only a starting point either way — every read and write the assistant then performs is authorized on its own.
+
+### Starting from a Media Library file
+
+Open one file in the [Media Library](./media-library.html) and start a chat from its page: that file is the subject. "What is this?", "where is this used?", and "attach this to the latest post" all resolve to it — and "where is this used?" comes back naming every record the file is attached to, which is the question a file's page most often raises.
+
+The gate is Media Library access, and it's the same one the page itself applies: a user who can open the library can open any file's page in it, so there is no narrower per-file check to add on top. Turn the Media Library off, or narrow its [`visible`](./media-library.html#control-who-can-use-it) block to fewer admins, and the file drops out of every prompt at once rather than the context outliving the access it was granted under.
+
+Only the blob id is stored. The filename and content type are read off the blob on each turn, so a file renamed mid-conversation is named correctly on the very next message.
+
+### Starting from a conversation
+
+A chat is stored as a record, so its own page offers it the way any record's page does. Open a conversation, start a *new* chat from the bar, and "summarize this", "what did we decide here?", or "who was this with?" resolve to the conversation you were reading — no copying and pasting a transcript into the new chat.
+
+### Change how it reads
+
+The wording lives in a prompt file like the rest, so you can change how the assistant treats the subject:
 
 ```bash
 bin/rails generate avo:ai:eject instructions
 ```
 
-Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives an `attached_record` local — `{resource:, record_id:, label:}`, or `nil` when the conversation wasn't started from a record — and rendering nothing is a valid way to turn the feature off.
+Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives one local per kind of subject, and a page offers one or the other:
+
+- `attached_record` — `{resource:, record_id:, label:}`, on a record's page.
+- `attached_file` — `{blob_id:, filename:, content_type:}`, on a Media Library file's page.
+
+Either is `nil` when the conversation started somewhere else, and rendering nothing is a valid way to turn the feature off.
 
 ## Open the chat
 

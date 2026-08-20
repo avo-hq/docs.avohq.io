@@ -124,16 +124,29 @@ Required inputs you didn't mention arrive as empty fields on the card for you to
 
 Files are referenced by blob id, and the Media Library URL carries one: `/avo/media-library/260/edit` is blob 260. The assistant never uploads bytes itself — a file gets in either by riding along on your message or through a URL you confirm. Purging a file stays a manual action. See [Files and attachments](./ai.html#files-and-attachments) and [Getting new files in](./ai.html#getting-new-files-in).
 
-## Ask about the record you're on
+## Ask about the page you're on
 
-Start a chat from a record's page and "this" is already resolved — for the whole conversation, not just the first message.
+Start a chat from a page whose subject is one thing and "this" is already resolved — for the whole conversation, not just the first message.
+
+From a record's page:
 
 - **"What is this?"**
 - **"Who owns it?"**
 - **"Set its status to active"**
 - **"Is anything missing here?"**
 
-A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it. See [The record you start from](./ai.html#the-record-you-start-from).
+From one [Media Library](./media-library.html) file's page:
+
+- **"What is this?"**
+- **"Where is this used?"** — every record the file is attached to
+- **"Attach this to the latest post's cover"**
+
+From a conversation's page, starting a new chat from the bar:
+
+- **"Summarize this"**
+- **"What did we decide here?"**
+
+A ribbon above the composer names the subject, and the ✕ at its end — or <kbd>Backspace</kbd> in an empty composer — starts the chat without it. See [What you start the chat from](./ai.html#what-you-start-the-chat-from).
 
 ## Ask about a file you sent
 
