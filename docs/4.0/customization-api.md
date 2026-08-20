@@ -359,11 +359,38 @@ config.container_width = :full
 config.container_width = { index: :full }
 ```
 
-| Value    | Behavior                                    |
-| -------- | ------------------------------------------- |
-| `:large` | Constrained container (default for index)   |
-| `:small` | Narrow container (default for show / forms) |
-| `:full`  | Full viewport width                         |
+| Value   | Max width | Clamps from | Behavior                                        |
+| ------- | --------- | ----------- | ----------------------------------------------- |
+| `:full` | —         | —           | Full viewport width                             |
+| `:lg`   | 1536px    | 1536px      | Constrained container (default for index)       |
+| `:md`   | 960px     | 1280px      | Narrower container (default for show / forms)   |
+| `:sm`   | 720px     | 768px       | Narrow, single-column screens                   |
+
+Below its clamp point a width spans the content area, so `:sm` is the only value
+that narrows anything on a typical laptop.
+
+:::warning Deprecated in Avo 4.1
+`:large` and `:small` were renamed to `:lg` and `:md` so container widths use the same
+Tailwind scale as every other size option in Avo (`size: :sm`, `width: :xl`, ...), and so
+there is room for narrower widths later. The old names still work and are mapped
+automatically, but they log a deprecation warning and will be removed in Avo 5.
+
+```ruby
+config.container_width = :small                  # [!code --]
+config.container_width = :md                     # [!code ++]
+
+config.container_width = { index: :large }       # [!code --]
+config.container_width = { index: :lg }          # [!code ++]
+```
+
+Note that `:small` maps to `:md`, **not** to `:sm`. The rename kept every existing
+screen at the width it already had; `:sm` is a new, genuinely narrower container that
+nothing gets automatically.
+
+If you style Avo's container yourself, the CSS classes were renamed to match:
+`.container-large` → `.container-lg`, `.container-small` → `.container-md`, and
+`.container-full-width` → `.container-full`.
+:::
 
 Hash keys can be individual views — `:index`, `:show`, `:new`, `:edit`, `:create`, `:update` — or group aliases:
 
@@ -376,7 +403,8 @@ Hash keys can be individual views — `:index`, `:show`, `:new`, `:edit`, `:crea
 When a specific key and a group alias target the same view, the specific key wins. Views not mentioned in the hash keep their defaults.
 
 - **Type:** Symbol or Hash
-- **Default:** `{ index: :large, show: :small, new: :small, edit: :small, create: :small, update: :small }`
+- **Values:** `:full`, `:lg`, `:md`, `:sm`
+- **Default:** `{ index: :lg, show: :md, new: :md, edit: :md, create: :md, update: :md }`
 - **Validation:** raises `ArgumentError` for unknown widths or unknown hash keys
 
 </Option>

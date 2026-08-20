@@ -205,14 +205,14 @@ Avo.configure do |config|
 end
 ```
 
-Widths are `:large`, `:small`, or `:full`. The hash form accepts individual view keys (`:index`, `:show`, `:new`, `:edit`, `:create`, `:update`) and the group aliases `:forms`, `:display`, and `:single` — specific keys win over aliases. See the [reference](./customization-api.html#container_width) for the full tables.
+Widths are `:lg`, `:md`, `:sm`, or `:full` (`:large` and `:small` still work but are deprecated — see the [reference](./customization-api.html#container_width)). The hash form accepts individual view keys (`:index`, `:show`, `:new`, `:edit`, `:create`, `:update`) and the group aliases `:forms`, `:display`, and `:single` — specific keys win over aliases. See the [reference](./customization-api.html#container_width) for the full tables.
 
 ```ruby
 # All single-record views full-width; index stays large
 config.container_width = { single: :full }
 
 # Mix: single full-width, but show overridden back to small
-config.container_width = { single: :full, show: :small }
+config.container_width = { single: :full, show: :md }
 ```
 
 ### Upgrading from `full_width_container` / `full_width_index_view`
