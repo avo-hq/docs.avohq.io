@@ -133,7 +133,16 @@ Start a chat from a record's page and "this" is already resolved — for the who
 - **"Set its status to active"**
 - **"Is anything missing here?"**
 
-A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it. See [The record you start from](./ai.html#the-record-you-start-from).
+## Ask about the rows you checked
+
+Check rows on an index — or in a has-many panel on a record's page — and "these" means exactly those records, by id, with no second search.
+
+- **"What are these?"**
+- **"How many of these are unpaid?"**
+- **"Set all of these to archived"**
+- **"Which of these has no owner?"**
+
+A ribbon above the composer shows everything a new chat will carry; hover its **"3 records selected"** chip to see each row by resource and name, and the ✕ at the ribbon's end starts the chat without any of it. See [What the chat starts from](./ai.html#what-the-chat-starts-from).
 
 ## Ask about a file you sent
 
