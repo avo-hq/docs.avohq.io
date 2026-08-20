@@ -67,7 +67,41 @@ bin/rails ruby_llm:load_models
 
 Later refreshes don't need the terminal: the Models resource (added to the menu below) ships a standalone **Refresh models** action that pulls the published catalog plus the latest models from every configured provider. There's nothing to restart after a refresh — a background job that meets a model its process doesn't know yet re-reads the registry and retries on its own.
 
-### 4. Add the admin resources to the menu
+### 4. Check the cable connection
+
+The chat updates live over ActionCable, on a stream that is verified against the chat's owner — so the connection has to know who is connected. The installer wires `app/channels/application_cable/connection.rb` for you:
+
+```ruby
+module ApplicationCable
+  class Connection < ActionCable::Connection::Base
+    include Avo::Ai::ConnectionIdentification # [!code focus]
+  end
+end
+```
+
+Identity comes from Warden, which Devise and most Rails auth stacks populate. On a different auth stack, override the lookup:
+
+```ruby
+module ApplicationCable
+  class Connection < ActionCable::Connection::Base
+    include Avo::Ai::ConnectionIdentification
+
+    private
+
+    def avo_ai_verified_user # [!code focus]
+      User.find_by(id: cookies.encrypted[:user_id]) # [!code focus]
+    end # [!code focus]
+  end
+end
+```
+
+:::warning
+Without an identified connection, every chat subscription is refused. The chat still renders and still answers — but nothing arrives until you reload the page, and the assistant's reply, the system prompt, and the auto-generated chat name all appear only after a refresh. If you see that, this is why; `Avo::Ai::ChatChannel refused a subscription` in the logs says the same thing.
+:::
+
+The include only sets `current_user` — it never rejects the connection — so it is safe in an app whose cable also serves logged-out visitors.
+
+### 5. Add the admin resources to the menu
 
 In `config/initializers/avo.rb`, inside the `config.main_menu` block:
 
@@ -81,7 +115,7 @@ end
 
 The resources and controllers ship inside the gem — there's nothing to generate into your app.
 
-### 5. Verify
+### 6. Verify
 
 ```bash
 bin/rails runner "puts Avo::Ai::Chat.count"
@@ -744,6 +778,8 @@ Rows of an [array resource](./array-resource.html) can't be attached — they ha
 ### The page you were on
 
 Every Avo page contributes its own title and path. That is what makes "what is this page?" or "where am I?" answerable on a dashboard, a settings page, or a filtered index — pages that are nobody's record.
+
+The assistant's own pages are the exception. A chat you start from the new-chat page, the chat list, or a conversation carries no page origin — the compose box is where you write a chat, never what it is about. A conversation's page still offers the conversation itself, as [the record it is](#starting-from-a-conversation).
 
 It is a label, not a description: the page origin says *where* the conversation started and never what was on screen. The assistant still queries before stating anything about your data, and page titles are passed to the model as untrusted values, so a record whose name reads like an instruction is text rather than a command.
 
