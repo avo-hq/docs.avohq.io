@@ -298,16 +298,21 @@ end
 ```
 
 Because the body is ordinary Ruby against those two objects, a part can be computed rather than
-read off a column:
+read off a column. Keep the computing on the model, though, and let the declaration say only how
+the answer looks — "is it night there?" is a question about a city, not about how one is drawn:
 
 ```ruby
+class City < ApplicationRecord
+  def night? # [!code focus]
+    local_hour < 6 || local_hour >= 20 # [!code focus]
+  end # [!code focus]
+end
+
 class Avo::Resources::City < Avo::BaseResource
   def chip
-    night = record.local_hour < 6 || record.local_hour >= 20
-
     part resource.avatar
-    part icon: night ? "tabler/outline/moon" : "tabler/outline/sun",
-         tone: night ? :info : :warning
+    part icon: record.night? ? "tabler/outline/moon" : "tabler/outline/sun", # [!code focus]
+         tone: record.night? ? :info : :warning # [!code focus]
     part resource.record_title
     part record.local_time, tone: :muted
   end
