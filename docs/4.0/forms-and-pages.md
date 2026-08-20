@@ -425,7 +425,7 @@ end
 
 ## Set the container width
 
-Pages and forms render inside Avo's page container, which is `:md` by default. Widen or narrow it per screen with `container_width` — `:md`, `:lg` or `:full`, the same values as [`config.container_width`](./customization-api.html#container_width).
+Pages and forms render inside Avo's page container, which is `:md` by default. Widen or narrow it per screen with `container_width` — `:sm`, `:md`, `:lg` or `:full`, the same values as [`config.container_width`](./customization-api.html#container_width).
 
 ```ruby
 # app/avo/pages/settings.rb

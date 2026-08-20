@@ -359,11 +359,15 @@ config.container_width = :full
 config.container_width = { index: :full }
 ```
 
-| Value   | Behavior                                    |
-| ------- | ------------------------------------------- |
-| `:lg`   | Constrained container (default for index)   |
-| `:md`   | Narrow container (default for show / forms) |
-| `:full` | Full viewport width                         |
+| Value   | Max width | Clamps from | Behavior                                        |
+| ------- | --------- | ----------- | ----------------------------------------------- |
+| `:full` | —         | —           | Full viewport width                             |
+| `:lg`   | 1536px    | 1536px      | Constrained container (default for index)       |
+| `:md`   | 960px     | 1280px      | Narrower container (default for show / forms)   |
+| `:sm`   | 720px     | 1024px      | Narrow, single-column screens                   |
+
+Below its clamp point a width spans the content area, so `:sm` is the only value
+that narrows anything on a typical laptop.
 
 :::warning Deprecated in Avo 4.1
 `:large` and `:small` were renamed to `:lg` and `:md` so container widths use the same
@@ -378,6 +382,10 @@ config.container_width = :md                     # [!code ++]
 config.container_width = { index: :large }       # [!code --]
 config.container_width = { index: :lg }          # [!code ++]
 ```
+
+Note that `:small` maps to `:md`, **not** to `:sm`. The rename kept every existing
+screen at the width it already had; `:sm` is a new, genuinely narrower container that
+nothing gets automatically.
 
 If you style Avo's container yourself, the CSS classes were renamed to match:
 `.container-large` → `.container-lg`, `.container-small` → `.container-md`, and

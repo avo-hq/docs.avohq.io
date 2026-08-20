@@ -20,8 +20,10 @@ words `:large` and `:small`, while every other size option in Avo uses Tailwind'
 | `:small` | `:md` |
 | `:full`  | `:full` (unchanged) |
 
-`:small` became `:md` rather than `:sm` deliberately, leaving `:sm` and `:xs` free for
-narrower containers later.
+`:small` became `:md` rather than `:sm` deliberately: it keeps every existing screen at
+the width it already had, and frees the narrower names. A new `:sm` (720px, clamping from
+1024px) ships in the same release for single-column screens — nothing gets it
+automatically, it is opt-in.
 
 ### Action Required
 

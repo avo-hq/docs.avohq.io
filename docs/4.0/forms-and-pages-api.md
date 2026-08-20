@@ -87,15 +87,16 @@ Overrides Avo's page container width for this screen. Same values as [`config.co
 self.container_width = :lg
 ```
 
-| Value   | Behavior                                  |
-| ------- | ----------------------------------------- |
-| `:md`   | Narrow, centered container.               |
-| `:lg`   | Wide constrained container.               |
-| `:full` | Spans the full width of the content area. |
+| Value   | Behavior                                       |
+| ------- | ---------------------------------------------- |
+| `:sm`   | Narrow single-column container (720px).        |
+| `:md`   | Medium centered container (960px).             |
+| `:lg`   | Wide constrained container (1536px).           |
+| `:full` | Spans the full width of the content area.      |
 
 - **Type:** Symbol
 - **Default:** `nil` — inherits whatever [`config.container_width`](./customization-api.html#container_width) gives the request's view.
-- **Values:** `:md`, `:lg`, `:full` (the Avo-4.0 names `:small` and `:large` still work but are deprecated)
+- **Values:** `:sm`, `:md`, `:lg`, `:full` (the Avo-4.0 names `:small` and `:large` still work but are deprecated — `:small` maps to `:md`, not `:sm`)
 - **Validation:** raises `ArgumentError` on any other value.
 - **Scope:** on a **page**, applies to that page; a sub-page's own value wins over its main page's. On a **form**, applies only when the form is rendered on its own URL — a form placed on a page takes the page's width.
 
