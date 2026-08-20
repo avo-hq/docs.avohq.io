@@ -403,7 +403,8 @@ Hash keys can be individual views — `:index`, `:show`, `:new`, `:edit`, `:crea
 When a specific key and a group alias target the same view, the specific key wins. Views not mentioned in the hash keep their defaults.
 
 - **Type:** Symbol or Hash
-- **Default:** `{ index: :large, show: :small, new: :small, edit: :small, create: :small, update: :small }`
+- **Values:** `:full`, `:lg`, `:md`, `:sm`
+- **Default:** `{ index: :lg, show: :md, new: :md, edit: :md, create: :md, update: :md }`
 - **Validation:** raises `ArgumentError` for unknown widths or unknown hash keys
 
 </Option>
