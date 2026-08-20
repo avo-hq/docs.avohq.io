@@ -299,7 +299,10 @@ end
 
 Because the body is ordinary Ruby against those two objects, a part can be computed rather than
 read off a column. Keep the computing on the model, though, and let the declaration say only how
-the answer looks — "is it night there?" is a question about a city, not about how one is drawn:
+the answer looks — "is it night there?" is a question about a city, not about how one is drawn.
+The chip is rarely the only place that wants the answer, either: the same `night?` can feed a
+[discreet information](./discreet-information.html) entry on the record's header without
+computing it twice.
 
 ```ruby
 class City < ApplicationRecord
