@@ -8,7 +8,7 @@ outline: [2, 3]
 
 Avo AI is built from two kinds of pieces. **Agents** are the model-facing side: each one pairs a system prompt with a set of tools and drives a conversation with the provider. **Tools** are the Rails-facing side: typed abilities that run inside your application, against your policies, and report back to the model.
 
-This page is the reference for both — which agents exist, what every tool does, and how conversations get their names. For the narrative of how a chat turn unfolds (inspect-first, confirmation cards, authorization), see [How the assistant works](./ai.html#how-the-assistant-works).
+This page is the reference for both — which agents exist, what every tool does, and how conversations get their names. For the narrative of how a chat turn unfolds (schema, confirmation cards, authorization), see [How the assistant works](./ai.html#how-the-assistant-works).
 
 ## The agents
 
@@ -25,7 +25,7 @@ A second, much smaller agent does exactly one job: reading a conversation's mess
 It runs on three occasions:
 
 - automatically, after the first message of a new conversation
-- when you pick **Rename again with AI** from the ⋯ menu, in the chat bar or on a chat page
+- when you pick **Rename with AI** from the ⋯ menu, in the chat bar or on a chat page
 - when you ask the assistant to rename the conversation without giving it a name
 
 All three go through the `rename_conversation` tool, so [excluding that tool](./ai.html#take-a-tool-away) switches the renamer off along with it — unless you registered a replacement under the same wire name (as [ejecting it](./ai.html#replace-a-shipped-tool-with-your-own-copy) does), in which case the renamer uses your copy. Naming a chat by hand keeps working.
@@ -40,7 +40,7 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------- |
 | `ask_user`                   | Asks you one clarifying question — free-form, or with clickable options — then ends the turn                         | —                 |
 | `schema_inspector`           | Reports the database structure — scoped to the resources the signed-in user is allowed to see                        | read-only         |
-| `resource_inspector`         | Reads one resource's real columns, associations, and scopes; unlocks querying and writing that resource              | read-only         |
+| `resource_inspector`         | The deep report on one resource: field types, actions, filters, associations, attachments                           | read-only         |
 | `active_record_query`        | Runs read-only, paginated, policy-scoped queries against a resource — filters, scopes, grouping, and free-text search through the resource's own [configured search](./search.html) | read-only         |
 | `active_storage_insights`    | Storage reports — totals, orphans, duplicates, growth, biggest files — and finding/showing files                     | read-only         |
 | `active_storage_attachment`  | Attaches or detaches a Media Library blob (or a chat upload) on a record's attachment; can also fetch a URL onto one | immediately¹      |
@@ -76,11 +76,13 @@ A tool only accepts from the model the arguments listed in its schema — a reso
 
 That is a deliberate security boundary. There is no argument the model could invent to act as a different user, and no id it could pass to rename or read a conversation other than the one it is speaking in. Combined with [authorization at the tool layer](./ai.html#how-the-assistant-works), it means a prompt-injection attempt riding in on your data has no lever to reach beyond what the chat's owner could already do in the Avo UI.
 
-### The inspection gate
+### Schema comes back with the answer
 
-The query and write tools refuse to touch a resource until `resource_inspector` has run for it in the conversation. The gate is enforced in the tools — not merely requested in the prompt — and is what makes the assistant work from your real columns and scopes instead of guessed ones. Excluding `resource_inspector` turns the gate off along with the tool — the queries and writes then proceed uninspected rather than refusing.
+Every result the query, write, and action tools return carries the resource it touched under `resource_schema`: its real columns and their types, the model's named scopes, and the attributes a create cannot omit. Success or error alike — a query that names a column you don't have comes back with the ones you do. This is done in the tools, not merely requested in the prompt, and is what makes the assistant work from your real columns and scopes instead of guessed ones, without spending a round trip asking first.
 
-`run_action` sits behind the same gate, and adds two of its own: the resource's `act_on?` policy method and the action's `self.authorize` block, both checked when the run is proposed and again when you confirm it. See [What it's allowed to run](./ai.html#what-it-s-allowed-to-run).
+It is sent once per resource per turn, and only for resources the signed-in user is allowed to list. `resource_inspector` remains for the deeper report — field types, a resource's actions and filters, its associations and attachments — when the assistant wants structure it cannot get from a result. Excluding it costs you that report, not the grounding: every result still comes back with its schema.
+
+`run_action` adds two checks of its own: the resource's `act_on?` policy method and the action's `self.authorize` block, both checked when the run is proposed and again when you confirm it. See [What it's allowed to run](./ai.html#what-it-s-allowed-to-run).
 
 ## Renaming conversations
 
@@ -90,7 +92,7 @@ After that, renaming is a chat feature like any other:
 
 - **"rename this conversation to 'Q3 invoices'"** — the assistant passes your exact wording to `rename_conversation` and the title applies immediately.
 - **"rename this conversation"** — with no name given, the assistant triggers the renamer agent instead of inventing a title itself. The regenerated title reflects where the conversation actually went, not just how it started.
-- **Rename again with AI** does the same regeneration without involving the assistant. It sits in the ⋯ menu, both in the chat bar and on a full-page chat.
+- **Rename with AI** does the same regeneration without involving the assistant. It sits in the ⋯ menu, both in the chat bar and on a full-page chat.
 - **Rename chat**, in the same menu, skips the model entirely: the title becomes editable in place and what you type is what it's called. See [The conversation menu](./ai.html#the-conversation-menu).
 
 Wherever the conversation's name is on screen, it updates live when a rename lands — the chat's tab in the floating bar, the breadcrumb on its full-page view, and the title, name field, and breadcrumb on its resource page.
