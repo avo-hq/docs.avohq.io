@@ -350,14 +350,16 @@ end
 
 :::warning
 Defining `chip` replaces the default entirely — including the picture and the title. Declare
-`part resource.avatar` and `part resource.record_title` if you want them, and an empty `def chip`
-renders an empty chip.
+`part resource.avatar` and `part resource.record_title` if you want them.
 :::
 
 :::info
 A part with neither text nor an icon is skipped, so `part(record.draft? ? "draft" : nil)` is a
-normal thing to write. An unknown `tone:` falls back to `:neutral`. And if `chip` raises, the
-record still renders as a link rather than taking the answer down with it.
+normal thing to write, and an unknown `tone:` falls back to `:neutral`.
+
+A chip never renders as nothing, whatever your declaration does. A `chip` that declares no parts —
+or one that raises — falls back to the record's title, because the chip is a word in a sentence
+and an empty one would leave a hole where the record should be.
 :::
 
 ## Answering the assistant's questions
