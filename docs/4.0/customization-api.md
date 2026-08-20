@@ -359,11 +359,30 @@ config.container_width = :full
 config.container_width = { index: :full }
 ```
 
-| Value    | Behavior                                    |
-| -------- | ------------------------------------------- |
-| `:large` | Constrained container (default for index)   |
-| `:small` | Narrow container (default for show / forms) |
-| `:full`  | Full viewport width                         |
+| Value   | Behavior                                    |
+| ------- | ------------------------------------------- |
+| `:lg`   | Constrained container (default for index)   |
+| `:md`   | Narrow container (default for show / forms) |
+| `:full` | Full viewport width                         |
+
+:::warning Deprecated in Avo 4.1
+`:large` and `:small` were renamed to `:lg` and `:md` so container widths use the same
+Tailwind scale as every other size option in Avo (`size: :sm`, `width: :xl`, ...), and so
+there is room for narrower widths later. The old names still work and are mapped
+automatically, but they log a deprecation warning and will be removed in Avo 5.
+
+```ruby
+config.container_width = :small                  # [!code --]
+config.container_width = :md                     # [!code ++]
+
+config.container_width = { index: :large }       # [!code --]
+config.container_width = { index: :lg }          # [!code ++]
+```
+
+If you style Avo's container yourself, the CSS classes were renamed to match:
+`.container-large` → `.container-lg`, `.container-small` → `.container-md`, and
+`.container-full-width` → `.container-full`.
+:::
 
 Hash keys can be individual views — `:index`, `:show`, `:new`, `:edit`, `:create`, `:update` — or group aliases:
 

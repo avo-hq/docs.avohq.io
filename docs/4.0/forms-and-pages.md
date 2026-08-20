@@ -153,6 +153,8 @@ Creates `app/avo/forms/your_form_name.rb`:
 class Avo::Forms::YourFormName < Avo::Forms::Core::Form
   self.title = "Your Form Name"
   self.description = "Manage your your form name"
+  # Applies when this form is opened on its own URL; on a page the page decides.
+  # self.container_width = :lg # :md, :lg or :full
 
   def fields
     field :example, as: :text, default: "Hello World"
@@ -181,6 +183,7 @@ class Avo::Pages::YourPageName < Avo::Forms::Core::Page
   self.title = "Your Page Name"
   self.description = "A page for your page name"
   # self.navigation_label = "Your Page Name"
+  # self.container_width = :lg # :md, :lg or :full
 
   def content
     # form Avo::Forms::AnyFormClass
@@ -419,6 +422,42 @@ def content
   form Avo::Forms::Settings::AppSettings, show_header: false
 end
 ```
+
+## Set the container width
+
+Pages and forms render inside Avo's page container, which is `:md` by default. Widen or narrow it per screen with `container_width` — `:md`, `:lg` or `:full`, the same values as [`config.container_width`](./customization-api.html#container_width).
+
+```ruby
+# app/avo/pages/settings.rb
+class Avo::Pages::Settings < Avo::Forms::Core::Page
+  self.title = "Settings"
+  self.container_width = :lg # applies to this page and its sub-pages
+end
+```
+
+A sub-page's own value wins over its main page's, so one wide area can still hold a narrow screen:
+
+```ruby
+# app/avo/pages/settings/notifications.rb
+class Avo::Pages::Settings::Notifications < Avo::Forms::Core::Page
+  self.container_width = :md
+end
+```
+
+On a form, `container_width` applies when the form is opened on its own URL (linked from the menu, or visited directly). When the form is placed on a page, the page owns the container and the form's value is ignored.
+
+```ruby
+# app/avo/forms/settings/app_settings.rb
+class Avo::Forms::Settings::AppSettings < Avo::Forms::Core::Form
+  self.container_width = :full
+end
+```
+
+Leave it unset to keep whatever `config.container_width` gives the app.
+
+:::info No navigation, no sidebar
+A page whose `navigation` is empty renders without the sidebar column, so its content spans the full container instead of sitting off to one side.
+:::
 
 ## Name the menu entry
 

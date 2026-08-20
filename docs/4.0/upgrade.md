@@ -4,6 +4,57 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to 4.1.15
+
+<Option name="`container_width` values renamed to Tailwind's scale">
+
+### Deprecation
+
+`config.container_width` (and `self.container_width` on Avo Forms pages and forms) used the
+words `:large` and `:small`, while every other size option in Avo uses Tailwind's scale —
+`size: :sm`, `width: :xl`, `size: :md`. The widths now use that scale too:
+
+| Before   | After |
+| -------- | ----- |
+| `:large` | `:lg` |
+| `:small` | `:md` |
+| `:full`  | `:full` (unchanged) |
+
+`:small` became `:md` rather than `:sm` deliberately, leaving `:sm` and `:xs` free for
+narrower containers later.
+
+### Action Required
+
+**None immediately.** The old names are still accepted and mapped for you — they log a
+deprecation warning through `Avo.logger` and will be removed in Avo 5. Update them when
+convenient:
+
+```ruby
+# config/initializers/avo.rb
+config.container_width = :small                     # [!code --]
+config.container_width = :md                        # [!code ++]
+
+config.container_width = { index: :large }          # [!code --]
+config.container_width = { index: :lg }             # [!code ++]
+```
+
+```ruby
+# app/avo/pages/settings.rb
+self.container_width = :large                       # [!code --]
+self.container_width = :lg                          # [!code ++]
+```
+
+**If you style Avo's container in your own CSS**, this part is *not* aliased — the emitted
+class names changed and your overrides need renaming:
+
+| Before                  | After              |
+| ----------------------- | ------------------ |
+| `.container-large`      | `.container-lg`    |
+| `.container-small`      | `.container-md`    |
+| `.container-full-width` | `.container-full`  |
+
+</Option>
+
 ## Upgrade to 4.1.11
 
 <Option name="`stacked: false` now opts a field out of sidebar and width stacking">
