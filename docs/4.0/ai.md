@@ -200,7 +200,7 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **It inspects before it queries.** The first time a conversation touches a resource, the assistant asks for that resource's real columns, associations, and scopes, then builds its query from the answer. This is enforced by the tools, not merely requested in the prompt: the query and write tools refuse to run against a resource that hasn't been inspected in this conversation. It's why the first question about a resource takes an extra beat, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters.
 
-**Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. When a query returns exactly one record, the UI renders a card for it — title and a link — and the assistant is told not to repeat the fields in prose.
+**Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
 
 **Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
@@ -211,6 +211,126 @@ Every message you send starts a fresh turn against the provider, built from thre
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
 For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./ai-agents-and-tools.html).
+
+### Record chips
+
+A record the assistant mentions is drawn inline as a **chip** — its picture, its title, and
+whatever status you choose to put on it — and clicking it opens that record. The chip is part of
+the sentence, so an answer reads as one thought rather than as a paragraph followed by a card.
+
+A chip appears because the assistant named that record. A count or a total names none, so it brings
+no chip with it.
+
+**Declare what it carries.** A chip is a row of parts. Every resource has a default one — the
+record's picture and its title — and `def chip` replaces it, declaring one `part` per piece, the
+same shape as [`fields`](./resources.html#fields):
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+  def chip # [!code focus]
+    part resource.avatar # [!code focus]
+    part resource.record_title # [!code focus]
+    part record.status, tone: :danger # [!code focus]
+  end # [!code focus]
+end
+```
+
+`chip` is an ordinary instance method, so **`record` and `resource` are in scope** — the same two
+names Avo injects into every lambda you write on a resource. Everything a part is built from is
+reached through one of them, so a declaration says out loud where each piece came from and there
+is nothing new to learn:
+
+```ruby
+part resource.avatar              # the picture, or the initials Avo derives
+part resource.record_title        # what Avo calls this record
+part record.status                # anything the record answers to
+part "in review"                  # a literal
+part record.status, tone: :danger # coloured
+part icon: "tabler/outline/moon"  # a glyph, alone or beside text
+```
+
+Because it is an instance method on the hydrated resource, the rest of what Avo hands a lambda is
+there too — `view`, `params`, `request`, `context`, `current_user`, `view_context`, `main_app`,
+`avo`, `helpers` and `t`. Nothing is injected for them; the resource already delegates them.
+
+```ruby
+def chip
+  part resource.avatar
+  part resource.record_title
+  part view_context.number_to_currency(record.budget), tone: :muted # [!code focus]
+  part t("my_app.draft"), tone: :muted if record.draft? # [!code focus]
+end
+```
+
+:::info
+The one thing a `def chip` body does *not* get is a lambda's implicit forwarding to the view
+context, so a bare `number_to_currency(...)` won't resolve — name `view_context`, as above, or
+reach your app's own helpers through `helpers`.
+:::
+
+**A chip renders in two places**, and that is worth knowing before you reach for anything
+request-scoped — it is drawn by two different things:
+
+| When | Rendered by |
+| ---- | ----------- |
+| The answer streaming in, live | a background job, broadcasting over Turbo Stream |
+| Opening or reloading the conversation | the usual controller and request |
+
+The whole vocabulary above works in **both** — including `view_context`, `main_app` and `avo`,
+which Avo lends the chip when there is no request to take them from. Your declaration behaves the
+same whether you watched the answer arrive or came back to the conversation a day later, which is
+the point: a chip that worked on every reload and came back empty mid-stream would be a miserable
+thing to catch.
+
+**Where the title sits is just where you declare it** — there is no "before" or "after" option,
+only order, and no limit on either side:
+
+```ruby
+class Avo::Resources::Issue < Avo::BaseResource
+  def chip
+    part resource.avatar
+    part icon: "tabler/outline/circle-dot", tone: :success # [!code focus]
+    part record.identifier, tone: :muted # [!code focus]
+    part resource.record_title # [!code focus]
+    part record.assignee_name, tone: :muted # [!code focus]
+  end
+end
+```
+
+Because the body is ordinary Ruby against those two objects, a part can be computed rather than
+read off a column:
+
+```ruby
+class Avo::Resources::City < Avo::BaseResource
+  def chip
+    night = record.local_hour < 6 || record.local_hour >= 20
+
+    part resource.avatar
+    part icon: night ? "tabler/outline/moon" : "tabler/outline/sun",
+         tone: night ? :info : :warning
+    part resource.record_title
+    part record.local_time, tone: :muted
+  end
+end
+```
+
+| Argument       | Values                                                                                          |
+| -------------- | ----------------------------------------------------------------------------------------------- |
+| first argument | The part's text — anything, used verbatim. `resource.avatar` is the one value that draws a picture instead |
+| `icon:`        | An [icon](./icons.html) name, e.g. `tabler/outline/moon`                                        |
+| `tone:`        | `:neutral` (default, the record's own ink), `:muted`, `:success`, `:warning`, `:danger`, `:info` |
+
+:::warning
+Defining `chip` replaces the default entirely — including the picture and the title. Declare
+`part resource.avatar` and `part resource.record_title` if you want them, and an empty `def chip`
+renders an empty chip.
+:::
+
+:::info
+A part with neither text nor an icon is skipped, so `part(record.draft? ? "draft" : nil)` is a
+normal thing to write. An unknown `tone:` falls back to `:neutral`. And if `chip` raises, the
+record still renders as a link rather than taking the answer down with it.
+:::
 
 ## Answering the assistant's questions
 
@@ -630,7 +750,7 @@ How much of the assistant's internal work a viewer may see is an authorization d
 
 There are two levels:
 
-- `:off` — the conversation: replies, record cards, confirmation buttons, the assistant's questions, the "Thinking…" indicator, and the collapsed trail with its reasoning trace and progress hints. The default.
+- `:off` — the conversation: replies, record chips, confirmation buttons, the assistant's questions, the "Thinking…" indicator, and the collapsed trail with its reasoning trace and progress hints. The default.
 - `:tools` — everything above plus the system prompt, the tool calls, and the raw tool output.
 
 The reasoning trace deliberately sits on the `:off` side of the line: it narrates the answer the
