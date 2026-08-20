@@ -398,6 +398,18 @@ Ask for it in whatever words you'd use with a colleague — "archive the Orbit p
 
 [Actions that run without records](./actions.html#run-an-action-without-records) work too — the assistant runs them with no record at all.
 
+### Finding an action without naming its resource
+
+People ask in verbs. "Refresh the models", "send the welcome email", "export everything" — none of those name a resource, and none of them need to. The assistant can list every action registered across the application, each beside the resource that owns it, pick the one that matches what you asked, and run it from there.
+
+This is why an action lands even when the noun in your sentence isn't one of your records. "Refresh the models" reads like a question about your database until you know that `Avo::Resources::AvoAi::Model` registers a **Refresh models** action — and knowing that is the assistant's job, not yours.
+
+The list is scoped like everything else: it only contains actions from resources the signed-in user is allowed to list, so it can never surface an operation from a corner of the app that user can't reach. It's also fetched only when a request looks like an operation — a conversation about editing a blog post never pays for it.
+
+:::info An action two resources share needs you to say which
+Naming the action alone is enough when one resource registers it. When two do, the assistant asks which resource you mean instead of choosing — two resources registering the same action class are two tables with two policies, and the run lands on exactly one of them.
+:::
+
 ### What it's allowed to run
 
 Two gates, both yours, both checked when the run is proposed and again when you confirm it:
