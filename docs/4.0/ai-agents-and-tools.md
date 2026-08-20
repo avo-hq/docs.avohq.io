@@ -47,7 +47,7 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 | `create_record`              | Creates a record                                                                                                     | immediately       |
 | `update_record`              | Changes a record's attributes                                                                                        | after you confirm |
 | `delete_record`              | Deletes a record                                                                                                     | after you confirm |
-| `run_action`                 | Lists the [actions](./actions.html) a resource registers, and proposes running one on the records you name           | after you confirm |
+| `run_action`                 | Lists the [actions](./actions.html) available — one resource's, or [every action in the app](./ai.html#finding-an-action-without-naming-its-resource) — and proposes running one on the records you name | after you confirm |
 | `write_history`              | Lists the writes made earlier in the conversation and proposes undoing one                                           | after you confirm |
 | `rename_conversation`        | Renames the current conversation — with your exact title, or by regenerating one                                     | immediately       |
 
