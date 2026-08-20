@@ -696,14 +696,22 @@ Start a conversation from a page whose subject is one thing and the assistant al
 | A record's page                                     | The resource name and the record id | That record                                                   |
 | A [Media Library](./media-library.html) file's page | The Active Storage blob id          | That file                                                     |
 | A conversation's page                               | The chat, itself a record           | That conversation                                             |
+| **Any** Avo page                                    | That page's title and path          | The page itself, for "what is this page?"                     |
+| A page with rows checked                            | Every checked row, by resource and id | Those records, for "these" and "the selected ones"           |
 
-A ribbon above the composer names the subject, so it's never a guess: what it is and what it's called, sitting behind the message box. A record shows its avatar or its initials — the same pair the breadcrumbs show — and a file shows its own thumbnail when it has one. On pages that aren't about a single subject — an index, a dashboard, a new-record form — there is no ribbon and no button, because there is nothing to attach.
+The last two are not subjects of their own — they ride along with whichever subject the page has, and with each other. A record's page carries the record *and* the page; a course's page with three links checked in a has-many panel carries the course, the page, *and* the links.
 
-**The subject stays attached for the whole conversation.** It's what the chat was *started from*, so you're asked once, when the chat begins — that's why the ribbon is on the new-chat composer only. Every later message still resolves "this record", "this file", "it", or a question with no subject at all against the same thing. Ask "what is this?" as the fifth message and it works exactly as it does as the first.
+A ribbon above the composer shows exactly what a new chat will carry, so it's never a guess: the subject, the page's path, and how many rows are checked. A record shows its avatar or its initials — the same pair the breadcrumbs show — and a file shows its own thumbnail when it has one.
+
+<Image src="/assets/img/4_0/ai/context-ribbon.webp" dark-src="/assets/img/4_0/ai/context-ribbon-dark.webp" width="1110" height="140" alt="The chat composer on a course's page. A ribbon above the empty message box reads: Course, Computer Science 382, #1, then the page's path, with a ✕ at its end." prompt="the chat composer's context ribbon on a record page" />
+
+It is one ribbon with one ✕: "what is this about" and "where was I" are not two decisions worth making separately. An index, a dashboard or a new-record form has no subject of its own, but it still has a page and it may have rows checked, so the ribbon is there too.
+
+**What is attached stays attached for the whole conversation.** It's what the chat was *started from*, so you're asked once, when the chat begins — that's why the ribbon is on the new-chat composer only. Every later message still resolves "this record", "this file", "it", or a question with no subject at all against the same thing. Ask "what is this?" as the fifth message and it works exactly as it does as the first.
 
 Dismiss the ribbon with the ✕ at its end, or press <kbd>Backspace</kbd> in an empty composer, and the chat starts without it. Backspace only ever removes — pressing it again can't attach the subject back — so clearing the message box can't put back something you meant to drop. The button next to send toggles it back on, and lights up whenever the subject is attached, so the ribbon and the button always agree about what the chat will carry. Every fresh compose view offers the subject again: the ✕ applies to the chat you're writing, not to the feature.
 
-It respects your policies, on every message. Only a reference is kept — the resource name and the record id, or the blob id — never a title, a filename, or any field value. That reference is resolved again on each turn, through the same authorization the page itself applies — `index?` plus your Pundit scope for a record, Media Library access for a file — and the label is read fresh at that moment. So a subject the user loses access to, or that gets deleted mid-conversation, simply drops out of the prompt instead of lingering as a stale copy of something they can no longer see. The attachment is only a starting point either way — every read and write the assistant then performs is authorized on its own.
+It respects your policies, on every message. Only references are kept — a resource name and a record id, a blob id, a title and a path — never a field value, and never the labels you see in the ribbon. That reference is resolved again on each turn, through the same authorization the page itself applies — `index?` plus your Pundit scope for a record, Media Library access for a file — and the label is read fresh at that moment. So a subject the user loses access to, or that gets deleted mid-conversation, simply drops out of the prompt instead of lingering as a stale copy of something they can no longer see. A checked row that was never theirs to read is not attached at all — the chat carries the subset they could have selected in the UI, never the set the browser asked for. The attachment is only a starting point either way — every read and write the assistant then performs is authorized on its own.
 
 ### Starting from a Media Library file
 
@@ -717,20 +725,46 @@ Only the blob id is stored. The filename and content type are read off the blob 
 
 A chat is stored as a record, so its own page offers it the way any record's page does. Open a conversation, start a *new* chat from the bar, and "summarize this", "what did we decide here?", or "who was this with?" resolve to the conversation you were reading — no copying and pasting a transcript into the new chat.
 
+### The rows you checked
+
+Check rows on an index and they come with the message, so "email these people", "how many of these are unpaid?", or "delete them" resolve to ids instead of another search.
+
+Every index on the page counts, not only the one the page is named for. A has-many panel on a record's page is an index in its own right, so on a course's page you can check three links and ask "what are these?" — the course and the links both travel, each addressed by its own resource. Check rows across two panels and the chat carries all of them: two links and four attendees is one selection of six.
+
+Hover the **"3 records selected"** chip — or focus it, if you are on the keyboard — to see exactly what is attached, by resource and by name. Those are the same labels the assistant will see.
+
+<Image src="/assets/img/4_0/ai/selected-records.webp" dark-src="/assets/img/4_0/ai/selected-records-dark.webp" width="1110" height="204" alt="The chat composer on a user's page. A panel open above the ribbon lists Team Facebook (#3), Project Fintone (#32) and Project Flexidy (#25). The ribbon beneath it reads: User, Johnny Kiehn, #1, 3 records selected, /admin/resources/users/1." prompt="the hover panel naming every checked row behind the composer's selection chip" />
+
+Up to 50 rows travel with one message. Past that the assistant is told the list was cut, so it says so before acting on "all of them" rather than quietly working from the first 50.
+
+:::info
+Rows of an [array resource](./array-resource.html) can't be attached — they have no database record to authorize or act on, so they are left out of the selection.
+:::
+
+### The page you were on
+
+Every Avo page contributes its own title and path. That is what makes "what is this page?" or "where am I?" answerable on a dashboard, a settings page, or a filtered index — pages that are nobody's record.
+
+It is a label, not a description: the page origin says *where* the conversation started and never what was on screen. The assistant still queries before stating anything about your data, and page titles are passed to the model as untrusted values, so a record whose name reads like an instruction is text rather than a command.
+
 ### Change how it reads
 
-The wording lives in a prompt file like the rest, so you can change how the assistant treats the subject:
+The wording lives in a prompt file like the rest, so you can change how the assistant treats any of it:
 
 ```bash
 bin/rails generate avo:ai:eject instructions
 ```
 
-Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives one local per kind of subject, and a page offers one or the other:
+Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives one local per source, each `nil` when the conversation did not start from that thing:
 
-- `attached_record` — `{resource:, record_id:, label:}`, on a record's page.
-- `attached_file` — `{blob_id:, filename:, content_type:}`, on a Media Library file's page.
+| Local                | Shape                                                               | Present on                       |
+| -------------------- | ------------------------------------------------------------------- | -------------------------------- |
+| `attached_record`    | `{resource:, record_id:, label:}`                                   | A record's page                  |
+| `attached_file`      | `{blob_id:, filename:, content_type:}`                              | A Media Library file's page      |
+| `attached_page`      | `{title:, path:}`                                                   | Any Avo page                     |
+| `attached_selection` | `{groups: [{resource:, records: [{record_id:, label:}]}], capped:}` | A page with rows checked         |
 
-Either is `nil` when the conversation started somewhere else, and rendering nothing is a valid way to turn the feature off.
+A page offers at most one of the first two. Rendering nothing is a valid way to turn any of it off.
 
 ## Open the chat
 

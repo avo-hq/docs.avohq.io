@@ -160,6 +160,17 @@ From a conversation's page, starting a new chat from the bar:
 
 A ribbon above the composer names the subject, and the ✕ at its end — or <kbd>Backspace</kbd> in an empty composer — starts the chat without it. See [What you start the chat from](./ai.html#what-you-start-the-chat-from).
 
+## Ask about the rows you checked
+
+Check rows on an index — or in a has-many panel on a record's page — and "these" means exactly those records, by id, with no second search.
+
+- **"What are these?"**
+- **"How many of these are unpaid?"**
+- **"Set all of these to archived"**
+- **"Which of these has no owner?"**
+
+The ribbon's **"3 records selected"** chip says how many; hovering it names each row by resource and label. See [The rows you checked](./ai.html#the-rows-you-checked).
+
 ## Ask about a file you sent
 
 Attach files to your message — paperclip, drag, or paste — and ask about them directly:
