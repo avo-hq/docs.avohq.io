@@ -221,6 +221,13 @@ the sentence, so an answer reads as one thought rather than as a paragraph follo
 A chip appears because the assistant named that record. A count or a total names none, so it brings
 no chip with it.
 
+**A set of records comes back as a list of rows.** When the answer *is* a set — "the last three
+users", "which projects are running", "show me the cities" — the assistant names one record per
+line, and the transcript draws those lines as a stack of rows instead of a bulleted paragraph: the
+same chip, given the whole width, so each row is scannable and clickable end to end the way an
+index table's rows are. A line that carries a sentence beside its record stays an ordinary bullet —
+there the record really is a word in a sentence.
+
 **Declare what it carries.** A chip is a row of parts. Every resource has a default one — the
 record's picture and its title — and `def chip` replaces it, declaring one `part` per piece, the
 same shape as [`fields`](./resources.html#fields):
@@ -353,6 +360,8 @@ When the assistant genuinely can't proceed — a required value you didn't menti
 **Picking several at once.** Some questions take more than one answer — which fields to fill in, which of the matched records to include. Those render as checkboxes instead of buttons, with one **Send** under them and an *Add anything else…* box alongside. Everything goes back as a single reply: the labels you ticked, plus whatever you typed, separated by commas.
 
 Answering a question card is an ordinary turn, never a confirmation. An option can quite legitimately read "Yes", and clicking it answers the question it belongs to — it can't reach back and confirm an update or a delete waiting further up the conversation.
+
+**Once you answer, the card settles.** Its options come off and it goes flat, the way a write card does once you confirm it. The question itself stays above your reply — it is the transcript's record of what was asked — and a page you left open on that card can't answer the same question a second time.
 
 ## Your actions, from the chat
 

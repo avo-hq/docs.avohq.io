@@ -40,6 +40,9 @@ paragraph followed by a card.
 A chip appears because the assistant named that record in its answer, which is why a count never
 brings one along: "how many projects?" names no project, so it shows none.
 
+Ask for several and they come back as a list of rows — "the last three users" is three rows you can
+scan and click, not a bulleted paragraph.
+
 What a chip carries beyond the title is up to the resource — see
 [Record chips](./ai.html#record-chips).
 
