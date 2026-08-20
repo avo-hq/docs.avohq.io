@@ -16,13 +16,13 @@ For how a turn actually unfolds — schema, confirmation cards, authorization �
 
 | Ask                                              | What you get                                                             |
 | ------------------------------------------------ | ------------------------------------------------------------------------ |
-| "Find the user with the email ada@example.com"   | The matching record, as a card with a link to open it                    |
+| "Find the user with the email ada@example.com"   | The matching record, named inline as a chip you can click                |
 | "Find the user called John Deere"                | The record — found by search, even when the name lives across several columns |
 | "Show me the 5 most recent posts"                | A short list, sorted by the timestamp that matches what you asked about  |
 | "Which users signed up in the last 7 days?"      | A date-filtered list, resolved against the real current time             |
 | "List projects whose name contains 'orbit'"      | A partial-match list                                                     |
 | "Show me every column for post 42"               | The full record, not just the common columns                             |
-| "Who signed up last?"                            | One record, rendered as a card                                           |
+| "Who signed up last?"                            | One record, named inline as a chip                                       |
 
 Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders over $500", "users older than 26", "posts with no author", "projects in draft or review".
 
@@ -32,7 +32,19 @@ Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders ov
 
 **Associations, without SQL.** "Which teams have no members?" and "show me users who have at least one order" are answered by checking whether the association exists, scoped to the child records you're allowed to see.
 
-When a query returns exactly one record, you get a card with its title and a link rather than a paragraph repeating its fields.
+**Records are named inline.** Any record the assistant mentions is rendered as a chip in the
+sentence itself — its picture, its title, and whatever status its resource declares — and clicking
+it opens the record. So "who signed up last?" reads as one sentence with the person in it, not as a
+paragraph followed by a card.
+
+A chip appears because the assistant named that record in its answer, which is why a count never
+brings one along: "how many projects?" names no project, so it shows none.
+
+Ask for several and they come back as a list of rows — "the last three users" is three rows you can
+scan and click, not a bulleted paragraph.
+
+What a chip carries beyond the title is up to the resource — see
+[Record chips](./ai.html#record-chips).
 
 ## Count and break down
 
