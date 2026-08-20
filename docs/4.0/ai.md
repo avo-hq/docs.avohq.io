@@ -232,6 +232,15 @@ same chip, given the whole width, so each row is scannable and clickable end to 
 index table's rows are. A line that carries a sentence beside its record stays an ordinary bullet —
 there the record really is a word in a sentence.
 
+:::warning `def chip` is alpha
+The DSL is new and still moving. Expect it to change before it settles — the part vocabulary, the
+tones, and the names on this page are all still up for revision — and expect at least one change
+that a chip you wrote today will not survive untouched. Every one of them will be written down: a
+breaking change to `chip` ships with the release note that says what to do about it, the same as
+any other Avo API. Declare a chip where it earns its keep today, and plan on revisiting those
+declarations at an upgrade.
+:::
+
 **Declare what it carries.** A chip is a row of parts. Every resource has a default one — the
 record's picture and its title — and `def chip` replaces it, declaring one `part` per piece, the
 same shape as [`fields`](./resources.html#fields):

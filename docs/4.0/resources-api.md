@@ -837,3 +837,4 @@ Some resource options have enough surface to warrant a dedicated page:
 | `self.cover`          | [Cover and avatar](./cover-and-avatar.html#add-a-cover-photo) |
 | `self.row_controls_config` | [Table view API](./table-view-api.html#row_controls_config) |
 | `self.table_view`     | [Table view API](./table-view-api.html#table_view)        |
+| `def chip`            | [Record chips](./ai.html#record-chips)                    |
