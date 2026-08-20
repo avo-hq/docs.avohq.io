@@ -13,7 +13,7 @@ resources to be displayed to the map view they require a `coordinates` field, bu
 
 To enable map view for a resource, you need to add the `map_view` class attribute to a resource. That will add the view switcher to the <Index /> view.
 
-<Image src="/assets/img/4_0/map-view/index.webp" dark-src="/assets/img/4_0/map-view/index-dark.webp" width="2824" height="1742" alt="The Cities resource in map view — the table/map view switcher, a Mapbox map with markers and the adjacent index table." prompt="map view on the Cities index with the view switcher, Mapbox map and adjacent table" />
+<Image src="/assets/img/4_0/map-view/index.webp" dark-src="/assets/img/4_0/map-view/index-dark.webp" width="2824" height="1742" alt="The Cities resource in map view — the table/map view switcher, a map with markers and the adjacent index table." prompt="map view on the Cities index with the view switcher, map and adjacent table" />
 
 ```ruby
 class Avo::Resources::City < Avo::BaseResource
@@ -39,8 +39,12 @@ class Avo::Resources::City < Avo::BaseResource
 end
 ```
 
-:::warning
-You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
+:::info
+You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile`. That's it — no map account required.
+
+Avo renders maps with [OpenFreeMap](https://openfreemap.org) by default: no registration, no API key, no request limit, and attribution is handled for you.
+
+If you'd rather use Mapbox, set the `MAPBOX_ACCESS_TOKEN` environment variable to a valid [Mapbox](https://account.mapbox.com/auth/signup/) key and Avo will default to Mapbox styles instead. Pin either one — or your own light/dark pair — with [`config.map_view`](./customization-api.html#styles), and override a single map with `mapkick_options: {style: "..."}`.
 :::
 
 <Option name="`mapkick_options`">
@@ -48,11 +52,16 @@ You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have 
 The options you pass here are forwarded to the [`mapkick` gem](https://github.com/ankane/mapkick).
 
 - **Type:** Hash
-- **Default:** `{}` — Avo sets `style` to `"mapbox://styles/mapbox/light-v11"` unless you provide one
+- **Default:** `{}` — Avo sets `style` to `"https://tiles.openfreemap.org/styles/positron"` (or `"mapbox://styles/mapbox/light-v11"` when `MAPBOX_ACCESS_TOKEN` is set) unless you provide one
 
 :::info
 Avo always sets the map's `height` (based on the [layout](#map)) — a `height` you pass here is overwritten.
 :::
+
+:::info
+Avo follows the color scheme and swaps the map between its light and dark styles automatically. Pass your own `style` and Avo leaves the map exactly as you set it, dark mode included.
+:::
+
 
 </Option>
 

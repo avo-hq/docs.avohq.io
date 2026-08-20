@@ -15,8 +15,12 @@ field :coordinates, as: :location
 
 <Image src="/assets/img/4_0/fields/location/show-map.webp" dark-src="/assets/img/4_0/fields/location/show-map-dark.webp" width="1192" height="1060" alt="An Avo Map card on the Dashy dashboard showing an embedded Google Maps view of Manhattan with an Open in Maps link and map navigation controls." prompt="page with navigation map" />
 
-:::warning
-You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
+:::info
+You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile`. That's it — no map account required.
+
+Avo renders maps with [OpenFreeMap](https://openfreemap.org) by default: no registration, no API key, no request limit, and attribution is handled for you.
+
+If you'd rather use Mapbox, set the `MAPBOX_ACCESS_TOKEN` environment variable to a valid [Mapbox](https://account.mapbox.com/auth/signup/) key and Avo will default to Mapbox styles instead. Pin either one — or your own light/dark pair — with [`config.map_view`](../customization-api.html#styles), and override a single map with `mapkick_options: {style: "..."}`.
 :::
 
 ## Description
@@ -78,7 +82,8 @@ Using this option, you can provide a hash of configuration settings supported by
 {
   id: "location-map",
   zoom: 15,
-  controls: true
+  controls: true,
+  style: "https://tiles.openfreemap.org/styles/positron" # "mapbox://styles/mapbox/light-v11" when MAPBOX_ACCESS_TOKEN is set
 }
 ```
 
@@ -93,12 +98,17 @@ field :coordinates,
   as: :location,
   stored_as: [:latitude, :longitude],
   mapkick_options: {
-    style: 'mapbox://styles/mapbox/satellite-v9',
+    style: 'https://tiles.openfreemap.org/styles/liberty',
     controls: true
   }
 ```
 
 By using `mapkick_options`, you can tailor the map's look and functionality to suit your application's requirements.
+
+:::info
+Avo follows the color scheme and swaps the map between its light and dark styles automatically. Pass your own `style` and Avo leaves the map exactly as you set it, dark mode included.
+:::
+
 </Option>
 
 <Option name="`zoom`">
@@ -111,7 +121,7 @@ Sets the initial zoom level of the interactive map. It has no effect on static m
 
 #### Possible values
 
-Any integer zoom level supported by Mapbox.
+Any integer zoom level supported by the map style.
 
 ```ruby
 field :coordinates, as: :location, zoom: 12
@@ -123,7 +133,9 @@ field :coordinates, as: :location, zoom: 12
 The `static` option enables the rendering of a static map leveraging the power of the [mapkick-static](https://github.com/ankane/mapkick-static) gem.
 
 :::warning
-You need to add the [mapkick-static](https://github.com/ankane/mapkick-static) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
+Static maps are Mapbox-only — they're rendered by Mapbox's Static Images API, which OpenFreeMap has no equivalent for. You need to add the [mapkick-static](https://github.com/ankane/mapkick-static) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
+
+The same applies to the <Preview /> view, which always renders a static map.
 :::
 
 

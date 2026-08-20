@@ -98,6 +98,19 @@ end
 
 <Image src="/assets/img/4_0/customization/view-type-table-grid.webm" dark-src="/assets/img/4_0/customization/view-type-table-grid-dark.webm" width="888" height="650" alt="An Avo Posts index with six records per page: the view switcher toggles between table rows and grid cards." prompt="Posts index with 4 per page; GIF toggling table and grid view with annotated view switcher" />
 
+### Map styles
+
+Maps work with no account: Avo renders them with [OpenFreeMap](https://openfreemap.org) by default, and switches to Mapbox styles on its own when `MAPBOX_ACCESS_TOKEN` is set. Pin one with [`map_view.styles`](./customization-api.html#styles), or point it at your own light/dark pair.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.map_view = {
+    styles: :open_free_map
+  }
+end
+```
+
 ### Sorting direction
 
 The first time a user sorts a column, Avo sorts it descending. Flip that with [`first_sorting_option`](./customization-api.html#first_sorting_option).
