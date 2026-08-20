@@ -98,8 +98,17 @@ Also accepts the shared [`icon`](#icon), [`color`](#color), [`hotkey`](#hotkey),
 | `true` / `false` | Forces the state. |
 
 :::warning `active` is ignored on sub-items
-For links nested inside a `resource` block, Avo computes the active sub-item itself — inclusively, favoring the most specific (longest) matching path — and a per-link `active:` has no effect.
+For links nested inside a `resource` or `link_to` block, Avo computes the active sub-item itself — inclusively, favoring the most specific (longest) matching path — and a per-link `active:` has no effect.
 :::
+
+Passing a block nests sub-items under the link — see the [sub-items guide](./menu-editor.html#sub-items). The link itself stays clickable, and Avo forces it active while one of its children is.
+
+```ruby
+link_to "Design", path: "/admin/design" do
+  link_to "Chat", path: "/admin/design/chat"
+  link_to "Loader", path: "/admin/design/loader"
+end
+```
 
 </Option>
 
