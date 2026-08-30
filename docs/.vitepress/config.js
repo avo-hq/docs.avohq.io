@@ -308,12 +308,13 @@ const config = {
             },
           ],
         },
-        // {
-        //   text: "MCP (Model Context Protocol)",
-        //   items: [
-        //     { text: "Overview", link: "/4.0/mcp.html" },
-        //   ],
-        // },
+        {
+          text: "MCP (Model Context Protocol)",
+          items: [
+            // { text: "Overview", link: "/4.0/mcp.html" },
+            { text: "WebMCP", link: "/4.0/webmcp.html" },
+          ],
+        },
         {
           text: "Concepts",
           items: [
