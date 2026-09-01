@@ -1,6 +1,6 @@
 ---
 license: addon
-addon_link: https://avohq.io/addons/json-api
+addon_link: https://avohq.io/addons/avo-api
 outline: [2, 3]
 guide: ./rest-api.html
 prev:
