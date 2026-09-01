@@ -40,14 +40,16 @@ The tokens table is new, and the token resource appears in the Avo sidebar by de
 
 ### Action Required
 
-Install it:
+You are already running the API, so your app has the controllers and needs only the table:
 
 ```bash
-rails generate avo_api:install
+rails generate avo_api:tokens
 rails db:migrate
 ```
 
-Until you do, opening the **API tokens** screen, or sending any request with an `Authorization: Bearer …` header, queries a table that isn't there and errors. This is additive to `avo_api:generate`, which still owns the resource controllers.
+Until you do, opening the **API tokens** screen, or sending any request with an `Authorization: Bearer …` header, queries a table that isn't there and errors. Running the generator twice is a no-op rather than an error.
+
+Reach for `rails generate avo_api:install` only on a **first** install — it invokes `avo_api:generate` as well, which regenerates every resource controller and asks to overwrite the ones you have customized. `avo_api:tokens` is the upgrade path and leaves them alone.
 
 If you don't want tokens at all, [replace the authentication hook](./rest-api.html#bring-your-own-authentication) so the token lookup never runs.
 
