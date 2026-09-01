@@ -90,7 +90,7 @@ The `all_resources` helper takes your [authorization](./authorization) rules int
 
 ## Sub-items
 
-You can nest items beneath a `resource` by passing a block. They appear as child items under the resource link in the sidebar. Any item type can be nested; a nested `resource`, `dashboard`, `page`, `board`, or `action` resolves its own URL automatically, so only `link_to` needs an explicit `path:`. A nested `action` also inherits its enclosing resource, so you don't repeat it.
+You can nest items beneath a `resource` or a `link_to` by passing a block. They appear as child items under the parent link in the sidebar, which stays clickable and goes to its own page. Any item type can be nested; a nested `resource`, `dashboard`, `page`, `board`, or `action` resolves its own URL automatically, so only `link_to` needs an explicit `path:`. A nested `action` also inherits its enclosing resource, so you don't repeat it.
 
 ```ruby
 # config/initializers/avo.rb
@@ -103,6 +103,12 @@ Avo.configure do |config|
       page "Avo::Pages::Settings"     # nested page
       board 1                         # nested kanban board
       action Avo::Actions::ExportData # nested action (inherits :projects)
+    end
+
+    # A plain link nests the same way — a custom page and its sub-pages.
+    link_to "Design", path: "/admin/design" do
+      link_to "Chat", path: "/admin/design/chat"
+      link_to "Loader", path: "/admin/design/loader"
     end
   }
 end
@@ -219,7 +225,7 @@ A [collapsable](./menu-editor-api.html#collapsable) section or group already car
 
 ## Icons
 
-The [`icon`](./menu-editor-api.html#icon) option is supported on `section` and on individual menu items (`link_to`, `resource`, `dashboard`, `page`, `form`, `board`, `action`). It is not supported on `group` or on sub-items nested inside a `resource` block.
+The [`icon`](./menu-editor-api.html#icon) option is supported on `section` and on individual menu items (`link_to`, `resource`, `dashboard`, `page`, `form`, `board`, `action`). It is not supported on `group` or on sub-items nested inside a `resource` or `link_to` block.
 
 You can use icons from [Tabler Icons](https://tabler.io/icons) (preferred in Avo 4) or from [Heroicons](https://heroicons.com/) (both `outline` and `solid` variants).
 

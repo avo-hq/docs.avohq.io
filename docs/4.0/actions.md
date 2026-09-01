@@ -127,7 +127,7 @@ You may use the [custom controls](./custom-controls.html) feature to show action
 
 ## Collect input with fields
 
-An action can define fields, shown to the user in the action's modal. They work the same way as fields on resources. When the action runs on a single record the fields are hydrated from that record; otherwise they're plain form inputs. The submitted values arrive in `handle` as the `fields` argument.
+An action can define fields, shown to the user in the action's modal. Most work the same way as fields on resources. When the action runs on a single record the fields are hydrated from that record; otherwise fields that do not depend on a record render as plain form inputs. Association fields are an exception, as described below. The submitted values arrive in `handle` as the `fields` argument.
 
 ```ruby
 # app/avo/actions/toggle_inactive.rb
@@ -140,6 +140,47 @@ end
 ```
 
 Check out the [Fields page](./fields.md) for everything fields can do.
+
+### Choose an associated record in a collection action
+
+A [`belongs_to` field](./associations/belongs_to.html) needs one current record to resolve its association. It works when you run the action from a record's <Show /> view or select exactly one record on the <Index /> view because Avo hydrates the action with that record. It cannot render when you select multiple records or run a standalone action because there is no single current record.
+
+For a short list of choices, use a [`select` field](./fields/select.html) with options loaded when the form renders:
+
+```ruby
+# app/avo/actions/assign_user.rb
+class Avo::Actions::AssignUser < Avo::BaseAction
+  def fields
+    field :user_id,
+      as: :select,
+      options: -> { User.order(:name).pluck(:name, :id) },
+      include_blank: true
+  end
+
+  def handle(query:, fields:, **)
+    query.each do |record|
+      record.update! user_id: fields[:user_id]
+    end
+
+    succeed "Assigned the selected records."
+  end
+end
+```
+
+For a long list that needs search, use a [`tags` field with `fetch_values_from`](./fields/tags.html#fetch_values_from) in select mode:
+
+```ruby
+# app/avo/actions/assign_user.rb
+def fields
+  field :user_id,
+    as: :tags,
+    mode: :select,
+    enforce_suggestions: true,
+    fetch_values_from: "/avo/resources/users/action_options"
+end
+```
+
+The endpoint receives the search text in `params[:q]` and returns objects with `value` and `label` keys. Both alternatives submit the selected ID as `fields[:user_id]`.
 
 ## Write the `handle` method
 

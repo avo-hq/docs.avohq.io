@@ -120,10 +120,10 @@ field :is_writer, format_display_using: -> { value.present? ? '👍' : '👎' }
 
 ### With Rails helpers
 
-You can format using Rails helpers like `number_to_currency` (note that `view_context` is used to access the helper):
+You can call Rails helpers such as `number_to_currency` directly inside a formatter. Use a display formatter when the result is not a valid form input value:
 
 ```ruby
-field :price, as: :number, format_using: -> { view_context.number_to_currency(value) }
+field :price, as: :number, format_display_using: -> { number_to_currency(value) }
 ```
 
 ## Parse the value before saving

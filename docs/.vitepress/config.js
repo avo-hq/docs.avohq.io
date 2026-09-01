@@ -187,6 +187,7 @@ const config = {
           items: [
             { text: "Getting Started", link: "/4.0/index.html" },
             { text: "Upgrade Guide", link: "/4.0/upgrade.html" },
+            { text: "Avo 3 to Avo 4 upgrade", link: "/4.0/avo-3-avo-4-upgrade.html" },
             { text: "Technical Support", link: "/4.0/technical-support.html" },
             { text: "🤖 Agentic engineering", link: "/4.0/agentic-engineering.html" },
           ]

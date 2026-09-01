@@ -4,6 +4,59 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to 4.1.15
+
+<Option name="`container_width` values renamed to Tailwind's scale">
+
+### Deprecation
+
+`config.container_width` (and `self.container_width` on Avo Forms pages and forms) used the
+words `:large` and `:small`, while every other size option in Avo uses Tailwind's scale —
+`size: :sm`, `width: :xl`, `size: :md`. The widths now use that scale too:
+
+| Before   | After |
+| -------- | ----- |
+| `:large` | `:lg` |
+| `:small` | `:md` |
+| `:full`  | `:full` (unchanged) |
+
+`:small` became `:md` rather than `:sm` deliberately: it keeps every existing screen at
+the width it already had, and frees the narrower names. A new `:sm` (720px, clamping from
+768px) ships in the same release for single-column screens — nothing gets it
+automatically, it is opt-in.
+
+### Action Required
+
+**None immediately.** The old names are still accepted and mapped for you — they log a
+deprecation warning through `Avo.logger` and will be removed in Avo 5. Update them when
+convenient:
+
+```ruby
+# config/initializers/avo.rb
+config.container_width = :small                     # [!code --]
+config.container_width = :md                        # [!code ++]
+
+config.container_width = { index: :large }          # [!code --]
+config.container_width = { index: :lg }             # [!code ++]
+```
+
+```ruby
+# app/avo/pages/settings.rb
+self.container_width = :large                       # [!code --]
+self.container_width = :lg                          # [!code ++]
+```
+
+**If you style Avo's container in your own CSS**, this part is *not* aliased — the emitted
+class names changed and your overrides need renaming:
+
+| Before                  | After              |
+| ----------------------- | ------------------ |
+| `.container-large`      | `.container-lg`    |
+| `.container-small`      | `.container-md`    |
+| `.container-full-width` | `.container-full`  |
+
+</Option>
+
 ## Upgrade to 4.1.11
 
 <Option name="`stacked: false` now opts a field out of sidebar and width stacking">
@@ -191,6 +244,85 @@ Editing scopes is gated by an `edit_scopes?` policy method, which — like every
 
 </Option>
 
+## Upgrade to `avo-dashboards` and `avo-scopes` `4.1.2`
+
+<Option name="Cards, dashboards, and scopes resolve their labels from locale keys first">
+
+### Breaking Change
+
+Cards, dashboards, and scopes now derive an i18n key from their class path and look it up **before** falling back to the class attribute, the same way [resources and actions](./i18n.html#how-avo-resolves-a-label) already did:
+
+| Class     | Key Avo looks up                       | Options under it                          |
+| --------- | -------------------------------------- | ----------------------------------------- |
+| Card      | `avo.card_translations.<class_path>`      | `label`, `description`, `discreet_description` |
+| Dashboard | `avo.dashboard_translations.<class_path>` | `name`, `description`                     |
+| Scope     | `avo.scope_translations.<class_path>`     | `name`, `description`                     |
+
+If your locale files already define one of those keys, it now wins over `self.label`, `self.name`, or `self.description` — **including when the attribute is a lambda**. The lambda isn't called at all, so anything it computed is dropped, with nothing in the logs.
+
+:::warning A lambda that reads the same key stops running
+This bites hardest when the attribute builds a string around the very key Avo now derives:
+
+```ruby
+# app/avo/cards/upcoming_metric.rb
+self.description = -> {
+  I18n.t("avo.card_translations.upcoming_metric.description") + " (#{timeframe})"
+}
+```
+
+Avo finds `avo.card_translations.upcoming_metric.description`, renders it verbatim, and the ` (#{timeframe})` suffix disappears.
+:::
+
+### Action Required
+
+**Grep your locale files** for `card_translations`, `dashboard_translations`, and `scope_translations`. Avo ships nothing under those roots, so if you weren't using them there's nothing to do — a missing key still falls through to your class attribute exactly as before.
+
+If you were using them for your own `I18n.t` lookups, pick one of the three ways out below.
+
+### Steps to Update
+
+**1. Move your own key out of the derived namespace.** The cleanest fix when the class attribute has to keep computing something:
+
+```yaml
+# config/locales/avo.en.yml
+en:
+  avo:
+    card_translations:
+      upcoming_metric:
+        description: Forecasted revenue based on current bookings # [!code --]
+        description_text: Forecasted revenue based on current bookings # [!code ++]
+```
+
+```ruby
+# app/avo/cards/upcoming_metric.rb
+self.description = -> {
+  I18n.t("avo.card_translations.upcoming_metric.description") + " (#{timeframe})" # [!code --]
+  I18n.t("avo.card_translations.upcoming_metric.description_text") + " (#{timeframe})" # [!code ++]
+}
+```
+
+**2. Point Avo's lookup somewhere else.** `self.translation_key` moves the derived key and leaves your own `I18n.t` call untouched:
+
+```ruby
+# app/avo/cards/upcoming_metric.rb
+class Avo::Cards::UpcomingMetric < Avo::Cards::MetricCard
+  self.translation_key = "avo.card_translations.upcoming_metric_chrome" # [!code ++]
+end
+```
+
+**3. Override at the registration site.** A value passed to `card` beats the locale key, so one registration can keep a computed description while the others stay translated:
+
+```ruby
+# app/avo/dashboards/dashy.rb
+card Avo::Cards::UpcomingMetric, description: -> { "#{I18n.t("...")} (#{timeframe})" }
+```
+
+Actions have no registration site, so only the first two apply there — see [Upgrade to 4.0.17](#upgrade-to-4-0-17).
+
+See [the key map](./i18n.html#key-map) for every key Avo derives.
+
+</Option>
+
 ## Upgrade to 4.1.4
 
 <Option name="The back to top pill is enabled by default">
@@ -338,5 +470,36 @@ pt-BR:
 Nothing else changes: resources and fields without a translation still fall back to the humanized class or attribute name.
 
 See [Localization (i18n)](./i18n) for the full picture.
+
+</Option>
+
+## Upgrade to 4.0.17
+
+<Option name="Action labels resolve from `avo.action_translations` first">
+
+### Breaking Change
+
+Actions now look up `avo.action_translations.<class_path>.{name,message,confirm_button_label,cancel_button_label,description}` **before** falling back to `self.name`, `self.message`, `self.confirm_button_label`, `self.cancel_button_label`, and `self.description`, mirroring how resources already resolved their names.
+
+If your locale files already define one of those keys, it now wins over the class attribute — **including when the attribute is a lambda**, which is then never called, so anything it computed is dropped with nothing in the logs.
+
+### Action Required
+
+**Grep your locale files for `action_translations`.** Avo ships nothing under that root, so if you weren't using it nothing changes: an action with no key still renders its class attribute, and an action with neither still renders its humanized class name.
+
+### Steps to Update
+
+If a key you own collides with an action's derived key, either rename your key, or point Avo's lookup elsewhere with `self.translation_key`:
+
+```ruby
+# app/avo/actions/toggle_inactive.rb
+class Avo::Actions::ToggleInactive < Avo::BaseAction
+  self.translation_key = "avo.action_translations.toggle_inactive_chrome" # [!code ++]
+end
+```
+
+`avo-dashboards` and `avo-scopes` got the same treatment in their `4.1.2` releases — see [that section](#upgrade-to-avo-dashboards-and-avo-scopes-4-1-2).
+
+See [Localizing actions](./i18n.html#localizing-actions) for the full picture.
 
 </Option>
