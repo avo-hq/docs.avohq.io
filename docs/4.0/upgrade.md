@@ -4,6 +4,86 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to 4.2.0
+
+<Option name="`super` in a `setup_authentication` override now accepts a valid API token">
+
+### Breaking Change
+
+`avo-api` ships [API tokens](./rest-api.html#authentication). The default `setup_authentication` on `BaseResourcesController` used to raise, closing the API until you replaced it. It now **accepts a request carrying a valid API token**, authenticated as that token's owner, and rejects everything else.
+
+That changes what `super` means inside an existing override.
+
+### Action Required
+
+Grep `app/controllers/avo/api/` for `setup_authentication` and check every override that calls `super`. An override that never calls it is unaffected.
+
+Drop the `super` call to opt out of tokens entirely and leave your own scheme in sole charge:
+
+```ruby
+# app/controllers/avo/api/resources/v1/base_resources_controller.rb
+def setup_authentication
+  super # [!code --]
+  authenticate_with_my_scheme!
+end
+```
+
+Keep it to accept tokens alongside your scheme — but note a token then reaches everything its owner reaches, since [a token acts as its owner](./rest-api.html#a-token-acts-as-its-owner).
+
+</Option>
+
+<Option name="`avo-api` now ships a migration">
+
+### Breaking Change
+
+The tokens table is new, and the token resource appears in the Avo sidebar by default as soon as the gem is upgraded — before the table exists.
+
+### Action Required
+
+Install it:
+
+```bash
+rails generate avo_api:install
+rails db:migrate
+```
+
+Until you do, opening the **API tokens** screen, or sending any request with an `Authorization: Bearer …` header, queries a table that isn't there and errors. This is additive to `avo_api:generate`, which still owns the resource controllers.
+
+If you don't want tokens at all, [replace the authentication hook](./rest-api.html#bring-your-own-authentication) so the token lookup never runs.
+
+</Option>
+
+<Option name="A denied policy method answers `403` JSON instead of a `302` redirect">
+
+### Breaking Change
+
+Policy *methods* (`index?`, `update?`, …) returning `false` raise `Avo::NotAuthorizedError`, which Avo handled with a flash message and a redirect to your root URL — right for the HTML panel, unreadable for a JSON client. The API now renders JSON instead:
+
+```json
+{ "error": "Forbidden", "reason": "policy" }
+```
+
+A [token scope refusal](./rest-api.html#tell-the-three-refusals-apart) is also a `403`, and `reason` is what tells the two apart.
+
+**Action required:** None for most apps — this replaces a redirect no API client could act on. Two cases to check:
+
+- **A client that read the `302` as "denied"** now gets a `403`. One that followed the redirect and parsed the resulting HTML now gets JSON.
+- **A `rescue_from Avo::NotAuthorizedError` you added to your own `BaseResourcesController`** still wins over the gem's, so your response shape is unchanged. Delete it to adopt the gem's, or keep it.
+
+</Option>
+
+<Option name="Tokens can now be scoped, and are unrestricted until they are">
+
+### Breaking Change
+
+None — this is additive. Existing tokens carry no grants, and a token with no grants [reaches everything its owner can](./rest-api.html#scope-a-token), exactly as before.
+
+**Action required:** None. Worth knowing before you use it: granting a token *anything* restricts it to what you granted, including against resources you deploy later, and removing the last grant leaves a token that refuses everything rather than one that is unscoped again. **Make unrestricted** in the token's **Scopes** panel is the way back.
+
+Editing scopes is gated by an `edit_scopes?` policy method, which — like every other token policy method — [answers yes when no authorization client is configured](./rest-api.html#who-may-change-scopes).
+
+</Option>
+
 ## Upgrade to 4.1.15
 
 <Option name="`container_width` values renamed to Tailwind's scale">
@@ -161,88 +241,6 @@ end
 
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
-
-## Unreleased — `avo-api` API tokens
-
-<Option name="`super` in a `setup_authentication` override now accepts a valid API token">
-
-### Breaking Change
-
-`avo-api` ships [API tokens](./rest-api.html#authentication). The default `setup_authentication` on `BaseResourcesController` used to raise, closing the API until you replaced it. It now **accepts a request carrying a valid API token**, authenticated as that token's owner, and rejects everything else.
-
-That changes what `super` means inside an existing override.
-
-### Action Required
-
-Grep `app/controllers/avo/api/` for `setup_authentication` and check every override that calls `super`. An override that never calls it is unaffected.
-
-Drop the `super` call to opt out of tokens entirely and leave your own scheme in sole charge:
-
-```ruby
-# app/controllers/avo/api/resources/v1/base_resources_controller.rb
-def setup_authentication
-  super # [!code --]
-  authenticate_with_my_scheme!
-end
-```
-
-Keep it to accept tokens alongside your scheme — but note a token then reaches everything its owner reaches, since [a token acts as its owner](./rest-api.html#a-token-acts-as-its-owner).
-
-</Option>
-
-<Option name="`avo-api` now ships a migration">
-
-### Breaking Change
-
-The tokens table is new, and the token resource appears in the Avo sidebar by default as soon as the gem is upgraded — before the table exists.
-
-### Action Required
-
-Install it:
-
-```bash
-rails generate avo_api:install
-rails db:migrate
-```
-
-Until you do, opening the **API tokens** screen, or sending any request with an `Authorization: Bearer …` header, queries a table that isn't there and errors. This is additive to `avo_api:generate`, which still owns the resource controllers.
-
-If you don't want tokens at all, [replace the authentication hook](./rest-api.html#bring-your-own-authentication) so the token lookup never runs.
-
-</Option>
-
-## Unreleased — `avo-api` token scopes
-
-<Option name="A denied policy method answers `403` JSON instead of a `302` redirect">
-
-### Breaking Change
-
-Policy *methods* (`index?`, `update?`, …) returning `false` raise `Avo::NotAuthorizedError`, which Avo handled with a flash message and a redirect to your root URL — right for the HTML panel, unreadable for a JSON client. The API now renders JSON instead:
-
-```json
-{ "error": "Forbidden", "reason": "policy" }
-```
-
-A [token scope refusal](./rest-api.html#tell-the-three-refusals-apart) is also a `403`, and `reason` is what tells the two apart.
-
-**Action required:** None for most apps — this replaces a redirect no API client could act on. Two cases to check:
-
-- **A client that read the `302` as "denied"** now gets a `403`. One that followed the redirect and parsed the resulting HTML now gets JSON.
-- **A `rescue_from Avo::NotAuthorizedError` you added to your own `BaseResourcesController`** still wins over the gem's, so your response shape is unchanged. Delete it to adopt the gem's, or keep it.
-
-</Option>
-
-<Option name="Tokens can now be scoped, and are unrestricted until they are">
-
-### Breaking Change
-
-None — this is additive. Existing tokens carry no grants, and a token with no grants [reaches everything its owner can](./rest-api.html#scope-a-token), exactly as before.
-
-**Action required:** None. Worth knowing before you use it: granting a token *anything* restricts it to what you granted, including against resources you deploy later, and removing the last grant leaves a token that refuses everything rather than one that is unscoped again. **Make unrestricted** in the token's **Scopes** panel is the way back.
-
-Editing scopes is gated by an `edit_scopes?` policy method, which — like every other token policy method — [answers yes when no authorization client is configured](./rest-api.html#who-may-change-scopes).
-
-</Option>
 
 ## Upgrade to `avo-dashboards` and `avo-scopes` `4.1.2`
 
