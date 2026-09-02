@@ -77,7 +77,7 @@ end
 If you pass `at:`, the path must match the path in `resource_identifier`. Booting with the two out of step raises a configuration error rather than starting, because the alternative is worse: discovery keeps answering while the endpoints it advertises return 404, which looks from the client side like the connection dying at token exchange with no error text.
 :::
 
-The authorize page and the connections screen are not part of this — they're mounted inside the panel with the rest of Avo's chrome, so they inherit your existing sign-in.
+The authorize page and the connections screen are not part of this — they're mounted with the panel, so they inherit your existing sign-in. The connections screen sits in Avo's chrome with the rest of your admin; the authorize page gets a dedicated full-page layout with no sidebar or navbar, because it's a decision about something outside your app and a panel full of links is both the wrong context and a way to abandon a flow the client is still waiting on.
 
 :::danger Mount it outside your authentication block
 If `mount_avo` lives inside an `authenticate :user do … end` block, `mount_avo_mcp_server` **must** be mounted outside and before it. A connected client calls the token and JSON-RPC endpoints with a bearer token and no browser session, so putting them behind your web session guard makes every call fail.
@@ -113,10 +113,13 @@ Nothing is copied by hand at any point. The client obtains a short-lived token t
 
 ### What the authorize page shows
 
-- **The origin of the requesting client's identifier**, as the primary identity.
+- **The origin of the requesting client's identifier**, as the primary identity — it's the heading of the page.
 - The client's display name, shown as *claimed by the client*.
 - The admin identity currently signed in — the person the connection will act as.
-- The four capabilities, as checkboxes.
+- The four capabilities, as checkboxes. Delete and run actions are marked destructive, and ticking either reveals a line explaining what that specific grant means.
+- Where you'll be sent afterwards. A loopback callback is named as what it is: a program running on the machine you're sitting at.
+
+A client that registered itself rather than publishing a metadata document has no verifiable identity at all. That page says so in the heading and warns above the card, rather than showing the identifier it minted as if it meant something.
 
 :::warning Read the origin, not the name
 Every attribute a client says about itself is unverified. A client's display name is whatever it puts in its own metadata, so an attacker can publish one that calls itself Claude and ask for delete access. The origin of the client identifier is the one attribute they'd have to control a domain to forge, which is why the page leads with it.
