@@ -12,8 +12,12 @@ The `Area` field is used to display a geographical area on a map.
 field :city_center_area, as: :area
 ```
 
-:::warning
-You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
+:::info
+You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile`. That's it — no map account required.
+
+Avo renders maps with [OpenFreeMap](https://openfreemap.org) by default: no registration, no API key, no request limit, and attribution is handled for you.
+
+If you'd rather use Mapbox, set the `MAPBOX_ACCESS_TOKEN` environment variable to a valid [Mapbox](https://account.mapbox.com/auth/signup/) key and Avo will default to Mapbox styles instead. Pin either one — or your own light/dark pair — with [`config.map_view`](../customization-api.html#styles), and override a single map with `mapkick_options: {style: "..."}`.
 :::
 
 ## Description
@@ -56,7 +60,7 @@ Using this option, you can provide a hash of configuration settings supported by
 
 #### Default value
 
-`{}`
+`{style: "https://tiles.openfreemap.org/styles/positron"}` — `"mapbox://styles/mapbox/light-v11"` when `MAPBOX_ACCESS_TOKEN` is set.
 
 #### Possible values
 
@@ -66,10 +70,14 @@ Accepts the options as [specified in the Mapkick gem](https://github.com/ankane/
 field :city_center_area,
   as: :area,
   mapkick_options: {
-    style: "mapbox://styles/mapbox/satellite-v9",
+    style: "https://tiles.openfreemap.org/styles/liberty",
     controls: true
   }
 ```
+
+:::info
+Avo follows the color scheme and swaps the map between its light and dark styles automatically. Pass your own `style` and Avo leaves the map exactly as you set it, dark mode included.
+:::
 </Option>
 
 <Option name="`datapoint_options`">
@@ -102,7 +110,7 @@ field :city_center_area,
   as: :area,
   geometry: :polygon,
   mapkick_options: {
-    style: "mapbox://styles/mapbox/satellite-v9",
+    style: "https://tiles.openfreemap.org/styles/liberty",
     controls: true
   },
   datapoint_options: {

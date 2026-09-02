@@ -185,8 +185,18 @@ If you'd rather skip the popover, set `on_click: :show` or `on_click: :edit` to 
 
 ## Navigation and filtering
 
-- The header's arrows navigate by month or week; the anchor date is carried in the `calendar_date` query param. The **Today** button jumps back to the current date.
+- The header's arrows navigate by month or week; the anchor date is carried in the `calendar_date` query param. The **Today** button jumps back to the current date, keeping the period you pressed it in.
 - Filters and scopes applied on the index also apply to the calendar. Pagination does not — the calendar always shows the whole visible range (capped at 500 records).
+
+### Pressing Today on today's own range
+
+A month grid bleeds a few days of its neighbours, so today can be on screen in a month it doesn't belong to — **Today** still takes you to its own month rather than pointing at the leaked cell.
+
+When the grid already shows today's own month or week, though, there is nothing to fetch, and the press is answered in the browser instead of by a reload. If today has scrolled out of sight it comes back to the middle of the viewport, and then it pops: the day number and the circle behind it scale up twice while a wash of the accent drains out of the cell. A press with today already in sight skips the scroll and pops on the spot.
+
+In the week view today's column is a pinned header that never leaves the screen, so what gets centred there is the current hour instead. Navigating is never accompanied by a pop — the arriving grid speaks for itself — and Cmd/Ctrl-click (or Shift/Alt) still opens today's range in a new tab or window, leaving the current page where it was.
+
+Two cases have nothing to reveal, and both are quiet rather than broken: `hide_weekends` can drop today from the grid entirely, and visitors who ask for reduced motion get the same jumps without the animation.
 
 :::info
 There is no drag-to-reschedule yet.

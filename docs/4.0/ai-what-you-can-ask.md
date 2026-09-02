@@ -10,19 +10,19 @@ A catalog of what the Avo AI assistant can do, with a prompt for each one. Every
 
 The resource and field names in the examples are placeholders. Substitute your own: the assistant reads your resources, your columns, and your scopes at the moment you ask, so the vocabulary that works is the vocabulary of your admin.
 
-For how a turn actually unfolds — inspect-first, confirmation cards, authorization — see [How the assistant works](./ai.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./ai-agents-and-tools.html).
+For how a turn actually unfolds — schema, confirmation cards, authorization — see [How the assistant works](./ai.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./ai-agents-and-tools.html).
 
 ## Find records
 
 | Ask                                              | What you get                                                             |
 | ------------------------------------------------ | ------------------------------------------------------------------------ |
-| "Find the user with the email ada@example.com"   | The matching record, as a card with a link to open it                    |
+| "Find the user with the email ada@example.com"   | The matching record, named inline as a chip you can click                |
 | "Find the user called John Deere"                | The record — found by search, even when the name lives across several columns |
 | "Show me the 5 most recent posts"                | A short list, sorted by the timestamp that matches what you asked about  |
 | "Which users signed up in the last 7 days?"      | A date-filtered list, resolved against the real current time             |
 | "List projects whose name contains 'orbit'"      | A partial-match list                                                     |
 | "Show me every column for post 42"               | The full record, not just the common columns                             |
-| "Who signed up last?"                            | One record, rendered as a card                                           |
+| "Who signed up last?"                            | One record, named inline as a chip                                       |
 
 Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders over $500", "users older than 26", "posts with no author", "projects in draft or review".
 
@@ -32,7 +32,19 @@ Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders ov
 
 **Associations, without SQL.** "Which teams have no members?" and "show me users who have at least one order" are answered by checking whether the association exists, scoped to the child records you're allowed to see.
 
-When a query returns exactly one record, you get a card with its title and a link rather than a paragraph repeating its fields.
+**Records are named inline.** Any record the assistant mentions is rendered as a chip in the
+sentence itself — its picture, its title, and whatever status its resource declares — and clicking
+it opens the record. So "who signed up last?" reads as one sentence with the person in it, not as a
+paragraph followed by a card.
+
+A chip appears because the assistant named that record in its answer, which is why a count never
+brings one along: "how many projects?" names no project, so it shows none.
+
+Ask for several and they come back as a list of rows — "the last three users" is three rows you can
+scan and click, not a bulleted paragraph.
+
+What a chip carries beyond the title is up to the resource — see
+[Record chips](./ai.html#record-chips).
 
 ## Count and break down
 
@@ -124,16 +136,40 @@ Required inputs you didn't mention arrive as empty fields on the card for you to
 
 Files are referenced by blob id, and the Media Library URL carries one: `/avo/media-library/260/edit` is blob 260. The assistant never uploads bytes itself — a file gets in either by riding along on your message or through a URL you confirm. Purging a file stays a manual action. See [Files and attachments](./ai.html#files-and-attachments) and [Getting new files in](./ai.html#getting-new-files-in).
 
-## Ask about the record you're on
+## Ask about the page you're on
 
-Start a chat from a record's page and "this" is already resolved — for the whole conversation, not just the first message.
+Start a chat from a page whose subject is one thing and "this" is already resolved — for the whole conversation, not just the first message.
+
+From a record's page:
 
 - **"What is this?"**
 - **"Who owns it?"**
 - **"Set its status to active"**
 - **"Is anything missing here?"**
 
-A ribbon above the composer names the attached record, and the ✕ at its end starts the chat without it. See [The record you start from](./ai.html#the-record-you-start-from).
+From one [Media Library](./media-library.html) file's page:
+
+- **"What is this?"**
+- **"Where is this used?"** — every record the file is attached to
+- **"Attach this to the latest post's cover"**
+
+From a conversation's page, starting a new chat from the bar:
+
+- **"Summarize this"**
+- **"What did we decide here?"**
+
+A ribbon above the composer names the subject, and the ✕ at its end — or <kbd>Backspace</kbd> in an empty composer — starts the chat without it. See [What you start the chat from](./ai.html#what-you-start-the-chat-from).
+
+## Ask about the rows you checked
+
+Check rows on an index — or in a has-many panel on a record's page — and "these" means exactly those records, by id, with no second search.
+
+- **"What are these?"**
+- **"How many of these are unpaid?"**
+- **"Set all of these to archived"**
+- **"Which of these has no owner?"**
+
+The ribbon's **"3 records selected"** chip says how many; hovering it names each row by resource and label. See [The rows you checked](./ai.html#the-rows-you-checked).
 
 ## Ask about a file you sent
 
@@ -152,7 +188,7 @@ The files stay on the message, so you can keep asking about them later in the co
 
 New conversations title themselves after your first message. See [Renaming conversations](./ai-agents-and-tools.html#renaming-conversations).
 
-You don't have to ask, either. The ⋯ menu next to the title renames the conversation without the assistant — **Rename chat** to type the title yourself, **Rename again with AI** to have one generated — and the bar's menu adds **Copy as markdown**, which puts the conversation on your clipboard as plain text. See [The conversation menu](./ai.html#the-conversation-menu).
+You don't have to ask, either. The ⋯ menu next to the title renames the conversation without the assistant — **Rename chat** to type the title yourself, **Rename with AI** to have one generated — and the bar's menu adds **Copy as markdown**, which puts the conversation on your clipboard as plain text. See [The conversation menu](./ai.html#the-conversation-menu).
 
 ## What it won't do
 

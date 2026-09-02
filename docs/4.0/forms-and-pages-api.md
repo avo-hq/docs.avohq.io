@@ -79,6 +79,29 @@ self.id = :app_settings
 
 </Option>
 
+<Option name="`self.container_width`" headingSize="3">
+
+Overrides Avo's page container width for this screen. Same values as [`config.container_width`](./customization-api.html#container_width).
+
+```ruby
+self.container_width = :lg
+```
+
+| Value   | Behavior                                       |
+| ------- | ---------------------------------------------- |
+| `:sm`   | Narrow single-column container (720px).        |
+| `:md`   | Medium centered container (960px).             |
+| `:lg`   | Wide constrained container (1536px).           |
+| `:full` | Spans the full width of the content area.      |
+
+- **Type:** Symbol
+- **Default:** `nil` — inherits whatever [`config.container_width`](./customization-api.html#container_width) gives the request's view.
+- **Values:** `:sm`, `:md`, `:lg`, `:full` (the Avo-4.0 names `:small` and `:large` still work but are deprecated — `:small` maps to `:md`, not `:sm`)
+- **Validation:** raises `ArgumentError` on any other value.
+- **Scope:** on a **page**, applies to that page; a sub-page's own value wins over its main page's. On a **form**, applies only when the form is rendered on its own URL — a form placed on a page takes the page's width.
+
+</Option>
+
 ## Form methods
 
 <Option name="`fields`">
@@ -161,6 +184,7 @@ end
 ```
 
 - **Type:** instance method you define
+- **Empty or undefined:** the page renders without the sidebar column, and its content spans the container.
 
 :::warning Parsed once at boot
 `navigation` is evaluated a single time during application boot. Don't put conditional or otherwise dynamic logic inside it — it won't be re-evaluated per request.
