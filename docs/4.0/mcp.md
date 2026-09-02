@@ -237,7 +237,17 @@ Those two gates decide whether an admin may touch a **record**. Which of its **f
 
 A field the panel hides from this admin is not returned by `show_record`, `list_records`, or `search_records`, and `list_resources` doesn't name it among the resource's fields either. Naming a field the admin can't see would hand an agent a column it's about to be refused on, which reads as a bug rather than as a permission.
 
+The converse holds too, and it is worth stating because it looks like an oversight when you first meet it: a field the panel **does** show this admin is returned, whatever it holds. If a resource renders an API token, `show_record` returns that token. The connection can do no more than the account can — and no less, because a read tool that quietly withheld fields the panel displays would be lying about what the admin can see.
+
+:::warning A field a person can read, an AI client can read
+That includes credentials. If a resource renders `api_token` and an admin can see it in the panel, a connection acting as that admin can read it too, and an AI client acts on the text it reads.
+
+The lever is the one you already have: hide it with a `visible:` block, and it disappears from both at once. There is no MCP-only redaction list to maintain, deliberately — a second place to declare what is secret is a second place to forget.
+:::
+
 The same field also **cannot be written**, even on a record they may otherwise edit. An admin can pass `update?` on a record and still be refused a column their own panel doesn't render for them — that is what a `visible:` block on a field means, and a tool that checked only the record-level policy would let an agent write straight past it. A field the panel renders read-only is refused for the same reason.
+
+Writes are deliberately **stricter** than reads on one point: an attribute whose name looks like a credential (`password`, `token`, `secret`, `digest`) is refused even when the panel renders it and the admin may edit it. Reading one is the admin's own visibility decision; rewriting one through a connection is not something a `visible:` block was ever asked to authorize.
 
 Two more sets of columns are never writable, whatever the policy says: the system-managed `id`, `created_at`, and `updated_at`, and any column whose name looks like it holds a credential (`password`, `token`, `secret`, `digest`).
 
