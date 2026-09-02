@@ -113,7 +113,7 @@ Nothing is copied by hand at any point. The client obtains a short-lived token t
 
 ### What the authorize page shows
 
-- **A pair of marks** — the client on the left, your panel's own logomark on the right. The client's mark is a fixed glyph, never an image the client nominates.
+- **A pair of marks** — the client on the left, your panel's own logomark (`appearance.logomark`, and its dark variant when you set one) on the right. The client's mark is the logo its metadata document publishes as `logo_uri`, if it publishes one at all; most don't, and Claude Code's document has no logo field, so what you'll usually see is the client's initial. Only `https` logo URLs are used, and they're fetched with `referrerpolicy="no-referrer"` — this page's URL carries the whole authorization request in its query string.
 - **The client's own product name**, in the heading: "Claude Code would like access to your admin panel". It's the string an admin can match against the thing they just launched.
 - **A disclaimer naming your app as the party that has _not_ vouched for it**, with the origin of the client's identifier printed in the same sentence. The name identifies; the domain is the evidence.
 - The admin identity currently signed in — the person the connection will act as.
