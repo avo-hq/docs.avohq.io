@@ -117,9 +117,9 @@ Nothing is copied by hand at any point. The client obtains a short-lived token t
 - The client's display name, shown as *claimed by the client*.
 - The admin identity currently signed in — the person the connection will act as.
 - The four capabilities, as checkboxes. Delete and run actions are marked destructive, and ticking either reveals a line explaining what that specific grant means.
-- Where you'll be sent afterwards. A loopback callback is named as what it is: a program running on the machine you're sitting at.
+- Where you'll be sent afterwards. A loopback callback is named as what it is: a program running on the machine you're sitting at. If the callback is on a domain other than the one the client was verified against, the page says so — a metadata document may list a redirect URI on any origin, so the origin in the heading can be telling the truth about who published the document while saying nothing about where the code goes.
 
-A client that registered itself rather than publishing a metadata document has no verifiable identity at all. That page says so in the heading and warns above the card, rather than showing the identifier it minted as if it meant something.
+A client that registered itself rather than publishing a metadata document has no verifiable identity at all. The page says so in the heading and warns above the card, rather than showing the identifier it minted as if it meant something. That variant also arrives with **read** ticked and nothing else, and adds one checkbox — *I started this connection myself, from a client I recognize* — which must be ticked before the page will approve anything. Declining never requires it.
 
 :::warning Read the origin, not the name
 Every attribute a client says about itself is unverified. A client's display name is whatever it puts in its own metadata, so an attacker can publish one that calls itself Claude and ask for delete access. The origin of the client identifier is the one attribute they'd have to control a domain to forge, which is why the page leads with it.
