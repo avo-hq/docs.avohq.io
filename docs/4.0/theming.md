@@ -85,26 +85,15 @@ Because it's plain, well-named CSS variables in a single file, this is the surfa
 ::: code-group
 
 ```text [Coastal]
-Use the Avo theming guide at https://docs.avohq.io/4.0/theming.html and
-reskin my Avo app to a coastal theme — soft sand neutrals, sea-glass and
-deep-ocean accents. Override CSS variables in
-app/assets/stylesheets/avo-overrides.css only, with matching :root and
-.dark values.
+Use the Avo theming guide at https://docs.avohq.io/4.0/theming.html and reskin my Avo app to a coastal theme — soft sand neutrals, sea-glass and deep-ocean accents. Override CSS variables in app/assets/stylesheets/avo-overrides.css only, with matching :root and .dark values.
 ```
 
 ```text [Rose]
-Use the Avo theming guide at https://docs.avohq.io/4.0/theming.html and
-reskin my Avo app to a rose theme — warm blush neutrals and a rich rose
-accent. Override CSS variables in app/assets/stylesheets/avo-overrides.css
-only, with matching :root and .dark values.
+Use the Avo theming guide at https://docs.avohq.io/4.0/theming.html and reskin my Avo app to a rose theme — warm blush neutrals and a rich rose accent. Override CSS variables in app/assets/stylesheets/avo-overrides.css only, with matching :root and .dark values.
 ```
 
 ```text [80's Sunset]
-Use the Avo theming guide at https://docs.avohq.io/4.0/theming.html and
-reskin my Avo app to an 80's sunset theme — dusk purples and hot magenta-to-
-orange accents. Override CSS variables in
-app/assets/stylesheets/avo-overrides.css only, with matching :root and
-.dark values.
+Use the Avo theming guide at https://docs.avohq.io/4.0/theming.html and reskin my Avo app to an 80's sunset theme — dusk purples and hot magenta-to- orange accents. Override CSS variables in app/assets/stylesheets/avo-overrides.css only, with matching :root and .dark values.
 ```
 
 :::
