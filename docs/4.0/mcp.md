@@ -111,6 +111,12 @@ That's why it isn't derived from the request. Host, scheme, and forwarding heade
 
 Nothing is copied by hand at any point. The client obtains a short-lived token through that redirect and refreshes it on its own, and declining creates nothing at all.
 
+### Which clients can connect
+
+The server authenticates clients as **public clients**: no shared secret, identity established by the metadata document the `client_id` URL serves, and the code protected by PKCE. Its authorization server metadata says so, advertising `token_endpoint_auth_methods_supported: ["none"]`.
+
+A client's own document names a *preferred* method in `token_endpoint_auth_method` and may list everything it can do in `token_endpoint_auth_methods_supported`. A client that can be public is accepted even when it would rather be something stronger — ChatGPT, for instance, prefers `private_key_jwt` and lists `["none", "private_key_jwt"]`, so it connects as a public client. A client offering nothing but confidential methods is refused on the authorize page, before anything is created, rather than at the token endpoint: accepting the declaration and then ignoring it would issue a token to a client that believes it authenticated with an assertion nobody checked.
+
 ### What the authorize page shows
 
 - **A pair of marks** — the client on the left, your panel's own logomark on the right. The right one is `Avo.configuration.appearance.logomark` (and `logomark_dark` when you set one), so it's your branding, not Avo's, wherever you've configured it.
