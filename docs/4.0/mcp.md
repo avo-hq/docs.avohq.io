@@ -113,18 +113,19 @@ Nothing is copied by hand at any point. The client obtains a short-lived token t
 
 ### What the authorize page shows
 
-- **The origin of the requesting client's identifier**, as the primary identity — it's the heading of the page.
-- The client's display name, shown as *claimed by the client*.
+- **A pair of marks** — the client on the left, your panel's own logomark on the right. The client's mark is a fixed glyph, never an image the client nominates.
+- **The client's own product name**, in the heading: "Claude Code would like access to your admin panel". It's the string an admin can match against the thing they just launched.
+- **A disclaimer naming your app as the party that has _not_ vouched for it**, with the origin of the client's identifier printed in the same sentence. The name identifies; the domain is the evidence.
 - The admin identity currently signed in — the person the connection will act as.
 - The four capabilities, as checkboxes. Delete and run actions are marked destructive, and ticking either reveals a line explaining what that specific grant means.
-- Where you'll be sent afterwards. A loopback callback is named as what it is: a program running on the machine you're sitting at. If the callback is on a domain other than the one the client was verified against, the page says so — a metadata document may list a redirect URI on any origin, so the origin in the heading can be telling the truth about who published the document while saying nothing about where the code goes.
+- Where you'll be sent afterwards. A loopback callback is named as what it is: a program running on the machine you're sitting at. If the callback is on a domain other than the one the client was verified against, the page says so — a metadata document may list a redirect URI on any origin, so the origin can be telling the truth about who published the document while saying nothing about where the code goes.
 
-A client that registered itself rather than publishing a metadata document has no verifiable identity at all. The page says so in the heading and warns above the card, rather than showing the identifier it minted as if it meant something. That variant also arrives with **read** ticked and nothing else, and adds one checkbox — *I started this connection myself, from a client I recognize* — which must be ticked before the page will approve anything. Declining never requires it.
+A client that registered itself rather than publishing a metadata document has no verifiable identity at all. The page still names it in the heading — that's what the admin recognizes — but there is no domain to print beside it, its mark is ringed in amber, and the card says the name itself was never checked. That variant also arrives with **read** ticked and nothing else, and adds one checkbox — *I started this connection myself, from a client I recognize* — which must be ticked before the page will approve anything. Declining never requires it.
 
-:::warning Read the origin, not the name
-Every attribute a client says about itself is unverified. A client's display name is whatever it puts in its own metadata, so an attacker can publish one that calls itself Claude and ask for delete access. The origin of the client identifier is the one attribute they'd have to control a domain to forge, which is why the page leads with it.
+:::warning The name is the client's claim; the domain is the evidence
+A client's display name is whatever it puts in its own metadata, so an attacker can publish a document that calls itself Claude Code and ask for delete access. The page names it anyway, because a name is what a person can match against the thing they just launched — and then, in the same sentence, states that your panel has not reviewed or verified it and prints the domain that actually published the description. That domain is the one attribute they'd have to control to forge.
 
-Check the origin before approving — especially on a request that asks for delete or run actions.
+So read the sentence under the heading, not just the heading — especially on a request that asks for delete or run actions.
 :::
 
 ## Choose what a connection can do
