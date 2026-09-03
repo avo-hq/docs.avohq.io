@@ -5,7 +5,7 @@ outline: [2, 3]
 
 # Theming
 
-Theming is how you make Avo look like your product — its colors, surfaces, logos, and chrome.
+Theming is how you make Avo look like your product — its colors, fonts, surfaces, logos, and chrome.
 
 **The fastest way to theme Avo is to let an AI agent do it for you.** Everything Avo exposes for theming is plain, well-structured text — Ruby config, CSS variables, ERB — which is exactly what an LLM handles well. Point your coding agent at this guide, describe the look you want, and it can produce a complete, coherent theme far faster than hand-tuning values one at a time. Skip to the [ready-made prompts →](#let-an-ai-agent-do-it)
 
@@ -30,6 +30,7 @@ Everything the agent does, you can do yourself. Avo gives you a ladder of approa
 | ----------------------------------------------------- | ------------------------------------------------------------------- | ---------- |
 | Swap logos, pick a color scheme and accent/neutral    | [Appearance config](#recolor-with-the-appearance-config)            | none       |
 | Re-skin the whole UI by overriding colors and radii   | [CSS variables](#re-skin-with-css-variables)                        | none       |
+| Use your own typeface                                 | [Font variables](#change-the-font)                                  | none       |
 | Restyle specific components (navbar, sidebar, tables) | [Component CSS variables](#fine-tune-specific-components)           | none       |
 | Style your own custom tools, fields, or pages         | [Tailwind & custom CSS](#style-your-custom-ui)                       | Tailwind   |
 | Rewrite a view's markup outright                      | [Eject a view for full control](#eject-a-view-for-full-control)      | none       |
@@ -101,6 +102,78 @@ Use the Avo theming guide at https://docs.avohq.io/4.0/theming.html and reskin m
 :::tip
 `avo-overrides.css` is served as-is — it is **not** run through the Tailwind build. For custom utility classes (`@apply`, arbitrary values) in your own UI, use the [TailwindCSS integration](./tailwindcss-integration.html) instead.
 :::
+
+## Change the font
+
+Avo ships [Inter](https://rsms.me/inter/) and reads it through a single variable, [`--font-sans`](./appearance-api.html#fonts), which every screen inherits. Monospace text — code snippets in alerts, file details in the media library — reads [`--font-mono`](./appearance-api.html#fonts). Point either at another family in `avo-overrides.css` and the whole interface follows, with no build step:
+
+```css
+/* app/assets/stylesheets/avo-overrides.css */
+:root {
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+```
+
+That is the entire change for a font the visitor's device already has, such as a [system font stack](https://systemfontstack.com/). For any other typeface, load it first — pick one of the two approaches below.
+
+Avo sets text at weights 400, 500, 600, and 700. Load all four (or a variable font covering that range) — otherwise the browser synthesizes the missing weights.
+
+### Load a hosted font
+
+Every font service hands you a stylesheet URL. Paste it as a `@import` at the **very top** of `avo-overrides.css` — CSS requires imports before any other rule — and set the variable below it:
+
+```css
+/* app/assets/stylesheets/avo-overrides.css */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+}
+```
+
+If you'd rather load it with `<link>` tags — the service's copy-paste snippet, with `preconnect` hints — [eject the `:head` partial](./eject-views.html#prepared-templates) and drop them in. Fonts don't compete in the cascade, so it doesn't matter that `:head` renders after Avo's assets (`:pre_head`, which renders before them, works just as well). The variable override still lives in `avo-overrides.css`:
+
+```erb
+<%# app/views/avo/partials/_head.html.erb %>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+```
+
+Where to get that URL:
+
+| Service                                       | Stylesheet URL                                                                         | Notes                                                                          |
+| --------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [Google Fonts](https://fonts.google.com)      | `https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap` | The largest library. Pick the four weights in the "Get font" panel.            |
+| [Bunny Fonts](https://fonts.bunny.net)        | `https://fonts.bunny.net/css?family=ibm-plex-sans:400,500,600,700`                         | Same library as Google Fonts, served without tracking — the GDPR-friendly swap. |
+| [Fontshare](https://www.fontshare.com)        | `https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap`                    | Indian Type Foundry's free catalog — a different flavor from the Google set.   |
+| [Adobe Fonts](https://fonts.adobe.com)        | `https://use.typekit.net/<kit-id>.css`                                                     | Commercial faces bundled with Creative Cloud. Add the site's domain to the kit. |
+
+:::warning
+If your app sets a Content Security Policy, allow the font host in `font-src` — and in `style-src` when the font's stylesheet is fetched from there too.
+:::
+
+### Self-host the font files
+
+Drop the files under `public/fonts/` and declare them with `@font-face` in `avo-overrides.css`. Referencing them by absolute path keeps the same file working under Propshaft and Sprockets alike, with no digest lookup involved. For a Google Fonts family, [google-webfonts-helper](https://gwfh.mranftl.com) packages the `.woff2` files and the matching `@font-face` block:
+
+```css
+/* app/assets/stylesheets/avo-overrides.css */
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-sans-variable.woff2") format("woff2");
+}
+
+:root {
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+}
+```
+
+That declaration covers a variable font. For static files, write one `@font-face` per weight, each with a single `font-weight` value.
 
 ## Fine-tune specific components
 

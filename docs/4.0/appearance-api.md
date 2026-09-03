@@ -454,6 +454,15 @@ These are CSS custom properties, not `config.appearance` keys — some colors an
 | `--color-main-content-background` | `var(--color-primary)`         | Background of the main content panel and the breadcrumb bar, which blends into it. Defaults to the primary surface; resolves per-scheme.               |
 | `--color-main-content-border`     | `var(--border-color)`          | Color of the border between the sidebar and the main content panel. Tracks the shared app border color by default; override to restyle just it.        |
 
+### Fonts
+
+Two Tailwind theme variables carry Avo's typefaces. Every screen inherits `--font-sans` through the root element, so overriding it on `:root` changes the whole interface. See [Change the font](./theming.html#change-the-font) in the theming guide for loading a hosted or self-hosted family.
+
+| Variable      | Default                                                                                              | Description                                                                                                                                                                 |
+| ------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--font-sans` | `"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, …`      | Font family for all interface text. Avo self-hosts Inter (Latin subset) in weights 400, 500, 600, and 700 and falls back to the system stack.                                |
+| `--font-mono` | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` | Font family for monospace text: code snippets in alerts, file details in the media library, the welcome page's commands. Not bundled — resolves to the device's monospace font. |
+
 ### Top navbar
 
 The top navbar exposes a scoped palette contract on `.top-navbar`. Override these variables on `.top-navbar` so the navbar can change without leaking those colors into dropdown panels, popovers, or the main content.
