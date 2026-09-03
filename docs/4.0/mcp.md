@@ -1,7 +1,7 @@
 ---
 license: addon
 addon_link: https://avohq.io/addons/mcp-server
-betaStatus: "Not yet released"
+betaStatus: "Beta"
 outline: [2, 3]
 ---
 
@@ -281,11 +281,76 @@ Access tokens are short-lived and refreshed by the client with no admin involvem
 
 ### Rate limiting
 
-The authorize, token, and client registration endpoints are rate-limited per IP. They're reachable by anyone who knows your panel's URL, so this bounds what an unauthenticated caller can do with them.
+Two separate limits protect this server, and both ride on `Rails.cache`.
 
-:::warning The limit rides on your cache store
-Rate limiting uses `Rails.cache`. On a host configured with `:null_store`, the limits are inert. Two consequences worth checking: if you sit behind a proxy that collapses client IPs, legitimate traffic shares one bucket; and if your cache is a null store, there is no limit at all.
+The authorize, token, and client registration endpoints are rate-limited **per IP**. They're reachable by anyone who knows your panel's URL, so this bounds what an unauthenticated caller can do with them.
+
+The JSON-RPC endpoint — the one a connected client calls for every tool — is rate-limited **per connection**, defaulting to 300 calls a minute. This bounds a runaway or stolen-token client server-side, where before it faced nothing but your own proxy, if you had one. Over the limit, the endpoint answers `429 Too Many Requests` with a `Retry-After` header naming the window. Size the ceiling to your own heaviest legitimate agent with `config.mcp_server.tool_calls_per_minute` — this one bounds your own work, not a stranger's.
+
+:::warning Both limits ride on your cache store
+Rate limiting uses `Rails.cache`, and a store that doesn't count across processes makes both limits soft:
+
+- On a **null store** — what `bin/rails dev:cache` leaves you with in development — nothing is counted, so there is no limit at all: neither the per-IP endpoints nor the per-connection JSON-RPC ceiling throttles anything.
+- On a **per-process store** (`:memory_store`), each worker keeps its own counter, so the real ceiling is your configured limit multiplied by the worker count.
+- Behind a proxy that collapses client IPs, the per-IP limits put legitimate traffic in one bucket.
+
+Give the server a shared, incrementing cache — Redis or Memcached — for the limits to mean what they say.
 :::
+
+## Running it in production
+
+A few operational facts that only bite once the server is live behind real infrastructure.
+
+### Behind a proxy or load balancer
+
+The server checks that each request actually arrived at `resource_identifier` — same scheme, host, and port. It's the audience check: a bearer token is only good for the one URL it was issued for. Behind a TLS-terminating proxy that doesn't pass the original scheme and host through, the app sees `http` and an internal hostname, the check fails, and every machine endpoint answers `421 Misdirected Request` while the connections screen shows a mismatch banner.
+
+The fix is the standard Rails proxy setup, not anything specific to this add-on:
+
+- Forward `X-Forwarded-Proto` and `X-Forwarded-Host` from the proxy.
+- Allow the public hostname in `config.hosts`.
+
+:::warning Plain `http` is refused outside development
+A `resource_identifier` on plain `http://` is refused at boot for any host that isn't `localhost` or `127.0.0.1` — bearer tokens and authorization codes would travel unencrypted. Use `https://` in production; the loopback exception is only so local development works.
+:::
+
+### Changing `resource_identifier` is a migration
+
+Every issued token is bound to the `resource_identifier` it was minted under, as its audience. Change the value — a new domain, a new mount path — and every existing connection's next call is refused with `421 Misdirected Request`. This is the audience binding doing its job, not a bug. Existing admins reconnect through the authorize page; there's no in-place rewrite of live tokens. Treat an identifier change as a migration you announce, not a config tweak.
+
+### If you forget to mount
+
+If `config.mcp_server.enabled` is `true` but `mount_avo_mcp_server` isn't in your routes, the protocol endpoints simply don't exist — discovery, token, and JSON-RPC all `404`. The server catches this: it logs a warning at boot, and the connections screen tells you the endpoints are unmounted instead of printing a server URL that leads nowhere. If a client can't discover the server, check that line in your routes first.
+
+### Turning it off keeps the revoke screen
+
+`config.mcp_server.enabled = false` shuts down every protocol endpoint and the consent screen — they `404` — but leaves the connections screen reachable. That's deliberate: disabling the server is a plausible first move when you're investigating a suspected leak, and you still need to see what's connected and cut it off. Revocation works while the server is disabled; only new connections are blocked.
+
+### What's kept out of your logs
+
+The engine filters the OAuth credential parameters — `code`, `code_verifier`, `refresh_token`, `access_token`, `client_secret` — from your request logs by default. Nothing to configure; it's added when the engine loads. The filters are name-anchored, so your own `country_code` or `zip_code` parameters stay readable.
+
+One thing is **not** filtered by default: the `_meta` object some clients attach to each call. It's useful for debugging the protocol, but clients like ChatGPT put the end user's coarse geolocation in it, which then lands in your logs. If you'd rather it didn't, filter it yourself:
+
+```ruby
+# config/initializers/filter_parameter_logging.rb
+Rails.application.config.filter_parameters += [:_meta]
+```
+
+### Linking the connections screen into your panel
+
+The installer prints a snippet for a profile-menu entry pointing at the connections screen:
+
+```ruby
+# config/initializers/avo.rb, inside Avo.configure
+config.profile_menu = -> do
+  link_to "AI connections",
+    path: Avo::McpServer::Engine.routes.url_helpers.connections_path,
+    icon: "plug-connected"
+end
+```
+
+A custom profile menu renders only if you have the [Menu editor](./menu-editor.html) add-on installed. Without it, reach the screen at `<your-avo-path>/mcp_server/connections` directly, or render the `avo/partials/_profile_menu_extra` partial, which Avo shows unconditionally.
 
 ## Trace changes back to an admin
 
@@ -398,9 +463,10 @@ A resource name no resource answers to is a `-32602` either way, and points at `
 
 ## Options reference
 
-Both options live under `config.mcp_server` inside `Avo.configure`, in `config/initializers/avo.rb`.
+These options live under `config.mcp_server` inside `Avo.configure`, in `config/initializers/avo.rb`.
 
 | Option                | Type      | Default | Description                                                                                                                |
 | --------------------- | --------- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `enabled`             | `Boolean` | `false` | Turns the whole server on. Off by default — installing the gem never starts answering protocol requests on its own.         |
 | `resource_identifier` | `String`  | `nil`   | **Required.** The canonical public URL of this MCP server, e.g. `"https://app.example.com/avo/mcp"`. Never request-derived. |
+| `tool_calls_per_minute` | `Integer` | `300`   | Per-connection ceiling on JSON-RPC tool calls. Over it, the client gets `429` with `Retry-After`. Size it to your heaviest legitimate agent; it bounds your own workload, not an unauthenticated caller's. |
