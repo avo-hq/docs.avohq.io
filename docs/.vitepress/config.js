@@ -272,6 +272,7 @@ const config = {
           items: [
             { text: "Customization", link: "/4.0/customization.html" },
             { text: "Eject views", link: "/4.0/eject-views.html" },
+            { text: "Partials", link: "/4.0/partials.html" },
             { text: "Menu editor", link: "/4.0/menu-editor.html" },
             { text: "Search", link: "/4.0/search.html" },
             { text: "Keyboard Shortcuts", link: "/4.0/keyboard-shortcuts.html" },

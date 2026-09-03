@@ -15,6 +15,7 @@ Theming and customizing draws on a handful of Avo surfaces. Give your agent any 
 - [Custom CSS & styling](./tailwindcss-integration.html) — the [TailwindCSS integration](./tailwindcss-integration.html) and the [`avo-overrides.css` / `avo-overrides.js`](./tailwindcss-integration.html#override-styles-and-scripts-avo-overrides-css-avo-overrides-js) no-build escape hatch
 - [JavaScript & Stimulus](./javascript.html) — add behavior to any screen
 - [Asset handling](./asset-handling.html) — load your own CSS/JS through the app pipeline
+- [Partials](./partials.html) — drop a few lines into `<head>`, the sidebar, the profile menu, or the footer without owning the layout
 - [Ejecting views](./eject-views.html) — copy Avo's markup into your app and rewrite it
 - [Custom tools](./custom-tools.html) & [Resource tools](./resource-tools.html) — build entirely new UI you style yourself
 - [`Avo::ApplicationController`](./avo-application-controller.html) — hook into Avo's controller layer

@@ -38,6 +38,9 @@ bin/rails generate avo:eject --partial :logo
 | `:scripts` | `_scripts.html.erb` | Before `</body>` — good for extra scripts |
 | `:sidebar_extra` | `_sidebar_extra.html.erb` | Extra content after the sidebar menu |
 | `:profile_menu_extra` | `_profile_menu_extra.html.erb` | Extra items in the profile menu |
+| `:footer` | `_footer.html.erb` | The footer at the bottom of the main content panel |
+
+What each one is good for, with worked examples, is on the [Partials](./partials.html) page. Three more symbols eject the no-build override files rather than a partial: `:avo_overrides_css`, `:avo_overrides_js`, and `:asset_overrides` for both — see [Override styles and scripts](./tailwindcss-integration.html#override-styles-and-scripts-avo-overrides-css-avo-overrides-js).
 
 ## Eject a component
 
