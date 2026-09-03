@@ -58,6 +58,10 @@ bin/rails db:migrate
 
 This creates the `avo_mcp_server_*` tables — the connections admins authorize, the single-use codes they're created through, and the tokens issued against them — and appends the configuration block to `config/initializers/avo.rb`.
 
+:::warning
+If your admin/user model uses UUID primary keys, edit the generated migration before running `db:migrate`: the polymorphic `t.references :user` line needs `type: :uuid`. The reference deliberately carries no foreign key, so a mismatched column type doesn't fail at migration time — it surfaces later as connections that can't be found.
+:::
+
 ### 3. Mount the protocol endpoints
 
 ```ruby
@@ -208,7 +212,7 @@ The server exposes nine tools covering the full range of admin operations.
 
 Paging is 1-based. `per_page` defaults to 25 and is capped at 100, and `search_records`' `limit` behaves the same way, per resource searched. `sort_by` has to name a real column on the model; it's checked against the model's columns rather than passed through to SQL, and a name that isn't one is refused with the list of columns that are. `sort_direction` is `asc` or `desc`. Leave either out and the resource's own default sorting stands.
 
-`attributes` on `create_record` and `update_record` is an object mapping field names to values. Use the field names `list_resources` reports or the raw column names — a `belongs_to` can be written either way, as `user` or as `user_id`. `update_record` changes only the attributes you pass and leaves the rest alone.
+`attributes` on `create_record` and `update_record` is an object mapping field names to values. Use the field names `list_resources` reports or a field's raw column names — a `belongs_to` can be written either way, as `user` or as `user_id`. Only columns a declared field claims are writable at all: a column no field on the resource exposes is refused as an unknown field, so the MCP write surface never exceeds the panel's. `update_record` changes only the attributes you pass and leaves the rest alone.
 
 `run_action` takes the `action` id from `list_actions` (the class name, e.g. `"Avo::Actions::TogglePublished"`), and `fields` is the same object shape for that action's inputs, keyed by the input names `list_actions` reports. An input you leave out falls back to the action's own default. `record_ids` is the set of records to act on: a standalone action takes none and is refused if given any, and every other action needs at least one. Every id is authorized individually, so a partly-allowed batch is refused rather than partly run.
 
