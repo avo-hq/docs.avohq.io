@@ -48,6 +48,25 @@ Unless locked, users can change the scheme from the navbar switcher.
 
 </Option>
 
+<Option name="`theme`">
+
+The default [theme](./themes.html) — the look a user lands on before picking one, and the forced value when `:theme` is locked.
+
+```ruby
+config.appearance = {
+  theme: :coastal
+}
+```
+
+- **Type:** Symbol — a theme id
+- **Default:** `nil` (the first offered theme; `:paper` unless `themes:` reorders or omits it)
+- **Validation:** raises `ArgumentError` when the value is not a Symbol. Whether the id is installed is checked per request, not at boot; an id that is not installed falls back to the default.
+- **Lockable:** yes — list `:theme` in `lock:` to hide the picker
+
+Full details, including the built-in ids, are on the [Themes API](./themes-api.html#theme) page.
+
+</Option>
+
 <Option name="`neutral`">
 
 The default neutral preset. Drives surfaces, borders, and chrome.
@@ -161,6 +180,24 @@ When either palette is set, Avo renders it as an inline `:root` `<style>` block 
 
 ## Picker control
 
+<Option name="`themes`">
+
+Restrict and order the [themes](./themes.html) the picker offers.
+
+```ruby
+config.appearance = {
+  themes: [:paper, :coastal, :monokai]
+}
+```
+
+- **Type:** Array of Symbols (theme ids)
+- **Default:** `nil` — every installed theme: the built-ins in their shipped order, then local and gem themes by title
+- **Values:** ids of installed themes; unknown ids are dropped at render time. The list may omit `:paper`.
+
+See [`themes`](./themes-api.html#themes) on the Themes API page.
+
+</Option>
+
 <Option name="`neutrals`">
 
 Restrict which neutral presets appear in the picker.
@@ -200,7 +237,7 @@ config.appearance = {
   scheme: :light,
   neutral: :slate,
   accent: :blue,
-  lock: [:scheme, :neutral, :accent] # any subset
+  lock: [:scheme, :neutral, :accent, :theme] # any subset
 }
 ```
 
@@ -209,8 +246,9 @@ config.appearance = {
 | `:scheme`      | Hides the light/dark/auto switcher                    |
 | `:neutral`     | Hides the neutral picker; forces the configured value |
 | `:accent`      | Hides the accent picker; forces the configured value  |
+| `:theme`       | Hides the theme picker; forces the configured `theme:` |
 
-- **Type:** Array of Symbols, any subset of `[:scheme, :neutral, :accent]`
+- **Type:** Array of Symbols, any subset of `[:scheme, :neutral, :accent, :theme]`
 - **Default:** `[]`
 
 A value not listed in `lock:` is treated as a default — users can override it via the switcher.
@@ -273,13 +311,13 @@ load_settings: -> {
 - **Type:** Proc / Lambda
 - **Default:** `nil`
 - **Context:** evaluated in Avo's execution context with `current_user` available (plus `params`, `request`, `view_context`, `main_app`)
-- **Return:** a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`. Missing keys fall back to the configured defaults.
+- **Return:** a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`, `:theme`. Missing keys fall back to the configured defaults.
 
 </Option>
 
 <Option name="`save_settings`">
 
-Block called whenever the user picks a new scheme, neutral, or accent. Receives a `settings` local — a **partial** Hash containing only the keys the user just changed.
+Block called whenever the user picks a new scheme, neutral, accent, or theme. Receives a `settings` local — a **partial** Hash containing only the keys the user just changed.
 
 ```ruby
 save_settings: -> {
@@ -296,7 +334,7 @@ save_settings: -> {
 - **Type:** Proc / Lambda
 - **Default:** `nil`
 - **Context:** evaluated in Avo's execution context with `current_user` available (plus `params`, `request`, `view_context`, `main_app`)
-- **Locals:** `settings` — partial Hash with whichever of `:color_scheme`, `:neutral`, `:accent` changed. It contains only the changed keys, so callers merge it into existing preferences rather than overwriting them.
+- **Locals:** `settings` — partial Hash with whichever of `:color_scheme`, `:neutral`, `:accent`, `:theme` changed. It contains only the changed keys, so callers merge it into existing preferences rather than overwriting them.
 
 You'll need a JSON or JSONB column on whichever model backs `current_user`:
 
