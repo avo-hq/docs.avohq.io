@@ -192,7 +192,7 @@ action Avo::Actions::PublishPost, color: :fuchsia, icon: "heroicons/outline/eye"
 - **Default label:** the action's name
 
 :::info
-The action's `visible` block is ignored here — wrap the declaration in an `if` statement instead. See [Conditionally show controls](./custom-controls.html#conditionally-show-controls).
+The action's [`visible`](./actions-api.html#visible) block and [`authorize`](./actions-api.html#authorize) rule are both checked before the button is drawn, so the control appears exactly where the Actions dropdown would offer the action. See [Conditionally show controls](./custom-controls.html#conditionally-show-controls).
 :::
 
 </Option>
@@ -245,7 +245,7 @@ end
 - **Default style:** `:outline`
 - **Default color:** `:primary`
 
-Within the block the permitted elements are `link_to`, `action`, and [`divider`](#divider). Unlike a directly declared `action` control, actions inside a `list` do respect the action's `visible` block.
+Within the block the permitted elements are `link_to`, `action`, and [`divider`](#divider). Actions inside a `list` respect the action's [`visible`](./actions-api.html#visible) block and [`authorize`](./actions-api.html#authorize) rule, exactly as a directly declared [`action`](#action) control does.
 
 The dropdown styles its own items, so [`style`](#style), [`color`](#color), and [`size`](#size) have no effect on a nested `link_to` or `action`. [`icon`](#icon), [`label`](#label), and a link's `target`, `data`, `class`, and forwarded HTML attributes all still apply.
 

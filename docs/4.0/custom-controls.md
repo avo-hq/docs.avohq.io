@@ -259,24 +259,35 @@ Within the `list` block you can use `link_to`, `action`, and [`divider`](./custo
 
 ## Conditionally show controls
 
-Actions have a `visible` block that controls their visibility, but a control declared with `action` ignores it. Because the controls declaration is a block, use regular `if`/`else` statements instead:
+A control declared with `action` renders exactly where the Actions dropdown would offer that action. Avo checks the action's [`visible`](./actions-api.html#visible) block *and* its [`authorize`](./actions-api.html#authorize) rule before drawing the button, so a hand-written guard around it usually just repeats what the action already says. Actions declared inside a [`list`](./custom-controls-api.html#list) dropdown behave the same way.
 
-```ruby{6-8}
+When the condition is about whether the action applies to this record at all, put it on the action and every control that offers it follows:
+
+```ruby
+# app/avo/actions/release_fish.rb
+class Avo::Actions::ReleaseFish < Avo::BaseAction
+  self.visible = -> { record.released? }
+end
+```
+
+Because the controls declaration is a block, you can still wrap any control in a regular `if`/`else`. Reach for that when you want *this control* hidden for a reason that isn't the action's own rule — most often where it's being drawn:
+
+```ruby
 # app/avo/resources/fish.rb
 class Avo::Resources::Fish < Avo::BaseResource
-  self.show_controls = -> do
-    back_button label: "", title: "Go back now"
-
-    # visibility conditional
-    if record.released?
+  self.row_controls = -> do
+    # Placement, not availability: this same block also draws the grid cards, and
+    # the button is too wide for them. Moving this into the action's own `visible`
+    # block would pull it from the Actions dropdown everywhere too.
+    unless params[:view_type] == "grid"
       action Avo::Actions::ReleaseFish, style: :primary, color: :fuchsia, icon: "heroicons/outline/globe"
     end
 
-    edit_button label: ""
+    show_button label: ""
   end
 end
 ```
 
 :::info
-The exception is actions declared inside a [`list`](./custom-controls-api.html#list) dropdown — those do respect the action's `visible` block.
+The built-in button controls (`edit_button`, `delete_button`, `detach_button`, …) have no `visible` block of their own. Avo still hides them when your policy says so — `edit_button` follows `edit?`, `delete_button` follows `destroy?` — but any other condition on those has to be a plain `if`.
 :::
