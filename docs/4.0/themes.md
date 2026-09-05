@@ -13,7 +13,7 @@ A theme is a named, finished look for Avo: a stylesheet drawn for one color sche
 Avo.configure do |config|
   config.appearance = {
     theme: :coastal,                         # the default look
-    themes: [:paper, :coastal, :monokai]     # what the picker offers, in order
+    themes: [:paper, :coastal, :monokai]     # what the picker offers, in this order within each group
   }
 end
 ```
@@ -57,7 +57,7 @@ A look that exists in two schemes is two themes, one per published variant, so t
 
 ## Set a default and trim the list
 
-Pass [`theme`](./themes-api.html#theme) to choose the look a user lands on before they pick anything, and [`themes`](./themes-api.html#themes) to replace the offered list with just the ids you want, in the order you want them.
+Pass [`theme`](./themes-api.html#theme) to choose the look a user lands on before they pick anything, and [`themes`](./themes-api.html#themes) to replace the offered list with just the ids you want, in the order you want them. The picker still groups them by scheme support (Light & dark, Light, Dark); your order applies inside each group.
 
 ```ruby
 # config/initializers/avo.rb

@@ -212,7 +212,7 @@ config.appearance = {
 
 <Option name="`themes`">
 
-The theme ids the picker offers, in order. Replaces the discovered list.
+The theme ids the picker offers. Replaces the discovered list. The picker groups themes by scheme support (Light & dark, Light, Dark) and keeps this order inside each group.
 
 ```ruby
 config.appearance = {
