@@ -43,6 +43,7 @@ Avo isn't a single engine. Most add-ons ship their own engine with its own route
 | [Collaboration](./collaboration)     | `avo_collaboration.`   | `/avo/collaboration`       | `avo_collaboration.entries_path`           |
 | [Notifications](./notifications)     | `avo_notifications.`   | `/avo/notifications`       | `avo_notifications.notifications_path`     |
 | [Dynamic filters](./dynamic-filters) | `avo_dynamic_filters.` | `/avo/avo-dynamic_filters` | `avo_dynamic_filters.fields_path`          |
+| [MCP Server](./mcp)                  | `avo_mcp_server.`      | `/avo/mcp_server`          | `avo_mcp_server.connections_path`          |
 
 The mount points are relative to your configured `root_path`. If you mounted Avo at `/admin`, dashboards live at `/admin/dashboards`.
 
