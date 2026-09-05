@@ -278,6 +278,7 @@ const config = {
             { text: "Localization (I18n)", link: "/4.0/i18n.html" },
             { text: "Appearance", link: "/4.0/appearance.html" },
             { text: "Theming", link: "/4.0/theming.html" },
+            { text: "Themes", link: "/4.0/themes.html" },
             // { text: "User Preferences", link: "/4.0/user-preferences.html" },
             { text: "Multitenancy", link: "/4.0/multitenancy.html" },
             {

@@ -217,16 +217,18 @@ config.appearance = {
 
 Only the listed entries appear in the picker. The default value (`neutral:` / `accent:`) should usually be one of them.
 
+The theme list works the same way: pass [`themes:`](./themes-api.html#themes) with the ids to offer, in order. See [Set a default and trim the list](./themes.html#set-a-default-and-trim-the-list) in the Themes guide.
+
 ## Locking choices
 
-By default, users can change the scheme, neutral, and accent themselves. To force one or more values and hide their switchers, list them in [`lock:`](./appearance-api.html#lock).
+By default, users can change the theme, scheme, neutral, and accent themselves. To force one or more values and hide their switchers, list them in [`lock:`](./appearance-api.html#lock).
 
 ```ruby
 config.appearance = {
   scheme: :light,
   neutral: :slate,
   accent: :blue,
-  lock: [:scheme, :neutral, :accent] # any subset of these three
+  lock: [:scheme, :neutral, :accent] # any subset of these, plus :theme
 }
 ```
 
@@ -235,6 +237,9 @@ config.appearance = {
 | `:scheme`      | Hides the light/dark/auto switcher                    |
 | `:neutral`     | Hides the neutral picker; forces the configured value |
 | `:accent`      | Hides the accent picker; forces the configured value  |
+| `:theme`       | Hides the theme picker; forces the configured [`theme:`](./themes-api.html#theme) — see [Themes](./themes.html#set-a-default-and-trim-the-list) |
+
+A [theme](./themes.html) can hide the same three pickers on its own: every built-in except Paper owns its neutral, accent, and scheme, so those pickers disappear while it is active and come back on Paper. `lock:` here removes a picker for every theme.
 
 A value not listed in `lock:` is treated as a **default** — users can override it.
 
@@ -276,7 +281,7 @@ config.appearance = {
 
 #### How the blocks receive data
 
-- `load_settings` should return a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`. Missing keys fall back to the configured defaults.
+- `load_settings` should return a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`, `:theme`. Missing keys fall back to the configured defaults. `:theme` holds a [theme](./themes.html#keep-the-pick-across-reloads) id and needs no migration if you already store the other three.
 - `save_settings` receives a `settings` local — a **partial** Hash containing only the keys the user just changed. Always merge into existing preferences rather than overwriting them.
 
 #### Required schema
@@ -467,11 +472,13 @@ end
 | `scheme`         | `:auto` `:light` `:dark` | `:auto`                  | Default color scheme                                        |
 | `neutral`        | Symbol                   | `nil`                    | Default neutral preset                                      |
 | `accent`         | Symbol                   | `nil`                    | Default accent preset                                       |
+| `theme`          | Symbol                   | `nil`                    | Default [theme](./themes.html) id; first offered theme when unset |
 | `neutral_colors` | Hash of 12 shades        | `nil`                    | Full 12-shade brand neutral override                        |
 | `accent_colors`  | Hash of 3 tokens         | `nil`                    | Three-token brand accent override                           |
 | `neutrals`       | Array of Strings         | All built-in presets     | Subset of neutrals exposed to the picker                    |
 | `accents`        | Array of Strings         | All built-in presets     | Subset of accents exposed to the picker                     |
-| `lock`           | Array of Symbols         | `[]`                     | Any of `:scheme`, `:neutral`, `:accent`                     |
+| `themes`         | Array of Symbols         | All installed themes     | [Themes](./themes.html) offered by the picker, in order     |
+| `lock`           | Array of Symbols         | `[]`                     | Any of `:scheme`, `:neutral`, `:accent`, `:theme`           |
 | `persistence`    | `:cookie` `:database`    | `:cookie`                | Where unlocked user picks are stored                        |
 | `load_settings`  | Proc                     | `nil`                    | Block returning a Hash of saved settings (database mode)    |
 | `save_settings`  | Proc                     | `nil`                    | Block called with a partial `settings` Hash (database mode) |
