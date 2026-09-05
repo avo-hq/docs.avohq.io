@@ -6,7 +6,7 @@ api_docs: ./themes-api.html
 
 # Themes
 
-A theme is a named look for Avo: a stylesheet, and optionally a set of partial overrides and brand assets, bundled under one id. Avo discovers every installed theme, lists it in the appearance picker with a live preview tile, remembers each user's pick, and applies the theme's partials and assets only while it is active. Themes come from three places — the thirteen Avo ships, `app/avo/themes/` in your app, and gems — and the picker treats them all the same.
+A theme is a named, finished look for Avo: a stylesheet drawn for one color scheme, and optionally a set of partial overrides and brand assets, bundled under one id. Avo discovers every installed theme, lists it in the appearance picker with a live preview tile, remembers each user's pick, and applies the theme's scheme, partials, and assets only while it is active. Themes come from three places — the eighteen Avo ships, `app/avo/themes/` in your app, and gems — and the picker treats them all the same.
 
 ```ruby
 # config/initializers/avo.rb
@@ -18,7 +18,9 @@ Avo.configure do |config|
 end
 ```
 
-With no configuration at all, every install already has themes: the picker lists all thirteen built-ins, Paper (Avo's stock look) is the default, and each user's pick is remembered in a cookie.
+With no configuration at all, every install already has themes: the picker lists all eighteen built-ins, Paper (Avo's stock look) is the default, and each user's pick is remembered in a cookie.
+
+Paper is the one theme that is a *base* rather than a look: on Paper the user picks a neutral, an accent, and a light/dark/auto scheme. Every other theme owns those three — it is drawn for one scheme and one palette, so while it is active the neutral, accent, and scheme pickers disappear, and the scheme follows the theme (pick Dracula and the interface goes dark, whatever the OS says). Pick Paper again and the pickers come back with the user's earlier choices intact, no reload needed.
 
 :::tip Themes and add-ons
 Themes work on core Avo only, but every add-on reads the same `var(--color-*)` tokens a theme redefines, so a theme re-skins dashboards, kanban boards, and the rest for free.
@@ -26,27 +28,32 @@ Themes work on core Avo only, but every add-on reads the same `var(--color-*)` t
 
 ## Pick a built-in theme
 
-Open the appearance picker in the top navbar. The **Theme** section sits above the neutral and accent pickers: hover a row to preview it across the whole screen, click to keep it.
+Open the appearance picker in the top navbar. The **Theme** section comes first: hover a row to preview it across the whole screen (scheme included), click to keep it.
 
 <Image prompt="The appearance picker open in the top navbar, showing the Theme section with its list of built-in themes, each row carrying a mini window preview tile and a title, with Coastal hovered" />
 
-| Theme       | Id            | Looks like                                            |
-| ----------- | ------------- | ----------------------------------------------------- |
-| Paper       | `paper`       | Avo's stock look: warm white surfaces, ink text       |
-| Coastal     | `coastal`     | Sand neutrals, sea-glass and deep-ocean accents       |
-| Rose        | `rose`        | Warm blush neutrals, rich rose accent                 |
-| Sunset      | `sunset`      | Dusk purples, magenta-to-orange accents               |
-| Midnight    | `midnight`    | Cool near-black surfaces, electric indigo accent      |
-| Monokai     | `monokai`     | Charcoal ground; yellow, magenta, cyan, green accents |
-| Dracula     | `dracula`     | Purple-grey ground, pink and purple accents           |
-| Solarized   | `solarized`   | One sixteen-color palette, light and dark             |
-| Nord        | `nord`        | Arctic blue-grey ground, frost accents                |
-| Gruvbox     | `gruvbox`     | Retro warm browns and olive, orange accent            |
-| One Dark    | `one_dark`    | Blue-grey ground, blue and purple accents             |
-| Catppuccin  | `catppuccin`  | Pastel palette: Latte by day, Mocha by night          |
-| Tokyo Night | `tokyo_night` | Deep navy, soft purple and cyan accents               |
+| Theme            | Id                 | Scheme | Looks like                                               |
+| ---------------- | ------------------ | ------ | -------------------------------------------------------- |
+| Paper            | `paper`            | yours  | Avo's stock look; pick your own neutral, accent, scheme  |
+| Coastal          | `coastal`          | light  | Sand surfaces and a sand navbar, sea-glass accent        |
+| Rose             | `rose`             | light  | Warm blush neutrals, deep rose navbar, rich rose accent  |
+| Sunset           | `sunset`           | light  | Dusk purples, magenta accent, amber warnings             |
+| Midnight         | `midnight`         | dark   | Cool near-black surfaces, electric indigo accent         |
+| Monokai          | `monokai`          | dark   | Charcoal ground; pink, yellow, cyan, green accents       |
+| Dracula          | `dracula`          | dark   | Purple-grey ground, purple and pink accents              |
+| Nord             | `nord`             | dark   | Arctic blue-grey ground, frost accents                   |
+| Solarized Light  | `solarized_light`  | light  | Cream base3 surfaces and a cream navbar, blue accent     |
+| Solarized Dark   | `solarized_dark`   | dark   | Base03 surfaces, blue accent, the same sixteen colors    |
+| Gruvbox Light    | `gruvbox_light`    | light  | Retro cream surfaces and a cream navbar, orange accent   |
+| Gruvbox Dark     | `gruvbox_dark`     | dark   | Retro warm browns, orange accent                         |
+| One Light        | `one_light`        | light  | Cool grey surfaces, blue accent                          |
+| One Dark         | `one_dark`         | dark   | Blue-grey ground, blue and purple accents                |
+| Catppuccin Latte | `catppuccin_latte` | light  | Pastel latte surfaces and a latte navbar, mauve accent   |
+| Catppuccin Mocha | `catppuccin_mocha` | dark   | Pastel mocha ground, mauve accent                        |
+| Tokyo Night Day  | `tokyo_night_day`  | light  | Soft blue-grey day surfaces, blue accent                 |
+| Tokyo Night      | `tokyo_night`      | dark   | Deep navy, soft blue and cyan accents                    |
 
-Every theme styles both color schemes, so the light/dark switcher keeps working on top of any of them. The editor palettes are dark-native; where the upstream project publishes a light variant (Solarized, Gruvbox, One Dark, Catppuccin, Tokyo Night) Avo uses it, and where it doesn't (Monokai, Dracula, Nord) the light block keeps the accents and puts them on a light ground of the same hue family. See the [built-in themes table](./themes-api.html#built-in-themes) for which is which.
+A look that exists in two schemes is two themes, one per published variant, so the picker says exactly what you get and no palette is stretched into a scheme it was never designed for. Four of the light themes keep a light navbar — the dark bar is Paper's choice, not a rule. See the [built-in themes table](./themes-api.html#built-in-themes) for the source of each palette.
 
 ## Set a default and trim the list
 
@@ -72,7 +79,7 @@ config.appearance = {
 }
 ```
 
-Locking `:theme` hides the Theme section and forces the configured value. It doesn't touch the scheme, neutral, or accent pickers — lock those separately, as described in [Locking choices](./appearance.html#locking-choices).
+Locking `:theme` hides the Theme section and forces the configured value. The scheme, neutral, and accent pickers then follow that theme: hidden if the theme owns them, open if it is Paper or another theme that leaves them open. To hide one of those for every theme, lock it in `config.appearance` too, as described in [Locking choices](./appearance.html#locking-choices).
 
 ## Keep the pick across reloads
 
@@ -112,7 +119,12 @@ bin/rails generate avo:theme ocean
       create  app/assets/stylesheets/avo/themes/ocean.css
 ```
 
-Restart the server and Ocean is in the picker. Two files carry the whole theme. The name becomes the theme id: `Ocean`, `ocean_theme`, and `OceanTheme` all produce `ocean`.
+Restart the server and Ocean is in the picker. Two files carry the whole theme. The name becomes the theme id: `Ocean`, `ocean_theme`, and `OceanTheme` all produce `ocean`. A theme is drawn for one scheme, light unless you pass `--scheme dark`; a look you want in both is two themes:
+
+```bash
+bin/rails generate avo:theme ocean_light
+bin/rails generate avo:theme ocean_dark --scheme dark
+```
 
 ### The theme class
 
@@ -123,14 +135,15 @@ The class is the manifest. Every attribute has a default derived from the class 
 class Avo::Themes::Ocean < Avo::BaseTheme
   self.title = "Ocean"
   self.description = "Deep blue surfaces, foam-white text."
+  self.scheme = :light                          # or :dark; forced while the theme is active
   # self.id = :ocean                              # derived from the class name
   # self.stylesheet = "avo/themes/ocean"          # asset path, derived from the id
-  # self.lock = [:neutral, :accent]               # hide the pickers the theme owns
+  # self.lock = [:neutral, :accent, :scheme]      # the pickers the theme owns; this is the default
   # self.appearance = { logo: "avo/themes/ocean/logo.svg" }
 end
 ```
 
-[`title`](./themes-api.html#self.title) is the picker label and [`description`](./themes-api.html#self.description) is free text for your own records. Leave [`id`](./themes-api.html#self.id) alone unless the class name can't produce the id you want; it's what the cookie, the `themes:` list, and the CSS class all use.
+[`title`](./themes-api.html#self.title) is the picker label and [`description`](./themes-api.html#self.description) is free text for your own records. [`scheme`](./themes-api.html#self.scheme) is the scheme the stylesheet is drawn for; Avo puts the interface in that scheme whenever the theme is active. Leave [`id`](./themes-api.html#self.id) alone unless the class name can't produce the id you want; it's what the cookie, the `themes:` list, and the CSS class all use.
 
 ### The stylesheet
 
@@ -142,6 +155,8 @@ The generated CSS file lists every public token Avo exposes, grouped the way the
   .avo-theme-ocean {
     --color-avo-neutral-50: oklch(97% 0.02 240);
     --color-avo-neutral-900: oklch(28% 0.06 240);
+    --color-background: var(--color-avo-neutral-50);
+    --color-primary: var(--color-white);
     --color-accent: oklch(62% 0.14 220);
     --color-accent-content: oklch(52% 0.14 220);
     --color-accent-foreground: var(--color-white);
@@ -149,34 +164,30 @@ The generated CSS file lists every public token Avo exposes, grouped the way the
     --color-navbar-background: oklch(24% 0.07 240);
     --radius-card: 1.25rem;
   }
-
-  .avo-theme-ocean.dark,
-  .dark .avo-theme-ocean {
-    --color-accent: oklch(74% 0.12 220);
-    --color-accent-content: oklch(80% 0.10 220);
-    --color-accent-foreground: oklch(20% 0.06 240);
-  }
 }
 ```
 
-Two things about that shape are load-bearing, so keep them:
+Three things about that shape are load-bearing, so keep them:
 
-- **Rules are scoped to `.avo-theme-ocean`, not `:root`.** Every installed theme loads on every page and only the class on `<html>` decides which one applies. That is what makes hovering a row in the picker preview the theme instantly, and what lets the picker's preview tile render your real colors with no extra work. Keep both dark selectors: `.avo-theme-ocean.dark` is the page and `.dark .avo-theme-ocean` is the tile.
-- **Everything sits in `@layer base`.** Avo's defaults live below it, in `@layer theme`, and the user-pickable neutral and accent classes live above it, in `@layer components`. A theme therefore replaces Avo's defaults, and a user's neutral or accent pick still wins on top of it — the same slot a [brand palette](./appearance-api.html#neutral_colors) in `config.appearance` uses. Your app's `avo-overrides.css` and `:head` partial are unlayered and keep beating everything, theme included.
+- **One block, one scheme.** The theme is drawn for its `scheme`, and Avo forces that scheme on `<html>` while the theme is active, so there is no `.dark` twin to keep in sync. A look wanted in both schemes is two themes, exactly as the built-ins do it (Solarized Light and Solarized Dark).
+- **Rules are scoped to `.avo-theme-ocean`, not `:root`.** Every installed theme loads on every page and only the class on `<html>` decides which one applies. That is what makes hovering a row in the picker preview the theme instantly, and what lets the picker's preview tile render your real colors with no extra work. The tile can sit on a page in the other scheme, so set the foundations (`--color-background`, `--color-primary`, the navbar) explicitly instead of relying on Avo deriving them from the neutral scale.
+- **Everything sits in `@layer base`.** Avo's defaults live below it, in `@layer theme`, and the user-pickable neutral and accent classes live above it, in `@layer components`. A theme therefore replaces Avo's defaults — the same slot a [brand palette](./appearance-api.html#neutral_colors) in `config.appearance` uses. Your app's `avo-overrides.css` and `:head` partial are unlayered and keep beating everything, theme included.
 
-Light values carry into dark. The dark block only overrides what it re-sets, so a token you declare once applies in both schemes until the dark block says otherwise. Set the neutral scale and the accent in the light block, then re-set in the dark block only what needs to differ — that's usually the accent and a couple of surfaces.
+:::tip The navbar does not have to be dark
+Avo's stock look has a dark navbar in both schemes, and it is easy to read that as a rule. It is not. `--color-navbar-background` plus the `--color-navbar-content` and `--color-navbar-control-*` tokens recolor the whole bar: make it a light band with dark ink (Coastal, Solarized Light, Gruvbox Light, and Catppuccin Latte do), a tint of the accent, or the same color as the page. Vary it between themes; a picker where every tile has the same dark strip is a picker of accent colors.
+:::
 
-:::tip Neutral and accent picks still apply
-Because a theme sits below the user's picks, someone can still choose `slate` or `orange` on top of Ocean. If the theme should own the whole palette, hide those pickers while it's active:
+:::tip A theme owns its pickers
+By default a theme locks the neutral, accent, and scheme pickers ([`lock`](./themes-api.html#self.lock) is `[:neutral, :accent, :scheme]`): they are hidden while it is active, and the user's picks for them are set aside, not lost. This is what keeps a theme looking like its screenshot. Paper unlocks all three, which is why it behaves as a base. Unlock a dimension on your own theme only if the stylesheet handles it — dropping `:scheme` means adding a `.avo-theme-ocean.dark, .dark .avo-theme-ocean { … }` block and styling both schemes:
 
 ```ruby
 # app/avo/themes/ocean.rb
 class Avo::Themes::Ocean < Avo::BaseTheme
-  self.lock = [:neutral, :accent]
+  self.lock = [:accent]   # the user picks a neutral and a scheme on top of Ocean
 end
 ```
 
-[`lock`](./themes-api.html#self.lock) on a theme takes only `:neutral` and `:accent` — the scheme switcher always works, and locking the theme itself is the host app's call through `config.appearance`.
+Locking the theme dimension itself is the host app's call through `config.appearance`.
 :::
 
 ### Fonts and images a theme uses
@@ -250,6 +261,7 @@ module Avo
       self.id = :ocean
       self.title = "Ocean"
       self.description = "Deep blue surfaces, foam-white text."
+      self.scheme = :light
     end
   end
 end
@@ -302,24 +314,24 @@ A theme is one Ruby class and one plain CSS file of well-named variables, which 
 ::: code-group
 
 ```text [Coastal]
-Use the Avo themes guide at https://docs.avohq.io/4.0/themes.html. Run `bin/rails generate avo:theme coastal_pro` and build a coastal theme — soft sand neutrals, sea-glass and deep-ocean accents — by uncommenting and setting tokens in app/assets/stylesheets/avo/themes/coastal_pro.css only. Keep the .avo-theme-coastal_pro scoping and the @layer base wrapper, set the full neutral scale and the accent in the light block, and re-set only the accent and surfaces that need to differ in the dark block. Set a title and description in app/avo/themes/coastal_pro.rb.
+Use the Avo themes guide at https://docs.avohq.io/4.0/themes.html. Run `bin/rails generate avo:theme coastal_pro` and build a light coastal theme — soft sand neutrals, sea-glass and deep-ocean accents — by uncommenting and setting tokens in app/assets/stylesheets/avo/themes/coastal_pro.css only. Keep the .avo-theme-coastal_pro scoping and the @layer base wrapper, set the full neutral scale, the foundations, and the accent, and give the navbar a look of its own with the --color-navbar-* tokens: it can be a light sand band with dark ink, it does not have to be dark. Set a title and description in app/avo/themes/coastal_pro.rb.
 ```
 
 ```text [Rose]
-Use the Avo themes guide at https://docs.avohq.io/4.0/themes.html. Run `bin/rails generate avo:theme blush` and build a rose theme — warm blush neutrals and a rich rose accent — by uncommenting and setting tokens in app/assets/stylesheets/avo/themes/blush.css only. Keep the .avo-theme-blush scoping and the @layer base wrapper, set the full neutral scale and the accent in the light block, and re-set only the accent and surfaces that need to differ in the dark block. Set a title and description in app/avo/themes/blush.rb.
+Use the Avo themes guide at https://docs.avohq.io/4.0/themes.html. Run `bin/rails generate avo:theme blush` and build a light rose theme — warm blush neutrals and a rich rose accent — by uncommenting and setting tokens in app/assets/stylesheets/avo/themes/blush.css only. Keep the .avo-theme-blush scoping and the @layer base wrapper, set the full neutral scale, the foundations, and the accent, and pick a navbar treatment that suits the look (a deep rose bar, a blush band, or the page color) using the --color-navbar-* tokens. Set a title and description in app/avo/themes/blush.rb.
 ```
 
-```text [80's Sunset]
-Use the Avo themes guide at https://docs.avohq.io/4.0/themes.html. Run `bin/rails generate avo:theme neon_sunset` and build an 80's sunset theme — dusk purples and hot magenta-to-orange accents — by uncommenting and setting tokens in app/assets/stylesheets/avo/themes/neon_sunset.css only. Keep the .avo-theme-neon_sunset scoping and the @layer base wrapper, set the full neutral scale and the accent in the light block, and re-set only the accent and surfaces that need to differ in the dark block. Set a title and description in app/avo/themes/neon_sunset.rb.
+```text [80's Sunset, dark]
+Use the Avo themes guide at https://docs.avohq.io/4.0/themes.html. Run `bin/rails generate avo:theme neon_sunset --scheme dark` and build a dark 80's sunset theme — dusk purples and hot magenta-to-orange accents — by uncommenting and setting tokens in app/assets/stylesheets/avo/themes/neon_sunset.css only. Keep the .avo-theme-neon_sunset scoping and the @layer base wrapper, set the full neutral scale, the dark foundations (background, primary, secondary, tertiary, content), and the accent, and try a navbar that is a tint of the accent rather than plain black. Set a title and description in app/avo/themes/neon_sunset.rb.
 ```
 
 ```text [Ship it as a gem]
-Use the Avo themes guide at https://docs.avohq.io/4.0/themes.html. Run `bin/rails generate avo:theme forest --gem` and build a forest theme — deep green surfaces, moss neutrals, and an amber accent — in the generated gem's app/assets/stylesheets/avo/themes/forest.css only. Keep the .avo-theme-forest scoping and the @layer base wrapper, set the full neutral scale and the accent in the light block, and re-set only what needs to differ in the dark block. Add the gem to my Gemfile with the path: option, then tell me the gem build and gem push commands.
+Use the Avo themes guide at https://docs.avohq.io/4.0/themes.html. Run `bin/rails generate avo:theme forest --scheme dark --gem` and build a dark forest theme — deep green surfaces, moss neutrals, and an amber accent — in the generated gem's app/assets/stylesheets/avo/themes/forest.css only. Keep the .avo-theme-forest scoping and the @layer base wrapper, set the full neutral scale, the dark foundations, and the accent, and choose the navbar colors deliberately with the --color-navbar-* tokens. Add the gem to my Gemfile with the path: option, then tell me the gem build and gem push commands.
 ```
 
 :::
 
-Coastal, Rose, and Sunset already ship as built-ins, so the first three prompts are for a look of your own in that direction; for the stock ones, `theme: :coastal` is the whole job.
+Coastal, Rose, and Sunset already ship as built-ins, so the first three prompts are for a look of your own in that direction; for the stock ones, `theme: :coastal` is the whole job. Each prompt makes one theme for one scheme; ask for a second run with the other `--scheme` if you want the pair.
 
 ## Full example
 
@@ -329,9 +341,10 @@ class Avo::Themes::Ocean < Avo::BaseTheme
   self.id = :ocean
   self.title = "Ocean"
   self.description = "Deep blue surfaces, foam-white text."
+  self.scheme = :dark
   self.stylesheet = "avo/themes/ocean"
   self.views = Rails.root.join("app/views/avo/themes/ocean")
-  self.lock = [:neutral, :accent]
+  self.lock = [:neutral, :accent, :scheme]
   self.appearance = {
     logo: "avo/themes/ocean/logo.svg",
     logo_dark: "avo/themes/ocean/logo-dark.svg",
@@ -351,8 +364,7 @@ end
 Avo.configure do |config|
   config.appearance = {
     theme: :ocean,
-    themes: [:ocean, :paper, :midnight],
-    lock: [:scheme]
+    themes: [:ocean, :paper, :midnight]
   }
 end
 ```

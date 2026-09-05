@@ -239,6 +239,8 @@ config.appearance = {
 | `:accent`      | Hides the accent picker; forces the configured value  |
 | `:theme`       | Hides the theme picker; forces the configured [`theme:`](./themes-api.html#theme) — see [Themes](./themes.html#set-a-default-and-trim-the-list) |
 
+A [theme](./themes.html) can hide the same three pickers on its own: every built-in except Paper owns its neutral, accent, and scheme, so those pickers disappear while it is active and come back on Paper. `lock:` here removes a picker for every theme.
+
 A value not listed in `lock:` is treated as a **default** — users can override it.
 
 ## Persist picks across devices

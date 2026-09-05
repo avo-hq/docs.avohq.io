@@ -484,7 +484,16 @@ These are CSS custom properties, not `config.appearance` keys — some colors an
 
 | Variable                          | Default                        | Description                                                                                                                                            |
 | --------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--color-navbar-background`       | `var(--color-avo-neutral-900)` | Global source for the top navbar background. Kept for compatibility. For full navbar palette changes, prefer the scoped `.top-navbar` variables below. |
+| `--color-navbar-background`       | `var(--color-avo-neutral-900)` | Global source for the top navbar background. Themes set it in their block; the dark bar is a default, not a rule.                                      |
+| `--color-navbar-content`          | `var(--color-avo-neutral-300)` | Global source for navbar text and icons. Set it with the background: a light navbar needs dark ink here.                                               |
+| `--color-navbar-content-hover`    | `var(--color-avo-neutral-50)`  | Global source for hovered navbar text and icons.                                                                                                       |
+| `--color-navbar-control-background` | `var(--color-avo-neutral-800)` | Global source for the navbar's controls (search, the appearance picker's pill and trigger).                                                          |
+| `--color-navbar-control-background-hover` | `var(--color-avo-neutral-700)` | Hover background for those controls; also the shortcut badges' background.                                                                     |
+| `--color-navbar-control-border`   | `var(--color-avo-neutral-700)` | Border of those controls.                                                                                                                              |
+| `--color-navbar-control-content`  | `var(--color-avo-neutral-50)`  | Text inside those controls.                                                                                                                            |
+| `--color-navbar-control-muted`    | `var(--color-avo-neutral-400)` | Muted text and icons inside those controls.                                                                                                            |
+| `--color-navbar-active-background` | `var(--color-avo-neutral-950)` | Background of the active button in the inline appearance switcher.                                                                                   |
+| `--color-navbar-active-content`   | `var(--color-avo-neutral-50)`  | Text and icon color of that active button.                                                                                                             |
 | `--navbar-notch-enabled`          | `true`                         | Whether the inverted corner arches under the navbar render. Set to `false` to hide them when the navbar and content share a background.                |
 | `--navbar-notch-radius`           | `1rem`                         | Radius of the navbar arches that fill the content panel's top corners. Set to `0` to flatten them.                                                     |
 | `--main-content-radius`           | `var(--navbar-notch-radius)`   | Radius of the main content panel's top corners. Defaults to the notch radius so the panel and the navbar arches stay aligned; override to differ.      |
@@ -503,23 +512,23 @@ Two Tailwind theme variables carry Avo's typefaces. Every screen inherits `--fon
 
 ### Top navbar
 
-The top navbar exposes a scoped palette contract on `.top-navbar`. Override these variables on `.top-navbar` so the navbar can change without leaking those colors into dropdown panels, popovers, or the main content.
+The top navbar exposes a scoped palette contract on `.top-navbar`, sourced from the global `--color-navbar-*` variables above. Override the scoped variables on `.top-navbar` for a one-off change in an app; set the global ones from a [theme](./themes.html)'s block, which cannot reach `.top-navbar`.
 
 | Variable                                           | Default                          | Description                                                                                           |
 | -------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `--top-navbar-background`                          | `var(--color-navbar-background)` | Background color of the top navbar.                                                                   |
-| `--top-navbar-content`                             | `var(--color-avo-neutral-300)`   | Text and icon color for navbar links and icon buttons.                                                |
-| `--top-navbar-content-hover`                       | `var(--color-avo-neutral-50)`    | Text and icon color for hovered navbar links and icon buttons.                                        |
-| `--top-navbar-control-background`                  | `var(--color-avo-neutral-800)`   | Background for navbar controls such as search, picker trigger, and hovered sidebar toggle.            |
-| `--top-navbar-control-background-hover`            | `var(--color-avo-neutral-700)`   | Hover background for navbar controls.                                                                 |
-| `--top-navbar-control-border`                      | `var(--color-avo-neutral-700)`   | Border color for navbar controls.                                                                     |
-| `--top-navbar-control-content`                     | `var(--color-avo-neutral-50)`    | Main text color inside navbar controls, such as the search input value.                               |
-| `--top-navbar-control-muted`                       | `var(--color-avo-neutral-400)`   | Muted text and icon color inside navbar controls, such as placeholders and search icons.              |
-| `--top-navbar-control-shortcut-background`         | `var(--color-avo-neutral-700)`   | Background for shortcut badges inside navbar controls.                                                |
-| `--top-navbar-control-shortcut-border`             | `var(--color-avo-neutral-600)`   | Border color for shortcut badges inside navbar controls.                                              |
-| `--top-navbar-control-shortcut-content`            | `var(--color-avo-neutral-200)`   | Text color for shortcut badges inside navbar controls.                                                |
-| `--top-navbar-active-background`                   | `var(--color-avo-neutral-950)`   | Background for active inline appearance switcher buttons.                                             |
-| `--top-navbar-active-content`                      | `var(--color-avo-neutral-50)`    | Text and icon color for active inline appearance switcher buttons.                                    |
+| `--top-navbar-content`                             | `var(--color-navbar-content)`   | Text and icon color for navbar links and icon buttons.                                                |
+| `--top-navbar-content-hover`                       | `var(--color-navbar-content-hover)`    | Text and icon color for hovered navbar links and icon buttons.                                        |
+| `--top-navbar-control-background`                  | `var(--color-navbar-control-background)`   | Background for navbar controls such as search, picker trigger, and hovered sidebar toggle.            |
+| `--top-navbar-control-background-hover`            | `var(--color-navbar-control-background-hover)`   | Hover background for navbar controls.                                                                 |
+| `--top-navbar-control-border`                      | `var(--color-navbar-control-border)`   | Border color for navbar controls.                                                                     |
+| `--top-navbar-control-content`                     | `var(--color-navbar-control-content)`    | Main text color inside navbar controls, such as the search input value.                               |
+| `--top-navbar-control-muted`                       | `var(--color-navbar-control-muted)`   | Muted text and icon color inside navbar controls, such as placeholders and search icons.              |
+| `--top-navbar-control-shortcut-background`         | `var(--color-navbar-control-background-hover)`   | Background for shortcut badges inside navbar controls.                                                |
+| `--top-navbar-control-shortcut-border`             | a mix of the control border and content colors   | Border color for shortcut badges inside navbar controls.                                              |
+| `--top-navbar-control-shortcut-content`            | `var(--color-navbar-content)`   | Text color for shortcut badges inside navbar controls.                                                |
+| `--top-navbar-active-background`                   | `var(--color-navbar-active-background)`   | Background for active inline appearance switcher buttons.                                             |
+| `--top-navbar-active-content`                      | `var(--color-navbar-active-content)`    | Text and icon color for active inline appearance switcher buttons.                                    |
 | `--top-navbar-start-notch-align-with-main-content` | `false`                          | Set to `true` to move the start notch to the `.main-content` start edge for a different rounded look. |
 
 :::info

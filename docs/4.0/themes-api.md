@@ -59,6 +59,24 @@ Installed themes are sorted by title after the built-ins when `themes:` is not s
 
 </Option>
 
+<Option name="`self.scheme`">
+
+The color scheme the theme is drawn for. While the theme locks `:scheme` (the default), Avo forces this scheme on `<html>` for every user who has the theme active, so the stylesheet is one block with no `.dark` twin.
+
+```ruby
+class Avo::Themes::Midnight < Avo::BaseTheme
+  self.scheme = :dark
+end
+```
+
+- **Type:** Symbol, `:light` or `:dark` (a String is converted)
+- **Default:** `:light`
+- **Validation:** raises `ArgumentError` for any other value. There is no `:auto`: a theme that follows the OS is a theme with `:scheme` removed from [`lock`](#self.lock), which then has to style both schemes.
+
+Picking a theme with a different scheme than the current page swaps the `dark` class on `<html>` along with the theme class, so the switch and the hover preview need no reload.
+
+</Option>
+
 <Option name="`self.description`">
 
 Free-text description of the look.
@@ -110,22 +128,25 @@ A theme with a views directory needs a full page render on switch; the picker pe
 
 <Option name="`self.lock`">
 
-Appearance pickers hidden while the theme is active. The configured `config.appearance` value for each locked dimension is forced.
+The appearance pickers the theme owns. While the theme is active they are hidden, and the user's picks for them are set aside: no `neutral-theme-*` / `accent-theme-*` class is applied for a locked neutral or accent, and a locked scheme is forced to [`scheme`](#self.scheme). The picks are kept, so switching to a theme that leaves a dimension open (Paper) restores them without a reload.
 
 ```ruby
 class Avo::Themes::Ocean < Avo::BaseTheme
-  self.lock = [:neutral, :accent]
+  self.lock = [:accent]   # the user still picks a neutral and a scheme
 end
 ```
 
-| Value      | Effect                                                   |
-| ---------- | -------------------------------------------------------- |
-| `:neutral` | Hides the neutral picker; the theme's neutral scale wins |
-| `:accent`  | Hides the accent picker; the theme's accent wins         |
+| Value      | Effect                                                                                     |
+| ---------- | ------------------------------------------------------------------------------------------ |
+| `:neutral` | Hides the neutral picker; the theme's neutral scale wins                                   |
+| `:accent`  | Hides the accent picker; the theme's accent wins                                           |
+| `:scheme`  | Hides the scheme switcher; the theme's `scheme` is forced. Unlock it only if the stylesheet also carries a `.avo-theme-<id>.dark, .dark .avo-theme-<id>` block |
 
 - **Type:** Array of Symbols (a single Symbol is wrapped)
-- **Default:** `[]`
-- **Validation:** raises `ArgumentError` for any value other than `:neutral` and `:accent`. The scheme switcher cannot be locked from a theme, and locking the theme dimension itself is a `config.appearance` concern — see [`lock`](#lock) below.
+- **Default:** `[:neutral, :accent, :scheme]` — a theme is a finished look. Paper sets `[]`.
+- **Validation:** raises `ArgumentError` for any other value. Locking the theme dimension itself is a `config.appearance` concern — see [`lock`](#lock) below.
+
+The sections are still rendered when a theme hides them (with the `hidden` attribute), so the picker can show and hide them as the user switches themes. A dimension locked in `config.appearance` is not rendered at all, for any theme.
 
 </Option>
 
@@ -147,7 +168,7 @@ end
 - **Type:** Hash with any subset of the keys `logo`, `logo_dark`, `logomark`, `logomark_dark`, `favicon`, `favicon_dark`, `placeholder`, `chart_colors` (String keys are symbolized)
 - **Default:** `{}`
 - **Values:** the same values the matching [`config.appearance` asset options](./appearance-api.html#assets) accept — asset paths, and an Array of hex Strings for `chart_colors`
-- **Validation:** raises `ArgumentError` for any other key. Colors belong in the stylesheet; `scheme`, `neutral`, `accent`, `neutral_colors`, `accent_colors`, `lock`, `persistence`, `theme`, and `themes` stay with the host app.
+- **Validation:** raises `ArgumentError` for any other key. Colors belong in the stylesheet; the theme's own scheme and locks are [`scheme`](#self.scheme) and [`lock`](#self.lock); `neutral`, `accent`, `neutral_colors`, `accent_colors`, `persistence`, `theme`, and `themes` stay with the host app.
 
 A theme with a non-empty `appearance` needs a full page render on switch, like one with a views directory.
 
@@ -221,31 +242,36 @@ config.appearance = {
 - **Type:** Array of Symbols, any subset of `[:scheme, :neutral, :accent, :theme]`
 - **Default:** `[]`
 
-When `theme:` names a theme that is not installed, the locked value falls back to the first offered theme.
+When `theme:` names a theme that is not installed, the locked value falls back to the first offered theme. The `:scheme`, `:neutral`, and `:accent` entries of the same list remove those pickers for every theme; a theme's own [`lock`](#self.lock) only hides them while that theme is active.
 
 </Option>
 
 ## Built-in themes
 
-Thirteen themes ship with Avo, under `Avo::BuiltinThemes`. Their stylesheet blocks compile into one file, `avo/themes.css`, so `stylesheet` is `nil` on each. Every built-in styles both schemes; the light block column says where the light values come from.
+Eighteen themes ship with Avo, under `Avo::BuiltinThemes`. Their stylesheet blocks compile into one file, `avo/themes.css`, so `stylesheet` is `nil` on each. Paper is the only one with `lock = []`; every other built-in owns the neutral, accent, and scheme pickers and is drawn for the one scheme in the table. An editor palette that publishes two variants is two themes.
 
-| Id            | Title       | Light block                               |
-| ------------- | ----------- | ----------------------------------------- |
-| `paper`       | Paper       | Avo's defaults — Paper has no stylesheet  |
-| `coastal`     | Coastal     | Authored by Avo                           |
-| `rose`        | Rose        | Authored by Avo                           |
-| `sunset`      | Sunset      | Authored by Avo                           |
-| `midnight`    | Midnight    | Authored by Avo                           |
-| `monokai`     | Monokai     | Derived from the dark palette             |
-| `dracula`     | Dracula     | Derived from the dark palette             |
-| `solarized`   | Solarized   | Upstream Solarized Light                  |
-| `nord`        | Nord        | Derived from the dark palette             |
-| `gruvbox`     | Gruvbox     | Upstream Gruvbox Light                    |
-| `one_dark`    | One Dark    | Upstream One Light                        |
-| `catppuccin`  | Catppuccin  | Upstream Latte (Mocha in dark)            |
-| `tokyo_night` | Tokyo Night | Upstream Day (Night in dark)              |
+| Id                 | Title            | Scheme | Palette                                  | Navbar |
+| ------------------ | ---------------- | ------ | ---------------------------------------- | ------ |
+| `paper`            | Paper            | user's | Avo's defaults — Paper has no stylesheet | dark   |
+| `coastal`          | Coastal          | light  | Authored by Avo                          | light  |
+| `rose`             | Rose             | light  | Authored by Avo                          | dark   |
+| `sunset`           | Sunset           | light  | Authored by Avo                          | dark   |
+| `midnight`         | Midnight         | dark   | Authored by Avo                          | dark   |
+| `monokai`          | Monokai          | dark   | Monokai (2006)                           | dark   |
+| `dracula`          | Dracula          | dark   | Dracula                                  | dark   |
+| `nord`             | Nord             | dark   | Nord (navbar shares the page ground)     | dark   |
+| `solarized_light`  | Solarized Light  | light  | Solarized Light                          | light  |
+| `solarized_dark`   | Solarized Dark   | dark   | Solarized Dark                           | dark   |
+| `gruvbox_light`    | Gruvbox Light    | light  | Gruvbox Light                            | light  |
+| `gruvbox_dark`     | Gruvbox Dark     | dark   | Gruvbox Dark                             | dark   |
+| `one_light`        | One Light        | light  | One Light                                | dark   |
+| `one_dark`         | One Dark         | dark   | One Dark                                 | dark   |
+| `catppuccin_latte` | Catppuccin Latte | light  | Catppuccin Latte                         | light  |
+| `catppuccin_mocha` | Catppuccin Mocha | dark   | Catppuccin Mocha                         | dark   |
+| `tokyo_night_day`  | Tokyo Night Day  | light  | Tokyo Night Day                          | dark   |
+| `tokyo_night`      | Tokyo Night      | dark   | Tokyo Night                              | dark   |
 
-"Derived" means the light block keeps the palette's accents and places them on a light ground of the same hue family; the dark block is the faithful one. The editor palettes are reused under their licenses (MIT, and the freely reused 2006 Monokai values), credited in each class's `attribution` and in the gem's `NOTICE`.
+Monokai, Dracula, and Nord have no upstream light variant and ship dark only. The editor palettes are reused under their licenses (MIT, and the freely reused 2006 Monokai values), credited in each class's `attribution` and in the gem's `NOTICE`.
 
 Built-in ids are reserved: a local or gem theme with one of these ids raises at boot.
 
@@ -256,7 +282,7 @@ Built-in ids are reserved: a local or gem theme with one of these ids raises at 
 Creates a theme: the class and its stylesheet, with every public token listed and commented out in the CSS.
 
 ```bash
-bin/rails generate avo:theme NAME [--gem] [--path DIR]
+bin/rails generate avo:theme NAME [--scheme light|dark] [--gem] [--path DIR]
 ```
 
 | Flag     | Effect                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -264,6 +290,7 @@ bin/rails generate avo:theme NAME [--gem] [--path DIR]
 | _(none)_ | A local theme: `app/avo/themes/<name>.rb` and `app/assets/stylesheets/avo/themes/<name>.css`                                                                                                                                                                                                                                                                                                                                                                                       |
 | `--gem`  | A publishable gem instead: `avo-<name>_theme/` with the gemspec, `lib/avo/<name>_theme.rb`, `lib/avo/<name>_theme/version.rb`, `lib/avo/<name>_theme/engine.rb`, `lib/avo/<name>_theme/theme.rb` (`Avo::<Name>Theme::Theme`, with `self.id` pinned to `<name>`), the stylesheet at `app/assets/stylesheets/avo/themes/<name>.css`, an asset manifest for Sprockets, empty `app/assets/images/avo/themes/<name>/` and `app/views/avo/themes/<name>/` directories, a `README.md` with the install line and the `gem build` / `gem push` steps, and a `NOTICE`. Prints the `Gemfile` line with `path:` for local development. |
 | `--path` | With `--gem`, the directory the gem is written into, relative to the app root. Defaults to the app root, so the gem lands at `<app>/avo-<name>_theme/`; `--path ../` puts it beside the app.                                                                                                                                                                                                                                                                                       |
+| `--scheme` | `light` (default) or `dark`: sets `self.scheme` in the class and writes the stylesheet's comments for that scheme. Anything else is refused.                                                                                                                                                                                                                                                                                                                                      |
 
 `NAME` is underscored and stripped of a trailing `_theme` to form the id — `Ocean`, `ocean_theme`, and `OceanTheme` all give `ocean` — and the result must match `/\A[a-z][a-z0-9_]*\z/`. The gemspec pins `avo >= <major>.<minor>` of the Avo version that generated it.
 
