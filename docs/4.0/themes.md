@@ -28,7 +28,7 @@ Themes work on core Avo only, but every add-on reads the same `var(--color-*)` t
 
 ## Pick a built-in theme
 
-Open the appearance picker in the top navbar. The **Theme** section comes first: hover a row to preview it across the whole screen (scheme included), click to keep it.
+Open the appearance picker in the top navbar. The **Theme** section comes first: hover a row to preview it across the whole screen (scheme included), click to keep it. Themes are listed in three groups: **Light & dark** for the ones that leave the scheme picker open (Paper, and any theme whose [`lock`](./themes-api.html#lock) omits `:scheme`), then **Light**, then **Dark**. A group with no themes in it is not shown.
 
 <Image prompt="The appearance picker open in the top navbar, showing the Theme section with its list of built-in themes, each row carrying a mini window preview tile and a title, with Coastal hovered" />
 
