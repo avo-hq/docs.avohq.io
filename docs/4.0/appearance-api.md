@@ -182,7 +182,7 @@ When either palette is set, Avo renders it as an inline `:root` `<style>` block 
 
 <Option name="`themes`">
 
-Restrict and order the [themes](./themes.html) the picker offers.
+Restrict the [themes](./themes.html) the picker offers, and order them within each scheme group (Light & dark, Light, Dark).
 
 ```ruby
 config.appearance = {
