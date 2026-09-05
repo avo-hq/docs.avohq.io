@@ -259,7 +259,7 @@ Eighteen themes ship with Avo, under `Avo::BuiltinThemes`. Their stylesheet bloc
 | `midnight`         | Midnight         | dark   | Authored by Avo                          | dark   |
 | `monokai`          | Monokai          | dark   | Monokai (2006)                           | dark   |
 | `dracula`          | Dracula          | dark   | Dracula                                  | dark   |
-| `nord`             | Nord             | dark   | Nord (navbar shares the page ground)     | dark   |
+| `nord`             | Nord             | dark   | Nord (flush: one ground, no seam, no notch) | dark   |
 | `solarized_light`  | Solarized Light  | light  | Solarized Light                          | light  |
 | `solarized_dark`   | Solarized Dark   | dark   | Solarized Dark                           | dark   |
 | `gruvbox_light`    | Gruvbox Light    | light  | Gruvbox Light                            | light  |
