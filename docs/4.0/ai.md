@@ -745,6 +745,8 @@ Rows of an [array resource](./array-resource.html) can't be attached — they ha
 
 Every Avo page contributes its own title and path. That is what makes "what is this page?" or "where am I?" answerable on a dashboard, a settings page, or a filtered index — pages that are nobody's record.
 
+The assistant's own pages are the exception. A chat you start from the new-chat page, the chat list, or a conversation carries no page origin — the compose box is where you write a chat, never what it is about. A conversation's page still offers the conversation itself, as [the record it is](#starting-from-a-conversation).
+
 It is a label, not a description: the page origin says *where* the conversation started and never what was on screen. The assistant still queries before stating anything about your data, and page titles are passed to the model as untrusted values, so a record whose name reads like an instruction is text rather than a command.
 
 ### Change how it reads
