@@ -200,7 +200,7 @@ signed in.
 
 Every message you send starts a fresh turn against the provider, built from three things: a system prompt, the conversation so far, and a set of tools. The model can't see your database — it only ever learns about your data by calling a tool and reading what comes back.
 
-**The system prompt is rebuilt on every turn.** It's assembled from the ERB files under `app/prompts/`, so it always reflects the current date, the signed-in user, [what the chat was started from](#what-you-start-the-chat-from), and any instructions you've added. Nothing about your schema is baked in ahead of time.
+**The system prompt is rebuilt on every turn.** It's assembled from the ERB files under `app/prompts/`, so it always reflects the current date, the signed-in user, [what the chat was started from](#what-you-start-the-chat-from), [what your app is](#teach-the-assistant-your-app), and any instructions you've added. Nothing about your schema is baked in ahead of time.
 
 **It works from your real schema, not a guess at it.** Every query, write, and action result carries the resource's real columns, model scopes, and required attributes back to the assistant — so it builds what comes next from your names. This is done by the tools, not merely requested in the prompt: it arrives with the answer rather than being asked for first, which is why a question rarely spends a round trip on structure, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters. A query that gets a column wrong comes back with the real ones attached, so the retry is built from names too.
 
@@ -478,6 +478,53 @@ The assistant's system prompt is built from ERB files that ship inside the gem, 
 Instructions are guidance for the model, not a security boundary. What the assistant can actually read and write is enforced by its tools and your Avo authorization policies — never rely on prompt text to hide or protect data.
 :::
 
+### Teach the assistant your app
+
+The shipped prompt knows Avo, not your application. It learns your columns and scopes from its tools as it goes, but it can't know that a "customer" is a `User` with a `client` role, that an "order" lives in the `Purchase` resource, or which questions your team asks every day. That knowledge has a prompt file of its own — `app/prompts/avo/ai/chat_agent/app_context.txt.erb` — rendered on every turn right after the assistant's identity and before the shipped rules. The gem's copy is empty.
+
+The gem ships an onboarding flow that writes it for you. It's an agent skill, `avo-ai-onboarding`, resolved through the [Avo skills loader](./agentic-engineering.html#skills) like every other Avo skill — so with the loader installed, tell your coding agent:
+
+```
+Onboard the Avo AI assistant onto this app.
+```
+
+The flow is a short conversation, not a generator:
+
+1. **It audits the app.** It starts from `bin/rails avo:ai:inventory` — a structure-only brief of what Avo actually registered: each resource and the model behind it, columns and their types, enums, the model's named scopes, associations, attachments, actions and filters, and the models that have no resource at all. No record is read to produce it. Then it reads your README, models, resources, policies and locale files for what the schema can't say.
+2. **It tells you what it found**, in plain language: what the app seems to be, who uses the admin, a table of the terms people use and the resource each one lives in (with how sure it is), the relationships that matter, the questions it expects users to ask and how it would answer them, and what the assistant can't see.
+3. **It asks what it couldn't infer** — the term that doesn't match a model name, the audience, the daily questions, the statuses' meanings, the areas to stay away from — each with its best guess as the default, so "all correct" is a complete answer.
+4. **Then it writes the file**, and only then. The result reads like your team describing its own app: vocabulary, relationships, example questions with the scope that answers each, what the assistant cannot see, conventions like currency and time zone.
+
+Run it again after the app changes and it proposes a diff against the file you have rather than rewriting it.
+
+To write the file by hand instead, eject the stub — its comment carries the rules — and follow the same shape:
+
+```bash
+bin/rails generate avo:ai:eject app_context
+```
+
+```erb
+<%# app/prompts/avo/ai/chat_agent/app_context.txt.erb %>
+About this application:
+- Acme is a subscription box service; this admin is used by the support team.
+
+Vocabulary — what people say, and what they mean:
+- "customer" — a `User` with role `client`. Use the `User.clients` scope.
+- "order" — the `Purchase` resource; a "box" is a `Purchase` whose `kind` is `subscription`.
+
+Questions people ask, and how to answer them:
+- "How many paid orders this month?" — `Purchase.paid` filtered on `created_at`.
+
+What you cannot see here:
+- Webhook deliveries have no resource in this admin; say so rather than searching.
+```
+
+The inventory is yours to read too — `bin/rails avo:ai:inventory` prints it to the terminal — and it's a good first look at what the assistant can and cannot reach in your app.
+
+:::warning
+Write structure, never values. The file is committed to your repository and the rendered prompt is visible to every viewer with the `:tools` [debug level](#debug-levels), so it must carry no record data, no credentials and nothing you wouldn't put on an internal wiki page. Instructions are guidance for the model, not a security boundary: a "don't mention salaries" line is a courtesy, and your [authorization policies](./authorization.html) are what actually decide what the assistant can read and write.
+:::
+
 ### Add your own instructions
 
 To add rules on top of the shipped prompt, eject the `extra_instructions` file:
@@ -488,18 +535,14 @@ bin/rails generate avo:ai:eject extra_instructions
 
 This creates `app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb` in your application. Whatever you write in it is appended to the end of the chat assistant's system prompt. The gem's own copy is empty, so until you edit the file nothing changes.
 
-This is the place for the things the assistant can't learn from your schema:
+This is the place for rules of your own — how to answer, what to prefer, what to avoid. What the app *is* belongs in the [app context](#teach-the-assistant-your-app) instead, which the onboarding flow keeps current for you:
 
 ```erb
 <%# app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb %>
-Domain vocabulary:
-- "Churned" customers are those with a cancelled subscription — use the
-  Customer resource's cancelled scope, not a column filter.
-- When the user says "orders", they mean the Purchase resource.
-
 Style:
 - Amounts are stored in cents. Always display them as EUR.
 - Answer in the same language the user writes in.
+- Never suggest deleting a record; propose archiving it instead.
 ```
 
 The file is ERB, so you can interpolate anything your app knows — `Rails.application.credentials`, `ENV`, your own configuration. Two locals are also available: `user`, the signed-in user the chat belongs to, and `chat`, the `Avo::Ai::Chat` record. That makes per-role instructions a conditional:
@@ -538,7 +581,7 @@ bin/rails generate avo:ai:eject instructions
 
 This copies all prompt files — the chat assistant's instructions and sub-prompts, plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
 
-The shipped `instructions.txt.erb` ends with an `<%= extra_instructions %>` slot. If you replace it, your copy decides whether to keep that slot — remove the line and the `extra_instructions` file is ignored.
+The shipped `instructions.txt.erb` carries two slots of yours: `<%= app_context %>` after the identity and `<%= extra_instructions %>` at the end. If you replace it, your copy decides whether to keep them — remove a line and the matching file is ignored.
 
 ## Choose which tools the assistant gets
 
