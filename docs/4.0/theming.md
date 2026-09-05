@@ -12,7 +12,7 @@ Theming is how you make Avo look like your product — its colors, fonts, surfac
 :::tip Hand your agent these pages
 Theming and customizing draws on a handful of Avo surfaces. Give your agent any of these (or read them yourself) — together they're the full toolbox:
 
-- [Themes](./themes.html) — named, switchable looks: thirteen built-ins, `rails g avo:theme` for your own, and gems to share them
+- [Themes](./themes.html) — named, switchable looks: eighteen built-ins, `rails g avo:theme` for your own, and gems to share them
 - [Custom CSS & styling](./tailwindcss-integration.html) — the [TailwindCSS integration](./tailwindcss-integration.html) and the [`avo-overrides.css` / `avo-overrides.js`](./tailwindcss-integration.html#override-styles-and-scripts-avo-overrides-css-avo-overrides-js) no-build escape hatch
 - [JavaScript & Stimulus](./javascript.html) — add behavior to any screen
 - [Asset handling](./asset-handling.html) — load your own CSS/JS through the app pipeline
@@ -58,7 +58,7 @@ This covers the palette that drives most of the interface. For everything it del
 
 ## Pick or build a theme
 
-A [theme](./themes.html) is a named look — a stylesheet, optionally partials and brand assets — that shows up in the appearance picker, with a live preview, and is remembered per user. Avo ships thirteen (Paper, Coastal, Rose, Sunset, Midnight, and eight editor palettes such as Monokai, Dracula, and Nord), so the quickest re-skin is a single line:
+A [theme](./themes.html) is a named, finished look — a stylesheet drawn for one scheme, optionally partials and brand assets — that shows up in the appearance picker, with a live preview, and is remembered per user. Avo ships eighteen (Paper, Coastal, Rose, Sunset, Midnight, and editor palettes such as Monokai, Dracula, Nord, and Solarized Light and Dark), so the quickest re-skin is a single line:
 
 ```ruby
 # config/initializers/avo.rb
@@ -67,7 +67,7 @@ config.appearance = {
 }
 ```
 
-For a look of your own, `bin/rails generate avo:theme ocean` writes a class and a stylesheet with every token listed; `--gem` writes the same theme as a publishable gem. Unlike `avo-overrides.css` below, a theme is one of several looks users can switch between rather than an always-on override, and it can carry its own logo, favicon, and partials. The [Themes guide](./themes.html) covers picking, creating, and shipping one.
+For a look of your own, `bin/rails generate avo:theme ocean` (or `--scheme dark`) writes a class and a stylesheet with every token listed; `--gem` writes the same theme as a publishable gem. Unlike `avo-overrides.css` below, a theme is one of several looks users can switch between rather than an always-on override, and it can carry its own logo, favicon, and partials. The [Themes guide](./themes.html) covers picking, creating, and shipping one.
 
 ## Re-skin with CSS variables
 
