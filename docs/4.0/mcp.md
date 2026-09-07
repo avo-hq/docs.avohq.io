@@ -159,7 +159,7 @@ A capability can only ever narrow what a connection may do. Granting write doesn
 
 ### Narrowing a connection to specific resources
 
-The authorize page's **Records** choice has three answers: **Read**, **Read & write**, or **Choose per resource**. The third lists every resource the signed-in admin can see and lets them pick *none*, *read*, or *read & write* for each one. Nothing the admin cannot see is offered.
+The authorize page's **Records** choice has three answers: **Read**, **Read & write**, or **Choose per resource**. The third lists every resource the signed-in admin can see and lets them pick *none*, *read*, or *read & write* for each one, with a *Set all to* control that applies one level to every row. Nothing the admin cannot see is offered.
 
 A per-resource grant is stored as `avo:read:Post` / `avo:write:Post` (the resource's name, as `list_resources` reports it), and it holds everywhere a global grant would:
 
