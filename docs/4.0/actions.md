@@ -192,6 +192,12 @@ The endpoint receives the search text in `params[:q]` and returns objects with `
 - `resource` — the Avo resource that triggered the action
 - `request` — the current `ActionDispatch::Request`
 
+:::info Records deleted after selection
+Someone else may delete a record between the moment you check it on the <Index /> page and the moment you run the action. Avo drops that record and runs the action on the rest, so you don't need to rescue `ActiveRecord::RecordNotFound` yourself.
+
+If every selected record is gone, `query` arrives empty — guard with `return error "No record selected" if query.blank?` when that matters.
+:::
+
 ```ruby
 # app/avo/actions/toggle_inactive.rb
 class Avo::Actions::ToggleInactive < Avo::BaseAction
