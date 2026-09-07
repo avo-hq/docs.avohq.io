@@ -81,7 +81,7 @@ end
 If you pass `at:`, the path must match the path in `resource_identifier`. Booting with the two out of step raises a configuration error rather than starting, because the alternative is worse: discovery keeps answering while the endpoints it advertises return 404, which looks from the client side like the connection dying at token exchange with no error text.
 :::
 
-The authorize page and the connections screen are not part of this — they're mounted with the panel, so they inherit your existing sign-in. The connections screen sits in Avo's chrome with the rest of your admin; the authorize page gets a dedicated full-page layout with no sidebar or navbar, because it's a decision about something outside your app and a panel full of links is both the wrong context and a way to abandon a flow the client is still waiting on.
+The authorize page and the connections resource are not part of this — they're mounted with the panel, so they inherit your existing sign-in. The connections screen sits in Avo's chrome with the rest of your admin; the authorize page gets a dedicated full-page layout with no sidebar or navbar, because it's a decision about something outside your app and a panel full of links is both the wrong context and a way to abandon a flow the client is still waiting on.
 
 :::danger Mount it outside your authentication block
 If `mount_avo` lives inside an `authenticate :user do … end` block, `mount_avo_mcp_server` **must** be mounted outside and before it. A connected client calls the token and JSON-RPC endpoints with a bearer token and no browser session, so putting them behind your web session guard makes every call fail.
@@ -107,7 +107,7 @@ That's why it isn't derived from the request. Host, scheme, and forwarding heade
 
 ## Connect an AI client
 
-1. Copy your app's MCP server URL — the value of `resource_identifier`, also shown on the connections screen in the panel.
+1. Copy your app's MCP server URL — the value of `resource_identifier`, also shown above the AI connections table in the panel.
 2. Add it to the AI client as a remote MCP server.
 3. The client sends the admin to an authorize page served by your own panel. If they aren't signed in, they go through your normal Avo sign-in and come back.
 4. They review who is asking, pick the capabilities to grant, and approve.
@@ -117,12 +117,12 @@ Nothing is copied by hand at any point. The client obtains a short-lived token t
 
 ### Connect from your AI client
 
-The connections screen shows the server URL with a recipe for each client, and opening the server URL in a browser shows the same page — so the URL explains itself wherever it gets pasted. Every client goes through the same sign-in: it sends the admin to your app's authorize page, they approve what the client may do, and the client is connected. Nothing is copied by hand. The recipes, with `https://app.example.com/admin/mcp` standing in for your URL and `acme-admin` for your app's name:
+The AI connections resource shows the server URL with a recipe for each client, and opening the server URL in a browser shows the same page — so the URL explains itself wherever it gets pasted. Every client goes through the same sign-in: it sends the admin to your app's authorize page, they approve what the client may do, and the client is connected. Nothing is copied by hand. The recipes, with `https://app.example.com/admin/mcp` standing in for your URL and `acme-admin` for your app's name:
 
 ::: code-group
 
 ```json [Cursor]
-// Select "Install in Cursor" on the connections screen, or add this to ~/.cursor/mcp.json
+// Select "Install in Cursor" on the AI connections page, or add this to ~/.cursor/mcp.json
 {
   "mcpServers": {
     "acme-admin": {
@@ -146,7 +146,7 @@ url = "https://app.example.com/admin/mcp"
 ```
 
 ```json [VS Code]
-// Select "Install in VS Code" on the connections screen, or add this to .vscode/mcp.json
+// Select "Install in VS Code" on the AI connections page, or add this to .vscode/mcp.json
 {
   "servers": {
     "acme-admin": {
@@ -334,13 +334,75 @@ Rather than degrade quietly, the server refuses to serve tool calls at all unles
 
 ## Review and revoke connections
 
-The panel lists an admin's connections with the client name, the capabilities granted, when it was authorized, and when it was last used. That last-used timestamp is what answers "was this connection ever actually used?" after a suspected token theft. The screen also shows the server URL, so an admin connecting a second client doesn't need this page to find it.
+Connections are an Avo resource — **AI connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin: the client's name and id, who it acts as, what it may do, when it was authorized, and when it was last used. That last-used timestamp is what answers "was this connection ever actually used?" after a suspected token theft. Above the table sit the server URL and a setup recipe for each client, so an admin connecting a second client doesn't need this page to find them.
 
-Revoking takes effect on the next tool call: the client's tokens stop validating, and reconnecting means a fresh trip through the authorize page.
+**Revoke** is an action on the resource — select rows and run it from the actions menu, or run it from a connection's own page. Revoking takes effect on the client's next call: its tokens stop validating, and reconnecting means a fresh trip through the authorize page. Nothing is sent to the client. The connection stays in the list, marked revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel; the model refuses both.
 
-Admins see and revoke their own connections. Because listing and revoking run through Avo's authorization, you can widen that with a policy — an owner-level admin who sees every connection in the app, say — without this add-on inventing a role of its own.
+The resource is excluded from the MCP tools themselves. A connected client can't list connections or run Revoke through `run_action`.
 
-Access tokens are short-lived and refreshed by the client with no admin involvement. The connection itself lasts until someone revokes it.
+:::info If you list resources explicitly
+A `config.resources` array in your initializer replaces Avo's discovery with your list. Add `"Avo::Resources::McpConnection"` to it, or the resource won't appear.
+:::
+
+### Who sees and revokes what
+
+This add-on ships no policy for the resource. Authorization is yours, the same way it is for every other resource in the panel — through a policy in your app.
+
+**Without a policy**, each admin sees and can revoke only the connections that act as them. That's the fallback, not a permission model: the moment a policy for the model exists, the policy is the whole answer and the fallback steps out of the way.
+
+A policy for the connection model goes where every other policy goes, named after the model class:
+
+```ruby
+# app/policies/avo/mcp_server/connection_policy.rb
+class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
+  def index? = true
+
+  def show? = record.user == user
+
+  # The revoke action. Avo asks once for the action itself (record is the class) and the
+  # action asks again per selected connection.
+  def act_on? = record.is_a?(Class) || record.user == user
+
+  # Connections are created by authorizing a client and ended by revoking it.
+  # Refusing these hides the "Create new", edit and delete controls.
+  def create? = false
+
+  def edit? = false
+
+  def destroy? = false
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = scope.where(user: user)
+  end
+end
+```
+
+Some shapes that policy usually takes:
+
+**Owners see everything, everyone else sees their own.** Widen the scope and the two record checks for whichever role you already have:
+
+```ruby
+def show? = user.owner? || record.user == user
+
+def act_on? = record.is_a?(Class) || user.owner? || record.user == user
+
+class Scope < ApplicationPolicy::Scope
+  def resolve = user.owner? ? scope.all : scope.where(user: user)
+end
+```
+
+**Anyone may look, only the acting admin may revoke.** Keep the scope wide and narrow `act_on?` to the record's own user. The action then revokes the rows the policy allows and reports the ones it refused.
+
+**Keep it off the sidebar.** The resource class ships with the gem, so set the flag from an initializer rather than editing it. It stays reachable from the profile-menu link and from the endpoint's signpost page:
+
+```ruby
+# config/initializers/avo_mcp_connections.rb
+Rails.application.config.to_prepare do
+  Avo::Resources::McpConnection.visible_on_sidebar = false
+end
+```
+
+**`explicit_authorization = true`** in your Avo config means a resource with no policy is hidden entirely, this one included. Write the policy first; the resource appears once `index?` answers.
 
 ### Rate limiting
 
@@ -383,11 +445,11 @@ Every issued token is bound to the `resource_identifier` it was minted under, as
 
 ### If you forget to mount
 
-If `config.mcp_server.enabled` is `true` but `mount_avo_mcp_server` isn't in your routes, the protocol endpoints simply don't exist — discovery, token, and JSON-RPC all `404`. The server catches this: it logs a warning at boot, and the connections screen tells you the endpoints are unmounted instead of printing a server URL that leads nowhere. If a client can't discover the server, check that line in your routes first.
+If `config.mcp_server.enabled` is `true` but `mount_avo_mcp_server` isn't in your routes, the protocol endpoints simply don't exist — discovery, token, and JSON-RPC all `404`. The server catches this: it logs a warning at boot, and the connections resource tells you the endpoints are unmounted instead of printing a server URL that leads nowhere. If a client can't discover the server, check that line in your routes first.
 
-### Turning it off keeps the revoke screen
+### Turning it off keeps the connections resource
 
-`config.mcp_server.enabled = false` shuts down every protocol endpoint and the consent screen — they `404` — but leaves the connections screen reachable. That's deliberate: disabling the server is a plausible first move when you're investigating a suspected leak, and you still need to see what's connected and cut it off. Revocation works while the server is disabled; only new connections are blocked.
+`config.mcp_server.enabled = false` shuts down every protocol endpoint and the consent screen — they `404` — but the connections resource stays where it is, because it's part of the panel rather than the server. That's deliberate: disabling the server is a plausible first move when you're investigating a suspected leak, and you still need to see what's connected and cut it off. Revocation works while the server is disabled; only new connections are blocked.
 
 ### What's kept out of your logs
 
@@ -400,20 +462,20 @@ One thing is **not** filtered by default: the `_meta` object some clients attach
 Rails.application.config.filter_parameters += [:_meta]
 ```
 
-### Linking the connections screen into your panel
+### Linking the connections resource into your profile menu
 
-The installer prints a snippet for a profile-menu entry pointing at the connections screen:
+The resource is in the sidebar already. The installer also prints a snippet for a profile-menu entry, which puts it one click from the admin's own name:
 
 ```ruby
 # config/initializers/avo.rb, inside Avo.configure
 config.profile_menu = -> do
   link_to "AI connections",
-    path: Avo::McpServer::Engine.routes.url_helpers.connections_path,
+    path: Avo::Engine.routes.url_helpers.resources_mcp_connections_path,
     icon: "plug-connected"
 end
 ```
 
-A custom profile menu renders only if you have the [Menu editor](./menu-editor.html) add-on installed. Without it, reach the screen at `<your-avo-path>/mcp_server/connections` directly, or render the `avo/partials/_profile_menu_extra` partial, which Avo shows unconditionally.
+A custom profile menu renders only if you have the [Menu editor](./menu-editor.html) add-on installed. Without it, the sidebar entry and `<your-avo-path>/resources/mcp_connections` both reach it, and opening the server URL in a browser links there too.
 
 ## Trace changes back to an admin
 
