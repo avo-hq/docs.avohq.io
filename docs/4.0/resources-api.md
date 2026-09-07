@@ -105,6 +105,10 @@ end
 `self.description` is not displayed when the resource is rendered as an association (for example, in a `has_many` table on another resource's page). To show a description there, use the [`description` option on the association field](./associations/has_many#description).
 :::
 
+:::info
+You can skip this attribute entirely and supply the text from a locale file instead, under `avo.resource_translations.<resource>.description`. When that key resolves it wins over `self.description`, so an app can keep an English default here and translate over it. See [Localizing resources](./i18n.html#localizing-resources).
+:::
+
 </Option>
 
 <Option name="`self.avatar`" headingSize="3">
