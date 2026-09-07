@@ -107,7 +107,7 @@ That's why it isn't derived from the request. Host, scheme, and forwarding heade
 
 ## Connect an AI client
 
-1. Copy your app's MCP server URL — the value of `resource_identifier`, also shown above the AI connections table in the panel.
+1. Copy your app's MCP server URL — the value of `resource_identifier`, also shown above the MCP connections table in the panel.
 2. Add it to the AI client as a remote MCP server.
 3. The client sends the admin to an authorize page served by your own panel. If they aren't signed in, they go through your normal Avo sign-in and come back.
 4. They review who is asking, pick the capabilities to grant, and approve.
@@ -117,12 +117,12 @@ Nothing is copied by hand at any point. The client obtains a short-lived token t
 
 ### Connect from your AI client
 
-The AI connections resource shows the server URL with a recipe for each client, and opening the server URL in a browser shows the same page — so the URL explains itself wherever it gets pasted. Every client goes through the same sign-in: it sends the admin to your app's authorize page, they approve what the client may do, and the client is connected. Nothing is copied by hand. The recipes, with `https://app.example.com/admin/mcp` standing in for your URL and `acme-admin` for your app's name:
+The MCP connections resource shows the server URL with a recipe for each client, and opening the server URL in a browser shows the same page — so the URL explains itself wherever it gets pasted. Every client goes through the same sign-in: it sends the admin to your app's authorize page, they approve what the client may do, and the client is connected. Nothing is copied by hand. The recipes, with `https://app.example.com/admin/mcp` standing in for your URL and `acme-admin` for your app's name:
 
 ::: code-group
 
 ```json [Cursor]
-// Select "Install in Cursor" on the AI connections page, or add this to ~/.cursor/mcp.json
+// Select "Install in Cursor" on the MCP connections page, or add this to ~/.cursor/mcp.json
 {
   "mcpServers": {
     "acme-admin": {
@@ -146,7 +146,7 @@ url = "https://app.example.com/admin/mcp"
 ```
 
 ```json [VS Code]
-// Select "Install in VS Code" on the AI connections page, or add this to .vscode/mcp.json
+// Select "Install in VS Code" on the MCP connections page, or add this to .vscode/mcp.json
 {
   "servers": {
     "acme-admin": {
@@ -334,7 +334,7 @@ Rather than degrade quietly, the server refuses to serve tool calls at all unles
 
 ## Review and revoke connections
 
-Connections are an Avo resource — **AI connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin: the client's name and id, who it acts as, what it may do, when it was authorized, and when it was last used. That last-used timestamp is what answers "was this connection ever actually used?" after a suspected token theft. Above the table sit the server URL and a setup recipe for each client, so an admin connecting a second client doesn't need this page to find them.
+Connections are an Avo resource — **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin: the client's name and id, who it acts as, what it may do, when it was authorized, and when it was last used. That last-used timestamp is what answers "was this connection ever actually used?" after a suspected token theft. Above the table sit the server URL and a setup recipe for each client, so an admin connecting a second client doesn't need this page to find them.
 
 **Revoke** is an action on the resource — select rows and run it from the actions menu, or run it from a connection's own page. Revoking takes effect on the client's next call: its tokens stop validating, and reconnecting means a fresh trip through the authorize page. Nothing is sent to the client. The connection stays in the list, marked revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel; the model refuses both.
 
@@ -469,7 +469,7 @@ The resource is in the sidebar already. The installer also prints a snippet for 
 ```ruby
 # config/initializers/avo.rb, inside Avo.configure
 config.profile_menu = -> do
-  link_to "AI connections",
+  link_to "MCP connections",
     path: Avo::Engine.routes.url_helpers.resources_mcp_connections_path,
     icon: "plug-connected"
 end
