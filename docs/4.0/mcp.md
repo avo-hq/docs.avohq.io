@@ -135,7 +135,7 @@ Icons are held in `Rails.cache`. On `:null_store` — which is what `bin/rails d
 - **The client's own product name**, in the heading: "Claude Code would like access to your admin panel". It's the string an admin can match against the thing they just launched.
 - **Two facts, as labelled values rather than prose** — the **verified domain** (the origin of the client's identifier), and where the browser **redirects to** afterwards. A loopback callback is named as what it is: a program running on the machine you're sitting at. If the callback is on a domain other than the one the client was verified against, the page says so — a metadata document may list a redirect URI on any origin, so the origin can be telling the truth about who published the document while saying nothing about where the code goes.
 - The admin identity currently signed in — the person the connection will act as.
-- The four capabilities, as checkboxes. Delete and run actions are marked destructive, and ticking either reveals a line explaining what that specific grant means.
+- What the client may do: **Records** as *Read*, *Read & write*, or *Choose per resource*, and **Run actions** as its own toggle. Read & write includes deleting, so choosing it (or per resource) reveals a line saying so; ticking run actions does the same.
 
 A client that registered itself rather than publishing a metadata document has no verifiable identity at all. The page still names it in the heading — that's what the admin recognizes — but there is no domain to print beside it, and its mark is ringed in amber. That variant also arrives with **read** ticked and nothing else, and adds one checkbox — *I started this connection myself, from a client I recognize* — which must be ticked before the page will approve anything. Declining never requires it.
 
@@ -147,16 +147,15 @@ A heading reading *Claude Code* over a verified domain reading `totally-not-evil
 
 ## Choose what a connection can do
 
-Four capabilities cover the whole surface. Read and create-and-update can be granted for every resource the admin can see, or narrowed to named resources; delete and run actions are global toggles.
+Three capabilities cover the whole surface. Write means create, update *and* delete, as it does in avo-api. Read and write can be granted for every resource the admin can see, or narrowed to named resources; run actions is a global toggle.
 
 | Capability            | Scope                                  | Tools it unlocks                                                                  | At consent     |
 | --------------------- | -------------------------------------- | --------------------------------------------------------------------------------- | -------------- |
-| **Read**              | `avo:read`, or `avo:read:<Resource>`   | `list_resources`, `list_records`, `show_record`, `search_records`, `list_actions` | Selected       |
-| **Create and update** | `avo:write`, or `avo:write:<Resource>` | `create_record`, `update_record`                                                  | Selected       |
-| **Delete**            | `avo:delete`                           | `delete_record`                                                                   | *Not* selected |
-| **Run actions**       | `avo:actions`                          | `run_action`                                                                      | *Not* selected |
+| **Read**                      | `avo:read`, or `avo:read:<Resource>`   | `list_resources`, `list_records`, `show_record`, `search_records`, `list_actions` | Selected       |
+| **Create, update and delete** | `avo:write`, or `avo:write:<Resource>` | `create_record`, `update_record`, `delete_record`                                 | *Not* selected |
+| **Run actions**               | `avo:actions`                          | `run_action`                                                                      | *Not* selected |
 
-A capability can only ever narrow what a connection may do. Granting delete doesn't let the connection delete anything its owning admin couldn't delete by hand — see [Every call stays inside the admin's own permissions](#every-call-stays-inside-the-admin-s-own-permissions).
+A capability can only ever narrow what a connection may do. Granting write doesn't let the connection delete anything its owning admin couldn't delete by hand — see [Every call stays inside the admin's own permissions](#every-call-stays-inside-the-admin-s-own-permissions).
 
 ### Narrowing a connection to specific resources
 
@@ -168,12 +167,12 @@ A per-resource grant is stored as `avo:read:Post` / `avo:write:Post` (the resour
 - A tool naming a resource the grant doesn't cover is refused before any record is loaded, with `requiredCapability` such as `"avo:read:Order"` in the error data.
 - `search_records` with no resource named searches only the granted resources.
 - An association to a resource the grant doesn't cover is **absent** from `show_record`'s payload — not present and empty, the same rule avo-api applies.
-- Over a narrowed read, **delete** and **run actions** mean "on those resources": a `delete_record` on a resource the connection can't read is refused as a missing read. A connection with no read narrowing keeps the plain global meaning.
+- Over a narrowed read, **run actions** means "on those resources": a `run_action` on a resource the connection can't read is refused as a missing read. A connection with no read narrowing keeps the plain global meaning.
 
-Write carries read: choosing *read & write* on a resource grants both, because nothing can change a record it can't open.
+Write carries read: choosing *read & write* on a resource grants both, because nothing can change a record it can't open. And write includes delete — there is no separate delete grant to narrow.
 
-:::danger Granting delete or run actions accepts a prompt-injection risk
-An AI agent can't reliably tell your data apart from instructions aimed at it. Any text that reaches a record the connected admin can read — a signup name, a support ticket body, a customer note — is read by the agent as part of its input, and text written to look like an instruction can steer it. With delete or run actions granted, that steering can end in destructive tool calls made under the admin's own identity and permissions.
+:::danger Granting write or run actions accepts a prompt-injection risk
+An AI agent can't reliably tell your data apart from instructions aimed at it. Any text that reaches a record the connected admin can read — a signup name, a support ticket body, a customer note — is read by the agent as part of its input, and text written to look like an instruction can steer it. With write or run actions granted, that steering can end in destructive tool calls made under the admin's own identity and permissions.
 
 Nothing in this release detects or prevents that:
 
@@ -182,7 +181,7 @@ Nothing in this release detects or prevents that:
 
 Nor does the tool itself pause. `run_action` runs the action immediately, and `delete_record` deletes immediately — there is no proposal step, no second confirmation, and nothing for a human to click. Granting the capability at consent **is** the confirmation, collected once, in advance, for every call the connection will ever make. That is precisely why those two are unselected by default.
 
-This is a documented, accepted limitation rather than an oversight, and the mitigation is the consent screen itself: delete and run actions are unselected by default, so granting them is always a deliberate act. Grant them to clients you trust, on data you control, and keep everything else read-only.
+This is a documented, accepted limitation rather than an oversight, and the mitigation is the consent screen itself: write and run actions are unselected by default, so granting them is always a deliberate act. Grant them to clients you trust, on data you control, and keep everything else read-only.
 :::
 
 ## Available tools
@@ -404,10 +403,10 @@ The first six are Avo's own and sit in the `-32000` to `-32019` band that the MC
   "id": 1,
   "error": {
     "code": -32000,
-    "message": "This connection was not granted avo:delete, which is required by delete_record.",
+    "message": "This connection was not granted avo:write, which is required by delete_record.",
     "data": {
-      "requiredCapability": "avo:delete",
-      "grantedCapabilities": ["avo:read", "avo:write"]
+      "requiredCapability": "avo:write",
+      "grantedCapabilities": ["avo:read"]
     }
   }
 }
