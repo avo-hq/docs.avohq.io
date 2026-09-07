@@ -115,6 +115,52 @@ That's why it isn't derived from the request. Host, scheme, and forwarding heade
 
 Nothing is copied by hand at any point. The client obtains a short-lived token through that redirect and refreshes it on its own, and declining creates nothing at all.
 
+### Connect from your AI client
+
+The connections screen shows the server URL with a recipe for each client, and opening the server URL in a browser shows the same page — so the URL explains itself wherever it gets pasted. Every client goes through the same sign-in: it sends the admin to your app's authorize page, they approve what the client may do, and the client is connected. Nothing is copied by hand. The recipes, with `https://app.example.com/admin/mcp` standing in for your URL and `acme-admin` for your app's name:
+
+::: code-group
+
+```json [Cursor]
+// Select "Install in Cursor" on the connections screen, or add this to ~/.cursor/mcp.json
+{
+  "mcpServers": {
+    "acme-admin": {
+      "url": "https://app.example.com/admin/mcp"
+    }
+  }
+}
+```
+
+```bash [Claude Code]
+claude mcp add --transport http acme-admin https://app.example.com/admin/mcp
+# then, inside Claude Code: /mcp → choose acme-admin → Authenticate
+```
+
+```toml [Codex CLI]
+# ~/.codex/config.toml
+[mcp_servers.acme-admin]
+url = "https://app.example.com/admin/mcp"
+
+# then: codex mcp login acme-admin
+```
+
+```json [VS Code]
+// Select "Install in VS Code" on the connections screen, or add this to .vscode/mcp.json
+{
+  "servers": {
+    "acme-admin": {
+      "type": "http",
+      "url": "https://app.example.com/admin/mcp"
+    }
+  }
+}
+```
+
+:::
+
+**ChatGPT** has no config file: open Settings, then Connectors, then Create; name it, paste the server URL, and sign in when asked (creating a connector needs developer mode, under Settings, Apps & Connectors, Advanced). **Any other MCP client** works the same way: follow its setup for a remote server and use the URL as the server URL. A client that cannot sign in through OAuth cannot connect — there is no key to paste.
+
 ### Which clients can connect
 
 The server authenticates clients as **public clients**: no shared secret, identity established by the metadata document the `client_id` URL serves, and the code protected by PKCE. Its authorization server metadata says so, advertising `token_endpoint_auth_methods_supported: ["none"]`.
