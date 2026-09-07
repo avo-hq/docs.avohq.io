@@ -147,16 +147,30 @@ A heading reading *Claude Code* over a verified domain reading `totally-not-evil
 
 ## Choose what a connection can do
 
-Four capabilities cover the whole surface. They're global: a capability applies across every resource, and there's no per-resource or per-action selection.
+Four capabilities cover the whole surface. Read and create-and-update can be granted for every resource the admin can see, or narrowed to named resources; delete and run actions are global toggles.
 
-| Capability            | Scope         | Tools it unlocks                                                                  | At consent     |
-| --------------------- | ------------- | --------------------------------------------------------------------------------- | -------------- |
-| **Read**              | `avo:read`    | `list_resources`, `list_records`, `show_record`, `search_records`, `list_actions` | Selected       |
-| **Create and update** | `avo:write`   | `create_record`, `update_record`                                                  | Selected       |
-| **Delete**            | `avo:delete`  | `delete_record`                                                                   | *Not* selected |
-| **Run actions**       | `avo:actions` | `run_action`                                                                      | *Not* selected |
+| Capability            | Scope                                  | Tools it unlocks                                                                  | At consent     |
+| --------------------- | -------------------------------------- | --------------------------------------------------------------------------------- | -------------- |
+| **Read**              | `avo:read`, or `avo:read:<Resource>`   | `list_resources`, `list_records`, `show_record`, `search_records`, `list_actions` | Selected       |
+| **Create and update** | `avo:write`, or `avo:write:<Resource>` | `create_record`, `update_record`                                                  | Selected       |
+| **Delete**            | `avo:delete`                           | `delete_record`                                                                   | *Not* selected |
+| **Run actions**       | `avo:actions`                          | `run_action`                                                                      | *Not* selected |
 
 A capability can only ever narrow what a connection may do. Granting delete doesn't let the connection delete anything its owning admin couldn't delete by hand — see [Every call stays inside the admin's own permissions](#every-call-stays-inside-the-admin-s-own-permissions).
+
+### Narrowing a connection to specific resources
+
+The authorize page's **Records** choice has three answers: **Read**, **Read & write**, or **Choose per resource**. The third lists every resource the signed-in admin can see and lets them pick *none*, *read*, or *read & write* for each one. Nothing the admin cannot see is offered.
+
+A per-resource grant is stored as `avo:read:Post` / `avo:write:Post` (the resource's name, as `list_resources` reports it), and it holds everywhere a global grant would:
+
+- `list_resources` lists only the resources granted, each with an `access` of `"read"` or `"write"`, so a client learns what it may touch before it asks.
+- A tool naming a resource the grant doesn't cover is refused before any record is loaded, with `requiredCapability` such as `"avo:read:Order"` in the error data.
+- `search_records` with no resource named searches only the granted resources.
+- An association to a resource the grant doesn't cover is **absent** from `show_record`'s payload — not present and empty, the same rule avo-api applies.
+- Over a narrowed read, **delete** and **run actions** mean "on those resources": a `delete_record` on a resource the connection can't read is refused as a missing read. A connection with no read narrowing keeps the plain global meaning.
+
+Write carries read: choosing *read & write* on a resource grants both, because nothing can change a record it can't open.
 
 :::danger Granting delete or run actions accepts a prompt-injection risk
 An AI agent can't reliably tell your data apart from instructions aimed at it. Any text that reaches a record the connected admin can read — a signup name, a support ticket body, a customer note — is read by the agent as part of its input, and text written to look like an instruction can steer it. With delete or run actions granted, that steering can end in destructive tool calls made under the admin's own identity and permissions.
@@ -234,7 +248,7 @@ It never falls back to returning the resource's records. That fallback is the te
 
 Every tool call passes two gates, in this order:
 
-1. **The capability gate.** If the connection wasn't granted the capability the tool needs, the call is refused before any data is touched, and the error names the missing capability.
+1. **The capability gate.** If the connection wasn't granted the capability the tool needs — globally, or for the resource the call names — the call is refused before any data is touched, and the error names the missing capability.
 2. **Avo's authorization.** The owning admin is re-resolved from your app on every request, and the operation runs through your Avo authorization for that admin — the same policies the panel uses.
 
 A connection therefore can never do anything its owning admin couldn't do by hand in the panel. Granting a capability is permission to *try*; the policy still decides.
