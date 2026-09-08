@@ -338,9 +338,11 @@ Connections are an Avo resource — **MCP connections** in the sidebar, at `<you
 
 **Create new** on the resource leads to the server's own connect page — the URL and a recipe per client — because a connection is created by a client arriving at the authorize page, never by a form in the panel.
 
-**Revoke** is an action on the resource — select rows and run it from the actions menu, or run it from a connection's own page. Revoking takes effect on the client's next call: its tokens stop validating, and reconnecting means a fresh trip through the authorize page. Nothing is sent to the client. The connection stays in the list, marked revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel; the model refuses both.
+**Revoke** is an action on the resource — select rows and run it from the actions menu, or run it from a connection's own page. With [Custom controls](./custom-controls.html) installed, it's also a button on each live row and on the connection's page, and the index trades "Create new" for a **Connect a client** link to the same connect page. Revoking takes effect on the client's next call: its tokens stop validating, and reconnecting means a fresh trip through the authorize page. Nothing is sent to the client. The connection stays in the list, marked revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel; the model refuses both.
 
 The resource is excluded from the MCP tools themselves. A connected client can't list connections or run Revoke through `run_action`.
+
+Every string the resource shows — field names, the badge values, the Revoke action's copy, the note under the table and the install banners — lives under `avo.mcp_server.connections` in the gem's locale file, so a translated panel can carry its own copy of them.
 
 :::info If you list resources explicitly
 A `config.resources` array in your initializer replaces Avo's discovery with your list. Add `"Avo::Resources::McpConnection"` to it, or the resource won't appear.
