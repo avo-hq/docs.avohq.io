@@ -13,7 +13,6 @@ The `avo-mcp_server` add-on turns your Avo panel into a remote [MCP](https://mod
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.mcp_server.enabled = true
-  config.mcp_server.resource_identifier = "https://app.example.com/avo/mcp"
 end
 ```
 
@@ -77,8 +76,8 @@ end
 
 `mount_avo_mcp_server` draws four things: the two OAuth discovery documents, always at the origin root because the protocol requires them there; the client registration endpoint, which is unauthenticated by design so clients that don't support metadata documents can still register; the token endpoint; and the JSON-RPC endpoint clients call, at `/avo/mcp` by default. Pass `at:` to serve the JSON-RPC endpoint somewhere else.
 
-:::warning `at:` and `resource_identifier` must agree
-If you pass `at:`, the path must match the path in `resource_identifier`. Booting with the two out of step raises a configuration error rather than starting, because the alternative is worse: discovery keeps answering while the endpoints it advertises return 404, which looks from the client side like the connection dying at token exchange with no error text.
+:::warning `at:` and a configured `resource_identifier` must agree
+If you pin `resource_identifier` and pass `at:`, the path must match the path in `resource_identifier`. Booting with the two out of step raises a configuration error rather than starting, because the alternative is worse: discovery keeps answering while the endpoints it advertises return 404, which looks from the client side like the connection dying at token exchange with no error text.
 :::
 
 The authorize page and the connections resource are not part of this — they're mounted with the panel, so they inherit your existing sign-in. The connections screen sits in Avo's chrome with the rest of your admin; the authorize page gets a dedicated full-page layout with no sidebar or navbar, because it's a decision about something outside your app and a panel full of links is both the wrong context and a way to abandon a flow the client is still waiting on.
@@ -95,19 +94,30 @@ This doesn't leave anything unauthenticated. Those endpoints authenticate themse
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.mcp_server.enabled = true # [!code ++]
+end
+```
+
+The server's address is the URL your panel is served at plus the mount path — `https://app.example.com/avo/mcp` for a panel at `https://app.example.com` mounted at the default `/avo/mcp`. That's the URL an admin pastes into their client, and the `resource` the discovery document names. Nothing to configure for it.
+
+### 5. Pin the address, if you need to
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.mcp_server.enabled = true
   config.mcp_server.resource_identifier = "https://app.example.com/avo/mcp" # [!code ++]
 end
 ```
 
-:::warning `resource_identifier` is a constant, not something derived from the request
-It must be the full public URL of your JSON-RPC endpoint — the same URL an admin pastes into their client. The `resource` field of the discovery document, the audience stamped on every token issued, and the audience checked on every incoming call all read from this one value, and they have to agree byte for byte.
+Set `resource_identifier` when the origin the request arrives on isn't the one you want clients to use: a panel reachable at more than one hostname, or a TLS-terminating proxy that hides the public scheme and host from the app. It must be the full public URL of the JSON-RPC endpoint, and once set, it's the one value every surface reads.
 
-That's why it isn't derived from the request. Host, scheme, and forwarding headers drift behind a proxy, differ between the discovery hit and the token hit, and let a caller influence the audience it's then checked against. A request arriving on a host that doesn't match is refused with a clear error rather than failing discovery silently, which is the failure mode you want here — a discovery mismatch surfaces client-side as nothing at all.
+:::warning Once pinned, `resource_identifier` is a constant
+With the override set, the `resource` field of the discovery document, the audience stamped on every token issued, and the audience checked on every incoming call all read that one value and have to agree byte for byte — so a request arriving at any other scheme, host, or port is refused with `421 Misdirected Request` rather than answered with a document naming a host the caller never reached. Without the override there's nothing to miss: each request is answered for the origin it arrived on.
 :::
 
 ## Connect an AI client
 
-1. Copy your app's MCP server URL — the value of `resource_identifier`. Opening it in a browser shows a connect page with the URL and a recipe per client; **Create new** on the MCP connections resource leads there too.
+1. Copy your app's MCP server URL — your panel's origin plus the mount path, or `resource_identifier` if you pinned it. Opening it in a browser shows a connect page with the URL and a recipe per client; **Create new** on the MCP connections resource leads there too.
 2. Add it to the AI client as a remote MCP server.
 3. The client sends the admin to an authorize page served by your own panel. If they aren't signed in, they go through your normal Avo sign-in and come back.
 4. They review who is asking, pick the capabilities to grant, and approve.
@@ -433,7 +443,7 @@ A few operational facts that only bite once the server is live behind real infra
 
 ### Behind a proxy or load balancer
 
-The server checks that each request actually arrived at `resource_identifier` — same scheme, host, and port. It's the audience check: a bearer token is only good for the one URL it was issued for. Behind a TLS-terminating proxy that doesn't pass the original scheme and host through, the app sees `http` and an internal hostname, the check fails, and every machine endpoint answers `421 Misdirected Request` while the connections screen shows a mismatch banner.
+Without a pinned `resource_identifier`, the server's address is whatever origin the request arrived on — so behind a TLS-terminating proxy that doesn't pass the original scheme and host through, the app sees `http` and an internal hostname, the derived address is plain `http://` on a non-loopback host, and every machine endpoint refuses with a configuration error that says so. With `resource_identifier` pinned, the server instead checks that each request actually arrived there — same scheme, host, and port — and answers `421 Misdirected Request` otherwise, while the connections resource shows a mismatch banner.
 
 The fix is the standard Rails proxy setup, not anything specific to this add-on:
 
@@ -441,12 +451,12 @@ The fix is the standard Rails proxy setup, not anything specific to this add-on:
 - Allow the public hostname in `config.hosts`.
 
 :::warning Plain `http` is refused outside development
-A `resource_identifier` on plain `http://` is refused at boot for any host that isn't `localhost` or `127.0.0.1` — bearer tokens and authorization codes would travel unencrypted. Use `https://` in production; the loopback exception is only so local development works.
+A `resource_identifier` on plain `http://` is refused at boot for any host that isn't `localhost` or `127.0.0.1`, and a derived address on plain `http://` is refused per request — bearer tokens and authorization codes would travel unencrypted. Serve the panel over `https://` in production; the loopback exception is only so local development works.
 :::
 
-### Changing `resource_identifier` is a migration
+### Changing the address is a migration
 
-Every issued token is bound to the `resource_identifier` it was minted under, as its audience. Change the value — a new domain, a new mount path — and every existing connection's next call is refused with `421 Misdirected Request`. This is the audience binding doing its job, not a bug. Existing admins reconnect through the authorize page; there's no in-place rewrite of live tokens. Treat an identifier change as a migration you announce, not a config tweak.
+Every issued token is bound to the address it was minted under, as its audience — `resource_identifier` if pinned, the panel's origin otherwise. Change the value — a new domain, a new mount path — and every existing connection's next call is refused with `421 Misdirected Request`. This is the audience binding doing its job, not a bug. Existing admins reconnect through the authorize page; there's no in-place rewrite of live tokens. Treat an identifier change as a migration you announce, not a config tweak.
 
 ### If you forget to mount
 
@@ -598,5 +608,5 @@ These options live under `config.mcp_server` inside `Avo.configure`, in `config/
 | Option                | Type      | Default | Description                                                                                                                |
 | --------------------- | --------- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `enabled`             | `Boolean` | `false` | Turns the whole server on. Off by default — installing the gem never starts answering protocol requests on its own.         |
-| `resource_identifier` | `String`  | `nil`   | **Required.** The canonical public URL of this MCP server, e.g. `"https://app.example.com/avo/mcp"`. Never request-derived. |
+| `resource_identifier` | `String`  | `nil`   | Optional. The public URL of this MCP server when it isn't the origin requests arrive on, e.g. `"https://app.example.com/avo/mcp"`. Never request-derived. |
 | `tool_calls_per_minute` | `Integer` | `300`   | Per-connection ceiling on JSON-RPC tool calls. Over it, the client gets `429` with `Retry-After`. Size it to your heaviest legitimate agent; it bounds your own workload, not an unauthenticated caller's. |
