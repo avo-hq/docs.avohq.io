@@ -31,6 +31,19 @@ If the target resource has too many records for a dropdown, make the picker sear
 
 [Nested association forms](./associations/has_many#nested-in-forms) (the `nested` option on those fields) require the **`avo-nested`** gem in addition to your usual Avo gems. Use the same source and credentials as for your other private Avo gems; see [Gem server authentication](./gem-server-authentication).
 
+## When the model association is missing
+
+An association field renders a Rails association; it doesn't create one. Declare `field :ghosts, as: :has_many` on a resource whose model has no `has_many :ghosts` and Avo raises `Avo::MissingAssociationError` when that association's panel loads:
+
+```
+Failed to find the :ghosts association on Team while rendering the :ghosts field.
+Define `has_many :ghosts` on Team, or update the Avo field to use an association that exists.
+```
+
+Both fixes are in the message: add the association to the model, or point the field at one that exists. The usual cause is a typo or a plural that doesn't match — `field :comment, as: :has_many` against a `has_many :comments`.
+
+Association panels load in a frame of their own, so the error surfaces inside the panel rather than on the whole page — the record's own fields render fine above it.
+
 ## Common options
 
 Association fields share most of their options. Each ✓ links to that option's documentation on the field's page.
