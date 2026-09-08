@@ -82,10 +82,14 @@ If you pin `resource_identifier` and pass `at:`, the path must match the path in
 
 The authorize page and the connections resource are not part of this — they're mounted with the panel, so they inherit your existing sign-in. The connections screen sits in Avo's chrome with the rest of your admin; the authorize page gets a dedicated full-page layout with no sidebar or navbar, because it's a decision about something outside your app and a panel full of links is both the wrong context and a way to abandon a flow the client is still waiting on.
 
-:::danger Mount it outside your authentication block
-If `mount_avo` lives inside an `authenticate :user do … end` block, `mount_avo_mcp_server` **must** be mounted outside and before it. A connected client calls the token and JSON-RPC endpoints with a bearer token and no browser session, so putting them behind your web session guard makes every call fail.
+:::danger Mount it outside your authentication block, and before `mount_avo`
+If `mount_avo` lives inside an `authenticate :user do … end` block, `mount_avo_mcp_server` **must** be mounted outside and before it. A connected client calls the token and JSON-RPC endpoints with a bearer token and no browser session, so Devise's constraint would answer every one of them — the discovery documents included — with the sign-in failure instead of the server.
 
-This doesn't leave anything unauthenticated. Those endpoints authenticate themselves against the token the client holds, and an unauthenticated call is answered with a `401` that points the client at the consent flow.
+It also has to come before `mount_avo` whenever its path is under Avo's own, which the default is (`/avo/mcp` under `/avo`): an engine mount matches everything below its prefix, so an MCP mount drawn after it is routed into Avo's engine and answered `404` while the discovery documents keep advertising it.
+
+Both placements are refused at boot with a message naming the fix, so a misplaced mount cannot reach production.
+
+This doesn't leave anything unauthenticated. Those endpoints authenticate themselves against the token the client holds, and an unauthenticated call is answered with a `401` that points the client at the authorize page — which is mounted with the panel and does require your sign-in.
 :::
 
 ### 4. Enable the server
