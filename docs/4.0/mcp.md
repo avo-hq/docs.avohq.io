@@ -336,6 +336,8 @@ Rather than degrade quietly, the server refuses to serve tool calls at all unles
 
 Connections are an Avo resource — **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin: the client's name and id, who it acts as, what it may do, when it was authorized, and when it was last used. That last-used timestamp is what answers "was this connection ever actually used?" after a suspected token theft. Above the table sit the server URL and a setup recipe for each client, so an admin connecting a second client doesn't need this page to find them.
 
+**Create new** on the resource leads to the server's own connect page — the URL and a recipe per client — because a connection is created by a client arriving at the authorize page, never by a form in the panel.
+
 **Revoke** is an action on the resource — select rows and run it from the actions menu, or run it from a connection's own page. Revoking takes effect on the client's next call: its tokens stop validating, and reconnecting means a fresh trip through the authorize page. Nothing is sent to the client. The connection stays in the list, marked revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel; the model refuses both.
 
 The resource is excluded from the MCP tools themselves. A connected client can't list connections or run Revoke through `run_action`.
@@ -364,7 +366,8 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
   def act_on? = record.is_a?(Class) || record.user == user
 
   # Connections are created by authorizing a client and ended by revoking it.
-  # Refusing these hides the "Create new", edit and delete controls.
+  # Refusing these hides the edit and delete controls, which the model refuses
+  # anyway, and the "Create new" button, which only links to the connect page.
   def create? = false
 
   def edit? = false
