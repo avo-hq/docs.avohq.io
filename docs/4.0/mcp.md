@@ -121,7 +121,7 @@ With the override set, the `resource` field of the discovery document, the audie
 
 ## Connect an AI client
 
-1. Copy your app's MCP server URL — your panel's origin plus the mount path, or `resource_identifier` if you pinned it. Opening it in a browser shows a connect page with the URL and a recipe per client; **Create new** on the MCP connections resource leads there too.
+1. Copy your app's MCP server URL — your panel's origin plus the mount path, or `resource_identifier` if you pinned it. **Create new** on the MCP connections resource shows it with a recipe per client, and opening the URL in a browser shows the same page.
 2. Add it to the AI client as a remote MCP server.
 3. The client sends the admin to an authorize page served by your own panel. If they aren't signed in, they go through your normal Avo sign-in and come back.
 4. They review who is asking, pick the capabilities to grant, and approve.
@@ -350,7 +350,7 @@ Rather than degrade quietly, the server refuses to serve tool calls at all unles
 
 Connections are an Avo resource — **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin: the client's name and id, who it acts as, what it may do, when it was authorized, and when it was last used. That last-used timestamp is what answers "was this connection ever actually used?" after a suspected token theft.
 
-**Create new** on the resource leads to the server's own connect page — the URL and a recipe per client — because a connection is created by a client arriving at the authorize page, never by a form in the panel.
+**Create new** on the resource opens the connect page inside the panel — the server URL and a recipe per client — because a connection is created by a client arriving at the authorize page, never by a form. The same recipes are what a browser sees when it opens the MCP URL itself.
 
 **Revoke** is an action on the resource — select rows and run it from the actions menu, or run it from a connection's own page. With [Custom controls](./custom-controls.html) installed, it's also a button on each live row and on the connection's page, and the index trades "Create new" for a **Connect a client** link to the same connect page. Revoking takes effect on the client's next call: its tokens stop validating, and reconnecting means a fresh trip through the authorize page. Nothing is sent to the client. The connection stays in the list, marked revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel; the model refuses both.
 
@@ -494,7 +494,7 @@ config.profile_menu = -> do
 end
 ```
 
-A custom profile menu renders only if you have the [Menu editor](./menu-editor.html) add-on installed. Without it, the sidebar entry and `<your-avo-path>/resources/mcp_connections` both reach it, and opening the server URL in a browser links there too.
+A custom profile menu renders only if you have the [Menu editor](./menu-editor.html) add-on installed. Without it, the sidebar entry and `<your-avo-path>/resources/mcp_connections` both reach it, and the page a browser sees at the server URL links there too.
 
 ## Trace changes back to an admin
 
