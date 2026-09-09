@@ -89,6 +89,10 @@ bin/rails runner "puts Avo::Ai::Chat.count"
 
 Expect `0` and no error. Restart your server and the chat bar appears on every Avo page, with an **AI** section in the sidebar.
 
+### 6. Teach the assistant your app
+
+The assistant now knows Avo, not your application — what a "customer" is here, which resource an "order" lives in, the questions your team actually asks. That goes in a prompt file of its own, and the gem ships a flow that writes it with you. See [Teach the assistant your app](#teach-the-assistant-your-app).
+
 ## Configuration
 
 Avo AI registers its settings on Avo's own configuration, so everything lives in `config/initializers/avo.rb` under the `ai` namespace:
@@ -470,6 +474,72 @@ Two paths bring a file that isn't in your Media Library yet onto a record:
 
 The download itself is hardened: only public `https://` URLs are accepted (private and internal addresses are rejected, on every redirect too), the file's content type is read from its bytes rather than trusted from the server, and anything over the configured size ceiling (25 MB by default) is refused mid-download rather than after it. If your files are bigger than that, or your source is slow, raise the matching keys under `config.ai.remote_file` — see [Configuration](#configuration). The undo is the same as for any attachment — detach it; the file stays in the Media Library.
 
+## Teach the assistant your app
+
+Out of the box the assistant knows Avo, not your application. It reads columns, enums, and scopes from its tools at run time, but nothing tells it that "customers" are `User` records with a `role` of `client`, that a "booking" is the `Reservation` resource, or that nobody on your team has ever asked about webhook deliveries. That's what it guesses wrong at, and guessing is what it has to do until you write the app down.
+
+Where you write it is a prompt file of its own, `app/prompts/avo/ai/chat_agent/app_context.txt.erb`. It renders into the system prompt on every turn, right after the assistant's identity and before the shipped rules — so the model reads *who* it is, then *what it's embedded in*, then *how to behave*. The gem's own copy renders to nothing, so nothing changes until the file exists.
+
+### Let your coding agent write it
+
+The flow ships in the gem as an agent skill, `avo-ai-onboarding`. With the [Avo skills loader](./agentic-engineering.html#skills) installed, tell your coding agent:
+
+```
+Onboard the Avo AI assistant onto this app.
+```
+
+It runs `bin/rails avo:ai:inventory` (below), reads your README and your initializer, tells you what it thinks the app is and asks whether it got that right, then interviews you in short rounds — a few related questions at a time, its best guess first — about the things the schema can't say. It writes the file once, at the end, after you've confirmed. Run it again after the app has changed and it proposes a diff rather than a rewrite.
+
+The same interview settles what a record's status means here, which is exactly what a [chip](#record-chips) should carry — so it also proposes a `def chip` on the resources people look up, and a record the assistant names in the chat shows its status beside its title.
+
+### The inventory
+
+```bash
+bin/rails avo:ai:inventory
+```
+
+Prints a structure-only markdown brief of the admin: every Avo resource with its model, title attribute, fields, actions, filters, scopes, columns, enums, associations, attachments, policy, and whether it declares a chip; the application models that have **no** resource, which is what the assistant cannot see; which narrative files exist for an agent to read; and which prompt files you already override.
+
+No record is ever read — columns come from the schema, scopes and enums from the classes — and columns or fields whose names read like credentials (password, token, secret, digest) are left out, because the brief is meant to end up in a file you commit.
+
+It's the onboarding flow's starting point, and it's worth running on its own: it is the closest thing to a list of what the assistant can and cannot reach.
+
+### Writing it by hand
+
+Eject the stub — its comment carries the rules:
+
+```bash
+bin/rails generate avo:ai:eject app_context
+```
+
+Then write down what the schema can't carry: what the app does, who uses the admin, what they call things, which resource each of those things lives in, and the questions people actually ask.
+
+```erb
+<%# app/prompts/avo/ai/chat_agent/app_context.txt.erb %>
+Acme is a booking platform for photography studios. The people in this admin are
+studio owners and our own support team.
+
+Vocabulary:
+- A "booking" is a Reservation. A "client" is a User with role "client"; a "host"
+  is a User with role "owner".
+- "Payouts" are Transfer records. Payments are what the client pays us — different
+  resource, opposite direction.
+
+What people ask here:
+- Which reservations for a studio are still unconfirmed this week.
+- Whether a host's payout for a given month has gone out.
+
+Nobody asks about Webhook or AuditEntry records.
+```
+
+The file is ERB, with the same two locals as `extra_instructions`: `user`, the signed-in user the chat belongs to, and `chat`, the `Avo::Ai::Chat` record. A note that only applies to one role is a conditional here too.
+
+:::warning
+Structure only — never a record's values, a credential, or anything the people using the chat must not see. The rendered prompt is shown to every viewer whose [debug level](#debug-levels) is `:tools`, and the file itself is committed. Instructions are guidance for the model, not a security boundary: what the assistant can actually read and write is decided by your Avo authorization policies.
+:::
+
+`app_context` says what the app **is**. It's a different file from [`extra_instructions`](#add-your-own-instructions), which is the rules you want followed, and from [`identity`](#rename-the-assistant), which is the assistant's name — writing one leaves the others alone.
+
 ## Customize the assistant's instructions
 
 The assistant's system prompt is built from ERB files that ship inside the gem, under `app/prompts/`. They resolve like Rails views: a file in your application at the same relative path replaces the gem's copy. If you configure nothing, the shipped prompt is used as is.
@@ -538,7 +608,7 @@ bin/rails generate avo:ai:eject instructions
 
 This copies all prompt files — the chat assistant's instructions and sub-prompts, plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
 
-The shipped `instructions.txt.erb` ends with an `<%= extra_instructions %>` slot. If you replace it, your copy decides whether to keep that slot — remove the line and the `extra_instructions` file is ignored.
+The shipped `instructions.txt.erb` renders the other prompt files through slots of its own: `<%= identity %>` and `<%= app_context %>` near the top, `<%= extra_instructions %>` at the end. If you replace it, your copy decides which of those slots survive — remove a line and that file is ignored, however carefully it was written.
 
 ## Choose which tools the assistant gets
 

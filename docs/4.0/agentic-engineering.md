@@ -111,6 +111,8 @@ Separately-licensed gems (paid add-on or Enterprise). These skills ship inside t
 | `avo-advanced-search`     | the <kbd>Cmd</kbd> + <kbd>K</kbd> global search palette, and type-to-search association pickers    |
 | `avo-record-reordering`   | persistent up/down and drag-and-drop record ordering                                               |
 | `avo-custom-controls`     | take over the show/edit/index/row button bars — relabel, remove, add links/actions/dropdowns       |
+| `avo-ai-tools`            | configure, extend, and replace the tools the [AI assistant](./ai.html) may call                    |
+| `avo-ai-onboarding`       | teach the AI assistant your app — audit it, interview you, write its `app_context` prompt          |
 
 ### Cross-cutting
 
