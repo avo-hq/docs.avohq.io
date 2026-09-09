@@ -356,7 +356,7 @@ Connections are an Avo resource — **MCP connections** in the sidebar, at `<you
 
 The resource is excluded from the MCP tools themselves. A connected client can't list connections or run Revoke through `run_action`.
 
-Every string the resource shows — field names, the badge values, the Revoke action's copy, the note under the table and the install banners — lives under `avo.mcp_server.connections` in the gem's locale files, in the same nineteen languages Avo ships its own strings in. A panel switched to any of them with `set_locale` shows the resource in that language; override a key in your app's own locale file to change the wording.
+Every string the resource shows lives in the gem's locale files, in the same nineteen languages Avo ships its own strings in: field names under `avo.resource_translations.mcp_connection.fields.<field id>`, where Avo looks for any resource's field names, and the badge values, the Revoke action's copy and the install banners under `avo.mcp_server.connections`. A panel switched to any of them with `set_locale` shows the resource in that language; override a key in your app's own locale file to change the wording.
 
 :::info If you list resources explicitly
 A `config.resources` array in your initializer replaces Avo's discovery with your list. Add `"Avo::Resources::McpConnection"` to it, or the resource won't appear.
