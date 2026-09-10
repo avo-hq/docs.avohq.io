@@ -366,7 +366,7 @@ A `config.resources` array in your initializer replaces Avo's discovery with you
 
 This add-on ships no policy for the resource. Authorization is yours, the same way it is for every other resource in the panel — through a policy in your app.
 
-**Without a policy**, each admin sees and can revoke only the connections that act as them. That's the fallback, not a permission model: the moment a policy for the model exists, the policy is the whole answer and the fallback steps out of the way.
+**Without a policy**, Avo's defaults apply, exactly as for any other resource: with `explicit_authorization = false` every admin sees, opens and may revoke every connection; with `explicit_authorization = true` the resource stays hidden until a policy answers `index?`. The add-on deliberately doesn't guess a scope of its own — which connections a role may see is your app's question.
 
 A policy for the connection model goes where every other policy goes, named after the model class:
 
