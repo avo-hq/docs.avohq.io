@@ -4,6 +4,20 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Skip version 4.2.2
+
+From `4.2.1` upgrade straight to <Version version="4.2.3" />. The `4.2.2` package accidentally carried four build artifacts that aren't Avo's to ship, one of them an `avo.custom.js`.
+
+That name is the one the [asset handling](./asset-handling.html#add-your-own-css-and-javascript) guide tells you to use for your own JavaScript. Sprockets keys assets by logical path, and Avo's manifest compiles after your app's, so in an app serving its own `avo.custom.js` through Sprockets the packaged file won that path — `javascript_include_tag "avo.custom"` served Avo's instead of yours.
+
+**Action required:** `bundle update avo` to `4.2.3` or later. Nothing in your app needs changing.
+
+:::warning
+The failure is silent. No exception, no log line: the page loads, the panel renders, and the Stimulus controllers registered in your `avo.custom.js` simply never run. If you saw custom behavior disappear on the `4.2.2` bump, this is why.
+:::
+
+`4.2.1` is clean — only `4.2.2` shipped the strays, and they also took the package from 24MB to 45MB. More on that in [#4785](https://github.com/avo-hq/avo/pull/4785).
+
 ## Upgrade to 4.2.0
 
 <Option name="`super` in a `setup_authentication` override now accepts a valid API token">
