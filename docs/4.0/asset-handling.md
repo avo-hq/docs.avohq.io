@@ -29,6 +29,10 @@ Under the hood Avo builds its own styles with [TailwindCSS](./tailwindcss-integr
 
 Avo just needs to know which files to load. How you produce those files depends on the pipeline your app already uses — pick the section that matches your setup.
 
+:::warning Your `avo.custom.js` is ignored on Avo 4.2.2
+That one release packaged an `avo.custom.js` of its own, which takes over the logical path yours is served from — silently, with no error. Upgrade to `4.2.3`; see [Skip version 4.2.2](./upgrade.html#skip-version-4-2-2).
+:::
+
 ### With Importmap
 
 Importmap is the default in modern Rails. Run:
