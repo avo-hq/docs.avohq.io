@@ -18,6 +18,7 @@ The feature and docs are both work in progress.
 
 - Avo 4
 - An API key for an LLM provider supported by [RubyLLM](https://rubyllm.com) (OpenAI, Anthropic, Gemini, and others)
+- RubyLLM 2.0, installed for you as a dependency. It is a release candidate today (`2.0.0.rc2`), which is why the gemspec asks for `>= 2.0.0.rc2` rather than `~> 2.0` — a `~>` requirement will not resolve a prerelease.
 - PostgreSQL
 
 ## Installation
@@ -59,7 +60,7 @@ end
 
 Store the key in your environment or `Rails.application.credentials` — never hardcode it in the initializer.
 
-Then load RubyLLM's model registry, and re-run it periodically (or call `RubyLLM.models.refresh!`) to keep model labels and pricing current:
+Then load RubyLLM's model registry, and re-run it periodically (or call `RubyLLM.models.refresh`) to keep model labels and pricing current:
 
 ```bash
 bin/rails ruby_llm:load_models
