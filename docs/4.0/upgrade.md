@@ -4,6 +4,43 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to 4.3.0
+
+<Option name="`avo-api` token scopes are now called entitlements">
+
+### Breaking Change
+
+"Scope" already means a policy scope in Avo and an ActiveRecord scope in every app running it, so what an API token is allowed to reach is called an **entitlement** from 4.3.0 on. 4.2.0 is the only version that shipped it under the old name.
+
+The rename reaches the database column, the panel, the `403` body, and the token policy method:
+
+| 4.2.0 | 4.3.0 |
+| ---------------------------------- | ------------------------------------------------------------------------ |
+| `avo_api_tokens.scopes` column | `avo_api_tokens.entitlements` |
+| `token.scopes` | `token.entitlements` |
+| `edit_scopes?` on your token policy | [`edit_entitlements?`](./rest-api.html#who-may-change-entitlements) |
+| `"reason": "token_scope"` in a `403` | `"reason": "token_entitlement"` |
+| `scopes_grid` in a form post | `entitlements_grid` |
+| The **Scopes** panel | The [**Entitlements**](./rest-api.html#entitle-a-token) panel |
+
+### Action Required
+
+Re-run the tokens generator and migrate. It writes `RenameAvoApiTokenScopes` and skips the create migration you already have:
+
+```bash
+rails generate avo_api:tokens
+rails db:migrate
+```
+
+Then grep your app for the left-hand column above. Two are worth checking before the others:
+
+- **`edit_scopes?` on your token policy.** Nothing asks that method any more, so the question falls back to the [permissive default](./rest-api.html#who-may-change-entitlements) and every panel user may edit entitlements. Rename it.
+- **A client branching on `"reason": "token_scope"`.** It now reads `"token_entitlement"` and a branch matching the old string falls through.
+
+Nothing grants or revokes anything on its own: the migration renames a column and every stored grant is carried over untouched.
+
+</Option>
+
 ## Upgrade to 4.2.0
 
 <Option name="`super` in a `setup_authentication` override now accepts a valid API token">
@@ -78,11 +115,15 @@ A [token scope refusal](./rest-api.html#tell-the-three-refusals-apart) is also a
 
 ### Breaking Change
 
-None — this is additive. Existing tokens carry no grants, and a token with no grants [reaches everything its owner can](./rest-api.html#scope-a-token), exactly as before.
+None — this is additive. Existing tokens carry no grants, and a token with no grants [reaches everything its owner can](./rest-api.html#entitle-a-token), exactly as before.
 
-**Action required:** None. Worth knowing before you use it: granting a token *anything* restricts it to what you granted, including against resources you deploy later, and removing the last grant leaves a token that refuses everything rather than one that is unscoped again. **Make unrestricted** in the token's **Scopes** panel is the way back.
+**Action required:** None. Worth knowing before you use it: granting a token *anything* restricts it to what you granted, including against resources you deploy later, and removing the last grant leaves a token that refuses everything rather than one that is unrestricted again. **Make unrestricted** in the token's panel is the way back.
 
-Editing scopes is gated by an `edit_scopes?` policy method, which — like every other token policy method — [answers yes when no authorization client is configured](./rest-api.html#who-may-change-scopes).
+Editing grants is gated by a policy method, which — like every other token policy method — [answers yes when no authorization client is configured](./rest-api.html#who-may-change-entitlements).
+
+:::info Renamed in 4.3.0
+This shipped as **Scopes**, with an `edit_scopes?` policy method. Both are called *entitlements* from 4.3.0 on — see [Upgrade to 4.3.0](#upgrade-to-4-3-0).
+:::
 
 </Option>
 
