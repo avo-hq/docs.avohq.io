@@ -55,7 +55,7 @@ bin/rails generate avo:mcp_server install
 bin/rails db:migrate
 ```
 
-This creates the `avo_mcp_server_*` tables — the connections admins authorize, the single-use codes they're created through, and the tokens issued against them — and appends the configuration block to `config/initializers/avo.rb`.
+This writes two migrations — the `avo_mcp_server_*` tables (the connections admins authorize, the single-use codes they're created through, and the tokens issued against them) and the [connection log's](#watch-a-connection-live) — and appends the configuration block to `config/initializers/avo.rb`. The installer is additive: run it again after an upgrade and it writes only what your app is missing.
 
 :::warning
 If your admin/user model uses UUID primary keys, edit the generated migration before running `db:migrate`: the polymorphic `t.references :user` line needs `type: :uuid`. The reference deliberately carries no foreign key, so a mismatched column type doesn't fail at migration time — it surfaces later as connections that can't be found.
@@ -436,6 +436,45 @@ Every string the resource shows lives in the gem's locale files, in the same nin
 A `config.resources` array in your initializer replaces Avo's discovery with your list. Add `"Avo::Resources::McpConnection"` to it, or the resource won't appear.
 :::
 
+### Watch a connection live
+
+A connection's page carries an **Activity** card: every request the client made, newest first, kept current while the page is open. It is the answer to "what is my agent doing right now?" — and, after the fact, to "did that call ever reach the panel, and what did it get back?"
+
+Each row is one request — the tool it called and the resource it named, or the method for anything that isn't a tool call (`initialize`, `tools/list`) — with the time, how long it took, and how it went:
+
+| Outcome        | What happened                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------- |
+| a green dot    | Served.                                                                                                 |
+| Error          | The server answered a JSON-RPC error: a withheld capability, a policy that said no, a missing record, invalid arguments. The message is the one the client got. |
+| Tool error     | The tool ran and reported a failure in its result.                                                     |
+| Refused        | The request was malformed — a routing header disagreeing with the body — and never reached a tool.     |
+| Rate limited   | Over `tool_calls_per_minute`.                                                                           |
+| Token rejected | The client presented a token that no longer authenticates: expired, revoked, or on a revoked connection. A client that keeps retrying after you revoked it shows up here, which is the point. |
+
+A tool call's **Arguments** are behind a disclosure on its row, after your app's `filter_parameters` — anything Rails would redact from your request log is redacted here too — and capped at 4 KB; over that, the row keeps the keys and the size. Filter the list to tool calls or to errors with the switcher; **Pause** stops it moving while you read. Polling stops while the tab is hidden, and stops for good if your policy no longer lets you open the connection.
+
+The log is on by default. Each connection keeps its newest 500 rows and drops older ones as new ones arrive, so a busy agent can't fill your database with its history; both are options:
+
+```ruby
+Avo.configure do |config|
+  config.mcp_server.connection_log = true       # false records nothing
+  config.mcp_server.connection_log_size = 500   # rows kept per connection; nil keeps them all
+end
+```
+
+Who may read a connection's log is who may open its page: the card and the endpoint it polls run the same policy, `show?` and the scope both.
+
+:::warning Upgrading from a version without the log
+The log has its own table. Run the installer again — it adds only the migration you're missing — then migrate:
+
+```bash
+bin/rails generate avo:mcp_server install
+bin/rails db:migrate
+```
+
+Until then the card names that migration, and nothing is recorded.
+:::
+
 ### Who sees and revokes what
 
 This add-on ships no policy for the resource. Authorization is yours, the same way it is for every other resource in the panel — through a policy in your app.
@@ -688,4 +727,6 @@ These options live under `config.mcp_server` inside `Avo.configure`, in `config/
 | `enabled`             | `Boolean` | `false` | Turns the whole server on. Off by default — installing the gem never starts answering protocol requests on its own.         |
 | `resource_identifier` | `String`  | `nil`   | Optional. The public URL of this MCP server when it isn't the origin requests arrive on, e.g. `"https://app.example.com/avo/mcp"`. Never request-derived. |
 | `tool_calls_per_minute` | `Integer` | `300`   | Per-connection ceiling on JSON-RPC tool calls. Over it, the client gets `429` with `Retry-After`. Size it to your heaviest legitimate agent; it bounds your own workload, not an unauthenticated caller's. |
+| `connection_log`      | `Boolean` | `true`  | Records every request a connection makes for the [Activity card](#watch-a-connection-live) on its page. `false` records nothing. |
+| `connection_log_size` | `Integer` | `500`   | Rows kept per connection; the oldest are dropped as new ones arrive. `nil` keeps every row. |
 | `extra_tools`         | `Array<String>` | `[]` | Class names of [your own tools](#your-own-tools), served after the nine. Strings, not classes — nothing is loaded while the initializer runs. Per-tool configuration isn't accepted; a tool reads its own settings from `ENV` or credentials. |
