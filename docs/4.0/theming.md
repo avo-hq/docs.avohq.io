@@ -12,6 +12,7 @@ Theming is how you make Avo look like your product — its colors, fonts, surfac
 :::tip Hand your agent these pages
 Theming and customizing draws on a handful of Avo surfaces. Give your agent any of these (or read them yourself) — together they're the full toolbox:
 
+- [Themes](./themes.html) — named, switchable looks: eighteen built-ins, `rails g avo:theme` for your own, and gems to share them
 - [Custom CSS & styling](./tailwindcss-integration.html) — the [TailwindCSS integration](./tailwindcss-integration.html) and the [`avo-overrides.css` / `avo-overrides.js`](./tailwindcss-integration.html#override-styles-and-scripts-avo-overrides-css-avo-overrides-js) no-build escape hatch
 - [JavaScript & Stimulus](./javascript.html) — add behavior to any screen
 - [Asset handling](./asset-handling.html) — load your own CSS/JS through the app pipeline
@@ -29,6 +30,7 @@ Everything the agent does, you can do yourself. Avo gives you a ladder of approa
 | You want to…                                          | Reach for                                                            | Build step |
 | ----------------------------------------------------- | ------------------------------------------------------------------- | ---------- |
 | Swap logos, pick a color scheme and accent/neutral    | [Appearance config](#recolor-with-the-appearance-config)            | none       |
+| Pick or build a named theme                           | [Themes](#pick-or-build-a-theme)                                    | none       |
 | Re-skin the whole UI by overriding colors and radii   | [CSS variables](#re-skin-with-css-variables)                        | none       |
 | Use your own typeface                                 | [Font variables](#change-the-font)                                  | none       |
 | Restyle specific components (navbar, sidebar, tables) | [Component CSS variables](#fine-tune-specific-components)           | none       |
@@ -53,6 +55,19 @@ end
 ```
 
 This covers the palette that drives most of the interface. For everything it deliberately leaves out — navbar background, sidebar surfaces, table row affordances, focus rings, motion — drop to CSS variables below. See the [Appearance guide](./appearance.html) for the full palette, logo, persistence, and locking options.
+
+## Pick or build a theme
+
+A [theme](./themes.html) is a named, finished look — a stylesheet drawn for one scheme, optionally partials and brand assets — that shows up in the appearance picker, with a live preview, and is remembered per user. Avo ships eighteen (Paper, Coastal, Rose, Sunset, Midnight, and editor palettes such as Monokai, Dracula, Nord, and Solarized Light and Dark), so the quickest re-skin is a single line:
+
+```ruby
+# config/initializers/avo.rb
+config.appearance = {
+  theme: :coastal
+}
+```
+
+For a look of your own, `bin/rails generate avo:theme ocean` (or `--scheme dark`) writes a class and a stylesheet with every token listed; `--gem` writes the same theme as a publishable gem. Unlike `avo-overrides.css` below, a theme is one of several looks users can switch between rather than an always-on override, and it can carry its own logo, favicon, and partials. The [Themes guide](./themes.html) covers picking, creating, and shipping one.
 
 ## Re-skin with CSS variables
 
@@ -98,6 +113,8 @@ Use the Avo theming guide at https://docs.avohq.io/4.0/theming.html and reskin m
 ```
 
 :::
+
+If the look is meant to be a named theme users can pick — rather than an always-on override — run `bin/rails generate avo:theme` first and tell the agent to put the values in the generated stylesheet instead; the [Themes guide](./themes.html#let-an-ai-agent-do-it) has prompts written for the generator.
 
 :::tip
 `avo-overrides.css` is served as-is — it is **not** run through the Tailwind build. For custom utility classes (`@apply`, arbitrary values) in your own UI, use the [TailwindCSS integration](./tailwindcss-integration.html) instead.
