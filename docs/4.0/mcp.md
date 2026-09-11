@@ -353,6 +353,8 @@ A tool is not callable until a connection was granted it, and **existing connect
 
 `avo:custom` gates *calling* the tool. What the tool declares in `touches` still has to be granted separately: a tool declaring a write is refused with `requiredCapability: "avo:write:<Resource>"` for a connection that holds no write, even one granted every tool.
 
+One argument name is special. If your tool takes an argument named `resource`, the value the *client* sent is checked against the connection's read grant before `perform` runs — a connection holding `avo:custom` and no read is refused with `requiredCapability: "avo:read:<Resource>"`. `touches` can't cover this case: it names the resources you wrote down, and this one is chosen per call by the caller. So when a tool lets the client pick which resource to work on, name that argument `resource`.
+
 The **MCP connections** resource shows which registered tools each connection cannot call, so you can see this without waiting for a user to report it.
 
 ### What the gem checks, and what it cannot
