@@ -10,7 +10,7 @@ api_docs: ./rest-api-api.html
 
 The `avo-api` add-on exposes a JSON REST API for every Avo resource. It reuses your resources' field definitions, view visibility rules, and Pundit policies, so a resource you already built for the admin panel is available over HTTP — list, read, create, update, and delete.
 
-This page covers installation, mounting, API tokens and authentication, reading and writing data, token scopes, authorization, how the current user is established, and managing tokens in the panel. Every generator, hook, and option is in the [API reference](./rest-api-api.html).
+This page covers installation, mounting, API tokens and authentication, reading and writing data, token entitlements, authorization, how the current user is established, and managing tokens in the panel. Every generator, hook, and option is in the [API reference](./rest-api-api.html).
 
 :::info Add-on
 The REST API ships as the separate `avo-api` gem. [See the add-on page →](https://avohq.io/addons/avo-api)
@@ -42,7 +42,7 @@ Two narrower generators exist for later: [`avo_api:generate`](./rest-api-api.htm
 :::danger The generator is required, not optional
 The API's routes are drawn from the controllers in your app's `app/controllers/avo/api/resources/*` directory. If you never run the generator, that directory doesn't exist and **no API routes are drawn at all** — every request 404s. There is no catch-all controller that serves resources you haven't generated.
 
-The same applies to resources you add later: **a resource with no controller gets no route**, so generate one for each new resource or it won't be reachable over the API. It also won't be offered in a token's [Scopes](#scope-a-token) panel, since there is nothing there to grant.
+The same applies to resources you add later: **a resource with no controller gets no route**, so generate one for each new resource or it won't be reachable over the API. It also won't be offered in a token's [Entitlements](#entitle-a-token) panel, since there is nothing there to grant.
 :::
 
 Pass `--version` to namespace under something other than `v1`:
@@ -67,6 +67,28 @@ rails db:migrate
 ```
 
 There is no initializer setting, environment variable, or credential to add — the feature needs none. Running it twice is a no-op rather than an error.
+
+:::warning Upgrading from `avo-api` 4.2.0
+4.2.0 is the one version that shipped the grants column as `scopes`. It is `entitlements` from 4.3.0 on, everywhere: the column, the panel, the `403` reason, and the policy method.
+
+Re-run the generator and migrate — it writes `RenameAvoApiTokenScopes` and skips the create migration you already have:
+
+```bash
+rails generate avo_api:tokens
+rails db:migrate
+```
+
+Then rename what your own app wrote, if anything:
+
+| 4.2.0 | 4.3.0 |
+| --- | --- |
+| `token.scopes` | `token.entitlements` |
+| `edit_scopes?` on your token policy | [`edit_entitlements?`](#who-may-change-entitlements) |
+| `"reason": "token_scope"` in a `403` | `"reason": "token_entitlement"` |
+| `scopes_grid` in a form post | `entitlements_grid` |
+
+A policy still defining `edit_scopes?` is the one to fix first: nothing asks that method any more, so the question falls back to the [permissive default](#who-may-change-entitlements) and everyone may edit entitlements.
+:::
 
 :::info Skipping tokens entirely
 Only if your app brings its own credential scheme. Then [replace the authentication hook](#bring-your-own-authentication) too, so nothing goes looking for a token that cannot exist.
@@ -198,7 +220,7 @@ So debug a `401` from the panel, not from the response. Check the token's **Stat
 
 An authenticated request runs as the token's owner, and **every policy that owner is subject to applies to it unchanged**. That is the ceiling: a token is never more powerful than the person who created it, so an administrator's token reaches everything an administrator reaches.
 
-A token can be less powerful, though. [Scopes](#scope-a-token) narrow it to a chosen set of resources and actions — always a subset of what the owner may already do, never an addition to it. A token nobody scoped reaches everything its owner does.
+A token can be less powerful, though. [Entitlements](#entitle-a-token) narrow it to a chosen set of resources and actions — always a subset of what the owner may already do, never an addition to it. A token nobody restricted reaches everything its owner does.
 
 ### Your app's own authentication still runs
 
@@ -401,9 +423,9 @@ Different field types accept the formats you'd expect:
 API controllers use Rails' `:null_session` CSRF strategy, so a stateless client that carries no CSRF token is not rejected — no `InvalidAuthenticityToken` is raised. [`self.setup_csrf_protection`](./rest-api-api.html#self.setup_csrf_protection) is the hook if you need a different strategy.
 :::
 
-## Scope a token
+## Entitle a token
 
-A token starts out able to do everything its owner can. **Scopes** narrow it: an allowlist, held on the token itself, of the resources it may reach and what it may do on each. Set them in the **Scopes** panel — on the token's page, and on the create and edit forms — there's no initializer setting and nothing to configure globally, because scoping is per token.
+A token starts out able to do everything its owner can. **Entitlements** narrow it: an allowlist, held on the token itself, of the resources it may reach and what it may do on each. Set them in the **Entitlements** panel — on the token's page, and on the create and edit forms — there's no initializer setting and nothing to configure globally, because entitling is per token.
 
 Each granted resource is held at one of two levels:
 
@@ -424,22 +446,22 @@ Every resource the token's owner can reach is a row, set to **None**, **Read**, 
 
 Above the rows, a search box narrows the list as you type, and **Set all shown** applies one level to whatever the search is currently showing: "read-only across the board" is one click, "read-only on everything matching `order`" is a search away.
 
-Clicking a level changes nothing on its own. The moment the grid differs from what's stored, **Apply changes** and **Undo** appear — Apply writes the whole grid at once, Undo snaps back. On the create and edit forms it's the same grid, and your **Save** is what commits it, so a token can be scoped as it's minted rather than sitting unrestricted until you come back to it.
+Clicking a level changes nothing on its own. The moment the grid differs from what's stored, **Apply changes** and **Undo** appear — Apply writes the whole grid at once, Undo snaps back. On the create and edit forms it's the same grid, and your **Save** is what commits it, so a token can be entitled as it's minted rather than sitting unrestricted until you come back to it.
 
 An unrestricted token shows one line instead of the grid. **Fine-tune** opens it with every row already at Read & Write — which is what unrestricted means for this owner — so you narrow from there instead of building the list up from nothing. Nothing is stored until you apply or save.
 
 Two things never get a row:
 
-- **Resources the token's owner can't reach.** The rows are resolved through the owner's own policies, so an administrator scoping somebody else's token can't grant past what that person already sees.
+- **Resources the token's owner can't reach.** The rows are resolved through the owner's own policies, so an administrator restricting somebody else's token can't grant past what that person already sees.
 - **The API tokens resource itself.** It has no API endpoint at all ([why](#endpoints)), so granting it would promise something no route can keep.
 
 ### Take a token back to unrestricted
 
-Setting every row to None does not land where you started. A token with nothing granted is scoped to *nothing* — it refuses every request. That's a legitimate thing to want, and it is not the same as never having scoped the token at all.
+Setting every row to None does not land where you started. A token with nothing granted is entitled to *nothing* — it refuses every request. That's a legitimate thing to want, and it is not the same as never having entitled the token at all.
 
 **Make unrestricted** is the way back: it drops every grant and returns the token to reaching everything its owner can. The panel says which of the two states a token is in rather than leaving you to infer it — a collapsed **Unrestricted** line, or a footer counting what's granted against what could be.
 
-### Scopes sit in front of your policies, never instead of them
+### Entitlements sit in front of your policies, never instead of them
 
 The check runs on the way in — before any record is loaded and before your authorization runs — and it can only ever subtract. A granted request then goes through your policies and policy scopes exactly as the same request would without a token.
 
@@ -448,7 +470,7 @@ So a token granted **Read & Write** on Orders still cannot destroy an order its 
 Two consequences worth knowing:
 
 - **A refusal can't be used to probe for records.** Because the gate runs before anything loads, an ungranted request gets the identical response whether the id exists or not.
-- **Only gem-issued tokens are gated.** If your `setup_authentication` [replaces the built-in one](#bring-your-own-authentication) without calling `super`, no token is in flight and no scope check runs — your scheme is in sole charge.
+- **Only gem-issued tokens are gated.** If your `setup_authentication` [replaces the built-in one](#bring-your-own-authentication) without calling `super`, no token is in flight and no entitlement check runs — your scheme is in sole charge.
 
 ### Tell the three refusals apart
 
@@ -457,35 +479,35 @@ A refused request answers one of three ways, and they're deliberately distinguis
 | Response | What happened | Where you fix it |
 | --- | --- | --- |
 | `401` `{ "error": "Unauthorized" }` | The credential didn't authenticate — absent, malformed, unknown, expired, revoked, or orphaned ([all identical on purpose](#token-lifecycle)) | Mint or rotate the token |
-| `403` `{ "error": "Forbidden", "reason": "token_scope" }` | The credential authenticated fine; the token's grants don't cover this resource or this action | The token's **Scopes** panel |
+| `403` `{ "error": "Forbidden", "reason": "token_entitlement" }` | The credential authenticated fine; the token's grants don't cover this resource or this action | The token's **Entitlements** panel |
 | `403` `{ "error": "Forbidden", "reason": "policy" }` | The grants allow it; the owner's policy denied it | Your policy classes, or the token's owner |
 
 `reason` is the whole point of the split: it tells an operator holding the response which lever to pull — widen the token, or fix the policy — without having to reproduce the request from the panel. The [full status-code table](./rest-api-api.html#status-codes) is in the reference.
 
-### Who may change scopes
+### Who may change entitlements
 
-Editing a token's scopes is gated by its own policy method, `edit_scopes?`, exactly like [`revoke?`](#what-each-policy-method-controls) gates the Revoke action:
+Editing a token's entitlements is gated by its own policy method, `edit_entitlements?`, exactly like [`revoke?`](#what-each-policy-method-controls) gates the Revoke action:
 
 ```ruby
 # app/policies/avo/api/token_policy.rb
 class Avo::Api::TokenPolicy < ApplicationPolicy
-  def edit_scopes? = user.admin?
+  def edit_entitlements? = user.admin?
 end
 ```
 
 Denied, the panel renders the grid **read-only** rather than disappearing — so someone who can see a token can always see what it reaches, and is told plainly that they can't change it.
 
-:::danger Without an authorization client, everyone may scope every token
-`edit_scopes?` is asked through the resource's authorization service, and with no client configured every such question answers yes — the same permissive default that applies to [minting and revoking](#who-may-manage-tokens). Nothing in the gem restricts scope editing on its own.
+:::danger Without an authorization client, everyone may entitle every token
+`edit_entitlements?` is asked through the resource's authorization service, and with no client configured every such question answers yes — the same permissive default that applies to [minting and revoking](#who-may-manage-tokens). Nothing in the gem restricts entitlement editing on its own.
 :::
 
-### What scopes don't cover
+### What entitlements don't cover
 
-Scopes constrain **resources and actions**. They do not constrain rows or attributes:
+Entitlements constrain **resources and actions**. They do not constrain rows or attributes:
 
 - **Which records come back** is still your policy scopes' job, unchanged. A token granted Read on Orders sees exactly the orders its owner sees — no more, and no fewer.
 - **Which fields are serialized** is still the resource's per-view visibility (`only_on:` / `hide_on:`).
-- **Custom controller actions.** A grant holds the five REST actions; an action you route onto a generated controller yourself is refused for every scoped token — only an unscoped token reaches it.
+- **Custom controller actions.** A grant holds the five REST actions; an action you route onto a generated controller yourself is refused for every restricted token — only an unrestricted token reaches it.
 
 :::warning Renaming a resource class orphans its grants
 Grants are stored under the Avo resource's class name (`Avo::Resources::Order`). Rename that class and the grant no longer matches anything, so the token is **refused** on the renamed resource — the safe direction, but a silent one.
@@ -639,7 +661,7 @@ Policy *methods* (`index?`, `update?`, …) returning `false` raise `Avo::NotAut
 { "error": "Forbidden", "reason": "policy" }
 ```
 
-The `reason` is what separates this from a [scope refusal](#tell-the-three-refusals-apart), which is also a `403`. Policy **scopes** are unaffected — they keep filtering the index silently, with no error at all.
+The `reason` is what separates this from an [entitlement refusal](#tell-the-three-refusals-apart), which is also a `403`. Policy **scopes** are unaffected — they keep filtering the index silently, with no error at all.
 
 This used to be a **302 redirect** to your root URL, behavior meant for the HTML admin panel; see the [upgrade note](./upgrade.html). A `rescue_from Avo::NotAuthorizedError` you added to your own `BaseResourcesController` to work around that still wins, so your response shape is unchanged.
 :::
@@ -664,7 +686,7 @@ end
 
 ## Manage tokens in the panel
 
-Tokens are minted, scoped, and revoked in Avo — never over the API. The resource ships with the gem, so there is nothing to generate. Two things decide whether it works for your team: whether people can **reach** it, and what they may **do** once they are there.
+Tokens are minted, entitled, and revoked in Avo — never over the API. The resource ships with the gem, so there is nothing to generate. Two things decide whether it works for your team: whether people can **reach** it, and what they may **do** once they are there.
 
 ### Put it in the menu
 
@@ -724,7 +746,7 @@ Each one gates both whether the control renders and whether it can be run, so a 
 | `destroy?` | Deleting the record outright — a different question from revoking it, which keeps the row |
 | `act_on?` | The Actions menu as a whole |
 | `revoke?` | The **Revoke** action. Offered only on an *active* token whatever this returns — an expired or revoked one has nothing left to withdraw |
-| `edit_scopes?` | The [Scopes](#scope-a-token) grid. Denying it renders the grid **read-only** rather than hiding it, and the form's write path strips what it refuses, so what is shown and what is accepted can't drift apart |
+| `edit_entitlements?` | The [Entitlements](#entitle-a-token) grid. Denying it renders the grid **read-only** rather than hiding it, and the form's write path strips what it refuses, so what is shown and what is accepted can't drift apart |
 
 The last three aren't Avo's standard CRUD set, but they're asked exactly the same way — through the resource's authorization service, so a client other than Pundit answers them in its own idiom, and names you remapped through [`config.authorization_methods`](./authorization.html#using-different-policy-methods) are honored.
 
@@ -753,8 +775,8 @@ class Avo::Api::TokenPolicy < ApplicationPolicy
 
   # Revoking is permanent, and changing what a token reaches is just as
   # consequential — both follow ownership rather than the looser browse rules.
-  def revoke?      = mine?
-  def edit_scopes? = mine?
+  def revoke?            = mine?
+  def edit_entitlements? = mine?
 
   class Scope < ApplicationPolicy::Scope
     def resolve
@@ -797,10 +819,10 @@ class Avo::Api::TokenPolicy < ApplicationPolicy
   # `try`, because Avo asks these against the model *class* on an index view,
   # and a class has no `revoked_at`. On the class this is nil, so the rule
   # falls through to ownership and the per-record check decides.
-  def edit?        = update?
-  def update?      = mine? && !revoked?
-  def destroy?     = mine? && !revoked?
-  def edit_scopes? = mine? && !revoked?
+  def edit?              = update?
+  def update?            = mine? && !revoked?
+  def destroy?           = mine? && !revoked?
+  def edit_entitlements? = mine? && !revoked?
 
   private
 
@@ -808,10 +830,10 @@ class Avo::Api::TokenPolicy < ApplicationPolicy
 end
 ```
 
-With that in place the Edit button disappears from a revoked token, its scopes grid renders read-only, and a crafted request to either is refused — the panel and the tool ask the same policy, so there is one answer and no way around it. Leave `show?` alone: reading what a revoked token used to reach is exactly what someone investigating it needs.
+With that in place the Edit button disappears from a revoked token, its entitlements grid renders read-only, and a crafted request to either is refused — the panel and the tool ask the same policy, so there is one answer and no way around it. Leave `show?` alone: reading what a revoked token used to reach is exactly what someone investigating it needs.
 
 :::warning Expiry is not revocation
-Resist adding `expires_at` to that rule. An expiry can be extended, so a lapsed token can be brought back — and it needs its name, expiry and scopes editable in order to come back usefully. Revocation has no such path: the model refuses to un-revoke.
+Resist adding `expires_at` to that rule. An expiry can be extended, so a lapsed token can be brought back — and it needs its name, expiry and entitlements editable in order to come back usefully. Revocation has no such path: the model refuses to un-revoke.
 :::
 
 :::info This is one client's shape
@@ -824,18 +846,18 @@ The **Owner** column is part of the resource the gem ships, and it renders for a
 
 In practice you don't need one. The `Scope` above already decides this: a non-admin only ever sees tokens they own, so the column tells them nothing they didn't know, and the only people reading somebody else's owner are the administrators who should. Scoping the list is the answer to "who sees the owner", not a field option.
 
-If you genuinely must change the field list, a file at `app/avo/resources/avo_api/token.rb` in your own app takes precedence over the gem's copy. Weigh it first: it **replaces** the resource rather than extending it, so the one-time reveal, the scopes grid, the lifecycle strip, and every field become yours to maintain against future versions of the gem. Scoping is almost always the better trade.
+If you genuinely must change the field list, a file at `app/avo/resources/avo_api/token.rb` in your own app takes precedence over the gem's copy. Weigh it first: it **replaces** the resource rather than extending it, so the one-time reveal, the entitlements grid, the lifecycle strip, and every field become yours to maintain against future versions of the gem. Scoping is almost always the better trade.
 
 ## Works better with
 
 Nothing on this page needs another add-on. Two of them change what the feature can do.
 
-- **[`avo-authorization`](./authorization.html)** — the layer every question here defers to: which tokens a user sees, who may revoke or rescope one, and the policies that [scopes subtract from](#scopes-sit-in-front-of-your-policies-never-instead-of-them). Without it every such question answers yes — [Authorization](#authorization) and [Who may manage tokens](#who-may-manage-tokens) have the exact failure modes.
+- **[`avo-authorization`](./authorization.html)** — the layer every question here defers to: which tokens a user sees, who may revoke or re-entitle one, and the policies that [entitlements subtract from](#entitlements-sit-in-front-of-your-policies-never-instead-of-them). Without it every such question answers yes — [Authorization](#authorization) and [Who may manage tokens](#who-may-manage-tokens) have the exact failure modes.
 - **[`avo-custom_controls`](./custom-controls.html)** — promotes **Revoke** out of the Actions dropdown. On a token's page it becomes a button beside Edit; on the index it becomes an icon at the end of every row, so working down a list of tokens costs one click each instead of a round trip. It appears only where the Actions menu would have offered it anyway — the control is filtered by the same `revoke?` policy and the same active-token check, so an expired or already-revoked token shows nothing.
 
 ## Localization
 
-Everything the add-on renders in the panel is a translation: the **API tokens** resource name, the one-time reveal banner, the [status chips](#token-lifecycle), the [scopes grid](#scope-a-token), and the **Revoke** action. All of it lives under `avo.api.token.*` and ships translated in every locale Avo supports, so a panel already running in another language shows tokens in that language with no work from you.
+Everything the add-on renders in the panel is a translation: the **API tokens** resource name, the one-time reveal banner, the [status chips](#token-lifecycle), the [entitlements grid](#entitle-a-token), and the **Revoke** action. All of it lives under `avo.api.token.*` and ships translated in every locale Avo supports, so a panel already running in another language shows tokens in that language with no work from you.
 
 Change any of those strings by defining the same key in your app — yours wins, and you only write the keys you are changing:
 

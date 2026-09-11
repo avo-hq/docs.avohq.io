@@ -74,14 +74,21 @@ rails generate avo_api:generate
 
 <Option name="`avo_api:tokens`">
 
-The tokens table alone: writes the `avo_api_tokens` migration without touching any controller. This is the upgrade path for an app that was running the API before tokens shipped.
+The tokens table alone: writes the `avo_api_tokens` migrations without touching any controller. This is the upgrade path for an app that was running the API before tokens shipped, and for an app picking up a later change to the table.
 
 ```bash
 rails generate avo_api:tokens
 rails db:migrate
 ```
 
-Running it twice is a no-op rather than an error — when the migration already exists it prints a notice and generates nothing.
+Running it twice is a no-op rather than an error — when a migration already exists it prints a notice and generates nothing. That is what makes it safe to re-run: it writes only the migrations your app is missing.
+
+It currently writes two:
+
+| Migration | What it does |
+| --- | --- |
+| `CreateAvoApiTokens` | Creates the `avo_api_tokens` table |
+| `RenameAvoApiTokenScopes` | Renames `scopes` to `entitlements`, for an app installed on `avo-api` 4.2.0. A guarded no-op on a fresh install |
 
 </Option>
 
@@ -205,6 +212,6 @@ raise Avo::Api::AuthenticationError if @api_user.nil?
 | `200` | Success |
 | `201` | Created |
 | `401` | Authentication failed or missing — an absent, malformed, unknown, expired, revoked, or orphaned token all look the same ([why](./rest-api.html#token-lifecycle)) |
-| `403` | Refused on permission. `reason` says which: `token_scope` (outside the token's [grants](./rest-api.html#scope-a-token)) or `policy` (a policy method denied it) — see [the three refusals](./rest-api.html#tell-the-three-refusals-apart) |
+| `403` | Refused on permission. `reason` says which: `token_entitlement` (outside the token's [grants](./rest-api.html#entitle-a-token)) or `policy` (a policy method denied it) — see [the three refusals](./rest-api.html#tell-the-three-refusals-apart) |
 | `404` | Record not found, out of policy scope, or the `avo-api` feature isn't enabled on your license |
 | `422` | Validation errors |
