@@ -81,14 +81,7 @@ rails generate avo_api:tokens
 rails db:migrate
 ```
 
-Running it twice is a no-op rather than an error — when a migration already exists it prints a notice and generates nothing. That is what makes it safe to re-run: it writes only the migrations your app is missing.
-
-It currently writes two:
-
-| Migration | What it does |
-| --- | --- |
-| `CreateAvoApiTokens` | Creates the `avo_api_tokens` table |
-| `RenameAvoApiTokenScopes` | Renames `scopes` to `entitlements`, for an app installed on `avo-api` 4.2.0. A guarded no-op on a fresh install |
+It writes every migration the table needs, and skips each one your app already has — so running it twice is a no-op rather than an error, and re-running it is how an existing install picks up a schema change ([upgrade guide](./upgrade.html)). Each skipped migration prints a notice.
 
 </Option>
 

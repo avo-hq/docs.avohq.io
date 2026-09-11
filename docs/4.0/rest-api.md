@@ -68,28 +68,6 @@ rails db:migrate
 
 There is no initializer setting, environment variable, or credential to add — the feature needs none. Running it twice is a no-op rather than an error.
 
-:::warning Upgrading from `avo-api` 4.2.0
-4.2.0 is the one version that shipped the grants column as `scopes`. It is `entitlements` from 4.3.0 on, everywhere: the column, the panel, the `403` reason, and the policy method.
-
-Re-run the generator and migrate — it writes `RenameAvoApiTokenScopes` and skips the create migration you already have:
-
-```bash
-rails generate avo_api:tokens
-rails db:migrate
-```
-
-Then rename what your own app wrote, if anything:
-
-| 4.2.0 | 4.3.0 |
-| --- | --- |
-| `token.scopes` | `token.entitlements` |
-| `edit_scopes?` on your token policy | [`edit_entitlements?`](#who-may-change-entitlements) |
-| `"reason": "token_scope"` in a `403` | `"reason": "token_entitlement"` |
-| `scopes_grid` in a form post | `entitlements_grid` |
-
-A policy still defining `edit_scopes?` is the one to fix first: nothing asks that method any more, so the question falls back to the [permissive default](#who-may-change-entitlements) and everyone may edit entitlements.
-:::
-
 :::info Skipping tokens entirely
 Only if your app brings its own credential scheme. Then [replace the authentication hook](#bring-your-own-authentication) too, so nothing goes looking for a token that cannot exist.
 :::
