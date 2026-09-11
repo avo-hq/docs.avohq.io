@@ -217,7 +217,7 @@ Four capabilities cover the whole surface. Write means create, update *and* dele
 | **Use this app's own tools**  | `avo:custom`, or `avo:custom:<tool>`   | the tools you add — see [Your own tools](#your-own-tools)                          | *Not* selected |
 
 :::warning A global `avo:custom` covers tools that do not exist yet
-The other three capabilities are bounded by the admin's own policies however the app changes. `avo:custom` granted globally is different: it covers every tool this application registers **from then on**, including ones written after the admin ticked the box. That is why the authorize page says so where the choice is made, and why narrowing it to named tools is offered beside it.
+The other three capabilities are bounded by the admin's own policies however the app changes. `avo:custom` granted globally is different: it covers every tool this application registers **from then on**, including ones written after the admin ticked the box. The authorize page says so above the choice, and offers narrowing to named tools beside it.
 :::
 
 A capability can only ever narrow what a connection may do. Granting write doesn't let the connection delete anything its owning admin couldn't delete by hand — see [Every call stays inside the admin's own permissions](#every-call-stays-inside-the-admin-s-own-permissions).
@@ -343,17 +343,25 @@ end
 
 Class names, as strings. Nothing is loaded while that initializer runs — the endpoint resolves each name once per request, which is also what lets an edit to the tool be served on the next call without a restart.
 
+Assign the whole array; don't append to it. The reader hands back a frozen copy, so `extra_tools << "SecondTool"` raises `FrozenError` at boot — appending would slip past the validation the setter does.
+
 There's no per-tool configuration here. A tool reads its own settings from `ENV` or Rails credentials, so nothing in this file ever holds a secret.
 
 ### 3. Have an admin authorize it
 
-A tool is not callable until a connection was granted it, and **existing connections do not gain it**. An admin who connected before you shipped the tool is refused with `missing_capability` until they authorize that client again — capabilities are fixed when a connection is created and can never be widened in place.
+A tool is not callable until a connection was granted it, and **existing connections do not gain it**. An admin who connected before you shipped the tool is refused with `-32000`, carrying `requiredCapability: "avo:custom:<wire_name>"`, until they authorize that client again — capabilities are fixed when a connection is created and can never be widened in place.
+
+`avo:custom` gates *calling* the tool. What the tool declares in `touches` still has to be granted separately: a tool declaring a write is refused with `requiredCapability: "avo:write:<Resource>"` for a connection that holds no write, even one granted every tool.
 
 The **MCP connections** resource shows which registered tools each connection cannot call, so you can see this without waiting for a user to report it.
 
 ### What the gem checks, and what it cannot
 
-A tool that would break the endpoint is dropped at registration with a line in your log naming the class and the reason — the endpoint keeps serving everything else. It's dropped if it doesn't subclass `Avo::McpServer::Tool`, overrides `call`, declares no `tool_name`, `description` or `touches`, declares a capability other than `avo:custom`, claims one of the nine shipped wire names, or claims a name another registered tool already claimed.
+A tool that would break the endpoint is dropped at registration with a line in your log naming the class and the reason — the endpoint keeps serving everything else. When a tool doesn't appear, read that log first; nothing surfaces the reason in the client.
+
+The two likeliest causes aren't about the tool's contents at all: **the class name doesn't resolve** (a typo, or a constant Zeitwerk can't find), and **the class body raised while loading** — `input_schema` is built and validated against JSON Schema 2020-12 at class-definition time, so a misspelled `type:` raises before the class exists.
+
+It's also dropped if it doesn't subclass `Avo::McpServer::Tool`, overrides `call`, declares no `tool_name`, `description` or `touches`, declares a capability other than `avo:custom`, has a wire name outside 1–128 characters of `A-Za-z0-9_-.`, claims one of the nine shipped wire names, or claims a name another registered tool already claimed.
 
 Two things it cannot check for you, both in the generated file's comments:
 
