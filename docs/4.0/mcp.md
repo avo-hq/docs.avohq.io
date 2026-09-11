@@ -207,13 +207,18 @@ A heading reading *Claude Code* over a verified domain reading `totally-not-evil
 
 ## Choose what a connection can do
 
-Three capabilities cover the whole surface. Write means create, update *and* delete, as it does in avo-api. Read and write can be granted for every resource the admin can see, or narrowed to named resources; run actions is a global toggle.
+Four capabilities cover the whole surface. Write means create, update *and* delete, as it does in avo-api. Read and write can be granted for every resource the admin can see, or narrowed to named resources; run actions is a global toggle; and this app's own tools can be granted all together or one at a time.
 
 | Capability            | Scope                                  | Tools it unlocks                                                                  | At consent     |
 | --------------------- | -------------------------------------- | --------------------------------------------------------------------------------- | -------------- |
 | **Read**                      | `avo:read`, or `avo:read:<Resource>`   | `list_resources`, `list_records`, `show_record`, `search_records`, `list_actions` | Selected       |
 | **Create, update and delete** | `avo:write`, or `avo:write:<Resource>` | `create_record`, `update_record`, `delete_record`                                 | *Not* selected |
 | **Run actions**               | `avo:actions`                          | `run_action`                                                                      | *Not* selected |
+| **Use this app's own tools**  | `avo:custom`, or `avo:custom:<tool>`   | the tools you add — see [Your own tools](#your-own-tools)                          | *Not* selected |
+
+:::warning A global `avo:custom` covers tools that do not exist yet
+The other three capabilities are bounded by the admin's own policies however the app changes. `avo:custom` granted globally is different: it covers every tool this application registers **from then on**, including ones written after the admin ticked the box. That is why the authorize page says so where the choice is made, and why narrowing it to named tools is offered beside it.
+:::
 
 A capability can only ever narrow what a connection may do. Granting write doesn't let the connection delete anything its owning admin couldn't delete by hand — see [Every call stays inside the admin's own permissions](#every-call-stays-inside-the-admin-s-own-permissions).
 
@@ -246,7 +251,7 @@ This is a documented, accepted limitation rather than an oversight, and the miti
 
 ## Available tools
 
-The server exposes nine tools covering the full range of admin operations.
+The server exposes nine tools covering the full range of admin operations, and your app can [add its own](#your-own-tools).
 
 ### Read-only tools
 
@@ -303,6 +308,65 @@ Naming such a resource directly is an error. In an all-resource search it's skip
 
 It never falls back to returning the resource's records. That fallback is the tempting one, and it would turn "this resource can't be searched" into "here is everything in it" — silently widening the widest read surface the add-on has.
 
+## Your own tools
+
+Your app can add tools of its own, so an agent does one of your operations in a single call instead of assembling it from the nine above.
+
+### When to write one, and when not to
+
+You already have a way to expose an app-defined operation: an **Avo Action**, which `run_action` serves to a client today. Reach for a host tool only when you need something an action cannot give you:
+
+- **A JSON schema the model reads.** An action's inputs are form fields. A host tool declares `input_schema`, so the model knows the argument names, types and bounds before it calls.
+- **An operation that isn't scoped to one resource.** An action runs against records of the resource it's registered on. A host tool can read Orders, write an Invoice, and call your billing provider in one call.
+- **A structured result.** An action answers with the messages the panel would have flashed. A host tool returns data the model can use in its next step.
+
+If what you want is a sequence of reads and writes on one resource, `run_action` already does it — and every tool you add costs roughly 450 tokens of description and schema on every `tools/list`, to every connection, forever.
+
+### 1. Scaffold it
+
+```bash
+bin/rails generate avo:mcp_server:tool issue_invoice
+```
+
+That writes `app/mcp_tools/issue_invoice_tool.rb` defining `IssueInvoiceTool`, which a client calls as `issue_invoice`. `issue_invoice`, `issue_invoice_tool` and `IssueInvoiceTool` all produce the same file and the same wire name.
+
+The generated file runs as-is. It reads through the connecting admin's own policy scope, records an audit entry, and answers a call — so you can register it, call it once to see the shape, and then edit it into what you actually need. Its comments carry the things nothing at runtime can check for you.
+
+### 2. Register it
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.mcp_server.extra_tools = ["IssueInvoiceTool"]
+end
+```
+
+Class names, as strings. Nothing is loaded while that initializer runs — the endpoint resolves each name once per request, which is also what lets an edit to the tool be served on the next call without a restart.
+
+There's no per-tool configuration here. A tool reads its own settings from `ENV` or Rails credentials, so nothing in this file ever holds a secret.
+
+### 3. Have an admin authorize it
+
+A tool is not callable until a connection was granted it, and **existing connections do not gain it**. An admin who connected before you shipped the tool is refused with `missing_capability` until they authorize that client again — capabilities are fixed when a connection is created and can never be widened in place.
+
+The **MCP connections** resource shows which registered tools each connection cannot call, so you can see this without waiting for a user to report it.
+
+### What the gem checks, and what it cannot
+
+A tool that would break the endpoint is dropped at registration with a line in your log naming the class and the reason — the endpoint keeps serving everything else. It's dropped if it doesn't subclass `Avo::McpServer::Tool`, overrides `call`, declares no `tool_name`, `description` or `touches`, declares a capability other than `avo:custom`, claims one of the nine shipped wire names, or claims a name another registered tool already claimed.
+
+Two things it cannot check for you, both in the generated file's comments:
+
+- **`touches` is trusted, not verified.** It's what narrows `avo:custom` per resource. `Avo::McpServer::ToolSupport` applies the admin's policy scope, but not the connection's per-resource grant — that lives in your declaration. A tool declaring `Order` that also reads `Customer` is a tool nothing narrowed on `Customer`.
+- **A `ToolErrors` message is sent verbatim to the client.** `raise Avo::McpServer::ToolErrors::InvalidArguments.new(e.message)` forwards whatever the caught exception said — a SQL fragment, a provider response body — to whoever is on the other end. Compose your own message and log the real one.
+
+### A wire name is what a grant binds to
+
+`avo:custom:issue_invoice` names the wire name, not the class behind it. So:
+
+- **Renaming a tool silently revokes it.** The old narrowed grant no longer matches, and the connection is refused until an admin authorizes again.
+- **Reusing a freed name silently transfers it.** A new class taking a retired tool's wire name inherits the approval the old one had. The gem refuses this within a single resolution, but nothing tracks a name across a config change — so if you retire a tool and later reuse its name, revoke the affected connections first.
+
 ## Every call stays inside the admin's own permissions
 
 Every tool call passes two gates, in this order:
@@ -352,7 +416,7 @@ Connections are an Avo resource — **MCP connections** in the sidebar, at `<you
 
 **Create new** on the resource opens the connect page inside the panel — the server URL and a recipe per client — because a connection is created by a client arriving at the authorize page, never by a form. The same recipes are what a browser sees when it opens the MCP URL itself.
 
-**Revoke** is an action on the resource — select rows and run it from the actions menu, or run it from a connection's own page. With [Custom controls](./custom-controls.html) installed the bars follow the [API tokens](./api.html) resource: Revoke is a button on the index toolbar once rows are selected, an icon at the start of each live row, and the first button on the connection's page; the index trades "Create new" for a **Connect a client** link. The connection's page shows status, last used, authorized and revoked as the small chips by its title. Revoking takes effect on the client's next call: its tokens stop validating, and reconnecting means a fresh trip through the authorize page. Nothing is sent to the client. The connection stays in the list, marked revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel; the model refuses both.
+**Revoke** is an action on the resource — select rows and run it from the actions menu, or run it from a connection's own page. With [Custom controls](./custom-controls.html) installed the bars follow the API tokens resource: Revoke is a button on the index toolbar once rows are selected, an icon at the start of each live row, and the first button on the connection's page; the index trades "Create new" for a **Connect a client** link. The connection's page shows status, last used, authorized and revoked as the small chips by its title. Revoking takes effect on the client's next call: its tokens stop validating, and reconnecting means a fresh trip through the authorize page. Nothing is sent to the client. The connection stays in the list, marked revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel; the model refuses both.
 
 The resource is excluded from the MCP tools themselves. A connected client can't list connections or run Revoke through `run_action`.
 
@@ -614,3 +678,4 @@ These options live under `config.mcp_server` inside `Avo.configure`, in `config/
 | `enabled`             | `Boolean` | `false` | Turns the whole server on. Off by default — installing the gem never starts answering protocol requests on its own.         |
 | `resource_identifier` | `String`  | `nil`   | Optional. The public URL of this MCP server when it isn't the origin requests arrive on, e.g. `"https://app.example.com/avo/mcp"`. Never request-derived. |
 | `tool_calls_per_minute` | `Integer` | `300`   | Per-connection ceiling on JSON-RPC tool calls. Over it, the client gets `429` with `Retry-After`. Size it to your heaviest legitimate agent; it bounds your own workload, not an unauthenticated caller's. |
+| `extra_tools`         | `Array<String>` | `[]` | Class names of [your own tools](#your-own-tools), served after the nine. Strings, not classes — nothing is loaded while the initializer runs. Per-tool configuration isn't accepted; a tool reads its own settings from `ENV` or credentials. |
