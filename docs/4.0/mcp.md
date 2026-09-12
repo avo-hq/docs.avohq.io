@@ -1,174 +1,262 @@
 ---
 license: addon
 addon_link: https://avohq.io/addons/mcp-server
+addon: avo-mcp_server
 betaStatus: "Not yet released"
 outline: [2, 3]
 ---
 
-# MCP (Model Context Protocol)
+# MCP server
 
-The `avo-mcp` gem exposes your Avo admin panel as an MCP server, allowing LLM-powered tools like Claude Desktop, Claude Code, or any MCP-compatible client to browse and manage your admin data through natural language.
+The `avo-mcp_server` add-on turns your Avo panel into a **remote** [MCP](https://modelcontextprotocol.io) server. An admin pastes the panel's MCP URL into an AI client — Claude Code, Cursor, ChatGPT, VS Code — approves a consent screen served by the panel itself, and everything the client does afterwards runs **as that admin, under the policies they already have**.
+
+There is no token to copy and no service account. The client obtains a short-lived token through an OAuth redirect and refreshes it itself, and the admin can revoke the whole connection from the panel at any time.
+
+:::info Add-on
+The MCP server ships as the separate `avo-mcp_server` gem. [See the add-on page →](https://avohq.io/addons/mcp-server)
+:::
 
 ## Requirements
 
 - Avo `>= 4.0`
-- Ruby `>= 3.0`
-- Rails `>= 6.1`
+- A licensed `avo-mcp_server`
+- A licensed **`avo-authorization`** — not merely bundled. Every tool call runs the connected admin's policies through it, and the server refuses to serve at all rather than run with authorization skipped.
 
 ## Installation
 
 ### 1. Add the gem
 
 ```ruby
-gem "avo-mcp", source: "https://packager.dev/avo-hq/"
+# Gemfile
+gem "avo-mcp_server", source: "https://packager.dev/avo-hq/"
 ```
-
-### 2. Install dependencies
 
 ```bash
 bundle install
 ```
 
-### 3. Configure
+### 2. Run the installer
 
-Add the following to your `config/initializers/avo.rb`:
+```bash
+bin/rails generate avo:mcp_server install
+bin/rails db:migrate
+```
+
+This creates the `avo_mcp_server_*` tables — connections, single-use authorization codes, access tokens, and the connection log — and appends the configuration block to `config/initializers/avo.rb`.
+
+### 3. Mount the endpoints
 
 ```ruby
-Avo::Mcp.configure do |config|
-  config.enabled = true # [!code highlight]
-  config.token = ENV["AVO_MCP_TOKEN"] # [!code highlight]
-  config.mount_path = "/avo-mcp"
-  config.transport = :both # :stdio, :http, or :both
-  config.current_user = ->(token) { User.find_by(mcp_token: token) } # [!code highlight]
+# config/routes.rb
+Rails.application.routes.draw do
+  mount_avo_mcp_server # [!code focus]
+
+  authenticate :user do
+    mount_avo
+  end
+end
+```
+
+:::warning Mount it outside your authentication block
+`mount_avo_mcp_server` must sit **outside and before** any `authenticate` block. The discovery, registration and token endpoints are called by the AI client, which has no session — wrapping them in your app's sign-in makes every client fail at a step that looks like a routing bug.
+:::
+
+It draws the two OAuth discovery documents (always at the origin root, where the protocol requires them), the client registration endpoint, the token endpoint, and the JSON-RPC endpoint at `/avo/mcp`. Pass `at:` to move the JSON-RPC endpoint alone:
+
+```ruby
+mount_avo_mcp_server at: "/agents/mcp"
+```
+
+The consent screen and the connections resource are **not** part of this. They are mounted with the panel and inherit your existing sign-in.
+
+### 4. Enable it
+
+Installing the gem never starts answering protocol requests on its own — you have to say so:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.mcp_server.enabled = true # [!code focus]
 end
 ```
 
 ## Configuration
 
-| Option         | Default      | Description                                                                                                |
-| -------------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
-| `enabled`      | `true`       | Enable or disable the MCP server                                                                           |
-| `token`        | `nil`        | Authentication token. Falls back to `ENV["AVO_MCP_TOKEN"]` if not set. Can be a `Proc` for lazy evaluation |
-| `mount_path`   | `"/avo-mcp"` | The HTTP endpoint path where the MCP server is mounted                                                     |
-| `transport`    | `:both`      | Transport mode: `:stdio`, `:http`, or `:both`                                                              |
-| `current_user` | `nil`        | A `Proc` that receives the token and returns a user object for authorization                               |
+All options live under `config.mcp_server` inside `Avo.configure`. There is no `Avo::McpServer.configure` block.
 
-## Transport modes
+```ruby
+Avo.configure do |config|
+  # Master switch. Installing the gem never starts serving on its own.
+  config.mcp_server.enabled = true
 
-Avo MCP supports two transport modes that can be used independently or together.
+  # Optional. By default the server's address is the origin each request arrives on plus the
+  # mount path. Pin the full public URL here when the panel answers at more than one origin,
+  # or when a proxy hides the public origin from the app.
+  config.mcp_server.resource_identifier = "https://app.example.com/avo/mcp"
 
-### Stdio
+  # Per-connection ceiling on JSON-RPC tool calls per minute. Over it, the endpoint answers
+  # 429 with Retry-After. This bounds your own authenticated agent doing your own work —
+  # raise it for a heavy one.
+  config.mcp_server.tool_calls_per_minute = 300
 
-The stdio transport is ideal for local development with tools like Claude Desktop or Claude Code. It communicates over stdin/stdout using JSON-RPC.
+  # Whether the endpoint records what each connection asked for, for the Activity card.
+  config.mcp_server.connection_log = true
 
-Run it from your Rails app root:
-
-```bash
-bundle exec avo-mcp
+  # How many log rows each connection keeps. Older rows are dropped as newer ones arrive.
+  # nil keeps every row.
+  config.mcp_server.connection_log_size = 500
+end
 ```
 
-### HTTP
+| Option                  | Type      | Default | Notes                                                                            |
+| ----------------------- | --------- | ------- | -------------------------------------------------------------------------------- |
+| `enabled`               | `Boolean` | `false` | Master switch.                                                                    |
+| `resource_identifier`   | `String`  | `nil`   | Pins the server's public address. Only needed behind a proxy or multiple origins. |
+| `tool_calls_per_minute` | `Integer` | `300`   | Per-connection rate limit on tool calls.                                          |
+| `connection_log`        | `Boolean` | `true`  | `false` records nothing; the Activity card says so.                               |
+| `connection_log_size`   | `Integer` | `500`   | Rows kept per connection. `nil` keeps all.                                        |
 
-The HTTP transport mounts an endpoint in your Rails app that accepts JSON-RPC requests. It supports both single JSON responses and SSE streaming.
+## Connecting a client
 
-Requests must include the authentication token:
+The admin copies the server URL — the panel's origin plus the mount path — and adds it to their client as a remote MCP server. Opening that URL in a browser shows a connect page with a setup recipe for each client.
 
-```bash
-curl -X POST http://localhost:3000/avo-mcp \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer your-token-here" \
-  -d '{"jsonrpc": "2.0", "method": "tools/list", "id": 1}'
-```
+The client sends them to the panel's own consent screen, where they choose what it may do and approve. Nothing is copied by hand.
 
-## Connecting to Claude Desktop
+:::warning The name is the client's claim; the domain is the evidence
+The consent screen leads with the client's own product name, because that is the string an admin can match against the thing they just launched — and says in the same breath that the panel has not verified it, printing the origin of the client identifier. A name is whatever a client puts in its own metadata. The origin is the one attribute an attacker would have to control a domain to forge.
+:::
 
-Add the following to your Claude Desktop MCP configuration:
+## Capabilities
 
-```json
-{
-  "mcpServers": {
-    "avo": {
-      "command": "bundle",
-      "args": ["exec", "avo-mcp"],
-      "cwd": "/path/to/your/rails/app"
-    }
-  }
-}
-```
+Three capabilities cover the whole surface. **Write includes delete**, as it does in the REST API.
 
-## Connecting to Claude Code
+| Capability       | Scope string                               | What it unlocks                                                             |
+| ---------------- | ------------------------------------------ | --------------------------------------------------------------------------- |
+| **Read**         | `avo:read`, or `avo:read:<Resource>`       | `list_resources`, `list_records`, `show_record`, `search_records`, `list_actions` |
+| **Read & write** | `avo:write`, or `avo:write:<Resource>`     | Everything in Read, plus `create_record`, `update_record`, `delete_record`   |
+| **Run actions**  | `avo:actions`                              | `run_action`                                                                  |
 
-Add the MCP server to your Claude Code configuration:
+Read and write are granted across every resource the admin can see, or **narrowed to named resources** through the consent screen's "Choose per resource" option. Run actions is a global toggle — there is no per-resource or per-action selection — and over a narrowed read it reaches exactly the resources those reads allow.
 
-```json
-{
-  "mcpServers": {
-    "avo": {
-      "command": "bundle",
-      "args": ["exec", "avo-mcp"],
-      "cwd": "/path/to/your/rails/app"
-    }
-  }
-}
-```
+A capability never widens what the admin can already do. It only narrows the result of your own authorization further.
 
-Once connected, you can ask Claude questions like:
+## Managing connections
 
-- "List all users"
-- "Show me the last 10 orders sorted by created_at"
-- "Search for users named John"
-- "Create a new post with title 'Hello World'"
-- "Run the 'Archive' action on post 42"
+Connections are an ordinary Avo resource — **MCP connections**, at `<avo-root>/resources/mcp_connections` — so they get the same table, filters, actions menu and policy as everything else in your panel.
 
-## Available tools
+A connection is created by authorizing a client and ended by revoking one. Nothing edits one in between: the model refuses it, because widening a client's reach underneath it is exactly what an admin would not expect. To change what a client may do, revoke it and authorize it again.
 
-Avo MCP exposes 9 tools that cover the full range of admin operations.
+**Revoke** is an action on the resource. It takes effect on the client's next call, notifies nothing, and the connection stays listed as revoked so the record survives.
 
-### Read-only tools
+A connection's page carries three cards below its fields.
 
-| Tool             | Description                                                                   |
-| ---------------- | ----------------------------------------------------------------------------- |
-| `list_resources` | Discover all available Avo resources with field definitions and record counts |
-| `list_records`   | List records from a resource with pagination, sorting, and filtering          |
-| `show_record`    | Show a single record's full details including associations                    |
-| `search_records` | Search across one or all resources using the configured search query          |
-| `list_actions`   | Discover available actions for a resource                                     |
+### Entitlements
 
-### Write tools
+What the grant reaches, resource by resource: one row per resource at **None / Read / Read & write**, with a search over them and a count underneath. It is the consent screen's decision read back in the same shape the admin made it in.
 
-| Tool            | Description                                   |
-| --------------- | --------------------------------------------- |
-| `create_record` | Create a new record with attribute validation |
-| `update_record` | Update an existing record's attributes        |
-| `delete_record` | Delete a record                               |
-| `run_action`    | Execute an Avo action on one or more records  |
+Rows are the resources the connection's **owner** can list — not the reader's. A grant naming a resource the panel no longer registers keeps its row, marked *no longer listed*, so the card never under-reports what is held.
+
+A grant that names no resources collapses to a single line — *Every resource*, at the level it holds — with the list behind a **Show resources** control.
+
+### Tools
+
+The same grant read back as the calls it turns into on the wire, by the name a client prints in its own transcript: `list_records`, `run_action`. It is grouped by the capability that unlocks each group, and **capabilities the grant withholds keep their group**, muted and headed "not granted" — because "why can it not do X?" is what this screen gets opened for.
+
+### Activity
+
+Every request the client made, newest first, kept current while the page is open: the tool and the resource it named, the time, the duration, and the outcome. A tool call's arguments sit behind a disclosure on its row, filtered through your app's `filter_parameters` and capped at 4 KB.
+
+In an app without `avo-audit_logging`, this and the **Last used** column are the only record anywhere that a connection ever ran — which is the first thing asked after a suspected token theft.
+
+Switch it off with `config.mcp_server.connection_log = false`.
 
 ## Authorization
 
-Avo MCP respects your existing Avo authorization setup. Every tool checks permissions before executing:
+**The gem ships no policy and no scoping for the connections resource.** Who sees which connections, and who may revoke them, is your decision — made in `Avo::McpServer::ConnectionPolicy` exactly as for any other resource.
 
-- **Token authentication** — Requests are validated using constant-time comparison against the configured token.
-- **User resolution** — The `current_user` proc maps a token to a user object. If no proc is configured, tools run without a user context.
-- **Policy checks** — Each tool invokes `Avo::Services::AuthorizationService.authorize` with the resolved user, so your existing Pundit (or other) policies apply.
+Without a policy, Avo's defaults apply: with `explicit_authorization = false` every admin sees, opens and may revoke every connection; with `explicit_authorization = true` the resource stays hidden until a policy answers `index?`.
 
-If a user is not authorized for an operation, the tool returns a structured error:
+```ruby
+# app/policies/avo/mcp_server/connection_policy.rb
+class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
+  class Scope < ApplicationPolicy::Scope
+    def resolve
+      user.owner? ? scope.all : scope.where(user: user)
+    end
+  end
 
-```json
-{
-  "error_type": "not_authorized",
-  "action": "index",
-  "message": "You are not authorized to perform this action."
-}
+  def index? = true
+
+  def show? = true
+
+  # Asked once with the class, then per selected record.
+  def act_on? = user.owner? || record.user == user
+
+  # The model refuses all three anyway; returning false hides the controls too.
+  def create? = false
+  def edit? = false
+  def destroy? = false
+end
 ```
 
-## Error handling
+### Per-card visibility
 
-All tools return structured error responses when something goes wrong:
+Each card below the fields has an **optional** policy method of its own. All three fall back to `show?` when your policy does not define them, so a policy that defines none gives the whole page to anyone who may open it.
 
-| Error type         | When it occurs                                   |
-| ------------------ | ------------------------------------------------ |
-| `invalid_params`   | Required parameters are missing or invalid       |
-| `not_found`        | The requested resource or record doesn't exist   |
-| `not_authorized`   | The current user lacks permission for the action |
-| `validation_error` | Record validation failed (includes field errors) |
-| `internal_error`   | An unexpected error occurred                     |
+| Method               | Decides                                                        |
+| -------------------- | -------------------------------------------------------------- |
+| `view_entitlements?` | The **Entitlements** card                                       |
+| `view_tools?`        | The **Tools** card                                              |
+| `view_activity?`     | The **Activity** card *and* the endpoint it polls               |
+
+They are separate because the cards disclose different things:
+
+- **Activity** is the only card carrying data about your own records — tool arguments, record ids, search terms.
+- **Entitlements** is computed against the connection **owner's** reach. On somebody else's connection it therefore names resources the reader's own policies may hide from them.
+- **Tools** is derived from the tool registry and the grant, and discloses nothing beyond them.
+
+Refusing one leaves the rest of the page intact:
+
+```ruby
+class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
+  def show? = true
+
+  # Everyone may see that a connection exists and revoke it...
+  # ...but only its owner reads what it actually did.
+  def view_activity? = user.owner? || record.user == user # [!code focus]
+
+  # ...and only owners see which resources another admin's grant reaches.
+  def view_entitlements? = user.owner? || record.user == user # [!code focus]
+end
+```
+
+:::info
+`view_activity?` is asked by the card *and* by the endpoint the page polls, so the two can never disagree. The other two cards render whole with the page and have no endpoint of their own.
+:::
+
+### What the tools themselves check
+
+A capability is permission to *try*, never permission to succeed. Every tool call still runs the connected admin's own policies, so a record their policies hide stays hidden, a field your resource does not render is not returned, and an action they may not run is refused.
+
+The converse holds too: **a field your panel does render that admin is returned**, credentials included. To keep something out of an AI client's reach, put a `visible:` block on that field — the same one that hides it from a person. There is no MCP-only redaction list.
+
+### Keeping the resource off the sidebar
+
+```ruby
+# config/initializers/avo.rb
+Rails.application.config.to_prepare do
+  Avo::Resources::McpConnection.visible_on_sidebar = false
+end
+```
+
+A host with an explicit `config.resources` array must add `"Avo::Resources::McpConnection"` to it.
+
+## Troubleshooting
+
+| Symptom                                                       | Cause                                                                                                            |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Every client fails at discovery or token exchange              | `mount_avo_mcp_server` is inside an `authenticate` block, or missing from `config/routes.rb`.                     |
+| Clients refused with a mismatch error                          | The panel is served from an address other than `resource_identifier`. Behind a TLS proxy, forward `X-Forwarded-Proto` and `X-Forwarded-Host` and allow the public host in `config.hosts`. |
+| Endpoints answer 404                                           | `config.mcp_server.enabled` is still `false`, or `avo-mcp_server` / `avo-authorization` is not licensed.          |
+| A client connects but lists no tools                           | The client rejected the `tools/list` schema — every request returned 200. Ask the client what it rejected (`claude mcp list` prints the validation error); the server's logs show nothing wrong. |
+| The Activity card names a migration                            | The app was installed before the log existed. Run the installer again — it adds only the missing migration — then migrate. |
