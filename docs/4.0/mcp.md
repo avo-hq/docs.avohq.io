@@ -462,7 +462,16 @@ Avo.configure do |config|
 end
 ```
 
-Who may read a connection's log is who may open its page: the card and the endpoint it polls run the same policy, `show?` and the scope both.
+Who may read a connection's log is, by default, who may open its page: the card and the endpoint it polls ask the same `show?` your policy answers for the page. To draw the line elsewhere — everyone may see a connection, only some may read what it did — define `view_activity?` on the policy. When it exists, the card and the endpoint ask it instead; when it doesn't, `show?` stands.
+
+```ruby
+class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
+  def show? = true
+
+  # The Activity card, and the endpoint it polls.
+  def view_activity? = user.owner? || record.user == user
+end
+```
 
 :::warning Upgrading from a version without the log
 The log has its own table. Run the installer again — it adds only the migration you're missing — then migrate:
@@ -493,6 +502,10 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
   # The revoke action. Avo asks once for the action itself (record is the class) and the
   # action asks again per selected connection.
   def act_on? = record.is_a?(Class) || record.user == user
+
+  # The Activity card on a connection's page, and the endpoint it polls. Optional: without
+  # it, `show?` decides.
+  def view_activity? = record.user == user
 
   # Connections are created by authorizing a client and ended by revoking it.
   # Refusing these hides the edit and delete controls, which the model refuses
