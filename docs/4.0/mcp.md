@@ -195,7 +195,7 @@ The converse is the rule too: a field the panel **does** render this admin is re
 
 ## Review and revoke connections
 
-Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — the client's name and id, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, a **Tools** card listing the calls its grant unlocks (and the ones it withholds), and the **Activity** card described below.
+Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — the client's name and id, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
 
 **Revoke** is an action on the resource, from the actions menu or a connection's page; with [Custom controls](./custom-controls.html) it's also a button on the toolbar, on each live row, and on the page. It takes effect on the client's next call and notifies nothing. The connection stays listed as revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel, and the resource is excluded from the MCP tools themselves — a client can't list connections or revoke one through `run_action`.
 
@@ -210,9 +210,25 @@ config.profile_menu = -> do
 end
 ```
 
+### See what a connection may reach
+
+The **Entitlements** card is the consent screen's decision read back in the shape it was made in: one row per resource, at **None**, **Read** or **Read & write**, with a search over them and a count underneath — `4 of 14 granted — everything else is refused`.
+
+Rows are the resources the connection's **owner** can list, not the reader's. A grant that names a resource the panel no longer registers keeps its row, marked *no longer listed*, so the card never under-reports what is held. A grant that names no resources at all collapses to one line — *Every resource*, at the level it holds — with the list behind a **Show resources** control.
+
+It is read-only, and not for want of a form. A connection's capabilities are fixed when it is authorized: to change what a client may do, revoke it and authorize it again, so the client is told rather than having its reach changed underneath it.
+
+Running actions is not a per-resource question, so it sits above the grid as its own line rather than as a row that could not hold it.
+
+:::info
+This is the same grid the [REST API](./rest-api.html) shows for an API token's entitlements. A panel running both add-ons asks "what may this credential reach?" in one form on both screens.
+:::
+
+The **Tools** card below it is the same grant read as the calls it turns into — `list_records`, `run_action` — grouped by the capability that unlocks each group. A narrowed grant is **counted** there (*on 3 resources*) rather than named, since the names are rows on the Entitlements card above. The write group says what it stands on, above its tools: *Everything in Read, plus:* — "Read & write" heads three calls only because the group carries read's five as well.
+
 ### Watch what a connection is doing
 
-A connection's page carries an **Activity** card: every request the client made, newest first, kept current while the page is open. Each row shows the tool and resource it named (or the method, for `initialize` and `tools/list`), the time, how long it took, and how it went:
+A connection's page carries a **Log** card: every request the client made, newest first, kept current while the page is open. Each row shows the tool and resource it named (or the method, for `initialize` and `tools/list`), the time, how long it took, and how it went:
 
 | Outcome        | What happened                                                                                     |
 | -------------- | ------------------------------------------------------------------------------------------------- |
@@ -232,7 +248,7 @@ Each connection keeps its newest 500 rows and drops older ones as new ones arriv
 config.mcp_server.connection_log_size = 2_000
 ```
 
-Who may read the log is who may open the page, unless your policy defines `view_activity?` — then the card and the endpoint it polls ask that instead.
+Who may read the log is who may open the page, unless your policy defines `view_log?` — then the card and the endpoint it polls ask that instead.
 
 Upgrading from a version without the log? The log has its own table: run `bin/rails generate avo:mcp_server install` again, then `bin/rails db:migrate`. Until then the card names the migration and nothing is recorded.
 
@@ -250,8 +266,12 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
   # Revoke. Avo asks once for the action itself (record is the class), then per selected connection.
   def act_on? = record.is_a?(Class) || user.owner? || record.user == user
 
-  # The Activity card and the endpoint it polls. Optional: without it, show? decides.
-  def view_activity? = user.owner?
+  # The three cards below the fields. Each is optional: without it, show? decides.
+  def view_log? = user.owner?
+
+  def view_entitlements? = user.owner?
+
+  def view_tools? = true
 
   # Connections are created by authorizing a client and ended by revoking it.
   def create? = false
@@ -267,6 +287,16 @@ end
 ```
 
 The `Scope` decides the list, `show?` the page, `act_on?` the Revoke action. To keep the resource off the sidebar, set `Avo::Resources::McpConnection.visible_on_sidebar = false` in a `to_prepare` block.
+
+Each card below the fields has an optional method of its own, and all three fall back to `show?`, so a policy that defines none gives the whole page to anyone who may open it. They are separate because the cards disclose different things:
+
+| Method               | Card                                          | What it discloses                                                                                                     |
+| -------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `view_log?`          | **Log**, *and* the endpoint the page polls    | Data about your own records — tool arguments, record ids, search terms.                                                 |
+| `view_entitlements?` | **Entitlements**                              | The connection **owner's** reach. On another admin's connection it names resources the reader's own policies may hide. |
+| `view_tools?`        | **Tools**                                     | Tool names, derived from the registry and the grant. Nothing beyond them.                                               |
+
+Refusing one leaves the rest of the page intact.
 
 ## Run it in production
 
@@ -316,7 +346,7 @@ Rails.application.config.filter_parameters += [:_meta]
 
 ## Trace changes back to an admin
 
-With [Audit Logging](./audit-logging.html) installed, a change made through a connection is recorded against the admin who authorized it, indistinguishable from the same change made by hand. The audit log tells you *who* a change belongs to; the Activity card tells you *what* the client asked for.
+With [Audit Logging](./audit-logging.html) installed, a change made through a connection is recorded against the admin who authorized it, indistinguishable from the same change made by hand. The audit log tells you *who* a change belongs to; the Log card tells you *what* the client asked for.
 
 ## Triage errors a client reports
 
