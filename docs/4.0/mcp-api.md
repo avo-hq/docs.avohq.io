@@ -76,7 +76,7 @@ config.mcp_server.tool_calls_per_minute = 600
 
 <Option name="`connection_log`" headingSize="3">
 
-Whether the JSON-RPC endpoint records every request a connection makes — tool calls, list requests, the handshake, and the ones it refused — for the Activity card on the connection's page. Rows are written after the endpoint has rendered its answer and never fail a request.
+Whether the JSON-RPC endpoint records every request a connection makes — tool calls, list requests, the handshake, and the ones it refused — for the Log card on the connection's page. Rows are written after the endpoint has rendered its answer and never fail a request.
 
 ```ruby
 config.mcp_server.connection_log = false
@@ -261,7 +261,7 @@ A record outside the admin's policy scope reports as `-32602`, identical to an i
 
 ## Connection log
 
-One row per request a connection makes, shown on the connection's page as the Activity card and polled from `<your-avo-path>/mcp_server/connections/:id/events`. Rows are written by the JSON-RPC endpoint after it has answered, and pruned per connection to [`connection_log_size`](#connection_log_size).
+One row per request a connection makes, shown on the connection's page as the Log card and polled from `<your-avo-path>/mcp_server/connections/:id/events`. Rows are written by the JSON-RPC endpoint after it has answered, and pruned per connection to [`connection_log_size`](#connection_log_size).
 
 | Outcome        | Recorded when                                                                              |
 | -------------- | ------------------------------------------------------------------------------------------ |
@@ -290,16 +290,20 @@ A tool call's arguments are stored after the app's `filter_parameters` and cappe
 | ---------------- | --------------------------------------------------------------------------------------------------------- |
 | `Scope#resolve`  | Which connections are listed and findable                                                                 |
 | `index?`         | Whether the resource appears at all under `explicit_authorization`                                        |
-| `show?`          | A connection's page — and, unless `view_activity?` is defined, its Activity card and poll endpoint        |
+| `show?`          | A connection's page — and every card on it that the three methods below do not claim                      |
 | `act_on?`        | The Revoke action. Asked once with the class, then per selected connection                                |
-| `view_activity?` | Optional. The Activity card and its poll endpoint, in place of `show?`                                    |
+| `view_log?`      | Optional. The Log card and its poll endpoint, in place of `show?`                                         |
+| `view_entitlements?` | Optional. The Entitlements card, in place of `show?`                                                  |
+| `view_tools?`    | Optional. The Tools card, in place of `show?`                                                             |
 | `create?`, `edit?`, `destroy?` | The corresponding controls. The model refuses edits and deletes regardless                  |
+
+The three card methods are separate because the cards disclose different things: the Log carries data about your own records, the Entitlements matrix is computed against the connection **owner's** reach (so on another admin's connection it names resources the reader's own policies may hide from them), and the Tools list is derived from the registry and the grant. Refusing one leaves the rest of the page intact.
 
 A host with an explicit `config.resources` array must add `"Avo::Resources::McpConnection"` to it. `Avo::Resources::McpConnection.visible_on_sidebar = false` in a `to_prepare` block keeps it off the sidebar.
 
 ### Translations
 
-Every string the resource shows is translatable, in each of the nineteen languages Avo ships: field names under `avo.resource_translations.mcp_connection.fields.<field id>`, everything else under `avo.mcp_server.connections` — the Revoke action's copy, the Tools card (`.tools.*`), the Activity card (`.log.*`), and the capability titles (`.capabilities.read|write|actions`). Tool names and descriptions are never translated, and the consent screen is English throughout.
+Every string the resource shows is translatable, in each of the nineteen languages Avo ships: field names under `avo.resource_translations.mcp_connection.fields.<field id>`, everything else under `avo.mcp_server.connections` — the Revoke action's copy, the Tools card (`.tools.*`), the Entitlements card (`.entitlements.*`), the Log card (`.log.*`), and the capability titles (`.capabilities.read|write|actions`). Tool names and descriptions are never translated, and the consent screen is English throughout.
 
 ## Rate limits
 
