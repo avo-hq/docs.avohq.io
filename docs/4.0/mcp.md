@@ -99,7 +99,7 @@ Avo.configure do |config|
   # raise it for a heavy one.
   config.mcp_server.tool_calls_per_minute = 300
 
-  # Whether the endpoint records what each connection asked for, for the Activity card.
+  # Whether the endpoint records what each connection asked for, for the Log card.
   config.mcp_server.connection_log = true
 
   # How many log rows each connection keeps. Older rows are dropped as newer ones arrive.
@@ -113,7 +113,7 @@ end
 | `enabled`               | `Boolean` | `false` | Master switch.                                                                    |
 | `resource_identifier`   | `String`  | `nil`   | Pins the server's public address. Only needed behind a proxy or multiple origins. |
 | `tool_calls_per_minute` | `Integer` | `300`   | Per-connection rate limit on tool calls.                                          |
-| `connection_log`        | `Boolean` | `true`  | `false` records nothing; the Activity card says so.                               |
+| `connection_log`        | `Boolean` | `true`  | `false` records nothing; the Log card says so.                               |
 | `connection_log_size`   | `Integer` | `500`   | Rows kept per connection. `nil` keeps all.                                        |
 
 ## Connecting a client
@@ -162,13 +162,17 @@ A grant that names no resources collapses to a single line — *Every resource*,
 
 The same grant read back as the calls it turns into on the wire, by the name a client prints in its own transcript: `list_records`, `run_action`. It is grouped by the capability that unlocks each group, and **capabilities the grant withholds keep their group**, muted and headed "not granted" — because "why can it not do X?" is what this screen gets opened for.
 
-### Activity
+### Log
 
 Every request the client made, newest first, kept current while the page is open: the tool and the resource it named, the time, the duration, and the outcome. A tool call's arguments sit behind a disclosure on its row, filtered through your app's `filter_parameters` and capped at 4 KB.
 
 In an app without `avo-audit_logging`, this and the **Last used** column are the only record anywhere that a connection ever ran — which is the first thing asked after a suspected token theft.
 
 Switch it off with `config.mcp_server.connection_log = false`.
+
+:::info Not the same thing as audit logging
+This log is one connection's own requests — what an AI client asked this server for. It is unrelated to [Audit Logging](./audit-logging.html), which records who changed which records across your whole panel. A panel can run both; they answer different questions.
+:::
 
 ## Authorization
 
@@ -207,11 +211,11 @@ Each card below the fields has an **optional** policy method of its own. All thr
 | -------------------- | -------------------------------------------------------------- |
 | `view_entitlements?` | The **Entitlements** card                                       |
 | `view_tools?`        | The **Tools** card                                              |
-| `view_activity?`     | The **Activity** card *and* the endpoint it polls               |
+| `view_log?`          | The **Log** card *and* the endpoint it polls                    |
 
 They are separate because the cards disclose different things:
 
-- **Activity** is the only card carrying data about your own records — tool arguments, record ids, search terms.
+- **Log** is the only card carrying data about your own records — tool arguments, record ids, search terms.
 - **Entitlements** is computed against the connection **owner's** reach. On somebody else's connection it therefore names resources the reader's own policies may hide from them.
 - **Tools** is derived from the tool registry and the grant, and discloses nothing beyond them.
 
@@ -223,7 +227,7 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 
   # Everyone may see that a connection exists and revoke it...
   # ...but only its owner reads what it actually did.
-  def view_activity? = user.owner? || record.user == user # [!code focus]
+  def view_log? = user.owner? || record.user == user # [!code focus]
 
   # ...and only owners see which resources another admin's grant reaches.
   def view_entitlements? = user.owner? || record.user == user # [!code focus]
@@ -231,7 +235,7 @@ end
 ```
 
 :::info
-`view_activity?` is asked by the card *and* by the endpoint the page polls, so the two can never disagree. The other two cards render whole with the page and have no endpoint of their own.
+`view_log?` is asked by the card *and* by the endpoint the page polls, so the two can never disagree. The other two cards render whole with the page and have no endpoint of their own.
 :::
 
 ### What the tools themselves check
@@ -259,4 +263,4 @@ A host with an explicit `config.resources` array must add `"Avo::Resources::McpC
 | Clients refused with a mismatch error                          | The panel is served from an address other than `resource_identifier`. Behind a TLS proxy, forward `X-Forwarded-Proto` and `X-Forwarded-Host` and allow the public host in `config.hosts`. |
 | Endpoints answer 404                                           | `config.mcp_server.enabled` is still `false`, or `avo-mcp_server` / `avo-authorization` is not licensed.          |
 | A client connects but lists no tools                           | The client rejected the `tools/list` schema — every request returned 200. Ask the client what it rejected (`claude mcp list` prints the validation error); the server's logs show nothing wrong. |
-| The Activity card names a migration                            | The app was installed before the log existed. Run the installer again — it adds only the missing migration — then migrate. |
+| The Log card names a migration                            | The app was installed before the log existed. Run the installer again — it adds only the missing migration — then migrate. |
