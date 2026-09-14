@@ -292,6 +292,7 @@ A tool call's arguments are stored after the app's `filter_parameters` and cappe
 | `show?`          | A connection's page — and every card on it that the three methods below do not claim                      |
 | `act_on?`        | The Revoke action. Asked once with the class, then per selected connection                                |
 | `view_log?`      | Optional. The Log card and its poll endpoint, in place of `show?`                                         |
+| `view_audit_trail?` | Optional. The Audit trail table **and** the endpoint that fills it, in place of `show?`             |
 | `view_entitlements?` | Optional. The Entitlements card, in place of `show?`                                                  |
 | `view_tools?`    | Optional. The Tools card, in place of `show?`                                                             |
 | `create?`, `edit?`, `destroy?` | The corresponding controls. The model refuses edits and deletes regardless                  |

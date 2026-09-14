@@ -437,6 +437,20 @@ That last row is the point. An action that emails a customer or calls another se
 
 Standalone runs aren't written to the audit log at all: it records what happened to a record, and a standalone action has none. The card in the conversation is the record of it.
 
+### Tracing what it changed
+
+The conversation keeps its own record of every write — that is what [undo](#undoing-a-run) reads. With [Audit Logging](./audit-logging.html) installed, the same write also lands in your app's audit log, where an admin reviewing the data will actually look for it: attributed to the user the chat acts as, and marked as coming from that chat.
+
+| Column          | Value                        |
+| --------------- | ---------------------------- |
+| `author`        | The chat's owner             |
+| `origin`        | `"ai_chat"`                  |
+| `origin_record` | The chat                     |
+
+A record's timeline reads *Ada Lovelace through AI chat*; the activity's **Origin** field — *AI chat — Reorder the Q3 invoices* — links to the conversation; and the chat's admin page carries an **Audit trail** table of what the assistant changed there. An action run is recorded against the action, as a click on it would be; a revert is recorded as the write it is.
+
+The table is gated by `view_audit_trail?` on your `Avo::Ai::ChatPolicy`, Avo's own convention for a `has_many`. The assistant itself can never reach the audit log: `Avo::AuditLogging::Activity` is not a resource it can name, list, or write to.
+
 ## Files and attachments
 
 The assistant reports on your Active Storage usage, so you can ask about files the way you ask about records:

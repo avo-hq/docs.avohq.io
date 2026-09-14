@@ -277,8 +277,10 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
   # Revoke. Avo asks once for the action itself (record is the class), then per selected connection.
   def act_on? = record.is_a?(Class) || user.owner? || record.user == user
 
-  # The three cards below the fields. Each is optional: without it, show? decides.
+  # The four cards below the fields. Each is optional: without it, show? decides.
   def view_log? = user.owner?
+
+  def view_audit_trail? = user.owner?
 
   def view_entitlements? = user.owner?
 
@@ -299,11 +301,12 @@ end
 
 The `Scope` decides the list, `show?` the page, `act_on?` the Revoke action. To keep the resource off the sidebar, set `Avo::Resources::McpConnection.visible_on_sidebar = false` in a `to_prepare` block.
 
-Each card below the fields has an optional method of its own, and all three fall back to `show?`, so a policy that defines none gives the whole page to anyone who may open it. They are separate because the cards disclose different things:
+Each card below the fields has an optional method of its own, and all of them fall back to `show?`, so a policy that defines none gives the whole page to anyone who may open it. They are separate because the cards disclose different things:
 
 | Method               | Card                                          | What it discloses                                                                                                     |
 | -------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `view_log?`          | **Log**, *and* the endpoint the page polls    | Data about your own records — tool arguments, record ids, search terms.                                                 |
+| `view_audit_trail?`  | **Audit trail** (with Audit Logging installed) | What the client changed, and the titles of the records it changed. Asked again by the table's own endpoint, so one method covers both. |
 | `view_entitlements?` | **Entitlements**                              | The connection **owner's** reach. On another admin's connection it names resources the reader's own policies may hide. |
 | `view_tools?`        | **Tools**                                     | Tool names, derived from the registry and the grant. Nothing beyond them.                                               |
 
@@ -355,9 +358,34 @@ The engine filters the OAuth parameters (`code`, `code_verifier`, `refresh_token
 Rails.application.config.filter_parameters += [:_meta]
 ```
 
-## Trace changes back to an admin
+## Trace changes back to a connection
 
-With [Audit Logging](./audit-logging.html) installed, a change made through a connection is recorded against the admin who authorized it, indistinguishable from the same change made by hand. The audit log tells you *who* a change belongs to; the Log card tells you *what* the client asked for.
+The Log card tells you what a client *asked for*. With [Audit Logging](./audit-logging.html) installed, the panel also tells you what it *changed*, and keeps that after the log has rolled over.
+
+Every create, update, delete and action run a connection makes is recorded as an activity, attributed to the admin who authorized the connection — they are the one whose permissions it acted with — and marked with where it came from:
+
+| Column          | Value                                                            |
+| --------------- | ---------------------------------------------------------------- |
+| `author`        | The admin who authorized the connection                          |
+| `origin`        | `"mcp_connection"` (a change made in the panel has no origin)    |
+| `origin_record` | The connection itself                                            |
+
+That shows up in three places:
+
+- **The record's own timeline** continues the author's name with it: *Ada Lovelace through MCP connection*.
+- **The activity's page** has an **Origin** field — *MCP connection — Claude* — the whole of which links to the connection.
+- **The connection's page** has an **Audit trail** table — Audit Logging's own activity table, the same one its docs put on a user's resource — listing what this client changed, each row linking to its entry.
+
+The table is there only when Audit Logging is installed and switched on. Upgrading from a version before this? Run `bin/rails generate avo:audit_logging upgrade`, then `bin/rails db:migrate` — until then changes are still recorded, just unmarked, and the table is not offered.
+
+Two things worth knowing:
+
+- **Audit Logging's own opt-in still decides.** A resource whose `audit_logging` switch is off records nothing, whoever made the change. See [Enable specific resources and actions](./audit-logging.html#enable-specific-resources-and-actions).
+- **Clients can't reach the audit log.** `Avo::AuditLogging::Activity` is never offered as an MCP resource, so a connection can't read, edit or delete the record of what it just did — even in an app whose policies would otherwise allow it.
+
+:::warning
+The connection log and the audit log answer different questions. The log holds every request, including reads and refusals, and keeps only the newest `connection_log_size` rows per connection. Audit entries cover only changes, and are never pruned. Investigating an incident usually means reading both.
+:::
 
 ## Triage errors a client reports
 

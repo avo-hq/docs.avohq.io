@@ -4,6 +4,43 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-audit_logging` 4.3.0
+
+<Option name="Activities record where they came from — run the installer again">
+
+### What changed
+
+An activity now carries an **origin**: `origin`, a short name for whatever acted, and the optional `origin_record` pointing at the thing itself. A change made in the panel has none. A change made through an [MCP connection](./mcp.html#trace-changes-back-to-a-connection), an [API token](./rest-api.html#see-what-a-token-changed) or an [Avo AI chat](./ai.html#tracing-what-it-changed) is marked `mcp_connection`, `api_token` (or `api`) and `ai_chat`, and links back to it — a record's timeline reads *Ada Lovelace through MCP connection*. Until this version an MCP client's changes were deliberately indistinguishable from the admin's own.
+
+The two columns are a new migration. A **first** install writes one migration with them included; an app that installed an earlier version has the table without them.
+
+### Action Required
+
+```bash
+bin/rails generate avo:audit_logging upgrade
+bin/rails db:migrate
+```
+
+`upgrade` reads your `db/migrate` and writes only what is missing — it never touches a migration you have already run. Running `install` again does the same thing.
+
+Until you migrate, nothing breaks: activities keep being recorded, just without an origin, and the **Audit trail** table on a connection's, token's or chat's page is not offered rather than shown empty.
+
+If you have written `Avo::AuditLogging::Activity` yourself — an importer, a job — you can mark those too; see [Mark your own origins](./audit-logging.html#mark-your-own-origins).
+
+</Option>
+
+<Option name="The audit log is off limits to MCP clients, API tokens and the assistant">
+
+### What changed
+
+`Avo::AuditLogging::Activity` is no longer offered as a resource through `avo-mcp_server`'s tools, `avo-api`'s routes and entitlements grid, or the Avo AI assistant, whatever your policies say. An agent or a credential that could delete the record of what it just did would make the log worthless.
+
+### Action Required
+
+Nothing, unless a client of yours was reading `/api/resources/avo_activities` or asking the assistant about activities — those now answer as if the resource did not exist. Read the audit log in the panel instead.
+
+</Option>
+
 ## Upgrade to 4.3.0
 
 <Option name="`avo-api` token scopes are now called entitlements">
