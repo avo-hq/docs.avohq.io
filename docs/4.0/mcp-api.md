@@ -133,17 +133,16 @@ The discovery documents are always at the origin root, where the protocol requir
 
 <Option name="`avo:mcp_server install`">
 
-Writes the migrations and appends the configuration block to `config/initializers/avo.rb`.
+Writes the migration and appends the configuration block to `config/initializers/avo.rb`.
 
 ```bash
 bin/rails generate avo:mcp_server install
 bin/rails db:migrate
 ```
 
-| Migration                         | Tables                                                                                                                                       |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `create_avo_mcp_server`           | `avo_mcp_server_connections`, `avo_mcp_server_access_grants` (single-use codes), `avo_mcp_server_access_tokens` (digests), `avo_mcp_server_clients` (registered clients) |
-| `create_avo_mcp_server_events`    | `avo_mcp_server_events` — the connection log                                                                                                 |
+| Migration               | Tables                                                                                                                                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `create_avo_mcp_server` | `avo_mcp_server_connections`, `avo_mcp_server_access_grants` (single-use codes), `avo_mcp_server_access_tokens` (digests), `avo_mcp_server_clients` (registered clients), `avo_mcp_server_events` (the connection log) |
 
 The installer is additive. A migration the app already has is skipped, and the configuration block is appended only when `config.mcp_server.enabled` appears nowhere in the initializer.
 

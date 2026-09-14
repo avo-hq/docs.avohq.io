@@ -62,7 +62,7 @@ bin/rails generate avo:mcp_server install
 bin/rails db:migrate
 ```
 
-The [installer](./mcp-api.html#generators) writes two migrations — the connections, codes, and tokens admins authorize, and the connection log — and appends a commented configuration block to `config/initializers/avo.rb`. It's additive: run it again after an upgrade and it adds only what your app is missing.
+The [installer](./mcp-api.html#generators) writes one migration — the connections, codes, and tokens admins authorize, plus the connection log — and appends a commented configuration block to `config/initializers/avo.rb`. It's additive: a migration your app already has is skipped, so running it again is safe.
 
 If your admin model uses UUID primary keys, add `type: :uuid` to the migration's `t.references :user` line before migrating. The reference carries no foreign key, so a mismatch doesn't fail at migration time — it shows up later as connections whose owner can't be found.
 
@@ -261,7 +261,7 @@ config.mcp_server.connection_log_size = 2_000
 
 Who may read the log is who may open the page, unless your policy defines `view_log?` — then the card and the endpoint it polls ask that instead.
 
-Upgrading from a version without the log? The log has its own table: run `bin/rails generate avo:mcp_server install` again, then `bin/rails db:migrate`. Until then the card names the migration and nothing is recorded.
+The log's table (`avo_mcp_server_events`) comes with the installer's migration. Until you've run `bin/rails db:migrate`, the card says so and nothing is recorded.
 
 ### Decide who sees and revokes what
 
