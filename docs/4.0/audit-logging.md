@@ -312,19 +312,27 @@ end
 
 Most activities come from somebody clicking in the panel, and those carry no origin — a marker on every row would say nothing. Anything else names itself, so you can tell a change your team made from a change something else made on their behalf.
 
-The clearest case is [the MCP server](./mcp.html): a change an AI client makes through a connection is attributed to the admin who authorized it — they are whose permissions it acted with — and marked as having come through that connection. The record's timeline says *through MCP connection* on the author's own line — "Ada Lovelace through MCP connection" — and the activity's own page carries an **Origin** field whose whole text links to the connection.
+Three of Avo's own add-ons name themselves, each after the record the entry points back to:
+
+| Add-on | `origin` | Reads as | Links to |
+| --- | --- | --- | --- |
+| [MCP server](./mcp.html) | `mcp_connection` | *through MCP connection* | The connection |
+| [REST API](./rest-api.html) | `api_token` — or `api` when your own scheme let the request in without a token | *through API token* / *through API* | The token |
+| [Avo AI](./ai.html) | `ai_chat` | *through AI chat* | The chat |
+
+In every case the author is still the person: the admin who authorized the connection, the token's owner, the chat's owner — whose permissions the change was made with. The record's timeline says *through MCP connection* on the author's own line — "Ada Lovelace through MCP connection" — and the activity's own page carries an **Origin** field whose whole text links to the connection.
 
 Two columns hold it:
 
 | Column          | Holds                                                                                         |
 | --------------- | ----------------------------------------------------------------------------------------------- |
-| `origin`        | A short name for what acted — `"mcp_server"`, or a name of your own. `nil` for the panel.      |
+| `origin`        | A short name for what acted — `"mcp_connection"`, `"api_token"`, `"ai_chat"`, or a name of your own. `nil` for the panel. |
 | `origin_record` | Optional, polymorphic: the thing that acted. Linked from the activity's page where it still exists. |
 
 Filter the activity index by **Origin** to see everything one kind of actor did, or scope a query directly:
 
 ```ruby
-Avo::AuditLogging::Activity.from_origin("mcp_server")       # everything MCP clients did
+Avo::AuditLogging::Activity.from_origin("mcp_connection")   # everything MCP clients did
 Avo::AuditLogging::Activity.originating_from(connection)    # everything one actor did
 ```
 

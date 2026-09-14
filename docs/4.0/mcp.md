@@ -356,7 +356,7 @@ Every create, update, delete and action run a connection makes is recorded as an
 | Column          | Value                                                            |
 | --------------- | ---------------------------------------------------------------- |
 | `author`        | The admin who authorized the connection                          |
-| `origin`        | `"mcp_server"` (a change made in the panel has no origin)        |
+| `origin`        | `"mcp_connection"` (a change made in the panel has no origin)    |
 | `origin_record` | The connection itself                                            |
 
 That shows up in three places:
