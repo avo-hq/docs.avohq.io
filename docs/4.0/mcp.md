@@ -299,7 +299,7 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 end
 ```
 
-The `Scope` decides the list, `show?` the page, `act_on?` the Revoke action. To keep the resource off the sidebar, set `Avo::Resources::McpConnection.visible_on_sidebar = false` in a `to_prepare` block.
+The `Scope` decides the list, `show?` the page, `act_on?` the Revoke action. The connect page — where **Connect a client** and "Create new" both lead — and the button that opens it follow `index?`, not `create?` or `new?`: the page creates nothing, so `create? = false` keeps it reachable for anyone who may see the list. To keep the resource off the sidebar, set `Avo::Resources::McpConnection.visible_on_sidebar = false` in a `to_prepare` block.
 
 Each card below the fields has an optional method of its own, and all of them fall back to `show?`, so a policy that defines none gives the whole page to anyone who may open it. They are separate because the cards disclose different things:
 
