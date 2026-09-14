@@ -112,6 +112,14 @@ claude mcp add --transport http acme-admin https://app.example.com/avo/mcp
 # then, inside Claude Code: /mcp → acme-admin → Authenticate
 ```
 
+```toml [Codex CLI]
+# ~/.codex/config.toml
+[mcp_servers.acme-admin]
+url = "https://app.example.com/avo/mcp"
+
+# then: codex mcp login acme-admin
+```
+
 ```json [Cursor]
 // ~/.cursor/mcp.json — or use "Install in Cursor" on the connect page
 {
@@ -123,12 +131,15 @@ claude mcp add --transport http acme-admin https://app.example.com/avo/mcp
 }
 ```
 
-```toml [Codex CLI]
-# ~/.codex/config.toml
-[mcp_servers.acme-admin]
-url = "https://app.example.com/avo/mcp"
-
-# then: codex mcp login acme-admin
+```json [Amp]
+// ~/.config/amp/settings.json — or: amp mcp add acme-admin https://app.example.com/avo/mcp
+{
+  "amp.mcpServers": {
+    "acme-admin": {
+      "url": "https://app.example.com/avo/mcp"
+    }
+  }
+}
 ```
 
 ```json [VS Code]
