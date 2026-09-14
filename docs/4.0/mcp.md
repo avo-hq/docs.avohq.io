@@ -365,7 +365,7 @@ That shows up in three places:
 - **The activity's page** has an **Origin** field — *MCP connection — Claude* — the whole of which links to the connection.
 - **The connection's page** has an **Audit trail** table — Audit Logging's own activity table, the same one its docs put on a user's resource — listing what this client changed, each row linking to its entry.
 
-The card is there only when Audit Logging is installed and switched on. Upgrading from a version before this? Run `bin/rails generate avo:audit_logging install` again, then `bin/rails db:migrate` — until then changes are still recorded, just unmarked, and the card says which command to run.
+The table is there only when Audit Logging is installed and switched on. Upgrading from a version before this? Run `bin/rails generate avo:audit_logging upgrade`, then `bin/rails db:migrate` — until then changes are still recorded, just unmarked, and the table is not offered.
 
 Two things worth knowing:
 

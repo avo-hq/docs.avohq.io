@@ -57,8 +57,15 @@ At this stage, all migrations, resources, and controllers required for the audit
 bin/rails db:migrate
 ```
 
-:::info Upgrading
-The installer is safe to run again. It writes only the migrations your app doesn't have yet, so after an upgrade it adds exactly what that version brought — the [activity origin](#where-an-activity-came-from) columns, for an app installed before they existed.
+:::info Already installed? Upgrade instead
+A first install writes **one** migration, with every column this version knows about. An app that installed an earlier version needs only what came after it:
+
+```bash
+bin/rails generate avo:audit_logging upgrade
+bin/rails db:migrate
+```
+
+Today that is the [activity origin](#where-an-activity-came-from) columns. `install` does the same thing — it looks at your `db/migrate` and writes only what is missing, never touching a migration you have already run — so re-running it is safe too; `upgrade` is the same code path under a name that says so.
 :::
 
 ## Enable and configure audit logging
