@@ -269,7 +269,7 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
   # The four cards below the fields. Each is optional: without it, show? decides.
   def view_log? = user.owner?
 
-  def view_avo_originated? = user.owner?
+  def view_audit_trail? = user.owner?
 
   def view_entitlements? = user.owner?
 
@@ -295,7 +295,7 @@ Each card below the fields has an optional method of its own, and all of them fa
 | Method               | Card                                          | What it discloses                                                                                                     |
 | -------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `view_log?`          | **Log**, *and* the endpoint the page polls    | Data about your own records — tool arguments, record ids, search terms.                                                 |
-| `view_avo_originated?` | **Audit trail** (with Audit Logging installed) | What the client changed, and the titles of the records it changed. Avo's own name for a `has_many`, asked again by the table's endpoint. |
+| `view_audit_trail?`  | **Audit trail** (with Audit Logging installed) | What the client changed, and the titles of the records it changed. Asked again by the table's own endpoint, so one method covers both. |
 | `view_entitlements?` | **Entitlements**                              | The connection **owner's** reach. On another admin's connection it names resources the reader's own policies may hide. |
 | `view_tools?`        | **Tools**                                     | Tool names, derived from the registry and the grant. Nothing beyond them.                                               |
 
