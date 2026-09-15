@@ -101,6 +101,20 @@ config.mcp_server.connection_log_size = 2_000
 
 </Option>
 
+<Option name="`extra_tools`" headingSize="3">
+
+Tools of the app's own, served beside the nine. Each entry is a class name — never a constant, since the initializer runs before the app's classes are loadable — or a Hash whose `tool:` key names the class and whose other keys are passed to the tool's initializer. The class is either an `Avo::McpServer::Tool`, which the `avo:mcp_server:tool` generator scaffolds, or a `RubyLLM::Tool` written for [Avo AI](./ai.html#bring-your-own-tool) that declares `def self.capability`; the second is served through an adapter. Names are resolved on every request, and an entry that can't be served is dropped with a log line naming the reason. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+
+```ruby
+config.mcp_server.extra_tools = ["IssueInvoiceTool", {tool: "CrmTool", api_key: ENV["CRM_API_KEY"]}]
+```
+
+- **Type:** `Array` of `String` or `Hash`
+- **Default:** `[]`
+- **Validation:** raises `ArgumentError` at boot for an entry that is neither a String nor a Hash with a String `tool:` key
+
+</Option>
+
 ## Routing
 
 <Option name="`mount_avo_mcp_server`">
@@ -150,9 +164,21 @@ The installer is additive. A migration the app already has is skipped, and the c
 
 </Option>
 
+<Option name="`avo:mcp_server:tool`">
+
+Scaffolds a tool of the app's own under `app/tools/`: an `Avo::McpServer::Tool` with the wire name pinned, a capability, a description, an input schema and a `perform` skeleton. Register the class with [`extra_tools`](#extra_tools).
+
+```bash
+bin/rails generate avo:mcp_server:tool issue_invoice
+```
+
+Writes `app/tools/issue_invoice_tool.rb`, defining `IssueInvoiceTool`, called `issue_invoice` by a client. `issue_invoice`, `issue_invoice_tool` and `IssueInvoiceTool` name the same tool; the suffix is added once. An app that also runs Avo AI scaffolds with [`avo:ai:tool`](./ai.html#bring-your-own-tool) instead and registers the one class with both gems.
+
+</Option>
+
 ## Tools
 
-The nine tools a connection can call, each gated by the capability it declares. Tool names are what a client prints in its transcript and are never translated.
+The nine tools a connection can call, each gated by the capability it declares. Tools the app registers through [`extra_tools`](#extra_tools) are served beside them, gated the same way by the capability each declares. Tool names are what a client prints in its transcript and are never translated.
 
 | Tool             | Capability    | Does                                            |
 | ---------------- | ------------- | ----------------------------------------------- |
