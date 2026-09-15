@@ -204,6 +204,98 @@ The [`visible:`](./field-options-api.html#visible) blocks on your fields apply t
 
 The converse is the rule too: a field the panel **does** render this admin is returned, credentials included. There is no MCP-only redaction list — to keep something out of an AI client's reach, hide it with `visible:`, the same block that hides it from a person.
 
+## Add tools of your own
+
+The nine tools reach any record, but a workflow an agent runs often — "issue the invoice for this order", "close these tickets and notify their reporters" — is better served as one tool than as a chain of `list_records`, `show_record` and `run_action` calls it has to get right every time. You can register tools of your own, and they're served beside the nine.
+
+Scaffold one:
+
+```bash
+bin/rails generate avo:mcp_server:tool issue_invoice
+```
+
+That writes `app/tools/issue_invoice_tool.rb`, defining `IssueInvoiceTool` — a subclass of `Avo::McpServer::Tool`, the same contract the shipped tools follow. A client calls it `issue_invoice`. Fill in four things:
+
+```ruby
+# app/tools/issue_invoice_tool.rb
+class IssueInvoiceTool < Avo::McpServer::Tool
+  tool_name "issue_invoice"
+  capability "avo:actions" # [!code focus]
+
+  description <<~DESC
+    Issues the invoice for an order and emails it to the customer.
+  DESC
+
+  input_schema(
+    properties: {
+      order_id: {type: "integer", description: "The order to invoice."}
+    },
+    required: ["order_id"]
+  )
+
+  def self.perform(identity:, order_id:, server_context: nil, **)
+    _, order = Avo::McpServer::ToolSupport.find_authorized_record!(
+      identity: identity, resource: "Order", id: order_id, action: :act_on
+    )
+    invoice = Invoicing.issue!(order, by: identity.admin)
+
+    respond({invoiceId: invoice.id, number: invoice.number})
+  end
+end
+```
+
+- **`capability`** is which of the [three capabilities](#choose-what-a-connection-can-do) unlocks the tool: `avo:read` for one that only reads, `avo:write` for one that changes records, `avo:actions` for one that runs a workflow. A connection without it is refused before `perform` runs, exactly as for the shipped tools.
+- **`description`** is what the client's model reads to decide whether to call the tool. Its first sentence is also what the connection's **Tools** card shows.
+- **`input_schema`** is the JSON schema of the arguments. Everything in `required` is checked before your code runs. A `resource` argument, if the tool takes one, is also checked against a grant narrowed to named resources.
+- **`perform`** receives the identity — the connection, and the admin it acts as — plus the arguments. Reach records through `Avo::McpServer::ToolSupport`, which runs the admin's own policies and reports a record they can't reach as one that doesn't exist; raise one of `Avo::McpServer::ToolErrors` to refuse with a structured error. With [Audit Logging](./audit-logging.html) installed, `Avo::McpServer::Audit.record` puts a change the tool makes in the audit log, marked as made through the connection.
+
+Then register the class in your initializer:
+
+```ruby
+# config/initializers/avo.rb
+config.mcp_server.extra_tools = ["IssueInvoiceTool"]
+```
+
+Entries are class **names**, not constants — this initializer runs before your own classes are loadable — and each is resolved when a request arrives, so editing a tool in development is served on the next call. An entry that can't be served (a class that doesn't load, one that isn't a tool, one with no `capability`, one claiming a shipped tool's name) is dropped with a line in the log saying why, and the rest keep serving.
+
+:::warning Custom tools share the consent capabilities
+There is no per-tool grant: an admin grants **Read**, **Read & write** or **Run actions**, and your tool is unlocked by whichever one it declares. That cuts both ways — a connection that already holds `avo:actions` can call a tool you register tomorrow, without anyone re-authorizing. Declare the capability that matches what the tool really does, and put a tool that changes data behind `avo:write` or `avo:actions`, never `avo:read`.
+:::
+
+### Share a tool with Avo AI
+
+Running [Avo AI](./ai.html) too? Write the tool once, for the chat, and serve it over MCP as well. A [`RubyLLM::Tool`](./ai.html#bring-your-own-tool) needs one more line — the capability — and the same class goes in both settings:
+
+```ruby
+# app/tools/issue_invoice_tool.rb
+class IssueInvoiceTool < RubyLLM::Tool
+  include Avo::Ai::ToolAuthorization
+
+  def self.capability = "avo:actions" # [!code focus]
+
+  description "Issues the invoice for an order and emails it to the customer."
+  parameter :order_id, type: :integer, description: "The order to invoice."
+
+  def execute(order_id:)
+    require_acting_user!
+    # ...
+    {invoice_id: invoice.id}
+  rescue Avo::Ai::ToolAuthorization::IdentityError => e
+    {error: e.message}
+  end
+end
+```
+
+```ruby
+# config/initializers/avo.rb
+config.ai.extra_tools = ["IssueInvoiceTool"]
+config.mcp_server.extra_tools = ["IssueInvoiceTool"]
+```
+
+Over MCP the server reads the name, description and argument schema off the class, builds an instance per call with the connecting admin as `user:` (and the entry's other keys as settings, as the chat does), and translates the answer: a Hash is served as structured content, a String as text, and an `{error: "..."}` Hash — the shape the chat's tools use for "not allowed" — as a tool error. The capability gate runs first, exactly as for every other tool. An entry's `user:` key is ignored, and `chat` and `inspection_tracker` are never set: the admin is always the one the connection was authorized by, and there is no conversation.
+
+The reverse isn't offered — an `Avo::McpServer::Tool` can't be handed to the chat. Write a tool you want in both places the RubyLLM way.
+
 ## Review and revoke connections
 
 Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — the client's name and id, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
@@ -420,6 +512,7 @@ Avo.configure do |config|
   config.mcp_server.tool_calls_per_minute = 300
   config.mcp_server.connection_log = true
   config.mcp_server.connection_log_size = 500
+  config.mcp_server.extra_tools = ["IssueInvoiceTool"]
 end
 ```
 
@@ -432,5 +525,6 @@ end
 | [`tool_calls_per_minute`](./mcp-api.html#tool_calls_per_minute) | `Integer` | `300`   |
 | [`connection_log`](./mcp-api.html#connection_log)               | `Boolean` | `true`  |
 | [`connection_log_size`](./mcp-api.html#connection_log_size)     | `Integer` | `500`   |
+| [`extra_tools`](./mcp-api.html#extra_tools)                     | `Array`   | `[]`    |
 
-The route helper, the installer, the nine tools and their arguments, the capabilities, every error code, and the policy methods are in the [MCP Server reference](./mcp-api.html).
+The route helper, the two generators, the nine tools and their arguments, the capabilities, every error code, and the policy methods are in the [MCP Server reference](./mcp-api.html).
