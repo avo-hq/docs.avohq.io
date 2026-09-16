@@ -119,6 +119,11 @@ Avo.configure do |config|
   # Which tools the assistant gets (see "Choose which tools the assistant gets").
   config.ai.excluded_tools = [:delete_record]
   config.ai.extra_tools = ["CrmTool"]
+
+  # Suggestion chips a brand-new chat offers before the first message. Unset (the default) shows
+  # generic suggestions, translatable through i18n (avo.ai.empty_state.suggestions). Set this to
+  # replace them outright with your own, e.g. naming real resources.
+  config.ai.empty_state_suggestions = ["Show me this week's orders", "Create a new customer"]
 end
 ```
 
@@ -814,7 +819,7 @@ To give a conversation the whole window, use **Open in full page** in the title 
 
 The button is there before you've sent anything, too. On the new-chat view it points at the full-page composer instead, so you can start a long message with the whole window rather than the panel.
 
-A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message.
+A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message. The greeting text is translated through i18n (`avo.ai.empty_state.title` / `.subtitle`) like any other copy; the suggested prompts themselves are generic by default but can be replaced with your own via [`config.ai.empty_state_suggestions`](#configuration).
 
 :::info
 Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {enabled: false}` in `config/initializers/avo.rb`, the shortcut is off along with the rest — the Agent button still works.
