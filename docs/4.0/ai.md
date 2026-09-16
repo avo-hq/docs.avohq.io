@@ -653,7 +653,7 @@ Running the [MCP Server](./mcp.html) too? The class you just wrote can answer co
 ```ruby
 # app/tools/crm_tool.rb
 class CrmTool < RubyLLM::Tool
-  def self.capability = "avo:read" # [!code focus]
+  def self.capability = "avo:read" # [!code highlight]
   # ...
 end
 ```
@@ -661,7 +661,7 @@ end
 ```ruby
 # config/initializers/avo.rb
 config.ai.extra_tools = ["CrmTool"]
-config.mcp_server.extra_tools = ["CrmTool"] # [!code focus]
+config.mcp_server.extra_tools = ["CrmTool"] # [!code highlight]
 ```
 
 The chat ignores `capability`. Over MCP the server injects the connecting admin as `user:` the way the chat does, runs the capability gate first, and serves a Hash as structured content, a String as text, and an `{error: "..."}` Hash as a tool error. `chat` and `inspection_tracker` are never set there, so a tool that can run over MCP mustn't depend on either. See [Share a tool with Avo AI](./mcp.html#share-a-tool-with-avo-ai) for the details.

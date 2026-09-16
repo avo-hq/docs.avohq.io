@@ -220,7 +220,7 @@ That writes `app/tools/issue_invoice_tool.rb`, defining `IssueInvoiceTool` — a
 # app/tools/issue_invoice_tool.rb
 class IssueInvoiceTool < Avo::McpServer::Tool
   tool_name "issue_invoice"
-  capability "avo:actions" # [!code focus]
+  capability "avo:actions" # [!code highlight]
 
   description <<~DESC
     Issues the invoice for an order and emails it to the customer.
@@ -256,7 +256,7 @@ Then register the class in your initializer:
 config.mcp_server.extra_tools = ["IssueInvoiceTool"]
 ```
 
-Entries are class **names**, not constants — this initializer runs before your own classes are loadable — and each is resolved when a request arrives, so editing a tool in development is served on the next call. An entry that can't be served (a class that doesn't load, one that isn't a tool, one with no `capability`, one claiming a shipped tool's name) is dropped with a line in the log saying why, and the rest keep serving.
+Entries are class **names**, not constants — this initializer runs before your own classes are loadable — and each is resolved when a request arrives, so editing a tool in development is served on the next call. An entry that can't be served (a class that doesn't load, one that isn't a tool, one with no `capability`, one claiming a shipped tool's name) is dropped with a line in the log saying why, and the rest keep serving. [`extra_tools`](./mcp-api.html#extra_tools) lists every reason an entry is dropped.
 
 :::warning Custom tools share the consent capabilities
 There is no per-tool grant: an admin grants **Read**, **Read & write** or **Run actions**, and your tool is unlocked by whichever one it declares. That cuts both ways — a connection that already holds `avo:actions` can call a tool you register tomorrow, without anyone re-authorizing. Declare the capability that matches what the tool really does, and put a tool that changes data behind `avo:write` or `avo:actions`, never `avo:read`.
@@ -271,7 +271,7 @@ Running [Avo AI](./ai.html) too? Write the tool once, for the chat, and serve it
 class IssueInvoiceTool < RubyLLM::Tool
   include Avo::Ai::ToolAuthorization
 
-  def self.capability = "avo:actions" # [!code focus]
+  def self.capability = "avo:actions" # [!code highlight]
 
   description "Issues the invoice for an order and emails it to the customer."
   parameter :order_id, type: :integer, description: "The order to invoice."
