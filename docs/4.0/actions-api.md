@@ -444,6 +444,17 @@ def handle(query:, **args)
 end
 ```
 
+On its own, `download` leaves the page as it is. If the action also creates or changes records, pair it with [`reload`](#reload) (or [`redirect_to`](#redirect_to)) so the page picks them up — unlike the other response methods, `download` composes instead of overriding.
+
+```ruby
+def handle(**args)
+  statement = Statements::GenerateMonthlyStatement.call(statement_data:)
+
+  download statement.file.download, statement.file.filename
+  reload # [!code focus]
+end
+```
+
 </Option>
 
 <Option name="`keep_modal_open`" headingSize="3">
