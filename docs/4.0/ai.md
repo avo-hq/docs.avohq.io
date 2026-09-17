@@ -289,6 +289,19 @@ context, so a bare `number_to_currency(...)` won't resolve — name `view_contex
 reach your app's own helpers through `helpers`.
 :::
 
+**What hovering shows.** A chip's tooltip is its title, so the hover repeats what the chip already
+spells out. A resource with something better to say declares `chip_tooltip`; a skill's chip uses
+this to show the skill's description. Blank falls back to the title, and a `chip_tooltip` that
+raises loses the tooltip, never the chip.
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+  def chip_tooltip # [!code focus]
+    record.summary # [!code focus]
+  end # [!code focus]
+end
+```
+
 **A chip renders in two places**, and that is worth knowing before you reach for anything
 request-scoped — it is drawn by two different things:
 
