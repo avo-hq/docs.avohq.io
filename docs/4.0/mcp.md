@@ -79,7 +79,7 @@ Rails.application.routes.draw do
 end
 ```
 
-[`mount_avo_mcp_server`](./mcp-api.html#mount_avo_mcp_server) draws the endpoints AI clients talk to: the two OAuth discovery documents at your origin root, the token and client registration endpoints, and the JSON-RPC endpoint at `/avo/mcp`. Pass `at:` to move the JSON-RPC endpoint. The consent screen and the connections resource aren't part of this — they're mounted with the panel and use your existing sign-in.
+[`mount_avo_mcp_server`](./mcp-api.html#mount_avo_mcp_server) draws the endpoints AI clients talk to: the two OAuth discovery documents at your origin root, the token, client registration and token revocation endpoints, and the JSON-RPC endpoint at `/avo/mcp`. Pass `at:` to move the JSON-RPC endpoint. The consent screen and the connections resource aren't part of this — they're mounted with the panel and use your existing sign-in.
 
 :::warning Mount it outside your authentication block, and before `mount_avo`
 A connected client calls these endpoints with a bearer token and no browser session, so inside `authenticate :user do … end` every call would be answered with the sign-in redirect. And because `/avo/mcp` sits under Avo's own `/avo`, it must come before `mount_avo`, or Avo's engine swallows it. Both placements are refused at boot with a message naming the fix.
@@ -300,7 +300,24 @@ The reverse isn't offered — an `Avo::McpServer::Tool` can't be handed to the c
 
 Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — the client's name and id, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
 
-**Revoke** is an action on the resource, from the actions menu or a connection's page; with [Custom controls](./custom-controls.html) it's also a button on the toolbar, on each live row, and on the page. It takes effect on the client's next call and notifies nothing. The connection stays listed as revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel, and the resource is excluded from the MCP tools themselves — a client can't list connections or revoke one through `run_action`.
+### What the status means
+
+Every connection carries a **status** — a badge on the index, a chip on its page — and it's never "active". The server has no connection to watch: each call is its own HTTP request, and nothing arrives when a client is closed or removed. What the server *does* know is whether what it issued still works, so the status is read off that:
+
+| Status       | What it means                                                                                                                                                      |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Open         | The client holds credentials that still work and can call at any time. Whether it does is what **Last used** says.                                                 |
+| Disconnected | The client gave up its credentials. Claude Code does this on **Clear authentication** in `/mcp` and on `claude mcp logout`, through the token revocation endpoint.  |
+| Expired      | Nothing the client holds still works: it went 30 days without calling, or never finished connecting after you approved it.                                         |
+| Revoked      | You revoked it.                                                                                                                                                    |
+
+A disconnected or expired client comes back by authorizing again — which creates a **new** connection. The old row stays, so you can still see what it was allowed to do and when it last ran. Hover the status chip for the moment the state was entered.
+
+:::info Only clients that revoke their tokens show as disconnected
+Token revocation ([RFC 7009](https://www.rfc-editor.org/rfc/rfc7009)) is the one signal a client can send on its way out, and only clients that implement it do. Claude Code does. A client that simply deletes its stored tokens reads as open until they expire, 30 days after its last call.
+:::
+
+**Revoke** is an action on the resource, from the actions menu or a connection's page; with [Custom controls](./custom-controls.html) it's also a button on the toolbar, on each row not yet revoked, and on the page. It takes effect on the client's next call and notifies nothing. The connection stays listed as revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel, and the resource is excluded from the MCP tools themselves — a client can't list connections or revoke one through `run_action`.
 
 If your initializer lists resources explicitly in `config.resources`, add `"Avo::Resources::McpConnection"` to it. To link the resource into the profile menu (needs the [Menu editor](./menu-editor.html) add-on):
 
@@ -341,6 +358,8 @@ A connection's page carries a **Log** card: every request the client made, newes
 | Refused        | A malformed request, refused before any tool ran.                                                 |
 | Rate limited   | Over `tool_calls_per_minute`.                                                                     |
 | Token rejected | An expired or revoked token, or a revoked connection. A client still retrying after you revoked it shows up here. |
+
+A client that disconnects through the revocation endpoint leaves an `oauth/revoke` row, so the moment it left sits where its calls do.
 
 A tool call's arguments sit behind a disclosure on its row, after your app's `filter_parameters` and capped at 4 KB. Filter the list to tool calls or errors, or pause it while you read.
 
