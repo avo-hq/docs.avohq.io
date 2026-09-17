@@ -892,6 +892,8 @@ Every composer takes files: click the paperclip, drag them in, or paste them fro
 
 The files stay attached to the message and the model sees them again on every later turn — you can keep asking about a file for the rest of the conversation, not just in the message it rode in on.
 
+Each file shows as a chip under your message. Clicking an image or a PDF opens the file; clicking a text file — markdown, plain text, CSV, TSV, JSON — opens its [Media Library](./media-library.html) page, where the blob id, the download, and the delete live. When the Media Library is disabled the chip downloads the file instead.
+
 Text files — markdown, plain text, CSV, TSV, and JSON — take a different route from images and PDFs: they aren't sent to the model inline. The model learns the file's name, type, size, and blob id, and reads it in windows through the `read_file` tool when it needs the content. See [Reading files and importing from them](#reading-files-and-importing-from-them).
 
 The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
