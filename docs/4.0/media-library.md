@@ -89,6 +89,28 @@ Avo.configure do |config|
 end
 ```
 
+## File previews
+
+Opening a file shows a preview next to its details.
+
+| File type                                             | Preview                                   |
+| ----------------------------------------------------- | ----------------------------------------- |
+| Images                                                | The image                                 |
+| Audio and video                                       | A player                                  |
+| CSV (`text/csv`)                                      | A table, with the first row as the header |
+| Other text files (`text/*`: `.txt`, `.md`, and so on) | The file's content as plain text          |
+| Everything else                                       | A placeholder icon                        |
+
+Markdown files are shown as source, not rendered.
+
+A CSV table loads 1,000 rows at a time. Use **Load more rows** at the bottom of the table to load the next 1,000, and **View raw** to see the file as plain text instead.
+
+Plain text previews show the first 1 MB of the file. **Download** always gives you the whole file.
+
+:::info
+Text previews are read from your storage service by the server, so they work the same on local disk, S3, and the other Active Storage services. No extra configuration is needed.
+:::
+
 ## Use it with the rich text editors
 
 The Media Library will seamlessly integrate with all the rich text editors.
