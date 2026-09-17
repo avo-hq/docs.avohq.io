@@ -77,6 +77,7 @@ section "AI", icon: "heroicons/outline/sparkles" do
   resource "avo_ai/chats"
   resource "avo_ai/messages"
   resource "avo_ai/models"
+  resource "avo_ai/skills"
 end
 ```
 
@@ -302,6 +303,19 @@ The one thing a `def chip` body does *not* get is a lambda's implicit forwarding
 context, so a bare `number_to_currency(...)` won't resolve — name `view_context`, as above, or
 reach your app's own helpers through `helpers`.
 :::
+
+**What hovering shows.** A chip's tooltip is its title, so the hover repeats what the chip already
+spells out. A resource with something better to say declares `chip_tooltip`; a skill's chip uses
+this to show the skill's description. Blank falls back to the title, and a `chip_tooltip` that
+raises loses the tooltip, never the chip.
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+  def chip_tooltip # [!code focus]
+    record.summary # [!code focus]
+  end # [!code focus]
+end
+```
 
 **A chip renders in two places**, and that is worth knowing before you reach for anything
 request-scoped — it is drawn by two different things:
@@ -593,7 +607,7 @@ For full control, eject every prompt file the gem ships:
 bin/rails generate avo:ai:eject instructions
 ```
 
-This copies all prompt files — the chat assistant's instructions and sub-prompts, plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
+This copies all prompt files — the chat assistant's instructions and sub-prompts (`identity.txt.erb`, `app_context.txt.erb`, `attached_context.txt.erb`, `uploaded_files.txt.erb`, `skills.txt.erb`, `extra_instructions.txt.erb`), plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
 
 The shipped `instructions.txt.erb` ends with an `<%= extra_instructions %>` slot. If you replace it, your copy decides whether to keep that slot — remove the line and the `extra_instructions` file is ignored.
 
@@ -898,6 +912,43 @@ Text files — markdown, plain text, CSV, TSV, and JSON — take a different rou
 
 The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
 
+## Attach a skill with a message
+
+A **skill** is a reusable instruction — a title, an optional one-line description, and a markdown body, written once by an admin and dropped into any chat. The description is for the person choosing and is never sent to the assistant. Type `/` at the start of a line or after a space to open a menu of every skill you're allowed to see, filtered by title and description as you type; pick one with the keyboard or a click and it lands in the composer as a chip. The **Skills** dropdown in the composer's toolbar, beside the model picker, lists the same skills and inserts the same chip at the cursor, for anyone who'd rather not remember the slash. It only appears once there's a skill to pick. Backspace removes the whole chip in one press, never one letter of its title.
+
+Write around the chip, or send it on its own — a message that's nothing but a skill chip is a valid send, the way a `/`-style slash command carries its own instruction. In the sent bubble the chip renders like any other [record chip](#record-chips) and links to the skill's page. Hover a skill chip, in the draft or in the transcript, to read its description.
+
+Picking a skill isn't a one-turn thing: its body joins the assistant's instructions for the **rest of the conversation**, and every later message in that chat reuses it too. Attach a second skill later and both apply together — there's no per-message detach in this version.
+
+**The body is read fresh on every turn, never copied into the message.** Edit a skill and the change reaches the very next reply. Delete it — or lose access to it through the skill policy's scope, see [Choose who can manage skills](#choose-who-can-manage-skills) — and it silently stops applying, in every chat that ever referenced it. Only the chip notices: a deleted skill's chip in an earlier bubble falls back to plain text, carrying the title as it was when you sent it.
+
+**A message that's only a chip is an instruction to run, now.** Send "Summarize as changelog" with nothing else typed around it, and the assistant treats that turn as doing what the skill says, on the spot — not describing the skill back to you.
+
+Manage skills from the **AI Skills** resource in the sidebar — see [Choose who can manage skills](#choose-who-can-manage-skills) for the menu entry and who's allowed to create, edit, and delete them.
+
+### Import a skill
+
+Already have the skill written down? Click **Import skill** on the AI Skills index and paste the markdown. A frontmatter block at the top supplies the `title` and the `description`; everything under it becomes the body:
+
+```md
+---
+title: Changelog
+description: Summarise a record as a changelog entry
+---
+
+Summarise the attached record as a changelog entry…
+```
+
+`name` works in place of `title`, so an agent `SKILL.md` pastes in unchanged. Other frontmatter keys are ignored. Without frontmatter there is no title to read, and the import says so rather than guessing one. Importing is creating — the action is available to whoever passes `create?` on the skill policy.
+
+**Export skill**, on a skill's own page, goes the other way: it downloads that skill as a `.md` file in exactly this shape, ready to import into another app or keep in a repository.
+
+Ejecting `instructions` (see [Replace the shipped prompts](#replace-the-shipped-prompts)) also gives you `app/prompts/avo/ai/chat_agent/skills.txt.erb`, the partial that renders the bodies into the system prompt. It receives one local:
+
+| Local    | Shape                     | Present when                                                                        |
+| -------- | ------------------------- | ------------------------------------------------------------------------------------ |
+| `skills` | Array of `Avo::Ai::Skill` | The chat has at least one skill attached, deduplicated and in first-attached order    |
+
 ## Dictate a message
 
 The microphone in every composer — the bar, the new-chat page, and open conversations — transcribes speech into the message box: click to start, click to stop. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
@@ -1031,6 +1082,61 @@ The switch takes effect from that message on. The transcript so far is replayed 
 The picker is disabled while the assistant is responding; the model is yours to change on your turn.
 
 A chat keeps running on its model even if you later drop that model from `#available_models`. Its own picker still lists it — otherwise the dropdown would misreport what the next message runs on — and re-picking it is a no-op, so the conversation is never stranded. But nobody can switch a chat *onto* a model you've withdrawn.
+
+## Choose who can manage skills
+
+Add the **AI Skills** resource to the menu beside the others:
+
+```ruby
+# config/initializers/avo.rb
+section "AI", icon: "heroicons/outline/sparkles" do
+  resource "avo_ai/chats"
+  resource "avo_ai/messages"
+  resource "avo_ai/models"
+  resource "avo_ai/skills" # [!code focus]
+end
+```
+
+By default, anyone who can use the chat can list, pick, create, edit, and destroy skills — authoring and using a skill share one policy surface, the same way [choosing a model](#choose-which-models-people-can-use) is one surface for every chat user.
+
+Define your own `Avo::Ai::SkillPolicy` to narrow that. Your class wins over the gem's copy, and — like the gem's — it's a plain class rather than one that inherits your app's `ApplicationPolicy`, so it means the same thing no matter what your own base policy does:
+
+```ruby
+# app/policies/avo/ai/skill_policy.rb
+class Avo::Ai::SkillPolicy
+  attr_reader :user, :record
+
+  def initialize(user, record)
+    @user = user
+    @record = record
+  end
+
+  def index? = true
+  def show? = true
+  def new? = user.admin?
+  def create? = user.admin?
+  def edit? = user.admin?
+  def update? = user.admin?
+  def destroy? = user.admin?
+  # Authorized separately from CRUD — without `search?` the resource's search box goes dark.
+  # The composer's `/` menu reads `Scope#resolve` below, not `search?`.
+  def search? = true
+  def act_on? = true
+
+  class Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      @scope.all
+    end
+  end
+end
+```
+
+Narrowing `Scope#resolve` reaches past the resource's own index: a skill the scope excludes also drops out of the composer's `/` menu, and out of any chat that already referenced it — the same way a deleted skill does (see [Attach a skill with a message](#attach-a-skill-with-a-message)).
 
 ## Who can delete a chat
 
