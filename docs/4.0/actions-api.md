@@ -253,6 +253,22 @@ end
 
 </Option>
 
+<Option name="`modal_width`" headingSize="3">
+
+How wide the action's modal opens. Widen it when the form holds something that needs room, like a large textarea or a code field. The user can still resize the modal from its own width selector.
+
+```ruby
+class Avo::Actions::ImportRecords < Avo::BaseAction
+  self.modal_width = :"4xl"
+end
+```
+
+- **Type:** Symbol
+- **Default:** `:xl`
+- **Possible values:** `:sm`, `:md`, `:lg`, `:xl`, `:"2xl"`, `:"3xl"`, `:"4xl"`, `:"5xl"`, `:full`
+
+</Option>
+
 ## Behavior
 
 <Option name="`standalone`" headingSize="3">

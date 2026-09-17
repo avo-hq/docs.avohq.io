@@ -328,7 +328,7 @@ class Avo::Actions::ReleaseFish < Avo::BaseAction
 end
 ```
 
-If the action is safe to run without asking, set [`confirmation`](./actions-api.html#confirmation) to `false` and it executes immediately on trigger. To stop the modal from closing when the user clicks outside it, set [`close_modal_on_backdrop_click`](./actions-api.html#close_modal_on_backdrop_click) to `false`.
+If the action is safe to run without asking, set [`confirmation`](./actions-api.html#confirmation) to `false` and it executes immediately on trigger. To stop the modal from closing when the user clicks outside it, set [`close_modal_on_backdrop_click`](./actions-api.html#close_modal_on_backdrop_click) to `false`. To give a larger form more room, set [`modal_width`](./actions-api.html#modal_width).
 
 ## Run an action without records
 
