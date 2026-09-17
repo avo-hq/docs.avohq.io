@@ -1055,7 +1055,64 @@ You can keep typing while it works. A message sent before the current answer lan
 
 While a message waits you can move it to the front of the line or drop it, which is the point of showing you the wait rather than hiding it. The list belongs to the page you typed on: reloading clears it, the same way it clears anything else you'd typed but not sent.
 
-The indicator is read from the conversation itself rather than from what your browser happened to witness. Reload mid-reply, or open the chat in full page while it's working, and the indicator is still there waiting on the same reply — the answer streams in wherever you're watching from when it lands. It clears when the assistant's reply arrives, when a card or a question hands the turn back to you, or when the run errors out.
+The indicator is read from the conversation itself rather than from what your browser happened to witness. Reload mid-reply, or open the chat in full page while it's working, and the indicator is still there waiting on the same reply — the answer streams in wherever you're watching from when it lands. It clears when the assistant's reply arrives, when a card or a question hands the turn back to you, or when the run fails and [says so](#when-a-reply-fails).
+
+## When a reply fails
+
+A run can fail: the provider is down or rate-limiting, an API key is missing, the conversation outgrew the model's context window, or something in the app raised. When that happens the conversation gets an **error row** where the answer would have been, the Thinking indicator clears, and the message you sent stays in the transcript, unanswered.
+
+The row carries one sentence, chosen by what went wrong:
+
+| What happened                                                             | What the row says                                              | Try again |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------- | --------- |
+| Rate limit, overload, a 5xx, a timeout, or the network                    | The provider is busy or unreachable                            | Yes       |
+| A missing or rejected API key, a billing problem, a forbidden request     | The provider rejected the request; someone with access to the AI settings needs to look | Yes |
+| The chat's model isn't in the registry                                    | The model isn't available; pick another or refresh the models  | Yes       |
+| The conversation is longer than the model's context window                | Start a new chat                                               | No        |
+| The provider called the request invalid, or refused an attachment type    | Start a new chat, or resend without the attachment             | No        |
+| Anything else                                                             | Something went wrong                                           | Yes       |
+
+**Try again** starts a new run for the message that went unanswered. It adds nothing to the transcript. The button only shows on the last row of the conversation, and only when running the same conversation again can work: a rejected API key gets one because someone can fix the key, a conversation that is too long doesn't. Sending a new message works too. The assistant then answers both.
+
+Error rows are never sent to the model.
+
+### When the worker dies mid-reply
+
+A worker that is killed mid-run, by a deploy or an out-of-memory kill, gets no chance to write an error row. The conversation covers that case itself: once nothing has been added to it for 10 minutes and no run holds the chat, it shows *The assistant stopped before it finished answering* with the same **Try again**. A page that was open the whole time shows it without a reload.
+
+### Where the failure is reported
+
+A failed run is handled inside the job, so it does **not** raise. Your queue won't retry it on its own schedule (which would post the same error row again each time), and it won't appear in the queue's failed or dead set. The exception goes to the [Rails error reporter](https://guides.rubyonrails.org/error_reporting.html) instead, marked `handled: true`, with the chat's id as context. Sentry, Honeybadger, AppSignal, and Bugsnag subscribe to it out of the box. To subscribe yourself:
+
+```ruby
+# config/initializers/error_subscriber.rb
+class AiFailureSubscriber
+  def report(error, handled:, severity:, context:, source: nil)
+    return unless context[:chat_id] # [!code focus]
+
+    Rails.logger.error("AI chat #{context[:chat_id]} failed: #{error.class}")
+  end
+end
+
+Rails.error.subscribe(AiFailureSubscriber.new)
+```
+
+The log line avo-ai writes itself (`[Avo::Ai] Chat 42 run failed: RubyLLM::RateLimitError`) names the exception's class and nothing else, because a message can carry SQL values or an internal URL.
+
+### Who sees what went wrong
+
+Everyone sees the sentence. The exception itself, its class and the provider's message, renders under it only for a viewer at the [`:tools` debug level](#debug-levels); at `:off` it never reaches the page. The row stores the exception's class until the chat is deleted. It stores the message only when the error came from the provider. For anything raised by the app it keeps the class alone, and your error tracker has the rest.
+
+:::warning Upgrading an existing install
+Error rows keep their kind in a new `avo_ai_messages.error_details` column. Re-run the installer to get its migration, then migrate:
+
+```bash
+bin/rails generate avo:ai install
+bin/rails db:migrate
+```
+
+The installer only writes what your app is missing. Until the column exists error rows still appear and still clear the indicator, but they carry no **Try again**.
+:::
 
 ## When each message was sent
 
@@ -1238,7 +1295,7 @@ How much of the assistant's internal work a viewer may see is an authorization d
 There are two levels:
 
 - `:off` — the conversation: replies, record chips, confirmation buttons, the assistant's questions, the "Thinking…" indicator, and the collapsed trail with its reasoning trace and progress hints. The default.
-- `:tools` — everything above plus the system prompt, the tool calls, and the raw tool output.
+- `:tools` — everything above plus the system prompt, the tool calls, the raw tool output, and the exception behind an [error row](#when-a-reply-fails).
 
 The reasoning trace deliberately sits on the `:off` side of the line: it narrates the answer the
 viewer is already allowed to read, not the machinery. The system prompt and the raw tool traffic
