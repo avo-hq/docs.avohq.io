@@ -79,7 +79,7 @@ Creates apply immediately — there's nothing to preview for a record that doesn
 - **"Add a user named Ada with the email ada@example.com and the admin role"** — several fields in one sentence.
 - **"Add 15 cities"** — creating is the one write it repeats. It creates all fifteen without stopping to ask between them, filling required fields with sensible values, and closes with one line.
 
-Each created record gets its own card with a link.
+Each created record gets its own card with a link. The one create that waits for you is an import from a file — "create users from this CSV" shows a card first; see [Work with files](#work-with-files).
 
 ## Change and delete records
 
@@ -133,8 +133,15 @@ Required inputs you didn't mention arrive as empty fields on the card for you to
 | "Attach the file I just sent to the cover" | A file you uploaded in this chat, linked to the record |
 | "Attach https://example.com/logo.png as the cover" | A confirmation card with the URL and a preview — nothing is fetched until you click **Attach** |
 | "Take the cover off this post"          | The file unlinked — the blob stays in the Media Library   |
+| "Read this contract and tell me if the subscription is active" | The file read, the subscription looked up, and an answer grounded in both |
+| "Which of the emails in this CSV are signed-up users?" | The rows read in windows and matched against your records — matches and misses reported |
+| "Create users from this CSV"            | A card with the file, the mapping, and a preview of the first rows — nothing is created until you click **Confirm** |
 
 Files are referenced by blob id, and the Media Library URL carries one: `/avo/media-library/260/edit` is blob 260. The assistant never uploads bytes itself — a file gets in either by riding along on your message or through a URL you confirm. Purging a file stays a manual action. See [Files and attachments](./ai.html#files-and-attachments) and [Getting new files in](./ai.html#getting-new-files-in).
+
+**Reading a file works wherever the file lives.** A file you dropped into the chat, a file attached to a record you can read, and a Media Library file can all be read — markdown, plain text, CSV, TSV, and JSON. The assistant reads in windows (lines, or rows for CSV and TSV) rather than swallowing the whole file, so a long file is read a piece at a time and cross-referenced against your records as it goes. Spreadsheets and PDFs aren't read this way; a PDF still reaches a vision-capable model as an attachment.
+
+**Importing shows you the import before it happens.** "Create users from this CSV" reads the header, maps the file's columns to the resource's fields, and shows a card with the file and where it came from, the resource, the row count, the mapping, and a preview of the first rows. Nothing is created until you confirm. Rows are then created on the server, one create per row, and the card reports how many were created and lists any row that failed validation with its row number and reason — the rest are still created. See [Reading files and importing from them](./ai.html#reading-files-and-importing-from-them).
 
 ## Ask about the page you're on
 
@@ -177,9 +184,9 @@ Attach files to your message — paperclip, drag, or paste — and ask about the
 
 - **"Summarize the attached CSV"**
 - **"What's in this screenshot?"**
-- **"Create a project for each row in this spreadsheet"**
+- **"Create a project for each row in this CSV"** — an import card you confirm; see [Work with files](#work-with-files)
 
-The files stay on the message, so you can keep asking about them later in the conversation. Reading an image or a PDF takes a vision-capable model. See [Send files with a message](./ai.html#send-files-with-a-message).
+The files stay on the message, so you can keep asking about them later in the conversation. Text files — markdown, plain text, CSV, TSV, JSON — are read on demand, in windows, rather than sent to the model whole. Reading an image or a PDF takes a vision-capable model. See [Send files with a message](./ai.html#send-files-with-a-message).
 
 ## Manage the conversation
 
