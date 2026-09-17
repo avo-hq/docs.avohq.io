@@ -308,6 +308,19 @@ config.appearance = {
 | `:inline`   | Renders inline on `lg` and up, auto-collapses to a dropdown on smaller screens |
 | `:dropdown` | Always renders as a compact dropdown                                           |
 
+## Sound feedback
+
+Avo plays a short sound when a user picks a scheme, neutral, or accent. <kbd>Shift</kbd>+<kbd>S</kbd> toggles it, and the choice is remembered per browser in `localStorage`.
+
+[`sound`](./appearance-api.html#sound) sets the starting state for browsers that haven't made a choice yet. [`sound_button`](./appearance-api.html#sound_button) adds a mute toggle to the switcher for people who'd rather click than use the shortcut.
+
+```ruby
+config.appearance = {
+  sound: true, # default
+  sound_button: true # default: false
+}
+```
+
 ## Customize chart colors
 
 Customize the colors used in dashboard charts with [`chart_colors`](./appearance-api.html#chart_colors) — pass an array of hex values.
@@ -476,6 +489,8 @@ end
 | `load_settings`  | Proc                     | `nil`                    | Block returning a Hash of saved settings (database mode)    |
 | `save_settings`  | Proc                     | `nil`                    | Block called with a partial `settings` Hash (database mode) |
 | `picker_layout`  | `:inline` `:dropdown`    | `:inline`                | Navbar switcher layout                                      |
+| `sound`          | Boolean                  | `true`                   | Play a sound on picks by default                            |
+| `sound_button`   | Boolean                  | `false`                  | Show the mute toggle in the switcher                        |
 | `logo`           | String                   | `"avo/logo.png"`         | Desktop logo path                                           |
 | `logo_dark`      | String                   | `nil`                    | Desktop logo for dark mode                                  |
 | `logomark`       | String                   | `"avo/logomark.png"`     | Compact logo path                                           |

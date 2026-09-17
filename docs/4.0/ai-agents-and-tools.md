@@ -44,16 +44,20 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 | `active_record_query`        | Runs read-only, paginated, policy-scoped queries against a resource — filters, scopes, grouping, and free-text search through the resource's own [configured search](./search.html) | read-only         |
 | `active_storage_insights`    | Storage reports — totals, orphans, duplicates, growth, biggest files — and finding/showing files                     | read-only         |
 | `active_storage_attachment`  | Attaches or detaches a Media Library blob (or a chat upload) on a record's attachment; can also fetch a URL onto one | immediately¹      |
+| `read_file`                  | Reads a markdown, text, CSV, TSV, or JSON file in windows — a file you uploaded in the chat, a file on a record you can read, or a [Media Library](./media-library.html) file — by blob id or filename | read-only         |
 | `create_record`              | Creates a record                                                                                                     | immediately       |
 | `update_record`              | Changes a record's attributes                                                                                        | after you confirm |
 | `delete_record`              | Deletes a record                                                                                                     | after you confirm |
 | `run_action`                 | Lists the [actions](./actions.html) available — one resource's, or [every action in the app](./ai.html#finding-an-action-without-naming-its-resource) — and proposes running one on the records you name | after you confirm |
+| `import_records`             | Proposes creating records for one resource from a CSV or TSV file, with a column-to-field mapping                    | after you confirm² |
 | `write_history`              | Lists the writes made earlier in the conversation and proposes undoing one                                           | after you confirm |
 | `rename_conversation`        | Renames the current conversation — with your exact title, or by regenerating one                                     | immediately       |
 
 "After you confirm" means the tool call produces a card describing the pending change; your click applies it, not the model. "Immediately" is reserved for actions that are reversible (a detached file can be re-attached, a conversation can be renamed again) or additive (creating a record).
 
 ¹ Attaching and detaching existing blobs apply immediately; the `attach_from_url` operation is the exception — a server-side download always goes through a confirmation card showing the URL, and nothing is fetched until you click **Attach**. See [Getting new files in](./ai.html#getting-new-files-in).
+
+² An import is the one create that waits for you: the call produces a card naming the file and where it came from, the resource, the row count, the mapping, and the first rows, and nothing is created until you click **Confirm**. The rows are then created on the server — the model never carries them — under the same authorization and field rules a single create uses; a row that fails validation is skipped and reported on the card with its row number and reason, and the rest are still created. See [Reading files and importing from them](./ai.html#reading-files-and-importing-from-them).
 
 ### The shapes an ask can take
 

@@ -54,6 +54,7 @@ Cycle the [appearance](./appearance.html) settings from any page.
 | <kbd>Shift</kbd>+<kbd>M</kbd> | Cycle the color scheme (auto / light / dark) |
 | <kbd>Shift</kbd>+<kbd>N</kbd> | Cycle the neutral theme                      |
 | <kbd>Shift</kbd>+<kbd>A</kbd> | Cycle the accent color                       |
+| <kbd>Shift</kbd>+<kbd>S</kbd> | Toggle the pick sound                        |
 
 ## Assistant
 

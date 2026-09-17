@@ -18,6 +18,7 @@ The feature and docs are both work in progress.
 
 - Avo 4
 - An API key for an LLM provider supported by [RubyLLM](https://rubyllm.com) (OpenAI, Anthropic, Gemini, and others)
+- RubyLLM 2.0, installed for you as a dependency. It is a release candidate today (`2.0.0.rc2`), which is why the gemspec asks for `>= 2.0.0.rc2` rather than `~> 2.0` — a `~>` requirement will not resolve a prerelease.
 - PostgreSQL
 
 ## Installation
@@ -59,7 +60,7 @@ end
 
 Store the key in your environment or `Rails.application.credentials` — never hardcode it in the initializer.
 
-Then load RubyLLM's model registry, and re-run it periodically (or call `RubyLLM.models.refresh!`) to keep model labels and pricing current:
+Then load RubyLLM's model registry, and re-run it periodically (or call `RubyLLM.models.refresh`) to keep model labels and pricing current:
 
 ```bash
 bin/rails ruby_llm:load_models
@@ -76,6 +77,7 @@ section "AI", icon: "heroicons/outline/sparkles" do
   resource "avo_ai/chats"
   resource "avo_ai/messages"
   resource "avo_ai/models"
+  resource "avo_ai/skills"
 end
 ```
 
@@ -120,9 +122,23 @@ Avo.configure do |config|
     max_redirects: 3
   }
 
+  # What reading a file through the chat may cost, and how big one import may be
+  # (see "Reading files and importing from them"). Set only the keys you want to change.
+  config.ai.files = {
+    max_read_size: 10.megabytes, # ceiling on a file read_file will decode
+    max_slice: 500,              # lines or rows one read_file call may return
+    max_slice_bytes: 256.kilobytes, # bytes one read_file call may return, whatever the line count
+    max_import_rows: 1000        # data rows one confirmed import may create
+  }
+
   # Which tools the assistant gets (see "Choose which tools the assistant gets").
   config.ai.excluded_tools = [:delete_record]
   config.ai.extra_tools = ["CrmTool"]
+
+  # Suggestion chips a brand-new chat offers before the first message. Unset (the default) shows
+  # generic suggestions, translatable through i18n (avo.ai.empty_state.suggestions). Set this to
+  # replace them outright with your own, e.g. naming real resources.
+  config.ai.empty_state_suggestions = ["Show me this week's orders", "Create a new customer"]
 end
 ```
 
@@ -210,9 +226,9 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
 
-**Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
+**Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. The exception is an [import from a CSV](#reading-files-and-importing-from-them), which is proposed as one card and creates its rows only when you confirm. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
-**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions).
+**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions).
 
 **Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
 
@@ -291,6 +307,19 @@ The one thing a `def chip` body does *not* get is a lambda's implicit forwarding
 context, so a bare `number_to_currency(...)` won't resolve — name `view_context`, as above, or
 reach your app's own helpers through `helpers`.
 :::
+
+**What hovering shows.** A chip's tooltip is its title, so the hover repeats what the chip already
+spells out. A resource with something better to say declares `chip_tooltip`; a skill's chip uses
+this to show the skill's description. Blank falls back to the title, and a `chip_tooltip` that
+raises loses the tooltip, never the chip.
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+  def chip_tooltip # [!code focus]
+    record.summary # [!code focus]
+  end # [!code focus]
+end
+```
 
 **A chip renders in two places**, and that is worth knowing before you reach for anything
 request-scoped — it is drawn by two different things:
@@ -441,6 +470,20 @@ That last row is the point. An action that emails a customer or calls another se
 
 Standalone runs aren't written to the audit log at all: it records what happened to a record, and a standalone action has none. The card in the conversation is the record of it.
 
+### Tracing what it changed
+
+The conversation keeps its own record of every write — that is what [undo](#undoing-a-run) reads. With [Audit Logging](./audit-logging.html) installed, the same write also lands in your app's audit log, where an admin reviewing the data will actually look for it: attributed to the user the chat acts as, and marked as coming from that chat.
+
+| Column          | Value                        |
+| --------------- | ---------------------------- |
+| `author`        | The chat's owner             |
+| `origin`        | `"ai_chat"`                  |
+| `origin_record` | The chat                     |
+
+A record's timeline reads *Ada Lovelace through AI chat*; the activity's **Origin** field — *AI chat — Reorder the Q3 invoices* — links to the conversation; and the chat's admin page carries an **Audit trail** table of what the assistant changed there. An action run is recorded against the action, as a click on it would be; a revert is recorded as the write it is.
+
+The table is gated by `view_audit_trail?` on your `Avo::Ai::ChatPolicy`, Avo's own convention for a `has_many`. The assistant itself can never reach the audit log: `Avo::AuditLogging::Activity` is not a resource it can name, list, or write to.
+
 ## Files and attachments
 
 The assistant reports on your Active Storage usage, so you can ask about files the way you ask about records:
@@ -473,6 +516,34 @@ Two paths bring a file that isn't in your Media Library yet onto a record:
 **Give it a link.** Ask the assistant to attach a file by URL — "attach https://example.com/logo.png as this post's cover" — and it proposes the download on a confirmation card showing the URL, the filename, and the record. When the link points at an image the card previews it, so you are approving a picture you have seen rather than an address you had to read. Nothing is fetched until you click **Attach**; the assistant can't fetch anything on its own, which is what keeps a malicious link that slipped into your data from ever being followed unseen.
 
 The download itself is hardened: only public `https://` URLs are accepted (private and internal addresses are rejected, on every redirect too), the file's content type is read from its bytes rather than trusted from the server, and anything over the configured size ceiling (25 MB by default) is refused mid-download rather than after it. If your files are bigger than that, or your source is slow, raise the matching keys under `config.ai.remote_file` — see [Configuration](#configuration). The undo is the same as for any attachment — detach it; the file stays in the Media Library.
+
+### Reading files and importing from them
+
+The assistant can read the **text** of a file, not just show it: markdown, plain text, CSV, TSV, and JSON. "Read this contract and tell me if the subscription is active", "which of the emails in this CSV are signed-up users?" — it reads the file, pulls out what it needs, and queries your records with it.
+
+The file can live in any of three places, and the read path is the same for all of them:
+
+| The file is                            | It's readable when                                                                              |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Uploaded in this chat                  | Always — uploads are private to their conversation                                              |
+| Attached to a record                   | You're allowed to read that record                                                              |
+| In the [Media Library](./media-library.html), attached to nothing | The Media Library is [visible](./media-library.html#control-who-can-use-it) to you |
+
+Files are named by blob id, as everywhere else in the chat, and a filename works when the assistant has no id yet: it searches everything you can see and reads the file if exactly one matches, otherwise it lists the candidates and asks.
+
+**Text uploads are read on demand, not sent inline.** A markdown, text, CSV, TSV, or JSON file you drop into the composer is no longer pasted into the prompt whole. The model is told the file's name, type, size, and blob id, and reads it through `read_file` when it needs to — which is what keeps a 300-row CSV from flooding the conversation, and a much bigger one from failing the turn. Images, PDFs, and other non-text uploads keep going to the model as attachments, as before.
+
+**Reading happens in windows.** Text, markdown, and JSON come back a range of lines at a time; CSV and TSV a range of rows, keyed by the header so column names survive into the answer. Every window reports the file's total, so the assistant knows to keep reading. One call returns at most `max_slice` lines or rows, and a file over `max_read_size` is refused with both sizes named rather than truncated quietly — raise the keys under `config.ai.files` if your files are bigger. See [Configuration](#configuration).
+
+**What a file says is data, not instructions.** Content comes back framed as file content the user supplied, and a sentence inside a file addressed to the assistant carries no more authority than text in a record: it can be reported, never acted on. Only the standard text, CSV, and JSON parsers are used — no format that can execute code or deserialize objects is accepted, and spreadsheets and PDFs are refused with the accepted types named.
+
+**Importing records from a CSV** is the write side of the same feature. "Create users from this CSV" reads the header and the first rows, works out which column fills which field — asking you when a required field has no obvious column — and then, instead of creating records one at a time, proposes the whole import as one card: the file and where it came from (this chat, a named record, or the Media Library), the resource, the row count, the column-to-field mapping, any columns it will skip, and a preview labelled as the first rows of the total.
+
+Nothing is created until you click **Confirm**. The rows are then created on the server — the model never carries them, so the import costs a handful of turns whatever the row count — under the same authorization and field rules a single create uses, and the mapping is checked again at that moment against what you can write. A row that fails validation is skipped and reported on the card with its row number and reason; the rest are still created. When it's done the card reports how many records were created and lists the failed rows, and each created record lands in the write history like a single create, so any one of them can be [undone](./ai-what-you-can-ask.html#undo-something) on its own.
+
+:::info
+An import creates records only — updating or upserting from a file isn't offered — and it takes CSV and TSV files, not JSON. One import is capped at `max_import_rows` data rows (1,000 by default); a bigger file is refused with the count and the cap named, so split it and import it in parts.
+:::
 
 ## Teach the assistant your app
 
@@ -606,7 +677,7 @@ For full control, eject every prompt file the gem ships:
 bin/rails generate avo:ai:eject instructions
 ```
 
-This copies all prompt files — the chat assistant's instructions and sub-prompts, plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
+This copies all prompt files — the chat assistant's instructions and sub-prompts (`identity.txt.erb`, `app_context.txt.erb`, `attached_context.txt.erb`, `uploaded_files.txt.erb`, `skills.txt.erb`, `extra_instructions.txt.erb`), plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
 
 The shipped `instructions.txt.erb` renders the other prompt files through slots of its own: `<%= identity %>` and `<%= app_context %>` near the top, `<%= extra_instructions %>` at the end. If you replace it, your copy decides which of those slots survive — remove a line and that file is ignored, however carefully it was written.
 
@@ -622,7 +693,7 @@ Avo.configure do |config|
 end
 ```
 
-Set neither and the assistant gets the twelve tools the gem ships. The roster is assembled per run, so once the app has restarted, the next message in an existing conversation already reflects the change — nothing is baked into a chat.
+Set neither and the assistant gets the fourteen tools the gem ships. The roster is assembled per run, so once the app has restarted, the next message in an existing conversation already reflects the change — nothing is baked into a chat.
 
 ### Take a tool away
 
@@ -631,11 +702,11 @@ Set neither and the assistant gets the twelve tools the gem ships. The roster is
 config.ai.excluded_tools = [:delete_record, :update_record]
 ```
 
-The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of twelve; symbols and strings are both accepted.
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of fourteen — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
 
 An excluded tool is filtered out by name before it's ever built, so it isn't attached to the conversation and the model never learns it exists. It doesn't refuse the request — there's nothing there to refuse with.
 
-A name that isn't one of the twelve raises `ArgumentError` at boot, listing the ones it knows. A typo that quietly left deletes attached is exactly the failure worth being loud about.
+A name that isn't one of the fourteen raises `ArgumentError` at boot, listing the ones it knows. A typo that quietly left deletes attached is exactly the failure worth being loud about.
 
 :::warning It's a denylist, so tools added later arrive switched on
 `excluded_tools` says what to remove, not what to allow. A future avo-ai release that ships a new tool — a write tool included — hands it to every app that hasn't named it here. Read the release notes when you upgrade, and exclude anything you don't want.
@@ -701,6 +772,26 @@ Three things the server decides for you, whatever the entry says:
 :::warning What a tool returns goes to your model provider
 Everything `execute` returns is sent to the provider on that turn and on every later turn of the conversation, and it's stored on the tool call. Return the minimum that answers the question — no API keys, no credentials, and no personal data the question didn't call for. Read secrets from `ENV` or `Rails.application.credentials`; never write one into the tool file or the initializer. When an entry fails to resolve, the error names the entry by its class and key names only — the values never reach a log, the error tracker, or the **Agent tools** field.
 :::
+
+### Serve the same tool over MCP
+
+Running the [MCP Server](./mcp.html) too? The class you just wrote can answer connected MCP clients as well. Declare which consent capability unlocks it — `avo:read`, `avo:write` or `avo:actions` — and register it with that gem beside this one:
+
+```ruby
+# app/tools/crm_tool.rb
+class CrmTool < RubyLLM::Tool
+  def self.capability = "avo:read" # [!code focus]
+  # ...
+end
+```
+
+```ruby
+# config/initializers/avo.rb
+config.ai.extra_tools = ["CrmTool"]
+config.mcp_server.extra_tools = ["CrmTool"] # [!code focus]
+```
+
+The chat ignores `capability`. Over MCP the server injects the connecting admin as `user:` the way the chat does, runs the capability gate first, and serves a Hash as structured content, a String as text, and an `{error: "..."}` Hash as a tool error. `chat` and `inspection_tracker` are never set there, so a tool that can run over MCP mustn't depend on either. See [Share a tool with Avo AI](./mcp.html#share-a-tool-with-avo-ai) for the details.
 
 ### Replace a shipped tool with your own copy
 
@@ -850,7 +941,7 @@ To give a conversation the whole window, use **Open in full page** in the title 
 
 The button is there before you've sent anything, too. On the new-chat view it points at the full-page composer instead, so you can start a long message with the whole window rather than the panel.
 
-A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message.
+A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message. The greeting text is translated through i18n (`avo.ai.empty_state.title` / `.subtitle`) like any other copy; the suggested prompts themselves are generic by default but can be replaced with your own via [`config.ai.empty_state_suggestions`](#configuration).
 
 :::info
 Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {enabled: false}` in `config/initializers/avo.rb`, the shortcut is off along with the rest — the Agent button still works.
@@ -885,7 +976,48 @@ Every composer takes files: click the paperclip, drag them in, or paste them fro
 
 The files stay attached to the message and the model sees them again on every later turn — you can keep asking about a file for the rest of the conversation, not just in the message it rode in on.
 
+Each file shows as a chip under your message. Clicking an image or a PDF opens the file; clicking a text file — markdown, plain text, CSV, TSV, JSON — opens its [Media Library](./media-library.html) page, where the blob id, the download, and the delete live. When the Media Library is disabled the chip downloads the file instead.
+
+Text files — markdown, plain text, CSV, TSV, and JSON — take a different route from images and PDFs: they aren't sent to the model inline. The model learns the file's name, type, size, and blob id, and reads it in windows through the `read_file` tool when it needs the content. See [Reading files and importing from them](#reading-files-and-importing-from-them).
+
 The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
+
+## Attach a skill with a message
+
+A **skill** is a reusable instruction — a title, an optional one-line description, and a markdown body, written once by an admin and dropped into any chat. The description is for the person choosing and is never sent to the assistant. Type `/` at the start of a line or after a space to open a menu of every skill you're allowed to see, filtered by title and description as you type; pick one with the keyboard or a click and it lands in the composer as a chip. The **Skills** dropdown in the composer's toolbar, beside the model picker, lists the same skills and inserts the same chip at the cursor, for anyone who'd rather not remember the slash. It only appears once there's a skill to pick. Backspace removes the whole chip in one press, never one letter of its title.
+
+Write around the chip, or send it on its own — a message that's nothing but a skill chip is a valid send, the way a `/`-style slash command carries its own instruction. In the sent bubble the chip renders like any other [record chip](#record-chips) and links to the skill's page. Hover a skill chip, in the draft or in the transcript, to read its description.
+
+Picking a skill isn't a one-turn thing: its body joins the assistant's instructions for the **rest of the conversation**, and every later message in that chat reuses it too. Attach a second skill later and both apply together — there's no per-message detach in this version.
+
+**The body is read fresh on every turn, never copied into the message.** Edit a skill and the change reaches the very next reply. Delete it — or lose access to it through the skill policy's scope, see [Choose who can manage skills](#choose-who-can-manage-skills) — and it silently stops applying, in every chat that ever referenced it. Only the chip notices: a deleted skill's chip in an earlier bubble falls back to plain text, carrying the title as it was when you sent it.
+
+**A message that's only a chip is an instruction to run, now.** Send "Summarize as changelog" with nothing else typed around it, and the assistant treats that turn as doing what the skill says, on the spot — not describing the skill back to you.
+
+Manage skills from the **AI Skills** resource in the sidebar — see [Choose who can manage skills](#choose-who-can-manage-skills) for the menu entry and who's allowed to create, edit, and delete them.
+
+### Import a skill
+
+Already have the skill written down? Click **Import skill** on the AI Skills index and paste the markdown. A frontmatter block at the top supplies the `title` and the `description`; everything under it becomes the body:
+
+```md
+---
+title: Changelog
+description: Summarise a record as a changelog entry
+---
+
+Summarise the attached record as a changelog entry…
+```
+
+`name` works in place of `title`, so an agent `SKILL.md` pastes in unchanged. Other frontmatter keys are ignored. Without frontmatter there is no title to read, and the import says so rather than guessing one. Importing is creating — the action is available to whoever passes `create?` on the skill policy.
+
+**Export skill**, on a skill's own page, goes the other way: it downloads that skill as a `.md` file in exactly this shape, ready to import into another app or keep in a repository.
+
+Ejecting `instructions` (see [Replace the shipped prompts](#replace-the-shipped-prompts)) also gives you `app/prompts/avo/ai/chat_agent/skills.txt.erb`, the partial that renders the bodies into the system prompt. It receives one local:
+
+| Local    | Shape                     | Present when                                                                        |
+| -------- | ------------------------- | ------------------------------------------------------------------------------------ |
+| `skills` | Array of `Avo::Ai::Skill` | The chat has at least one skill attached, deduplicated and in first-attached order    |
 
 ## Dictate a message
 
@@ -1020,6 +1152,61 @@ The switch takes effect from that message on. The transcript so far is replayed 
 The picker is disabled while the assistant is responding; the model is yours to change on your turn.
 
 A chat keeps running on its model even if you later drop that model from `#available_models`. Its own picker still lists it — otherwise the dropdown would misreport what the next message runs on — and re-picking it is a no-op, so the conversation is never stranded. But nobody can switch a chat *onto* a model you've withdrawn.
+
+## Choose who can manage skills
+
+Add the **AI Skills** resource to the menu beside the others:
+
+```ruby
+# config/initializers/avo.rb
+section "AI", icon: "heroicons/outline/sparkles" do
+  resource "avo_ai/chats"
+  resource "avo_ai/messages"
+  resource "avo_ai/models"
+  resource "avo_ai/skills" # [!code focus]
+end
+```
+
+By default, anyone who can use the chat can list, pick, create, edit, and destroy skills — authoring and using a skill share one policy surface, the same way [choosing a model](#choose-which-models-people-can-use) is one surface for every chat user.
+
+Define your own `Avo::Ai::SkillPolicy` to narrow that. Your class wins over the gem's copy, and — like the gem's — it's a plain class rather than one that inherits your app's `ApplicationPolicy`, so it means the same thing no matter what your own base policy does:
+
+```ruby
+# app/policies/avo/ai/skill_policy.rb
+class Avo::Ai::SkillPolicy
+  attr_reader :user, :record
+
+  def initialize(user, record)
+    @user = user
+    @record = record
+  end
+
+  def index? = true
+  def show? = true
+  def new? = user.admin?
+  def create? = user.admin?
+  def edit? = user.admin?
+  def update? = user.admin?
+  def destroy? = user.admin?
+  # Authorized separately from CRUD — without `search?` the resource's search box goes dark.
+  # The composer's `/` menu reads `Scope#resolve` below, not `search?`.
+  def search? = true
+  def act_on? = true
+
+  class Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      @scope.all
+    end
+  end
+end
+```
+
+Narrowing `Scope#resolve` reaches past the resource's own index: a skill the scope excludes also drops out of the composer's `/` menu, and out of any chat that already referenced it — the same way a deleted skill does (see [Attach a skill with a message](#attach-a-skill-with-a-message)).
 
 ## Who can delete a chat
 

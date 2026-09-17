@@ -505,6 +505,10 @@ redirect_to avo.resources_users_path(
 
 Avo provides two pairs of helpers — the Rails view helpers [`encode_filter_params`](./basic-filters-api#encode_filter_params) / [`decode_filter_params`](./basic-filters-api#decode_filter_params) (available in views and off `view_context`) and the standalone [`Avo::Filters::BaseFilter.encode_filters`](./basic-filters-api#Avo::Filters::BaseFilter.encode_filters) / [`Avo::Filters::BaseFilter.decode_filters`](./basic-filters-api#Avo::Filters::BaseFilter.decode_filters) class methods, usable anywhere.
 
+:::info
+Only the filters a resource declares in `def filters` are applied. A filter that has since been removed from the resource — or whose class no longer exists — is discarded, with a warning in the logs. Users holding a link (or a persisted session) that still names the old filter keep loading the <Index /> view instead of hitting an error.
+:::
+
 ## Open a filter in your editor
 
 In the `development` environment, each filter's title in the filters panel shows a small `</>` icon that opens the filter's source file in your editor. See [Open a record in your editor](./customization.html#open-a-record-in-your-editor) for how it works and how to configure it for your editor.

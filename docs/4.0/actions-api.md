@@ -253,6 +253,22 @@ end
 
 </Option>
 
+<Option name="`modal_width`" headingSize="3">
+
+How wide the action's modal opens. Widen it when the form holds something that needs room, like a large textarea or a code field. The user can still resize the modal from its own width selector.
+
+```ruby
+class Avo::Actions::ImportRecords < Avo::BaseAction
+  self.modal_width = :"4xl"
+end
+```
+
+- **Type:** Symbol
+- **Default:** `:xl`
+- **Possible values:** `:sm`, `:md`, `:lg`, `:xl`, `:"2xl"`, `:"3xl"`, `:"4xl"`, `:"5xl"`, `:full`
+
+</Option>
+
 ## Behavior
 
 <Option name="`standalone`" headingSize="3">
@@ -441,6 +457,17 @@ def handle(query:, **args)
 
   succeed "Done!"
   download report_data, "projects.csv"
+end
+```
+
+On its own, `download` leaves the page as it is. If the action also creates or changes records, pair it with [`reload`](#reload) (or [`redirect_to`](#redirect_to)) so the page picks them up — unlike the other response methods, `download` composes instead of overriding.
+
+```ruby
+def handle(**args)
+  statement = Statements::GenerateMonthlyStatement.call(statement_data:)
+
+  download statement.file.download, statement.file.filename
+  reload # [!code focus]
 end
 ```
 

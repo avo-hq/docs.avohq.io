@@ -57,6 +57,17 @@ At this stage, all migrations, resources, and controllers required for the audit
 bin/rails db:migrate
 ```
 
+:::info Already installed? Upgrade instead
+A first install writes **one** migration, with every column this version knows about. An app that installed an earlier version needs only what came after it:
+
+```bash
+bin/rails generate avo:audit_logging upgrade
+bin/rails db:migrate
+```
+
+Today that is the [activity origin](#where-an-activity-came-from) columns. `install` does the same thing — it looks at your `db/migrate` and writes only what is missing, never touching a migration you have already run — so re-running it is safe too; `upgrade` is the same code path under a name that says so.
+:::
+
 ## Enable and configure audit logging
 
 ### Enable it globally
@@ -296,6 +307,65 @@ Avo.configure do |config|
   }
 end
 ```
+
+## Where an activity came from
+
+Most activities come from somebody clicking in the panel, and those carry no origin — a marker on every row would say nothing. Anything else names itself, so you can tell a change your team made from a change something else made on their behalf.
+
+Three of Avo's own add-ons name themselves, each after the record the entry points back to:
+
+| Add-on | `origin` | Reads as | Links to |
+| --- | --- | --- | --- |
+| [MCP server](./mcp.html) | `mcp_connection` | *through MCP connection* | The connection |
+| [REST API](./rest-api.html) | `api_token` — or `api` when your own scheme let the request in without a token | *through API token* / *through API* | The token |
+| [Avo AI](./ai.html) | `ai_chat` | *through AI chat* | The chat |
+
+In every case the author is still the person: the admin who authorized the connection, the token's owner, the chat's owner — whose permissions the change was made with. The record's timeline says *through MCP connection* on the author's own line — "Ada Lovelace through MCP connection" — and the activity's own page carries an **Origin** field whose whole text links to the connection.
+
+Two columns hold it:
+
+| Column          | Holds                                                                                         |
+| --------------- | ----------------------------------------------------------------------------------------------- |
+| `origin`        | A short name for what acted — `"mcp_connection"`, `"api_token"`, `"ai_chat"`, or a name of your own. `nil` for the panel. |
+| `origin_record` | Optional, polymorphic: the thing that acted. Linked from the activity's page where it still exists. |
+
+Filter the activity index by **Origin** to see everything one kind of actor did, or scope a query directly:
+
+```ruby
+Avo::AuditLogging::Activity.from_origin("mcp_connection")   # everything MCP clients did
+Avo::AuditLogging::Activity.originating_from(connection)    # everything one actor did
+```
+
+### Mark your own origins
+
+Anything of yours that records activities through Avo — an importer, a background job, a rake task — can name itself the same way. Wrap the work:
+
+```ruby
+# app/jobs/nightly_import_job.rb
+class NightlyImportJob < ApplicationJob
+  def perform(import)
+    Avo::AuditLogging::Origin.with("nightly_importer", record: import) do
+      # anything in here that records an activity records it as the importer's
+      import.run!
+    end
+  end
+end
+```
+
+The origin lasts exactly as long as the block and cannot leak into the next request or job. The panel labels it from `avo.audit_logging.origins.<name>` where you define one, and humanizes the name where you don't — `"nightly_importer"` renders as *Nightly importer*:
+
+```yaml
+# config/locales/en.yml
+en:
+  avo:
+    audit_logging:
+      origins:
+        nightly_importer: "Nightly import"
+```
+
+:::info
+Activities recorded before you upgraded have no origin, and neither do activities recorded by an app that hasn't run the new migration yet. Both keep working — they just read as the panel's own.
+:::
 
 ## Disable specific actions logging
 
