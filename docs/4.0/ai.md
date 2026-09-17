@@ -854,7 +854,7 @@ The one thing to check is the model: reading an image takes a vision model. The 
 
 ## Attach a skill with a message
 
-A **skill** is a reusable instruction — a title, an optional one-line description, and a markdown body, written once by an admin and dropped into any chat. The description is for the person choosing and is never sent to the assistant. Type `/` at the start of a line or after a space to open a menu of every skill you're allowed to see, filtered by title and description as you type; pick one with the keyboard or a click and it lands in the composer as a chip. Backspace removes the whole chip in one press, never one letter of its title.
+A **skill** is a reusable instruction — a title, an optional one-line description, and a markdown body, written once by an admin and dropped into any chat. The description is for the person choosing and is never sent to the assistant. Type `/` at the start of a line or after a space to open a menu of every skill you're allowed to see, filtered by title and description as you type; pick one with the keyboard or a click and it lands in the composer as a chip. The **Skills** dropdown in the composer's toolbar, beside the model picker, lists the same skills and inserts the same chip at the cursor, for anyone who'd rather not remember the slash. It only appears once there's a skill to pick. Backspace removes the whole chip in one press, never one letter of its title.
 
 Write around the chip, or send it on its own — a message that's nothing but a skill chip is a valid send, the way a `/`-style slash command carries its own instruction. In the sent bubble the chip renders like any other [record chip](#record-chips) and links to the skill's page.
 
@@ -880,6 +880,8 @@ Summarise the attached record as a changelog entry…
 ```
 
 `name` works in place of `title`, so an agent `SKILL.md` pastes in unchanged. Other frontmatter keys are ignored. Without frontmatter there is no title to read, and the import says so rather than guessing one. Importing is creating — the action is available to whoever passes `create?` on the skill policy.
+
+**Export skill**, on a skill's own page, goes the other way: it downloads that skill as a `.md` file in exactly this shape, ready to import into another app or keep in a repository.
 
 Ejecting `instructions` (see [Replace the shipped prompts](#replace-the-shipped-prompts)) also gives you `app/prompts/avo/ai/chat_agent/skills.txt.erb`, the partial that renders the bodies into the system prompt. It receives one local:
 
