@@ -86,12 +86,15 @@ Use <kbd>J</kbd> / <kbd>K</kbd> to jump into the table from anywhere on the page
 
 ## Show view
 
-| Keys         | Action            |
-| ------------ | ----------------- |
-| <kbd>E</kbd> | Edit the record   |
-| <kbd>D</kbd> | Delete the record |
+| Keys         | Action                |
+| ------------ | --------------------- |
+| <kbd>E</kbd> | Edit the record       |
+| <kbd>D</kbd> | Delete the record     |
 | <kbd>A</kbd> | Open the actions menu |
-| <kbd>I</kbd> | Go back to the index |
+| <kbd>C</kbd> | Create a new record   |
+| <kbd>I</kbd> | Go back to the index  |
+
+<kbd>C</kbd> follows the same authorization as the index's create button: if the user can't create the record, the key does nothing.
 
 ## Edit view
 

@@ -165,7 +165,7 @@ From a conversation's page, starting a new chat from the bar:
 - **"Summarize this"**
 - **"What did we decide here?"**
 
-A ribbon above the composer names the subject, and the ✕ at its end — or <kbd>Backspace</kbd> in an empty composer — starts the chat without it. See [What you start the chat from](./ai.html#what-you-start-the-chat-from).
+A ribbon above the composer names the subject, and the ✕ at its end — or <kbd>Backspace</kbd> in an empty composer — starts the chat without it; <kbd>Backspace</kbd> again brings it back. See [What you start the chat from](./ai.html#what-you-start-the-chat-from).
 
 ## Ask about the rows you checked
 
