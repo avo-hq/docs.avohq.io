@@ -238,6 +238,36 @@ config.appearance = {
 
 </Option>
 
+<Option name="`sound`">
+
+Whether the pick sound starts on. Each browser can override it with <kbd>Shift</kbd>+<kbd>S</kbd> or the mute toggle, and that choice is stored in `localStorage`.
+
+```ruby
+config.appearance = {
+  sound: false
+}
+```
+
+- **Type:** Boolean
+- **Default:** `true`
+
+</Option>
+
+<Option name="`sound_button`">
+
+Show a mute toggle in the appearance switcher. Without it, <kbd>Shift</kbd>+<kbd>S</kbd> is the only way to toggle the sound.
+
+```ruby
+config.appearance = {
+  sound_button: true
+}
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+</Option>
+
 ## Persistence
 
 <Option name="`persistence`">
