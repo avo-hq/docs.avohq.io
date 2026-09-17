@@ -133,6 +133,7 @@ mount_avo_mcp_server at: "/admin/mcp"   # moved
 | Authorization server metadata  | `/.well-known/oauth-authorization-server` (origin root)   | None           |
 | Token endpoint                 | `<mount path>/token`                                      | None           |
 | Client registration (RFC 7591) | `<mount path>/register`                                   | None           |
+| Token revocation (RFC 7009)    | `<mount path>/revoke`                                     | None           |
 | JSON-RPC endpoint              | `<mount path>`                                            | Bearer token   |
 
 The discovery documents are always at the origin root, where the protocol requires them; `at:` moves only the endpoints under the mount path. The consent screen and the MCP connections resource are mounted with the panel, not here.
