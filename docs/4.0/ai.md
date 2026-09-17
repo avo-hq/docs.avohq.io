@@ -117,6 +117,15 @@ Avo.configure do |config|
     max_redirects: 3
   }
 
+  # What reading a file through the chat may cost, and how big one import may be
+  # (see "Reading files and importing from them"). Set only the keys you want to change.
+  config.ai.files = {
+    max_read_size: 10.megabytes, # ceiling on a file read_file will decode
+    max_slice: 500,              # lines or rows one read_file call may return
+    max_slice_bytes: 256.kilobytes, # bytes one read_file call may return, whatever the line count
+    max_import_rows: 1000        # data rows one confirmed import may create
+  }
+
   # Which tools the assistant gets (see "Choose which tools the assistant gets").
   config.ai.excluded_tools = [:delete_record]
   config.ai.extra_tools = ["CrmTool"]
@@ -212,9 +221,9 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
 
-**Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
+**Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. The exception is an [import from a CSV](#reading-files-and-importing-from-them), which is proposed as one card and creates its rows only when you confirm. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
-**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions).
+**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions).
 
 **Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
 
@@ -490,6 +499,34 @@ Two paths bring a file that isn't in your Media Library yet onto a record:
 
 The download itself is hardened: only public `https://` URLs are accepted (private and internal addresses are rejected, on every redirect too), the file's content type is read from its bytes rather than trusted from the server, and anything over the configured size ceiling (25 MB by default) is refused mid-download rather than after it. If your files are bigger than that, or your source is slow, raise the matching keys under `config.ai.remote_file` — see [Configuration](#configuration). The undo is the same as for any attachment — detach it; the file stays in the Media Library.
 
+### Reading files and importing from them
+
+The assistant can read the **text** of a file, not just show it: markdown, plain text, CSV, TSV, and JSON. "Read this contract and tell me if the subscription is active", "which of the emails in this CSV are signed-up users?" — it reads the file, pulls out what it needs, and queries your records with it.
+
+The file can live in any of three places, and the read path is the same for all of them:
+
+| The file is                            | It's readable when                                                                              |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Uploaded in this chat                  | Always — uploads are private to their conversation                                              |
+| Attached to a record                   | You're allowed to read that record                                                              |
+| In the [Media Library](./media-library.html), attached to nothing | The Media Library is [visible](./media-library.html#control-who-can-use-it) to you |
+
+Files are named by blob id, as everywhere else in the chat, and a filename works when the assistant has no id yet: it searches everything you can see and reads the file if exactly one matches, otherwise it lists the candidates and asks.
+
+**Text uploads are read on demand, not sent inline.** A markdown, text, CSV, TSV, or JSON file you drop into the composer is no longer pasted into the prompt whole. The model is told the file's name, type, size, and blob id, and reads it through `read_file` when it needs to — which is what keeps a 300-row CSV from flooding the conversation, and a much bigger one from failing the turn. Images, PDFs, and other non-text uploads keep going to the model as attachments, as before.
+
+**Reading happens in windows.** Text, markdown, and JSON come back a range of lines at a time; CSV and TSV a range of rows, keyed by the header so column names survive into the answer. Every window reports the file's total, so the assistant knows to keep reading. One call returns at most `max_slice` lines or rows, and a file over `max_read_size` is refused with both sizes named rather than truncated quietly — raise the keys under `config.ai.files` if your files are bigger. See [Configuration](#configuration).
+
+**What a file says is data, not instructions.** Content comes back framed as file content the user supplied, and a sentence inside a file addressed to the assistant carries no more authority than text in a record: it can be reported, never acted on. Only the standard text, CSV, and JSON parsers are used — no format that can execute code or deserialize objects is accepted, and spreadsheets and PDFs are refused with the accepted types named.
+
+**Importing records from a CSV** is the write side of the same feature. "Create users from this CSV" reads the header and the first rows, works out which column fills which field — asking you when a required field has no obvious column — and then, instead of creating records one at a time, proposes the whole import as one card: the file and where it came from (this chat, a named record, or the Media Library), the resource, the row count, the column-to-field mapping, any columns it will skip, and a preview labelled as the first rows of the total.
+
+Nothing is created until you click **Confirm**. The rows are then created on the server — the model never carries them, so the import costs a handful of turns whatever the row count — under the same authorization and field rules a single create uses, and the mapping is checked again at that moment against what you can write. A row that fails validation is skipped and reported on the card with its row number and reason; the rest are still created. When it's done the card reports how many records were created and lists the failed rows, and each created record lands in the write history like a single create, so any one of them can be [undone](./ai-what-you-can-ask.html#undo-something) on its own.
+
+:::info
+An import creates records only — updating or upserting from a file isn't offered — and it takes CSV and TSV files, not JSON. One import is capped at `max_import_rows` data rows (1,000 by default); a bigger file is refused with the count and the cap named, so split it and import it in parts.
+:::
+
 ## Customize the assistant's instructions
 
 The assistant's system prompt is built from ERB files that ship inside the gem, under `app/prompts/`. They resolve like Rails views: a file in your application at the same relative path replaces the gem's copy. If you configure nothing, the shipped prompt is used as is.
@@ -572,7 +609,7 @@ Avo.configure do |config|
 end
 ```
 
-Set neither and the assistant gets the twelve tools the gem ships. The roster is assembled per run, so once the app has restarted, the next message in an existing conversation already reflects the change — nothing is baked into a chat.
+Set neither and the assistant gets the fourteen tools the gem ships. The roster is assembled per run, so once the app has restarted, the next message in an existing conversation already reflects the change — nothing is baked into a chat.
 
 ### Take a tool away
 
@@ -581,11 +618,11 @@ Set neither and the assistant gets the twelve tools the gem ships. The roster is
 config.ai.excluded_tools = [:delete_record, :update_record]
 ```
 
-The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of twelve; symbols and strings are both accepted.
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of fourteen — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
 
 An excluded tool is filtered out by name before it's ever built, so it isn't attached to the conversation and the model never learns it exists. It doesn't refuse the request — there's nothing there to refuse with.
 
-A name that isn't one of the twelve raises `ArgumentError` at boot, listing the ones it knows. A typo that quietly left deletes attached is exactly the failure worth being loud about.
+A name that isn't one of the fourteen raises `ArgumentError` at boot, listing the ones it knows. A typo that quietly left deletes attached is exactly the failure worth being loud about.
 
 :::warning It's a denylist, so tools added later arrive switched on
 `excluded_tools` says what to remove, not what to allow. A future avo-ai release that ships a new tool — a write tool included — hands it to every app that hasn't named it here. Read the release notes when you upgrade, and exclude anything you don't want.
@@ -854,6 +891,8 @@ The composer is a rich text box, not a bare textarea. The usual markdown shortcu
 Every composer takes files: click the paperclip, drag them in, or paste them from the clipboard. Files upload as you add them — through Active Storage's direct upload, into the storage service your app already uses — preview in the draft, and go to the model with the message, so "summarize the attached CSV" and "what's in this screenshot?" work the way you'd expect.
 
 The files stay attached to the message and the model sees them again on every later turn — you can keep asking about a file for the rest of the conversation, not just in the message it rode in on.
+
+Text files — markdown, plain text, CSV, TSV, and JSON — take a different route from images and PDFs: they aren't sent to the model inline. The model learns the file's name, type, size, and blob id, and reads it in windows through the `read_file` tool when it needs the content. See [Reading files and importing from them](#reading-files-and-importing-from-them).
 
 The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
 
