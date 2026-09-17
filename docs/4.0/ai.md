@@ -800,7 +800,7 @@ It is one ribbon with one ✕: "what is this about" and "where was I" are not tw
 
 **What is attached stays attached for the whole conversation.** It's what the chat was *started from*, so you're asked once, when the chat begins — that's why the ribbon is on the new-chat composer only. Every later message still resolves "this record", "this file", "it", or a question with no subject at all against the same thing. Ask "what is this?" as the fifth message and it works exactly as it does as the first.
 
-Dismiss the ribbon with the ✕ at its end, or press <kbd>Backspace</kbd> in an empty composer, and the chat starts without it. Backspace only ever removes — pressing it again can't attach the subject back — so clearing the message box can't put back something you meant to drop. The button next to send toggles it back on, and lights up whenever the subject is attached, so the ribbon and the button always agree about what the chat will carry. Every fresh compose view offers the subject again: the ✕ applies to the chat you're writing, not to the feature.
+Dismiss the ribbon with the ✕ at its end, or press <kbd>Backspace</kbd> in an empty composer, and the chat starts without it. Press <kbd>Backspace</kbd> again and the subject is attached back. Holding the key down to clear a message never reaches the ribbon — only a fresh press in an already-empty composer counts. The button next to send is the same switch, and lights up whenever the subject is attached, so the ribbon and the button always agree about what the chat will carry. Every fresh compose view offers the subject again: the ✕ applies to the chat you're writing, not to the feature.
 
 It respects your policies, on every message. Only references are kept — a resource name and a record id, a blob id, a title and a path — never a field value, and never the labels you see in the ribbon. That reference is resolved again on each turn, through the same authorization the page itself applies — `index?` plus your Pundit scope for a record, Media Library access for a file — and the label is read fresh at that moment. So a subject the user loses access to, or that gets deleted mid-conversation, simply drops out of the prompt instead of lingering as a stale copy of something they can no longer see. A checked row that was never theirs to read is not attached at all — the chat carries the subset they could have selected in the UI, never the set the browser asked for. The attachment is only a starting point either way — every read and write the assistant then performs is authorized on its own.
 
@@ -882,6 +882,8 @@ Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {en
 Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` with the default mount). The list shows every chat you own — its model, message count, and age — and links to the conversation. It's the same chat as in the bar: same messages, same tools, same streaming, with room to read.
 
 The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Ai::Chat` resource from the sidebar.
+
+Avo's resource hotkeys work here too: **C** starts a new chat from the list or from a conversation, and **I** takes you from a conversation back to the list.
 
 ## The conversation menu
 
