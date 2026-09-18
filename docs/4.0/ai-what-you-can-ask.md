@@ -188,6 +188,25 @@ Attach files to your message — paperclip, drag, or paste — and ask about the
 
 The files stay on the message, so you can keep asking about them later in the conversation. Text files — markdown, plain text, CSV, TSV, JSON — are read on demand, in windows, rather than sent to the model whole. Reading an image or a PDF takes a vision-capable model. See [Send files with a message](./ai.html#send-files-with-a-message).
 
+## Reach your other systems
+
+Connect a remote MCP server from the chat and its tools join Avo's own for the rest of the conversation, with the record you're looking at as the context. See [Connect other tools with MCP](./ai.html#connect-other-tools-with-mcp) for how a connection is made and who's allowed to make one.
+
+| Ask                                                                   | What you get                                                                                                                  |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| "Give this customer a $30 credit"                                     | The customer found in Stripe from what the record already carries, then a card showing the exact call before anything is sent |
+| "How can I refund this customer?"                                     | Your own refund policy, read out of the Notion pages you connected, rather than a guess at one                                |
+| "Create an issue about this project not being able to finish on time" | A Linear issue written from the project record you are on, on a card you approve                                              |
+| "Mark this project open in Linear, charge the customer in Stripe, and open a GitHub issue for each of its tasks" | Three systems in one turn, one card per call that is not already always-allowed, and a plain report of anything you declined or that failed |
+
+**The record you're on is the identifier.** "This customer" resolves from what the record already holds, such as a Stripe id or an email. When it holds nothing that names the remote entity, the assistant looks it up on the remote side or asks you which one it is. It does not guess an id.
+
+**Say which system when it matters.** Two connected servers can both offer a tool called `create_record`, and so does your admin. Naming the system, "in Linear", "in Stripe", saves a round trip, and every answer tells you which connection a result came from.
+
+**One card per call.** A multi-step request shows them in the order the assistant makes them, so you can approve the Linear issue and decline the charge. Declining one stops that step only; the assistant carries on with the rest or explains what it couldn't finish.
+
+**A connection that's down doesn't break the chat.** Avo's own tools keep working, and the assistant names the connection that needs reconnecting instead of going quiet.
+
 ## Manage the conversation
 
 - **"Rename this conversation to 'Q3 invoices'"** — your exact wording, applied everywhere the title shows.
@@ -208,6 +227,9 @@ Knowing the edges saves a round trip:
 | Delete a file from storage                | It can detach, never purge                                               |
 | Touch anything your policies hide         | Every read and write is authorized for the signed-in user                |
 | Take on substantial work unrelated to this app | Writing your blog post, debugging a codebase, a long translation, or a research report is someone else's job — it says so and offers what it can do instead |
+| Connect an MCP server, share one, or disconnect one | Those are a person's clicks in the connections panel, behind their own permission; ask it to connect something and it tells you where to do it |
+| Approve its own call to a connected system | The card is yours, and that one is settled by button only: neither a remote result nor a typed "do it" can confirm it |
+| Change what a connection's tools are allowed to do | On, always ask, and off belong to the connection's owner, on its own page |
 
 Short of that it is good company: small talk, a joke, a quick factual aside, or a question about a file you dropped into the conversation all get a straight answer before it steers back to your data. Anything you put in front of it — an uploaded file, the Media Library file you started the chat from, text you pasted — counts as part of the conversation, so "what does this show?" is answered rather than declined.
 
