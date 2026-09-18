@@ -1041,12 +1041,13 @@ Paste the server's address and click **Check server**. Avo asks the server what 
 
 | What the server asks for                      | What the panel shows                                                                                                          |
 | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Nothing at all                                | A single **Connect** button, with no credential to go and find                                                                |
 | A sign-in, and it can register Avo on the spot | **Continue to sign in**, which hands you to the provider's own consent screen and brings you back to the chat you started from |
 | A credential you already hold                 | A masked **Access token** field, with a sentence saying why a sign-in is not on offer                                          |
 
 Stripe, Linear, and Notion take the sign-in path. GitHub's hosted server expects a client registered with it ahead of time, which Avo can't do for you, so it connects with a personal access token instead. A server that needs a pre-registered client and issues no token you can paste can't be connected in this version. The panel says so rather than looping you through a sign-in that can't finish.
 
-Nothing is written until the credential has been proven against the server: a rejected token, an abandoned consent screen, or a server that never answers leaves no half-connected row behind. When it works, the chat you started from gets a line naming the server and how many tools it offers.
+Nothing is written until the connection has been proven against the server. A rejected token, an abandoned consent screen, a server that never answers, or one that turns out to want a credential after all leaves no half-connected row behind. That includes a **Connect** that went out with nothing: what the panel offered is checked against the server rather than taken on trust. When it works, the chat you started from gets a line naming the server and how many tools it offers.
 
 ### Who can use a connection
 
@@ -1084,9 +1085,9 @@ Connections have their own **Connectors** page in the sidebar, next to Chats and
 | **Always ask** | Callable, but every call shows a card and **Always allow** is never offered |
 | **Off**        | Not offered to the assistant at all                                         |
 
-Setting a tool to **Always ask** is also how you take an always-allow back: every grant on that tool stops applying at once, for everyone. Switching a tool **Off** hides it from the assistant entirely, which is what to do with the tools on a shared connection that nobody should reach from a chat. New tools a server starts offering arrive **On**.
+Setting a tool to **Always ask** is also how you take an always-allow back for that one tool: every grant on it stops applying at once, for everyone. Switching a tool **Off** hides it from the assistant entirely, which is what to do with the tools on a shared connection that nobody should reach from a chat. New tools a server starts offering arrive **On**.
 
-**Refresh tools** asks the server for its current list; Avo also refreshes it in the background when a turn starts with a list over an hour old. **Disconnect** deletes the connection, its credential, its tools, and every always-allow on it. It drops out of every chat on the next turn, while the messages that used it stay readable.
+**Refresh tools** asks the server for its current list; Avo also refreshes it in the background when a turn starts with a list over an hour old. **Revoke always-allow** takes back every always-allow on the whole connection at once, leaving what the assistant may call untouched: the next call for each tool stops on a card again, and anyone can always-allow one afresh from it. **Disconnect** deletes the connection, its credential, its tools, and every always-allow on it. It drops out of every chat on the next turn, while the messages that used it stay readable.
 
 ### When something expires
 
@@ -1099,7 +1100,7 @@ Nothing here fails a conversation: a connection that's down or out of credential
 | A sign-in you started and left             | Ten minutes, then the link is dead and you start again from the panel                                    |
 | The cached tool list                       | An hour, then the next turn refreshes it in the background                                               |
 
-A connection whose credentials stopped working shows **Needs reconnecting**. Only its owner can reconnect it, through the same panel, with the same consent screen or a fresh token, because that's the decision about whose remote account everyone acts as.
+A connection whose credentials stopped working shows **Needs reconnecting**. Only its owner can reconnect it, through the same panel, with the same consent screen or a fresh token, because that's the decision about whose remote account everyone acts as. That holds however much your app trusts somebody else with every other connection: a colleague who can manage this one still cannot paste a new token into it.
 
 ## Dictate a message
 
@@ -1329,9 +1330,11 @@ class Avo::Ai::ConnectorPolicy
   def new? = create?
   def edit? = update?
 
-  # Reconnecting, resubmitting a token, changing the audience, disconnecting, and setting a
-  # tool to on / always ask / off. Owner-only here.
+  # Setting a tool to on / always ask / off, refreshing the tool list, and revoking the
+  # always-allows. Reconnecting, resubmitting a token and changing the audience are owner-only
+  # whatever this answers.
   def update? = record.respond_to?(:owned_by?) && record.owned_by?(user)
+  # Disconnecting.
   def destroy? = update?
 
   # Authorized separately from CRUD: without these the resource's search box and its actions
@@ -1394,7 +1397,7 @@ class Scope
 end
 ```
 
-That shape lets them see every connection, set its tools to on / always ask / off, and disconnect it. It does **not** let them widen who a connection is shared with: the audience field stays with the owner whatever the policy says, and so does taking an OAuth connection back through its consent screen, because both decide whose remote account everybody else acts as.
+That shape lets them see every connection, set its tools to on / always ask / off, refresh its tools, revoke its always-allows, and disconnect it. It does **not** let them widen who a connection is shared with, nor reconnect one: the audience field stays with the owner whatever the policy says, and so does reconnecting, whether that means the consent screen again or a fresh token pasted in. Each of those decides whose remote account everybody else acts as.
 
 ### What a connection needs from your app
 
