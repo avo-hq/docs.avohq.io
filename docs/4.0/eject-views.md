@@ -39,6 +39,17 @@ bin/rails generate avo:eject --partial :logo
 | `:sidebar_extra` | `_sidebar_extra.html.erb` | Extra content after the sidebar menu |
 | `:profile_menu_extra` | `_profile_menu_extra.html.erb` | Extra items in the profile menu |
 
+### Eject into a theme
+
+Add `--theme` with a [theme](./themes.html) id to copy the partial into that theme's views directory instead of `app/views/`. The copy is used only while the theme is active, and it takes precedence over a copy ejected into the app:
+
+```bash
+bin/rails generate avo:eject --partial :logo --theme ocean
+      create  app/views/avo/themes/ocean/avo/partials/_logo.html.erb
+```
+
+The path under the theme directory mirrors Avo's `app/views` tree. Prepared templates and gem paths both work; see [Override partials](./themes.html#override-partials) in the Themes guide.
+
 ## Eject a component
 
 Use the `--component` option to eject any of Avo's ViewComponents. It accepts the class name or the underscored path — these two commands are equivalent:
@@ -124,6 +135,7 @@ The most common use case is ejecting the `application_controller`. It's an exten
 | Option | Description |
 |:-------|:------------|
 | `--partial` | Partial to eject: a [prepared template](#prepared-templates) symbol or a path inside the gem |
+| `--theme` | With `--partial`, the [theme](./themes.html) id whose views directory receives the copy |
 | `--component` | ViewComponent to eject: class name or underscored path |
 | `--field-components` | Field name whose components to eject |
 | `--view` | With `--field-components`, limit to `edit`, `index`, or `show` |
