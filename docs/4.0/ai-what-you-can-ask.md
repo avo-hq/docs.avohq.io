@@ -83,15 +83,19 @@ Each created record gets its own card with a link. The one create that waits for
 
 ## Change and delete records
 
-Both work one record at a time and both end in a card you confirm.
+Deletes work one record at a time. Updates work on one record or on many, and either way it ends in a card you confirm.
 
 - **"Set the Orbit project's status to active"** — a card shows the record and each field's before → after value, with **Confirm** and **Cancel**.
 - **"Rename the post 'Hello' to 'Hello world'"** — same card.
+- **"Update the last three users and make them active"** — one card for the whole batch: the change once, then every record it will touch, with the same **Confirm** and **Cancel**.
+- **"Show me this week's signups. Mark them approved"** — the assistant looks them up first, then proposes the batch. If your app registers an approve [action](./actions.html), it runs that instead, because an action carries business logic a field edit doesn't.
 - **"Delete the test project"** — a card names the record and asks you to confirm.
+
+**A batch is one card, one confirmation.** Up to 50 records at a time; ask for more and the assistant says how many there are and offers to narrow. Records that fail validation are named on the card afterwards and the rest are still updated. Each one is recorded separately, so undo works per record — a batch of 50 is 50 undos, not one.
 
 **Your confirmation applies the change, not the model.** Confirm a card by clicking its button or by telling the assistant to go ahead — "do it", "run it", "yes" — which counts the same because the words are yours. Either way the assistant can propose a write but never perform one, and it can't talk its way past a Cancel.
 
-**Ambiguity stops the write.** If "the Orbit project" matches three records, the assistant lists them and asks which one rather than picking. Bulk changes aren't offered at all: ask to update or delete many records and it will say it works one at a time.
+**Ambiguity stops the write.** If "the Orbit project" matches three records, the assistant lists them and asks which one rather than picking — naming one record and getting several is a reason to stop, not to update all three. Deleting many records at once isn't offered: ask and it will say it deletes one at a time.
 
 ## Undo something
 
@@ -173,7 +177,7 @@ Check rows on an index — or in a has-many panel on a record's page — and "th
 
 - **"What are these?"**
 - **"How many of these are unpaid?"**
-- **"Set all of these to archived"**
+- **"Set all of these to archived"** — one card over exactly the rows you checked, with no second lookup
 - **"Which of these has no owner?"**
 
 The ribbon's **"3 records selected"** chip says how many; hovering it names each row by resource and label. See [The rows you checked](./ai.html#the-rows-you-checked).
@@ -203,7 +207,7 @@ Knowing the edges saves a round trip:
 
 | It won't                                  | Because                                                                 |
 | ----------------------------------------- | ----------------------------------------------------------------------- |
-| Update or delete many records at once     | Writes are one record at a time; it will ask you to pick                |
+| Delete many records at once               | Deletes are one record at a time; it will ask you to pick. Updating many at once is supported — see [Change and delete records](#change-and-delete-records) |
 | Apply its own updates, deletes, or undos  | The card is yours to confirm — a click, or a quick "do it" in your own words |
 | Delete a file from storage                | It can detach, never purge                                               |
 | Touch anything your policies hide         | Every read and write is authorized for the signed-in user                |
