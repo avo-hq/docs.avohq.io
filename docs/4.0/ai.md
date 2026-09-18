@@ -1100,7 +1100,7 @@ Nothing here fails a conversation: a connection that's down or out of credential
 | A sign-in you started and left             | Ten minutes, then the link is dead and you start again from the panel                                    |
 | The cached tool list                       | An hour, then the next turn refreshes it in the background                                               |
 
-A connection whose credentials stopped working shows **Needs reconnecting**. Only its owner can reconnect it, through the same panel, with the same consent screen or a fresh token, because that's the decision about whose remote account everyone acts as. That holds however much your app trusts somebody else with every other connection: a colleague who can manage this one still cannot paste a new token into it.
+A connection whose credentials stopped working shows **Needs reconnecting**. Only its owner can reconnect it, through the same panel, with the same consent screen or a fresh token, because that's the decision about whose remote account everyone acts as. That holds however much your app trusts somebody else with every other connection: a colleague who can manage this one still cannot paste a new token into it. Pasting a fresh token takes back every always-allow on the connection, because a token can belong to a different account on the same server and nothing in the exchange says so.
 
 ## Dictate a message
 
