@@ -255,7 +255,7 @@ end
 
 <Option name="`modal_width`" headingSize="3">
 
-How wide the action's modal opens. Widen it when the form holds something that needs room, like a large textarea or a code field. The user can still resize the modal from its own width selector.
+How wide the action's modal opens. Widen it when the form holds something that needs room, like a large textarea or a code field. The modal carries no size control of its own, so this is the width the user sees.
 
 ```ruby
 class Avo::Actions::ImportRecords < Avo::BaseAction
