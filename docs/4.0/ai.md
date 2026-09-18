@@ -480,6 +480,8 @@ The conversation keeps its own record of every write — that is what [undo](#un
 | `origin`        | `"ai_chat"`                  |
 | `origin_record` | The chat                     |
 
+A batch update is recorded the same way, one entry per record it changed — so an audit reader sees each record's own change, and undo can take them back individually.
+
 A record's timeline reads *Ada Lovelace through AI chat*; the activity's **Origin** field — *AI chat — Reorder the Q3 invoices* — links to the conversation; and the chat's admin page carries an **Audit trail** table of what the assistant changed there. An action run is recorded against the action, as a click on it would be; a revert is recorded as the write it is.
 
 The table is gated by `view_audit_trail?` on your `Avo::Ai::ChatPolicy`, Avo's own convention for a `has_many`. The assistant itself can never reach the audit log: `Avo::AuditLogging::Activity` is not a resource it can name, list, or write to.
@@ -543,6 +545,8 @@ Nothing is created until you click **Confirm**. The rows are then created on the
 
 :::info
 An import creates records only — updating or upserting from a file isn't offered — and it takes CSV and TSV files, not JSON. One import is capped at `max_import_rows` data rows (1,000 by default); a bigger file is refused with the count and the cap named, so split it and import it in parts.
+
+Batch updates are capped too, at 50 records, and that cap is not configurable. An import's rows are new, so the only cost of a big one is the time it takes; a batch update changes records that already exist, and undo is recorded per record — so the cap is what keeps a batch small enough to review on one card and to walk back afterwards.
 :::
 
 ## Teach the assistant your app
@@ -897,6 +901,8 @@ Hover the **"3 records selected"** chip — or focus it, if you are on the keybo
 <Image src="/assets/img/4_0/ai/selected-records.webp" dark-src="/assets/img/4_0/ai/selected-records-dark.webp" width="1110" height="204" alt="The chat composer on a user's page. A panel open above the ribbon lists Team Facebook (#3), Project Fintone (#32) and Project Flexidy (#25). The ribbon beneath it reads: User, Johnny Kiehn, #1, 3 records selected, /admin/resources/users/1." prompt="the hover panel naming every checked row behind the composer's selection chip" />
 
 Up to 50 rows travel with one message. Past that the assistant is told the list was cut, so it says so before acting on "all of them" rather than quietly working from the first 50.
+
+A selection is also what you batch over: "set all of these to archived" proposes one card covering exactly the rows you checked. That is the same 50, and not a coincidence — a batch update is capped at 50 records for the same reason the selection is.
 
 :::info
 Rows of an [array resource](./array-resource.html) can't be attached — they have no database record to authorize or act on, so they are left out of the selection.
