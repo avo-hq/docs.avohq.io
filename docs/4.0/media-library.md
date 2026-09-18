@@ -103,7 +103,7 @@ Opening a file shows a preview next to its details.
 
 Markdown files are shown as source, not rendered.
 
-A CSV table loads 1,000 rows at a time. Use **Load more rows** at the bottom of the table to load the next 1,000, and **View raw** to see the file as plain text instead.
+A CSV table loads up to 1,000 rows at a time, and never more than 1 MB of the file per read — whichever limit it reaches first, so very wide rows arrive in smaller pages. Use **Load more rows** at the bottom of the table to load the next page, **View raw** to see the file as plain text instead, and **View as table** to come back.
 
 Plain text previews show the first 1 MB of the file. **Download** always gives you the whole file.
 
