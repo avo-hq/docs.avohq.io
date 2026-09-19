@@ -18,7 +18,7 @@ The feature and docs are both work in progress.
 
 - Avo 4
 - An API key for an LLM provider supported by [RubyLLM](https://rubyllm.com) (OpenAI, Anthropic, Gemini, and others)
-- RubyLLM 2.0, installed for you as a dependency. It is a release candidate today (`2.0.0.rc2`), which is why the gemspec asks for `>= 2.0.0.rc2` rather than `~> 2.0` — a `~>` requirement will not resolve a prerelease.
+- RubyLLM 2.0, installed for you as a dependency. It is a release candidate today (`2.0.0.rc4`), which is why the gemspec asks for `>= 2.0.0.rc4`, `< 2.1` rather than `~> 2.0` — a `~>` requirement will not resolve a prerelease, and the upper bound keeps a future 2.1 from arriving unannounced.
 - PostgreSQL
 
 ## Installation
@@ -986,7 +986,7 @@ The one thing to check is the model: reading an image takes a vision model. The 
 
 ## Attach a skill with a message
 
-A **skill** is a reusable instruction — a title, an optional one-line description, and a markdown body, written once by an admin and dropped into any chat. The description is for the person choosing and is never sent to the assistant. Type `/` at the start of a line or after a space to open a menu of every skill you're allowed to see, filtered by title and description as you type; pick one with the keyboard or a click and it lands in the composer as a chip. The **Skills** dropdown in the composer's toolbar, beside the model picker, lists the same skills and inserts the same chip at the cursor, for anyone who'd rather not remember the slash. It only appears once there's a skill to pick. Backspace removes the whole chip in one press, never one letter of its title.
+A **skill** is a reusable instruction — a title, an optional one-line description, and a markdown body, written once by an admin and dropped into any chat. The description is for the person choosing and is never sent to the assistant. Type `/` at the start of a line or after a space to open a menu of every skill you're allowed to see, filtered by title and description as you type; pick one with the keyboard or a click and it lands in the composer as a chip. When the menu has nothing to list it says which case that is — no skills written yet, or none matching what you typed — and in the first case it links straight to the new-skill form, for anyone your [skill policy](#choose-who-can-manage-skills) lets create one. The **Skills** dropdown in the composer's toolbar, beside the model picker, lists the same skills and inserts the same chip at the cursor, for anyone who'd rather not remember the slash. It only appears once there's a skill to pick. Backspace removes the whole chip in one press, never one letter of its title.
 
 Write around the chip, or send it on its own — a message that's nothing but a skill chip is a valid send, the way a `/`-style slash command carries its own instruction. In the sent bubble the chip renders like any other [record chip](#record-chips) and links to the skill's page. Hover a skill chip, in the draft or in the transcript, to read its description.
 
@@ -1106,7 +1106,7 @@ The log line avo-ai writes itself (`[Avo::Ai] Chat 42 run failed: RubyLLM::RateL
 Everyone sees the sentence. The exception itself, its class and the provider's message, renders under it only for a viewer at the [`:tools` debug level](#debug-levels); at `:off` it never reaches the page. The row stores the exception's class until the chat is deleted. It stores the message only when the error came from the provider. For anything raised by the app it keeps the class alone, and your error tracker has the rest.
 
 :::warning Upgrading an existing install
-Error rows keep their kind in a new `avo_ai_messages.error_details` column. Re-run the installer to get its migration, then migrate:
+Error rows keep what they report — the kind, the exception's class, whether retrying can help — under the `error` key of a new `avo_ai_messages.meta` column. Re-run the installer to get its migration, then migrate:
 
 ```bash
 bin/rails generate avo:ai install
