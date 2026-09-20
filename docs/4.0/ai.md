@@ -18,7 +18,7 @@ The feature and docs are both work in progress.
 
 - Avo 4
 - An API key for an LLM provider supported by [RubyLLM](https://rubyllm.com) (OpenAI, Anthropic, Gemini, and others)
-- RubyLLM 2.0, installed for you as a dependency. It is a release candidate today (`2.0.0.rc2`), which is why the gemspec asks for `>= 2.0.0.rc2` rather than `~> 2.0` — a `~>` requirement will not resolve a prerelease.
+- RubyLLM 2.0, installed for you as a dependency. It is a release candidate today (`2.0.0.rc4`), which is why the gemspec asks for `>= 2.0.0.rc4`, `< 2.1` rather than `~> 2.0` — a `~>` requirement will not resolve a prerelease. The upper bound is deliberate too: it keeps `bundle update` from pulling a 2.1 the gem has never been tested against.
 - PostgreSQL
 
 ## Installation
