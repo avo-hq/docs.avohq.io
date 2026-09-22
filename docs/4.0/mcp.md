@@ -62,7 +62,7 @@ bin/rails generate avo:mcp_server install
 bin/rails db:migrate
 ```
 
-The [installer](./mcp-api.html#generators) writes one migration — the connections, codes, and tokens admins authorize, plus the connection log — and appends a commented configuration block to `config/initializers/avo.rb`. It's additive: a migration your app already has is skipped, so running it again is safe.
+The [installer](./mcp-api.html#generators) writes one migration — the connections, codes, and tokens admins authorize, plus the connection log — and appends a commented configuration block to `config/initializers/avo.rb`. It's additive: a migration your app already has is skipped, so running it again is safe. Running it again is also how you upgrade: an app whose connections table predates the **Software** column gets those columns as a migration of their own (see [Tell connections apart](#tell-connections-apart)).
 
 If your admin model uses UUID primary keys, add `type: :uuid` to the migration's `t.references :user` line before migrating. The reference carries no foreign key, so a mismatch doesn't fail at migration time — it shows up later as connections whose owner can't be found.
 
@@ -298,7 +298,7 @@ The reverse isn't offered — an `Avo::McpServer::Tool` can't be handed to the c
 
 ## Review and revoke connections
 
-Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — the client's name and id, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
+Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — the client's name and id, the **Software** it reports as, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
 
 ### What the status means
 
@@ -329,6 +329,27 @@ config.profile_menu = -> do
     icon: "plug-connected"
 end
 ```
+
+### Tell connections apart
+
+Every Claude Code install registers as the same client — one client id, one name — and so does every claude.ai connector, so a panel with five **Claude Code** rows can't say from the registration which is which. Two things can.
+
+**The Software column** is what the program says it is *over the protocol*: the name and version it sends when it connects (`clientInfo` on `initialize`), with its user agent on the connection's page. The **Client** column is the client's claim at authorization time; this is its claim on every session, as last seen:
+
+| Client                                  | Client column | Software column       | User agent (connection's page) |
+| --------------------------------------- | ------------- | --------------------- | ------------------------------ |
+| Claude Code                             | Claude Code   | `claude-code 2.1.269` | `claude-code/2.1.269 (cli)`    |
+| claude.ai, Claude Desktop, mobile apps  | Claude        | `Anthropic/ClaudeAI`  | `Claude-User`                  |
+
+That tells a Claude Code row from a claude.ai one, and a session on one version from a session on another. A row reads *Not reported yet* until its client's first request. Like the name, it's the client's own word — nothing verifies it.
+
+**Ask the session.** Two Claude Code sessions send exactly the same name, version and user agent, so nothing they send tells them apart. Instead, the server tells each client which connection it holds, in the instructions it answers `initialize` with — Claude Code puts those in front of the model as *MCP Server Instructions*. Ask the session *"which Avo MCP connection is this?"* and it answers with the id and the connection's page:
+
+> You are using MCP connection #17 of the Acme Admin panel at https://app.example.com (client: Claude Code, authorized 2026-09-12). When asked which MCP connection this is, say so; its page is https://app.example.com/avo/resources/mcp_connections/17.
+
+:::info Upgrading from an earlier 4.2 beta
+The Software column needs three columns the first migration didn't have. Run `bin/rails generate avo:mcp_server install` again — it adds them as a migration of their own, and nothing else — then `bin/rails db:migrate`. Until then the column isn't shown and nothing is recorded; connections keep working.
+:::
 
 ### See what a connection may reach
 

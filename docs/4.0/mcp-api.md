@@ -155,11 +155,12 @@ bin/rails generate avo:mcp_server install
 bin/rails db:migrate
 ```
 
-| Migration               | Tables                                                                                                                                                                                                 |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `create_avo_mcp_server` | `avo_mcp_server_connections`, `avo_mcp_server_access_grants` (single-use codes), `avo_mcp_server_access_tokens` (digests), `avo_mcp_server_clients` (registered clients), `avo_mcp_server_events` (the connection log) |
+| Migration                                    | Tables                                                                                                                                                                                                 |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `create_avo_mcp_server`                      | `avo_mcp_server_connections`, `avo_mcp_server_access_grants` (single-use codes), `avo_mcp_server_access_tokens` (digests), `avo_mcp_server_clients` (registered clients), `avo_mcp_server_events` (the connection log) |
+| `add_software_to_avo_mcp_server_connections` | Only for an app whose `create_avo_mcp_server` predates the `software_name`, `software_version` and `user_agent` columns on `avo_mcp_server_connections` — what a client [reports as](./mcp.html#tell-connections-apart). A fresh install has them in the first migration. |
 
-The installer is additive. A migration the app already has is skipped, and the configuration block is appended only when `config.mcp_server.enabled` appears nowhere in the initializer.
+The installer is additive. A migration the app already has is skipped, and the configuration block is appended only when `config.mcp_server.enabled` appears nowhere in the initializer. Run it again after upgrading the gem: it reads the app's own `create_avo_mcp_server` migration and adds the upgrade migration only when that one lacks the columns.
 
 - **Values:** `--skip-avo-version` — don't print the installed Avo version
 
