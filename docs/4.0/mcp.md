@@ -298,7 +298,7 @@ The reverse isn't offered — an `Avo::McpServer::Tool` can't be handed to the c
 
 ## Review and revoke connections
 
-Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — the client's name and id, the **Software** it reports as, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
+Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — its **Name** (two words, unique, the same name the session announces), the client's name and id, the **Software** it reports as, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
 
 ### What the status means
 
@@ -332,7 +332,13 @@ end
 
 ### Tell connections apart
 
-Every Claude Code install registers as the same client — one client id, one name — and so does every claude.ai connector, so a panel with five **Claude Code** rows can't say from the registration which is which. Two things can.
+Every Claude Code install registers as the same client — one client id, one name — and so does every claude.ai connector, so a panel with five **Claude Code** rows can't say from the registration which is which. Three things can.
+
+**Every connection has a name.** Two words, unique, generated when you approve the client — `creamy-guacamole` — shown as the **Name** column and as the connection's title. The server tells the client its name when it connects and asks it to pass the name on, so a Claude Code session opens with:
+
+> MCP connected — you're connection creamy-guacamole.
+
+Find that row in the panel and you know which session you're looking at. Ask the session *"which Avo MCP connection is this?"* at any point and it repeats the name. The name can't be changed; revoking names it too — *creamy-guacamole (Claude Code) can no longer reach this panel*.
 
 **The Software column** is what the program says it is *over the protocol*: the name and version it sends when it connects (`clientInfo` on `initialize`), with its user agent on the connection's page. The **Client** column is the client's claim at authorization time; this is its claim on every session, as last seen:
 
@@ -341,14 +347,16 @@ Every Claude Code install registers as the same client — one client id, one na
 | Claude Code                             | Claude Code   | `claude-code 2.1.269` | `claude-code/2.1.269 (cli)`    |
 | claude.ai, Claude Desktop, mobile apps  | Claude        | `Anthropic/ClaudeAI`  | `Claude-User`                  |
 
-That tells a Claude Code row from a claude.ai one, and a session on one version from a session on another. A row reads *Not reported yet* until its client's first request. Like the name, it's the client's own word — nothing verifies it.
+That tells a Claude Code row from a claude.ai one, and a session on one version from a session on another. A row reads *Not reported yet* until its client's first request. Like the client name, it's the client's own word — nothing verifies it. Two Claude Code sessions send exactly the same values, which is why the name above exists.
 
-**Ask the session.** Two Claude Code sessions send exactly the same name, version and user agent, so nothing they send tells them apart. Instead, the server tells each client which connection it holds, in the instructions it answers `initialize` with — Claude Code puts those in front of the model as *MCP Server Instructions*. Ask the session *"which Avo MCP connection is this?"* and it answers with the id and the connection's page:
+**The connection's page** is linked from the same instructions, so a session can also hand you the URL. The whole text the client receives at `initialize`:
 
-> You are using MCP connection #17 of the Acme Admin panel at https://app.example.com (client: Claude Code, authorized 2026-09-12). When asked which MCP connection this is, say so; its page is https://app.example.com/avo/resources/mcp_connections/17.
+> MCP connected: this session holds MCP connection creamy-guacamole (#17) to the Acme Admin panel at https://app.example.com, registered as Claude Code, authorized 2026-09-12. At the start of the session, tell the user: "MCP connected — you're connection creamy-guacamole." Answer the same whenever asked which MCP connection this is; its page is https://app.example.com/avo/resources/mcp_connections/17.
+
+Claude Code puts a server's instructions in front of the model as *MCP Server Instructions*. Whether claude.ai does the same is not verified; there, the Software column and the live Log still identify the row.
 
 :::info Upgrading from an earlier 4.2 beta
-The Software column needs three columns the first migration didn't have. Run `bin/rails generate avo:mcp_server install` again — it adds them as a migration of their own, and nothing else — then `bin/rails db:migrate`. Until then the column isn't shown and nothing is recorded; connections keep working.
+Names and the Software column need four columns the first migration didn't have. Run `bin/rails generate avo:mcp_server install` again — it adds them as a migration of their own, names every existing connection, and changes nothing else — then `bin/rails db:migrate`. Until then rows are titled by the client name, the session is told its connection's id instead of a name, and nothing is recorded; connections keep working.
 :::
 
 ### See what a connection may reach
