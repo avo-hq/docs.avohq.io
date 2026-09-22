@@ -627,7 +627,7 @@ To add rules on top of the shipped prompt, eject the `extra_instructions` file:
 bin/rails generate avo:ai:eject extra_instructions
 ```
 
-This creates `app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb` in your application. Whatever you write in it is appended to the end of the chat assistant's system prompt. The gem's own copy is empty, so until you edit the file nothing changes.
+This creates `app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb` in your application. Whatever you write in it renders straight after the shipped rules — so it reads as part of the same instruction block, and ahead of the runtime context (the signed-in user, what the conversation was started from, the clock). The gem's own copy is empty, so until you edit the file nothing changes.
 
 This is the place for the things the assistant can't learn from your schema:
 
@@ -679,7 +679,19 @@ bin/rails generate avo:ai:eject instructions
 
 This copies all prompt files — the chat assistant's instructions and sub-prompts (`identity.txt.erb`, `app_context.txt.erb`, `attached_context.txt.erb`, `uploaded_files.txt.erb`, `skills.txt.erb`, `extra_instructions.txt.erb`), plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
 
-The shipped `instructions.txt.erb` renders the other prompt files through slots of its own: `<%= identity %>` and `<%= app_context %>` near the top, `<%= extra_instructions %>` at the end. If you replace it, your copy decides which of those slots survive — remove a line and that file is ignored, however carefully it was written.
+The shipped `instructions.txt.erb` renders the other prompt files through slots of its own, and it renders them least-volatile first:
+
+| Slot                                                                                      | Changes                                        |
+| ----------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `<%= identity %>`, `<%= app_context %>`, the shipped rules, `<%= extra_instructions %>`   | only when you deploy                           |
+| `<%= skills %>`                                                                           | when a skill is attached to the chat or edited |
+| `<%= current_user %>`, `<%= attached_context %>`                                          | never within one conversation                  |
+| `<%= uploaded_files %>`                                                                   | when a file is sent with a message             |
+| `<%= current_time %>`                                                                     | every turn                                     |
+
+That order is worth keeping. Providers cache on a *prefix* of the prompt, so the first block that differs between two turns costs you everything behind it — with the clock at the top, the whole prompt is new input on every single message.
+
+If you replace the file, your copy decides which of those slots survive — remove a line and that file is ignored, however carefully it was written — and it decides the order too.
 
 ## Choose which tools the assistant gets
 
