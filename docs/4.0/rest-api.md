@@ -133,6 +133,104 @@ The path segment is the resource's `route_key` (e.g. `blog_posts`, `product_cate
 The token resource is skipped when routes are drawn, so no version namespace gets a `tokens` endpoint. Tokens are managed in the panel only — a credential can neither mint nor revoke credentials, and so cannot outlive being revoked.
 :::
 
+## Discovery
+
+Two `GET` endpoints describe what the API version exposes, so a client doesn't have to be told which resources exist, what key a write nests under, or what fields a request takes. Neither writes anything.
+
+```
+GET    /api/resources/v1/_schema                    # every resource the caller may reach
+GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on one view
+```
+
+### The resource listing
+
+`GET /api/resources/v1/_schema` runs under the same authentication as the rest of the API and lists only the resources the caller may list and the token may reach.
+
+```json
+{
+  "api_version": "v1",
+  "resources": [
+    {
+      "route_key": "teams",
+      "param_key": "team",
+      "name": "Team",
+      "entitlements": ["index", "show", "create", "update", "destroy"]
+    }
+  ]
+}
+```
+
+| Key | Meaning |
+|-----|---------|
+| `api_version` | The version namespace the request came through. |
+| `route_key` | The URL segment every other request is built from. |
+| `param_key` | The key a `POST` or `PATCH` body nests its fields under. Use it rather than singularizing `route_key`. |
+| `name` | The resource's singular title, for display. |
+| `entitlements` | The API actions the token may call on this resource. All five for a token that was never restricted. |
+
+### One resource's fields
+
+`GET /api/resources/v1/teams/_schema?view=create` lists one resource's fields on one view. `view` defaults to `create`.
+
+| `view` | Lists |
+|--------|-------|
+| `create` | What a `POST` body may send, with `required`. The default. |
+| `update` | What a `PATCH` or `PUT` body may send, with `required`. |
+| `show` | What a record comes back with from `GET /teams/:id`. |
+| `index` | What a row of `GET /teams` carries. |
+
+```json
+{
+  "param_key": "team",
+  "fields": [
+    { "id": "name", "type": "text", "required": true, "shape": "scalar" },
+    { "id": "admin_id", "type": "belongs_to", "required": false, "shape": "scalar" },
+    { "id": "plan", "type": "select", "required": false, "shape": "scalar", "options": ["free", "pro"] },
+    { "id": "tags", "type": "select", "required": false, "shape": "array", "options": ["ops", "eu", "us"] },
+    { "id": "coordinates", "type": "location", "required": false, "shape": "hash", "keys": ["latitude", "longitude"] }
+  ]
+}
+```
+
+| Key | Meaning |
+|-----|---------|
+| `id` | The key the field reads back under, or, on `create` and `update`, the key the body sets it through (`admin_id`). |
+| `type` | The Avo field type. |
+| `required` | Whether a blank value is refused. |
+| `shape` | What the body sends for the field: `scalar` is one value (a string, number or boolean), `array` is a list of scalars, `hash` is an object. |
+| `keys` | With `shape: "hash"`: the keys to send inside that object, in the order given. Absent when the field accepts any keys. |
+| `options` | On choice fields: the values the field accepts, never the labels. |
+
+Each field's `shape` says what to put under its `id` in a `POST` or `PATCH` body.
+
+| `shape` | Field types | What you send |
+|---------|-------------|---------------|
+| `scalar` | `text`, `number`, `boolean`, `select`, `belongs_to`, and every other single-value field | one value: `"name": "Acme"`, `"plan": "pro"` |
+| `array` | `select` with `multiple`, `checkbox_list`, `boolean_group`, `files` | a list of values: `"tags": ["ops", "eu"]` |
+| `hash` | `location` on two columns, custom fields that permit a hash | an object whose keys are the ones listed in `keys`: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
+
+Put together, the schema above is written as:
+
+```json
+{
+  "team": {
+    "name": "Acme",
+    "plan": "pro",
+    "tags": ["ops", "eu"],
+    "coordinates": { "latitude": 44.43, "longitude": 26.10 }
+  }
+}
+```
+
+Read views carry `id` and `type` only; form views list only the fields a body may write.
+
+:::info Refusals
+- `403` with `reason: "token_entitlement"` when the token lacks the action the view is named after.
+- `403` with `reason: "policy"` when the token's owner cannot index the resource.
+- `400` with `{ "error": "Unknown view", "views": ["index", "show", "create", "update"] }` for a view it doesn't know.
+- `404` when this version has no controller for the resource.
+:::
+
 ## Authentication
 
 Every request runs through [`setup_authentication`](./rest-api-api.html#setup_authentication), a hook on `BaseResourcesController`. **The default implementation accepts a valid API token** and rejects everything else with `401 Unauthorized`:
@@ -890,3 +988,11 @@ The whole key tree is in the gem's `config/locales/en.yml`. See [Localization](.
 :::info Relative times need `rails-i18n`
 The lifecycle chips say "3 minutes ago" through Rails' own `datetime.distance_in_words` strings, which Rails ships in English only. Add the [rails-i18n](https://github.com/svenfuchs/rails-i18n) gem for translated relative times — without it, chips in other languages show the exact timestamp instead.
 :::
+
+## Command line client
+
+[avo-cli](./cli.html) is the official command line client for this API. It reads the discovery endpoints first, so it knows the resource names and the key a write nests under, and it turns every refusal into one line and an exit code.
+
+```bash
+gem install avo-cli
+```
