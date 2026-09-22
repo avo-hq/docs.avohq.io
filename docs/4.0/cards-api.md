@@ -109,7 +109,9 @@ self.cols = 2
 
 <Option name="`self.rows`" headingSize="3">
 
-How many rows of the parent's grid the card spans. On [table](#self.fields) and [list](#self.fields) cards it also caps the card's height — rows past the cap scroll inside the card.
+How many rows of the parent's grid the card spans, which is how tall a `partial`, `html`, `metric`, or `chartkick` card stands.
+
+On [table](#self.fields) and [list](#self.fields) cards it is a **ceiling** instead: the card is as tall as the records it holds and grows no further than the step, with anything past it scrolling inside the card. A card set to `rows = 6` that returns three records is three records tall, not six rows of grid.
 
 ```ruby
 self.rows = 2

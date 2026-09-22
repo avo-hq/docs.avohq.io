@@ -20,6 +20,8 @@ All cards have some standard settings like [`id`](./cards-api.html#self.id), whi
 
 Each card has its own [`cols`](./cards-api.html#self.cols) and [`rows`](./cards-api.html#self.rows) settings to control the width and height of the card inside the parent's grid. `cols` takes values from `1` to `6`; `rows` takes values from `1` to `12`.
 
+On `table` and `list` cards `rows` is a maximum rather than a fixed height — those cards size to the records they hold and scroll once they reach the step.
+
 All these settings can be set to a lambda.
 
 The lambda will be executed using [`Avo::ExecutionContext`](execution-context). Within this blocks, you gain access to all attributes of [`Avo::ExecutionContext`](execution-context) along with the `parent`, `resource`, `dashboard` and `card`.
@@ -751,7 +753,7 @@ Table cards support the same `ranges`, `initial_range`, and `refresh_every` sett
 `refresh_every` reloads the whole card, which resets the scroll position of a tall table. Prefer it on short tables.
 :::
 
-The card's `rows` setting also caps the table's height — rows past the cap scroll inside the card, with the column headers staying pinned.
+The card's `rows` setting caps the table's height rather than fixing it. A short table is as tall as its records; once the records pass the cap the card stops growing and they scroll inside it, with the column headers staying pinned. An empty table is the height of its "No record found" message, whatever `rows` says.
 
 ## List card
 
