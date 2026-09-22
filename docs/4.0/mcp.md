@@ -62,7 +62,7 @@ bin/rails generate avo:mcp_server install
 bin/rails db:migrate
 ```
 
-The [installer](./mcp-api.html#generators) writes one migration — the connections, codes, and tokens admins authorize, plus the connection log — and appends a commented configuration block to `config/initializers/avo.rb`. It's additive: a migration your app already has is skipped, so running it again is safe. Running it again is also how you upgrade: an app whose connections table predates the **Software** column gets those columns as a migration of their own (see [Tell connections apart](#tell-connections-apart)).
+The [installer](./mcp-api.html#generators) writes one migration — the connections, codes, and tokens admins authorize, plus the connection log — and appends a commented configuration block to `config/initializers/avo.rb`. It's additive: a migration your app already has is skipped, so running it again is safe. Running it again is also how you upgrade: an app whose connections predate their **Name** gets that column as a migration of its own (see [Tell connections apart](#tell-connections-apart)).
 
 If your admin model uses UUID primary keys, add `type: :uuid` to the migration's `t.references :user` line before migrating. The reference carries no foreign key, so a mismatch doesn't fail at migration time — it shows up later as connections whose owner can't be found.
 
@@ -298,7 +298,7 @@ The reverse isn't offered — an `Avo::McpServer::Tool` can't be handed to the c
 
 ## Review and revoke connections
 
-Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — its **Name** (three words, unique, the same name the session announces), the client's name and id, the **Software** it reports as, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
+Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — its **Name** (three words, unique, the same name the session announces), the client's name and id, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
 
 ### What the status means
 
@@ -332,31 +332,24 @@ end
 
 ### Tell connections apart
 
-Every Claude Code install registers as the same client — one client id, one name — and so does every claude.ai connector, so a panel with five **Claude Code** rows can't say from the registration which is which. Three things can.
+Every Claude Code install registers as the same client — one client id, one name — and so does every claude.ai connector, so a panel with five **Claude Code** rows can't say from the registration which is which. Nothing the client sends helps either: two Claude Code sessions send exactly the same thing.
 
-**Every connection has a name.** Three words from the avocado's own vocabulary, unique, generated when you approve the client — `creamy-golden-hass`, `ripe-mashed-guacamole` — shown as the **Name** column and as the connection's title. No two connections ever share one: the database enforces it. The server tells the client its name when it connects and asks it to pass the name on, so a Claude Code session opens with:
+So **every connection has a name**. Three words from the avocado's own vocabulary, unique, generated when you approve the client — `creamy-golden-hass`, `ripe-mashed-guacamole` — shown as the **Name** column and as the connection's title. No two connections ever share one: the database enforces it.
+
+The server tells the client its name when it connects and asks it to pass the name on, so a Claude Code session opens with:
 
 > MCP connected — you're connection creamy-golden-hass.
 
 Find that row in the panel and you know which session you're looking at. Ask the session *"which Avo MCP connection is this?"* at any point and it repeats the name. The name can't be changed; revoking names it too — *creamy-golden-hass (Claude Code) can no longer reach this panel*.
 
-**The Software column** is what the program says it is *over the protocol*: the name and version it sends when it connects (`clientInfo` on `initialize`), with its user agent on the connection's page. The **Client** column is the client's claim at authorization time; this is its claim on every session, as last seen:
+The whole text the client receives at `initialize`, which Claude Code puts in front of the model as *MCP Server Instructions*:
 
-| Client                                  | Client column | Software column       | User agent (connection's page) |
-| --------------------------------------- | ------------- | --------------------- | ------------------------------ |
-| Claude Code                             | Claude Code   | `claude-code 2.1.269` | `claude-code/2.1.269 (cli)`    |
-| claude.ai, Claude Desktop, mobile apps  | Claude        | `Anthropic/ClaudeAI`  | `Claude-User`                  |
+> This session is MCP connection creamy-golden-hass to the Acme Admin panel. At the start of the session, tell the user: "MCP connected — you're connection creamy-golden-hass." Answer the same whenever asked which MCP connection this is.
 
-That tells a Claude Code row from a claude.ai one, and a session on one version from a session on another. A row reads *Not reported yet* until its client's first request. Like the client name, it's the client's own word — nothing verifies it. Two Claude Code sessions send exactly the same values, which is why the name above exists.
-
-**The connection's page** is linked from the same instructions, so a session can also hand you the URL. The whole text the client receives at `initialize`:
-
-> MCP connected: this session holds MCP connection creamy-golden-hass (#17) to the Acme Admin panel at https://app.example.com, registered as Claude Code, authorized 2026-09-12. At the start of the session, tell the user: "MCP connected — you're connection creamy-golden-hass." Answer the same whenever asked which MCP connection this is; its page is https://app.example.com/avo/resources/mcp_connections/17.
-
-Claude Code puts a server's instructions in front of the model as *MCP Server Instructions*. Whether claude.ai does the same is not verified; there, the Software column and the live Log still identify the row.
+Whether claude.ai surfaces a server's instructions the same way is not verified; there, the live Log on the connection's page still shows which row a call landed on.
 
 :::info Upgrading from an earlier 4.2 beta
-Names and the Software column need four columns the first migration didn't have. Run `bin/rails generate avo:mcp_server install` again — it adds them as a migration of their own, names every existing connection, and changes nothing else — then `bin/rails db:migrate`. Until then rows are titled by the client name, the session is told its connection's id instead of a name, and nothing is recorded; connections keep working.
+Names need a column the first migration didn't have. Run `bin/rails generate avo:mcp_server install` again — it adds the column as a migration of its own, names every existing connection, and changes nothing else — then `bin/rails db:migrate`. Until then rows are titled by the client name and the session is told its connection's id instead of a name; connections keep working.
 :::
 
 ### See what a connection may reach
