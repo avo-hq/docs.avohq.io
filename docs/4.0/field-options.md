@@ -266,6 +266,8 @@ field :status,
   tooltip: -> { record.revoked_at? ? "Revoked at #{record.revoked_at}" : nil }
 ```
 
+<Image src="/assets/img/4_0/field-options/tooltip.webp" dark-src="/assets/img/4_0/field-options/tooltip-dark.webp" width="1440" height="146" alt="An Avo Show page 'Stage' badge field with the mouse over the green 'Done' badge and a tooltip bubble above it reading 'Apollo is done'." prompt="Show page badge field hovered, with a tooltip bubble above the badge" />
+
 Both options accept a string or a block. Inside the block you get the same context as `format_using` — `record`, `resource`, `view`, and `field` — and returning `nil` renders no tooltip. HTML is allowed, the same as `help`.
 
 [`label_tooltip`](./field-options-api.html#label_tooltip) puts the bubble on the label instead, on every view and on the <Index /> table header. An info icon next to the label marks it as hoverable.
@@ -273,6 +275,8 @@ Both options accept a string or a block. Inside the block you get the same conte
 ```ruby
 field :mrr, as: :number, label_tooltip: "Monthly recurring revenue, net of refunds"
 ```
+
+<Image src="/assets/img/4_0/field-options/label-tooltip.webp" dark-src="/assets/img/4_0/field-options/label-tooltip-dark.webp" width="1440" height="133" alt="An Avo Show page 'Stage' field whose label carries a small info icon, with the mouse over the label and a tooltip bubble above it reading 'Where the project is in its lifecycle'." prompt="Show page field label with an info icon hovered, with a tooltip bubble above the label" />
 
 :::info
 On the <Index /> header there is no record, so a `label_tooltip` block must not depend on `record`.
