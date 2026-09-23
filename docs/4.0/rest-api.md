@@ -174,8 +174,8 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 
 | `view` | Lists |
 |--------|-------|
-| `create` | What a `POST` body may send, with `required`. The default. |
-| `update` | What a `PATCH` or `PUT` body may send, with `required`. |
+| `create` | What a `POST` body may send, with each field's `field_options`. The default. |
+| `update` | What a `PATCH` or `PUT` body may send, with each field's `field_options`. |
 | `show` | What a record comes back with from `GET /teams/:id`. |
 | `index` | What a row of `GET /teams` carries. |
 
@@ -183,25 +183,26 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 {
   "param_key": "team",
   "fields": [
-    { "id": "name", "type": "text", "required": true, "shape": "scalar" },
-    { "id": "admin_id", "type": "belongs_to", "required": false, "shape": "scalar" },
-    { "id": "plan", "type": "select", "required": false, "shape": "scalar", "options": ["free", "pro"] },
-    { "id": "tags", "type": "select", "required": false, "shape": "array", "options": ["ops", "eu", "us"] },
-    { "id": "coordinates", "type": "location", "required": false, "shape": "hash", "keys": ["latitude", "longitude"] }
+    { "field_id": "name", "field_type": "text", "field_options": { "required": true, "shape": "scalar" } },
+    { "field_id": "admin_id", "field_type": "belongs_to", "field_options": { "required": false, "shape": "scalar" } },
+    { "field_id": "plan", "field_type": "select", "field_options": { "required": false, "shape": "scalar", "options": ["free", "pro"] } },
+    { "field_id": "tags", "field_type": "select", "field_options": { "required": false, "shape": "array", "options": ["ops", "eu", "us"] } },
+    { "field_id": "coordinates", "field_type": "location", "field_options": { "required": false, "shape": "hash", "keys": ["latitude", "longitude"] } }
   ]
 }
 ```
 
 | Key | Meaning |
 |-----|---------|
-| `id` | The key the field reads back under, or, on `create` and `update`, the key the body sets it through (`admin_id`). |
-| `type` | The Avo field type. |
-| `required` | Whether a blank value is refused. |
-| `shape` | What the body sends for the field: `scalar` is one value (a string, number or boolean), `array` is a list of scalars, `hash` is an object. |
-| `keys` | With `shape: "hash"`: the keys to send inside that object, in the order given. Absent when the field accepts any keys. |
-| `options` | On choice fields: the values the field accepts, never the labels. |
+| `field_id` | The key the field reads back under, or, on `create` and `update`, the key the body sets it through (`admin_id`). |
+| `field_type` | The Avo field type. |
+| `field_options` | Form views only: one object holding everything a write needs to know about the field, the four keys below. Read views carry none. |
+| `field_options.required` | Whether a blank value is refused. |
+| `field_options.shape` | What the body sends for the field: `scalar` is one value (a string, number or boolean), `array` is a list of scalars, `hash` is an object. |
+| `field_options.keys` | With `shape: "hash"`: the keys to send inside that object, in the order given. Absent when the field accepts any keys. |
+| `field_options.options` | On choice fields: the values the field accepts, never the labels. |
 
-Each field's `shape` says what to put under its `id` in a `POST` or `PATCH` body.
+Each field's `shape` says what to put under its `field_id` in a `POST` or `PATCH` body.
 
 | `shape` | Field types | What you send |
 |---------|-------------|---------------|
@@ -222,7 +223,7 @@ Put together, the schema above is written as:
 }
 ```
 
-Read views carry `id` and `type` only; form views list only the fields a body may write.
+Read views carry `field_id` and `field_type` only; form views add `field_options` and list only the fields a body may write.
 
 :::info Refusals
 - `403` with `reason: "token_entitlement"` when the token lacks the action the view is named after.

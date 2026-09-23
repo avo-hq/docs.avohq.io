@@ -115,15 +115,17 @@ avo schema users
 ```
 
 ```
-id          type     required  shape   options
-name        text     true      scalar  -
-email       text     true      scalar  -
-active      boolean  false     scalar  -
-role        select   false     scalar  user, admin, moderator
-team_id     number   false     scalar  -
+field_id  field_type  field_options
+name      text        {"required":true,"shape":"scalar"}
+email     text        {"required":true,"shape":"scalar"}
+active    boolean     {"required":false,"shape":"scalar"}
+role      select      {"required":false,"shape":"scalar","options":["user","admin","moderator"]}
+team_id   number      {"required":false,"shape":"scalar"}
 ```
 
-Pass `--view update` for what an update may send, and `--view index` or `--view show` for what a record reads back. Each view needs the entitlement of the request it describes.
+`field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It appears on the two form views only.
+
+Pass `--view update` for what an update may send, and `--view index` or `--view show` for what a record reads back, where the `field_options` column is gone since nothing is sent. Each view needs the entitlement of the request it describes.
 
 A `belongs_to` is listed by the key that sets it, `team_id`.
 
@@ -189,7 +191,7 @@ Each key is a field name from `avo schema <resource>`. Write values in their nat
 
 ### Arrays and hashes
 
-The `shape` column tells you when a field takes more than a scalar:
+The `shape` inside a field's `field_options` tells you when a field takes more than a scalar:
 
 | The view says                                | You write                                              | Note                                   |
 | -------------------------------------------- | ------------------------------------------------------ | -------------------------------------- |
