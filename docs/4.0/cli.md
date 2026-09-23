@@ -56,6 +56,8 @@ It asks for three things and checks them against the app before saving them:
 
 If the check fails, nothing is saved.
 
+Only a flag on the `login` line skips a prompt. `AVO_API_HOST`, `AVO_API_TOKEN` and `AVO_API_VERSION` exported in your shell are ignored by `login`, so it always asks for what it is about to save.
+
 :::warning The token is saved as plain text
 `avo login` writes `~/.config/avo/config.json`. Use a token you can revoke from the [API tokens](./rest-api.html#manage-tokens-in-the-panel) screen, and run `avo logout` on a machine you are leaving.
 :::
