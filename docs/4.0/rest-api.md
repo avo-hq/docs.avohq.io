@@ -183,11 +183,11 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 {
   "param_key": "team",
   "fields": [
-    { "field_id": "name", "field_type": "text", "field_options": { "required": true, "shape": "scalar" } },
-    { "field_id": "admin_id", "field_type": "belongs_to", "field_options": { "required": false, "shape": "scalar" } },
-    { "field_id": "plan", "field_type": "select", "field_options": { "required": false, "shape": "scalar", "options": ["free", "pro"] } },
-    { "field_id": "tags", "field_type": "select", "field_options": { "required": false, "shape": "array", "options": ["ops", "eu", "us"] } },
-    { "field_id": "coordinates", "field_type": "location", "field_options": { "required": false, "shape": "hash", "keys": ["latitude", "longitude"] } }
+    { "field_id": "name", "field_type": "text", "field_options": { "required": true } },
+    { "field_id": "admin_id", "field_type": "belongs_to", "field_options": { "required": false } },
+    { "field_id": "plan", "field_type": "select", "field_options": { "required": false, "options": ["free", "pro"] } },
+    { "field_id": "tags", "field_type": "select", "field_options": { "required": false, "options": ["ops", "eu", "us"] } },
+    { "field_id": "coordinates", "field_type": "location", "field_options": { "required": false } }
   ]
 }
 ```
@@ -196,19 +196,20 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 |-----|---------|
 | `field_id` | The key the field reads back under, or, on `create` and `update`, the key the body sets it through (`admin_id`). |
 | `field_type` | The Avo field type. |
-| `field_options` | Form views only: one object holding everything a write needs to know about the field, the four keys below. Read views carry none. |
+| `field_options` | Form views only: one object holding what a write needs to know about the field, the two keys below. Read views carry none. |
 | `field_options.required` | Whether a blank value is refused. |
-| `field_options.shape` | What the body sends for the field: `scalar` is one value (a string, number or boolean), `array` is a list of scalars, `hash` is an object. |
-| `field_options.keys` | With `shape: "hash"`: the keys to send inside that object, in the order given. Absent when the field accepts any keys. |
 | `field_options.options` | On choice fields: the values the field accepts, never the labels. |
 
-Each field's `shape` says what to put under its `field_id` in a `POST` or `PATCH` body.
+Each field's `field_type` says what to put under its `field_id` in a `POST` or `PATCH` body.
 
-| `shape` | Field types | What you send |
-|---------|-------------|---------------|
-| `scalar` | `text`, `number`, `boolean`, `select`, `belongs_to`, and every other single-value field | one value: `"name": "Acme"`, `"plan": "pro"` |
-| `array` | `select` with `multiple`, `checkbox_list`, `boolean_group`, `files` | a list of values: `"tags": ["ops", "eu"]` |
-| `hash` | `location` on two columns, custom fields that permit a hash | an object whose keys are the ones listed in `keys`: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
+| Field types | What you send |
+|-------------|---------------|
+| `text`, `number`, `boolean`, `select`, `belongs_to`, and every other single-value field | one value: `"name": "Acme"`, `"plan": "pro"` |
+| `select` with `multiple`, `checkbox_list`, `boolean_group` | a list of values: `"tags": ["ops", "eu"]` |
+| `location` on two columns (`stored_as: [:latitude, :longitude]`) | an object keyed by those columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
+| `location` on one column, `tags`, `key_value`, `code` | one string the field parses: `"home": "44.43,26.10"`, `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"` |
+
+`null` clears any field, a list and a two-column `location` included.
 
 Put together, the schema above is written as:
 
@@ -495,6 +496,11 @@ Different field types accept the formats you'd expect:
 | Boolean | `true`, `false` |
 | Date / datetime | `"2024-01-15"`, `"2024-01-15T10:30:00Z"` |
 | `belongs_to` | the foreign key: `"admin_id": 5` |
+| `select` with `multiple`, `checkbox_list`, `boolean_group` | a list: `"tags": ["ops", "eu"]` |
+| `location` on two columns | an object keyed by its `stored_as` columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
+| `tags`, `key_value`, `code`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"`, `"home": "44.43,26.10"` |
+
+`null` clears any field, a list and a two-column `location` included.
 
 :::info CSRF and JSON clients
 API controllers use Rails' `:null_session` CSRF strategy, so a stateless client that carries no CSRF token is not rejected — no `InvalidAuthenticityToken` is raised. [`self.setup_csrf_protection`](./rest-api-api.html#self.setup_csrf_protection) is the hook if you need a different strategy.
