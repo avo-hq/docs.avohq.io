@@ -255,6 +255,29 @@ field :custom_css, as: :code, theme: 'dracula', language: 'css', label_help: "Th
 
 <Image src="/assets/img/4_0/field-options/label-help.webp" dark-src="/assets/img/4_0/field-options/label-help-dark.webp" width="1440" height="248" alt="An Avo Edit form 'Custom css' code field with a line of help text shown directly below the field label explaining what the field does." prompt="Form field with label_help text shown below the field label" />
 
+## Add a tooltip
+
+Help text takes up space on every row. When the extra context only matters on demand — the exact time behind a "Revoked" badge, the source of a computed number — use [`tooltip`](./field-options-api.html#tooltip) instead. The text shows in a bubble when the user hovers the value: the badge or text on <Index /> and <Show />, the input on <New /> and <Edit />.
+
+```ruby
+field :status,
+  as: :badge,
+  options: {success: :active, danger: :revoked},
+  tooltip: -> { record.revoked_at? ? "Revoked at #{record.revoked_at}" : nil }
+```
+
+Both options accept a string or a block. Inside the block you get the same context as `format_using` — `record`, `resource`, `view`, and `field` — and returning `nil` renders no tooltip. HTML is allowed, the same as `help`.
+
+[`label_tooltip`](./field-options-api.html#label_tooltip) puts the bubble on the label instead, on every view and on the <Index /> table header. An info icon next to the label marks it as hoverable.
+
+```ruby
+field :mrr, as: :number, label_tooltip: "Monthly recurring revenue, net of refunds"
+```
+
+:::info
+On the <Index /> header there is no record, so a `label_tooltip` block must not depend on `record`.
+:::
+
 ## Add a placeholder
 
 Some fields support the [`placeholder`](./field-options-api.html#placeholder) option, which will be passed to the inputs on the <New /> and <Edit /> views when they are empty.

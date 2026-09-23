@@ -145,6 +145,17 @@ field :priority, as: :badge,
   }
 ```
 
+### Showing the moment behind a status
+
+A badge says *what* the state is. The [`tooltip`](../field-options-api.html#tooltip) option can say *when*, on hover, without spending a column on it:
+
+```ruby
+field :status,
+  as: :badge,
+  options: {success: :active, warning: :expired, danger: :revoked},
+  tooltip: -> { "Revoked at #{record.revoked_at}" if record.revoked_at? }
+```
+
 ### Using Badge with a Select field for editing
 
 Since Badge is display-only, pair it with a Select field to allow editing:
