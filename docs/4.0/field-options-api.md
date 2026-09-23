@@ -80,6 +80,34 @@ field :custom_css, as: :code, label_help: "This enables you to edit the user's c
 
 </Option>
 
+<Option name="`tooltip`" headingSize="3">
+
+Text shown in a bubble when the user hovers the field's value — the rendered value on <Index /> and <Show />, the input on <New /> and <Edit />. Accepts HTML. A block receives `record`, `resource`, `view`, and `field`; return `nil` to render no tooltip.
+
+```ruby
+field :status, as: :badge, tooltip: -> { "Revoked at #{record.revoked_at}" if record.revoked_at? }
+```
+
+- **Type:** String (HTML allowed) or Proc
+- **Default:** `nil`
+- **i18n key:** `avo.field_translations.<field_id>.tooltip` — used when defined
+
+</Option>
+
+<Option name="`label_tooltip`" headingSize="3">
+
+Text shown in a bubble when the user hovers the field's label, on every view and on the <Index /> table header. An info icon next to the label marks it as hoverable. Accepts HTML. A block receives `resource`, `view`, and `field`; `record` is `nil` on the <Index /> header.
+
+```ruby
+field :mrr, as: :number, label_tooltip: "Monthly recurring revenue, net of refunds"
+```
+
+- **Type:** String (HTML allowed) or Proc
+- **Default:** `nil`
+- **i18n key:** `avo.field_translations.<field_id>.label_tooltip` — used when defined
+
+</Option>
+
 <Option name="`placeholder`" headingSize="3">
 
 The placeholder shown inside empty inputs on the <New /> and <Edit /> views. Only applies to fields that render a text-like input.
