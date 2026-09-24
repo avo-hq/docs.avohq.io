@@ -118,11 +118,11 @@ avo schema users
 
 ```
 field_id  field_type  field_options
-name      text        {"required":true,"shape":"scalar"}
-email     text        {"required":true,"shape":"scalar"}
-active    boolean     {"required":false,"shape":"scalar"}
-role      select      {"required":false,"shape":"scalar","options":["user","admin","moderator"]}
-team_id   number      {"required":false,"shape":"scalar"}
+name      text        {"required":true}
+email     text        {"required":true}
+active    boolean     {"required":false}
+role      select      {"required":false,"options":["user","admin","moderator"]}
+team_id   number      {"required":false}
 ```
 
 `field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It appears on the two form views only.
@@ -159,7 +159,7 @@ Pass the fields as one JSON object and the created record is printed back:
 avo create users --data '{"name": "Ada Lovelace", "email": "ada@example.com"}'
 ```
 
-A create reads the resource's `create` view first, for the key the body nests under and the shape of each field, then sends the `POST`. Use `--verbose` to see both requests.
+A create reads the resource's `create` view first, for the key the body nests under and to refuse a `file` field, then sends the `POST`. Use `--verbose` to see both requests.
 
 ## Update a record
 
@@ -193,12 +193,15 @@ Each key is a field name from `avo schema <resource>`. Write values in their nat
 
 ### Arrays and hashes
 
-The `shape` inside a field's `field_options` tells you when a field takes more than a scalar:
+The `field_type` tells you when a field takes more than a scalar:
 
-| The view says                                | You write                                              | Note                                   |
-| -------------------------------------------- | ------------------------------------------------------ | -------------------------------------- |
-| `shape: array`                               | `"roles": ["editor", "reviewer"]`                      | `null` clears it to `[]`               |
-| `shape: hash`, `keys: [latitude, longitude]` | `"coordinates": {"latitude": 44.4, "longitude": 26.1}` | `null` sets every key to `null`        |
+| The view says                                              | You write                                              | Note                               |
+| ---------------------------------------------------------- | ------------------------------------------------------ | ---------------------------------- |
+| `select` with `multiple`, `checkbox_list`, `boolean_group` | `"roles": ["editor", "reviewer"]`                      | `null` clears it to `[]`           |
+| `location` on two columns (`stored_as`)                    | `"coordinates": {"latitude": 44.4, "longitude": 26.1}` | `null` sets both columns to `null` |
+| `location` on one column                                   | `"home": "44.4,26.1"`                                  | `null` clears it                   |
+
+A `has_many` or `has_one` is never listed on a form view and is not something `--data` can set: a key naming one is ignored, `null` included.
 
 ### Key-value and code fields
 

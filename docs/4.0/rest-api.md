@@ -209,7 +209,7 @@ Each field's `field_type` says what to put under its `field_id` in a `POST` or `
 | `location` on two columns (`stored_as: [:latitude, :longitude]`) | an object keyed by those columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
 | `location` on one column, `tags`, `key_value`, `code` | one string the field parses: `"home": "44.43,26.10"`, `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"` |
 
-`null` clears any field, a list and a two-column `location` included.
+`null` clears any field, a list and a `location` on one or two columns included. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
 
 Put together, the schema above is written as:
 
@@ -500,7 +500,7 @@ Different field types accept the formats you'd expect:
 | `location` on two columns | an object keyed by its `stored_as` columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
 | `tags`, `key_value`, `code`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"`, `"home": "44.43,26.10"` |
 
-`null` clears any field, a list and a two-column `location` included.
+`null` clears any field, a list and a `location` on one or two columns included. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
 
 :::info CSRF and JSON clients
 API controllers use Rails' `:null_session` CSRF strategy, so a stateless client that carries no CSRF token is not rejected — no `InvalidAuthenticityToken` is raised. [`self.setup_csrf_protection`](./rest-api-api.html#self.setup_csrf_protection) is the hook if you need a different strategy.
