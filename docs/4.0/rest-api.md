@@ -119,18 +119,113 @@ mount_avo_api at: "#{Avo.configuration.root_path}/api"
 Each generated resource controller gets standard RESTful endpoints under `resources/v1`. For a `teams` resource mounted at the default `/api`:
 
 ```
-GET    /api/resources/v1/teams        # List teams
-POST   /api/resources/v1/teams        # Create a team
-GET    /api/resources/v1/teams/:id    # Show a team
-PATCH  /api/resources/v1/teams/:id    # Update a team
-PUT    /api/resources/v1/teams/:id    # Update a team
-DELETE /api/resources/v1/teams/:id    # Delete a team
+GET    /api/resources/v1/teams          # List teams
+POST   /api/resources/v1/teams          # Create a team
+GET    /api/resources/v1/teams/:id      # Show a team
+PATCH  /api/resources/v1/teams/:id      # Update a team
+PUT    /api/resources/v1/teams/:id      # Update a team
+DELETE /api/resources/v1/teams/:id      # Delete a team
+GET    /api/resources/v1/teams/_schema  # Describe a team's fields on one view
 ```
 
-The path segment is the resource's `route_key` (e.g. `blog_posts`, `product_categories`).
+Plus one endpoint per version that isn't tied to a resource:
+
+```
+GET    /api/resources/v1/_schema        # List the resources this caller may reach
+```
+
+The path segment is the resource's `route_key` (e.g. `blog_posts`, `product_categories`). The two `_schema` endpoints are described under [Discovery](#discovery).
 
 :::info API tokens are not served over the API
 The token resource is skipped when routes are drawn, so no version namespace gets a `tokens` endpoint. Tokens are managed in the panel only — a credential can neither mint nor revoke credentials, and so cannot outlive being revoked.
+:::
+
+## Discovery
+
+Two `GET` endpoints describe what an API version exposes, so a client — a script, an agent, or the [command line client](./cli.html) — never has to guess a resource name, the key a write body nests under, or which fields a write takes. Neither writes anything, and both answer *as the caller*: a resource this token can't reach is not listed.
+
+| Endpoint | Answers |
+| --- | --- |
+| `GET /api/resources/v1/_schema` | Every resource this caller may reach, and how far |
+| `GET /api/resources/v1/teams/_schema?view=show` | One resource's fields on one view |
+
+### List what a token may reach
+
+```json
+{
+  "api_version": "v1",
+  "resources": [
+    {
+      "route_key": "teams",
+      "param_key": "team",
+      "name": "Team",
+      "entitlements": ["index", "show", "create", "update", "destroy"]
+    }
+  ]
+}
+```
+
+| Key | What it is |
+| --- | --- |
+| `api_version` | The version namespace the request came through |
+| `route_key` | The URL segment — the name every other request is built from |
+| `param_key` | The key a write body nests under. It is the **model's** name, not the route's, so a resource named `Archive` over a `Tag` model takes `tag`. A client can't derive it, which is why it's published |
+| `name` | The resource's singular title, for display only |
+| `entitlements` | Which of the five API actions this token permits here, in fixed order |
+
+Three independent gates decide whether a resource is listed at all: a controller was [generated](#installation) for it in this version, the token [permits](#entitle-a-token) at least one of the five actions on it, and the token owner's `index?` policy allows it. A resource failing any one of them is left out, so the listing never advertises what the caller can't reach.
+
+There are no fields here. A field list is answered per resource and per view, where it carries the entitlement of the request it describes.
+
+:::info `entitlements` is the token's grant, never a policy answer
+Only `index?` is asked of your policies, because it's the one class-level question Avo can ask without a record. `show?`, `update?` and `destroy?` are per-record, so asking them against the class would refuse what the API accepts on a record. Those refusals arrive at request time instead, as a `403` with [`reason: "policy"`](#tell-the-three-refusals-apart).
+:::
+
+### Describe one resource's fields
+
+```bash
+GET /api/resources/v1/teams/_schema?view=create
+```
+
+| `view` | Lists | |
+| --- | --- | --- |
+| `create` | What a `create` body may send, with `field_options` | **The default** |
+| `update` | What an `update` body may send, with `field_options` | |
+| `show` | What a record comes back with from `show` | |
+| `index` | What a row of the index carries | |
+
+A view is named after the API action it describes — the same word `entitlements` publishes above — so a client that read `create` there asks for `create` here. Avo's own `new` and `edit` are not accepted as names. An unknown view answers `400` naming the ones it knows.
+
+```json
+{
+  "param_key": "team",
+  "fields": [
+    { "field_id": "name", "field_type": "text", "field_options": { "required": true, "shape": "scalar" } },
+    { "field_id": "owner_id", "field_type": "belongs_to", "field_options": { "required": true, "shape": "scalar" } },
+    { "field_id": "plan", "field_type": "select", "field_options": { "required": false, "shape": "scalar", "options": ["free", "pro"] } },
+    { "field_id": "coordinates", "field_type": "location", "field_options": { "required": false, "shape": "hash", "keys": ["latitude", "longitude"] } }
+  ]
+}
+```
+
+| Key | What it is |
+| --- | --- |
+| `field_id` | On read views, the key the field comes back under. On form views, the key the body sets it through — a `belongs_to` reads back as `owner` and is written as `owner_id` |
+| `field_type` | The Avo field type (`text`, `belongs_to`, `has_many`, …) |
+| `field_options` | Form views only. Read views carry none |
+| `field_options.required` | Whether the model's presence validators or the field's `required:` refuse a blank. `null` when a `required` block needs real record data to answer |
+| `field_options.shape` | What the value is on the wire: `scalar` (a string, number or boolean), `array` (a list of scalars), or `hash` (an object) |
+| `field_options.keys` | With `shape: "hash"` — the object's key names, in order |
+| `field_options.options` | On `select`, `checkbox_list`, `boolean_group` and `radio` — the values the field accepts, never the labels. An enum-backed select lists the enum keys |
+
+`shape` is read off the field's own strong-params declaration rather than mapped per type, so a custom field you wrote gets the right shape without the endpoint knowing it exists.
+
+:::warning Nothing is merged across views
+A resource may declare a field differently per view (`index_fields`, `form_fields`, `show_on:`), so an answer holds for the one view it was asked for. Ask for `create` before a create and `update` before an update — a form-only `required: true` is not the index's answer.
+:::
+
+:::tip Two commands instead of two requests
+The [command line client](./cli.html) wraps both as one verb — `avo schema` for the listing, `avo schema teams` for one resource — and prints them as tables. See [Discover what an app serves](./cli.html#discover-what-an-app-serves).
 :::
 
 ## Authentication
@@ -183,6 +278,8 @@ A token's status is derived from two timestamps, never stored, so there is no li
 | **Revoked** | The Revoke action was run on it | No |
 
 Expiry is optional — leave it blank and the token never expires. Revocation is permanent: the **Revoke** action on the token resource marks the token and keeps the record, and nothing can un-revoke it. A token that is both revoked and past its expiry reports **Revoked**.
+
+Hover the **Status** badge on the index — or the chip on a token's page — for the moment that ended it: when it expired, or when it was revoked. There is no column for either, since both are blank on every live token.
 
 Each successful request stamps the token's **Last used** column, which is the fastest way to tell a token that was never wired up from one that stopped working.
 
@@ -858,10 +955,11 @@ The `api` origin needs a current user to attribute to. A hand-rolled `setup_auth
 
 ## Works better with
 
-Nothing on this page needs another add-on. Two of them change what the feature can do.
+Nothing on this page needs another add-on. Two of them change what the feature can do, and one gives you a terminal onto it.
 
 - **[`avo-authorization`](./authorization.html)** — the layer every question here defers to: which tokens a user sees, who may revoke or re-entitle one, and the policies that [entitlements subtract from](#entitlements-sit-in-front-of-your-policies-never-instead-of-them). Without it every such question answers yes — [Authorization](#authorization) and [Who may manage tokens](#who-may-manage-tokens) have the exact failure modes.
 - **[`avo-custom_controls`](./custom-controls.html)** — promotes **Revoke** out of the Actions dropdown. On a token's page it becomes a button beside Edit; on the index it becomes an icon at the end of every row, so working down a list of tokens costs one click each instead of a round trip. It appears only where the Actions menu would have offered it anyway — the control is filtered by the same `revoke?` policy and the same active-token check, so an expired or already-revoked token shows nothing.
+- **[`avo-cli`](./cli.html)** — the command line client for this API. It reads the [discovery endpoints](#discovery) above, so `avo list users` and `avo create users --data '{"name": "Ada"}'` work against any app running `avo-api` with nothing installed in it. What it may do is this token's entitlements and your policies, exactly as for any other client.
 
 ## Localization
 
