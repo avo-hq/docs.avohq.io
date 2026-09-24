@@ -17,14 +17,14 @@ avo create users --data '{"name": "Ada", "email": "ada@example.com"}'
 
 Every line has the same shape, `avo <verb> <resource> [id] [flags]`, with the resource named by its route key. Once you have logged in, no command needs a host or a token again.
 
-:::info The CLI is free, the API is an add-on
-`avo-cli` is a free, separate gem. The app it talks to must run the paid `avo-api` add-on. [See the add-on page](https://avohq.io/addons/api).
+:::info The CLI installs without a license, the API is an add-on
+`avo-cli` is a separate gem on rubygems.org: no license key and no gem server credentials to install it. The app it talks to must run the paid `avo-api` add-on. [See the add-on page](https://avohq.io/addons/api).
 :::
 
 ## Requirements
 
 - **Ruby 3.0 or newer**: the `avo` executable is a Ruby gem.
-- **Node 18.12.1 or newer**, the first `node` on your `PATH` or the binary `AVO_CLI_NODE` names. The gem hands the line over to it.
+- **Node 22 or newer**, the first `node` on your `PATH` or the binary `AVO_CLI_NODE` names. The gem hands the line over to it.
 - **An app running `avo-api`**, reachable over HTTP, and an [API token](./rest-api.html#create-a-token) created in that app.
 
 ## Installation
@@ -59,7 +59,7 @@ If the check fails, nothing is saved.
 Only a flag on the `login` line skips a prompt. `AVO_API_HOST`, `AVO_API_TOKEN` and `AVO_API_VERSION` exported in your shell are ignored by `login`, so it always asks for what it is about to save.
 
 :::warning The token is saved as plain text
-`avo login` writes `~/.config/avo/config.json`. Use a token you can revoke from the [API tokens](./rest-api.html#manage-tokens-in-the-panel) screen, and run `avo logout` on a machine you are leaving.
+`avo login` writes `~/.config/avo/config.json`, or `$XDG_CONFIG_HOME/avo/config.json` when that variable is set, `%LOCALAPPDATA%\avo\config.json` on Windows, and the directory `AVO_CONFIG_DIR` names over all of these. The `Saved to` line prints the path it used. Use a token you can revoke from the [API tokens](./rest-api.html#manage-tokens-in-the-panel) screen, and run `avo logout` on a machine you are leaving.
 :::
 
 ### 3. Check what the token reaches
@@ -71,7 +71,7 @@ avo schema
 This is the right first command after logging in. It lists every resource the API serves and the actions this token may call on each:
 
 ```
-route_key  name     entitlements
+route key  name     entitlements
 posts      Post     index, show, create, update, destroy
 users      User     index, show, create, update, destroy
 ```
@@ -117,12 +117,12 @@ avo schema users
 ```
 
 ```
-field_id  field_type  field_options
+field id  field type  field options
 name      text        {"required":true}
 email     text        {"required":true}
 active    boolean     {"required":false}
 role      select      {"required":false,"options":["user","admin","moderator"]}
-team_id   number      {"required":false}
+team_id   belongs_to  {"required":false}
 ```
 
 `field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It appears on the two form views only.
@@ -137,7 +137,16 @@ A `belongs_to` is listed by the key that sets it, `team_id`.
 avo list users
 ```
 
-The server decides the columns, and the pagination comes back as a footer line. Narrow or reorder the columns with `--fields`, and page and sort with the rest:
+The server decides the columns, and the pagination comes back as a footer line that ends with the command for the next page while there is one:
+
+```
+id  name          email              active
+1   Ada Lovelace  ada@example.com    true
+2   Grace Hopper  grace@example.com  false
+Page 1 of 3 (58 records). Next: avo list users --page 2
+```
+
+On a terminal the table fits the width: a long cell is shortened with an ellipsis, and columns past the right edge are dropped, in which case the footer says how many (`4 of 15 columns; --fields picks them, --format json has all`). Piped into another command or a file, every column prints at full width and nothing is cut. Narrow or reorder the columns with `--fields`, and page and sort with the rest:
 
 ```bash
 avo list users --sort name --dir desc --fields id,name,email --per-page 10
@@ -149,7 +158,7 @@ avo list users --sort name --dir desc --fields id,name,email --per-page 10
 avo get users 5
 ```
 
-The record reads down the page, one field per row, and `--fields name,email` picks the rows.
+The record reads down the page, one field per row, and `--fields name,email` picks the rows. A long value wraps under the value column on a terminal and stays on its one line when piped. `create` and `update` print the same view, after a line saying what they did: `Created users 56.`
 
 ## Create a record
 
@@ -199,7 +208,7 @@ The `field_type` tells you when a field takes more than a scalar:
 | ---------------------------------------------------------- | ------------------------------------------------------ | ---------------------------------- |
 | `select` with `multiple`, `checkbox_list`, `boolean_group` | `"roles": ["editor", "reviewer"]`                      | `null` clears it to `[]`           |
 | `location` on two columns (`stored_as`)                    | `"coordinates": {"latitude": 44.4, "longitude": 26.1}` | `null` sets both columns to `null` |
-| `location` on one column                                   | `"home": "44.4,26.1"`                                  | `null` clears it                   |
+| `location` on one column                                   | `"home": "44.4,26.1"`                                  | `""` clears it, not `null`         |
 
 A `has_many` or `has_one` is never listed on a form view and is not something `--data` can set: a key naming one is ignored, `null` included.
 
@@ -258,14 +267,16 @@ avo get users 5 --fields name,email
 `--format json` prints the body exactly as the server sent it, on stdout and nothing else, so a script can read it:
 
 ```bash
-avo get users 5 --format json
+avo get users 5 --format json | jq .record.email
 ```
 
 ```json
 {"record": {"id": 5, "name": "Ada", "email": "ada@example.com"}}
 ```
 
-The default `table` format shortens long values with an ellipsis. When you see one, use `--format json` to get the whole value.
+Run in a terminal rather than piped, the same command prints the body indented and coloured for reading. Only the piped form is the server's bytes, so a script always reads through a pipe or a file.
+
+The default `table` format shortens a long cell with an ellipsis only on a terminal, and only on `list` and `schema`; piped output is never cut. When you see one, widen the terminal, pick fewer columns with `--fields`, or use `--format json` to get the whole value.
 
 `--verbose` logs each request and response line to stderr, so `--format json --verbose` still leaves only the body on stdout.
 
@@ -279,7 +290,14 @@ This deletes what `avo login` saved. Anything exported in your shell (`AVO_API_H
 
 ## When a command fails
 
-A failed command prints one message on stderr, nothing on stdout, and exits non-zero. The message names what to change. Add `--verbose` to also see the request and response lines on stderr.
+A failed command prints one message on stderr, nothing on stdout, and exits non-zero. The message names what to change, and a `401` also says where to look:
+
+```
+ ›   Error: Unauthorized: http://localhost:3000 rejected the token. Check
+ ›   --token, AVO_API_TOKEN, or run `avo login` again.
+```
+
+Add `--verbose` to also see the request and response lines on stderr.
 
 | Exit code | Meaning                                                                                              |
 | --------- | ---------------------------------------------------------------------------------------------------- |
@@ -295,7 +313,7 @@ The message is one of two kinds.
 **The app answered with an error.** The message starts with `Unauthorized`, `Forbidden`, `Not found`, `Failed to create ...`, `Failed to update ...`, `HTTP 400` or `Server error 5xx`, and carries the app's own `error` and, when present, `reason`. These are the REST API's responses, so:
 
 - What each status means and where to fix it: the [status-code table](./rest-api-api.html#status-codes)
-- The two `Forbidden` reasons: [Tell the three refusals apart](./rest-api.html#tell-the-three-refusals-apart)
+- The two `Forbidden` reasons: [Tell the three refusals apart](./rest-api.html#tell-the-three-refusals-apart). `token_entitlement` suggests widening the token; `policy` suggests nothing, since another token will not help
 - `Not found` on every resource: usually an app without `avo-api` mounted and licensed
 - `HTTP 400`: also what an empty `--data` object gets
 
@@ -315,7 +333,7 @@ Nothing was sent, so nothing changed on the app. The message names what to fix, 
 - **The data.** `--data` that is not one JSON object, or names a file it cannot read, or includes a `file` field (files need a multipart upload the CLI does not send)
 - **The connection.** No host or no token, a host that is not an `http://` or `https://` URL or carries a username and password, or a token with a character a header cannot carry, such as a newline
 - **The saved login.** A file `avo login` wrote that cannot be read, written, or parsed
-- **The environment.** `avo login` with no terminal to ask on, or no Node 18.12.1 or newer on `PATH`
+- **The environment.** `avo login` with no terminal to ask on, or no Node 22 or newer on `PATH`
 
 ## Command reference
 
@@ -346,7 +364,7 @@ A shortcut goes in the command's slot: `avo l users` is `avo list users`. `avo h
 | `--token <secret>`             | every request                    | API token secret, sent as a Bearer token. Env: `AVO_API_TOKEN`                           |
 | `--api-version <name>`         | every request                    | API version segment of the URL. Defaults to the one `login` saved, then `v1`. Env: `AVO_API_VERSION` |
 | `--verbose`                    | every request                    | Log each request and response line to stderr                                             |
-| `--format table\|json`         | every response                   | Output format. Default `table`; `json` prints the body exactly as the server sent it     |
+| `--format table\|json`         | every response                   | Output format. Default `table`; `json` prints the body exactly as the server sent it, indented on a terminal     |
 | `--fields <a,b,c>`             | `list`, `get`, `create`, `update` | Which fields to show, comma-separated, in that order. Columns on `list`, rows elsewhere |
 | `-d, --data <json\|@path\|->`  | `create`, `update`               | Required. Fields to write, as one JSON object. `@path` reads it from a file, `-` from stdin |
 | `--view <name>`                | `schema`                         | Which view's fields. `create` (default) and `update` list what a write may send; `index` and `show` what a record reads back. Needs a resource |
@@ -358,5 +376,5 @@ A shortcut goes in the command's slot: `avo l users` is `avo list users`. `avo h
 `login` and `logout` are the two commands that take no `RESOURCE`:
 
 - **`login`** takes the connection flags and `--verbose`.
-- Without a terminal, `--host` and `--token` (or their env variables) are required, and the API version falls back to `v1`.
+- Without a terminal, `--host` and `--token` are required, and the API version falls back to `v1`.
 - **`logout`** takes no flags.
