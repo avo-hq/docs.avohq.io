@@ -352,6 +352,16 @@ const config = {
               text: "MCP Server",
               link: "/4.0/mcp.html",
             },
+            {
+              text: "AI assistant",
+              link: "/4.0/ai.html",
+              collapsed: false,
+              items: [
+                { text: "Overview", link: "/4.0/ai.html" },
+                { text: "What you can ask", link: "/4.0/ai-what-you-can-ask.html" },
+                { text: "Agents and tools", link: "/4.0/ai-agents-and-tools.html" },
+              ],
+            },
           ]
         },
         {

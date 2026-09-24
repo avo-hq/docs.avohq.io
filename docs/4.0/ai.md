@@ -93,7 +93,7 @@ Expect `0` and no error. Restart your server and the chat bar appears on every A
 
 ### 6. Teach the assistant your app
 
-The assistant now knows Avo, not your application — what a "customer" is here, which resource an "order" lives in, the questions your team actually asks. That goes in a prompt file of its own, and the gem ships a flow that writes it with you. See [Teach the assistant your app](#teach-the-assistant-your-app).
+Don't skip this one. The assistant now knows Avo, not your application — what a "customer" is here, which resource an "order" lives in, the questions your team actually asks — and until you write that down it guesses, and guesses wrong. It goes in a prompt file of its own, and the gem ships a flow that writes it with you. The install isn't finished until you've followed [Teach the assistant your app](#teach-the-assistant-your-app).
 
 ## Configuration
 
@@ -547,7 +547,7 @@ An import creates records only — updating or upserting from a file isn't offer
 
 ## Teach the assistant your app
 
-Out of the box the assistant knows Avo, not your application. It reads columns, enums, and scopes from its tools at run time, but nothing tells it that "customers" are `User` records with a `role` of `client`, that a "booking" is the `Reservation` resource, or that nobody on your team has ever asked about webhook deliveries. That's what it guesses wrong at, and guessing is what it has to do until you write the app down.
+Out of the box the assistant knows Avo, not your application. It reads columns, enums, and scopes from its tools at run time, but nothing tells it that "customers" are `User` records with a `role` of `client`, that a "booking" is the `Reservation` resource, or that nobody on your team has ever asked about webhook deliveries. That's what it guesses wrong at, and guessing is what it has to do until you write the app down. That's why this is the last step of the install, not an extra.
 
 Where you write it is a prompt file of its own, `app/prompts/avo/ai/chat_agent/app_context.txt.erb`. It renders into the system prompt on every turn, right after the assistant's identity and before the shipped rules — so the model reads *who* it is, then *what it's embedded in*, then *how to behave*. The gem's own copy renders to nothing, so nothing changes until the file exists.
 
