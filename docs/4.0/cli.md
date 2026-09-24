@@ -125,7 +125,7 @@ role      select      {"required":false,"options":["user","admin","moderator"]}
 team_id   belongs_to  {"required":false}
 ```
 
-`field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It appears on the two form views only.
+`field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required`, the `options` a choice field accepts, and `multiple: true` on a field that takes a list. It appears on the two form views only.
 
 Pass `--view update` for what an update may send, and `--view index` or `--view show` for what a record reads back, where the `field_options` column is gone since nothing is sent. Each view needs the entitlement of the request it describes.
 
