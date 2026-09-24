@@ -53,7 +53,7 @@ rails generate avo_api:install --version v2
 
 ### Install the API tokens table
 
-`avo_api:install` above already wrote the migration for the `avo_api_tokens` table, so a first install needs only:
+`avo_api:install` above already wrote the migrations for the `avo_api_tokens` table, so a first install needs only:
 
 ```bash
 rails db:migrate
@@ -133,6 +133,108 @@ The path segment is the resource's `route_key` (e.g. `blog_posts`, `product_cate
 The token resource is skipped when routes are drawn, so no version namespace gets a `tokens` endpoint. Tokens are managed in the panel only — a credential can neither mint nor revoke credentials, and so cannot outlive being revoked.
 :::
 
+## Discovery
+
+Two `GET` endpoints describe what the API version exposes, so a client doesn't have to be told which resources exist, what key a write nests under, or what fields a request takes. Neither writes anything.
+
+```
+GET    /api/resources/v1/_schema                    # every resource the caller may reach
+GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on one view
+```
+
+### The resource listing
+
+`GET /api/resources/v1/_schema` runs under the same authentication as the rest of the API and lists only the resources the caller may list and the token may reach.
+
+```json
+{
+  "api_version": "v1",
+  "resources": [
+    {
+      "route_key": "teams",
+      "param_key": "team",
+      "name": "Team",
+      "entitlements": ["index", "show", "create", "update", "destroy"]
+    }
+  ]
+}
+```
+
+| Key | Meaning |
+|-----|---------|
+| `api_version` | The version namespace the request came through. |
+| `route_key` | The URL segment every other request is built from. |
+| `param_key` | The key a `POST` or `PATCH` body nests its fields under. Use it rather than singularizing `route_key`. |
+| `name` | The resource's singular title, for display. |
+| `entitlements` | The API actions the token may call on this resource. All five for a token that was never restricted. |
+
+### One resource's fields
+
+`GET /api/resources/v1/teams/_schema?view=create` lists one resource's fields on one view. `view` defaults to `create`.
+
+| `view` | Lists |
+|--------|-------|
+| `create` | What a `POST` body may send, with each field's `field_options`. The default. |
+| `update` | What a `PATCH` or `PUT` body may send, with each field's `field_options`. |
+| `show` | What a record comes back with from `GET /teams/:id`. |
+| `index` | What a row of `GET /teams` carries. |
+
+```json
+{
+  "param_key": "team",
+  "fields": [
+    { "field_id": "name", "field_type": "text", "field_options": { "required": true } },
+    { "field_id": "admin_id", "field_type": "belongs_to", "field_options": { "required": false } },
+    { "field_id": "plan", "field_type": "select", "field_options": { "required": false, "options": ["free", "pro"] } },
+    { "field_id": "tags", "field_type": "select", "field_options": { "required": false, "options": ["ops", "eu", "us"], "multiple": true } },
+    { "field_id": "coordinates", "field_type": "location", "field_options": { "required": false } }
+  ]
+}
+```
+
+| Key | Meaning |
+|-----|---------|
+| `field_id` | The key the field reads back under, or, on `create` and `update`, the key the body sets it through (`admin_id`). |
+| `field_type` | The Avo field type. |
+| `field_options` | Form views only: one object holding what a write needs to know about the field, the keys below. Read views carry none. |
+| `field_options.required` | Whether a blank value is refused. |
+| `field_options.options` | On choice fields: the values the field accepts, never the labels. |
+| `field_options.multiple` | `true` on a field that takes a list (`select` with `multiple`, `checkbox_list`, `boolean_group`); absent otherwise. |
+
+Each field's `field_type` says what to put under its `field_id` in a `POST` or `PATCH` body.
+
+| Field types | What you send |
+|-------------|---------------|
+| `text`, `number`, `boolean`, `select`, `belongs_to`, and every other single-value field | one value: `"name": "Acme"`, `"plan": "pro"` |
+| `select` with `multiple`, `checkbox_list`, `boolean_group` | a list of values: `"tags": ["ops", "eu"]` |
+| `location` on two columns (`stored_as: [:latitude, :longitude]`) | an object keyed by those columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
+| `location` on one column, `tags`, `key_value` | one string the field parses: `"home": "44.43,26.10"`, `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"` |
+| `code` | one string, stored as it is. Only a field declared with `pretty_generated: true` parses it as JSON |
+
+`null` clears any field, a list and a `location` on two columns included. The one exception is a `location` on one column, which splits the string it is given: clear it with `""`, since `null` is answered with a `500`. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
+
+Put together, the schema above is written as:
+
+```json
+{
+  "team": {
+    "name": "Acme",
+    "plan": "pro",
+    "tags": ["ops", "eu"],
+    "coordinates": { "latitude": 44.43, "longitude": 26.10 }
+  }
+}
+```
+
+Read views carry `field_id` and `field_type` only; form views add `field_options` and list only the fields a body may write.
+
+:::info Refusals
+- `403` with `reason: "token_entitlement"` when the token lacks the action the view is named after.
+- `403` with `reason: "policy"` when the token's owner cannot index the resource.
+- `400` with `{ "error": "Unknown view", "views": ["index", "show", "create", "update"] }` for a view it doesn't know.
+- `404` when this version has no controller for the resource. No route exists then, so this one is Rails' own page, not the JSON body above.
+:::
+
 ## Authentication
 
 Every request runs through [`setup_authentication`](./rest-api-api.html#setup_authentication), a hook on `BaseResourcesController`. **The default implementation accepts a valid API token** and rejects everything else with `401 Unauthorized`:
@@ -184,7 +286,7 @@ A token's status is derived from two timestamps, never stored, so there is no li
 
 Expiry is optional — leave it blank and the token never expires. Revocation is permanent: the **Revoke** action on the token resource marks the token and keeps the record, and nothing can un-revoke it. A token that is both revoked and past its expiry reports **Revoked**.
 
-Each successful request stamps the token's **Last used** column, which is the fastest way to tell a token that was never wired up from one that stopped working.
+Each authenticated request stamps the token's **Last used** column, a refused one included, which is the fastest way to tell a token that was never wired up from one that stopped working.
 
 Deleting a token's owner also stops the token: a token whose owner can no longer be resolved is rejected, so a request never proceeds with nobody attached to it.
 
@@ -304,7 +406,8 @@ Fields are respected according to their view visibility, and typed values are se
 | Text, number, boolean, date/datetime | The raw value |
 | `belongs_to` | `{ "id": 5, "label": "John Doe" }` |
 | `has_many`, `has_one` | `{ "count": 12 }` (or `{ "id": 5 }` for a single loaded record) |
-| `file`, `files` | `{ "filename": "…", "content_type": "…", "byte_size": 1234, "url": "…" }` |
+| `file` | `{ "filename": "…", "content_type": "…", "byte_size": 1234, "url": "…" }` |
+| `files` | a list of those objects, one per attachment |
 
 Field visibility follows your resource's view settings, so you can shape the API per view:
 
@@ -400,6 +503,12 @@ Different field types accept the formats you'd expect:
 | Boolean | `true`, `false` |
 | Date / datetime | `"2024-01-15"`, `"2024-01-15T10:30:00Z"` |
 | `belongs_to` | the foreign key: `"admin_id": 5` |
+| `select` with `multiple`, `checkbox_list`, `boolean_group` | a list: `"tags": ["ops", "eu"]` |
+| `location` on two columns | an object keyed by its `stored_as` columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
+| `tags`, `key_value`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"`, `"home": "44.43,26.10"` |
+| `code` | one string, stored as it is unless the field is declared with `pretty_generated: true`, which parses it as JSON |
+
+`null` clears any field, a list and a `location` on two columns included. The one exception is a `location` on one column, which splits the string it is given: clear it with `""`, since `null` is answered with a `500`. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
 
 :::info CSRF and JSON clients
 API controllers use Rails' `:null_session` CSRF strategy, so a stateless client that carries no CSRF token is not rejected — no `InvalidAuthenticityToken` is raised. [`self.setup_csrf_protection`](./rest-api-api.html#self.setup_csrf_protection) is the hook if you need a different strategy.
@@ -894,3 +1003,11 @@ The whole key tree is in the gem's `config/locales/en.yml`. See [Localization](.
 :::info Relative times need `rails-i18n`
 The lifecycle chips say "3 minutes ago" through Rails' own `datetime.distance_in_words` strings, which Rails ships in English only. Add the [rails-i18n](https://github.com/svenfuchs/rails-i18n) gem for translated relative times — without it, chips in other languages show the exact timestamp instead.
 :::
+
+## Command line client
+
+[avo-cli](./cli.html) is the official command line client for this API. It reads the discovery endpoints first, so it knows the resource names and the key a write nests under, and it turns every refusal into one line and an exit code.
+
+```bash
+gem install avo-cli
+```

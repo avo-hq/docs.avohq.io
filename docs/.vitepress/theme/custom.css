@@ -127,7 +127,9 @@ pre code span.line:not(:last-child) {
    name, and a name broken across two lines stops the column being scannable,
    which is the only reason it is a column. VitePress already gives .vp-doc
    table `overflow-x: auto`, so a long name scrolls the table rather than
-   forcing the page sideways. */
-.skills-catalog .vp-doc td:first-child code {
+   forcing the page sideways. The CLI reference (4.0/cli) has the same shape:
+   every table leads with a command, argument or flag. */
+.skills-catalog .vp-doc td:first-child code,
+.cli-reference .vp-doc td:first-child code {
   white-space: nowrap;
 }
