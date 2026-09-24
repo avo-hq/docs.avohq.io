@@ -227,7 +227,7 @@ The scope strings a grant is stored as. Write carries read; a per-resource grant
 | Read & write | `avo:write`   | `avo:write:Post`  | No                  |
 | Run actions  | `avo:actions` | —                 | No                  |
 
-Run actions has no per-resource form: over a narrowed read it applies to the resources the read grant names. A connection's capabilities are fixed when it is created; authorizing the client again is the only way to widen them.
+Run actions has no per-resource form: over a narrowed read it applies to the resources the read grant names. A connection's capabilities are set at consent and changed later from the connection's [Entitlements card](./mcp.html#see-and-change-what-a-connection-may-reach), by whoever the policy's `edit_entitlements?` allows; the change binds the connection's next tool call on the tokens the client already holds.
 
 ## Error codes
 
@@ -307,7 +307,7 @@ A tool call's arguments are stored after the app's `filter_parameters` and cappe
 | ----------------------------------- | ----------------------------------------------------------------------- |
 | `Avo::Resources::McpConnection`     | The MCP connections resource, at `<your-avo-path>/resources/mcp_connections` |
 | `Avo::Actions::McpRevokeConnection` | The Revoke action                                                       |
-| `Avo::McpServer::Connection`        | The model behind the resource. Refuses `update` and `destroy`.          |
+| `Avo::McpServer::Connection`        | The model behind the resource. Its identity — client, owner, name — is immutable and it refuses `destroy`; the grant (`capabilities`) is edited through the Entitlements card. |
 | `Avo::McpServer::Event`             | One row of the connection log                                           |
 | `Avo::McpServer::ConnectionPolicy`  | The policy **you** write; the gem ships none                            |
 
@@ -323,7 +323,8 @@ A tool call's arguments are stored after the app's `filter_parameters` and cappe
 | `view_audit_trail?` | Optional. The Audit trail table **and** the endpoint that fills it, in place of `show?`             |
 | `view_entitlements?` | Optional. The Entitlements card, in place of `show?`                                                  |
 | `view_tools?`    | Optional. The Tools card, in place of `show?`                                                             |
-| `create?`, `edit?`, `destroy?` | The corresponding controls. The model refuses edits and deletes regardless                  |
+| `edit_entitlements?` | Optional. Changing the grant from the Entitlements card, and the request Apply sends. Denied — or undefined in a policy — the card renders read-only; it does not fall back to `show?`. Editing implies `view_entitlements?` |
+| `create?`, `edit?`, `destroy?` | The corresponding controls. Identity is immutable and the model refuses deletes regardless; the grant is changed through `edit_entitlements?`, not `edit?` |
 
 The three card methods are separate because the cards disclose different things: the Log carries data about your own records, the Entitlements matrix is computed against the connection **owner's** reach (so on another admin's connection it names resources the reader's own policies may hide from them), and the Tools list is derived from the registry and the grant. Refusing one leaves the rest of the page intact.
 
