@@ -36,7 +36,7 @@ const paths = [
 
     <div class="grove-home__copy">
       <p class="grove-home__eyebrow">Avo documentation</p>
-      <h1 class="grove-home__title">Build the app your team <em>runs the business from</em>.</h1>
+      <h1 class="grove-home__title">How to build internal tools you can <em>stop worrying about</em>.</h1>
       <a class="grove-home__tag" href="/4.0/agentic-engineering.html">Yes, your agents can read these too.</a>
       <p class="grove-home__lead">
         With Avo, your Rails app is your company's command center. Describe your data in a few Ruby files and
