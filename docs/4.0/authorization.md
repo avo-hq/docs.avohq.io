@@ -717,7 +717,7 @@ Raise when resolution fails. Returning the full list on an error is exactly the 
 
 - **Unlicensed, it is inert.** Field authorization runs where authorization runs. Without the `avo-authorization` add-on on your license, every policy check is skipped, and so are these declarations. They are not a security boundary in an unlicensed app.
 - **Only Avo's surfaces.** Your own code is outside the boundary. `record.ssn` in a custom partial, a `self.search[:item]` block, a background job or raw SQL reads the attribute regardless.
-- **A column no field declares cannot be named.** An entry has to match a declared field id. To govern a column, declare a field for it.
+- **A column no field declares cannot be governed.** An entry only takes effect where it matches a field the resource declares. To govern a column, declare a field for it.
 - **May see but may not write** is not expressible in one list. Use the per-field [`disabled:` pattern](#use-resource-s-policy-to-authorize-custom-actions).
 - **Kanban's read side.** Which column a card sits in discloses the value of the board's grouping property. A drag that would write a withheld field is refused, but the board still renders.
 - **avo-query does not participate.** It generates SQL from the schema and cannot resolve a policy's lists, so it declines to answer while `avo-authorization` is loaded.
