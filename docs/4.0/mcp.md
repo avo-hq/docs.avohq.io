@@ -183,7 +183,7 @@ Three capabilities cover the whole surface. Write means create, update, **and** 
 
 **Choose per resource** on the authorize page lists every resource the admin can see and lets them pick *none*, *read*, or *read & write* for each. A narrowed grant holds everywhere: `list_resources` lists only the granted resources, a tool naming any other one is refused before a record is loaded, `search_records` with no resource searches only the granted ones, an association to an ungranted resource is left out of `show_record`'s payload, and run actions over a narrowed read means "on those resources". Write carries read.
 
-A capability is fixed when the connection is created. To widen one, the admin authorizes the client again.
+The decision made at consent isn't final. An admin the policy allows widens or narrows a connection later from its [Entitlements card](#see-and-change-what-a-connection-may-reach), and the change binds the client's next call.
 
 :::warning Write and run actions are unselected on purpose
 An agent can't reliably tell your data apart from instructions aimed at it, so text in a record it reads — a signup name, a ticket body — can steer it. `delete_record` and `run_action` act immediately, with no confirmation step: granting the capability at consent **is** the confirmation. Grant them to clients you trust, on data you control, and keep everything else read-only.
@@ -298,7 +298,7 @@ The reverse isn't offered — an `Avo::McpServer::Tool` can't be handed to the c
 
 ## Review and revoke connections
 
-Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — its **Name** (three words, unique, the same name the session announces), the client's name and id, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
+Connections are an Avo resource: **MCP connections** in the sidebar, at `<your-avo-path>/resources/mcp_connections`. Each row is one client acting as one admin — its **Name** (three words, unique, the same name the session announces), the client's name and id, the **Owner**, when it was authorized, and when it was **last used**. A connection's page adds the status as chips by the title, an **Entitlements** card showing — and changing — what the grant reaches, a **Tools** card listing the calls it unlocks (and the ones it withholds), and the **Log** card described below.
 
 ### What the status means
 
@@ -317,7 +317,7 @@ A disconnected or expired client comes back by authorizing again — which creat
 Token revocation ([RFC 7009](https://www.rfc-editor.org/rfc/rfc7009)) is the one signal a client can send on its way out, and only clients that implement it do. Claude Code does. A client that simply deletes its stored tokens reads as open until they expire, 30 days after its last call.
 :::
 
-**Revoke** is an action on the resource, from the actions menu or a connection's page; with [Custom controls](./custom-controls.html) it's also a button on the toolbar, on each row not yet revoked, and on the page. It takes effect on the client's next call and notifies nothing. The connection stays listed as revoked, so you can still see that it existed and when it last ran. Connections are never edited or deleted from the panel, and the resource is excluded from the MCP tools themselves — a client can't list connections or revoke one through `run_action`.
+**Revoke** is an action on the resource, from the actions menu or a connection's page; with [Custom controls](./custom-controls.html) it's also a button on the toolbar, on each row not yet revoked, and on the page. It takes effect on the client's next call and notifies nothing. The connection stays listed as revoked, so you can still see that it existed and when it last ran. A connection's identity — its client, owner and name — is never edited, and connections are never deleted from the panel; what one may reach is changed from its [Entitlements card](#see-and-change-what-a-connection-may-reach). The resource is excluded from the MCP tools themselves — a client can't list connections, revoke one, or change a grant through `run_action`.
 
 If your initializer lists resources explicitly in `config.resources`, add `"Avo::Resources::McpConnection"` to it. To link the resource into the profile menu (needs the [Menu editor](./menu-editor.html) add-on):
 
@@ -352,18 +352,30 @@ Whether claude.ai surfaces a server's instructions the same way is not verified;
 Names need a column the first migration didn't have. Run `bin/rails generate avo:mcp_server install` again — it adds the column as a migration of its own, names every existing connection, and changes nothing else — then `bin/rails db:migrate`. Until then rows are titled by the client name and the session is told its connection's id instead of a name; connections keep working.
 :::
 
-### See what a connection may reach
+### See and change what a connection may reach
 
-The **Entitlements** card is the consent screen's decision read back in the shape it was made in: one row per resource, at **None**, **Read** or **Read & write**, with a search over them and a count underneath — `4 of 14 granted — everything else is refused`.
+The **Entitlements** card is the consent screen's decision read back in the shape it was made in: one row per resource, at **None**, **Read** or **Read & write**, with a search over them and a count underneath — `4 of 14 granted — everything else is refused`. It is also where that decision is changed.
 
-Rows are the resources the connection's **owner** can list, not the reader's. A grant that names a resource the panel no longer registers keeps its row, marked *no longer listed*, so the card never under-reports what is held. A grant that names no resources at all collapses to one line — *Every resource*, at the level it holds — with the list behind a **Show resources** control.
+Rows are the resources the connection's **owner** can list, not the reader's. A grant that names a resource the panel no longer registers keeps its row, marked *no longer listed*, so the card never under-reports what is held. A grant that names no resources at all collapses to one line — *Every resource*, at the level it holds.
 
-It is read-only, and not for want of a form. A connection's capabilities are fixed when it is authorized: to change what a client may do, revoke it and authorize it again, so the client is told rather than having its reach changed underneath it.
+Running actions is not a per-resource question, so it sits above the grid as its own line — a checkbox — rather than as a row that could not hold it.
 
-Running actions is not a per-resource question, so it sits above the grid as its own line rather than as a row that could not hold it.
+Clicking a level changes nothing on its own. The moment the card differs from what's stored, **Apply changes** and **Undo** appear — Apply writes the whole card at once, Run actions included, and Undo snaps back. Above the rows, a search box narrows the list as you type, and **Set all shown** applies one level to whatever the search is currently showing: "read-only on everything matching `order`" is a search and a click.
+
+An unrestricted connection shows the collapsed line instead of the grid, and the line is live: switch it between Read and Read & write and apply. **Fine-tune** opens the rows with every one already at the level the connection holds, so you narrow from there instead of building the list up from nothing. Nothing is stored until you apply.
+
+:::warning Unrestricted reaches what comes later; a list does not
+A connection granted Read or Read & write across the board — the consent screen's default — reaches every resource its owner can see, **including resources your app registers later**. Fine-tune it and apply, and it holds an explicit list instead: a resource the owner gains after that is refused until you grant it. Setting every row to None leaves the connection with no record access at all, which is not the same as unrestricted; a Run actions grant it holds keeps its global meaning.
+:::
+
+**Make unrestricted** is the way back. It returns a narrowed connection to reaching everything its owner can, at **Read** — the level the consent screen starts from — so any write it held on a resource is dropped, and the confirmation says so. Read & write across the board is one more click on the collapsed line, then Apply. It also clears entries naming resources the card no longer lists.
+
+The change binds the connection's **next tool call**, on the tokens the client already holds — nothing is revoked and nobody authorizes again. A client that cached its tool list learns on its next refused call. A code approved before the change and exchanged after it is bound by the current grant too; the `scope` string the client is handed follows the code's original snapshot on that exchange and the current grant on refresh. Each accepted change is written to the Avo log with who made it, the connection, and the capabilities before and after.
+
+Who may change a grant is the policy's [`edit_entitlements?`](#decide-who-sees-and-revokes-what). Denied, the card renders read-only and says so. It is read-only as well on a revoked connection (the grant is kept as a record of what was held), while `config.mcp_server.enabled` is `false`, when the owner no longer exists, and when [Authorization](./authorization.html) is unlicensed.
 
 :::info
-This is the same grid the [REST API](./rest-api.html) shows for an API token's entitlements. A panel running both add-ons asks "what may this credential reach?" in one form on both screens.
+This is the same grid the [REST API](./rest-api.html#entitle-a-token) shows for an API token's entitlements, with the same controls and the same [way back](./rest-api.html#take-a-token-back-to-unrestricted). A panel running both add-ons asks "what may this credential reach?" in one form on both screens.
 :::
 
 The **Tools** card below it is the same grant read as the calls it turns into — `list_records`, `run_action` — grouped by the capability that unlocks each group. A narrowed grant is **counted** there (*on 3 resources*) rather than named, since the names are rows on the Entitlements card above. The write group says what it stands on, above its tools: *Everything in Read, plus:* — "Read & write" heads three calls only because the group carries read's five as well.
@@ -398,7 +410,7 @@ The log's table (`avo_mcp_server_events`) comes with the installer's migration. 
 
 ### Decide who sees and revokes what
 
-This add-on ships no policy for the resource. Without one, Avo's defaults apply as for any other resource: with `explicit_authorization = false` every admin sees and may revoke every connection; with `explicit_authorization = true` the resource stays hidden until a policy answers `index?`. A policy goes where every other policy goes:
+This add-on ships no policy for the resource. Without one, Avo's defaults apply as for any other resource: with `explicit_authorization = false` every admin sees, may revoke, and may change the reach of every connection; with `explicit_authorization = true` the resource stays hidden until a policy answers `index?`. A policy goes where every other policy goes:
 
 ```ruby
 # app/policies/avo/mcp_server/connection_policy.rb
@@ -419,7 +431,10 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 
   def view_tools? = true
 
-  # Connections are created by authorizing a client and ended by revoking it.
+  # Changing the grant from the Entitlements card. Without this method the card is read-only.
+  def edit_entitlements? = user.owner? || record.user == user
+
+  # Connections are created by authorizing a client and ended by revoking it; the grant is changed from the Entitlements card, not the edit form.
   def create? = false
 
   def edit? = false
@@ -432,9 +447,9 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 end
 ```
 
-The `Scope` decides the list, `show?` the page, `act_on?` the Revoke action. The connect page — where **Connect a client** and "Create new" both lead — and the button that opens it follow `index?`, not `create?` or `new?`: the page creates nothing, so `create? = false` keeps it reachable for anyone who may see the list. To keep the resource off the sidebar, set `Avo::Resources::McpConnection.visible_on_sidebar = false` in a `to_prepare` block.
+The `Scope` decides the list, `show?` the page, `act_on?` the Revoke action, `edit_entitlements?` the Entitlements card's controls. The connect page — where **Connect a client** and "Create new" both lead — and the button that opens it follow `index?`, not `create?` or `new?`: the page creates nothing, so `create? = false` keeps it reachable for anyone who may see the list. To keep the resource off the sidebar, set `Avo::Resources::McpConnection.visible_on_sidebar = false` in a `to_prepare` block.
 
-Each card below the fields has an optional method of its own, and all of them fall back to `show?`, so a policy that defines none gives the whole page to anyone who may open it. They are separate because the cards disclose different things:
+Each card below the fields has an optional method of its own, and the four `view_` methods fall back to `show?`, so a policy that defines none gives the whole page to anyone who may open it. Changing the grant is a separate question that does not fall back. They are separate because the cards disclose different things:
 
 | Method               | Card                                          | What it discloses                                                                                                     |
 | -------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -442,6 +457,7 @@ Each card below the fields has an optional method of its own, and all of them fa
 | `view_audit_trail?`  | **Audit trail** (with Audit Logging installed) | What the client changed, and the titles of the records it changed. Asked again by the table's own endpoint, so one method covers both. |
 | `view_entitlements?` | **Entitlements**                              | The connection **owner's** reach. On another admin's connection it names resources the reader's own policies may hide. |
 | `view_tools?`        | **Tools**                                     | Tool names, derived from the registry and the grant. Nothing beyond them.                                               |
+| `edit_entitlements?` | **Entitlements** — the controls, *and* the request Apply sends | Changing the connection **owner's** reach. Optional, but a host with a policy must define it to enable editing: denied or undefined, the card renders read-only and says so. Editing implies `view_entitlements?` — nobody may change what they may not see. |
 
 Refusing one leaves the rest of the page intact.
 
@@ -526,7 +542,7 @@ Refusals come back as JSON-RPC errors with a numeric `code`, a message, and a `d
 
 | Code     | Means                                              | First thing to check                                         |
 | -------- | -------------------------------------------------- | ------------------------------------------------------------ |
-| `-32000` | Capability not granted                             | The consent selection — authorize again with the capability  |
+| `-32000` | Capability not granted                             | The connection's [Entitlements](#see-and-change-what-a-connection-may-reach) — grant what was withheld |
 | `-32001` | Capability granted, the admin's policy said no     | Your policy for that admin                                   |
 | `-32002` | Authorization isn't being enforced, nothing ran    | The license — both add-ons must be enabled                   |
 
