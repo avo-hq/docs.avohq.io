@@ -6,7 +6,9 @@ outline: [2, 3]
 
 # Avo AI
 
-Avo AI adds an AI assistant to your admin panel. It ships a floating chat bar on every Avo page, a set of tools the assistant uses to query, create, update, and delete records on your behalf, and admin resources for browsing chats, messages, tool calls, and models.
+Avo AI puts a chat bar on every page of your Avo app, so the people on your team can ask about your data in their own words and get an answer instead of filing a ticket. [AI in your Avo app](./ai-overview.html) compares it with the MCP server. It sees only what that person's [policies](./authorization.html) allow, updates and deletes wait until someone clicks **Confirm**, and every write lands in an audit log.
+
+Under the hood it is a set of tools the assistant uses to query, create, update, and delete records, and admin resources for browsing chats, messages, tool calls, and models.
 
 New here, or wondering what to type into it? [What you can ask](./ai-what-you-can-ask.html) is the catalog of everything the assistant does, with a sample prompt for each.
 

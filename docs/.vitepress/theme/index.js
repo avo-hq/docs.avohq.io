@@ -14,6 +14,7 @@ import BetaStatus from "../theme/components/BetaStatus.vue"
 import SponsorGroup from "../theme/components/SponsorGroup.vue"
 import Sponsor from "../theme/components/Sponsor.vue"
 import Index from "../theme/components/Index.vue"
+import GroveHome from "../theme/components/GroveHome.vue"
 import Show from "../theme/components/Show.vue"
 import Edit from "../theme/components/Edit.vue"
 import New from "../theme/components/New.vue"
@@ -83,6 +84,7 @@ export default {
     app.component("SponsorGroup", SponsorGroup)
     app.component("Sponsor", Sponsor)
     app.component("Index", Index)
+    app.component("GroveHome", GroveHome)
     app.component("Show", Show)
     app.component("Edit", Edit)
     app.component("New", New)

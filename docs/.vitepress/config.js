@@ -66,6 +66,10 @@ const config = {
     ],
     ["script", {}, '!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]); posthog.init("phc_AcnCOed7OL4OtCH5i9O3Hb9jLow9iX1aiJxi7GmXoky",{api_host:"https://eu.i.posthog.com",person_profiles: "always"})'],
     ["script", {}, "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-VWMV2FNBQ1');"],
+    // Bricolage Grotesque, the avohq.io display face, for the homepage headline.
+    ['link', { rel: "preconnect", href: "https://fonts.googleapis.com" }],
+    ['link', { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" }],
+    ['link', { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" }],
     ['link', { rel: "apple-touch-icon", sizes: "180x180", href: "/favicons/apple-touch-icon.png" }],
     ['link', { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicons/favicon-32x32.png" }],
     ['link', { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicons/favicon-16x16.png" }],
@@ -190,6 +194,18 @@ const config = {
             { text: "Avo 3 to Avo 4 upgrade", link: "/4.0/avo-3-avo-4-upgrade.html" },
             { text: "Technical Support", link: "/4.0/technical-support.html" },
             { text: "🤖 Agentic engineering", link: "/4.0/agentic-engineering.html" },
+          ]
+        },
+        {
+          // What the team uses, not the developer: the chat and MCP. Coding agents live
+          // under "Agentic engineering", just above.
+          text: "AI",
+          items: [
+            { text: "Overview", link: "/4.0/ai-overview.html" },
+            { text: "Chat", link: "/4.0/ai.html" },
+            { text: "What you can ask", link: "/4.0/ai-what-you-can-ask.html" },
+            { text: "Agents and tools", link: "/4.0/ai-agents-and-tools.html" },
+            { text: "MCP server", link: "/4.0/mcp.html" },
           ]
         },
         {

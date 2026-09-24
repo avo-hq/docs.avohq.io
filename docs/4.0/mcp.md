@@ -9,7 +9,9 @@ api_docs: ./mcp-api.html
 
 # MCP Server
 
-The `avo-mcp_server` add-on turns your Avo panel into a remote [MCP](https://modelcontextprotocol.io) server, so an AI client such as Claude, ChatGPT, or Cursor can browse and manage your admin data in natural language. An admin pastes your app's MCP URL into their client, approves a consent screen served by your own panel, and from then on the client acts **as that admin** — through the same resources, policies, and field visibility the panel already enforces.
+Your team can ask Claude, ChatGPT, or Cursor about the data in your Avo app, in plain words, from the assistant they already use all day. The `avo-mcp_server` add-on serves your app as a remote [MCP](https://modelcontextprotocol.io) server. A teammate pastes its URL into their client and approves a consent screen served by your own app. From then on the client acts **as that person**, through the same resources, policies, and field visibility the Avo app already applies to them.
+
+It's one of two ways your team can ask the app; [AI in your Avo app](./ai-overview.html) compares it with the chat.
 
 ```ruby
 # config/routes.rb

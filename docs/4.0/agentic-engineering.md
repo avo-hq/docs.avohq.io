@@ -5,14 +5,9 @@ prompt: Use this page (${link}) to set up my AI coding agent to work with Avo â€
 
 # Agentic engineering
 
-Avo is designed to work well with AI coding agents. This page covers the tools and setup that let you build Avo features faster by pairing with agents like Claude Code, Cursor, Windsurf, and others.
+You can hand most Avo work to a coding agent: a new resource, a filter, an action, a dashboard card. What it needs is the same thing you need, the right docs for the version you run. This page sets up Claude Code, Cursor, Windsurf, and the rest with that context, the skills that ship inside the gem, and the MCP server, so the code they write is code you'd have written.
 
-<!-- Uncomment when avo-ai is published (AVO-1665). The page exists on this branch,
-so this line builds fine â€” it stays commented only because the add-on isn't buyable yet.
-This page is about agents in your editor; readers looking for the in-app chat land here first.
-
-Looking for the AI assistant *inside* your admin panel rather than in your editor? That's [Avo AI](./ai.html).
--->
+Looking for AI your team uses inside the Avo app, the chat or the MCP server, rather than agents in your editor? That's [AI in your Avo app](./ai-overview.html).
 
 ## Code editors and LLM setup
 

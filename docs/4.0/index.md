@@ -1,12 +1,20 @@
 # Getting started
 
-Avo turns your Rails app into something your whole team can operate. You describe your data in small Ruby configuration files, and Avo builds the interface around it: the screens to browse and edit records, the actions that run your business logic, the dashboards, the search. It's the layer your team logs into every day to run the product, whether you use it as an admin panel, an internal tool, or the app itself.
+With Avo, your Rails app is your company's command center. You describe your data in small Ruby files, and your team gets what they need to run the business from it: screens to browse and edit records, actions that run your business logic, dashboards, search, and an AI assistant they can ask in plain words. Support asks the app and gets an answer instead of waiting on a developer, ops fixes the order themselves, and you get back to the product.
+
+The AI follows the same rules as everything else in Avo. Your team asks from the chat bar in the Avo app, or from Claude, ChatGPT or Cursor over MCP, and it sees only what that person's policies allow. In the chat, updates and deletes wait until someone clicks **Confirm**, and with Audit Logging every change leaves a trail. [AI in your Avo app](./ai-overview.html) walks through both.
+
+Use it as an admin panel, an internal tool, or the app itself; it runs inside your Rails app either way.
 
 Everything in these docs fits into three rings:
 
 1. **[The core](#the-core)**. Describe your data once and Avo generates the full interface around it.
 2. **[Add-ons](#add-ons)**. Optional gems that extend the core with new capabilities as your needs grow.
 3. **[Your code](#your-code)**. Escape hatches at every level, so configuration never boxes you in.
+
+:::tip Building with an AI coding agent?
+Your agent can read these docs too. [Agentic engineering](./agentic-engineering.html) shows how to point Claude Code, Cursor and the rest at the docs map and the skills that ship inside the gem, so what they write matches the Avo version you run.
+:::
 
 ## The core
 
@@ -61,6 +69,12 @@ The core covers managing records. Add-ons extend it toward whatever job your app
 
 - [Authorization](./authorization.html): granular permissions using Pundit policies.
 - [Custom Controls](./custom-controls.html): decide exactly which buttons and actions each user sees.
+
+**Let your team ask the app**
+
+- [AI chat](./ai.html): a chat bar on every Avo page that answers from your data and waits for **Confirm** before it updates or deletes anything.
+- [MCP Server](./mcp.html): your team asks from Claude, ChatGPT or Cursor, as themselves, with their own permissions.
+- [AI in your Avo app](./ai-overview.html): how the two compare, and the rules they share.
 
 **Connect other systems**
 
