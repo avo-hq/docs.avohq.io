@@ -338,15 +338,19 @@ Every Claude Code install registers as the same client — one client id, one na
 
 So **every connection has a name**. Three words from the avocado's own vocabulary, unique, generated when you approve the client — `creamy-golden-hass`, `ripe-mashed-guacamole` — shown as the **Name** column and as the connection's title. No two connections ever share one: the database enforces it.
 
-The server tells the client its name when it connects — in its answer to `server/discover`, or to `initialize` for a client that still initializes — and asks it to pass the name on, so a Claude Code session opens with:
+The server tells the client its name when it connects — in its answer to `server/discover`, or to `initialize` for a client that still initializes. The first time a connection is used after you authorize it, the server also asks the client to pass the name on, so that first Claude Code session opens with:
 
 > MCP connected — you're connection creamy-golden-hass.
 
-Find that row in the panel and you know which session you're looking at. Ask the session *"which Avo MCP connection is this?"* at any point and it repeats the name. The name can't be changed; revoking names it too — *creamy-golden-hass (Claude Code) can no longer reach this panel*.
+Find that row in the panel and you know which session you're looking at. Later sessions and reconnects open without the line — you already know the name — but the client still holds it: ask the session *"which Avo MCP connection is this?"* at any point and it answers with the name. The name can't be changed; revoking names it too — *creamy-golden-hass (Claude Code) can no longer reach this panel*.
 
-The whole text the client receives, which Claude Code puts in front of the model as *MCP Server Instructions*:
+The whole text the client receives, which Claude Code puts in front of the model as *MCP Server Instructions* — on the connection's first use:
 
-> This session is MCP connection creamy-golden-hass to the Acme Admin panel. At the start of the session, tell the user: "MCP connected — you're connection creamy-golden-hass." Answer the same whenever asked which MCP connection this is.
+> This session is MCP connection creamy-golden-hass to the Acme Admin panel, newly authorized. Tell the user once: "MCP connected — you're connection creamy-golden-hass." Afterwards, name it only when asked which MCP connection this is.
+
+and on every connect after that:
+
+> This session is MCP connection creamy-golden-hass to the Acme Admin panel. Name it only when asked which MCP connection this is; do not announce it otherwise.
 
 Whether claude.ai surfaces a server's instructions the same way is not verified; there, the live Log on the connection's page still shows which row a call landed on.
 
