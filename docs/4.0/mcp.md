@@ -311,7 +311,7 @@ Every connection carries a **status** — a badge on the index, a chip on its pa
 | Expired      | Nothing the client holds still works: it went 30 days without calling, or never finished connecting after you approved it.                                         |
 | Revoked      | You revoked it.                                                                                                                                                    |
 
-A disconnected or expired client comes back by authorizing again — which creates a **new** connection. The old row stays, so you can still see what it was allowed to do and when it last ran. Hover the status chip for the moment the state was entered.
+A disconnected or expired client comes back by authorizing again — which creates a **new** connection. The old row stays, so you can still see what it was allowed to do and when it last ran. Hover the status — the badge on the index or the chip on the connection's page — for the moment the state was entered.
 
 :::info Only clients that revoke their tokens show as disconnected
 Token revocation ([RFC 7009](https://www.rfc-editor.org/rfc/rfc7009)) is the one signal a client can send on its way out, and only clients that implement it do. Claude Code does. A client that simply deletes its stored tokens reads as open until they expire, 30 days after its last call.

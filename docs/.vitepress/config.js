@@ -345,6 +345,10 @@ const config = {
               link: "/4.0/rest-api.html",
             },
             {
+              text: "Command line client",
+              link: "/4.0/cli.html",
+            },
+            {
               text: "Collaboration",
               link: "/4.0/collaboration.html",
             },
