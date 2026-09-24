@@ -146,7 +146,7 @@ id  name          email              active
 Page 1 of 3 (58 records). Next: avo list users --page 2
 ```
 
-On a terminal the table fits the width: a long cell is shortened with an ellipsis, and columns past the right edge are dropped, in which case the footer says how many (`4 of 15 columns; --fields picks them, --format json has all`). Piped into another command or a file, every column prints at full width and nothing is cut. Narrow or reorder the columns with `--fields`, and page and sort with the rest:
+On a terminal the table is framed and fits the width: a long cell is shortened with an ellipsis, and columns past the right edge are dropped, in which case the footer says how many (`4 of 15 columns; --fields picks them, --format json has all`). Piped into another command or a file, every column prints at full width and nothing is cut. Narrow or reorder the columns with `--fields`, and page and sort with the rest:
 
 ```bash
 avo list users --sort name --dir desc --fields id,name,email --per-page 10
@@ -158,7 +158,7 @@ avo list users --sort name --dir desc --fields id,name,email --per-page 10
 avo get users 5
 ```
 
-The record reads down the page, one field per row, and `--fields name,email` picks the rows. A long value wraps under the value column on a terminal and stays on its one line when piped. `create` and `update` print the same view, after a line saying what they did: `Created users 56.`
+The record reads down the page, one field per row, and `--fields name,email` picks the rows. On a terminal it is the same framed table as `list`, headed `field` and `value`, and a long value wraps inside its column; piped, there is no header and each value stays on its one line. `create` and `update` print the same view, after a line saying what they did: `Created users 56.`
 
 ## Create a record
 
@@ -214,7 +214,7 @@ A `has_many` or `has_one` is never listed on a form view and is not something `-
 
 ### Key-value and code fields
 
-Write a `key_value` or `code` field as a JSON object. The CLI serializes it to a string for you and the field parses it on the app side:
+Write a `key_value` or `code` field as a JSON object. The CLI serializes it to a string for you. A `key_value` parses it on the app side; a `code` field stores the string as it is, unless it is declared with `pretty_generated: true`:
 
 ```bash
 avo update users 5 --data '{"settings": {"theme": "dark"}}'
@@ -276,7 +276,7 @@ avo get users 5 --format json | jq .record.email
 
 Run in a terminal rather than piped, the same command prints the body indented and coloured for reading. Only the piped form is the server's bytes, so a script always reads through a pipe or a file.
 
-The default `table` format shortens a long cell with an ellipsis only on a terminal, and only on `list` and `schema`; piped output is never cut. When you see one, widen the terminal, pick fewer columns with `--fields`, or use `--format json` to get the whole value.
+The default `table` format shortens a long cell with an ellipsis only on a terminal, and only on `list` and the resource listing of `schema`, since `avo schema <resource>` wraps instead; piped output is never cut. When you see one, widen the terminal, pick fewer columns with `--fields`, or use `--format json` to get the whole value.
 
 `--verbose` logs each request and response line to stderr, so `--format json --verbose` still leaves only the body on stdout.
 

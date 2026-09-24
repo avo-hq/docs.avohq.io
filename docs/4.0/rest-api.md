@@ -53,7 +53,7 @@ rails generate avo_api:install --version v2
 
 ### Install the API tokens table
 
-`avo_api:install` above already wrote the migration for the `avo_api_tokens` table, so a first install needs only:
+`avo_api:install` above already wrote the migrations for the `avo_api_tokens` table, so a first install needs only:
 
 ```bash
 rails db:migrate
@@ -208,7 +208,8 @@ Each field's `field_type` says what to put under its `field_id` in a `POST` or `
 | `text`, `number`, `boolean`, `select`, `belongs_to`, and every other single-value field | one value: `"name": "Acme"`, `"plan": "pro"` |
 | `select` with `multiple`, `checkbox_list`, `boolean_group` | a list of values: `"tags": ["ops", "eu"]` |
 | `location` on two columns (`stored_as: [:latitude, :longitude]`) | an object keyed by those columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
-| `location` on one column, `tags`, `key_value`, `code` | one string the field parses: `"home": "44.43,26.10"`, `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"` |
+| `location` on one column, `tags`, `key_value` | one string the field parses: `"home": "44.43,26.10"`, `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"` |
+| `code` | one string, stored as it is. Only a field declared with `pretty_generated: true` parses it as JSON |
 
 `null` clears any field, a list and a `location` on two columns included. The one exception is a `location` on one column, which splits the string it is given: clear it with `""`, since `null` is answered with a `500`. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
 
@@ -231,7 +232,7 @@ Read views carry `field_id` and `field_type` only; form views add `field_options
 - `403` with `reason: "token_entitlement"` when the token lacks the action the view is named after.
 - `403` with `reason: "policy"` when the token's owner cannot index the resource.
 - `400` with `{ "error": "Unknown view", "views": ["index", "show", "create", "update"] }` for a view it doesn't know.
-- `404` when this version has no controller for the resource.
+- `404` when this version has no controller for the resource. No route exists then, so this one is Rails' own page, not the JSON body above.
 :::
 
 ## Authentication
@@ -285,7 +286,7 @@ A token's status is derived from two timestamps, never stored, so there is no li
 
 Expiry is optional — leave it blank and the token never expires. Revocation is permanent: the **Revoke** action on the token resource marks the token and keeps the record, and nothing can un-revoke it. A token that is both revoked and past its expiry reports **Revoked**.
 
-Each successful request stamps the token's **Last used** column, which is the fastest way to tell a token that was never wired up from one that stopped working.
+Each authenticated request stamps the token's **Last used** column, a refused one included, which is the fastest way to tell a token that was never wired up from one that stopped working.
 
 Deleting a token's owner also stops the token: a token whose owner can no longer be resolved is rejected, so a request never proceeds with nobody attached to it.
 
@@ -401,7 +402,8 @@ Fields are respected according to their view visibility, and typed values are se
 | Text, number, boolean, date/datetime | The raw value |
 | `belongs_to` | `{ "id": 5, "label": "John Doe" }` |
 | `has_many`, `has_one` | `{ "count": 12 }` (or `{ "id": 5 }` for a single loaded record) |
-| `file`, `files` | `{ "filename": "…", "content_type": "…", "byte_size": 1234, "url": "…" }` |
+| `file` | `{ "filename": "…", "content_type": "…", "byte_size": 1234, "url": "…" }` |
+| `files` | a list of those objects, one per attachment |
 
 Field visibility follows your resource's view settings, so you can shape the API per view:
 
@@ -499,7 +501,8 @@ Different field types accept the formats you'd expect:
 | `belongs_to` | the foreign key: `"admin_id": 5` |
 | `select` with `multiple`, `checkbox_list`, `boolean_group` | a list: `"tags": ["ops", "eu"]` |
 | `location` on two columns | an object keyed by its `stored_as` columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
-| `tags`, `key_value`, `code`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"`, `"home": "44.43,26.10"` |
+| `tags`, `key_value`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"`, `"home": "44.43,26.10"` |
+| `code` | one string, stored as it is unless the field is declared with `pretty_generated: true`, which parses it as JSON |
 
 `null` clears any field, a list and a `location` on two columns included. The one exception is a `location` on one column, which splits the string it is given: clear it with `""`, since `null` is answered with a `500`. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
 
