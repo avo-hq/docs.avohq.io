@@ -362,19 +362,21 @@ Names need a column the first migration didn't have. Run `bin/rails generate avo
 
 The **Entitlements** card is the consent screen's decision read back in the shape it was made in: one row per resource, at **None**, **Read** or **Read & write**, with a search over them and a count underneath — `4 of 14 granted — everything else is refused`. It is also where that decision is changed.
 
-Rows are the resources the connection's **owner** can list, not the reader's. A grant that names a resource the panel no longer registers keeps its row, marked *no longer listed*, so the card never under-reports what is held. A grant that names no resources at all collapses to one line — *Every resource*, at the level it holds.
+Rows are the resources the connection's **owner** can list, not the reader's. A grant that names a resource the panel no longer registers keeps its row, marked *no longer listed*, so the card never under-reports what is held.
 
 Running actions is not a per-resource question, so it sits above the grid as its own line — a checkbox — rather than as a row that could not hold it.
 
 Clicking a level changes nothing on its own. The moment the card differs from what's stored, **Apply changes** and **Undo** appear — Apply writes the whole card at once, Run actions included, and Undo snaps back. Above the rows, a search box narrows the list as you type, and **Set all shown** applies one level to whatever the search is currently showing: "read-only on everything matching `order`" is a search and a click.
 
-An unrestricted connection shows the collapsed line instead of the grid, and the line is live: switch it between Read and Read & write and apply. **Fine-tune** opens the rows with every one already at the level the connection holds, so you narrow from there instead of building the list up from nothing. Nothing is stored until you apply.
+A connection is either **unrestricted** or fine-tuned, and there is nothing in between. Unrestricted means the connection limits nothing of its own: it can read and write everything its owner can reach, and the owner's own policies are the only limit — exactly what an unrestricted [API token](./rest-api.html#entitle-a-token) means. Such a connection shows one line instead of the grid: the *Unrestricted* pill and whose reach that is (*Everything you can access.*). There is no level on that line, because unrestricted is not a level. **Fine-tune** opens the rows with every one already at Read & write, so you narrow from there instead of building the list up from nothing. Nothing is stored until you apply.
+
+Everything else is the grid, open. That includes a connection the consent screen granted **Read** across the board — its default: reading everything is a limit the connection itself imposes, so the card shows it as rows, every one at Read, and the count says so.
 
 :::warning Unrestricted reaches what comes later; a list does not
-A connection granted Read or Read & write across the board — the consent screen's default — reaches every resource its owner can see, **including resources your app registers later**. Fine-tune it and apply, and it holds an explicit list instead: a resource the owner gains after that is refused until you grant it. Setting every row to None leaves the connection with no record access at all, which is not the same as unrestricted; a Run actions grant it holds keeps its global meaning.
+An unrestricted connection reaches every resource its owner can see, **including resources your app registers later**. Fine-tune it, move a level and apply, and it holds an explicit list instead: a resource the owner gains after that is refused until you grant it. Setting every row to None leaves the connection with no record access at all; a Run actions grant it holds keeps its global meaning.
 :::
 
-**Make unrestricted** is the way back. It returns a narrowed connection to reaching everything its owner can, at **Read** — the level the consent screen starts from — so any write it held on a resource is dropped, and the confirmation says so. Read & write across the board is one more click on the collapsed line, then Apply. It also clears entries naming resources the card no longer lists.
+**Make unrestricted** is the way back, from any grid. It returns the connection to reading and writing everything its owner can — the confirmation says so, since a connection that held write on one resource will now hold it on all of them — and clears every per-resource entry, including ones naming resources the card no longer lists.
 
 The change binds the connection's **next tool call**, on the tokens the client already holds — nothing is revoked and nobody authorizes again. A client that cached its tool list learns on its next refused call. A code approved before the change and exchanged after it is bound by the current grant too; the `scope` string the client is handed follows the code's original snapshot on that exchange and the current grant on refresh. Each accepted change is written to the Avo log with who made it, the connection, and the capabilities before and after.
 
