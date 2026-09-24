@@ -263,7 +263,11 @@ Who may mint and revoke tokens is your app's authorization decision, and the def
 }
 ```
 
-**Pagination**: `page` (default `1`) and `per_page` (default `config.per_page`).
+**Pagination**: `page` (default `1`) and `per_page` (default `config.per_page`). Each must be an integer of `1` or more; anything else is refused with a `400` naming the parameter at fault:
+
+```json
+{ "error": "Invalid pagination", "parameter": "per_page", "expected": "an integer of 1 or more" }
+```
 
 **Sorting**: `sort_by` (field) and `sort_direction` (`asc` / `desc`).
 
