@@ -577,19 +577,18 @@ class UserPolicy < ApplicationPolicy
 end
 ```
 
-**Entries are field ids, not column names.** Name the id you passed to `field`, and Avo maps it to every column behind it: `:price` covers `price_cents` and `price_currency` for a money field, `:author` covers `author_id` for a `belongs_to`, and a location field stored across `latitude` and `longitude` is covered by its own id. An id matching no field the resource declares raises `Avo::Authorization::FieldResolver::UnknownFieldError`, so a typo or a name left behind after a rename does not read like a rule in force while doing nothing.
+**Entries are field ids, not column names.** Name the id you passed to `field`, and Avo maps it to every column behind it: `:price` covers `price_cents` and `price_currency` for a money field, `:author` covers `author_id` for a `belongs_to`, and a location field stored across `latitude` and `longitude` is covered by its own id. An id matching no field the resource declares on the current view is ignored. That is what lets `ApplicationPolicy` deny a field only some resources have, and a field declared under `if view.show?` stay denied on the show view without erroring on index.
 
 Resolution never falls open. A declaration that cannot be resolved raises instead of degrading to "no restriction", because a working page that exposes everything it was asked to hide is the failure with no symptom. Every error is a subclass of `Avo::Authorization::FieldResolver::Error`:
 
 | Error                      | Raised when                                                                              |
 | -------------------------- | ---------------------------------------------------------------------------------------- |
-| `UnknownFieldError`        | A list names an id that matches no field the resource declares                           |
 | `InvalidDeclarationError`  | A method answers something other than `:all`, `:none` or an Array. `nil` counts as this. |
 | `ResolutionFailedError`    | A method raised while being read                                                         |
 | `MissingStanceError`       | A policy declares neither method while `explicit_authorization` is on                    |
 
 :::info A model with several resources
-A list is read against the resource performing the request, so an id has to match a field that resource declares. If `Avo::Resources::Post` and `Avo::Resources::DraftPost` share `PostPolicy`, write the denial in each resource's vocabulary, or the policy raises `UnknownFieldError` on the one that lacks the field.
+A list is read against the resource performing the request. If `Avo::Resources::Post` and `Avo::Resources::DraftPost` share `PostPolicy`, an entry only one of them declares applies there and is ignored on the other, so one policy can name both resources' fields.
 :::
 
 ### What a withheld field is withheld from
