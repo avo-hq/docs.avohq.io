@@ -236,6 +236,8 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
+**Per-field means the policy's field lists too.** A field the resource's policy withholds with `whitelisted_fields` / `blacklisted_fields` is not returned by any tool, not named in a record context or a confirmation card, and cannot be written. `Avo::Current.interface` is `:ai` inside every tool call, so a policy can withhold more from the chat than from the panel. See [Field authorization](./authorization.html#field-authorization).
+
 For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./ai-agents-and-tools.html).
 
 ### Record chips

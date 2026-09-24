@@ -322,6 +322,8 @@ class Avo::Resources::Team < Avo::BaseResource
 end
 ```
 
+A policy can also withhold a field from a user outright, with `whitelisted_fields` / `blacklisted_fields` on the resource's policy. A withheld field is absent from every response and refused on write, so a client cannot set it by naming it in a payload. `Avo::Current.interface` is `:api` for every request this add-on serves, so a policy can withhold more from a token than from the panel. See [Field authorization](./authorization.html#field-authorization).
+
 :::info File URLs are permanent
 `file` and `files` fields serialize the standard attachment URL. These are not signed or expiring — anyone who obtains the URL can fetch the file. Keep that in mind before exposing attachments to clients you don't control.
 :::

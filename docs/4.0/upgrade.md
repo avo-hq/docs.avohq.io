@@ -4,6 +4,41 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Every policy must declare a field stance (`avo-authorization`, unreleased)
+
+<Option name="Policies must declare `whitelisted_fields` or `blacklisted_fields` under `explicit_authorization`">
+
+### Breaking Change
+
+A Pundit policy can now name which of a resource's fields a user may reach, and every surface Avo owns honors that answer for reads and writes. Under the default `explicit_authorization = true`, a policy that declares neither `whitelisted_fields` nor `blacklisted_fields` raises `Avo::Authorization::FieldResolver::MissingStanceError` the first time a user opens its resource. See [Field authorization](./authorization.html#field-authorization).
+
+### Action Required
+
+Run the audit before deploying. It lists every policy your resources use that still declares neither method:
+
+```bash
+bin/rails avo:authorization:field_stances
+```
+
+### Steps to Update
+
+Add one method to each policy it names, or to a shared parent so every policy inherits it:
+
+```ruby
+# app/policies/application_policy.rb
+class ApplicationPolicy
+  def blacklisted_fields = [] # [!code ++]
+end
+```
+
+An empty denylist denies nothing, so behavior is unchanged until you name a field.
+
+### Maintaining Previous Behavior
+
+With `explicit_authorization = false` no stance is required. Avo's own shipped policies already declare one, and the nil client and custom clients that do not implement field resolution are never asked.
+
+</Option>
+
 ## Upgrade to `avo-audit_logging` 4.3.0
 
 <Option name="Activities record where they came from — run the installer again">

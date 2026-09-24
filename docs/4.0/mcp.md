@@ -206,6 +206,8 @@ The [`visible:`](./field-options-api.html#visible) blocks on your fields apply t
 
 The converse is the rule too: a field the panel **does** render this admin is returned, credentials included. There is no MCP-only redaction list — to keep something out of an AI client's reach, hide it with `visible:`, the same block that hides it from a person.
 
+When the rule is about *who* rather than *when*, the resource's policy can name the fields directly with `whitelisted_fields` / `blacklisted_fields`. A field it withholds is kept from every Avo surface at once, this one included, and cannot be widened back by a `visible:` block. `Avo::Current.interface` is `:mcp` for every call this add-on serves, so a policy that trusts the panel more than a connected client can say so in one place. See [Field authorization](./authorization.html#field-authorization).
+
 ## Add tools of your own
 
 The nine tools reach any record, but a workflow an agent runs often — "issue the invoice for this order", "close these tickets and notify their reporters" — is better served as one tool than as a chain of `list_records`, `show_record` and `run_action` calls it has to get right every time. You can register tools of your own, and they're served beside the nine.
