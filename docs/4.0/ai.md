@@ -1137,12 +1137,12 @@ Hover any message and a copy button appears beneath it. It copies the raw text t
 
 ## Rate a reply
 
-Every assistant reply has a thumbs up and a thumbs down beside its copy button. A click saves a vote right away and opens a modal for detail. Both fields in it are optional, so the vote counts even if you close the modal (**Cancel**, the close button, **Esc**, or a click outside it) without sending anything.
+Every assistant reply has a thumbs up and a thumbs down beside its copy button. A click opens a modal; nothing is recorded until you press **Send feedback**, or <kbd>Cmd</kbd>+<kbd>Return</kbd> (<kbd>Ctrl</kbd>+<kbd>Return</kbd> on Windows and Linux) while typing the comment. Both fields in it are optional, so sending an empty modal still records the vote. Closing the modal (**Cancel**, the close button, **Esc**, or a click outside it) records nothing.
 
 - **Thumbs down** asks "What went wrong?" with an optional reason picked from a dropdown: **Wrong or inaccurate**, **Didn't follow instructions**, **Wrong records or data**, **Took an action I didn't want**, **Too slow or verbose**, or **Other**. A comment box sits under it.
 - **Thumbs up** asks "What did you like about this response?" and takes a comment.
 
-Each click leaves a new feedback. Clicking a thumb again, either one, opens an empty modal for another feedback instead of the one you sent before, so you can rate the same reply more than once. The thumbs never show a selected state, and a feedback can't be removed or switched to the other vote once it's saved.
+Each send leaves a new feedback. Clicking a thumb again, either one, opens an empty modal for another feedback instead of the one you sent before, so you can rate the same reply more than once. The thumbs never show a selected state, and a feedback can't be edited, removed, or switched to the other vote once it's sent.
 
 Only the chat's owner can rate its replies, the same way only the owner can read the chat. Deleting a chat deletes its feedback.
 
@@ -1163,7 +1163,7 @@ end
 
 Each record shows the vote, the reason, the comment, the prompt the user sent, the reply they rated, the model that produced that reply, the author, and a link to the chat. Filter the index by vote, reason, status, or model.
 
-You triage a record with two fields of your own: **Status** (**Open**, **In progress**, or **Resolved**) and **Admin note**. Those are the only fields you can edit. The user's vote, reason, and comment are read-only in the resource. If the user changes the reason or comment after you've triaged it, the status goes back to **Open**, so a resolved record never hides something new.
+You triage a record with two fields of your own: **Status** (**Open**, **In progress**, or **Resolved**) and **Admin note**. Those are the only fields you can edit. The user's vote, reason, and comment are read-only, in the resource and for the user, so a triaged record never changes under you.
 
 ### Choose who can review feedback
 
@@ -1240,7 +1240,7 @@ Requires [avo-notifications](./notifications.html). Point `feedback_notification
 config.ai.feedback_notification_recipients = -> { User.where(role: "admin") }
 ```
 
-It's a zero-argument lambda, and `feedback` is available inside it. Return a user, an Array of users, or a relation. It runs in a background job, never in the vote request itself, so a slow lookup never delays the click. Leave it unset (the default) and nobody is notified.
+It's a zero-argument lambda, and `feedback` is available inside it. Return a user, an Array of users, or a relation. It runs in a background job, never in the request that sends the feedback, so a slow lookup never delays it. Leave it unset (the default) and nobody is notified.
 
 Narrow which feedback notifies with `feedback_notification_events`:
 
@@ -1256,7 +1256,7 @@ config.ai.feedback_notification_events = [:downvotes, :with_description]
 | `:upvotes` | Thumbs up. |
 | `:with_description` | Any vote that carries a comment. |
 
-A feedback notifies once, the first time it matches any of the events set. Each click is a new feedback, so a second vote on the same reply can notify again. That first match can come later than the vote itself: a plain thumbs up that gets a comment added afterward can still trigger `:with_description` on that later save. An unknown event raises at boot.
+The events are checked once, when the user sends the feedback, and a feedback notifies at most once. The vote, reason, and comment arrive together, so the notification carries the reason in its title and the comment in its body. Each send is a new feedback, so a second one on the same reply can notify again. An unknown event raises at boot.
 
 The notification names the vote and its reason, carries the comment as its body, and links to the feedback record in Avo. A thumbs down sends at `:warning` level; a thumbs up sends at `:info` level.
 
