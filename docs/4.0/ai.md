@@ -1135,6 +1135,91 @@ Dividers are worked out when the page renders, not as each message arrives. Leav
 
 Hover any message and a copy button appears beneath it. It copies the raw text the assistant produced — the markdown it wrote, not the rendered HTML — so pasting it into an issue or an editor keeps the formatting.
 
+## Rate a reply
+
+Every assistant reply has a thumbs up and a thumbs down beside its copy button. A click saves the vote right away and opens a small panel for detail. Both fields in it are optional, so the vote counts even if you close the panel without sending anything.
+
+- **Thumbs down** asks "What went wrong?" and offers one reason: **Wrong or inaccurate**, **Didn't follow instructions**, **Wrong records or data**, **Took an action I didn't want**, **Too slow or verbose**, or **Other**. A comment box sits under the reasons.
+- **Thumbs up** asks "What did you like about this response?" and takes a comment.
+
+Click the other thumb to switch your vote. Click the selected thumb again to take the vote back, which deletes the feedback. The **Add details** button next to the thumbs reopens the panel later.
+
+Only the chat's owner can rate its replies, the same way only the owner can read the chat. Deleting a chat deletes its feedback.
+
+### Review feedback
+
+Feedback lands in the **Feedback** resource. Add it to the menu beside the others:
+
+```ruby
+# config/initializers/avo.rb
+section "AI", icon: "heroicons/outline/sparkles" do
+  resource "avo_ai/chats"
+  resource "avo_ai/messages"
+  resource "avo_ai/models"
+  resource "avo_ai/skills"
+  resource "avo_ai/feedbacks" # [!code focus]
+end
+```
+
+Each record shows the vote, the reason, the comment, the prompt the user sent, the reply they rated, the model that produced that reply, the author, and a link to the chat. Filter the index by vote, reason, status, or model.
+
+You triage a record with two fields of your own: **Status** (**Open**, **In progress**, or **Resolved**) and **Admin note**. Those are the only fields you can edit. The user's vote, reason, and comment are read-only in the resource. If the user changes their vote, reason, or comment after you've triaged it, the status goes back to **Open**, so a resolved record never hides something new.
+
+### Choose who can review feedback
+
+Feedback contains other people's conversations, so the gem ships `Avo::Ai::FeedbackPolicy` closed: nobody sees any feedback until you say who reviews it. Define your own `Avo::Ai::FeedbackPolicy` and open `index?`, `show?`, `edit?`, and `update?` for your reviewers. Your class wins over the gem's copy:
+
+```ruby
+# app/policies/avo/ai/feedback_policy.rb
+class Avo::Ai::FeedbackPolicy
+  attr_reader :user, :record
+
+  def initialize(user, record)
+    @user = user
+    @record = record
+  end
+
+  def index? = user.admin?
+  def show? = user.admin?
+  def edit? = user.admin?
+  def update? = user.admin?
+  def search? = user.admin?
+  def act_on? = user.admin?
+  # Feedback is written from the chat and deleted with its chat.
+  def new? = false
+  def create? = false
+  def destroy? = false
+
+  class Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      @scope.all
+    end
+  end
+end
+```
+
+Keep `new?`, `create?`, and `destroy?` closed. There is nothing to create from the admin side.
+
+:::info
+The resource checks this policy itself, so it stays closed without [avo-authorization](./authorization.html). With the gem's policy in place the index is empty and opening a record fails as not found.
+:::
+
+:::warning Upgrading an existing install
+Feedback is stored in a new `avo_ai_feedbacks` table. Re-run the installer to get its migration, then migrate:
+
+```bash
+bin/rails generate avo:ai install
+bin/rails db:migrate
+```
+
+The installer only writes what your app is missing.
+:::
+
 ## Choose which models people can use
 
 By default a chat runs on the model you configured in `config/initializers/ruby_llm.rb`, and there is no model picker — the RubyLLM registry is thousands of models long, which is not a dropdown.
