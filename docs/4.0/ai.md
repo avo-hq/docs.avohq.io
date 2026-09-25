@@ -1137,12 +1137,12 @@ Hover any message and a copy button appears beneath it. It copies the raw text t
 
 ## Rate a reply
 
-Every assistant reply has a thumbs up and a thumbs down beside its copy button. A click saves the vote right away and opens a small panel for detail. Both fields in it are optional, so the vote counts even if you close the panel without sending anything.
+Every assistant reply has a thumbs up and a thumbs down beside its copy button. A click saves the vote right away and opens a modal for detail. Both fields in it are optional, so the vote counts even if you close the modal (**Cancel**, the close button, **Esc**, or a click outside it) without sending anything.
 
 - **Thumbs down** asks "What went wrong?" and offers one reason: **Wrong or inaccurate**, **Didn't follow instructions**, **Wrong records or data**, **Took an action I didn't want**, **Too slow or verbose**, or **Other**. A comment box sits under the reasons.
 - **Thumbs up** asks "What did you like about this response?" and takes a comment.
 
-Click the other thumb to switch your vote. Click the selected thumb again to take the vote back, which deletes the feedback. The **Add details** button next to the thumbs reopens the panel later.
+Click the other thumb to switch your vote. Click the selected thumb again to take the vote back, which deletes the feedback. The **Add details** button next to the thumbs reopens the modal later, filled in with what you sent.
 
 Only the chat's owner can rate its replies, the same way only the owner can read the chat. Deleting a chat deletes its feedback.
 
