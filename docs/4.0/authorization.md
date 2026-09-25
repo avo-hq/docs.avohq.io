@@ -543,10 +543,6 @@ end
 
 A non-admin never sees `budget` on the index table, the show page, the edit form, in global search, in a `record_link`, through the REST API, in the AI chat, or over MCP. They cannot set it with a hand-built form submission either, because it is gone from the permitted params too.
 
-:::warning Upgrading: run `bin/rails avo:authorization:field_stances` before deploying
-Under the default `explicit_authorization = true`, every policy must now declare `whitelisted_fields` or `blacklisted_fields`, or it raises `Avo::Authorization::FieldResolver::MissingStanceError` the first time a user opens its resource. The task lists every policy your resources use that still declares neither, so you fix them as a checklist instead of one resource at a time in production. See [Every policy must take a stance](#every-policy-must-take-a-stance).
-:::
-
 ### Declare which fields a user may reach
 
 Two methods, each answering `:all`, `:none`, or an Array of field ids:
@@ -585,7 +581,6 @@ Resolution never falls open. A declaration that cannot be resolved raises instea
 | -------------------------- | ---------------------------------------------------------------------------------------- |
 | `InvalidDeclarationError`  | A method answers something other than `:all`, `:none` or an Array. `nil` counts as this. |
 | `ResolutionFailedError`    | A method raised while being read                                                         |
-| `MissingStanceError`       | A policy declares neither method while `explicit_authorization` is on                    |
 
 :::info A model with several resources
 A list is read against the resource performing the request. If `Avo::Resources::Post` and `Avo::Resources::DraftPost` share `PostPolicy`, an entry only one of them declares applies there and is ignored on the other, so one policy can name both resources' fields.
@@ -635,79 +630,47 @@ The policy is the floor and the resource is the ceiling. Fields the policy withh
 
 Keep `visible:` for conditions on the resource, such as a field that only makes sense while a record is in one state. Reach for the policy when the rule is about who is asking.
 
-### Every policy must take a stance
+### A policy that declares neither
 
-`explicit_authorization` treats a missing policy method as a denial. Field lists follow the same rule with one difference: a resource with every field denied is a blank screen, so instead of denying, a policy that declares neither method raises `Avo::Authorization::FieldResolver::MissingStanceError` the first time a user opens its resource. The message names the policy and the fix.
+Field lists are opt-in. A policy that declares neither `whitelisted_fields` nor `blacklisted_fields` restricts nothing: an undeclared allowlist is `:all` and an undeclared denylist is `:none`, whatever `explicit_authorization` says. Upgrading changes no behavior until a policy declares a list.
 
-Opting out is one method. Put it on `ApplicationPolicy` and every policy inherits it:
-
-```ruby
-# app/policies/application_policy.rb
-class ApplicationPolicy
-  def blacklisted_fields = [] # denies nothing
-end
-```
-
-Before deploying, list every policy that still declares neither:
-
-```bash
-bin/rails avo:authorization:field_stances
-```
-
-It walks the policies your resources actually use, a resource's own `authorization_policy` included, and prints the ones that declare neither method anywhere in their ancestry:
-
-```
-2 policies declare neither whitelisted_fields nor blacklisted_fields.
-Under config.explicit_authorization each of these raises the first time a user opens its resource.
-
-  PostPolicy
-  UserPolicy
-
-Add one to each, or to a shared parent — `def blacklisted_fields = []` denies nothing.
-```
-
-When nothing is missing it prints `Every policy declares a field stance.`
-
-A few things to know:
-
-- With `explicit_authorization = false` no stance is required, and a policy that declares neither imposes no restriction.
-- A `private` declaration counts as declared.
-- Only the Pundit client raises this. The nil client and a [custom client](#field-resolution-in-a-custom-client) that does not implement field resolution never do.
-- Avo's own shipped policies already declare a stance.
+Put a list on `ApplicationPolicy` and every policy inherits it; a subclass's own list composes with it in the order above. A `private` declaration counts as declared.
 
 ### Field resolution in a custom client
 
 Field resolution is part of the [client contract](#custom-authorization-clients), through two methods. Both are optional: a client that implements neither imposes no field restriction, which is how a client written before this feature, or one you wrote yourself, keeps working unchanged.
 
-#### `permitted_field_ids(user, record, declared_field_ids:, interface:, policy_class:)`
+#### `permitted_field_ids(user, record, declared_field_ids:, policy_class:)`
 
-Returns the subset of `declared_field_ids` (the resource's field ids, as Symbols) this user may reach through this interface. Avo memoizes the answer per user, record, resource and interface for the length of the request, and the answer governs reads and writes alike.
+Returns the subset of `declared_field_ids` (the resource's field ids, as Symbols) this user may reach. The answer governs reads and writes alike. A policy that answers differently per surface reads `Avo::Current.interface` itself.
 
-#### `field_reachable?(user, record, field_id, interface:, policy_class:)`
+#### `field_reachable?(user, record, field_id, declared_field_ids:, policy_class:)`
 
-Returns whether one field id survives, for a caller that has no field list to offer, such as a record title resolved for a search result or an association picker.
+Returns whether one field id survives, for a caller such as a record title resolved for a search result or an association picker. `declared_field_ids` is the resource's field ids when it has detected its fields, and empty otherwise.
 
-`Avo::Authorization::FieldResolver` does the composing, validating and interface switching described above, so a client that can resolve a policy object hands it over instead of reimplementing the rules:
+`Avo::Authorization::FieldResolver` does the composing and validating described above, so a client that can resolve a policy object hands it over instead of reimplementing the rules:
 
 ```ruby
 # app/services/avo/action_policy_authorization_client.rb
-def permitted_field_ids(user, record, declared_field_ids:, interface:, policy_class: nil)
+def permitted_field_ids(user, record, declared_field_ids:, policy_class: nil)
   # policy_class is the resource's own `authorization_policy`, when it names one.
   resolved = policy_class ? policy_class.new(user, record) : policy(user, record)
   return declared_field_ids if resolved.nil?
 
   Avo::Authorization::FieldResolver.new(
     policy: resolved,
-    declared_field_ids: declared_field_ids,
-    interface: interface
+    declared_field_ids: declared_field_ids
   ).permitted_field_ids
 end
 
-def field_reachable?(user, record, field_id, interface:, policy_class: nil)
+def field_reachable?(user, record, field_id, declared_field_ids: [], policy_class: nil)
   resolved = policy_class ? policy_class.new(user, record) : policy(user, record)
   return true if resolved.nil?
 
-  Avo::Authorization::FieldResolver.new(policy: resolved, interface: interface).reaches?(field_id)
+  Avo::Authorization::FieldResolver.new(
+    policy: resolved,
+    declared_field_ids: declared_field_ids
+  ).reaches?(field_id)
 end
 ```
 
@@ -720,7 +683,7 @@ Raise when resolution fails. Returning the full list on an error is exactly the 
 - **A column no field declares cannot be governed.** An entry only takes effect where it matches a field the resource declares. To govern a column, declare a field for it.
 - **May see but may not write** is not expressible in one list. Use the per-field [`disabled:` pattern](#use-resource-s-policy-to-authorize-custom-actions).
 - **Kanban's read side.** Which column a card sits in discloses the value of the board's grouping property. A drag that would write a withheld field is refused, but the board still renders.
-- **avo-query does not participate.** It generates SQL from the schema and cannot resolve a policy's lists, so it declines to answer while `avo-authorization` is loaded.
+- **avo-query does not participate.** It generates SQL from the schema and cannot resolve a policy's lists. It is held out of release until it can.
 
 ## Raise errors when policies are missing
 
