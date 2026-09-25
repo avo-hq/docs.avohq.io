@@ -644,7 +644,7 @@ To add rules on top of the shipped prompt, eject the `extra_instructions` file:
 bin/rails generate avo:ai:eject extra_instructions
 ```
 
-This creates `app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb` in your application. Whatever you write in it is appended to the end of the chat assistant's system prompt. The gem's own copy is empty, so until you edit the file nothing changes.
+This creates `app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb` in your application. Whatever you write in it is appended right after the shipped rules, ahead of the blocks carrying the conversation's own context — the signed-in user, [what the chat was started from](#what-you-start-the-chat-from), and the current time. The gem's own copy is empty, so until you edit the file nothing changes.
 
 This is the place for the things the assistant can't learn from your schema:
 
@@ -694,9 +694,25 @@ For full control, eject every prompt file the gem ships:
 bin/rails generate avo:ai:eject instructions
 ```
 
-This copies all prompt files — the chat assistant's instructions and sub-prompts (`identity.txt.erb`, `app_context.txt.erb`, `attached_context.txt.erb`, `uploaded_files.txt.erb`, `skills.txt.erb`, `extra_instructions.txt.erb`), plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
+This copies all prompt files — the chat assistant's instructions and sub-prompts (`identity.txt.erb`, `app_context.txt.erb`, `extra_instructions.txt.erb`, `skills.txt.erb`, `current_user.txt.erb`, `attached_context.txt.erb`, `uploaded_files.txt.erb`, `current_time.txt.erb`), plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
 
-The shipped `instructions.txt.erb` renders the other prompt files through slots of its own: `<%= identity %>` and `<%= app_context %>` near the top, `<%= extra_instructions %>` at the end. If you replace it, your copy decides which of those slots survive — remove a line and that file is ignored, however carefully it was written.
+The shipped `instructions.txt.erb` renders those files through slots of its own, in this order:
+
+| Slot                        | Renders                                  | Changes                             |
+| --------------------------- | ---------------------------------------- | ----------------------------------- |
+| `<%= identity %>`           | who the assistant is                     | on deploy                           |
+| `<%= app_context %>`        | what this app is                         | on deploy                           |
+| the shipped rules           | how the assistant behaves                | on deploy                           |
+| `<%= extra_instructions %>` | your own rules                           | on deploy                           |
+| `<%= skills %>`             | the skills attached to the conversation  | when a skill is attached or edited  |
+| `<%= current_user %>`       | the signed-in user                       | once per conversation               |
+| `<%= attached_context %>`   | what the chat was started from           | once per conversation               |
+| `<%= uploaded_files %>`     | the files in the conversation            | when a file is uploaded             |
+| `<%= current_time %>`       | the current date and time                | every message                       |
+
+That order is least-volatile first, and it's deliberate: providers cache on a *prefix* of the prompt, so the first block that differs from the previous run invalidates everything after it. Lead with the clock and the whole prompt — the shipped rules included — is fresh input on every message. If your copy adds a block of its own, place it by how often it changes rather than at the bottom of the file.
+
+If you replace `instructions.txt.erb`, your copy decides which of those slots survive — remove a line and that file is ignored, however carefully it was written.
 
 ## Choose which tools the assistant gets
 
