@@ -247,6 +247,11 @@ the sentence, so an answer reads as one thought rather than as a paragraph follo
 A chip appears because the assistant named that record. A count or a total names none, so it brings
 no chip with it.
 
+A chip is looked up through the viewer's policy, the same `index?` and scope the query tool reads
+with, so a reference to a record the viewer is not allowed to read renders as the plain label text
+rather than as a chip. That holds for a reference the assistant wrote, one typed into a message, and
+one that arrived through record data or an uploaded file.
+
 **A set of records comes back as a list of rows.** When the answer *is* a set — "the last three
 users", "which projects are running", "show me the cities" — the assistant names one record per
 line, and the transcript draws those lines as a stack of rows instead of a bulleted paragraph: the
