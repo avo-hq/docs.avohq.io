@@ -4,6 +4,57 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-ai` 4.2.0.beta.4
+
+<Option name="Batch updates are undone as one change: run the installer again">
+
+### What changed
+
+The assistant can now [change many records in one confirmation](./ai-what-you-can-ask.html) with the new `update_records` tool, and undo the whole batch from one card. Undo knows which records belong to a batch through a new column, `avo_ai_write_logs.pending_write_id`. A **first** install gets it in the create migration; an app that installed an earlier version does not have it.
+
+### Action Required
+
+```bash
+bin/rails generate avo:ai install
+bin/rails db:migrate
+```
+
+The installer reads your `db/migrate` and writes only the migrations you are missing, so running it again is safe.
+
+Until you migrate nothing breaks: batch updates still work, but the history lists and undoes a batch record by record instead of as one entry.
+
+</Option>
+
+<Option name="A new write tool arrives switched on: update_records">
+
+### What changed
+
+`update_records` is a new shipped tool, and `config.ai.excluded_tools` is a list of what to remove, so every app gets it unless it names it. It writes nothing without the user's click on a confirmation card, under the same policies and field rules as `update_record`.
+
+### Action Required
+
+Nothing, unless your initializer excludes `update_record` to keep the assistant from editing records. Exclude the new tool too, or it can still update them in batches:
+
+```ruby
+config.ai.excluded_tools = [:update_record, :update_records] # [!code focus]
+```
+
+A batch is capped at 50 records. To change that, set `config.ai.max_update_records` to a number from 1 to 500; anything else raises at boot.
+
+</Option>
+
+<Option name="Typing a confirmation with several cards on screen confirms nothing">
+
+### What changed
+
+A typed "do it" used to confirm the last card when one reply had put several on screen. It now confirms none of them and goes to the assistant as an ordinary message, since it cannot tell which card you meant. With one card waiting, a typed confirmation now also still reaches it after the assistant has only reminded you to click.
+
+### Action Required
+
+Nothing. Click **Confirm** on the card you want.
+
+</Option>
+
 ## Upgrade to `avo-audit_logging` 4.3.0
 
 <Option name="Activities record where they came from — run the installer again">
