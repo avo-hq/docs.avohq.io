@@ -230,7 +230,7 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **It works from your real schema, not a guess at it.** Every query, write, and action result carries the resource's real columns, model scopes, and required attributes back to the assistant — so it builds what comes next from your names. This is done by the tools, not merely requested in the prompt: it arrives with the answer rather than being asked for first, which is why a question rarely spends a round trip on structure, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters. A query that gets a column wrong comes back with the real ones attached, so the retry is built from names too.
 
-**Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
+**Reading.** Query results are paginated, and "how many" goes to `count_records`, which returns the number and never a row — so a capped result set doesn't become a wrong number, and a count sends no record to the model provider. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
 
 **Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. A delete works one record at a time; an update works on one record or on many, and a batch is one card covering the whole set. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. The exception is an [import from a CSV](#reading-files-and-importing-from-them), which is proposed as one card and creates its rows only when you confirm. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
@@ -726,7 +726,7 @@ Avo.configure do |config|
 end
 ```
 
-Set neither and the assistant gets the fifteen tools the gem ships. The roster is assembled per run, so once the app has restarted, the next message in an existing conversation already reflects the change — nothing is baked into a chat.
+Set neither and the assistant gets the sixteen tools the gem ships. The roster is assembled per run, so once the app has restarted, the next message in an existing conversation already reflects the change — nothing is baked into a chat.
 
 ### Take a tool away
 
@@ -735,13 +735,13 @@ Set neither and the assistant gets the fifteen tools the gem ships. The roster i
 config.ai.excluded_tools = [:delete_record, :update_record]
 ```
 
-The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of fifteen — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of sixteen — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
 
 `update_record` and `update_records` are separate names, so excluding the first leaves the second attached. An app that excludes `update_record` to stop the assistant writing columns wants both.
 
 An excluded tool is filtered out by name before it's ever built, so it isn't attached to the conversation and the model never learns it exists. It doesn't refuse the request — there's nothing there to refuse with.
 
-A name that isn't one of the fifteen raises `ArgumentError` at boot, listing the ones it knows. A typo that quietly left deletes attached is exactly the failure worth being loud about.
+A name that isn't one of the sixteen raises `ArgumentError` at boot, listing the ones it knows. A typo that quietly left deletes attached is exactly the failure worth being loud about.
 
 :::warning It's a denylist, so tools added later arrive switched on
 `excluded_tools` says what to remove, not what to allow. A future avo-ai release that ships a new tool — a write tool included — hands it to every app that hasn't named it here. Read the release notes when you upgrade, and exclude anything you don't want.
