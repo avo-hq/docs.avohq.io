@@ -65,7 +65,7 @@ field :name, as: :text, filterable: {
 
 Reach for dynamic filters when you want to give users broad, composable filtering over many attributes — from a one-word setup to [fully customized filters](./dynamic-filters#customize-a-filter).
 
-Dynamic filters are a paid [add-on](https://avohq.io/pricing-4?add_ons[]=dynamic-filters).
+Dynamic filters are a paid [add-on](https://avohq.io/addons/dynamic-filters).
 
 ## Which one should you use?
 
