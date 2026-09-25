@@ -237,6 +237,8 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
+The chat runs in a background job, with no request. A resource whose field definitions read request-only context (`Avo::Current.context[:account]`, `params`) can't have its field rules checked there, so the assistant refuses that resource rather than read it without them. A single field whose `visible:` proc raises is treated as hidden.
+
 For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./ai-agents-and-tools.html).
 
 ### Record chips
@@ -1274,6 +1276,48 @@ end
 ```
 
 Narrowing `Scope#resolve` reaches past the resource's own index: a skill the scope excludes also drops out of the composer's `/` menu, and out of any chat that already referenced it — the same way a deleted skill does (see [Attach a skill with a message](#attach-a-skill-with-a-message)).
+
+## Who can see a chat
+
+The chat UI only ever loads the signed-in user's own conversations, and the **Chats** and **Messages** admin resources list only theirs. Those resources still open any record by id, though, so close them with policies that scope to the owner:
+
+```ruby
+# app/policies/avo/ai/chat_policy.rb
+class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def index? = user.present?
+  def show? = owner?
+  def create? = user.present?
+  def update? = owner?
+  def destroy? = owner?
+
+  private
+
+  def owner? = user.present? && record.user == user
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = scope.where(user: user)
+  end
+end
+
+# app/policies/avo/ai/message_policy.rb
+class Avo::Ai::MessagePolicy < ApplicationPolicy
+  def index? = user.present?
+  def show? = owner?
+  def create? = false
+  def update? = owner?
+  def destroy? = owner?
+
+  private
+
+  def owner? = user.present? && record.chat&.user == user
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = scope.where(chat: Avo::Ai::Chat.where(user: user))
+  end
+end
+```
+
+A chat or message outside the scope is a 404, admins included. `create?` is closed on messages because they are written by the chat; the admin form would let someone append to another person's conversation.
 
 ## Who can delete a chat
 
