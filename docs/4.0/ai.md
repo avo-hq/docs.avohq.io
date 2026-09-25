@@ -483,7 +483,7 @@ The conversation keeps its own record of every write — that is what [undo](#un
 | `origin`        | `"ai_chat"`                  |
 | `origin_record` | The chat                     |
 
-A batch update is recorded the same way, one entry per record it changed — so an audit reader sees each record's own change, and undo can take them back individually.
+A batch update is recorded the same way, one entry per record it changed, so an audit reader sees each record's own change. The conversation's history keeps the batch together: undo takes the whole batch back from one card, or only the records you name.
 
 A record's timeline reads *Ada Lovelace through AI chat*; the activity's **Origin** field — *AI chat — Reorder the Q3 invoices* — links to the conversation; and the chat's admin page carries an **Audit trail** table of what the assistant changed there. An action run is recorded against the action, as a click on it would be; a revert is recorded as the write it is.
 
@@ -549,7 +549,7 @@ Nothing is created until you click **Confirm**. The rows are then created on the
 :::info
 An import creates records only — updating or upserting from a file isn't offered — and it takes CSV and TSV files, not JSON. One import is capped at `max_import_rows` data rows (1,000 by default); a bigger file is refused with the count and the cap named, so split it and import it in parts.
 
-Batch updates are capped too, at `max_update_records` records (50 by default). Raise it to at most 500; a higher value, zero, or anything that isn't an Integer raises at boot. An import's rows are new, so the only cost of a big one is the time it takes; a batch update changes records that already exist, and undo is recorded per record. Undo lists only the last 50 writes, so a batch larger than 50 can't be fully walked back from the chat, and checked rows stop at 50 whatever the cap is.
+Batch updates are capped too, at `max_update_records` records (50 by default). Raise it to at most 500; a higher value, zero, or anything that isn't an Integer raises at boot. An import's rows are new, so the only cost of a big one is the time it takes; a batch update changes records that already exist. However large it is, a batch counts as one entry in the undo history and is undone from one card. Checked rows stop at 50 whatever the cap is.
 :::
 
 ## Teach the assistant your app
@@ -1125,6 +1125,8 @@ bin/rails db:migrate
 ```
 
 The installer only writes what your app is missing. Until the column exists error rows still appear and still clear the indicator, but they carry no **Try again**.
+
+The same run adds `avo_ai_write_logs.pending_write_id`, which ties a batch update's records together so undo treats the batch as one change. Until it exists, a batch is listed and undone record by record.
 :::
 
 ## When each message was sent
