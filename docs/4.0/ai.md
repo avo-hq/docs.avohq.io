@@ -1220,6 +1220,50 @@ bin/rails db:migrate
 The installer only writes what your app is missing.
 :::
 
+### Turn feedback off
+
+Feedback is on by default. Turn it off in the initializer:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.feedback_enabled = false
+```
+
+This hides the thumbs under every reply and refuses new votes. Feedback already collected stays reviewable in the Feedback resource.
+
+### Notify reviewers of new feedback
+
+Requires [avo-notifications](./notifications.html). Point `feedback_notification_recipients` at whoever should hear about new feedback:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.feedback_notification_recipients = -> { User.where(role: "admin") }
+```
+
+It's a zero-argument lambda, and `feedback` is available inside it. Return a user, an Array of users, or a relation. It runs in a background job, never in the vote request itself, so a slow lookup never delays the click. Leave it unset (the default) and nobody is notified.
+
+Narrow which feedback notifies with `feedback_notification_events`:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.feedback_notification_events = [:downvotes, :with_description]
+```
+
+| Value | Notifies on |
+| --- | --- |
+| `:all` | Every vote. The default. |
+| `:downvotes` | Thumbs down. |
+| `:upvotes` | Thumbs up. |
+| `:with_description` | Any vote that carries a comment. |
+
+A feedback notifies once, the first time it matches any of the events set. That first match can come later than the vote itself: a plain thumbs up that gets a comment added afterward can still trigger `:with_description` on that later save. An unknown event raises at boot.
+
+The notification names the vote and its reason, carries the comment as its body, and links to the feedback record in Avo. A thumbs down sends at `:warning` level; a thumbs up sends at `:info` level.
+
+:::info
+A notification failure is logged and never affects the vote. The vote is already saved by the time the notification runs.
+:::
+
 ## Choose which models people can use
 
 By default a chat runs on the model you configured in `config/initializers/ruby_llm.rb`, and there is no model picker — the RubyLLM registry is thousands of models long, which is not a dropdown.
