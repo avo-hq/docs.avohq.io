@@ -1142,7 +1142,7 @@ Every assistant reply has a thumbs up and a thumbs down beside its copy button. 
 - **Thumbs down** asks "What went wrong?" with an optional reason picked from a dropdown: **Wrong or inaccurate**, **Didn't follow instructions**, **Wrong records or data**, **Took an action I didn't want**, **Too slow or verbose**, or **Other**. A comment box sits under it.
 - **Thumbs up** asks "What did you like about this response?" and takes a comment.
 
-Each send leaves a new feedback. Clicking a thumb again, either one, opens an empty modal for another feedback instead of the one you sent before, so you can rate the same reply more than once. The thumbs never show a selected state, and a feedback can't be edited, removed, or switched to the other vote once it's sent.
+Each send leaves a new feedback. Clicking a thumb again, either one, opens an empty modal for another feedback instead of the one you sent before, so you can rate the same reply more than once. The thumb of your last sent vote stays highlighted. A feedback can't be edited, removed, or switched to the other vote once it's sent.
 
 Only the chat's owner can rate its replies, the same way only the owner can read the chat. Deleting a chat deletes its feedback.
 
