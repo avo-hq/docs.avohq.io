@@ -33,6 +33,7 @@ The same rules apply wherever the question comes from. You write them once, in t
 - [The chat](./ai.html): install it, choose models, teach it your app, and decide who can do what.
 - [What you can ask](./ai-what-you-can-ask.html): example requests your team can copy, from finding a record to importing a CSV. Good to hand to the people who'll use it.
 - [Skills](./ai.html#attach-a-skill-with-a-message): saved instructions your team drops into a chat with `/`, such as "summarize as changelog" or "draft the refund email".
+- [Feedback on replies](./ai.html#rate-a-reply): people rate replies with a thumbs up or down, and your reviewers triage what they said.
 - [Agents and tools](./ai-agents-and-tools.html): reference for every tool the chat assistant can call.
 - [The MCP server](./mcp.html): connect a client, choose what a connection can do, review and revoke connections.
 - [MCP API](./mcp-api.html): reference for the MCP tools, scopes and error codes.

@@ -80,8 +80,11 @@ section "AI", icon: "heroicons/outline/sparkles" do
   resource "avo_ai/messages"
   resource "avo_ai/models"
   resource "avo_ai/skills"
+  resource "avo_ai/feedbacks"
 end
 ```
+
+The Feedback resource stays empty until you say who reviews it; see [Choose who can review feedback](#choose-who-can-review-feedback).
 
 The resources and controllers ship inside the gem — there's nothing to generate into your app.
 
@@ -141,6 +144,15 @@ Avo.configure do |config|
   # generic suggestions, translatable through i18n (avo.ai.empty_state.suggestions). Set this to
   # replace them outright with your own, e.g. naming real resources.
   config.ai.empty_state_suggestions = ["Show me this week's orders", "Create a new customer"]
+
+  # Thumbs up/down under each reply (see "Rate a reply"). On by default.
+  config.ai.feedback_enabled = true
+
+  # Who hears about new feedback, through avo-notifications (see "Notify reviewers of new feedback").
+  # Unset (the default) notifies nobody.
+  config.ai.feedback_notification_recipients = -> { User.where(role: "admin") }
+  # Which feedback notifies: any of :all (default), :downvotes, :upvotes, :with_description.
+  config.ai.feedback_notification_events = [:downvotes, :with_description]
 end
 ```
 

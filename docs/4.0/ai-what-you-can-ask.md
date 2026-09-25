@@ -197,6 +197,8 @@ New conversations title themselves after your first message. See [Renaming conve
 
 You don't have to ask, either. The ⋯ menu next to the title renames the conversation without the assistant — **Rename chat** to type the title yourself, **Rename with AI** to have one generated — and the bar's menu adds **Copy as markdown**, which puts the conversation on your clipboard as plain text. See [The conversation menu](./ai.html#the-conversation-menu).
 
+To tell whoever runs the app how a reply went, use the thumbs up or thumbs down beside it. A click opens a short form: a reason for a thumbs down, and a comment either way. Nothing is recorded until you send it. See [Rate a reply](./ai.html#rate-a-reply).
+
 ## What it won't do
 
 Knowing the edges saves a round trip:
