@@ -1138,6 +1138,135 @@ Dividers are worked out when the page renders, not as each message arrives. Leav
 
 Hover any message and a copy button appears beneath it. It copies the raw text the assistant produced — the markdown it wrote, not the rendered HTML — so pasting it into an issue or an editor keeps the formatting.
 
+## Rate a reply
+
+Every assistant reply has a thumbs up and a thumbs down beside its copy button. A click opens a modal; nothing is recorded until you press **Send feedback**, or <kbd>Cmd</kbd>+<kbd>Return</kbd> (<kbd>Ctrl</kbd>+<kbd>Return</kbd> on Windows and Linux) while typing the comment. Both fields in it are optional, so sending an empty modal still records the vote. Closing the modal (**Cancel**, the close button, **Esc**, or a click outside it) records nothing.
+
+- **Thumbs down** asks "What went wrong?" with an optional reason picked from a dropdown: **Wrong or inaccurate**, **Didn't follow instructions**, **Wrong records or data**, **Took an action I didn't want**, **Too slow or verbose**, or **Other**. A comment box sits under it.
+- **Thumbs up** asks "What did you like about this response?" and takes a comment.
+
+Each send leaves a new feedback. Clicking a thumb again, either one, opens an empty modal for another feedback instead of the one you sent before, so you can rate the same reply more than once. The thumb of your last sent vote stays highlighted. A feedback can't be edited, removed, or switched to the other vote once it's sent.
+
+Only the chat's owner can rate its replies, the same way only the owner can read the chat. Deleting a chat deletes its feedback.
+
+### Review feedback
+
+Feedback lands in the **Feedback** resource. Add it to the menu beside the others:
+
+```ruby
+# config/initializers/avo.rb
+section "AI", icon: "heroicons/outline/sparkles" do
+  resource "avo_ai/chats"
+  resource "avo_ai/messages"
+  resource "avo_ai/models"
+  resource "avo_ai/skills"
+  resource "avo_ai/feedbacks" # [!code focus]
+end
+```
+
+Each record shows the vote, the reason, the comment, the prompt the user sent, the reply they rated, the model that produced that reply, the author, and a link to the chat. Filter the index by vote, reason, status, or model.
+
+You triage a record with two fields of your own: **Status** (**Open**, **In progress**, or **Resolved**) and **Admin note**. Those are the only fields you can edit. The user's vote, reason, and comment are read-only, in the resource and for the user, so a triaged record never changes under you.
+
+### Choose who can review feedback
+
+Feedback contains other people's conversations, so the gem ships `Avo::Ai::FeedbackPolicy` closed: nobody sees any feedback until you say who reviews it. Define your own `Avo::Ai::FeedbackPolicy` and open `index?`, `show?`, `edit?`, and `update?` for your reviewers. Your class wins over the gem's copy:
+
+```ruby
+# app/policies/avo/ai/feedback_policy.rb
+class Avo::Ai::FeedbackPolicy
+  attr_reader :user, :record
+
+  def initialize(user, record)
+    @user = user
+    @record = record
+  end
+
+  def index? = user.admin?
+  def show? = user.admin?
+  def edit? = user.admin?
+  def update? = user.admin?
+  def search? = user.admin?
+  def act_on? = user.admin?
+  # Feedback is written from the chat and deleted with its chat.
+  def new? = false
+  def create? = false
+  def destroy? = false
+
+  class Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      @scope.all
+    end
+  end
+end
+```
+
+Keep `new?`, `create?`, and `destroy?` closed. There is nothing to create from the admin side.
+
+:::info
+The resource checks this policy itself, so it stays closed without [avo-authorization](./authorization.html). With the gem's policy in place the index is empty and opening a record fails as not found.
+:::
+
+:::warning Upgrading an existing install
+Feedback is stored in a new `avo_ai_feedbacks` table. Re-run the installer to get its migration, then migrate:
+
+```bash
+bin/rails generate avo:ai install
+bin/rails db:migrate
+```
+
+The installer only writes what your app is missing.
+:::
+
+### Turn feedback off
+
+Feedback is on by default. Turn it off in the initializer:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.feedback_enabled = false
+```
+
+This hides the thumbs under every reply and refuses new votes. Feedback already collected stays reviewable in the Feedback resource.
+
+### Notify reviewers of new feedback
+
+Requires [avo-notifications](./notifications.html). Point `feedback_notification_recipients` at whoever should hear about new feedback:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.feedback_notification_recipients = -> { User.where(role: "admin") }
+```
+
+It's a zero-argument lambda, and `feedback` is available inside it. Return a user, an Array of users, or a relation. It runs in a background job, never in the request that sends the feedback, so a slow lookup never delays it. Leave it unset (the default) and nobody is notified.
+
+Narrow which feedback notifies with `feedback_notification_events`:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.feedback_notification_events = [:downvotes, :with_description]
+```
+
+| Value | Notifies on |
+| --- | --- |
+| `:all` | Every vote. The default. |
+| `:downvotes` | Thumbs down. |
+| `:upvotes` | Thumbs up. |
+| `:with_description` | Any vote that carries a comment. |
+
+The events are checked once, when the user sends the feedback, and a feedback notifies at most once. The vote, reason, and comment arrive together, so the notification carries the reason in its title and the comment in its body. Each send is a new feedback, so a second one on the same reply can notify again. An unknown event raises at boot.
+
+The notification names the vote and its reason, carries the comment as its body, and links to the feedback record in Avo. A thumbs down sends at `:warning` level; a thumbs up sends at `:info` level.
+
+:::info
+A notification failure is logged and never affects the vote. The vote is already saved by the time the notification runs.
+:::
+
 ## Choose which models people can use
 
 By default a chat runs on the model you configured in `config/initializers/ruby_llm.rb`, and there is no model picker — the RubyLLM registry is thousands of models long, which is not a dropdown.
