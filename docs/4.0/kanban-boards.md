@@ -1,6 +1,6 @@
 ---
 license: addon
-addon_link: https://avohq.io/addons/kanban-boards
+addon_link: https://avohq.io/addons/kanban
 betaStatus: Beta
 outline: [2, 3]
 ---

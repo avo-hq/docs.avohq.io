@@ -1,5 +1,6 @@
 ---
 license: addon
+addon_link: https://avohq.io/addons/ai
 betaStatus: Beta
 outline: [2, 3]
 ---

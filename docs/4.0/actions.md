@@ -129,6 +129,8 @@ You may use the [custom controls](./custom-controls.html) feature to show action
 
 An action can define fields, shown to the user in the action's modal. Most work the same way as fields on resources. When the action runs on a single record the fields are hydrated from that record; otherwise fields that do not depend on a record render as plain form inputs. Association fields are an exception, as described below. The submitted values arrive in `handle` as the `fields` argument.
 
+Every field you declare here renders in the modal. The `hide_on` and `show_on` marks belong to resource views and do not filter an action's fields. A field with no form component, such as `badge`, renders read-only, as it does on the <Show /> view, which lets you show context next to the inputs.
+
 ```ruby
 # app/avo/actions/toggle_inactive.rb
 class Avo::Actions::ToggleInactive < Avo::BaseAction
@@ -368,6 +370,8 @@ end
 ```
 
 Both accept a boolean or a block executed in [`Avo::ExecutionContext`](./execution-context).
+
+Inside every block of an action, `visible`, `authorize`, the modal texts, `fields`, and `handle`, `view` is the view the action was started from: `index`, `show`, or `edit`. It stays the same while the modal renders and while the action runs, and it is never `new`. Avo checks the value against the request's route, so `show` and `edit` need a record in the URL and a crafted request cannot claim another page. Use it to adapt behavior, for example `reload_records if view.index?`. Gate who may run an action on `current_user`, and single-versus-bulk on `query.size` or `record`.
 
 ## Trigger an action from a link
 

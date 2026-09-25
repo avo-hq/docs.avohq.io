@@ -1,6 +1,6 @@
 ---
 license: addon
-addon_link: https://avohq.io/addons/advanced-search
+addon_link: https://avohq.io/addons/searchable-associations
 outline: [2, 3]
 guide: ./searchable.html
 ---

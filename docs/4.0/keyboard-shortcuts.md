@@ -104,12 +104,14 @@ Use <kbd>J</kbd> / <kbd>K</kbd> to jump into the table from anywhere on the page
 | <kbd>I</kbd>                                               | Go back to the index      |
 | <kbd>Esc</kbd>                                             | Unfocus the current field |
 
-## Action modal
+## Modals
 
-| Keys                                                       | Action         |
-| ---------------------------------------------------------- | -------------- |
-| <kbd>Cmd</kbd>+<kbd>↵</kbd> / <kbd>Ctrl</kbd>+<kbd>↵</kbd> | Run the action |
-| <kbd>Esc</kbd>                                             | Cancel / close the modal |
+| Keys                                                       | Action                                  |
+| ---------------------------------------------------------- | --------------------------------------- |
+| <kbd>Cmd</kbd>+<kbd>↵</kbd> / <kbd>Ctrl</kbd>+<kbd>↵</kbd> | Submit the modal's form (run the action, attach, save) |
+| <kbd>Esc</kbd>                                             | Cancel / close the modal                |
+
+<kbd>Cmd</kbd>+<kbd>↵</kbd> works from inside a field too, and in any modal that wraps or contains a form: action modals, the attach modal, the "Create new" modal of a `belongs_to` field, and modals your own views render with `Avo::ModalComponent`, including ones a Turbo Stream inserts. It submits with the modal's primary submit button, so that button's `name`/`value` are sent. If that button is disabled, nothing happens.
 
 ## Assign hotkeys to the sidebar menu
 
