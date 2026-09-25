@@ -91,7 +91,7 @@ Deletes work one record at a time. Updates work on one record or on many, and ei
 - **"Show me this week's signups. Mark them approved"** — the assistant looks them up first, then proposes the batch. If your app registers an approve [action](./actions.html), it runs that instead, because an action carries business logic a field edit doesn't.
 - **"Delete the test project"** — a card names the record and asks you to confirm.
 
-**A batch is one card, one confirmation.** Up to 50 records at a time; ask for more and the assistant says how many there are and offers to narrow. Records that fail validation are named on the card afterwards and the rest are still updated. Each one is recorded separately, so undo works per record — a batch of 50 is 50 undos, not one.
+**A batch is one card, one confirmation.** Up to 50 records at a time by default (`config.ai.max_update_records` raises it to 500); ask for more and the assistant says how many there are and offers to narrow. Records that fail validation are named on the card afterwards and the rest are still updated. Each one is recorded separately, so undo works per record — a batch of 50 is 50 undos, not one.
 
 **Your confirmation applies the change, not the model.** Confirm a card by clicking its button or by telling the assistant to go ahead — "do it", "run it", "yes" — which counts the same because the words are yours. Either way the assistant can propose a write but never perform one, and it can't talk its way past a Cancel.
 

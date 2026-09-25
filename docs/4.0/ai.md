@@ -131,6 +131,9 @@ Avo.configure do |config|
     max_import_rows: 1000        # data rows one confirmed import may create
   }
 
+  # Records one batch update may change (see "Reading files and importing from them"). 1 to 500.
+  config.ai.max_update_records = 50
+
   # Which tools the assistant gets (see "Choose which tools the assistant gets").
   config.ai.excluded_tools = [:delete_record]
   config.ai.extra_tools = ["CrmTool"]
@@ -546,7 +549,7 @@ Nothing is created until you click **Confirm**. The rows are then created on the
 :::info
 An import creates records only — updating or upserting from a file isn't offered — and it takes CSV and TSV files, not JSON. One import is capped at `max_import_rows` data rows (1,000 by default); a bigger file is refused with the count and the cap named, so split it and import it in parts.
 
-Batch updates are capped too, at 50 records, and that cap is not configurable. An import's rows are new, so the only cost of a big one is the time it takes; a batch update changes records that already exist, and undo is recorded per record — so the cap is what keeps a batch small enough to review on one card and to walk back afterwards.
+Batch updates are capped too, at `max_update_records` records (50 by default). Raise it to at most 500; a higher value, zero, or anything that isn't an Integer raises at boot. An import's rows are new, so the only cost of a big one is the time it takes; a batch update changes records that already exist, and undo is recorded per record. Undo lists only the last 50 writes, so a batch larger than 50 can't be fully walked back from the chat, and checked rows stop at 50 whatever the cap is.
 :::
 
 ## Teach the assistant your app
@@ -904,7 +907,7 @@ Hover the **"3 records selected"** chip — or focus it, if you are on the keybo
 
 Up to 50 rows travel with one message. Past that the assistant is told the list was cut, so it says so before acting on "all of them" rather than quietly working from the first 50.
 
-A selection is also what you batch over: "set all of these to archived" proposes one card covering exactly the rows you checked. That is the same 50, and not a coincidence — a batch update is capped at 50 records for the same reason the selection is.
+A selection is also what you batch over: "set all of these to archived" proposes one card covering exactly the rows you checked. At the default `max_update_records` of 50 the two limits match, and they match on purpose: both keep a batch small enough to review on one card.
 
 :::info
 Rows of an [array resource](./array-resource.html) can't be attached — they have no database record to authorize or act on, so they are left out of the selection.
