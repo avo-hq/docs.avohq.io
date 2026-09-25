@@ -81,7 +81,7 @@ end
 
 The `avo_boot` hook is called when the parent Rails application boots up. This is where you can register your scripts and stylesheets and also add your functionality to Avo.
 
-We use it heavily to add our own concerns to the `Avo::BaseResource` and `Avo::BaseController` classes and even extend the `Avo::ApplicationController` class.
+We use it heavily to add our own concerns to Avo's resource and field classes, like `Avo::Resources::Base` and `Avo::Fields::BelongsToField`. Avo's controllers and components are extended from somewhere else — see [Boot hooks must not load app classes](#boot-hooks-must-not-load-app-classes).
 
 </Option>
 
@@ -94,6 +94,55 @@ We don't use it as much in our plugins as we do in the `avo_boot` hook.
 :::
 
 </Option>
+
+## Boot hooks must not load app classes
+
+`avo_boot` runs while the parent app is still initializing, and referencing a class is enough to load it. Avo's controllers load Action Controller, its components load Action View, and a model loads Active Record — and Rails 8.2 flags any framework loaded during initialization ([rails/rails#56201](https://github.com/rails/rails/issues/56201)). A plugin that prepends a module to `Avo::BaseController` from the hook trips that guard on every boot.
+
+What is safe to touch from the hook, and what is not:
+
+| Class                                                            | Where to extend it                              |
+| ---------------------------------------------------------------- | ----------------------------------------------- |
+| Avo's `lib/` classes — resources, fields, the managers            | In the `avo_boot` hook                          |
+| Avo's `app/` classes — controllers, components, helpers            | From an autoloader hook, when Zeitwerk loads it |
+| Models, Avo's or the app's                                        | From `ActiveSupport.on_load(:active_record)`    |
+
+Wait for the class to load and extend it then. Zeitwerk takes a hook per constant name, and it runs every time that constant is loaded, reloads in development included:
+
+```ruby
+# lib/avo/feed_view/engine.rb
+module Avo
+  module FeedView
+    class Engine < ::Rails::Engine
+      isolate_namespace Avo::FeedView
+
+      initializer "avo-feed-view.init" do
+        # Avo's lib classes: extend them in the hook.
+        ActiveSupport.on_load(:avo_boot) do
+          Avo.plugin_manager.register :feed_view
+          Avo::Resources::Base.prepend Avo::FeedView::Concerns::ResourceExtensions
+        end
+
+        # Controllers, components and helpers: extend them whenever Zeitwerk loads them.
+        Rails.autoloaders.main.on_load("Avo::BaseController") do |controller, _abspath|
+          controller.prepend Avo::FeedView::Concerns::ControllerExtensions
+        end
+
+        # Models: wait for Active Record.
+        ActiveSupport.on_load(:active_record) do
+          Avo::FeedView::ModelTracking.install
+        end
+      end
+    end
+  end
+end
+```
+
+:::info
+Nothing about this is Rails 8.2-only — the hooks above work on every version Avo supports, and they are how Avo's own add-ons are written. Rails 8.2 only made the old shape loud.
+:::
+
+Registering anything by its class has the same constraint. That is why [`register_view_type`](./custom-view-types.html#_2-register-the-view-type) takes the component's name as a string: a string is constantized at render time, so the hook loads nothing.
 
 ## Registration API
 

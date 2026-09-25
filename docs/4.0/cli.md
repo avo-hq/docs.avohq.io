@@ -120,12 +120,16 @@ avo schema users
 field id  field type  field options
 name      text        {"required":true}
 email     text        {"required":true}
-active    boolean     {"required":false}
-role      select      {"required":false,"options":["user","admin","moderator"]}
-team_id   belongs_to  {"required":false}
+active    boolean     -
+role      select      {"options":["user","admin","moderator"]}
+team_id   belongs_to  -
 ```
 
 `field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required`, the `options` a choice field accepts, and `multiple: true` on a field that takes a list. It appears on the two form views only.
+
+:::info `required: false` is left out of the table
+Most fields are not required, so printing it on every row buried the few that are. A field with nothing else left to show prints `-`, a `required: null` (the app could not tell) still prints, and `--format json` keeps every key the server sent.
+:::
 
 Pass `--view update` for what an update may send, and `--view index` or `--view show` for what a record reads back, where the `field_options` column is gone since nothing is sent. Each view needs the entitlement of the request it describes.
 
@@ -151,6 +155,8 @@ On a terminal the table is framed and fits the width: a long cell is shortened w
 ```bash
 avo list users --sort name --dir desc --fields id,name,email --per-page 10
 ```
+
+Ask for a page past the last one and the app answers with the first page instead. The CLI says so on stderr — `Page 9 does not exist; showing page 1 of 3.` — so the footer is not read as confirming the page you asked for.
 
 ## Read one record
 

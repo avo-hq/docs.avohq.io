@@ -101,12 +101,12 @@ end
 
 | Option        | Required | Description                                           |
 | ------------- | -------- | ----------------------------------------------------- |
-| `component`   | Yes      | Component class or string (auto-constantized)         |
+| `component`   | Yes      | Component name as a string, constantized at render time |
 | `icon`        | Yes      | Icon path for the inactive state in the view switcher |
 | `active_icon` | Yes      | Icon path for the active state in the view switcher   |
 
-:::info
-The `component` can be passed as a string (`"MyPlugin::ViewTypes::TimelineViewTypeComponent"`) or as the class itself. Strings are constantized at render time, which avoids load-order issues during boot.
+:::warning Pass the component as a string, not the class
+Naming the class inside the hook loads the component, and a component loads Action View while the app is still initializing — which Rails 8.2 flags ([rails/rails#57224](https://github.com/rails/rails/issues/57224)). A string is constantized at render time instead, so nothing is loaded on boot. The class itself is still accepted for a registration that happens after boot, and Avo registers its own view types by name for this reason. See [Boot hooks must not load app classes](./plugins.html#boot-hooks-must-not-load-app-classes).
 :::
 
 ## 3. Configure a resource to use it
