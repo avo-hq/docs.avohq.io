@@ -240,6 +240,8 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
+The assistant reads the same rows the resource's Index shows: its [`index_query`](./resources-api.html#self.index_query) first, then the policy scope on top. Rows, counts, grouped answers, "has any" checks, and the records a write or action can target all stay inside that set, so tenant or soft-delete scoping you put in `index_query` bounds the chat too. Avo's show page finds a record through the policy alone, so a rule that must hold on every page still belongs in the policy's scope.
+
 The chat runs in a background job, with no request. A resource whose field definitions read request-only context (`Avo::Current.context[:account]`, `params`) can't have its field rules checked there, so the assistant refuses that resource rather than read it without them. A single field whose `visible:` proc raises is treated as hidden.
 
 For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./ai-agents-and-tools.html).
