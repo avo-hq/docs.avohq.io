@@ -110,7 +110,9 @@ The host is the API base URL: the address the API answers on, mount path include
 
 ## Look up what you can send
 
-Ask for one resource's fields before writing to it. Without `--view`, the app picks the view: `create` on a resource that takes writes, `show` on an [array resource](./rest-api.html#endpoints), which is read-only:
+Ask for one resource's fields before writing to it. Without `--view`, the view is `create`. The one exception is an [array resource](./rest-api.html#endpoints): it is read-only, so its default is `show`.
+
+The default does not look at the token. A token that may only read a resource is still asked for `create`, and is refused with a `403`. Pass `--view show` or `--view index` on such a token:
 
 ```bash
 avo schema users
@@ -127,7 +129,7 @@ team_id   belongs_to  {"required":false}
 
 `field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required`, the `options` a choice field accepts, and `multiple: true` on a field that takes a list. It appears on the two form views only.
 
-Pass `--view update` for what an update may send, and `--view index` or `--view show` for what a record reads back, where the `field_options` column is gone since nothing is sent. Each view needs the entitlement of the request it describes.
+Pass `--view update` for what an update may send, and `--view index` or `--view show` for what a record reads back, where the `field_options` column is gone since nothing is sent. Each view needs the entitlement of the request it describes, the default included: a read-only token is refused on `create` and `update` and must name a read view.
 
 A `belongs_to` is listed by the key that sets it, `team_id`.
 

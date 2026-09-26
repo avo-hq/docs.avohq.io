@@ -174,7 +174,7 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 
 ### One resource's fields
 
-`GET /api/resources/v1/teams/_schema?view=create` lists one resource's fields on one view. `view` defaults to `create`, or to `show` on an array resource, which has only the `index` and `show` views.
+`GET /api/resources/v1/teams/_schema?view=create` lists one resource's fields on one view. `view` defaults to `create`. The one exception is an array resource: it is read-only, so it has only the `index` and `show` views and defaults to `show`. The default does not look at the token. A token that may only read a resource is still asked for `create` and refused with a `403`; send `view=show` or `view=index` on such a token.
 
 | `view` | Lists |
 |--------|-------|
