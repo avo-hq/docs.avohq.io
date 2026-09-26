@@ -733,7 +733,7 @@ def cache_hash(parent_record)
 end
 ```
 
-`file_hash` is an md5 of the resource file and the policy file (so the cache gets busted when the rules change). The `parent_record` is added when the resource is displayed as an association, so there's a separate cache record for each association.
+`file_hash` is an md5 of the resource file, the policy file and `Avo.cache_version` (a digest of the installed Avo version and every registered plugin's version), so the cache gets busted when the rules change and when you upgrade Avo or a plugin. The `parent_record` is added when the resource is displayed as an association, so there's a separate cache record for each association.
 
 Override the method in your resource file when a row displays data the record itself doesn't carry, such as an association:
 

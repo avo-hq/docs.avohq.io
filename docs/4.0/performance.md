@@ -36,6 +36,19 @@ Avo caches each item on the <Grid /> view for improved performance. Table rows a
 
 Every cached row is keyed on the record **and on the viewer**: the current user, the locale and the tenant are part of the key by default, so a field that is shown or hidden per role, a computed field that reads `current_user` or a grid card lambda is cached per user and never leaks between users. Cached rows expire after one day.
 
+### What invalidates a cached row
+
+A row is re-rendered when any part of its key changes:
+
+- **The record is updated.** The key carries the record's `cache_key_with_version`, so a change to `updated_at` busts it. A model without `updated_at` only busts on expiry.
+- **The resource file or its policy file is edited.** [`file_hash`](./resources-api#cache_hash) is an MD5 of both files.
+- **Avo or any plugin is upgraded.** `file_hash` also folds in `Avo.cache_version`, a digest of the installed Avo version and every registered plugin's version. Rows rendered by a ViewComponent carry no template digest, so this is what busts them after `bundle update`.
+- **The viewer changes.** A different user, a locale switch or a tenant switch is a different key. Editing the viewer's own user record busts their rows too.
+- **The parent record is updated**, for rows in an association table.
+- **One day passes.**
+
+Two things do not bust a row on their own: a change to an associated record the row displays (add `touch: true` on the association, or fold it into `cache_hash`), and a role stored outside the user record, such as a roles table (fold a version of it into [`index_cache_context`](#index_cache_context), or `touch` the user when it changes).
+
 <Option name="`cache_resources_on_index_view`">
 
 Controls whether Avo caches the rows on the <Index /> view. Set it to `false` to disable row caching entirely.
