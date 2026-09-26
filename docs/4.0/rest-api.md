@@ -129,6 +129,10 @@ DELETE /api/resources/v1/teams/:id    # Delete a team
 
 The path segment is the resource's `route_key` (e.g. `blog_posts`, `product_categories`).
 
+:::info Array resources are read-only
+A resource built on `Avo::Resources::ArrayResource` builds its records from a Ruby array on every request, so there is nothing a write could land on. The API serves it for reading only: `index` and `show` work as for any other resource, and no `POST`, `PATCH`, `PUT` or `DELETE` route is drawn for it. `_schema` lists it with `["index", "show"]` at most, a `null` `param_key`, and only the `index` and `show` views. HTTP resources are not affected.
+:::
+
 :::info API tokens are not served over the API
 The token resource is skipped when routes are drawn, so no version namespace gets a `tokens` endpoint. Tokens are managed in the panel only — a credential can neither mint nor revoke credentials, and so cannot outlive being revoked.
 :::
@@ -164,23 +168,24 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 |-----|---------|
 | `api_version` | The version namespace the request came through. |
 | `route_key` | The URL segment every other request is built from. |
-| `param_key` | The key a `POST` or `PATCH` body nests its fields under. Use it rather than singularizing `route_key`. |
+| `param_key` | The key a `POST` or `PATCH` body nests its fields under. Use it rather than singularizing `route_key`. `null` on an array resource, which takes no writes. |
 | `name` | The resource's singular title, for display. |
-| `entitlements` | The API actions the token may call on this resource. All five for a token that was never restricted. |
+| `entitlements` | The API actions the token may call on this resource. All five for a token that was never restricted; never more than `index` and `show` on an array resource. |
 
 ### One resource's fields
 
-`GET /api/resources/v1/teams/_schema?view=create` lists one resource's fields on one view. `view` defaults to `create`.
+`GET /api/resources/v1/teams/_schema?view=create` lists one resource's fields on one view. `view` defaults to `create`, or to `show` on an array resource, which has only the `index` and `show` views.
 
 | `view` | Lists |
 |--------|-------|
-| `create` | What a `POST` body may send, with each field's `field_options`. The default. |
+| `create` | What a `POST` body may send, with each field's `field_options`. The default, except on an array resource. |
 | `update` | What a `PATCH` or `PUT` body may send, with each field's `field_options`. |
 | `show` | What a record comes back with from `GET /teams/:id`. |
 | `index` | What a row of `GET /teams` carries. |
 
 ```json
 {
+  "view": "create",
   "param_key": "team",
   "fields": [
     { "field_id": "name", "field_type": "text", "field_options": { "required": true } },
@@ -191,6 +196,8 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
   ]
 }
 ```
+
+`view` names the view the fields belong to, so a request that sent none can tell which default it got. `param_key` is the same key the listing publishes.
 
 | Key | Meaning |
 |-----|---------|
@@ -231,7 +238,7 @@ Read views carry `field_id` and `field_type` only; form views add `field_options
 :::info Refusals
 - `403` with `reason: "token_entitlement"` when the token lacks the action the view is named after.
 - `403` with `reason: "policy"` when the token's owner cannot index the resource.
-- `400` with `{ "error": "Unknown view", "views": ["index", "show", "create", "update"] }` for a view it doesn't know.
+- `400` with `{ "error": "Unknown view", "views": ["index", "show", "create", "update"] }` for a view it doesn't know. An array resource lists `["index", "show"]` and refuses `create` and `update` the same way.
 - `404` when this version has no controller for the resource. No route exists then, so this one is Rails' own page, not the JSON body above.
 :::
 

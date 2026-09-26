@@ -110,7 +110,7 @@ The host is the API base URL: the address the API answers on, mount path include
 
 ## Look up what you can send
 
-Ask for one resource's fields before writing to it. `--view create` is the default:
+Ask for one resource's fields before writing to it. Without `--view`, the app picks the view: `create` on a resource that takes writes, `show` on an [array resource](./rest-api.html#endpoints), which is read-only:
 
 ```bash
 avo schema users
@@ -367,7 +367,7 @@ A shortcut goes in the command's slot: `avo l users` is `avo list users`. `avo h
 | `--format table\|json`         | every response                   | Output format. Default `table`; `json` prints the body exactly as the server sent it, indented on a terminal     |
 | `--fields <a,b,c>`             | `list`, `get`, `create`, `update` | Which fields to show, comma-separated, in that order. Columns on `list`, rows elsewhere |
 | `-d, --data <json\|@path\|->`  | `create`, `update`               | Required. Fields to write, as one JSON object. `@path` reads it from a file, `-` from stdin |
-| `--view <name>`                | `schema`                         | Which view's fields. `create` (default) and `update` list what a write may send; `index` and `show` what a record reads back. Needs a resource |
+| `--view <name>`                | `schema`                         | Which view's fields. `create` and `update` list what a write may send; `index` and `show` what a record reads back. Defaults to the app's choice: `create`, or `show` on an array resource. Needs a resource |
 | `--page <n>`                   | `list`                           | Page number, starting at 1                                                               |
 | `--per-page <n>`               | `list`                           | Records per page. Default: the app's Avo setting                                         |
 | `--sort <field>`               | `list`                           | Field to sort by                                                                         |
