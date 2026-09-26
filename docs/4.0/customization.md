@@ -152,7 +152,7 @@ This interaction (clicking a `tr` element to behave as a link) is not natively s
 
 ### Cache resources on the Index view
 
-Avo caches each resource row (or grid item) for performance reasons. Disable that with [`cache_resources_on_index_view`](./customization-api.html#cache_resources_on_index_view).
+Avo caches each grid item on the <Index /> view for performance reasons (table rows are rendered on every request today). The cache key carries the record and the viewer — the current user, the locale and the tenant — so fields shown or hidden per role are cached per user. Disable caching with [`cache_resources_on_index_view`](./customization-api.html#cache_resources_on_index_view), or change what the key varies by with [`index_cache_context`](./customization-api.html#index_cache_context).
 
 ```ruby
 # config/initializers/avo.rb
@@ -162,7 +162,7 @@ end
 ```
 
 :::info
-If you use the `visibility` option to show/hide fields based on the user's role, you should disable this setting.
+Fields gated on the user's role no longer need caching turned off; each user gets their own cached row. Turn it off only when a field reads `params`, which no cache key can carry. See [Row caching](./performance.html#row-caching).
 :::
 
 ### Search debounce

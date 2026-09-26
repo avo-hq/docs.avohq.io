@@ -275,18 +275,33 @@ config.id_links_to_resource = true
 
 <Option name="`cache_resources_on_index_view`" headingSize="3">
 
-Caches each resource row (or grid item) on the <Index /> view. The cache key uses the record's `id` and `created_at` attributes and the resource file's `md5`.
+Caches each grid item on the <Index /> view (table rows are rendered on every request today). The cache key is the record, the resource and policy files' `md5`, and [`index_cache_context`](#index_cache_context) — by default the current user, the locale and the tenant — so fields shown or hidden per role are cached per user.
 
 ```ruby
 config.cache_resources_on_index_view = false
 ```
 
 - **Type:** Boolean
-- **Default:** `true`
+- **Default:** `true` in every environment except development
 
-:::warning
-The cache key does not include the current user. If you use the `visibility` field option to show or hide fields based on the user's role, disable this setting.
+:::info
+Role-based `visible:` fields no longer need this off. The one thing a key cannot carry is `params`: a field that reads a query-string value is served from whichever request cached the row first, so disable caching there. See [Row caching](./performance.html#row-caching).
 :::
+
+</Option>
+
+<Option name="`index_cache_context`" headingSize="3">
+
+What a row's cache key varies by besides the record. Resolved through `Avo::ExecutionContext` once per request and appended to every row's key.
+
+```ruby
+config.index_cache_context = -> { [current_user, I18n.locale, Avo::Current.tenant_id] }
+```
+
+- **Type:** Lambda
+- **Default:** `-> { [current_user, I18n.locale, Avo::Current.tenant_id] }`
+
+The user record is in the key, not its id, so a role edit busts that user's rows immediately. Narrow it to a role to share cached rows across users who see identical rows — only when nothing a row renders reads the user. A resource can override the resolved value with its own [`cache_context`](./resources-api#cache_context) method.
 
 </Option>
 
