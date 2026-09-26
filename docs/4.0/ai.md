@@ -134,6 +134,15 @@ Avo.configure do |config|
     max_import_rows: 1000        # data rows one confirmed import may create
   }
 
+  # What the composer lets people upload (see "Send files with a message"). Set only the keys
+  # you want to change. accept takes what an HTML accept attribute does: MIME types, wildcards
+  # ("image/*", or "*/*" for anything) and extensions (".csv").
+  config.ai.uploads = {
+    max_size: 25.megabytes,
+    accept: %w[image/png image/jpeg image/gif image/webp application/pdf text/* application/json
+      .md .markdown .txt .csv .tsv .json]
+  }
+
   # Records one batch update may change (see "Reading files and importing from them"). 1 to 500.
   config.ai.max_update_records = 50
 
@@ -1020,6 +1029,59 @@ Each file shows as a chip under your message. Clicking an image or a PDF opens t
 Text files — markdown, plain text, CSV, TSV, and JSON — take a different route from images and PDFs: they aren't sent to the model inline. The model learns the file's name, type, size, and blob id, and reads it in windows through the `read_file` tool when it needs the content. See [Reading files and importing from them](#reading-files-and-importing-from-them).
 
 The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
+
+### What the composer accepts
+
+By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files — markdown, plain text, CSV, TSV, JSON — which it reads in windows. Files can be up to 25 MB.
+
+Anything else is refused as you add it, before it uploads, with a line under the draft naming the file and why — so a 2 GB video never leaves the browser. The same rule is checked again when the message is sent, so a request that skips the composer can't attach a file it would have refused.
+
+Change either side under `config.ai.uploads`:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.ai.uploads = {
+    max_size: 50.megabytes,
+    # Keeps the defaults and adds Word documents, e.g. for attaching to records.
+    accept: %w[image/png image/jpeg image/gif image/webp application/pdf text/* application/json
+      .md .markdown .txt .csv .tsv .json
+      application/vnd.openxmlformats-officedocument.wordprocessingml.document .docx]
+  }
+end
+```
+
+`accept` reads like the HTML `accept` attribute, because that is where it ends up — the paperclip's file dialog is narrowed to it. Entries are MIME types (`application/pdf`), wildcards (`image/*`) or extensions (`.csv`), and a file passes when its type **or** its extension matches. The extensions matter: browsers often hand over a `.md` or `.tsv` with no type at all. Use `["*/*"]` to allow any file — for example when people upload files only to have the assistant attach them to records. A malformed entry (`"pdf"`) or an empty list raises at boot.
+
+:::info
+Setting `accept` replaces the list rather than adding to it, so repeat the defaults you want to keep.
+:::
+
+### Protect the direct-upload endpoint
+
+The composer uploads through Rails' own direct-upload endpoint, `POST /rails/active_storage/direct_uploads`. Rails ships that endpoint **without authentication**: anyone who can load a page from your app can create blobs of any declared size and get a URL to upload them to. That is true whether or not you use Avo AI — the composer's limits run in the browser and at send time, and neither stops a request that goes straight to the endpoint.
+
+Protecting it is your app's job, because only your app knows who is signed in. The smallest fix is a `before_action` on Rails' controller, using your app's own authentication and size limit:
+
+```ruby
+# config/initializers/active_storage.rb
+Rails.application.config.to_prepare do
+  ActiveStorage::DirectUploadsController.class_eval do
+    # Devise's helper — use whatever your app authenticates with.
+    before_action :authenticate_user!
+
+    # The composer's own ceiling. Raise it if other upload fields in your app need more.
+    before_action do
+      if params.dig(:blob, :byte_size).to_i > Avo.configuration.ai.uploads[:max_size]
+        head :content_too_large
+      end
+    end
+  end
+end
+```
+
+`to_prepare` re-applies it whenever development reloads code. With this in place, a signed-out request gets a `401`, an oversized one a `413`, and the composer works as before. Checking the declared size is enough on the Disk and S3 services, which refuse an upload whose body is a different length; on another service, check that it enforces the declared length too.
+
 
 ## Attach a skill with a message
 
