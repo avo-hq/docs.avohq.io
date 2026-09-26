@@ -4,6 +4,36 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo-ai`: the composer limits what it uploads
+
+<Option name="Files over 25 MB, and types the assistant can't use, are refused">
+
+### What changed
+
+The chat composer used to upload any file. It now takes images (PNG, JPEG, GIF, WebP), PDFs and text files — markdown, plain text, CSV, TSV, JSON — up to 25 MB, and refuses anything else as it is added, before it uploads, with a line under the draft saying why. A message sent without the composer is held to the same rule: a file it would have refused is left off the message.
+
+### Action Required
+
+Nothing, unless people upload other files — say, Word documents or videos to attach to records. Allow them under `config.ai.uploads`; see [What the composer accepts](./ai.html#what-the-composer-accepts).
+
+```ruby
+config.ai.uploads = {accept: ["*/*"], max_size: 100.megabytes} # [!code highlight]
+```
+
+</Option>
+
+<Option name="Protect Rails' direct-upload endpoint">
+
+### What changed
+
+Nothing in Avo — this was always true. The composer uploads through `POST /rails/active_storage/direct_uploads`, which Rails ships without authentication, and the new limits don't cover a request that goes straight to it.
+
+### Action Required
+
+Add your app's authentication and a size check to that endpoint: [Protect the direct-upload endpoint](./ai.html#protect-the-direct-upload-endpoint).
+
+</Option>
+
 ## Upgrade to `avo-ai` 4.2.0.beta.4
 
 <Option name="Batch updates are undone as one change: run the installer again">
