@@ -129,6 +129,53 @@ Nothing grants or revokes anything on its own: the migration renames a column an
 
 </Option>
 
+## Upgrade to 4.2.8
+
+<Option name="`view` inside an action is the page it was started from, not `new`">
+
+### Breaking Change
+
+Every block of an action — `visible`, `authorize`, the modal's texts, `fields`, and `handle` — used to see `view` as `new` while the modal rendered and while the action ran. It is now the view the action was started from: `index`, `show`, or `edit`. It is never `new`, and it stays the same from the modal through `handle` ([#4825](https://github.com/avo-hq/avo/pull/4825)).
+
+Avo checks the value against the request's route, so `show` and `edit` need a record in the URL and a crafted request cannot claim another page. Read the whole story under [Control visibility and authorization](./actions.html#control-visibility-and-authorization).
+
+### Action Required
+
+Grep your actions for `view` and drop any branch that expects `new`:
+
+```ruby
+# app/avo/actions/toggle_inactive.rb
+def handle(query:, fields:, **)
+  reload_records if view.new? # never true now # [!code --]
+  reload_records if view.index? # the action was started from the index page # [!code ++]
+end
+```
+
+Nothing to do if your actions don't read `view`.
+
+</Option>
+
+<Option name="Every field an action declares renders in its modal">
+
+### Breaking Change
+
+An action's fields used to be filtered by the `show_on` / `hide_on` marks against the `new` view, so a field those marks kept off forms never reached the modal. Those marks describe resource views, and an action already lists its own fields, so all of them render now ([#4825](https://github.com/avo-hq/avo/pull/4825)). A field with no form component, such as `badge`, renders read-only, as it does on the <Show /> view.
+
+### Action Required
+
+Look at the actions whose fields carry those marks — the ones that were being dropped now show up in the modal. Take a field you don't want there out of the action's `fields`; `visible` still filters them, so a block is the other way to keep one out.
+
+```ruby
+# app/avo/actions/toggle_inactive.rb
+def fields
+  field :status, as: :badge, hide_on: :forms # renders read-only in the modal now # [!code --]
+  field :notify_user, as: :boolean
+  field :message, as: :textarea
+end
+```
+
+</Option>
+
 ## Upgrade to 4.2.0
 
 <Option name="`super` in a `setup_authentication` override now accepts a valid API token">
