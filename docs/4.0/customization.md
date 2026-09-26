@@ -56,6 +56,8 @@ end
 
 By default Avo follows each visitor's own time zone via [`use_browser_timezone`](./customization-api.html#use_browser_timezone): it detects the browser's time zone, stores it in a cookie, and renders all server-side dates and times in it — announcing the switch with an alert the first time. Set it to `false` to render everyone in the configured zone above.
 
+This affects rendering only. Your own code — an action's `handle`, a scope, a filter, a model callback — keeps the zone configured above, so `Time.zone` there means what it means everywhere else in your app.
+
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
