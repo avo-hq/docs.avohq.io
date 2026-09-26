@@ -719,7 +719,7 @@ Works the same as [`self.attachments`](#self.attachments), but eager loads the a
 
 <Option name="`cache_hash`" headingSize="3">
 
-The method Avo uses to compute the cache key for each row. The default implementation looks like this:
+The part of a row's cache key that comes from the record. The default implementation looks like this:
 
 ```ruby
 def cache_hash(parent_record)
@@ -731,34 +731,16 @@ def cache_hash(parent_record)
 
   result
 end
-
-def file_hash
-  content_to_be_hashed = ""
-
-  file_name = self.class.underscore_name.tr(" ", "_")
-  resource_path = Rails.root.join("app", "avo", "resources", "#{file_name}.rb").to_s
-  if File.file? resource_path
-    content_to_be_hashed += File.read(resource_path)
-  end
-
-  # policy file hash
-  policy_path = Rails.root.join("app", "policies", "#{file_name.gsub("_resource", "")}_policy.rb").to_s
-  if File.file? policy_path
-    content_to_be_hashed += File.read(policy_path)
-  end
-
-  Digest::MD5.hexdigest(content_to_be_hashed)
-end
 ```
 
-It's an md5 of the resource file and the policy file (so the cache gets busted when the rules change). The `parent_record` is added when the resource is displayed as an association, so there's a separate cache record for each association.
+`file_hash` is an md5 of the resource file, the policy file and `Avo.cache_version` (a digest of the installed Avo version and every registered plugin's version), so the cache gets busted when the rules change and when you upgrade Avo or a plugin. The `parent_record` is added when the resource is displayed as an association, so there's a separate cache record for each association.
 
-Override the method in your resource file when you have special requirements:
+Override the method in your resource file when a row displays data the record itself doesn't carry, such as an association:
 
 ```ruby
 class Avo::Resources::User < Avo::BaseResource
   def cache_hash(parent_record)
-    result = [record, file_hash, "SOMETHING_NEW"]
+    result = [record, file_hash, record.post]
 
     if parent_record.present?
       result << parent_record
@@ -768,6 +750,54 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
+
+Anything that varies by who is looking, rather than by the record, belongs in [`cache_context`](#cache_context) instead. The two are composed into the actual key, so overriding `cache_hash` can't drop the viewer out of it.
+
+:::info
+Only the <Grid /> view caches per row today. Table rows are rendered on every request; caching them under the same key is a follow-up.
+:::
+
+<RelatedList>
+  <RelatedItem href="./performance.html">Caching</RelatedItem>
+</RelatedList>
+
+</Option>
+
+<Option name="`cache_context`" headingSize="3">
+
+The part of a row's cache key that comes from the request. By default it resolves `config.index_cache_context`, which is:
+
+```ruby
+# config/initializers/avo.rb
+config.index_cache_context = -> { [current_user, I18n.locale, Avo::Current.tenant_id] }
+```
+
+That puts the current user record, the locale and the tenant in every row's key, so a `visible:` lambda, a computed field or a grid card that reads `current_user` is cached per user and can never serve one user's row to another. The user *record* is in the key, not its id: a role edit touches `updated_at`, which busts that user's rows on the spot.
+
+Both the global option and the per-resource method run through `Avo::ExecutionContext`, so `current_user`, `params`, `request` and `context` are available. It is resolved once per request and reused for every row, so it must not read `record`.
+
+Narrow it when many users see exactly the same rows and you'd rather they share the cache. Only do this when nothing a row renders reads the user:
+
+```ruby
+# config/initializers/avo.rb
+config.index_cache_context = -> { [current_user.role, I18n.locale] }
+```
+
+Or widen it on one resource whose lambdas read some other per-request dimension:
+
+```ruby
+class Avo::Resources::Order < Avo::BaseResource
+  def cache_context
+    [*super, Avo::Current.context[:currency]]
+  end
+end
+```
+
+The final key is `index_cache_key(parent_record)`, which is `[*cache_hash(parent_record), *cache_context]`.
+
+:::warning
+A key can only vary by what it contains. A `visible:` or computed field that reads `params` (say, a query-string flag) is served from whichever request cached the row first, whatever the key. Put the value in `cache_context` if it is a small, bounded set, or turn `cache_resources_on_index_view` off for that app.
+:::
 
 <RelatedList>
   <RelatedItem href="./performance.html">Caching</RelatedItem>
