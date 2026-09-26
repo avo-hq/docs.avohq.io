@@ -260,6 +260,12 @@ with, so a reference to a record the viewer is not allowed to read renders as th
 rather than as a chip. That holds for a reference the assistant wrote, one typed into a message, and
 one that arrived through record data or an uploaded file.
 
+A chip names its record the way Avo's own URLs do: by `to_param`. An app that hides its primary keys
+behind friendly_id, a hashid gem, or a `to_param` of its own gets the slug in every chip, link, card
+title and reference, never the key, and a reference resolves through the resource's
+`find_record_method` just as the record's page does. On such a resource, a raw primary key typed into
+a message isn't a name the record answers to, so it renders as plain text.
+
 **A set of records comes back as a list of rows.** When the answer *is* a set — "the last three
 users", "which projects are running", "show me the cities" — the assistant names one record per
 line, and the transcript draws those lines as a stack of rows instead of a bulleted paragraph: the
@@ -806,6 +812,30 @@ Three things the server decides for you, whatever the entry says:
 - **Authorization is yours to call.** Nothing in the gem stops a tool reading the whole table — reach data through `authorized_relation` and `authorize_record_action!` so your tool sees exactly what the signed-in user sees in Avo, and rescue `Avo::Ai::ToolAuthorization::IdentityError` to report "not allowed" as a result instead of failing the run.
 - **Two tools can't share a wire name.** Registering a tool whose name collides with a shipped one raises when the roster is built. To replace a shipped tool, exclude it first — that's what [ejecting](#replace-a-shipped-tool-with-your-own-copy) does for you.
 
+### Name records by `to_param`
+
+A record your tool returns becomes a [chip](#record-chips) when the result carries its `reference`: `avo:<Resource>/<id>`, where the id is the record's `to_param`, as in Avo's own URLs. Build it from `to_param`, never `id`. On a resource that names its records by slug or hashid, a reference built from the primary key shows the key you meant to hide, and it doesn't resolve to a chip.
+
+An id the model passes back is that same param, so look the record up with `find_authorized_record_by_param`. It goes through the resource's `find_record_method` and reads the result back through the signed-in user's scope, so a custom finder can't widen what your tool reaches. It still accepts a primary key the model read off an `id` column.
+
+```ruby
+# app/tools/crm_tool.rb
+def execute(resource:, id:)
+  resource_class = find_resource_class(resource)
+  return {error: "No #{resource} resource."} unless resource_class
+
+  record = find_authorized_record_by_param(resource_class, resource_class.model_class, id)
+  return {error: "No #{resource} #{id}."} unless record
+
+  json_result(
+    title: record.name,
+    reference: "avo:#{short_name(resource_class)}/#{record.to_param}"
+  )
+end
+```
+
+Declare that `id` parameter as a string, since a slug is one.
+
 :::warning What a tool returns goes to your model provider
 Everything `execute` returns is sent to the provider on that turn and on every later turn of the conversation, and it's stored on the tool call. Return the minimum that answers the question — no API keys, no credentials, and no personal data the question didn't call for. Read secrets from `ENV` or `Rails.application.credentials`; never write one into the tool file or the initializer. When an entry fails to resolve, the error names the entry by its class and key names only — the values never reach a log, the error tracker, or the **Agent tools** field.
 :::
@@ -959,14 +989,18 @@ bin/rails generate avo:ai:eject instructions
 
 Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives one local per source, each `nil` when the conversation did not start from that thing:
 
-| Local                | Shape                                                               | Present on                       |
-| -------------------- | ------------------------------------------------------------------- | -------------------------------- |
-| `attached_record`    | `{resource:, record_id:, label:}`                                   | A record's page                  |
-| `attached_file`      | `{blob_id:, filename:, content_type:}`                              | A Media Library file's page      |
-| `attached_page`      | `{title:, path:}`                                                   | Any Avo page                     |
-| `attached_selection` | `{groups: [{resource:, records: [{record_id:, label:}]}], capped:}` | A page with rows checked         |
+| Local                | Shape                                                                              | Present on                  |
+| -------------------- | ---------------------------------------------------------------------------------- | --------------------------- |
+| `attached_record`    | `{resource:, record_id:, record_param:, label:}`                                   | A record's page             |
+| `attached_file`      | `{blob_id:, filename:, content_type:}`                                             | A Media Library file's page |
+| `attached_page`      | `{title:, path:}`                                                                  | Any Avo page                |
+| `attached_selection` | `{groups: [{resource:, records: [{record_id:, record_param:, label:}]}], capped:}` | A page with rows checked    |
 
 A page offers at most one of the first two. Rendering nothing is a valid way to turn any of it off.
+
+Name a record by `record_param`, its `to_param`. `record_id` is the primary key the chat stores, and an
+app that hides its keys behind a slug would see it in the prompt, and in anything the assistant
+repeats from it. The tools accept either.
 
 ## Open the chat
 
