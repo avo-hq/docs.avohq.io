@@ -1060,7 +1060,7 @@ Ejecting `instructions` (see [Replace the shipped prompts](#replace-the-shipped-
 
 ## Dictate a message
 
-The microphone in every composer — the bar, the new-chat page, and open conversations — transcribes speech into the message box: click to start, click to stop. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
+The microphone in every composer — the bar, the new-chat page, and open conversations — transcribes speech into the message box: click to start, click to stop. Sending the message stops it too, so what you dictated goes out and the mic doesn't keep listening. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
 
 Minimizing the chat window ends an open session, so the mic never keeps listening behind a closed window.
 
