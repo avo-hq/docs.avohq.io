@@ -145,6 +145,10 @@ Avo.configure do |config|
   # generic suggestions, translatable through i18n (avo.ai.empty_state.suggestions). Set this to
   # replace them outright with your own, e.g. naming real resources.
   config.ai.empty_state_suggestions = ["Show me this week's orders", "Create a new customer"]
+
+  # Close chat-bar pills nobody has opened for this long (see "Closing idle tabs automatically").
+  # Unset (the default) keeps them until closed.
+  config.ai.tab_expiry = 30.days
 end
 ```
 
@@ -975,6 +979,19 @@ The chat bar sits at the bottom of every Avo page. **Cmd+J** (or **Ctrl+J**) ope
 Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. Drag a pill to reorder them. The chat window lines its end edge up with the pill it was opened from and slides across when you switch, so it's always clear which conversation you're looking at. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. The open chats, their order, and the collapsed state are all remembered per device.
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way. The **×** in the title bar does the same thing: it closes the window, not the conversation. To take a chat out of the dock, use the × on its own pill; the conversation itself is kept either way, and it's still on your [chat list](#full-page-chats).
+
+To clear the dock in one go, open the history menu (the clock button next to **Agent**) and pick **Close all tabs** at the bottom. It does what every pill's × does, all at once: the pills go, and every conversation stays in the history list right above the button, one click from reopening. The entry only shows when there's at least one pill to close.
+
+### Closing idle tabs automatically
+
+Pills you stop using pile up. Set `config.ai.tab_expiry` and a pill nobody has opened for that long closes itself the next time an Avo page loads:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.tab_expiry = 30.days
+```
+
+It takes a duration or a number of seconds. It's unset by default, which keeps pills until someone closes them; zero, a negative value, or anything that isn't a number raises at boot. The clock restarts every time a pill's conversation is shown, and pills opened before you upgraded count as fresh rather than expiring on the first load. As with **Close all tabs**, only the pill goes — the conversation stays in the history menu and on your [chat list](#full-page-chats).
 
 To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Minimize to the chat bar** hands the conversation back to the floating bar. If you got there through **Open in full page**, it returns you to the page you came from and its tooltip names it; a chat page opened directly — from a link, the chat list, or a bookmark — has no such page, so it takes you home instead.
 
