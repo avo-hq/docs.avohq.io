@@ -49,14 +49,23 @@ What a chip carries beyond the title is up to the resource — see
 
 ## Count and break down
 
-Counts come from the real total, never from counting the rows on screen.
+Counts come from the database, never from counting the rows on screen.
 
-| Ask                                          | What you get                                    |
-| -------------------------------------------- | ----------------------------------------------- |
-| "How many orders do we have?"                | The total, even when only a page of rows was read |
-| "How many posts per status?"                 | A count per value                               |
-| "Which team has the most members?"           | Grouped counts, highest first                   |
-| "Which author has published the fewest posts?" | Grouped counts, lowest first                   |
+| Ask                                            | What you get                                         |
+| ---------------------------------------------- | ---------------------------------------------------- |
+| "How many orders do we have?"                  | The total                                            |
+| "How many posts per status?"                   | A count per value                                    |
+| "Which team has the most members?"             | Grouped counts, highest first                        |
+| "Which author has published the fewest posts?" | Grouped counts, lowest first                         |
+| "How many users signed up per month?"          | A count per day, week, or month, in your app's time zone |
+| "How many distinct customers placed an order?" | Distinct values of a column, not rows                |
+| "How many members does the Core team have?"    | Only the records belonging to that one parent record |
+
+**A "how many" question reads no records.** It goes to a counting tool that returns numbers and nothing else — no ids, no names, no column values — so answering it sends none of your data to the model provider. The same filters, scopes, and search apply as when listing records, and the answer says what was counted: "412 orders placed this month".
+
+Counting within a parent record goes through the same checks as opening that record's association in the admin: you have to be allowed to see the parent, to view it, and to view that association. A column hidden from you can't be counted by, grouped by, or filtered on either — a count over a column you can't see would still tell you what's in it.
+
+A count that runs longer than 10 seconds on PostgreSQL is stopped and reported as an error. You get a request to narrow it, never an estimate.
 
 If a list is longer than one page, the assistant says so — "showing 25 of 54" — instead of quietly presenting a subset as the whole.
 
