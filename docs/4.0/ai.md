@@ -147,7 +147,7 @@ Avo.configure do |config|
   config.ai.empty_state_suggestions = ["Show me this week's orders", "Create a new customer"]
 
   # Close chat-bar pills nobody has opened for this long (see "Closing idle tabs automatically").
-  # Unset (the default) keeps them until closed.
+  # Unset (the default), nil, or false keeps them until closed.
   config.ai.tab_expiry = 30.days
 end
 ```
@@ -1000,7 +1000,13 @@ Pills you stop using pile up. Set `config.ai.tab_expiry` and a pill nobody has o
 config.ai.tab_expiry = 30.days
 ```
 
-It takes a duration or a number of seconds. It's unset by default, which keeps pills until someone closes them; zero, a negative value, or anything that isn't a number raises at boot. The clock restarts every time a pill's conversation is shown, and pills opened before you upgraded count as fresh rather than expiring on the first load. As with **Close all tabs**, only the pill goes — the conversation stays in the history menu and on your [chat list](#full-page-chats).
+It takes a duration or a number of seconds. It's unset by default, which keeps pills until someone closes them. To turn it back off, set it to `nil` or `false` (or delete the line):
+
+```ruby
+config.ai.tab_expiry = false # pills stay until closed
+```
+
+Zero, a negative value, `true`, or anything else that isn't a number raises at boot. The clock restarts every time a pill's conversation is shown, and pills opened before you upgraded count as fresh rather than expiring on the first load. As with **Close all tabs**, only the pill goes — the conversation stays in the history menu and on your [chat list](#full-page-chats).
 
 To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Minimize to the chat bar** hands the conversation back to the floating bar. If you got there through **Open in full page**, it returns you to the page you came from and its tooltip names it; a chat page opened directly — from a link, the chat list, or a bookmark — has no such page, so it takes you home instead.
 
