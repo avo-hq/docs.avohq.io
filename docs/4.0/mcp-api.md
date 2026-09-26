@@ -103,15 +103,33 @@ config.mcp_server.connection_log_size = 2_000
 
 <Option name="`extra_tools`" headingSize="3">
 
-Tools of the app's own, served beside the nine. Each entry is a class name — never a constant, since the initializer runs before the app's classes are loadable — or a Hash whose `tool:` key names the class and whose other keys are passed to the tool's initializer. The class is either an `Avo::McpServer::Tool`, which the `avo:mcp_server:tool` generator scaffolds, or a `RubyLLM::Tool` written for [Avo AI](./ai.html#bring-your-own-tool) that declares `def self.capability`; the second is served through an adapter. Names are resolved on every request, and an entry that can't be served is dropped with a log line naming the reason. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+Tools of the app's own, served beside the nine. Each entry is a class name — never a constant, since the initializer runs before the app's classes are loadable — or a Hash whose `tool:` key names the class. The class is either an `Avo::McpServer::Tool`, which the `avo:mcp_server:tool` generator scaffolds, or a `RubyLLM::Tool` written for [Avo AI](./ai.html#bring-your-own-tool) that declares `def self.capability`; the second is served through an adapter. Names are resolved on every request, and an entry that can't be served is dropped with a log line naming the reason while the rest keep serving. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+
+A Hash entry's remaining keys are passed to the tool's initializer, so the Hash form is for a `RubyLLM::Tool`. An `Avo::McpServer::Tool` runs as class methods and is never instantiated; an entry naming one and carrying settings is dropped rather than served without them.
 
 ```ruby
-config.mcp_server.extra_tools = ["IssueInvoiceTool", {tool: "CrmTool", api_key: ENV["CRM_API_KEY"]}]
+config.mcp_server.extra_tools = [
+  "IssueInvoiceTool",                            # an Avo::McpServer::Tool takes no settings
+  {tool: "CrmTool", api_key: ENV["CRM_API_KEY"]} # a RubyLLM::Tool receives them in its initializer
+]
 ```
 
-- **Type:** `Array` of `String` or `Hash`
+`user:` is reserved: the key is dropped from an entry, and the admin the connection was authorized by is passed instead to a tool whose initializer accepts one.
+
+| Entry dropped because                                                                   | Applies to             |
+| --------------------------------------------------------------------------------------- | ---------------------- |
+| The class name doesn't resolve                                                          | both                   |
+| The class is neither an `Avo::McpServer::Tool` nor a `RubyLLM::Tool`                    | both                   |
+| It declares no `capability`, or one that isn't `avo:read`, `avo:write` or `avo:actions` | both                   |
+| Its tool name is already taken by a shipped tool or by an earlier entry                 | both                   |
+| Reading its name, description or argument schema raised                                 | both                   |
+| The entry carries keys besides `tool:`                                                  | `Avo::McpServer::Tool` |
+| It overrides `call`, where the capability gate runs                                     | `Avo::McpServer::Tool` |
+| Its argument schema doesn't resolve to an object                                        | `RubyLLM::Tool`        |
+
+- **Type:** `Array` of `String` or `Hash` with a String `tool:` key
 - **Default:** `[]`
-- **Validation:** raises `ArgumentError` at boot for an entry that is neither a String nor a Hash with a String `tool:` key
+- **Validation:** raises `ArgumentError` at boot for an entry that is neither a String nor a Hash with a String `tool:` key. Everything else is checked per request, and a failure drops that entry alone.
 
 </Option>
 
