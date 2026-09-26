@@ -34,6 +34,26 @@ Add your app's authentication and a size check to that endpoint: [Protect the di
 
 </Option>
 
+## `avo-ai`: records are named by `to_param`
+
+<Option name="Records are named by to_param, not their primary key">
+
+### What changed
+
+The assistant names every record the way Avo's own URLs do: by `to_param`. On a resource that hides its primary keys behind friendly_id, a hashid gem, or its own `to_param`, the slug now appears in the system prompt, in record labels (`Hello world (#hello-world)`), in chip and card links, and in the `reference` the tools hand the model. The tools look an id up through the resource's `find_record_method`, and still accept a primary key. Their `id` parameters are strings.
+
+Resources that keep Rails' default `to_param` see no difference.
+
+### Action Required
+
+Nothing, unless you replaced part of the assistant with your own copy. Check each of these:
+
+- **An ejected `attached_context.txt.erb`.** Name records by `attached_record[:record_param]` and each selected record's `record_param`, not `record_id`, or your prompt keeps the primary key. See [Change how it reads](./ai.html#change-how-it-reads).
+- **An ejected write tool** (`update_record`, `delete_record`, `update_records`, `run_action`, `active_storage_attachment`). The model now passes a slug. Look it up with `find_authorized_record_by_param`, and declare the `id` parameter as a string. Diff your copy against the gem's.
+- **A tool of your own that returns a `reference`.** Build it from `record.to_param`. A reference built from `record.id` on a slugged resource no longer renders as a chip. See [Bring your own tool](./ai.html#bring-your-own-tool).
+
+</Option>
+
 ## Upgrade to `avo-ai` 4.2.0.beta.4
 
 <Option name="Batch updates are undone as one change: run the installer again">

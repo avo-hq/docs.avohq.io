@@ -828,6 +828,24 @@ Three things the server decides for you, whatever the entry says:
 
 **Returning records? Hand back a reference.** Put the string that names each record in your result — `"avo:#{short_name(resource_class)}/#{record.to_param}"` — and the model copies it into its answer, where it renders as a [chip](#record-chips). Build it from `to_param`, not `id`, so an app that hides its keys behind a slug or hashid keeps them hidden. When the model passes an id back to your tool, look it up with `find_authorized_record_by_param(resource_class, model_class, id)`: it takes the param out of a reference, or a primary key the model selected, and reads either through the signed-in user's scope.
 
+```ruby
+# app/tools/crm_tool.rb
+def execute(resource:, id:)
+  resource_class = find_resource_class(resource)
+  return {error: "No #{resource} resource."} unless resource_class
+
+  record = find_authorized_record_by_param(resource_class, resource_class.model_class, id)
+  return {error: "No #{resource} #{id}."} unless record
+
+  json_result(
+    title: record.name,
+    reference: "avo:#{short_name(resource_class)}/#{record.to_param}"
+  )
+end
+```
+
+Declare that `id` parameter as a string, since a slug is one.
+
 :::warning What a tool returns goes to your model provider
 Everything `execute` returns is sent to the provider on that turn and on every later turn of the conversation, and it's stored on the tool call. Return the minimum that answers the question — no API keys, no credentials, and no personal data the question didn't call for. Read secrets from `ENV` or `Rails.application.credentials`; never write one into the tool file or the initializer. When an entry fails to resolve, the error names the entry by its class and key names only — the values never reach a log, the error tracker, or the **Agent tools** field.
 :::
@@ -981,14 +999,18 @@ bin/rails generate avo:ai:eject instructions
 
 Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives one local per source, each `nil` when the conversation did not start from that thing:
 
-| Local                | Shape                                                               | Present on                       |
-| -------------------- | ------------------------------------------------------------------- | -------------------------------- |
-| `attached_record`    | `{resource:, record_id:, label:}`                                   | A record's page                  |
-| `attached_file`      | `{blob_id:, filename:, content_type:}`                              | A Media Library file's page      |
-| `attached_page`      | `{title:, path:}`                                                   | Any Avo page                     |
-| `attached_selection` | `{groups: [{resource:, records: [{record_id:, label:}]}], capped:}` | A page with rows checked         |
+| Local                | Shape                                                                              | Present on                  |
+| -------------------- | ---------------------------------------------------------------------------------- | --------------------------- |
+| `attached_record`    | `{resource:, record_id:, record_param:, label:}`                                   | A record's page             |
+| `attached_file`      | `{blob_id:, filename:, content_type:}`                                             | A Media Library file's page |
+| `attached_page`      | `{title:, path:}`                                                                  | Any Avo page                |
+| `attached_selection` | `{groups: [{resource:, records: [{record_id:, record_param:, label:}]}], capped:}` | A page with rows checked    |
 
 A page offers at most one of the first two. Rendering nothing is a valid way to turn any of it off.
+
+Name a record by `record_param`, its `to_param`. `record_id` is the primary key the chat stores, and an
+app that hides its keys behind a slug would see it in the prompt, and in anything the assistant
+repeats from it. The tools accept either.
 
 ## Open the chat
 
