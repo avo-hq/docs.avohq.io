@@ -4,7 +4,37 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
-## Upgrade to `avo-ai` 4.2.0.beta.5
+## `avo-ai`: the composer limits what it uploads
+
+<Option name="Files over 25 MB, and types the assistant can't use, are refused">
+
+### What changed
+
+The chat composer used to upload any file. It now takes images (PNG, JPEG, GIF, WebP), PDFs and text files — markdown, plain text, CSV, TSV, JSON — up to 25 MB, and refuses anything else as it is added, before it uploads, with a line under the draft saying why. A message sent without the composer is held to the same rule: a file it would have refused is left off the message.
+
+### Action Required
+
+Nothing, unless people upload other files — say, Word documents or videos to attach to records. Allow them under `config.ai.uploads`; see [What the composer accepts](./ai.html#what-the-composer-accepts).
+
+```ruby
+config.ai.uploads = {accept: ["*/*"], max_size: 100.megabytes} # [!code highlight]
+```
+
+</Option>
+
+<Option name="Protect Rails' direct-upload endpoint">
+
+### What changed
+
+Nothing in Avo — this was always true. The composer uploads through `POST /rails/active_storage/direct_uploads`, which Rails ships without authentication, and the new limits don't cover a request that goes straight to it.
+
+### Action Required
+
+Add your app's authentication and a size check to that endpoint: [Protect the direct-upload endpoint](./ai.html#protect-the-direct-upload-endpoint).
+
+</Option>
+
+## `avo-ai`: records are named by `to_param`
 
 <Option name="Records are named by to_param, not their primary key">
 
@@ -20,7 +50,7 @@ Nothing, unless you replaced part of the assistant with your own copy. Check eac
 
 - **An ejected `attached_context.txt.erb`.** Name records by `attached_record[:record_param]` and each selected record's `record_param`, not `record_id`, or your prompt keeps the primary key. See [Change how it reads](./ai.html#change-how-it-reads).
 - **An ejected write tool** (`update_record`, `delete_record`, `update_records`, `run_action`, `active_storage_attachment`). The model now passes a slug. Look it up with `find_authorized_record_by_param`, and declare the `id` parameter as a string. Diff your copy against the gem's.
-- **A tool of your own that returns a `reference`.** Build it from `record.to_param`. A reference built from `record.id` on a slugged resource no longer renders as a chip. See [Name records by `to_param`](./ai.html#name-records-by-to-param).
+- **A tool of your own that returns a `reference`.** Build it from `record.to_param`. A reference built from `record.id` on a slugged resource no longer renders as a chip. See [Bring your own tool](./ai.html#bring-your-own-tool).
 
 </Option>
 

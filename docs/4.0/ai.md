@@ -134,6 +134,15 @@ Avo.configure do |config|
     max_import_rows: 1000        # data rows one confirmed import may create
   }
 
+  # What the composer lets people upload (see "Send files with a message"). Set only the keys
+  # you want to change. accept takes what an HTML accept attribute does: MIME types, wildcards
+  # ("image/*", or "*/*" for anything) and extensions (".csv").
+  config.ai.uploads = {
+    max_size: 25.megabytes,
+    accept: %w[image/png image/jpeg image/gif image/webp application/pdf text/* application/json
+      .md .markdown .txt .csv .tsv .json]
+  }
+
   # Records one batch update may change (see "Reading files and importing from them"). 1 to 500.
   config.ai.max_update_records = 50
 
@@ -145,6 +154,10 @@ Avo.configure do |config|
   # generic suggestions, translatable through i18n (avo.ai.empty_state.suggestions). Set this to
   # replace them outright with your own, e.g. naming real resources.
   config.ai.empty_state_suggestions = ["Show me this week's orders", "Create a new customer"]
+
+  # Close chat-bar pills nobody has opened for this long (see "Closing idle tabs automatically").
+  # Unset (the default), nil, or false keeps them until closed.
+  config.ai.tab_expiry = 30.days
 end
 ```
 
@@ -260,11 +273,12 @@ with, so a reference to a record the viewer is not allowed to read renders as th
 rather than as a chip. That holds for a reference the assistant wrote, one typed into a message, and
 one that arrived through record data or an uploaded file.
 
-A chip names its record the way Avo's own URLs do: by `to_param`. An app that hides its primary keys
-behind friendly_id, a hashid gem, or a `to_param` of its own gets the slug in every chip, link, card
-title and reference, never the key, and a reference resolves through the resource's
-`find_record_method` just as the record's page does. On such a resource, a raw primary key typed into
-a message isn't a name the record answers to, so it renders as plain text.
+A chip names its record the way your Avo pages do: by `to_param`, looked up through the resource's
+own `find_record_method`. If your app hides its primary keys behind friendly_id, hashids, or its own
+`to_param`, the assistant's references and the chip's link carry that same slug or hashid, never the
+raw key. A raw key such a resource doesn't answer to — `avo:Post/12` typed into a message — renders
+as plain text, the same as a record that doesn't exist. Resources on Avo's default finder are
+unaffected: their param is the primary key.
 
 **A set of records comes back as a list of rows.** When the answer *is* a set — "the last three
 users", "which projects are running", "show me the cities" — the assistant names one record per
@@ -778,7 +792,7 @@ That writes `app/tools/crm_tool.rb`, defining `CrmTool` — a `RubyLLM::Tool` th
 | Mixin | What it gives you |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | `Avo::Ai::ToolSupport` | `json_result` for the reply shape, plus resource lookup and schema introspection helpers |
-| `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!` |
+| `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!`, `find_authorized_record_by_param` |
 | `Avo::Ai::InspectionAware` | Answers with the touched resource's real columns, scopes, and required attributes under `resource_schema` — once per run per resource. It reads the resource name from your tool's own `resource:` argument |
 
 :::warning Include `InspectionAware` in the tool class itself
@@ -812,11 +826,7 @@ Three things the server decides for you, whatever the entry says:
 - **Authorization is yours to call.** Nothing in the gem stops a tool reading the whole table — reach data through `authorized_relation` and `authorize_record_action!` so your tool sees exactly what the signed-in user sees in Avo, and rescue `Avo::Ai::ToolAuthorization::IdentityError` to report "not allowed" as a result instead of failing the run.
 - **Two tools can't share a wire name.** Registering a tool whose name collides with a shipped one raises when the roster is built. To replace a shipped tool, exclude it first — that's what [ejecting](#replace-a-shipped-tool-with-your-own-copy) does for you.
 
-### Name records by `to_param`
-
-A record your tool returns becomes a [chip](#record-chips) when the result carries its `reference`: `avo:<Resource>/<id>`, where the id is the record's `to_param`, as in Avo's own URLs. Build it from `to_param`, never `id`. On a resource that names its records by slug or hashid, a reference built from the primary key shows the key you meant to hide, and it doesn't resolve to a chip.
-
-An id the model passes back is that same param, so look the record up with `find_authorized_record_by_param`. It goes through the resource's `find_record_method` and reads the result back through the signed-in user's scope, so a custom finder can't widen what your tool reaches. It still accepts a primary key the model read off an `id` column.
+**Returning records? Hand back a reference.** Put the string that names each record in your result — `"avo:#{short_name(resource_class)}/#{record.to_param}"` — and the model copies it into its answer, where it renders as a [chip](#record-chips). Build it from `to_param`, not `id`, so an app that hides its keys behind a slug or hashid keeps them hidden. When the model passes an id back to your tool, look it up with `find_authorized_record_by_param(resource_class, model_class, id)`: it takes the param out of a reference, or a primary key the model selected, and reads either through the signed-in user's scope.
 
 ```ruby
 # app/tools/crm_tool.rb
@@ -1010,6 +1020,25 @@ Every chat you open becomes a pill in the dock, newest first, so several convers
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way. The **×** in the title bar does the same thing: it closes the window, not the conversation. To take a chat out of the dock, use the × on its own pill; the conversation itself is kept either way, and it's still on your [chat list](#full-page-chats).
 
+To clear the dock in one go, open the history menu (the clock button next to **Agent**) and pick **Close all tabs** at the bottom. It does what every pill's × does, all at once: the pills go, and every conversation stays in the history list right above the button, one click from reopening. The entry only shows when there's at least one pill to close.
+
+### Closing idle tabs automatically
+
+Pills you stop using pile up. Set `config.ai.tab_expiry` and a pill nobody has opened for that long closes itself the next time an Avo page loads:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.tab_expiry = 30.days
+```
+
+It takes a duration or a number of seconds. It's unset by default, which keeps pills until someone closes them. To turn it back off, set it to `nil` or `false` (or delete the line):
+
+```ruby
+config.ai.tab_expiry = false # pills stay until closed
+```
+
+Zero, a negative value, `true`, or anything else that isn't a number raises at boot. The clock restarts every time a pill's conversation is shown, and pills opened before you upgraded count as fresh rather than expiring on the first load. As with **Close all tabs**, only the pill goes — the conversation stays in the history menu and on your [chat list](#full-page-chats).
+
 To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Minimize to the chat bar** hands the conversation back to the floating bar. If you got there through **Open in full page**, it returns you to the page you came from and its tooltip names it; a chat page opened directly — from a link, the chat list, or a bookmark — has no such page, so it takes you home instead.
 
 The button is there before you've sent anything, too. On the new-chat view it points at the full-page composer instead, so you can start a long message with the whole window rather than the panel.
@@ -1056,6 +1085,59 @@ Each file shows as a chip under your message. Clicking an image or a PDF opens t
 Text files — markdown, plain text, CSV, TSV, and JSON — take a different route from images and PDFs: they aren't sent to the model inline. The model learns the file's name, type, size, and blob id, and reads it in windows through the `read_file` tool when it needs the content. See [Reading files and importing from them](#reading-files-and-importing-from-them).
 
 The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
+
+### What the composer accepts
+
+By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files — markdown, plain text, CSV, TSV, JSON — which it reads in windows. Files can be up to 25 MB.
+
+Anything else is refused as you add it, before it uploads, with a line under the draft naming the file and why — so a 2 GB video never leaves the browser. The same rule is checked again when the message is sent, so a request that skips the composer can't attach a file it would have refused.
+
+Change either side under `config.ai.uploads`:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.ai.uploads = {
+    max_size: 50.megabytes,
+    # Keeps the defaults and adds Word documents, e.g. for attaching to records.
+    accept: %w[image/png image/jpeg image/gif image/webp application/pdf text/* application/json
+      .md .markdown .txt .csv .tsv .json
+      application/vnd.openxmlformats-officedocument.wordprocessingml.document .docx]
+  }
+end
+```
+
+`accept` reads like the HTML `accept` attribute, because that is where it ends up — the paperclip's file dialog is narrowed to it. Entries are MIME types (`application/pdf`), wildcards (`image/*`) or extensions (`.csv`), and a file passes when its type **or** its extension matches. The extensions matter: browsers often hand over a `.md` or `.tsv` with no type at all. Use `["*/*"]` to allow any file — for example when people upload files only to have the assistant attach them to records. A malformed entry (`"pdf"`) or an empty list raises at boot.
+
+:::info
+Setting `accept` replaces the list rather than adding to it, so repeat the defaults you want to keep.
+:::
+
+### Protect the direct-upload endpoint
+
+The composer uploads through Rails' own direct-upload endpoint, `POST /rails/active_storage/direct_uploads`. Rails ships that endpoint **without authentication**: anyone who can load a page from your app can create blobs of any declared size and get a URL to upload them to. That is true whether or not you use Avo AI — the composer's limits run in the browser and at send time, and neither stops a request that goes straight to the endpoint.
+
+Protecting it is your app's job, because only your app knows who is signed in. The smallest fix is a `before_action` on Rails' controller, using your app's own authentication and size limit:
+
+```ruby
+# config/initializers/active_storage.rb
+Rails.application.config.to_prepare do
+  ActiveStorage::DirectUploadsController.class_eval do
+    # Devise's helper — use whatever your app authenticates with.
+    before_action :authenticate_user!
+
+    # The composer's own ceiling. Raise it if other upload fields in your app need more.
+    before_action do
+      if params.dig(:blob, :byte_size).to_i > Avo.configuration.ai.uploads[:max_size]
+        head :content_too_large
+      end
+    end
+  end
+end
+```
+
+`to_prepare` re-applies it whenever development reloads code. With this in place, a signed-out request gets a `401`, an oversized one a `413`, and the composer works as before. Checking the declared size is enough on the Disk and S3 services, which refuse an upload whose body is a different length; on another service, check that it enforces the declared length too.
+
 
 ## Attach a skill with a message
 
