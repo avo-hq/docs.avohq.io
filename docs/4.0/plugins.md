@@ -289,6 +289,8 @@ Please check out [the scripts](https://github.com/avo-hq/avo/blob/main/package.j
 
 We don't yet have a generator for that but what we do is to create a new Rails Engine and add the plugin to it.
 
+If what you're packaging is a look — a stylesheet, partials, brand assets — it's a [theme](./themes.html#ship-a-theme-as-a-gem), not a plugin: `rails g avo:theme NAME --gem` generates the whole gem for you.
+
 1. Run `rails plugin new feed-view`
 1. Add the plugin to the `engine.rb` file
 1. Register the plugin to the `lib/avo/feed_view/engine.rb` file
