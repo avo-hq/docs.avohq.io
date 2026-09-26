@@ -541,7 +541,7 @@ class PostPolicy < ApplicationPolicy
 end
 ```
 
-A non-admin never sees `budget` on the index table, the show page, the edit form, in global search, in a `record_link`, through the REST API, in the AI chat, or over MCP. They cannot set it with a hand-built form submission either, because it is gone from the permitted params too.
+A non-admin never sees `budget` on the index table, the show page, the edit form, in global search, in a `record_link`, through the [REST API](./rest-api.html), in the [AI chat](./ai.html), or over [MCP](./mcp.html). They cannot set it with a hand-built form submission either, because it is gone from the permitted params too.
 
 ### Declare which fields a user may reach
 
