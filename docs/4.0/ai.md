@@ -258,6 +258,13 @@ with, so a reference to a record the viewer is not allowed to read renders as th
 rather than as a chip. That holds for a reference the assistant wrote, one typed into a message, and
 one that arrived through record data or an uploaded file.
 
+A chip names its record the way your Avo pages do: by `to_param`, looked up through the resource's
+own `find_record_method`. If your app hides its primary keys behind friendly_id, hashids, or its own
+`to_param`, the assistant's references and the chip's link carry that same slug or hashid, never the
+raw key. A raw key such a resource doesn't answer to — `avo:Post/12` typed into a message — renders
+as plain text, the same as a record that doesn't exist. Resources on Avo's default finder are
+unaffected: their param is the primary key.
+
 **A set of records comes back as a list of rows.** When the answer *is* a set — "the last three
 users", "which projects are running", "show me the cities" — the assistant names one record per
 line, and the transcript draws those lines as a stack of rows instead of a bulleted paragraph: the
@@ -770,7 +777,7 @@ That writes `app/tools/crm_tool.rb`, defining `CrmTool` — a `RubyLLM::Tool` th
 | Mixin | What it gives you |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | `Avo::Ai::ToolSupport` | `json_result` for the reply shape, plus resource lookup and schema introspection helpers |
-| `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!` |
+| `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!`, `find_authorized_record_by_param` |
 | `Avo::Ai::InspectionAware` | Answers with the touched resource's real columns, scopes, and required attributes under `resource_schema` — once per run per resource. It reads the resource name from your tool's own `resource:` argument |
 
 :::warning Include `InspectionAware` in the tool class itself
@@ -803,6 +810,8 @@ Three things the server decides for you, whatever the entry says:
 - **The acting user, the conversation, and the inspection tracker are injected server-side.** `user:` is passed to your initializer when it accepts one, and `chat` / `inspection_tracker` are set afterwards if your tool declares the accessors (the generated one declares `chat` and picks up `inspection_tracker` from `Avo::Ai::InspectionAware`). `user:`, `chat:` and `inspection_tracker:` keys in an `extra_tools` entry are stripped, so the initializer can't hand your tool a different user than the one who's chatting.
 - **Authorization is yours to call.** Nothing in the gem stops a tool reading the whole table — reach data through `authorized_relation` and `authorize_record_action!` so your tool sees exactly what the signed-in user sees in Avo, and rescue `Avo::Ai::ToolAuthorization::IdentityError` to report "not allowed" as a result instead of failing the run.
 - **Two tools can't share a wire name.** Registering a tool whose name collides with a shipped one raises when the roster is built. To replace a shipped tool, exclude it first — that's what [ejecting](#replace-a-shipped-tool-with-your-own-copy) does for you.
+
+**Returning records? Hand back a reference.** Put the string that names each record in your result — `"avo:#{short_name(resource_class)}/#{record.to_param}"` — and the model copies it into its answer, where it renders as a [chip](#record-chips). Build it from `to_param`, not `id`, so an app that hides its keys behind a slug or hashid keeps them hidden. When the model passes an id back to your tool, look it up with `find_authorized_record_by_param(resource_class, model_class, id)`: it takes the param out of a reference, or a primary key the model selected, and reads either through the signed-in user's scope.
 
 :::warning What a tool returns goes to your model provider
 Everything `execute` returns is sent to the provider on that turn and on every later turn of the conversation, and it's stored on the tool call. Return the minimum that answers the question — no API keys, no credentials, and no personal data the question didn't call for. Read secrets from `ENV` or `Rails.application.credentials`; never write one into the tool file or the initializer. When an entry fails to resolve, the error names the entry by its class and key names only — the values never reach a log, the error tracker, or the **Agent tools** field.
