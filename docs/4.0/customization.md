@@ -81,7 +81,7 @@ end
 
 <Image src="/assets/img/4_0/customization/per-page-pagination.webm" dark-src="/assets/img/4_0/customization/per-page-pagination-dark.webm" width="888" height="280" alt="An Avo index table with four rows and a pagination bar; the per-page picker opens upward to list 4, 12, 24 and 48, then closes." prompt="index table with 4 rows and pagination bar; per-page picker opens listing 4, 12, 24, 48 then closes" />
 
-For `has_many` associations, control how many records are visible in their **Index** view with [`via_per_page`](./customization-api.html#via_per_page).
+For `has_many` associations, control how many records are visible in their **Index** view with [`via_per_page`](./customization-api.html#via_per_page), or per field with the [`per_page`](./associations/has_many#per_page) option.
 
 For the pagination engine itself — countless mode, page size behavior — set global defaults with [`pagination`](./customization-api.html#pagination), which takes the same keys as the per-resource [`self.pagination`](./resources-api#self.pagination) option.
 

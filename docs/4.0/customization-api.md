@@ -149,7 +149,7 @@ config.per_page_steps = [12, 24, 48, 72]
 
 <Option name="`via_per_page`" headingSize="3">
 
-The number of records shown on association views (`has_many` tables and similar).
+The number of records shown on association views (`has_many` tables and similar). Override it for a single field with the [`per_page`](./associations/has_many#per_page) option.
 
 ```ruby
 config.via_per_page = 8
