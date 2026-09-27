@@ -206,6 +206,7 @@ const config = {
             { text: "What you can ask", link: "/4.0/ai-what-you-can-ask.html" },
             { text: "Agents and tools", link: "/4.0/ai-agents-and-tools.html" },
             { text: "MCP server", link: "/4.0/mcp.html" },
+            { text: "CLI", link: "/4.0/cli.html" },
           ]
         },
         {
@@ -359,10 +360,6 @@ const config = {
             {
               text: "REST API",
               link: "/4.0/rest-api.html",
-            },
-            {
-              text: "Command line client",
-              link: "/4.0/cli.html",
             },
             {
               text: "Collaboration",
