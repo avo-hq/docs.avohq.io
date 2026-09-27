@@ -1,8 +1,15 @@
 <Option name="`linkable`">
 
-Use this option to make the association title clickable. That link will open a new page with the same view.
+Adds an "open in a new tab" icon next to the association's panel title.
 
-This feature doesn't go deeper than this. It just helps you see the association table easier in a separate page.
+- On `has_many` and `has_and_belongs_to_many`, the icon opens the association table on its own page.
+- On `has_one`, the icon opens the associated record's show page.
+
+```ruby
+field :admin, as: :has_one, linkable: true
+```
+
+This feature doesn't go deeper than this. It just helps you get to the association in a separate page.
 
 <!-- TODO(screenshot→gif): Replace the static PNG below with an animated GIF once the flow (Team show → red highlight on link icon → dedicated Memberships page) reads clearly in motion. Image: docs/public/assets/img/4_0/associations/has-many-linkable.webp → has-many-linkable.gif (+ -dark.gif). Spec: tools/screenshots/specs.mjs → GIF_SPECS `has-many-linkable-gif`. -->
 
