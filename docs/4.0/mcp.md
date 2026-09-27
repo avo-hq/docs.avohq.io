@@ -200,6 +200,10 @@ Every tool call passes two gates, in this order:
 
 So a connection can never do anything its admin couldn't do by hand. Granting a capability is permission to *try*; the policy decides. And because the admin is re-resolved every time, a permission change takes effect on the next call — demote an admin to read-only and their connected client stops writing, with nothing to revoke.
 
+### An action runs on the view it would have been started from
+
+[`view`](./actions.html#control-visibility-and-authorization) is `show` when `run_action` targets one record and `index` for a bulk run or [one that takes no records](./actions.html#run-an-action-without-records) — the page an admin would have clicked it from, never `new`. The action's `authorize` block, its `fields`, and `handle` all read that value, so an action that branches on `view.show?` or `view.index?` answers a client as it does on a click. A bulk run also hands the action no current record, the way the panel does when several rows are checked.
+
 ### Keep a field out of a client's reach
 
 The [`visible:`](./field-options-api.html#visible) blocks on your fields apply to reads *and* writes. A field the panel hides from this admin isn't returned by any read tool, isn't listed by `list_resources`, and can't be written even on a record they may otherwise edit. Read-only fields are refused the same way, and so are `id`, `created_at`, `updated_at`, and any column whose name looks like a credential (`password`, `token`, `secret`, `digest`). A refused attribute fails the call rather than being silently dropped.

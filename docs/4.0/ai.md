@@ -466,6 +466,8 @@ Ask for it in whatever words you'd use with a colleague — "archive the Orbit p
 
 [Actions that run without records](./actions.html#run-an-action-without-records) work too — the assistant runs them with no record at all.
 
+**It runs on the view it would have been started from.** [`view`](./actions.html#control-visibility-and-authorization) is `show` when the run targets one record and `index` for a bulk run or [one that takes no records](./actions.html#run-an-action-without-records) — the page you would have clicked the action from, never `new`. The action's `authorize` block, its `fields`, and `handle` all read that value, so an action that branches on `view.show?` or `view.index?` behaves in the chat as it does on a click. A display-only field the action declares — a badge, a key/value — shows read-only on the card beside the inputs, the way Avo's own modal renders it.
+
 ### Finding an action without naming its resource
 
 People ask in verbs. "Refresh the models", "send the welcome email", "export everything" — none of those name a resource, and none of them need to. The assistant can list every action registered across the application, each beside the resource that owns it, pick the one that matches what you asked, and run it from there.
@@ -1020,6 +1022,8 @@ Every chat you open becomes a pill in the dock, newest first, so several convers
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way. The **×** in the title bar does the same thing: it closes the window, not the conversation. To take a chat out of the dock, use the × on its own pill; the conversation itself is kept either way, and it's still on your [chat list](#full-page-chats).
 
+**The window sizes itself to the screen, and remembers what you drag it to.** Its default is a share of the viewport rather than a fixed box — floored so a laptop still gets a usable panel, capped so a large monitor doesn't hand the chat half the page, and growing smoothly as you resize the browser. Drag its top edge, its start edge, or the corner between them to resize it; the size you land on is kept per device and restored on your next page load, clamped back down if you come back on a smaller screen. The panel never reaches under Avo's top navbar, however far you drag.
+
 To clear the dock in one go, open the history menu (the clock button next to **Agent**) and pick **Close all tabs** at the bottom. It does what every pill's × does, all at once: the pills go, and every conversation stays in the history list right above the button, one click from reopening. The entry only shows when there's at least one pill to close.
 
 ### Closing idle tabs automatically
@@ -1180,7 +1184,7 @@ Ejecting `instructions` (see [Replace the shipped prompts](#replace-the-shipped-
 
 The microphone in every composer — the bar, the new-chat page, and open conversations — transcribes speech into the message box: click to start, click to stop. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
 
-Minimizing the chat window ends an open session, so the mic never keeps listening behind a closed window.
+An open session ends the moment you stop needing it: sending the message stops the mic, and so does minimizing the window or switching to another chat in the dock — so nothing keeps listening behind a window you've left.
 
 It dictates in your admin's language: the recognizer follows the page's `lang` attribute, falling back to the browser's own language setting.
 
