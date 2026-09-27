@@ -168,7 +168,7 @@ The two thinking options fall back to an environment variable when unset, so you
 | `thinking_effort` | `AVO_AI_THINKING_EFFORT`   | unset   |
 | `thinking_budget` | `AVO_AI_THINKING_BUDGET`   | unset   |
 
-When both are unset, no thinking parameters are sent to the provider.
+When both are unset, no effort or budget is sent. Models that return their reasoning only as a summary (OpenAI and Azure reasoning models, and Anthropic's effort-only models) are still asked for that summary, so readers see a trace either way.
 
 ### Thinking
 
@@ -207,6 +207,10 @@ higher effort buys a longer, deeper trace; a smaller one keeps it to a line or t
 models the trace is the model's own reasoning verbatim, so the budget bounds it directly. On
 effort models what renders is the provider's summary of the reasoning — its length loosely follows
 the effort, and its wording isn't steerable from your side.
+
+A reply only gets a reasoning panel when the provider sent readable text. A bare signature or a
+thinking token count, which is what comes back when a model thought too briefly to summarize, shows
+nothing.
 
 :::info
 Thinking only reaches models that declare reasoning support. Sending it to a plain chat model like
@@ -1020,7 +1024,7 @@ Every chat you open becomes a pill in the dock, newest first, so several convers
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way. The **×** in the title bar does the same thing: it closes the window, not the conversation. To take a chat out of the dock, use the × on its own pill; the conversation itself is kept either way, and it's still on your [chat list](#full-page-chats).
 
-To clear the dock in one go, open the history menu (the clock button next to **Agent**) and pick **Close all tabs** at the bottom. It does what every pill's × does, all at once: the pills go, and every conversation stays in the history list right above the button, one click from reopening. The entry only shows when there's at least one pill to close.
+To clear the dock in one go, open the history menu (the clock button next to **Agent**) and pick **Clear open chats** at the bottom. It does what every pill's × does, all at once, and closes the chat window: the pills go, and every conversation stays in the history list right above the button, one click from reopening. The entry only shows when there's at least one pill to close.
 
 ### Closing idle tabs automatically
 
@@ -1037,7 +1041,7 @@ It takes a duration or a number of seconds. It's unset by default, which keeps p
 config.ai.tab_expiry = false # pills stay until closed
 ```
 
-Zero, a negative value, `true`, or anything else that isn't a number raises at boot. The clock restarts every time a pill's conversation is shown, and pills opened before you upgraded count as fresh rather than expiring on the first load. As with **Close all tabs**, only the pill goes — the conversation stays in the history menu and on your [chat list](#full-page-chats).
+Zero, a negative value, `true`, or anything else that isn't a number raises at boot. The clock restarts every time a pill's conversation is shown, and pills opened before you upgraded count as fresh rather than expiring on the first load. As with **Clear open chats**, only the pill goes — the conversation stays in the history menu and on your [chat list](#full-page-chats).
 
 To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Minimize to the chat bar** hands the conversation back to the floating bar. If you got there through **Open in full page**, it returns you to the page you came from and its tooltip names it; a chat page opened directly — from a link, the chat list, or a bookmark — has no such page, so it takes you home instead.
 
