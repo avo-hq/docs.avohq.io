@@ -4,6 +4,76 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Field authorization: `avo-authorization` 4.2.1
+
+<Option name="Nothing to add to your policies">
+
+### What changed
+
+A Pundit policy can now name which of a resource's fields a user may reach, with `whitelisted_fields` and `blacklisted_fields`, and every Avo surface honors the answer for reads and writes. See [Field authorization](./authorization.html#field-authorization).
+
+### Action Required
+
+None. Field lists are opt-in: a policy that declares neither restricts nothing, whether `explicit_authorization` is on or off. Behavior changes only once a policy declares a list.
+
+Release `avo-authorization` 4.2.1 together with, or before, `avo-ai` 4.2.0.beta.6 and `avo-mcp_server` 4.2.0.beta.9. Both call code that only 4.2.1 ships.
+
+</Option>
+
+## `avo-api` 4.2.7: `visible:` hides a field from the API too
+
+<Option name="A field whose visible: proc answers false is no longer serialized">
+
+### What changed
+
+The API used to check only a field's `show_on` / `hide_on` options, so a field a `visible:` proc hid from a user in the panel was still in that user's API payload. It is now left out, the same as in the panel.
+
+A failed create, update or delete no longer names a field a policy withholds from the token's owner in `errors`. The failure is reported on `base` instead.
+
+### Action Required
+
+Nothing, unless an API client reads a field that a `visible:` proc hides from the token's owner. Make the proc answer `true` for that user, or the field stays out of the payload.
+
+</Option>
+
+## `avo-ai` 4.2.0.beta.6: the chat reads through the resource's fields
+
+<Option name="A column no field declares is no longer reachable from the chat">
+
+### What changed
+
+The assistant used to read, filter, sort, group and search any column on the model, except password- and token-shaped ones. It now goes through the resource the way the panel does. A column is reachable only when a field the user may reach claims it, and associations are traversed only through an association field. A column no field declares is not returned, filtered, sorted, grouped, searched, written, imported, or named in a schema or an inspector report.
+
+Three things the panel exposes without a field still count:
+
+- **`discreet_information`:** the timestamps and id a resource lists there are readable.
+- **`created_at`:** it stays a sort key whenever the column exists.
+- **`extra_params`:** the columns a resource opens there are writable.
+
+A model with no Avo resource is never queried or described, and an association check through one is refused.
+
+### Action Required
+
+Declare a field for every column the chat should work with. A field only one role should see still takes a `visible:` proc or, with `avo-authorization`, a policy field list. See [How the assistant works](./ai.html#how-the-assistant-works).
+
+</Option>
+
+## `avo-mcp_server` 4.2.0.beta.9: sorting and errors follow the resource's fields
+
+<Option name="Clients sort by field columns, and errors name only what the admin may see">
+
+### What changed
+
+- **Sorting:** `list_records` sorts only by a column behind a field the admin may reach, or by `created_at`. Any other `sort_by` is refused, with the sortable columns listed.
+- **Validation errors:** failed writes name only attributes within the admin's reach. This covers the messages, `requiredAttributes`, `optionalAttributes` and `missingRequiredAttributes`. The server log records which attributes were dropped.
+- **`update_record`:** its `changed` list names only readable columns.
+
+### Action Required
+
+Nothing, unless a client sorts by a column with no field. Declare a field for it. See [The MCP server](./mcp.html).
+
+</Option>
+
 ## `avo-ai`: the composer limits what it uploads
 
 <Option name="Files over 25 MB, and types the assistant can't use, are refused">
