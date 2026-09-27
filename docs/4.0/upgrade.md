@@ -4,6 +4,27 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo-ai`, `avo-mcp_server`: an agent-run action sees the view it was started from
+
+<Option name="`view` is show or index inside an action the assistant or a client runs">
+
+### What changed
+
+An action the chat or a connected MCP client runs used to be built on `view: :new`. It is now built on the view the panel would have started it from: `show` when the run targets one record, `index` for a bulk run or one that takes no records. That is the value its `authorize` block, its `fields`, and `handle` read as `view`, matching [how Avo hands an action its view](./actions.html#control-visibility-and-authorization) on a click. A bulk run over MCP also hands the action no current record, as the panel does.
+
+The app boots and nothing raises — an action that reads `view` simply answers differently than it did.
+
+### Action Required
+
+Nothing for an action that ignores `view`. Check the ones that read it:
+
+- **An `authorize` block that reads `view`.** One written as `-> { view.index? }` refused every agent run before, because `view` was `new`; it now allows a bulk or standalone run. One written as `-> { view.new? }` allowed every agent run and now allows none. Both are surfaces that move without an error, so re-read any `authorize` block that mentions `view`.
+- **A `fields` block or `handle` branching on `view.new?`** took that branch on every agent run before and takes it on none now. Branch on `record`, on `query.size`, or on `view.index?` instead.
+
+See [Your actions, from the chat](./ai.html#your-actions-from-the-chat) and [An action runs on the view it would have been started from](./mcp.html#an-action-runs-on-the-view-it-would-have-been-started-from).
+
+</Option>
+
 ## `avo-ai`: the composer limits what it uploads
 
 <Option name="Files over 25 MB, and types the assistant can't use, are refused">
