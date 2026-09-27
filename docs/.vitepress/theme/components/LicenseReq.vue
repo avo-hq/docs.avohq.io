@@ -17,8 +17,9 @@ const links = {
   kanban: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=kanban",
   audit_logging: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=audit_logging",
   custom: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=custom",
-  addon: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=add_on", // this is different from the other addon links
-  addon_blank: "https://savvycal.com/adrianthedev/avo-addon-talk?questions[0]=", // this is different from the other addon links
+  // Fallback only: every add-on page sets `addon_link` to its avohq.io/addons/<slug>
+  // page (enforced by scripts/check-addon-links.js).
+  addon: "https://avohq.io/pricing",
   mixed: "https://avohq.io/pricing#comparison-heading",
   enterprise: "https://savvycal.com/avo-hq/discovery-call-ent",
 };
@@ -37,9 +38,6 @@ const labels = {
 const href = computed(() => {
   if (props.addon_link) {
     return props.addon_link;
-  }
-  if (props.addon) {
-    return links.addon_blank + props.addon;
   }
   return links[license.value];
 });

@@ -32,7 +32,22 @@ The `cache_store` configuration option expects a cache store object. The lambda 
 
 ## Row caching
 
-Avo caches each record on the <Index /> view (and each item on the Grid view) for improved performance.
+Avo caches each item on the <Grid /> view for improved performance. Table rows are not cached today; they are rendered on every request. Caching them under the same key is a follow-up.
+
+Every cached row is keyed on the record **and on the viewer**: the current user, the locale and the tenant are part of the key by default, so a field that is shown or hidden per role, a computed field that reads `current_user` or a grid card lambda is cached per user and never leaks between users. Cached rows expire after one day.
+
+### What invalidates a cached row
+
+A row is re-rendered when any part of its key changes:
+
+- **The record is updated.** The key carries the record's `cache_key_with_version`, so a change to `updated_at` busts it. A model without `updated_at` only busts on expiry.
+- **The resource file or its policy file is edited.** [`file_hash`](./resources-api#cache_hash) is an MD5 of both files.
+- **Avo or any plugin is upgraded.** `file_hash` also folds in `Avo.cache_version`, a digest of the installed Avo version and every registered plugin's version. Rows rendered by a ViewComponent carry no template digest, so this is what busts them after `bundle update`.
+- **The viewer changes.** A different user, a locale switch or a tenant switch is a different key. Editing the viewer's own user record busts their rows too.
+- **The parent record is updated**, for rows in an association table.
+- **One day passes.**
+
+Two things do not bust a row on their own: a change to an associated record the row displays (add `touch: true` on the association, or fold it into `cache_hash`), and a role stored outside the user record, such as a roles table (fold a version of it into [`index_cache_context`](#index_cache_context), or `touch` the user when it changes).
 
 <Option name="`cache_resources_on_index_view`">
 
@@ -48,16 +63,43 @@ config.cache_resources_on_index_view = false
 
 </Option>
 
+<Option name="`index_cache_context`">
+
+What a row's cache key varies by besides the record.
+
+```ruby
+# config/initializers/avo.rb
+config.index_cache_context = -> { [current_user, I18n.locale, Avo::Current.tenant_id] }
+```
+
+- **Type:** Lambda, resolved through `Avo::ExecutionContext` once per request
+- **Default:** the current user record, `I18n.locale` and `Avo::Current.tenant_id`
+
+The user *record* is in the key rather than its id, so editing a user's roles busts their cached rows immediately. Narrow it to a role when many users see identical rows and should share the cache, but only if nothing a row renders reads the user:
+
+```ruby
+# config/initializers/avo.rb
+config.index_cache_context = -> { [current_user.role, I18n.locale] }
+```
+
+A resource can override the resolved value with its own [`cache_context`](./resources-api#cache_context) method.
+
+</Option>
+
 <Option name="`cache_hash`">
 
-The `cache_hash` method is used to compute the cache key for each row.
+The `cache_hash` method is the record's part of the key. Override it per resource to fold in an association the row displays.
 
 More about this on the [resource options page](./resources-api#cache_hash).
 </Option>
 
+### What a key cannot fix
+
+A cached row can only vary by what is in its key. A `visible:` or computed field that reads `params` — a query-string flag, a filter value — is served from whichever request cached the row first, under any key. If the values form a small, bounded set, add them to `index_cache_context`; otherwise turn `cache_resources_on_index_view` off for that app.
+
 ## Caching caveats
 
-Because Avo caches each record on the <Index /> view, some side-effects may occur. We'll try to outline some of them below and keep this page up to date as we find them or as they get reported to us.
+Because Avo caches each item on the <Grid /> view, some side-effects may occur. We'll try to outline some of them below and keep this page up to date as we find them or as they get reported to us.
 
 These are things that may happen to regular Rails apps, not just in the Avo context.
 
