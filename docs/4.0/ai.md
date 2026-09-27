@@ -168,7 +168,7 @@ The two thinking options fall back to an environment variable when unset, so you
 | `thinking_effort` | `AVO_AI_THINKING_EFFORT`   | unset   |
 | `thinking_budget` | `AVO_AI_THINKING_BUDGET`   | unset   |
 
-When both are unset, no thinking parameters are sent to the provider.
+When both are unset, no effort or budget is sent. Models that return their reasoning only as a summary (OpenAI and Azure reasoning models, and Anthropic's effort-only models) are still asked for that summary, so readers see a trace either way.
 
 ### Thinking
 
@@ -207,6 +207,10 @@ higher effort buys a longer, deeper trace; a smaller one keeps it to a line or t
 models the trace is the model's own reasoning verbatim, so the budget bounds it directly. On
 effort models what renders is the provider's summary of the reasoning — its length loosely follows
 the effort, and its wording isn't steerable from your side.
+
+A reply only gets a reasoning panel when the provider sent readable text. A bare signature or a
+thinking token count, which is what comes back when a model thought too briefly to summarize, shows
+nothing.
 
 :::info
 Thinking only reaches models that declare reasoning support. Sending it to a plain chat model like
