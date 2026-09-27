@@ -995,6 +995,23 @@ Full guide: [Localization](./i18n.html).
 
 </Option>
 
+<Option name="`locale_selector`" headingSize="3">
+
+Controls the **Language** entry in the profile menu, which lets each user pick their own language. The choice is stored per user in a cookie.
+
+```ruby
+config.locale_selector = true               # every available locale Avo has translations for
+config.locale_selector = [:en, :ro, :de]    # exactly these locales
+config.locale_selector = false              # no selector
+```
+
+- **Type:** Boolean or Array
+- **Default:** `true`
+
+Full guide: [Locale selector](./i18n.html#locale-selector).
+
+</Option>
+
 ## Appearance
 
 <Option name="`appearance`" headingSize="3">
