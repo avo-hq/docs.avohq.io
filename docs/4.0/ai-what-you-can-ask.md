@@ -47,6 +47,11 @@ scan and click, not a bulleted paragraph.
 What a chip carries beyond the title is up to the resource — see
 [Record chips](./ai.html#record-chips).
 
+You can also ask the onboarding assistant to make those chips distinctive: "Give paid purchases a
+green chip and refunded purchases a red one", "Use an indigo-to-fuchsia gradient on city chips",
+or "Use each event's cover as its chip background." It updates the resource's `def chip`
+declaration, where the result remains ordinary app code you can adjust.
+
 ## Count and break down
 
 Counts come from the database, never from counting the rows on screen.
