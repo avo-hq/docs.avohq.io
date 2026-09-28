@@ -172,6 +172,12 @@ avo create users --data '{"name": "Ada Lovelace", "email": "ada@example.com"}'
 
 A create reads the resource's `create` view first, for the key the body nests under and to refuse a `file` field, then sends the `POST`. Use `--verbose` to see both requests.
 
+A read-only resource, such as an [array resource](./rest-api.html#endpoints), has no `create` or `update` view, so the write stops there and nothing is sent:
+
+```
+ ›   Error: movies does not support update.
+```
+
 ## Update a record
 
 ```bash
