@@ -202,6 +202,12 @@ avo delete users 5
 `delete` asks nothing before sending: the line already names the record.
 :::
 
+A read-only resource, such as an [array resource](./rest-api.html#endpoints), cannot be deleted from:
+
+```
+ ›   Error: movies does not support delete.
+```
+
 ## Send the right value for a field
 
 `--data` (`-d`) takes one JSON object. Pass it inline, as `@path` to read a file, or as `-` to read stdin.
