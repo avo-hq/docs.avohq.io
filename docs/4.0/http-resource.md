@@ -91,7 +91,14 @@ Every request carries them: index, show, and count, as well as the create, updat
 
 ## Map sorting and filtering to query params
 
-If you want Avo's sorting UI (or any UI state) forwarded to the API, build the query string with [`query_params`](./http-resource-api.html#query_params). The proc has access to controller `params`, and its result is merged into the request's query string:
+Avo doesn't sort an HTTP resource's records itself: the remote API does. When a user sorts, Avo gives [`query_params`](./http-resource-api.html#query_params) two values:
+
+- `params[:sort_by]` is the id of the field being sorted, e.g. `"name"`
+- `params[:sort_direction]` is `"asc"` or `"desc"`
+
+Return a Hash from `query_params` and Avo adds it to the request's query string. Keys set to `nil` are left out. How to name the sort parameters is up to the remote API, so check its docs.
+
+An API that takes one parameter, like `?sort=name:asc`:
 
 ```ruby
 # app/avo/resources/author.rb
@@ -106,6 +113,22 @@ self.http_adapter = {
   }
 }
 ```
+
+An API that takes the field and the direction separately, like `?_sort=name&_order=asc`:
+
+```ruby
+# app/avo/resources/author.rb
+self.http_adapter = {
+  endpoint: "https://jsonplaceholder.typicode.com/users",
+  query_params: -> {
+    { _sort: params[:sort_by].presence, _order: params[:sort_direction].presence }
+  }
+}
+```
+
+Avo also sends `page` and `per_page` on every index request. If the API rejects parameters it doesn't know, set them to `nil` to leave them out: `{ page: nil, per_page: nil, ... }`.
+
+The same proc serves the [REST API](./rest-api.html)'s `sort_by` and `sort_direction`. Without it, a sorted request still succeeds, and the records come back in the remote API's own order.
 
 ## Customize the backing model
 

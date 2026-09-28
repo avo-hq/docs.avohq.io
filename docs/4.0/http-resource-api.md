@@ -80,9 +80,12 @@ self.http_adapter = {
 
 <Option name="`query_params`" headingSize="3">
 
-A proc returning a Hash that is merged into the index request's query string, on top of the built-in `page` and `per_page` parameters. The proc is evaluated through [`Avo::ExecutionContext`](execution-context), with access to controller `params` when available — useful to map Avo's sorting and filtering UI to the API's query parameters.
+A proc returning a Hash that is added to the index request's query string, on top of the built-in `page` and `per_page` parameters. Keys set to `nil` are left out, so `{ page: nil, per_page: nil }` turns off the built-in ones. The proc is evaluated through [`Avo::ExecutionContext`](execution-context), with access to controller `params`.
+
+Avo doesn't sort an HTTP resource itself. When a user sorts, in the admin panel or through the REST API, `params[:sort_by]` holds the field id and `params[:sort_direction]` holds `"asc"` or `"desc"`. Name the parameters the way the remote API expects them:
 
 ```ruby
+# One parameter: ?sort=name:asc
 self.http_adapter = {
   query_params: -> {
     if params[:sort_by].present? && params[:sort_direction].present?
@@ -90,6 +93,13 @@ self.http_adapter = {
     else
       {}
     end
+  }
+}
+
+# Separate field and direction: ?_sort=name&_order=asc
+self.http_adapter = {
+  query_params: -> {
+    { _sort: params[:sort_by].presence, _order: params[:sort_direction].presence }
   }
 }
 ```

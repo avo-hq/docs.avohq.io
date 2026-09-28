@@ -390,6 +390,8 @@ An array resource cannot sort, so a `sort_by` on one is refused with a `400`:
 { "error": "Sorting not supported", "parameter": "sort_by" }
 ```
 
+An [HTTP resource](./http-resource.html) is sorted by the remote API, not by Avo. `sort_by` and `sort_direction` reach it only through the resource's [`query_params`](./http-resource-api.html#query_params), the same way the admin panel's sorting does. If `query_params` doesn't forward them, the request still answers `200`, in whatever order the remote API returns. Paging is left to the remote API too: `page` and `per_page` are sent to it, so the page you get back is the one it serves. If the resource's [`query_params`](./http-resource-api.html#query_params) sets them to `nil`, neither is sent, and you forward paging under the remote API's own names instead (for example json-server's `_page` and `_limit`).
+
 :::info `per_page` is remembered in a cookie
 Avo stores `per_page` in a cookie so the admin panel remembers the reader's choice. A client that keeps cookies between requests (a browser, or a scripted session with a cookie jar) will keep the last `per_page` it sent even when it omits the parameter. Send `per_page` explicitly on every request if you need a fixed page size.
 :::
