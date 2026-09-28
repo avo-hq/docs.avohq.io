@@ -67,6 +67,7 @@ Association fields share most of their options. Each ✓ links to that option's 
 | `attach_using` | – | – | [✓](./associations/has_many#attach_using) | [✓](./associations/has_and_belongs_to_many#attach_using) |
 | `attach_fields` | – | [✓](./associations/has_one#attach_fields) | [✓](./associations/has_many#attach_fields) | – |
 | `discreet_pagination` | – | – | [✓](./associations/has_many#discreet_pagination) | [✓](./associations/has_and_belongs_to_many#discreet_pagination) |
+| `per_page` | – | – | [✓](./associations/has_many#per_page) | [✓](./associations/has_and_belongs_to_many#per_page) |
 | `hide_search_input` | – | – | [✓](./associations/has_many#hide_search_input) | [✓](./associations/has_and_belongs_to_many#hide_search_input) |
 | `hide_filter_button` | – | – | [✓](./associations/has_many#hide_filter_button) | [✓](./associations/has_and_belongs_to_many#hide_filter_button) |
 | `link_to_child_resource` | [✓](./associations/belongs_to#link_to_child_resource) | – | [✓](./associations/has_many#link_to_child_resource) | [✓](./associations/has_and_belongs_to_many#link_to_child_resource) |
@@ -75,7 +76,7 @@ A few options belong to a single field type: [`polymorphic_as` + `types`](./asso
 
 ## Show or hide the association buttons
 
-The attach, detach, create, destroy, and actions buttons on association panels are controlled through the target resource's policy methods. Find out more on the [authorization](./authorization#associations) page.
+The attach, detach, create, destroy, and actions buttons on association panels are controlled through the target resource's policy methods. Find out more on the [authorization](./authorization.html#authorize-association-controls) page.
 
 ## Single Table Inheritance (STI)
 

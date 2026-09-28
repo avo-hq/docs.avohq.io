@@ -174,6 +174,35 @@ Apply it:
 - **Reference (API)** — usually skip. The `config.feature = { ... }` blocks are fragments of the initializer, and the page intro already states they live in `config/initializers/avo.rb`. Adding `# config/initializers/avo.rb` to every `<Option>` snippet is noise.
 - **Skip** when there is no real file: shell commands, REPL sessions, or syntax-only fragments.
 
+## Add-on license links
+
+Every add-on page links its **own add-on page on avohq.io**: `https://avohq.io/addons/<slug>`. Never a call-booking link, never a pricing preselect (`/pricing-4?add_ons[]=…`).
+
+```yaml
+---
+license: addon
+addon_link: https://avohq.io/addons/mcp
+---
+```
+
+The same applies to an inline `<LicenseReq license="addon" addon_link="…" />` and to body links to an add-on.
+
+**The slug is HQ's, not the gem's or the page's.** `avo-mcp_server` → `mcp`, `avo-kanban` (page `kanban-boards.md`) → `kanban`, `avo-api` → `api`. Don't guess it — verify before adding:
+
+```bash
+curl -s -o /dev/null -w '%{http_code} %{redirect_url}\n' https://avohq.io/addons/<slug>
+```
+
+Only `200` with no redirect is valid. HQ answers an unknown slug with `302 → /pricing` and a gem-name slug with `301 → /addons/<canonical>`; both look fine in a browser and are both wrong.
+
+Then run the checker, which does this for every add-on link in `docs/4.0` and fails on any page missing `addon_link`:
+
+```bash
+yarn check-addon-links
+```
+
+CI runs it on PRs touching `docs/4.0/` and weekly on `main`, to catch slugs renamed on HQ after the page was written.
+
 ## House style
 
 - Code samples must be real and copy-pasteable — no `...` placeholders inside runnable Ruby unless clearly a comment.

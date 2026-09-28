@@ -1,6 +1,6 @@
 ---
 license: addon
-addon_link: https://avohq.io/addons/mcp-server
+addon_link: https://avohq.io/addons/mcp
 addon: avo-mcp_server
 betaStatus: "Beta"
 outline: [2, 3]
@@ -206,6 +206,10 @@ The [`visible:`](./field-options-api.html#visible) blocks on your fields apply t
 
 The converse is the rule too: a field the panel **does** render this admin is returned, credentials included. There is no MCP-only redaction list — to keep something out of an AI client's reach, hide it with `visible:`, the same block that hides it from a person.
 
+When the rule is about *who* rather than *when*, the resource's policy can name the fields directly with `whitelisted_fields` / `blacklisted_fields`. A field it withholds is kept from every Avo surface at once, this one included, and cannot be widened back by a `visible:` block. `Avo::Current.interface` is `:mcp` for every call this add-on serves, so a policy that trusts the panel more than a connected client can say so in one place. See [Field authorization](./authorization.html#hide-fields-from-a-user).
+
+A column no field declares, and a field the user may not reach, are the same thing to a client: not serialized, not accepted as a sort key, never named in `sortableColumns`, `writableFields` or a validation error, and refused on write exactly as a nonexistent field is. Two things the panel shows without a field count as declared: `created_at` stays a sort key whenever the column exists, and the timestamps or id a resource lists in `discreet_information` are read (never written) alongside its fields. A tool of your own gets the same treatment by building its payloads with `FieldSupport.record_payload` and its errors with `FieldSupport.validation_failed`; raising `ValidationFailed.new(record)` by hand still works but sends every error, not only the ones the admin may see.
+
 ## Add tools of your own
 
 The nine tools reach any record, but a workflow an agent runs often — "issue the invoice for this order", "close these tickets and notify their reporters" — is better served as one tool than as a chain of `list_records`, `show_record` and `run_action` calls it has to get right every time. You can register tools of your own, and they're served beside the nine.
@@ -387,6 +391,20 @@ This is the same grid the [REST API](./rest-api.html#entitle-a-token) shows for 
 :::
 
 The **Tools** card below it is the same grant read as the calls it turns into — `list_records`, `run_action` — grouped by the capability that unlocks each group. A narrowed grant is **counted** there (*on 3 resources*) rather than named, since the names are rows on the Entitlements card above. The write group says what it stands on, above its tools: *Everything in Read, plus:* — "Read & write" heads three calls only because the group carries read's five as well.
+
+### Read a connection's access at a glance
+
+The connections index sums each grant up in an **Access** column, so the connection that can write stands out without opening every one. Hover the badge for how far it reaches — a grant across the board says *every resource its owner can access*, a fine-tuned one counts its resources.
+
+| Access | Means |
+| --- | --- |
+| **Unrestricted** | Read and write across everything the owner can reach, including resources added later. |
+| **Read only** | Read on every resource it reaches — the consent screen's default. |
+| **Read & write** | Read & write on every resource it reaches, but fine-tuned rather than unrestricted. |
+| **Custom** | Resources sit at different levels, such as read everywhere and write on a few. |
+| **No access** | No record access at all. A Run actions grant alone still reads as No access. |
+
+The same column, with the same words, is on the [API tokens](./rest-api.html#read-a-token-s-access-at-a-glance) index.
 
 ### Watch what a connection is doing
 

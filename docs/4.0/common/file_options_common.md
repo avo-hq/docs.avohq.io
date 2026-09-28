@@ -42,3 +42,22 @@ field :cover_video, as: :file, display_filename: false
 
 `true`, `false`
 </Option>
+
+<Option name="`lightbox`">
+
+On the <Show /> view, clicking an image opens it in an in-page lightbox. The lightbox previews the image, cycles through the field's other images with the arrow buttons or the <kbd>←</kbd> and <kbd>→</kbd> keys, closes with <kbd>Esc</kbd> or a click outside the image, and links to the original file in a new tab. Non-image files keep their download link.
+
+Set `lightbox: false` to render the image on its own.
+
+```ruby
+field :cover, as: :file, lightbox: false
+```
+
+#### Default value
+
+`true`
+
+#### Possible values
+
+`true`, `false`
+</Option>

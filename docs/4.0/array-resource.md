@@ -62,6 +62,44 @@ end
 
 Each hash becomes a record, so `field :name` reads the `name:` key and computed fields can call `record.fun_fact` directly. If you return Active Record objects or a relation instead, Avo uses their real model class and fields behave as they do on a regular resource. Pagination works out of the box.
 
+## Create, edit and delete
+
+<VersionReq version="4.2.10" />
+
+Array resources are read-only by default. Set `self.writable = true` to show the Create, Edit and Delete controls, then save the changes in the resource's controller. Avo fills the record from the form, but it can't save an array record by itself, so you override `save_record_action` and `destroy_record_action`:
+
+```ruby
+# app/avo/resources/bookmark.rb
+class Avo::Resources::Bookmark < Avo::Resources::ArrayResource
+  self.writable = true # [!code focus]
+
+  def records = BookmarkStore.all
+
+  def fields
+    field :id, as: :id
+    field :title, as: :text
+    field :url, as: :text
+  end
+end
+```
+
+```ruby
+# app/controllers/avo/bookmarks_controller.rb
+class Avo::BookmarksController < Avo::ArrayController
+  private
+
+  def save_record_action
+    @record.id = BookmarkStore.save(id: @record.id, title: @record.title, url: @record.url)
+  end
+
+  def destroy_record_action
+    BookmarkStore.destroy(@record.id)
+  end
+end
+```
+
+`BookmarkStore` stands in for wherever the data lives: a JSON file, a cache, or an external API. `save_record_action` handles both create and update. A new record has a `nil` id, so set it after saving: Avo uses it to redirect to the record's page. The resource's policy still decides who can create, edit and delete.
+
 ## Render it inside another resource
 
 The Array Resource pairs with the [`Array` field](./fields/array.html) to display array data on another resource — `field :attendees, as: :array` on a `Course`, for example. When rendered through the field, `records` is the last fallback in the data-fetching hierarchy; the field's block and the model's method take precedence. See the [Array field documentation](./fields/array.html) for the full hierarchy.

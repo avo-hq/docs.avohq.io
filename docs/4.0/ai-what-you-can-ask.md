@@ -1,5 +1,6 @@
 ---
 license: addon
+addon_link: https://avohq.io/addons/ai
 betaStatus: Beta
 outline: [2, 3]
 ---
@@ -46,16 +47,30 @@ scan and click, not a bulleted paragraph.
 What a chip carries beyond the title is up to the resource — see
 [Record chips](./ai.html#record-chips).
 
+You can also ask the onboarding assistant to make those chips distinctive: "Give paid purchases a
+green chip and refunded purchases a red one", "Use an indigo-to-fuchsia gradient on city chips",
+or "Use each event's cover as its chip background." It updates the resource's `def chip`
+declaration, where the result remains ordinary app code you can adjust.
+
 ## Count and break down
 
-Counts come from the real total, never from counting the rows on screen.
+Counts come from the database, never from counting the rows on screen.
 
-| Ask                                          | What you get                                    |
-| -------------------------------------------- | ----------------------------------------------- |
-| "How many orders do we have?"                | The total, even when only a page of rows was read |
-| "How many posts per status?"                 | A count per value                               |
-| "Which team has the most members?"           | Grouped counts, highest first                   |
-| "Which author has published the fewest posts?" | Grouped counts, lowest first                   |
+| Ask                                            | What you get                                         |
+| ---------------------------------------------- | ---------------------------------------------------- |
+| "How many orders do we have?"                  | The total                                            |
+| "How many posts per status?"                   | A count per value                                    |
+| "Which team has the most members?"             | Grouped counts, highest first                        |
+| "Which author has published the fewest posts?" | Grouped counts, lowest first                         |
+| "How many users signed up per month?"          | A count per day, week, or month, in your app's time zone |
+| "How many distinct customers placed an order?" | Distinct values of a column, not rows                |
+| "How many members does the Core team have?"    | Only the records belonging to that one parent record |
+
+**A "how many" question reads no records.** It goes to a counting tool that returns numbers and nothing else — no ids, no names, no column values — so answering it sends none of your data to the model provider. The same filters, scopes, and search apply as when listing records, and the answer says what was counted: "412 orders placed this month".
+
+Counting within a parent record goes through the same checks as opening that record's association in the admin: you have to be allowed to see the parent, to view it, and to view that association. A column hidden from you can't be counted by, grouped by, or filtered on either — a count over a column you can't see would still tell you what's in it.
+
+A count that runs longer than 10 seconds on PostgreSQL is stopped and reported as an error. You get a request to narrow it, never an estimate.
 
 If a list is longer than one page, the assistant says so — "showing 25 of 54" — instead of quietly presenting a subset as the whole.
 
@@ -83,15 +98,19 @@ Each created record gets its own card with a link. The one create that waits for
 
 ## Change and delete records
 
-Both work one record at a time and both end in a card you confirm.
+Deletes work one record at a time. Updates work on one record or on many, and either way it ends in a card you confirm.
 
 - **"Set the Orbit project's status to active"** — a card shows the record and each field's before → after value, with **Confirm** and **Cancel**.
 - **"Rename the post 'Hello' to 'Hello world'"** — same card.
+- **"Update the last three users and make them active"** — one card for the whole batch: the change once, then every record it will touch, with the same **Confirm** and **Cancel**.
+- **"Show me this week's signups. Mark them approved"** — the assistant looks them up first, then proposes the batch. If your app registers an approve [action](./actions.html), it runs that instead, because an action carries business logic a field edit doesn't.
 - **"Delete the test project"** — a card names the record and asks you to confirm.
+
+**A batch is one card, one confirmation.** Up to 50 records at a time by default (`config.ai.max_update_records` raises it to 500); ask for more and the assistant says how many there are and offers to narrow. Records that fail validation are named on the card afterwards and the rest are still updated. Each record's change is recorded on its own, but the batch stays one entry in the history: "undo that" takes the whole batch back on one card, and you can ask to undo only some of its records.
 
 **Your confirmation applies the change, not the model.** Confirm a card by clicking its button or by telling the assistant to go ahead — "do it", "run it", "yes" — which counts the same because the words are yours. Either way the assistant can propose a write but never perform one, and it can't talk its way past a Cancel.
 
-**Ambiguity stops the write.** If "the Orbit project" matches three records, the assistant lists them and asks which one rather than picking. Bulk changes aren't offered at all: ask to update or delete many records and it will say it works one at a time.
+**Ambiguity stops the write.** If "the Orbit project" matches three records, the assistant lists them and asks which one rather than picking — naming one record and getting several is a reason to stop, not to update all three. Deleting many records at once isn't offered: ask and it will say it deletes one at a time.
 
 ## Undo something
 
@@ -102,8 +121,12 @@ Every executed write is recorded, so undo doesn't depend on the change still bei
 | "What have you changed in this chat?"    | The writes made here, newest first                        |
 | "Undo that"                              | A card describing the undo, for you to confirm            |
 | "Revert the status change on Orbit"      | The same, for a specific earlier write                    |
+| "Undo that bulk update"                  | One card listing every record in the batch; hover a record to see what it restores |
+| "Undo the batch, but only for Orbit"     | The same card, narrowed to the records you name           |
 
 Undoing a create deletes the record it made; undoing an update restores the values it overwrote; undoing a delete re-creates the record. A write can only be undone once, and a change that left nothing behind to restore is reported as not undoable rather than attempted.
+
+Undoing a batch is one **Undo** click for every record in it. Each record is checked again when you click: one you may no longer edit, or one someone changed after the batch, is skipped and named on the card, and the rest are restored. An undo card that's already waiting is not proposed twice. If you ask again, the assistant points you at the card on screen.
 
 ## Run your actions
 
@@ -173,7 +196,7 @@ Check rows on an index — or in a has-many panel on a record's page — and "th
 
 - **"What are these?"**
 - **"How many of these are unpaid?"**
-- **"Set all of these to archived"**
+- **"Set all of these to archived"** — one card over exactly the rows you checked, with no second lookup
 - **"Which of these has no owner?"**
 
 The ribbon's **"3 records selected"** chip says how many; hovering it names each row by resource and label. See [The rows you checked](./ai.html#the-rows-you-checked).
@@ -203,7 +226,7 @@ Knowing the edges saves a round trip:
 
 | It won't                                  | Because                                                                 |
 | ----------------------------------------- | ----------------------------------------------------------------------- |
-| Update or delete many records at once     | Writes are one record at a time; it will ask you to pick                |
+| Delete many records at once               | Deletes are one record at a time; it will ask you to pick. Updating many at once is supported — see [Change and delete records](#change-and-delete-records) |
 | Apply its own updates, deletes, or undos  | The card is yours to confirm — a click, or a quick "do it" in your own words |
 | Delete a file from storage                | It can detach, never purge                                               |
 | Touch anything your policies hide         | Every read and write is authorized for the signed-in user                |

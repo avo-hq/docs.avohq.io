@@ -4,6 +4,177 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Field authorization: `avo-authorization` 4.2.1
+
+<Option name="Nothing to add to your policies">
+
+### What changed
+
+A Pundit policy can now name which of a resource's fields a user may reach, with `whitelisted_fields` and `blacklisted_fields`, and every Avo surface honors the answer for reads and writes. See [Field authorization](./authorization.html#hide-fields-from-a-user).
+
+### Action Required
+
+None. Field lists are opt-in: a policy that declares neither restricts nothing, whether `explicit_authorization` is on or off. Behavior changes only once a policy declares a list.
+
+Release `avo-authorization` 4.2.1 together with, or before, `avo-ai` 4.2.0.beta.6 and `avo-mcp_server` 4.2.0.beta.9. Both call code that only 4.2.1 ships.
+
+</Option>
+
+## `avo-api` 4.2.7: `visible:` hides a field from the API too
+
+<Option name="A field whose visible: proc answers false is no longer serialized">
+
+### What changed
+
+The API used to check only a field's `show_on` / `hide_on` options, so a field a `visible:` proc hid from a user in the panel was still in that user's API payload. It is now left out, the same as in the panel.
+
+A failed create, update or delete no longer names a field a policy withholds from the token's owner in `errors`. The failure is reported on `base` instead.
+
+### Action Required
+
+Nothing, unless an API client reads a field that a `visible:` proc hides from the token's owner. Make the proc answer `true` for that user, or the field stays out of the payload.
+
+</Option>
+
+## `avo-ai` 4.2.0.beta.6: the chat reads through the resource's fields
+
+<Option name="A column no field declares is no longer reachable from the chat">
+
+### What changed
+
+The assistant used to read, filter, sort, group and search any column on the model, except password- and token-shaped ones. It now goes through the resource the way the panel does. A column is reachable only when a field the user may reach claims it, and associations are traversed only through an association field. A column no field declares is not returned, filtered, sorted, grouped, searched, written, imported, or named in a schema or an inspector report.
+
+Three things the panel exposes without a field still count:
+
+- **`discreet_information`:** the timestamps and id a resource lists there are readable.
+- **`created_at`:** it stays a sort key whenever the column exists.
+- **`extra_params`:** the columns a resource opens there are writable.
+
+A model with no Avo resource is never queried or described, and an association check through one is refused.
+
+### Action Required
+
+Declare a field for every column the chat should work with. A field only one role should see still takes a `visible:` proc or, with `avo-authorization`, a policy field list. See [How the assistant works](./ai.html#how-the-assistant-works).
+
+</Option>
+
+## `avo-mcp_server` 4.2.0.beta.9: sorting and errors follow the resource's fields
+
+<Option name="Clients sort by field columns, and errors name only what the admin may see">
+
+### What changed
+
+- **Sorting:** `list_records` sorts only by a column behind a field the admin may reach, or by `created_at`. Any other `sort_by` is refused, with the sortable columns listed.
+- **Validation errors:** failed writes name only attributes within the admin's reach. This covers the messages, `requiredAttributes`, `optionalAttributes` and `missingRequiredAttributes`. The server log records which attributes were dropped.
+- **`update_record`:** its `changed` list names only readable columns.
+
+### Action Required
+
+Nothing, unless a client sorts by a column with no field. Declare a field for it. See [The MCP server](./mcp.html).
+
+</Option>
+
+## `avo-ai`: the composer limits what it uploads
+
+<Option name="Files over 25 MB, and types the assistant can't use, are refused">
+
+### What changed
+
+The chat composer used to upload any file. It now takes images (PNG, JPEG, GIF, WebP), PDFs and text files — markdown, plain text, CSV, TSV, JSON — up to 25 MB, and refuses anything else as it is added, before it uploads, with a line under the draft saying why. A message sent without the composer is held to the same rule: a file it would have refused is left off the message.
+
+### Action Required
+
+Nothing, unless people upload other files — say, Word documents or videos to attach to records. Allow them under `config.ai.uploads`; see [What the composer accepts](./ai.html#what-the-composer-accepts).
+
+```ruby
+config.ai.uploads = {accept: ["*/*"], max_size: 100.megabytes} # [!code highlight]
+```
+
+</Option>
+
+<Option name="Protect Rails' direct-upload endpoint">
+
+### What changed
+
+Nothing in Avo — this was always true. The composer uploads through `POST /rails/active_storage/direct_uploads`, which Rails ships without authentication, and the new limits don't cover a request that goes straight to it.
+
+### Action Required
+
+Add your app's authentication and a size check to that endpoint: [Protect the direct-upload endpoint](./ai.html#protect-the-direct-upload-endpoint).
+
+</Option>
+
+## `avo-ai`: records are named by `to_param`
+
+<Option name="Records are named by to_param, not their primary key">
+
+### What changed
+
+The assistant names every record the way Avo's own URLs do: by `to_param`. On a resource that hides its primary keys behind friendly_id, a hashid gem, or its own `to_param`, the slug now appears in the system prompt, in record labels (`Hello world (#hello-world)`), in chip and card links, and in the `reference` the tools hand the model. The tools look an id up through the resource's `find_record_method`, and still accept a primary key. Their `id` parameters are strings.
+
+Resources that keep Rails' default `to_param` see no difference.
+
+### Action Required
+
+Nothing, unless you replaced part of the assistant with your own copy. Check each of these:
+
+- **An ejected `attached_context.txt.erb`.** Name records by `attached_record[:record_param]` and each selected record's `record_param`, not `record_id`, or your prompt keeps the primary key. See [Change how it reads](./ai.html#change-how-it-reads).
+- **An ejected write tool** (`update_record`, `delete_record`, `update_records`, `run_action`, `active_storage_attachment`). The model now passes a slug. Look it up with `find_authorized_record_by_param`, and declare the `id` parameter as a string. Diff your copy against the gem's.
+- **A tool of your own that returns a `reference`.** Build it from `record.to_param`. A reference built from `record.id` on a slugged resource no longer renders as a chip. See [Bring your own tool](./ai.html#bring-your-own-tool).
+
+</Option>
+
+## Upgrade to `avo-ai` 4.2.0.beta.4
+
+<Option name="Batch updates are undone as one change: run the installer again">
+
+### What changed
+
+The assistant can now [change many records in one confirmation](./ai-what-you-can-ask.html) with the new `update_records` tool, and undo the whole batch from one card. Undo knows which records belong to a batch through a new column, `avo_ai_write_logs.pending_write_id`. A **first** install gets it in the create migration; an app that installed an earlier version does not have it.
+
+### Action Required
+
+```bash
+bin/rails generate avo:ai install
+bin/rails db:migrate
+```
+
+The installer reads your `db/migrate` and writes only the migrations you are missing, so running it again is safe.
+
+Until you migrate nothing breaks: batch updates still work, but the history lists and undoes a batch record by record instead of as one entry.
+
+</Option>
+
+<Option name="A new write tool arrives switched on: update_records">
+
+### What changed
+
+`update_records` is a new shipped tool, and `config.ai.excluded_tools` is a list of what to remove, so every app gets it unless it names it. It writes nothing without the user's click on a confirmation card, under the same policies and field rules as `update_record`.
+
+### Action Required
+
+Nothing, unless your initializer excludes `update_record` to keep the assistant from editing records. Exclude the new tool too, or it can still update them in batches:
+
+```ruby
+config.ai.excluded_tools = [:update_record, :update_records] # [!code focus]
+```
+
+A batch is capped at 50 records. To change that, set `config.ai.max_update_records` to a number from 1 to 500; anything else raises at boot.
+
+</Option>
+
+<Option name="Typing a confirmation with several cards on screen confirms nothing">
+
+### What changed
+
+A typed "do it" used to confirm the last card when one reply had put several on screen. It now confirms none of them and goes to the assistant as an ordinary message, since it cannot tell which card you meant. With one card waiting, a typed confirmation now also still reaches it after the assistant has only reminded you to click.
+
+### Action Required
+
+Nothing. Click **Confirm** on the card you want.
+
+</Option>
+
 ## Upgrade to `avo-audit_logging` 4.3.0
 
 <Option name="Activities record where they came from — run the installer again">

@@ -1,6 +1,6 @@
 ---
 license: addon
-addon_link: https://avohq.io/addons/avo-api
+addon_link: https://avohq.io/addons/api
 addon: avo-api
 outline: [2, 3]
 api_docs: ./rest-api-api.html
@@ -13,7 +13,7 @@ The `avo-api` add-on exposes a JSON REST API for every Avo resource. It reuses y
 This page covers installation, mounting, API tokens and authentication, reading and writing data, token entitlements, authorization, how the current user is established, and managing tokens in the panel. Every generator, hook, and option is in the [API reference](./rest-api-api.html).
 
 :::info Add-on
-The REST API ships as the separate `avo-api` gem. [See the add-on page →](https://avohq.io/addons/avo-api)
+The REST API ships as the separate `avo-api` gem. [See the add-on page →](https://avohq.io/addons/api)
 :::
 
 ## Installation
@@ -440,6 +440,8 @@ class Avo::Resources::Team < Avo::BaseResource
 end
 ```
 
+A policy can also withhold a field from a user outright, with `whitelisted_fields` / `blacklisted_fields` on the resource's policy. A withheld field is absent from every response and refused on write, so a client cannot set it by naming it in a payload. `Avo::Current.interface` is `:api` for every request this add-on serves, so a policy can withhold more from a token than from the panel. See [Field authorization](./authorization.html#hide-fields-from-a-user).
+
 :::info File URLs are permanent
 `file` and `files` fields serialize the standard attachment URL. These are not signed or expiring — anyone who obtains the URL can fetch the file. Keep that in mind before exposing attachments to clients you don't control.
 :::
@@ -560,6 +562,18 @@ Two things never get a row:
 
 - **Resources the token's owner can't reach.** The rows are resolved through the owner's own policies, so an administrator restricting somebody else's token can't grant past what that person already sees.
 - **The API tokens resource itself.** It has no API endpoint at all ([why](#endpoints)), so granting it would promise something no route can keep.
+
+### Read a token's access at a glance
+
+The tokens index sums each token's entitlements up in an **Access** column, so the token that can write stands out without opening every one. Hover the badge for how many resources it reaches.
+
+| Access | Means |
+| --- | --- |
+| **Unrestricted** | No grants at all: everything the owner's policies allow, including resources added later. |
+| **Read only** | Every granted resource is at Read. |
+| **Read & write** | Every granted resource is at Read & Write. |
+| **Custom** | Granted resources sit at different levels, or one holds an action set the grid can't name. |
+| **No access** | Every resource is at None: the token is refused everywhere. |
 
 ### Take a token back to unrestricted
 
@@ -837,7 +851,7 @@ The model is `Avo::Api::Token`, so the policy is `Avo::Api::TokenPolicy` at `app
 And a token carries its owner's full privileges over every record. If `avo-authorization` isn't installed, isn't enabled on your license, or no `config.authorization_client` is set, nothing stands between a user who can sign in to Avo and a credential that reaches your whole API. That's your app's configuration rather than anything this feature decides, but decide it deliberately.
 :::
 
-The opposite is just as true. With [`config.explicit_authorization`](./authorization.html#explicit_authorization) at its default of `true`, a resource whose policy class is missing is **denied**, so the token resource is unreachable until you write one — the same rule that applies to every other resource in that app.
+The opposite is just as true. With [`config.explicit_authorization`](./authorization-api.html#explicit_authorization) at its default of `true`, a resource whose policy class is missing is **denied**, so the token resource is unreachable until you write one — the same rule that applies to every other resource in that app.
 
 ### What each policy method controls
 
@@ -855,7 +869,7 @@ Each one gates both whether the control renders and whether it can be run, so a 
 | `edit_entitlements?` | The [Entitlements](#entitle-a-token) grid. Denying it renders the grid **read-only** rather than hiding it, and the form's write path strips what it refuses, so what is shown and what is accepted can't drift apart |
 | `view_audit_trail?` | The [Audit trail](#see-what-a-token-changed) table on a token's page, *and* the request that fills it. Avo's own `view_<field>?` for a `has_many`: under `explicit_authorization` (the default) the table is hidden until the policy answers it |
 
-The last four aren't Avo's standard CRUD set, but they're asked exactly the same way — through the resource's authorization service, so a client other than Pundit answers them in its own idiom, and names you remapped through [`config.authorization_methods`](./authorization.html#using-different-policy-methods) are honored.
+The last four aren't Avo's standard CRUD set, but they're asked exactly the same way — through the resource's authorization service, so a client other than Pundit answers them in its own idiom, and names you remapped through [`config.authorization_methods`](./authorization-api.html#authorization_methods) are honored.
 
 ### Everyone manages their own tokens
 

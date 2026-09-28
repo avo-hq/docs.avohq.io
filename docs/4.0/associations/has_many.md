@@ -24,6 +24,7 @@ field :projects, as: :has_many
 <!-- @include: ./../common/associations_use_resource_option_common.md-->
 <!-- @include: ./../common/associations_attach_using_option_common.md-->
 <!-- @include: ./../common/associations_discreet_pagination_option_common.md-->
+<!-- @include: ./../common/associations_per_page_option_common.md-->
 <!-- @include: ./../common/associations_hide_search_input_option_common.md-->
 <!-- @include: ./../common/associations_hide_filter_button_option_common.md-->
 <!-- @include: ./../common/associations_link_to_child_resource_common.md-->

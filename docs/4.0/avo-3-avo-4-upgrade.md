@@ -690,7 +690,7 @@ If you use global search and have hardcoded search URLs, see [Avo Pro mount poin
 
 #### Policy helpers
 
-If you use [`inherit_association_from_policy`](./authorization#removing-duplication) in your policies, update the concern's namespace:
+If you use [`inherit_association_from_policy`](./authorization-api.html#inherit_association_from_policy) in your policies, update the concern's namespace:
 
 ```ruby
 include Avo::Pro::Concerns::PolicyHelpers # [!code --]
@@ -1159,4 +1159,4 @@ Avo.configure do |config|
 end
 ```
 
-More info on the [`explicit_authorization` option](./authorization.html#explicit_authorization) section.
+More info on the [`explicit_authorization` option](./authorization-api.html#explicit_authorization) section.

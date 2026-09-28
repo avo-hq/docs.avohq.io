@@ -301,7 +301,7 @@ end
 
 Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults:
 
-- `view` — the current view type (`index`, `show`, `edit`)
+- `view` — the view the action was started from (`index`, `show`, or `edit`); `authorize`, the modal blocks, `fields`, and `handle` read the same value
 - `resource` — the current resource instance
 - `parent_resource` — the parent resource, if any (access the parent record via `parent_resource.record`)
 - `params`
@@ -322,6 +322,8 @@ end
 - **Default:** `true`
 
 Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults: `action`, `resource`, `view`.
+
+`view` is the view the action was started from, checked against the request's route (`show` and `edit` need a record in the URL). It is never `new`. Do not make it the only condition: gate who may run the action on `current_user`, and single-versus-bulk on `query.size` or `record`.
 
 </Option>
 
@@ -560,7 +562,7 @@ end
 ```
 
 :::warning
-This response **only** works on <Index /> pages, **not** on associations.
+This response **only** works on <Index /> pages, **not** on associations. Inside `handle`, `view.index?` tells you whether the action was started from the <Index /> page.
 :::
 
 </Option>

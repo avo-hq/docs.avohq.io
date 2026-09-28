@@ -19,7 +19,7 @@ Pass in a block where you attach scopes to the `query` object and `parent` objec
 
 :::warning
 The `attach_scope` will not filter the records in the listing from `has_many` or `has_and_belongs_to_many` associations.
-Use [`scope`](#scope) or a [Pundit policy `Scope`](./../authorization#scopes) for that.
+Use [`scope`](#scope) or a [Pundit policy `Scope`](./../authorization.html#limit-which-records-a-user-sees) for that.
 :::
 
 ```ruby-vue{3}

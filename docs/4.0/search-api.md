@@ -45,7 +45,7 @@ self.search = {
 
 - **Type:** Proc
 - **Default:** `nil` — search disabled for the resource
-- **Locals:** `q` (stripped search string), `query` (base scope with [authorization scopes](./authorization.html#scopes) applied), `params`, [`search_type`](#search_type), plus all `Avo::ExecutionContext` attributes
+- **Locals:** `q` (stripped search string), `query` (base scope with [authorization scopes](./authorization.html#limit-which-records-a-user-sees) applied), `params`, [`search_type`](#search_type), plus all `Avo::ExecutionContext` attributes
 - **Return:** an `ActiveRecord::Relation`, or an Array of hashes for [custom search providers](#custom-search-providers)
 
 </Option>
@@ -132,7 +132,7 @@ A local injected into the [`query`](#query) proc identifying which surface trigg
 
 ## Global search configuration
 
-<LicenseReq license="addon" addon_link="https://avohq.io/pricing-4?add_ons[]=advanced-search" />
+<LicenseReq license="addon" addon_link="https://avohq.io/addons/global-search" />
 
 Keys of the `config.global_search` hash in `config/initializers/avo.rb`. Also listed in the [customization API](./customization-api.html#global_search).
 

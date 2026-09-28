@@ -1,5 +1,6 @@
 ---
 license: addon
+addon_link: https://avohq.io/addons/ai
 betaStatus: Beta
 outline: [2, 3]
 ---
@@ -20,7 +21,7 @@ The feature and docs are both work in progress.
 
 - Avo 4
 - An API key for an LLM provider supported by [RubyLLM](https://rubyllm.com) (OpenAI, Anthropic, Gemini, and others)
-- RubyLLM 2.0, installed for you as a dependency. It is a release candidate today (`2.0.0.rc2`), which is why the gemspec asks for `>= 2.0.0.rc2` rather than `~> 2.0` — a `~>` requirement will not resolve a prerelease.
+- RubyLLM 2, installed for you as a dependency.
 - PostgreSQL
 
 ## Installation
@@ -133,6 +134,18 @@ Avo.configure do |config|
     max_import_rows: 1000        # data rows one confirmed import may create
   }
 
+  # What the composer lets people upload (see "Send files with a message"). Set only the keys
+  # you want to change. accept takes what an HTML accept attribute does: MIME types, wildcards
+  # ("image/*", or "*/*" for anything) and extensions (".csv").
+  config.ai.uploads = {
+    max_size: 25.megabytes,
+    accept: %w[image/png image/jpeg image/gif image/webp application/pdf text/* application/json
+      .md .markdown .txt .csv .tsv .json]
+  }
+
+  # Records one batch update may change (see "Reading files and importing from them"). 1 to 500.
+  config.ai.max_update_records = 50
+
   # Which tools the assistant gets (see "Choose which tools the assistant gets").
   config.ai.excluded_tools = [:delete_record]
   config.ai.extra_tools = ["CrmTool"]
@@ -141,6 +154,10 @@ Avo.configure do |config|
   # generic suggestions, translatable through i18n (avo.ai.empty_state.suggestions). Set this to
   # replace them outright with your own, e.g. naming real resources.
   config.ai.empty_state_suggestions = ["Show me this week's orders", "Create a new customer"]
+
+  # Close chat-bar pills nobody has opened for this long (see "Closing idle tabs automatically").
+  # Unset (the default), nil, or false keeps them until closed.
+  config.ai.tab_expiry = 30.days
 end
 ```
 
@@ -151,7 +168,7 @@ The two thinking options fall back to an environment variable when unset, so you
 | `thinking_effort` | `AVO_AI_THINKING_EFFORT`   | unset   |
 | `thinking_budget` | `AVO_AI_THINKING_BUDGET`   | unset   |
 
-When both are unset, no thinking parameters are sent to the provider.
+When both are unset, no effort or budget is sent. Models that return their reasoning only as a summary (OpenAI and Azure reasoning models, and Anthropic's effort-only models) are still asked for that summary, so readers see a trace either way.
 
 ### Thinking
 
@@ -191,6 +208,10 @@ models the trace is the model's own reasoning verbatim, so the budget bounds it 
 effort models what renders is the provider's summary of the reasoning — its length loosely follows
 the effort, and its wording isn't steerable from your side.
 
+A reply only gets a reasoning panel when the provider sent readable text. A bare signature or a
+thinking token count, which is what comes back when a model thought too briefly to summarize, shows
+nothing.
+
 :::info
 Thinking only reaches models that declare reasoning support. Sending it to a plain chat model like
 `gpt-4o-mini` would have the provider reject the whole request, so Avo doesn't.
@@ -226,15 +247,21 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **It works from your real schema, not a guess at it.** Every query, write, and action result carries the resource's real columns, model scopes, and required attributes back to the assistant — so it builds what comes next from your names. This is done by the tools, not merely requested in the prompt: it arrives with the answer rather than being asked for first, which is why a question rarely spends a round trip on structure, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters. A query that gets a column wrong comes back with the real ones attached, so the retry is built from names too.
 
-**Reading.** Query results are paginated, and the assistant is told to answer "how many" from the result's total count rather than by counting rows, so a capped result set doesn't become a wrong number. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
+**Reading.** Query results are paginated, and "how many" goes to `count_records`, which returns the number and never a row — so a capped result set doesn't become a wrong number, and a count sends no record to the model provider. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
 
-**Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. Those two work one record at a time — ask for a bulk change and the assistant will say so and ask you to pick. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. The exception is an [import from a CSV](#reading-files-and-importing-from-them), which is proposed as one card and creates its rows only when you confirm. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
+**Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. A delete works one record at a time; an update works on one record or on many, and a batch is one card covering the whole set. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. The exception is an [import from a CSV](#reading-files-and-importing-from-them), which is proposed as one card and creates its rows only when you confirm. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
-**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions).
+**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "commit", "apply it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions). A typed confirmation reaches the latest card while nothing else has happened since: if an earlier "go ahead" of yours reached the assistant and it only reminded you to confirm, the next "do it" still confirms the card. Once you ask about something else, or the assistant looks something up or asks you a question, click the card's button instead. When one reply shows several cards, typing confirms none of them, because it can't know which one you mean; click each card you want.
 
 **Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
 
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
+
+**Per-field means the policy's field lists too.** A field the resource's policy withholds with `whitelisted_fields` / `blacklisted_fields` is not returned by any tool, not named in a record context or a confirmation card, and cannot be written. A column no field declares does not exist for the chat at all: it is not returned, filtered, sorted, grouped, searched, written, imported, or named in a schema, an inspector report or a validation message. What the panel shows or accepts without a field counts as declared: the timestamps or id a resource lists in `discreet_information` are readable, `created_at` stays a sort key whenever the column exists, and the columns a resource opens through `extra_params` are writable. Associations are reachable only through an association field the user may reach, and a model with no Avo resource is never queried or described. Undo reverses exactly what the chat did: a deleted record comes back whole, and an update or action is restored column for column, refused only where a restored column now belongs to a field the user may not write. `Avo::Current.interface` is `:ai` for the whole of a response and for a confirmed write, so a policy can withhold more from the chat than from the panel. See [Field authorization](./authorization.html#hide-fields-from-a-user).
+
+The assistant reads the same rows the resource's Index shows: its [`index_query`](./resources-api.html#self.index_query) first, then the policy scope on top. Rows, counts, grouped answers, "has any" checks, and the records a write or action can target all stay inside that set, so tenant or soft-delete scoping you put in `index_query` bounds the chat too. Avo's show page finds a record through the policy alone, so a rule that must hold on every page still belongs in the policy's scope.
+
+The chat runs in a background job, with no request. A resource whose field definitions read request-only context (`Avo::Current.context[:account]`, `params`) can't have its field rules checked there, so the assistant refuses that resource rather than read it without them. A single field whose `visible:` proc raises is treated as hidden.
 
 For the full reference — both agents, every tool and its gates, and how conversations get their names — see [Agents and tools](./ai-agents-and-tools.html).
 
@@ -246,6 +273,18 @@ the sentence, so an answer reads as one thought rather than as a paragraph follo
 
 A chip appears because the assistant named that record. A count or a total names none, so it brings
 no chip with it.
+
+A chip is looked up through the viewer's policy, the same `index?` and scope the query tool reads
+with, so a reference to a record the viewer is not allowed to read renders as the plain label text
+rather than as a chip. That holds for a reference the assistant wrote, one typed into a message, and
+one that arrived through record data or an uploaded file.
+
+A chip names its record the way your Avo pages do: by `to_param`, looked up through the resource's
+own `find_record_method`. If your app hides its primary keys behind friendly_id, hashids, or its own
+`to_param`, the assistant's references and the chip's link carry that same slug or hashid, never the
+raw key. A raw key such a resource doesn't answer to — `avo:Post/12` typed into a message — renders
+as plain text, the same as a record that doesn't exist. Resources on Avo's default finder are
+unaffected: their param is the primary key.
 
 **A set of records comes back as a list of rows.** When the answer *is* a set — "the last three
 users", "which projects are running", "show me the cities" — the assistant names one record per
@@ -290,6 +329,56 @@ part "in review"                  # a literal
 part record.status, tone: :danger # coloured
 part icon: "tabler/outline/moon"  # a glyph, alone or beside text
 ```
+
+**Give the whole chip a background.** Call `background` once inside `chip`, before or after its
+parts. A solid fill accepts an Avo palette name or a hex color:
+
+```ruby
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  def chip
+    background color: :violet
+    part resource.avatar
+    part resource.record_title
+    part record.status
+  end
+end
+```
+
+For a gradient, provide two or more palette names or hex colors. Avo draws them at 135 degrees:
+
+```ruby
+# app/avo/resources/project.rb
+def chip
+  background gradient: [:indigo, "#c026d3", :rose]
+  part resource.record_title
+  part record.status
+end
+```
+
+For a background image, provide an Avo photo such as `resource.cover`, an Active Storage-backed
+photo, or an image URL:
+
+```ruby
+# app/avo/resources/event.rb
+def chip
+  background image: resource.cover
+  part resource.avatar
+  part resource.record_title
+end
+```
+
+Avo chooses light or dark text by measuring the declared colors against the 4.5:1 contrast floor.
+If a gradient needs help at one end, or a photograph could contain light and dark pixels, Avo adds
+the smallest light or dark scrim needed to keep the words readable. Set `foreground: :light` or
+`foreground: :dark` only when the visual direction matters more than the automatic choice; Avo
+still adjusts the background enough to protect contrast.
+
+Backgrounds accept these palette names: `:red`, `:orange`, `:amber`, `:yellow`, `:lime`, `:green`,
+`:emerald`, `:teal`, `:cyan`, `:sky`, `:blue`, `:indigo`, `:violet`, `:purple`, `:fuchsia`, `:pink`,
+and `:rose`. Custom colors use three- or six-digit hex values. A filled chip uses one foreground
+color for all its parts, since semantic part colors cannot stay readable over every fill; a
+`:muted` part keeps its hierarchy through the chip's smaller secondary text size instead.
 
 Because it is an instance method on the hydrated resource, the rest of what Avo hands a lambda is
 there too — `view`, `params`, `request`, `context`, `current_user`, `view_context`, `main_app`,
@@ -482,6 +571,8 @@ The conversation keeps its own record of every write — that is what [undo](#un
 | `origin`        | `"ai_chat"`                  |
 | `origin_record` | The chat                     |
 
+A batch update is recorded the same way, one entry per record it changed, so an audit reader sees each record's own change. The conversation's history keeps the batch together: undo takes the whole batch back from one card, or only the records you name.
+
 A record's timeline reads *Ada Lovelace through AI chat*; the activity's **Origin** field — *AI chat — Reorder the Q3 invoices* — links to the conversation; and the chat's admin page carries an **Audit trail** table of what the assistant changed there. An action run is recorded against the action, as a click on it would be; a revert is recorded as the write it is.
 
 The table is gated by `view_audit_trail?` on your `Avo::Ai::ChatPolicy`, Avo's own convention for a `has_many`. The assistant itself can never reach the audit log: `Avo::AuditLogging::Activity` is not a resource it can name, list, or write to.
@@ -545,6 +636,8 @@ Nothing is created until you click **Confirm**. The rows are then created on the
 
 :::info
 An import creates records only — updating or upserting from a file isn't offered — and it takes CSV and TSV files, not JSON. One import is capped at `max_import_rows` data rows (1,000 by default); a bigger file is refused with the count and the cap named, so split it and import it in parts.
+
+Batch updates are capped too, at `max_update_records` records (50 by default). Raise it to at most 500; a higher value, zero, or anything that isn't an Integer raises at boot. An import's rows are new, so the only cost of a big one is the time it takes; a batch update changes records that already exist. However large it is, a batch counts as one entry in the undo history and is undone from one card. Checked rows stop at 50 whatever the cap is.
 :::
 
 ## Teach the assistant your app
@@ -629,7 +722,7 @@ To add rules on top of the shipped prompt, eject the `extra_instructions` file:
 bin/rails generate avo:ai:eject extra_instructions
 ```
 
-This creates `app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb` in your application. Whatever you write in it is appended to the end of the chat assistant's system prompt. The gem's own copy is empty, so until you edit the file nothing changes.
+This creates `app/prompts/avo/ai/chat_agent/extra_instructions.txt.erb` in your application. Whatever you write in it is appended right after the shipped rules, ahead of the blocks carrying the conversation's own context — the signed-in user, [what the chat was started from](#what-you-start-the-chat-from), and the current time. The gem's own copy is empty, so until you edit the file nothing changes.
 
 This is the place for the things the assistant can't learn from your schema:
 
@@ -679,9 +772,25 @@ For full control, eject every prompt file the gem ships:
 bin/rails generate avo:ai:eject instructions
 ```
 
-This copies all prompt files — the chat assistant's instructions and sub-prompts (`identity.txt.erb`, `app_context.txt.erb`, `attached_context.txt.erb`, `uploaded_files.txt.erb`, `skills.txt.erb`, `extra_instructions.txt.erb`), plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
+This copies all prompt files — the chat assistant's instructions and sub-prompts (`identity.txt.erb`, `app_context.txt.erb`, `extra_instructions.txt.erb`, `skills.txt.erb`, `current_user.txt.erb`, `attached_context.txt.erb`, `uploaded_files.txt.erb`, `current_time.txt.erb`), plus the conversation-renamer's — into `app/prompts/avo/ai/`, where your copies take over completely. Edit the ones you want to change and delete the rest: a deleted file falls back to the gem's copy, so you keep receiving prompt improvements for everything you didn't touch.
 
-The shipped `instructions.txt.erb` renders the other prompt files through slots of its own: `<%= identity %>` and `<%= app_context %>` near the top, `<%= extra_instructions %>` at the end. If you replace it, your copy decides which of those slots survive — remove a line and that file is ignored, however carefully it was written.
+The shipped `instructions.txt.erb` renders those files through slots of its own, in this order:
+
+| Slot                        | Renders                                  | Changes                             |
+| --------------------------- | ---------------------------------------- | ----------------------------------- |
+| `<%= identity %>`           | who the assistant is                     | on deploy                           |
+| `<%= app_context %>`        | what this app is                         | on deploy                           |
+| the shipped rules           | how the assistant behaves                | on deploy                           |
+| `<%= extra_instructions %>` | your own rules                           | on deploy                           |
+| `<%= skills %>`             | the skills attached to the conversation  | when a skill is attached or edited  |
+| `<%= current_user %>`       | the signed-in user                       | once per conversation               |
+| `<%= attached_context %>`   | what the chat was started from           | once per conversation               |
+| `<%= uploaded_files %>`     | the files in the conversation            | when a file is uploaded             |
+| `<%= current_time %>`       | the current date and time                | every message                       |
+
+That order is least-volatile first, and it's deliberate: providers cache on a *prefix* of the prompt, so the first block that differs from the previous run invalidates everything after it. Lead with the clock and the whole prompt — the shipped rules included — is fresh input on every message. If your copy adds a block of its own, place it by how often it changes rather than at the bottom of the file.
+
+If you replace `instructions.txt.erb`, your copy decides which of those slots survive — remove a line and that file is ignored, however carefully it was written.
 
 ## Choose which tools the assistant gets
 
@@ -695,7 +804,7 @@ Avo.configure do |config|
 end
 ```
 
-Set neither and the assistant gets the fourteen tools the gem ships. The roster is assembled per run, so once the app has restarted, the next message in an existing conversation already reflects the change — nothing is baked into a chat.
+Set neither and the assistant gets every tool the gem ships. The roster is assembled per run, so once the app has restarted, the next message in an existing conversation already reflects the change — nothing is baked into a chat.
 
 ### Take a tool away
 
@@ -704,11 +813,13 @@ Set neither and the assistant gets the fourteen tools the gem ships. The roster 
 config.ai.excluded_tools = [:delete_record, :update_record]
 ```
 
-The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list of fourteen — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
+
+`update_record` and `update_records` are separate names, so excluding the first leaves the second attached. An app that excludes `update_record` to stop the assistant writing columns wants both.
 
 An excluded tool is filtered out by name before it's ever built, so it isn't attached to the conversation and the model never learns it exists. It doesn't refuse the request — there's nothing there to refuse with.
 
-A name that isn't one of the fourteen raises `ArgumentError` at boot, listing the ones it knows. A typo that quietly left deletes attached is exactly the failure worth being loud about.
+A name that isn't one of those raises `ArgumentError` at boot, listing the ones it knows. A typo that quietly left deletes attached is exactly the failure worth being loud about.
 
 :::warning It's a denylist, so tools added later arrive switched on
 `excluded_tools` says what to remove, not what to allow. A future avo-ai release that ships a new tool — a write tool included — hands it to every app that hasn't named it here. Read the release notes when you upgrade, and exclude anything you don't want.
@@ -737,7 +848,7 @@ That writes `app/tools/crm_tool.rb`, defining `CrmTool` — a `RubyLLM::Tool` th
 | Mixin | What it gives you |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | `Avo::Ai::ToolSupport` | `json_result` for the reply shape, plus resource lookup and schema introspection helpers |
-| `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!` |
+| `Avo::Ai::ToolAuthorization` | The acting user, and the gates to reach data through: `require_acting_user!`, `authorized_relation`, `authorize_record_action!`, `find_authorized_record_by_param` |
 | `Avo::Ai::InspectionAware` | Answers with the touched resource's real columns, scopes, and required attributes under `resource_schema` — once per run per resource. It reads the resource name from your tool's own `resource:` argument |
 
 :::warning Include `InspectionAware` in the tool class itself
@@ -770,6 +881,26 @@ Three things the server decides for you, whatever the entry says:
 - **The acting user, the conversation, and the inspection tracker are injected server-side.** `user:` is passed to your initializer when it accepts one, and `chat` / `inspection_tracker` are set afterwards if your tool declares the accessors (the generated one declares `chat` and picks up `inspection_tracker` from `Avo::Ai::InspectionAware`). `user:`, `chat:` and `inspection_tracker:` keys in an `extra_tools` entry are stripped, so the initializer can't hand your tool a different user than the one who's chatting.
 - **Authorization is yours to call.** Nothing in the gem stops a tool reading the whole table — reach data through `authorized_relation` and `authorize_record_action!` so your tool sees exactly what the signed-in user sees in Avo, and rescue `Avo::Ai::ToolAuthorization::IdentityError` to report "not allowed" as a result instead of failing the run.
 - **Two tools can't share a wire name.** Registering a tool whose name collides with a shipped one raises when the roster is built. To replace a shipped tool, exclude it first — that's what [ejecting](#replace-a-shipped-tool-with-your-own-copy) does for you.
+
+**Returning records? Hand back a reference.** Put the string that names each record in your result — `"avo:#{short_name(resource_class)}/#{record.to_param}"` — and the model copies it into its answer, where it renders as a [chip](#record-chips). Build it from `to_param`, not `id`, so an app that hides its keys behind a slug or hashid keeps them hidden. When the model passes an id back to your tool, look it up with `find_authorized_record_by_param(resource_class, model_class, id)`: it takes the param out of a reference, or a primary key the model selected, and reads either through the signed-in user's scope.
+
+```ruby
+# app/tools/crm_tool.rb
+def execute(resource:, id:)
+  resource_class = find_resource_class(resource)
+  return {error: "No #{resource} resource."} unless resource_class
+
+  record = find_authorized_record_by_param(resource_class, resource_class.model_class, id)
+  return {error: "No #{resource} #{id}."} unless record
+
+  json_result(
+    title: record.name,
+    reference: "avo:#{short_name(resource_class)}/#{record.to_param}"
+  )
+end
+```
+
+Declare that `id` parameter as a string, since a slug is one.
 
 :::warning What a tool returns goes to your model provider
 Everything `execute` returns is sent to the provider on that turn and on every later turn of the conversation, and it's stored on the tool call. Return the minimum that answers the question — no API keys, no credentials, and no personal data the question didn't call for. Read secrets from `ENV` or `Rails.application.credentials`; never write one into the tool file or the initializer. When an entry fails to resolve, the error names the entry by its class and key names only — the values never reach a log, the error tracker, or the **Agent tools** field.
@@ -900,6 +1031,8 @@ Hover the **"3 records selected"** chip — or focus it, if you are on the keybo
 
 Up to 50 rows travel with one message. Past that the assistant is told the list was cut, so it says so before acting on "all of them" rather than quietly working from the first 50.
 
+A selection is also what you batch over: "set all of these to archived" proposes one card covering exactly the rows you checked. At the default `max_update_records` of 50 the two limits match, and they match on purpose: both keep a batch small enough to review on one card.
+
 :::info
 Rows of an [array resource](./array-resource.html) can't be attached — they have no database record to authorize or act on, so they are left out of the selection.
 :::
@@ -922,14 +1055,18 @@ bin/rails generate avo:ai:eject instructions
 
 Then edit `app/prompts/avo/ai/chat_agent/attached_context.txt.erb`. It receives one local per source, each `nil` when the conversation did not start from that thing:
 
-| Local                | Shape                                                               | Present on                       |
-| -------------------- | ------------------------------------------------------------------- | -------------------------------- |
-| `attached_record`    | `{resource:, record_id:, label:}`                                   | A record's page                  |
-| `attached_file`      | `{blob_id:, filename:, content_type:}`                              | A Media Library file's page      |
-| `attached_page`      | `{title:, path:}`                                                   | Any Avo page                     |
-| `attached_selection` | `{groups: [{resource:, records: [{record_id:, label:}]}], capped:}` | A page with rows checked         |
+| Local                | Shape                                                                              | Present on                  |
+| -------------------- | ---------------------------------------------------------------------------------- | --------------------------- |
+| `attached_record`    | `{resource:, record_id:, record_param:, label:}`                                   | A record's page             |
+| `attached_file`      | `{blob_id:, filename:, content_type:}`                                             | A Media Library file's page |
+| `attached_page`      | `{title:, path:}`                                                                  | Any Avo page                |
+| `attached_selection` | `{groups: [{resource:, records: [{record_id:, record_param:, label:}]}], capped:}` | A page with rows checked    |
 
 A page offers at most one of the first two. Rendering nothing is a valid way to turn any of it off.
+
+Name a record by `record_param`, its `to_param`. `record_id` is the primary key the chat stores, and an
+app that hides its keys behind a slug would see it in the prompt, and in anything the assistant
+repeats from it. The tools accept either.
 
 ## Open the chat
 
@@ -938,6 +1075,25 @@ The chat bar sits at the bottom of every Avo page. **Cmd+J** (or **Ctrl+J**) ope
 Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. Drag a pill to reorder them. The chat window lines its end edge up with the pill it was opened from and slides across when you switch, so it's always clear which conversation you're looking at. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. The open chats, their order, and the collapsed state are all remembered per device.
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way. The **×** in the title bar does the same thing: it closes the window, not the conversation. To take a chat out of the dock, use the × on its own pill; the conversation itself is kept either way, and it's still on your [chat list](#full-page-chats).
+
+To clear the dock in one go, open the history menu (the clock button next to **Agent**) and pick **Clear open chats** at the bottom. It does what every pill's × does, all at once, and closes the chat window: the pills go, and every conversation stays in the history list right above the button, one click from reopening. The entry only shows when there's at least one pill to close.
+
+### Closing idle tabs automatically
+
+Pills you stop using pile up. Set `config.ai.tab_expiry` and a pill nobody has opened for that long closes itself the next time an Avo page loads:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.tab_expiry = 30.days
+```
+
+It takes a duration or a number of seconds. It's unset by default, which keeps pills until someone closes them. To turn it back off, set it to `nil` or `false` (or delete the line):
+
+```ruby
+config.ai.tab_expiry = false # pills stay until closed
+```
+
+Zero, a negative value, `true`, or anything else that isn't a number raises at boot. The clock restarts every time a pill's conversation is shown, and pills opened before you upgraded count as fresh rather than expiring on the first load. As with **Clear open chats**, only the pill goes — the conversation stays in the history menu and on your [chat list](#full-page-chats).
 
 To give a conversation the whole window, use **Open in full page** in the title bar. It's a normal link, so cmd-click opens it in a new tab. From that page, **Minimize to the chat bar** hands the conversation back to the floating bar. If you got there through **Open in full page**, it returns you to the page you came from and its tooltip names it; a chat page opened directly — from a link, the chat list, or a bookmark — has no such page, so it takes you home instead.
 
@@ -985,6 +1141,59 @@ Each file shows as a chip under your message. Clicking an image or a PDF opens t
 Text files — markdown, plain text, CSV, TSV, and JSON — take a different route from images and PDFs: they aren't sent to the model inline. The model learns the file's name, type, size, and blob id, and reads it in windows through the `read_file` tool when it needs the content. See [Reading files and importing from them](#reading-files-and-importing-from-them).
 
 The one thing to check is the model: reading an image takes a vision model. The current Claude, GPT, and Gemini families all read images and PDFs; sending a file to a model that can't read it fails at request time with the provider's error rather than silently dropping the file.
+
+### What the composer accepts
+
+By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files — markdown, plain text, CSV, TSV, JSON — which it reads in windows. Files can be up to 25 MB.
+
+Anything else is refused as you add it, before it uploads, with a line under the draft naming the file and why — so a 2 GB video never leaves the browser. The same rule is checked again when the message is sent, so a request that skips the composer can't attach a file it would have refused.
+
+Change either side under `config.ai.uploads`:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.ai.uploads = {
+    max_size: 50.megabytes,
+    # Keeps the defaults and adds Word documents, e.g. for attaching to records.
+    accept: %w[image/png image/jpeg image/gif image/webp application/pdf text/* application/json
+      .md .markdown .txt .csv .tsv .json
+      application/vnd.openxmlformats-officedocument.wordprocessingml.document .docx]
+  }
+end
+```
+
+`accept` reads like the HTML `accept` attribute, because that is where it ends up — the paperclip's file dialog is narrowed to it. Entries are MIME types (`application/pdf`), wildcards (`image/*`) or extensions (`.csv`), and a file passes when its type **or** its extension matches. The extensions matter: browsers often hand over a `.md` or `.tsv` with no type at all. Use `["*/*"]` to allow any file — for example when people upload files only to have the assistant attach them to records. A malformed entry (`"pdf"`) or an empty list raises at boot.
+
+:::info
+Setting `accept` replaces the list rather than adding to it, so repeat the defaults you want to keep.
+:::
+
+### Protect the direct-upload endpoint
+
+The composer uploads through Rails' own direct-upload endpoint, `POST /rails/active_storage/direct_uploads`. Rails ships that endpoint **without authentication**: anyone who can load a page from your app can create blobs of any declared size and get a URL to upload them to. That is true whether or not you use Avo AI — the composer's limits run in the browser and at send time, and neither stops a request that goes straight to the endpoint.
+
+Protecting it is your app's job, because only your app knows who is signed in. The smallest fix is a `before_action` on Rails' controller, using your app's own authentication and size limit:
+
+```ruby
+# config/initializers/active_storage.rb
+Rails.application.config.to_prepare do
+  ActiveStorage::DirectUploadsController.class_eval do
+    # Devise's helper — use whatever your app authenticates with.
+    before_action :authenticate_user!
+
+    # The composer's own ceiling. Raise it if other upload fields in your app need more.
+    before_action do
+      if params.dig(:blob, :byte_size).to_i > Avo.configuration.ai.uploads[:max_size]
+        head :content_too_large
+      end
+    end
+  end
+end
+```
+
+`to_prepare` re-applies it whenever development reloads code. With this in place, a signed-out request gets a `401`, an oversized one a `413`, and the composer works as before. Checking the declared size is enough on the Disk and S3 services, which refuse an upload whose body is a different length; on another service, check that it enforces the declared length too.
+
 
 ## Attach a skill with a message
 
@@ -1069,11 +1278,14 @@ The row carries one sentence, chosen by what went wrong:
 
 | What happened                                                             | What the row says                                              | Try again |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------- | --------- |
-| Rate limit, overload, a 5xx, a timeout, or the network                    | The provider is busy or unreachable                            | Yes       |
-| A missing or rejected API key, a billing problem, a forbidden request     | The provider rejected the request; someone with access to the AI settings needs to look | Yes |
-| The chat's model isn't in the registry                                    | The model isn't available; pick another or refresh the models  | Yes       |
+| Rate limit, overload, a 5xx, a timeout, or the network                    | Names the provider and says it is busy or unreachable          | Yes       |
+| The provider is not configured                                            | Names the provider; someone with access to the AI settings needs to finish its setup | Yes |
+| The provider rejected the app's credentials                               | Names the provider; someone with access to the AI settings needs to check the API key | Yes |
+| The provider reports a billing or quota problem                           | Names the provider; someone with access to the provider account needs to look | Yes |
+| The app cannot use the requested model or feature                         | Names the provider; someone with access to the provider account needs to look | Yes |
+| The chat's model isn't in the registry                                    | Names the provider; pick another model or refresh the models   | Yes       |
 | The conversation is longer than the model's context window                | Start a new chat                                               | No        |
-| The provider called the request invalid, or refused an attachment type    | Start a new chat, or resend without the attachment             | No        |
+| The provider called the request invalid, or refused an attachment type    | Names the provider; start a new chat, or resend without the attachment | No |
 | Anything else                                                             | Something went wrong                                           | Yes       |
 
 **Try again** starts a new run for the message that went unanswered. It adds nothing to the transcript. The button only shows on the last row of the conversation, and only when running the same conversation again can work: a rejected API key gets one because someone can fix the key, a conversation that is too long doesn't. Sending a new message works too. The assistant then answers both.
@@ -1116,6 +1328,8 @@ bin/rails db:migrate
 ```
 
 The installer only writes what your app is missing. Until the column exists error rows still appear and still clear the indicator, but they carry no **Try again**.
+
+The same run adds `avo_ai_write_logs.pending_write_id`, which ties a batch update's records together so undo treats the batch as one change. Until it exists, a batch is listed and undone record by record.
 :::
 
 ## When each message was sent
@@ -1129,6 +1343,135 @@ Dividers are worked out when the page renders, not as each message arrives. Leav
 ## Copy a message
 
 Hover any message and a copy button appears beneath it. It copies the raw text the assistant produced — the markdown it wrote, not the rendered HTML — so pasting it into an issue or an editor keeps the formatting.
+
+## Rate a reply
+
+Every assistant reply has a thumbs up and a thumbs down beside its copy button. A click opens a modal; nothing is recorded until you press **Send feedback**, or <kbd>Cmd</kbd>+<kbd>Return</kbd> (<kbd>Ctrl</kbd>+<kbd>Return</kbd> on Windows and Linux) while typing the comment. Both fields in it are optional, so sending an empty modal still records the vote. Closing the modal (**Cancel**, the close button, **Esc**, or a click outside it) records nothing.
+
+- **Thumbs down** asks "What went wrong?" with an optional reason picked from a dropdown: **Wrong or inaccurate**, **Didn't follow instructions**, **Wrong records or data**, **Took an action I didn't want**, **Too slow or verbose**, or **Other**. A comment box sits under it.
+- **Thumbs up** asks "What did you like about this response?" and takes a comment.
+
+Each send leaves a new feedback. Clicking a thumb again, either one, opens an empty modal for another feedback instead of the one you sent before, so you can rate the same reply more than once. The thumb of your last sent vote stays highlighted. A feedback can't be edited, removed, or switched to the other vote once it's sent.
+
+Only the chat's owner can rate its replies, the same way only the owner can read the chat. Deleting a chat deletes its feedback.
+
+### Review feedback
+
+Feedback lands in the **Feedback** resource. Add it to the menu beside the others:
+
+```ruby
+# config/initializers/avo.rb
+section "AI", icon: "heroicons/outline/sparkles" do
+  resource "avo_ai/chats"
+  resource "avo_ai/messages"
+  resource "avo_ai/models"
+  resource "avo_ai/skills"
+  resource "avo_ai/feedbacks" # [!code focus]
+end
+```
+
+Each record shows the vote, the reason, the comment, the prompt the user sent, the reply they rated, the model that produced that reply, the author, and a link to the chat. Filter the index by vote, reason, status, or model.
+
+You triage a record with two fields of your own: **Status** (**Open**, **In progress**, or **Resolved**) and **Admin note**. Those are the only fields you can edit. The user's vote, reason, and comment are read-only, in the resource and for the user, so a triaged record never changes under you.
+
+### Choose who can review feedback
+
+Feedback contains other people's conversations, so the gem ships `Avo::Ai::FeedbackPolicy` closed: nobody sees any feedback until you say who reviews it. Define your own `Avo::Ai::FeedbackPolicy` and open `index?`, `show?`, `edit?`, and `update?` for your reviewers. Your class wins over the gem's copy:
+
+```ruby
+# app/policies/avo/ai/feedback_policy.rb
+class Avo::Ai::FeedbackPolicy
+  attr_reader :user, :record
+
+  def initialize(user, record)
+    @user = user
+    @record = record
+  end
+
+  def index? = user.admin?
+  def show? = user.admin?
+  def edit? = user.admin?
+  def update? = user.admin?
+  def search? = user.admin?
+  def act_on? = user.admin?
+  # Feedback is written from the chat and deleted with its chat.
+  def new? = false
+  def create? = false
+  def destroy? = false
+
+  class Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      @scope.all
+    end
+  end
+end
+```
+
+Keep `new?`, `create?`, and `destroy?` closed. There is nothing to create from the admin side.
+
+:::info
+The resource checks this policy itself, so it stays closed without [avo-authorization](./authorization.html). With the gem's policy in place the index is empty and opening a record fails as not found.
+:::
+
+:::warning Upgrading an existing install
+Feedback is stored in a new `avo_ai_feedbacks` table. Re-run the installer to get its migration, then migrate:
+
+```bash
+bin/rails generate avo:ai install
+bin/rails db:migrate
+```
+
+The installer only writes what your app is missing.
+:::
+
+### Turn feedback off
+
+Feedback is on by default. Turn it off in the initializer:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.feedback_enabled = false
+```
+
+This hides the thumbs under every reply and refuses new votes. Feedback already collected stays reviewable in the Feedback resource.
+
+### Notify reviewers of new feedback
+
+Requires [avo-notifications](./notifications.html). Point `feedback_notification_recipients` at whoever should hear about new feedback:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.feedback_notification_recipients = -> { User.where(role: "admin") }
+```
+
+It's a zero-argument lambda, and `feedback` is available inside it. Return a user, an Array of users, or a relation. It runs in a background job, never in the request that sends the feedback, so a slow lookup never delays it. Leave it unset (the default) and nobody is notified.
+
+Narrow which feedback notifies with `feedback_notification_events`:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.feedback_notification_events = [:downvotes, :with_description]
+```
+
+| Value | Notifies on |
+| --- | --- |
+| `:all` | Every vote. The default. |
+| `:downvotes` | Thumbs down. |
+| `:upvotes` | Thumbs up. |
+| `:with_description` | Any vote that carries a comment. |
+
+The events are checked once, when the user sends the feedback, and a feedback notifies at most once. The vote, reason, and comment arrive together, so the notification carries the reason in its title and the comment in its body. Each send is a new feedback, so a second one on the same reply can notify again. An unknown event raises at boot.
+
+The notification names the vote and its reason, carries the comment as its body, and links to the feedback record in Avo. A thumbs down sends at `:warning` level; a thumbs up sends at `:info` level.
+
+:::info
+A notification failure is logged and never affects the vote. The vote is already saved by the time the notification runs.
+:::
 
 ## Choose which models people can use
 
@@ -1268,6 +1611,48 @@ end
 ```
 
 Narrowing `Scope#resolve` reaches past the resource's own index: a skill the scope excludes also drops out of the composer's `/` menu, and out of any chat that already referenced it — the same way a deleted skill does (see [Attach a skill with a message](#attach-a-skill-with-a-message)).
+
+## Who can see a chat
+
+The chat UI only ever loads the signed-in user's own conversations, and the **Chats** and **Messages** admin resources list only theirs. Those resources still open any record by id, though, so close them with policies that scope to the owner:
+
+```ruby
+# app/policies/avo/ai/chat_policy.rb
+class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def index? = user.present?
+  def show? = owner?
+  def create? = user.present?
+  def update? = owner?
+  def destroy? = owner?
+
+  private
+
+  def owner? = user.present? && record.user == user
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = scope.where(user: user)
+  end
+end
+
+# app/policies/avo/ai/message_policy.rb
+class Avo::Ai::MessagePolicy < ApplicationPolicy
+  def index? = user.present?
+  def show? = owner?
+  def create? = false
+  def update? = owner?
+  def destroy? = owner?
+
+  private
+
+  def owner? = user.present? && record.chat&.user == user
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = scope.where(chat: Avo::Ai::Chat.where(user: user))
+  end
+end
+```
+
+A chat or message outside the scope is a 404, admins included. `create?` is closed on messages because they are written by the chat; the admin form would let someone append to another person's conversation.
 
 ## Who can delete a chat
 

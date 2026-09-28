@@ -156,7 +156,7 @@ class Avo::Cards::UsersMetric < Avo::Cards::MetricCard
 end
 ```
 
-Entries are scoped to the current user, tenant and **locale**, so a card querying `current_user` — or returning translated content — is safe to cache. Each [range](#ranges) is cached separately too, and on a resource card each record gets its own entry. If your `query` varies on something else, override `cache_key` as shown in the [reference](./cards-api.html#self.cache_for).
+Entries are scoped to the current user, tenant and **locale**, so a card querying `current_user` — or returning translated content — is safe to cache. Each [range](#ranges) is cached separately too, and on a resource card each record gets its own entry. Upgrading Avo or a plugin busts every entry as well, since the installed versions are part of the key. If your `query` varies on something else, override `cache_key` as shown in the [reference](./cards-api.html#self.cache_for).
 
 Someone clicking the card's [refresh control](#refresh-a-card-on-demand) is asking for current data, so that click re-runs the `query` and rewrites the entry — but only their own, since the key is per user. Automatic `refresh_every` polling still respects `cache_for`, which is what makes the two worth pairing: poll often, query rarely.
 
@@ -942,3 +942,24 @@ end
 ```
 
 With the setup above, the card will render on the Project show page via `show_cards`. If you remove `show_cards`, Avo will use `display_cards` for the show page. For new/edit pages, Avo will use `form_cards` unless you define `new_cards` or `edit_cards` respectively.
+
+### Cards on association tables
+
+A resource's index cards also render when that index is a `has_many` table on another record's page. There, `params[:related_name]` holds the association name and `params[:via_record_id]` the parent record's id, so a card can count the parent's records instead of all of them. Look the parent up through its resource's `find_record`, which understands slugs and other custom ids:
+
+```ruby
+class Avo::Cards::PostsCount < Avo::Cards::MetricCard
+  self.id = "posts_count"
+  self.label = "Posts count"
+
+  def query
+    scope = if params[:via_record_id].present?
+      Avo::Resources::User.find_record(params[:via_record_id]).posts
+    else
+      Post
+    end
+
+    result scope.count
+  end
+end
+```
