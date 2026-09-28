@@ -68,7 +68,9 @@ You can add those targets to your controllers and use them in your JS code.
 
 ### Field inputs as targets
 
-Similar to the wrapper element, inputs in the `Edit` and `New` views get the `[FIELD_NAME][FIELD_TYPE]InputTarget`. On more complex fields like the searchable, polymorphic `belongs_to` field, where there is more than one input, the target attributes are attached to all `input`, `select`, and `button` elements.
+Similar to the wrapper element, inputs in the `Edit` and `New` views get the `[FIELD_NAME][FIELD_TYPE]InputTarget`. On the polymorphic `belongs_to` field, where there is more than one select, the target attributes are attached to both the type select and the record select.
+
+A searchable `belongs_to` field renders a text input for searching and a hidden input that holds the selected record's id. The target attributes, and any `data` you set on the `input` through the [`html` option](./field-options-api#html), go on the hidden input. Its `value` is the record id, like the select's, and it fires `input` and `change` events when a record is picked or cleared. To hide or disable the whole field, target the `...Wrapper` instead.
 
 ```ruby
 # Inputs get the `data-[CONTROLLER]-target="nameTextInput"` attribute and can be targeted using nameTextInputTarget
