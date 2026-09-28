@@ -76,7 +76,7 @@ A few options belong to a single field type: [`polymorphic_as` + `types`](./asso
 
 ## Show or hide the association buttons
 
-The attach, detach, create, destroy, and actions buttons on association panels are controlled through the target resource's policy methods. Find out more on the [authorization](./authorization#associations) page.
+The attach, detach, create, destroy, and actions buttons on association panels are controlled through the target resource's policy methods. Find out more on the [authorization](./authorization.html#authorize-association-controls) page.
 
 ## Single Table Inheritance (STI)
 

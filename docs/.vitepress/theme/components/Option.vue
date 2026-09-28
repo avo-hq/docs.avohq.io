@@ -1,13 +1,13 @@
 <script>
 export default {
-  props: ['name', 'since', 'headingSize'],
+  props: ['name', 'since', 'headingSize', 'id'],
   setup(props, { slots }) {
     let name = (props.name || "")
     // let since = (props.since || "")
     const isCode = name.includes('`')
     name = name.replace(/`/g, '');
     // const prettyName =
-    const anchor = name.replace(/\?|{|}|!|`/g, '')
+    const anchor = props.id || name.replace(/\?|{|}|!|`/g, '')
     const anchorName = `#${anchor}`
 
     // expose to template and other options API hooks

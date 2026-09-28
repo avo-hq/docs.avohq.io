@@ -167,7 +167,7 @@ end
 
 ## Authorization
 
-If you're using the [authorization](./authorization) feature, please ensure you give the proper permissions using the [`reorder?`](./authorization#reorder) policy method.
+If you're using the [authorization](./authorization) feature, please ensure you give the proper permissions using the [`reorder?`](./authorization-api.html#reorder) policy method.
 
 ```ruby
 # app/policies/course_link_policy.rb

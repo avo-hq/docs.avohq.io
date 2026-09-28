@@ -45,7 +45,7 @@ self.search = {
 
 - **Type:** Proc
 - **Default:** `nil` — search disabled for the resource
-- **Locals:** `q` (stripped search string), `query` (base scope with [authorization scopes](./authorization.html#scopes) applied), `params`, [`search_type`](#search_type), plus all `Avo::ExecutionContext` attributes
+- **Locals:** `q` (stripped search string), `query` (base scope with [authorization scopes](./authorization.html#limit-which-records-a-user-sees) applied), `params`, [`search_type`](#search_type), plus all `Avo::ExecutionContext` attributes
 - **Return:** an `ActiveRecord::Relation`, or an Array of hashes for [custom search providers](#custom-search-providers)
 
 </Option>

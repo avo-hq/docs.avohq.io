@@ -15,4 +15,4 @@ Please ensure you have the `upload_{FIELD_ID}?`, `delete_{FIELD_ID}?`, and `down
 :::
 
 **Related:**
- - [Attachment pundit policies](./../authorization.html#attachments)
+ - [Attachment pundit policies](./../authorization.html#authorize-file-attachments)
