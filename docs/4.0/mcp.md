@@ -392,6 +392,20 @@ This is the same grid the [REST API](./rest-api.html#entitle-a-token) shows for 
 
 The **Tools** card below it is the same grant read as the calls it turns into — `list_records`, `run_action` — grouped by the capability that unlocks each group. A narrowed grant is **counted** there (*on 3 resources*) rather than named, since the names are rows on the Entitlements card above. The write group says what it stands on, above its tools: *Everything in Read, plus:* — "Read & write" heads three calls only because the group carries read's five as well.
 
+### Read a connection's access at a glance
+
+The connections index sums each grant up in an **Access** column, so the connection that can write stands out without opening every one. Hover the badge for how far it reaches — a grant across the board says *every resource its owner can access*, a fine-tuned one counts its resources.
+
+| Access | Means |
+| --- | --- |
+| **Unrestricted** | Read and write across everything the owner can reach, including resources added later. |
+| **Read only** | Read on every resource it reaches — the consent screen's default. |
+| **Read & write** | Read & write on every resource it reaches, but fine-tuned rather than unrestricted. |
+| **Custom** | Resources sit at different levels, such as read everywhere and write on a few. |
+| **No access** | No record access at all. A Run actions grant alone still reads as No access. |
+
+The same column, with the same words, is on the [API tokens](./rest-api.html#read-a-token-s-access-at-a-glance) index.
+
 ### Watch what a connection is doing
 
 A connection's page carries a **Log** card: every request the client made, newest first, kept current while the page is open. Each row shows the tool and resource it named (or the method, for `initialize` and `tools/list`), the time, how long it took, and how it went:

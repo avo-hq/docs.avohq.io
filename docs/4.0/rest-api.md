@@ -548,6 +548,18 @@ Two things never get a row:
 - **Resources the token's owner can't reach.** The rows are resolved through the owner's own policies, so an administrator restricting somebody else's token can't grant past what that person already sees.
 - **The API tokens resource itself.** It has no API endpoint at all ([why](#endpoints)), so granting it would promise something no route can keep.
 
+### Read a token's access at a glance
+
+The tokens index sums each token's entitlements up in an **Access** column, so the token that can write stands out without opening every one. Hover the badge for how many resources it reaches.
+
+| Access | Means |
+| --- | --- |
+| **Unrestricted** | No grants at all: everything the owner's policies allow, including resources added later. |
+| **Read only** | Every granted resource is at Read. |
+| **Read & write** | Every granted resource is at Read & Write. |
+| **Custom** | Granted resources sit at different levels, or one holds an action set the grid can't name. |
+| **No access** | Every resource is at None: the token is refused everywhere. |
+
 ### Take a token back to unrestricted
 
 Setting every row to None does not land where you started. A token with nothing granted is entitled to *nothing* — it refuses every request. That's a legitimate thing to want, and it is not the same as never having entitled the token at all.
