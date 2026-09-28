@@ -10,7 +10,7 @@ If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedica
 
 ### What changed
 
-A Pundit policy can now name which of a resource's fields a user may reach, with `whitelisted_fields` and `blacklisted_fields`, and every Avo surface honors the answer for reads and writes. See [Field authorization](./authorization.html#field-authorization).
+A Pundit policy can now name which of a resource's fields a user may reach, with `whitelisted_fields` and `blacklisted_fields`, and every Avo surface honors the answer for reads and writes. See [Field authorization](./authorization.html#hide-fields-from-a-user).
 
 ### Action Required
 

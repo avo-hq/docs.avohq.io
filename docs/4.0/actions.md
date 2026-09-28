@@ -118,7 +118,7 @@ end
 :::
 
 :::warning
-When using Pundit policies, access to actions is restricted with the `act_on?` method. If you think you should see an action and you don't, check the policy. More info [here](./authorization#act-on).
+When using Pundit policies, access to actions is restricted with the `act_on?` method. If you think you should see an action and you don't, check the policy. More info [here](./authorization-api.html#act_on).
 :::
 
 :::info

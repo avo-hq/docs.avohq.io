@@ -51,7 +51,7 @@ class CoursePolicy < ApplicationPolicy
 end
 ```
 
-For more details, refer to the [view\_{association}?](./../authorization.html#view_association) documentation.
+For more details, refer to the [view\_{association}?](./../authorization-api.html#view_association) documentation.
 :::
 
 ## Example 2: Array field fetching data from the model's method

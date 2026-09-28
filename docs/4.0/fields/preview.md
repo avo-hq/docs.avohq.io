@@ -44,4 +44,4 @@ end
 
 ## Authorization
 
-The preview request authorization is controlled with the [`preview?` policy method](./../authorization.html#preview).
+The preview request authorization is controlled with the [`preview?` policy method](./../authorization-api.html#preview).
