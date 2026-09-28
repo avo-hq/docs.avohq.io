@@ -51,10 +51,15 @@ def create_success_action
   if params[:via_belongs_to_resource_class].present?
     respond_to do |format|
       format.turbo_stream do
+        # The dialog's own frame: modal_frame, or modal_frame_nested and deeper when it was opened from another dialog.
+        modal_frame_id = helpers.current_modal_frame_id || Avo::MODAL_FRAME_ID.to_s
+
         render turbo_stream: [
-          turbo_stream.remove(Avo::MODAL_FRAME_ID),
+          turbo_stream.update(modal_frame_id, ""),
           turbo_stream.avo_update_belongs_to(
             relation_name: params[:via_relation],
+            target_name: params[:via_belongs_to_target_name],
+            frame_id: modal_frame_id,
             target_record_id: @record.to_param,
             target_resource_label: @resource.record_title,
             target_resource_class: @record.class.name
@@ -71,10 +76,14 @@ def create_success_action
 end
 ```
 
-- **Default behavior:** when the record was created through a `belongs_to` modal (`params[:via_belongs_to_resource_class]` is present), renders Turbo Streams that close the modal and select the new record in the field. Otherwise redirects to [`after_create_path`](#after_create_path) with the success flash.
+- **Default behavior:** when the record was created through a `belongs_to` modal (`params[:via_belongs_to_resource_class]` is present), renders Turbo Streams that close that dialog and select the new record in the field that opened it. Otherwise redirects to [`after_create_path`](#after_create_path) with the success flash.
 
 :::warning
 Keep the `super` guard for the `belongs_to`-modal branch — dropping it breaks the "Create new record" flow inside `belongs_to` fields.
+:::
+
+:::info
+A "Create new" dialog can open another one on top of it, so the stream clears only the current dialog's frame instead of removing `Avo::MODAL_FRAME_ID`. `target_name` and `frame_id` make sure the new record lands in the field that opened the dialog, not in a field with the same name in the dialog underneath. Both are optional; without them every field for `relation_name` is updated.
 :::
 
 </Option>
