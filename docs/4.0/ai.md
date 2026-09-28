@@ -1228,11 +1228,14 @@ The row carries one sentence, chosen by what went wrong:
 
 | What happened                                                             | What the row says                                              | Try again |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------- | --------- |
-| Rate limit, overload, a 5xx, a timeout, or the network                    | The provider is busy or unreachable                            | Yes       |
-| A missing or rejected API key, a billing problem, a forbidden request     | The provider rejected the request; someone with access to the AI settings needs to look | Yes |
-| The chat's model isn't in the registry                                    | The model isn't available; pick another or refresh the models  | Yes       |
+| Rate limit, overload, a 5xx, a timeout, or the network                    | Names the provider and says it is busy or unreachable          | Yes       |
+| The provider is not configured                                            | Names the provider; someone with access to the AI settings needs to finish its setup | Yes |
+| The provider rejected the app's credentials                               | Names the provider; someone with access to the AI settings needs to check the API key | Yes |
+| The provider reports a billing or quota problem                           | Names the provider; someone with access to the provider account needs to look | Yes |
+| The app cannot use the requested model or feature                         | Names the provider; someone with access to the provider account needs to look | Yes |
+| The chat's model isn't in the registry                                    | Names the provider; pick another model or refresh the models   | Yes       |
 | The conversation is longer than the model's context window                | Start a new chat                                               | No        |
-| The provider called the request invalid, or refused an attachment type    | Start a new chat, or resend without the attachment             | No        |
+| The provider called the request invalid, or refused an attachment type    | Names the provider; start a new chat, or resend without the attachment | No |
 | Anything else                                                             | Something went wrong                                           | Yes       |
 
 **Try again** starts a new run for the message that went unanswered. It adds nothing to the transcript. The button only shows on the last row of the conversation, and only when running the same conversation again can work: a rejected API key gets one because someone can fix the key, a conversation that is too long doesn't. Sending a new message works too. The assistant then answers both.
