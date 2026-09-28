@@ -4,6 +4,22 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Built-in neutral themes now share one lightness curve
+
+<Option name="Built-in neutral presets keep their tint but use a consistent surface hierarchy">
+
+### What Changed
+
+Slate, Stone, Gray, Zinc, Neutral, Taupe, Mauve, Mist, and Olive now use Brand's lightness at every shade while preserving their original hue and chroma. Dark primary surfaces are also slightly softer. Navbar text continues to use each named preset's original 300 shade for contrast.
+
+Custom palettes supplied through [`neutral_colors`](./appearance-api.html#neutral_colors) are unchanged.
+
+### Action Required
+
+None, unless custom CSS depends on the previous built-in shade values. Review overrides that use `--color-avo-neutral-*` while a named preset is active, and use the [public appearance variables](./appearance-api.html#css-variables) when a surface needs a fixed color.
+
+</Option>
+
 ## Field authorization: `avo-authorization` 4.2.1
 
 <Option name="Nothing to add to your policies">
