@@ -330,6 +330,56 @@ part record.status, tone: :danger # coloured
 part icon: "tabler/outline/moon"  # a glyph, alone or beside text
 ```
 
+**Give the whole chip a background.** Call `background` once inside `chip`, before or after its
+parts. A solid fill accepts an Avo palette name or a hex color:
+
+```ruby
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  def chip
+    background color: :violet
+    part resource.avatar
+    part resource.record_title
+    part record.status
+  end
+end
+```
+
+For a gradient, provide two or more palette names or hex colors. Avo draws them at 135 degrees:
+
+```ruby
+# app/avo/resources/project.rb
+def chip
+  background gradient: [:indigo, "#c026d3", :rose]
+  part resource.record_title
+  part record.status
+end
+```
+
+For a background image, provide an Avo photo such as `resource.cover`, an Active Storage-backed
+photo, or an image URL:
+
+```ruby
+# app/avo/resources/event.rb
+def chip
+  background image: resource.cover
+  part resource.avatar
+  part resource.record_title
+end
+```
+
+Avo chooses light or dark text by measuring the declared colors against the 4.5:1 contrast floor.
+If a gradient needs help at one end, or a photograph could contain light and dark pixels, Avo adds
+the smallest light or dark scrim needed to keep the words readable. Set `foreground: :light` or
+`foreground: :dark` only when the visual direction matters more than the automatic choice; Avo
+still adjusts the background enough to protect contrast.
+
+Backgrounds accept these palette names: `:red`, `:orange`, `:amber`, `:yellow`, `:lime`, `:green`,
+`:emerald`, `:teal`, `:cyan`, `:sky`, `:blue`, `:indigo`, `:violet`, `:purple`, `:fuchsia`, `:pink`,
+and `:rose`. Custom colors use three- or six-digit hex values. A filled chip uses one foreground
+color for all its parts, since semantic part colors cannot stay readable over every fill; a
+`:muted` part keeps its hierarchy through the chip's smaller secondary text size instead.
+
 Because it is an instance method on the hydrated resource, the rest of what Avo hands a lambda is
 there too — `view`, `params`, `request`, `context`, `current_user`, `view_context`, `main_app`,
 `avo`, `helpers` and `t`. Nothing is injected for them; the resource already delegates them.
