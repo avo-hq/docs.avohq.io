@@ -56,7 +56,7 @@ The endpoint needs a host. A missing, blank, or relative value (`nil`, `""`, `"/
 :::
 
 :::info Request behavior
-Index requests always carry `page` and `per_page` query parameters — the names are not configurable. Use [`query_params`](#query_params) to send additional parameters. Requests time out after 10 seconds and raise an error.
+Index requests carry `page` and `per_page` query parameters. APIs that page with other parameter names aren't supported yet. Use [`query_params`](#query_params) to send additional parameters. Requests time out after 10 seconds and raise an error.
 :::
 
 </Option>
@@ -155,11 +155,17 @@ self.http_adapter = {
 
 <Option name="`parse_count`" headingSize="3">
 
-Extracts the total number of records, used for pagination.
+Extracts the total number of records, used for pagination. Read the total the API reports, from the body or from a response header.
 
 ```ruby
+# From the body
 self.http_adapter = {
   parse_count: -> { response["meta"]["count"] }
+}
+
+# From a header
+self.http_adapter = {
+  parse_count: -> { headers["x-total-count"].to_i }
 }
 ```
 

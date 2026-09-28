@@ -68,7 +68,7 @@ self.http_adapter = {
 Each proc runs in an [`Avo::ExecutionContext`](execution-context) with access to `raw_response` (the `HTTParty::Response`), `response` (the parsed body), and `headers` (the response headers), so you can dig into nested structures or inspect status codes as needed.
 
 :::info Pagination
-Avo pages the API for you — index requests always include `page` and `per_page` query parameters.
+Avo pages the API for you — index requests include `page` and `per_page` query parameters. APIs that page with other parameter names aren't supported yet.
 :::
 
 ## Send authentication headers
@@ -125,8 +125,6 @@ self.http_adapter = {
   }
 }
 ```
-
-Avo also sends `page` and `per_page` on every index request. If the API rejects parameters it doesn't know, set them to `nil` to leave them out: `{ page: nil, per_page: nil, ... }`.
 
 The same proc serves the [REST API](./rest-api.html)'s `sort_by` and `sort_direction`. Without it, a sorted request still succeeds, and the records come back in the remote API's own order.
 
