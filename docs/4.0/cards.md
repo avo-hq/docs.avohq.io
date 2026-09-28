@@ -942,3 +942,24 @@ end
 ```
 
 With the setup above, the card will render on the Project show page via `show_cards`. If you remove `show_cards`, Avo will use `display_cards` for the show page. For new/edit pages, Avo will use `form_cards` unless you define `new_cards` or `edit_cards` respectively.
+
+### Cards on association tables
+
+A resource's index cards also render when that index is a `has_many` table on another record's page. There, `params[:related_name]` holds the association name and `params[:via_record_id]` the parent record's id, so a card can count the parent's records instead of all of them. Look the parent up through its resource's `find_record`, which understands slugs and other custom ids:
+
+```ruby
+class Avo::Cards::PostsCount < Avo::Cards::MetricCard
+  self.id = "posts_count"
+  self.label = "Posts count"
+
+  def query
+    scope = if params[:via_record_id].present?
+      Avo::Resources::User.find_record(params[:via_record_id]).posts
+    else
+      Post
+    end
+
+    result scope.count
+  end
+end
+```
