@@ -26,7 +26,37 @@ config.load_defaults 6.1 # 6.1 or higher, depending on your rails version
 
 ## Installing Avo
 
-### 1. One-command install
+### 1. Install the full Avo stack with your coding agent
+
+Paste this prompt into your coding agent:
+
+```text
+Install and configure the full Avo stack in this Rails app. Run:
+
+bin/rails app:template LOCATION=https://avohq.io/install/agent.rb
+
+When the command shows an activation URL and code, give them to me.
+Wait while I approve the installation. Then finish the install,
+verify the migrations and routes, and tell me what was added.
+```
+
+The command opens a short-lived activation flow on Avo HQ. Sign in or create an account, review the
+app name and included add-ons, and approve the installation. Your agent resumes automatically, so
+you do not need to paste a license key or gem server credential into the chat.
+
+This starts a 14-day Stripe trial with no card required and installs:
+
+- Avo, authorization, menu, advanced search, dynamic filters, and scopes
+- dashboards and audit logging
+- notifications
+- forms, plus starter Settings form and page
+- Avo AI and an application context prompt
+- the MCP server and Avo agent skills
+
+The generated dashboard, Settings form, and Settings page are starting points. Ask your agent to
+adapt them to your application's models and workflows after installation.
+
+### 2. Install Avo core with one command
 
 Use [this](https://railsbytes.com/public/templates/zyvsME) app template for a one-liner install process.
 
@@ -36,17 +66,7 @@ Run this command which will run all the required steps to install Avo in your ap
 bin/rails app:template LOCATION='https://avohq.io/app-template'
 ```
 
-:::tip Let an LLM do it for you
-Working with an AI coding assistant (Claude, Cursor, Copilot, etc.)? Paste this prompt and let it handle the install:
-
-```
-Install and configure Avo in this Rails app by following
-https://docs.avohq.io/4.0/installation.html — run the install steps,
-wire up the initializer and routes, then generate my first resource.
-```
-:::
-
-### 2. Manual, step by step.
+### 3. Manual, step by step
 
 1. Add the appropriate Avo gem to the `Gemfile`
 
@@ -64,7 +84,7 @@ Please use [this guide](./gem-server-authentication.html) to find the best authe
 This will mount the app under `/avo` path. Visit the link to see the result.
 :::
 
-### 3. In popular Rails starter kits
+### 4. In popular Rails starter kits
 
 We have integrations with the most popular starter kits.
 
