@@ -384,6 +384,12 @@ Who may mint and revoke tokens is your app's authorization decision, and the def
 GET /api/resources/v1/teams?page=2&per_page=10&sort_by=name&sort_direction=asc
 ```
 
+An array resource cannot sort, so a `sort_by` on one is refused with a `400`:
+
+```json
+{ "error": "Sorting not supported", "parameter": "sort_by" }
+```
+
 :::info `per_page` is remembered in a cookie
 Avo stores `per_page` in a cookie so the admin panel remembers the reader's choice. A client that keeps cookies between requests (a browser, or a scripted session with a cookie jar) will keep the last `per_page` it sent even when it omits the parameter. Send `per_page` explicitly on every request if you need a fixed page size.
 :::
