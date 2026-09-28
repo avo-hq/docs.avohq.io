@@ -636,6 +636,12 @@ Field lists are opt-in. A policy that declares neither `whitelisted_fields` nor 
 
 Put a list on `ApplicationPolicy` and every policy inherits it; a subclass's own list composes with it in the order above. A `private` declaration counts as declared.
 
+:::info A policy that refuses a nil user
+Policies whose constructor raises without a current user (`raise Pundit::NotAuthorizedError, "must be logged in" if user.nil?`) are common, and a resource built in a job, a mailer, a rake task or a model spec has no user. When the policy declares neither list there is nothing to read from it, so that error is swallowed and the answer is "no restriction" — the same as before field authorization existed.
+
+Declare a list and the error propagates, because resolution never falls open. Hand those call sites a user, or let the constructor accept a nil user and have the list answer restrictively for it — the declaration's own body never runs when the constructor raises first.
+:::
+
 ### Field resolution in a custom client
 
 Field resolution is part of the [client contract](#custom-authorization-clients), through two methods. Both are optional: a client that implements neither imposes no field restriction, which is how a client written before this feature, or one you wrote yourself, keeps working unchanged.

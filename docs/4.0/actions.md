@@ -127,7 +127,7 @@ You may use the [custom controls](./custom-controls.html) feature to show action
 
 ## Collect input with fields
 
-An action can define fields, shown to the user in the action's modal. Most work the same way as fields on resources. When the action runs on a single record the fields are hydrated from that record; otherwise fields that do not depend on a record render as plain form inputs. Association fields are an exception, as described below. The submitted values arrive in `handle` as the `fields` argument.
+An action can define fields, shown to the user in the action's modal. Most work the same way as fields on resources. When the action runs on a single record the fields are hydrated from that record; otherwise they render empty. The submitted values arrive in `handle` as the `fields` argument.
 
 Every field you declare here renders in the modal. The `hide_on` and `show_on` marks belong to resource views and do not filter an action's fields. A field with no form component, such as `badge`, renders read-only, as it does on the <Show /> view, which lets you show context next to the inputs.
 
@@ -143,20 +143,15 @@ end
 
 Check out the [Fields page](./fields.md) for everything fields can do.
 
-### Choose an associated record in a collection action
+### Choose an associated record
 
-A [`belongs_to` field](./associations/belongs_to.html) needs one current record to resolve its association. It works when you run the action from a record's <Show /> view or select exactly one record on the <Index /> view because Avo hydrates the action with that record. It cannot render when you select multiple records or run a standalone action because there is no single current record.
-
-For a short list of choices, use a [`select` field](./fields/select.html) with options loaded when the form renders:
+A [`belongs_to` field](./associations/belongs_to.html) renders in the action's modal wherever the action was started from: a record's <Show /> view, one or several records selected on the <Index /> view, or a [standalone action](./actions-api.html#standalone) that has no record at all. <VersionReq version="4.2.9" />
 
 ```ruby
 # app/avo/actions/assign_user.rb
 class Avo::Actions::AssignUser < Avo::BaseAction
   def fields
-    field :user_id,
-      as: :select,
-      options: -> { User.order(:name).pluck(:name, :id) },
-      include_blank: true
+    field :user, as: :belongs_to
   end
 
   def handle(query:, fields:, **)
@@ -169,7 +164,27 @@ class Avo::Actions::AssignUser < Avo::BaseAction
 end
 ```
 
-For a long list that needs search, use a [`tags` field with `fetch_values_from`](./fields/tags.html#fetch_values_from) in select mode:
+**The value arrives under the foreign key, not the field id.** `field :user` submits `fields[:user_id]`. A [polymorphic](./associations/belongs_to.html#polymorphic-belongs-to) `belongs_to` submits both halves, `fields[:reviewable_type]` and `fields[:reviewable_id]`.
+
+The association is read from the resource's model, so the field renders with or without a record. On a single record Avo hydrates the field and it opens with that record's association preselected; with several records or none it opens empty.
+
+:::info
+Before <Version version="4.2.9" /> the field only rendered when the action had exactly one record, so older actions guard it with `visible: -> { resource.record.present? }` or use one of the alternatives below. Neither is needed any more — drop the guard to show the field everywhere.
+:::
+
+For a value that isn't an association, keep using a plain field. A [`select` field](./fields/select.html) covers a short list of choices:
+
+```ruby
+# app/avo/actions/assign_user.rb
+def fields
+  field :user_id,
+    as: :select,
+    options: -> { User.order(:name).pluck(:name, :id) },
+    include_blank: true
+end
+```
+
+A [`tags` field with `fetch_values_from`](./fields/tags.html#fetch_values_from) in select mode covers a long list that needs search:
 
 ```ruby
 # app/avo/actions/assign_user.rb
