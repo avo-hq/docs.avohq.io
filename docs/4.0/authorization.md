@@ -383,7 +383,7 @@ The policy removes fields first, then any `visible:` block narrows what's left. 
 
 ### Limits
 
-- **Unlicensed, it's inert.** Without the `avo-authorization` add-on on your license, every policy check is skipped, these lists included. They aren't a security boundary in an unlicensed app.
+- **Unlicensed or without a client, it's inert.** Without the `avo-authorization` add-on on your license, or while [`authorization_client`](./authorization-api.html#authorization_client) is `nil`, every policy check is skipped, these lists included. They aren't a security boundary in either case.
 - **Only Avo's surfaces.** `record.ssn` in a custom partial, a `self.search[:item]` block, a background job or raw SQL reads the attribute regardless.
 - **A column no field declares can't be governed.** To govern a column, declare a field for it.
 - **"May see but may not write"** isn't expressible in one list. See [Let a user see a field but not change it](#let-a-user-see-a-field-but-not-change-it).
