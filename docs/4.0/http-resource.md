@@ -190,6 +190,8 @@ end
 Avo configures no `base_uri`, so a relative path — `HTTParty.post("/authors", ...)` — has no host to connect to and fails inside `Net::HTTP` on a nil address, long after the form was submitted. Always request the resource's full `endpoint`.
 :::
 
+These overrides apply to the admin panel only. For the [REST API](./rest-api.html#your-admin-panel-controllers-are-not-inherited), override `save_record_action` and `destroy_record_action` in the resource's API controller.
+
 ## Debug console
 
 HTTP Resources ship with an interactive debug console for inspecting exactly what your resource sends and receives. Visit `<avo_root>/http-resource/debug` (e.g. `/avo/http-resource/debug`), pick a resource and an action (`index`, `show`, `count`, `create`, `update`, or `delete`), and fire the request.
