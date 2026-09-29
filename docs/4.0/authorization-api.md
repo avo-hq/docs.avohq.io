@@ -47,7 +47,7 @@ config.authorization_client = "Avo::ActionPolicyAuthorizationClient"
 
 <Option name="`explicit_authorization`" headingSize="3">
 
-How a missing policy class or policy method is treated.
+How a missing policy class or [association policy method](#association-policy-methods) is treated.
 
 ```ruby
 config.explicit_authorization = true
@@ -55,9 +55,11 @@ config.explicit_authorization = true
 
 | Value | Behavior |
 | --- | --- |
-| `true` | A missing policy class or method denies the action. |
-| `false` | A missing policy class or method allows the action. |
+| `true` | A missing policy class or association policy method denies the action. |
+| `false` | A missing policy class or association policy method allows the action. |
 | `Proc` | Evaluated per request; a truthy result behaves like `true`, a falsy one like `false`. |
+
+A policy class that exists but lacks a [resource](#resource-policy-methods) or [attachment](#attachment-policy-methods) policy method denies that action, whatever this option is set to.
 
 ```ruby
 config.explicit_authorization = -> {

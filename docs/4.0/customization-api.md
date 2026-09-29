@@ -965,7 +965,7 @@ Full guide: [Authorization](./authorization.html).
 
 <Option name="`explicit_authorization`" headingSize="3">
 
-When `true`, actions without an explicitly defined policy method are denied; when `false`, they are allowed.
+When `true`, a missing policy class or association policy method denies the action; when `false`, it allows it. A missing resource or attachment policy method is denied either way.
 
 ```ruby
 config.explicit_authorization = true

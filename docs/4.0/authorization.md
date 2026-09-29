@@ -447,7 +447,7 @@ Avo now calls `avo_index?` for the <Index /> view.
 
 ## Handle missing policies
 
-By default, a missing policy class or method denies the action. If you'd rather allow it, turn off [`explicit_authorization`](./authorization-api.html#explicit_authorization):
+By default, a resource without a policy class is denied, and so is an association control whose policy method is missing. If you'd rather allow them, turn off [`explicit_authorization`](./authorization-api.html#explicit_authorization):
 
 ```ruby
 # config/initializers/avo.rb
@@ -475,7 +475,7 @@ end
 ```
 
 :::warning
-With `explicit_authorization` on, adding a policy with only `destroy?` denies every other method, so the resource disappears from the sidebar. Define every method whose control you want to show.
+`explicit_authorization` doesn't cover a policy class that exists but lacks a resource or attachment method. That action is denied either way, so a policy with only `destroy?` makes the resource disappear from the sidebar. Define every method whose control you want to show.
 :::
 
 ## Debug a denied action
