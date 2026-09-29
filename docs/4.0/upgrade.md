@@ -4,6 +4,46 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo`: forms ask before you leave with unsaved changes
+
+<Option name="`warn_on_unsaved_changes` is on by default">
+
+### What changed
+
+Avo now asks for confirmation before a user leaves a `New` or `Edit` form with unsaved changes. Saving never asks, and a change that was undone does not count. See [`config.warn_on_unsaved_changes`](./resources-api.html#config.warn_on_unsaved_changes).
+
+### Action Required
+
+None in production. Check your system specs: one that changes a form and then navigates away without saving now meets the confirmation dialog. There are two ways to handle it:
+
+- Accept the dialog in those specs with `accept_custom_alert` from the [testing helpers](./testing.html#testing-helpers).
+- Turn the warning off in the test environment only, and keep it on everywhere else.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # Off in the test environment, on everywhere else.
+  config.warn_on_unsaved_changes = !Rails.env.test?
+end
+```
+
+:::info
+With the warning off in tests, your specs no longer go through what your users see when they leave a form.
+:::
+
+### Maintaining Previous Behavior
+
+Turn it off in every environment.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.warn_on_unsaved_changes = false
+end
+```
+
+</Option>
+
 ## Built-in neutral themes now share one lightness curve
 
 <Option name="Built-in neutral presets keep their tint but use a consistent surface hierarchy">

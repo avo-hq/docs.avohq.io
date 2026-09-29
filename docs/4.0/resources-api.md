@@ -587,6 +587,60 @@ end
 
 </Option>
 
+<Option name="`config.warn_on_unsaved_changes`" headingSize="3">
+
+Whether Avo asks for confirmation before the user leaves a `New` or `Edit` form with unsaved changes. Like `config.buttons_on_form_footers`, this one is set in the initializer and applies to all resources.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.warn_on_unsaved_changes = false
+end
+```
+
+- **Type:** Boolean
+- **Default:** `true`
+- **i18n key:** `avo.unsaved_changes_warning` ("You have unsaved changes. Are you sure you want to leave this page?")
+
+#### What counts as a change
+
+The form's current values are compared with the values it had before the user's first interaction with it.
+
+- Typing something and deleting it again is not a change. Neither is only clicking into a field.
+- Rich editors (Trix, Tiptap, markdown, code, tags, key value) are covered, because they keep a form input in sync.
+- Custom fields are covered as long as they write their value to a form input. A field that keeps its value only in JavaScript state until submit is invisible to the check.
+- Saving never asks. When the save fails validation, the form that re-renders with the errors counts as changed from the start.
+
+#### How the user is asked
+
+| Leaving through              | The user sees                             |
+| ---------------------------- | ----------------------------------------- |
+| A link or button inside Avo  | Avo's confirmation dialog                 |
+| Browser back and forward     | Avo's confirmation dialog                 |
+| Reloading or closing the tab | The browser's native "leave site?" prompt |
+
+The back and forward guard uses the [Navigation API](https://developer.mozilla.org/en-US/docs/Web/API/Navigation_API). Browsers without it skip that guard and keep the other two. Browsers let a page cancel back or forward only once per user interaction, so pressing back twice in a row without touching the page always leaves.
+
+#### Not covered
+
+- Forms shown in a modal, such as the `belongs_to` "create new" modal.
+- The search and scope inputs of associations shown on the `Edit` page. They are not values of the record, so typing in them is not a change.
+- A value that changes before the user clicks or types in the form, such as one filled in by a browser extension.
+
+:::warning System specs
+A system spec that changes a form and then navigates away without saving meets the confirmation dialog. Accept it with `accept_custom_alert` from the [testing helpers](./testing.html#testing-helpers), or turn the option off in the test environment only.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # Off in the test environment, on everywhere else.
+  config.warn_on_unsaved_changes = !Rails.env.test?
+end
+```
+:::
+
+</Option>
+
 ## Navigation
 
 <Option name="`self.visible_on_sidebar`" headingSize="3">
