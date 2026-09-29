@@ -182,6 +182,7 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 ```json
 {
   "param_key": "team",
+  "view": "create",
   "fields": [
     { "field_id": "name", "field_type": "text", "field_options": { "required": true } },
     { "field_id": "admin_id", "field_type": "belongs_to", "field_options": { "required": false } },
@@ -194,6 +195,7 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 
 | Key | Meaning |
 |-----|---------|
+| `view` | The view the fields belong to: the one the request named, or `create` when it named none. |
 | `field_id` | The key the field reads back under, or, on `create` and `update`, the key the body sets it through (`admin_id`). |
 | `field_type` | The Avo field type. |
 | `field_options` | Form views only: one object holding what a write needs to know about the field, the keys below. Read views carry none. |
@@ -381,6 +383,10 @@ GET /api/resources/v1/teams?page=2&per_page=10&sort_by=name&sort_direction=asc
 Avo stores `per_page` in a cookie so the admin panel remembers the reader's choice. A client that keeps cookies between requests (a browser, or a scripted session with a cookie jar) will keep the last `per_page` it sent even when it omits the parameter. Send `per_page` explicitly on every request if you need a fixed page size.
 :::
 
+:::warning Filtering is not supported
+The index has no supported way to select records by value. To find records matching a condition, page through the index and filter on the client.
+:::
+
 ### Show
 
 `GET /api/resources/v1/teams/1` returns a single record with fields visible on the `:show` view:
@@ -433,7 +439,7 @@ A policy can also withhold a field from a user outright, with `whitelisted_field
 
 ## Writing data
 
-Send field data under the resource's singular key. Requests use JSON.
+Send field data as JSON, nested under the resource's `param_key`. It is usually the singular name (`team`), but not always: an [HTTP resource](#http-resources) uses `avo/http_resource/planet`. Read it from the [schema](#discovery) rather than guess it.
 
 ### Create
 
@@ -788,6 +794,67 @@ module Avo::Api::Resources::V1
   end
 end
 ```
+
+### Your admin panel controllers are not inherited
+
+Each resource has two controllers, one for the admin panel and one for the API. The API controller does not inherit from the admin panel one:
+
+| Serves      | File                                                       |
+| ----------- | ---------------------------------------------------------- |
+| Admin panel | `app/controllers/avo/users_controller.rb`                  |
+| API         | `app/controllers/avo/api/resources/v1/users_controller.rb` |
+
+A method you override in the admin panel controller has no effect on the API. To change how the API behaves, override the method in the API controller.
+
+## Array resources
+
+An [array resource](./array-resource.html) is served like any other resource. Generate its controller, and `index`, `show` and `_schema` work with no code in it.
+
+### Accept writes
+
+Avo fills the record from the request body, but only your app knows where an array record is kept. Define `save_record_action` and `destroy_record_action` in the resource's API controller:
+
+```ruby
+# app/controllers/avo/api/resources/v1/bookmarks_controller.rb
+module Avo::Api::Resources::V1
+  class BookmarksController < BaseResourcesController
+    private
+
+    def save_record_action
+      @record.id = BookmarkStore.save(id: @record.id, title: @record.title, url: @record.url)
+    end
+
+    def destroy_record_action
+      BookmarkStore.destroy(@record.id)
+    end
+  end
+end
+```
+
+`save_record_action` runs on both create and update. A new record has a `nil` id, so set it after saving: the response serializes the record.
+
+The [panel's controller](./array-resource.html#create-edit-and-delete) overrides the same two methods, but [it is not inherited here](#your-admin-panel-controllers-are-not-inherited). Define them in both, or share them through a concern.
+
+Without them, a create, update or delete answers `422` and names the method the record lacks:
+
+```json
+{
+  "errors": { "base": ["undefined method 'save!' for an instance of Avo::Movie"] },
+  "message": "Failed to create Movie"
+}
+```
+
+### What decides access
+
+- **`self.writable` is for the panel only.** It shows or hides the Create, Edit and Delete controls. Over the API, the token's [entitlements](#entitle-a-token) and the resource's policy decide who may write.
+- **Name the policy on the resource.** Avo builds the record's class at runtime, so set `self.authorization_policy = BookmarkPolicy` rather than rely on a lookup by class name.
+- **A policy scope does not narrow the list.** The rows are what `records` returns. The scope's `resolve` is handed the record's class, not a relation, so return it untouched.
+
+## HTTP resources
+
+An [HTTP resource](./http-resource.html) needs no code in its API controller. Sorting and paging reach the remote API [as they do in the panel](./http-resource.html#map-sorting-and-filtering-to-query-params). What differs is how a failing remote API answers.
+
+A failed read answers `502` with `{ "error": "Bad Gateway", "message": "<the error>" }`, and so does an update or delete, since both read the record first. A failed write answers `422`: a timeout or other exception lands in `errors.base`, and a non-success status from the remote API leaves `errors` empty.
 
 ## Manage tokens in the panel
 

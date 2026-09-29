@@ -117,6 +117,7 @@ avo schema users
 ```
 
 ```
+users: create view
 field id  field type  field options
 name      text        {"required":true}
 email     text        {"required":true}
@@ -125,7 +126,7 @@ role      select      {"required":false,"options":["user","admin","moderator"]}
 team_id   belongs_to  {"required":false}
 ```
 
-`field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required`, the `options` a choice field accepts, and `multiple: true` on a field that takes a list. It appears on the two form views only.
+The first line names the resource and the view the fields belong to. `field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required`, the `options` a choice field accepts, and `multiple: true` on a field that takes a list. It appears on the two form views only.
 
 Pass `--view update` for what an update may send, and `--view index` or `--view show` for what a record reads back, where the `field_options` column is gone since nothing is sent. Each view needs the entitlement of the request it describes.
 
@@ -151,6 +152,10 @@ On a terminal the table is framed and fits the width: a long cell is shortened w
 ```bash
 avo list users --sort name --dir desc --fields id,name,email --per-page 10
 ```
+
+:::warning Filtering is not supported
+`list` cannot select records by value, because the REST API has no filtering. To find "every user where ...", loop over `--page` with `--format json` and filter the output locally, for example with `jq`.
+:::
 
 ## Read one record
 
@@ -316,6 +321,8 @@ The message is one of two kinds.
 - The two `Forbidden` reasons: [Tell the three refusals apart](./rest-api.html#tell-the-three-refusals-apart). `token_entitlement` suggests widening the token; `policy` suggests nothing, since another token will not help
 - `Not found` on every resource: usually an app without `avo-api` mounted and licensed
 - `HTTP 400`: also what an empty `--data` object gets
+- A write that fails on an array resource: the resource's API controller does not define how to save or delete its records. See [Array resources](./rest-api.html#array-resources)
+- `Server error 502` on an HTTP resource: the remote API behind the resource failed, not the app. The message carries its error. See [HTTP resources](./rest-api.html#http-resources)
 
 **The app never answered.** The request did not reach a response the app meant to send:
 
