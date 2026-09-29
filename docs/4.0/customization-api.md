@@ -950,7 +950,7 @@ Full guide: [Authorization](./authorization.html).
 
 <Option name="`raise_error_on_missing_policy`" headingSize="3">
 
-Raises an error when a resource is missing its policy, instead of allowing everything.
+Raises `Avo::NoPolicyError` when a resource is missing its policy class, instead of applying [`explicit_authorization`](#explicit_authorization).
 
 ```ruby
 config.raise_error_on_missing_policy = true
