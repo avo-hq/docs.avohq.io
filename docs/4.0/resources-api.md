@@ -628,12 +628,13 @@ The back and forward guard uses the [Navigation API](https://developer.mozilla.o
 - A value that changes before the user clicks or types in the form, such as one filled in by a browser extension.
 
 :::warning System specs
-A system spec that changes a form and then navigates away without saving meets the confirmation dialog. Accept it with `accept_custom_alert` from the [testing helpers](./testing.html#testing-helpers), or turn the option off in the test environment.
+A system spec that changes a form and then navigates away without saving meets the confirmation dialog. Accept it with `accept_custom_alert` from the [testing helpers](./testing.html#testing-helpers), or turn the option off in the test environment only.
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.warn_on_unsaved_changes = false if Rails.env.test?
+  # Off in the test environment, on everywhere else.
+  config.warn_on_unsaved_changes = !Rails.env.test?
 end
 ```
 :::

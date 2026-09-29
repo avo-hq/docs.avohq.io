@@ -14,9 +14,26 @@ Avo now asks for confirmation before a user leaves a `New` or `Edit` form with u
 
 ### Action Required
 
-None in production. Check your system specs: one that changes a form and then navigates away without saving now meets the confirmation dialog. Accept it with `accept_custom_alert` from the [testing helpers](./testing.html#testing-helpers).
+None in production. Check your system specs: one that changes a form and then navigates away without saving now meets the confirmation dialog. There are two ways to handle it:
+
+- Accept the dialog in those specs with `accept_custom_alert` from the [testing helpers](./testing.html#testing-helpers).
+- Turn the warning off in the test environment only, and keep it on everywhere else.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # Off in the test environment, on everywhere else.
+  config.warn_on_unsaved_changes = !Rails.env.test?
+end
+```
+
+:::info
+With the warning off in tests, your specs no longer go through what your users see when they leave a form.
+:::
 
 ### Maintaining Previous Behavior
+
+Turn it off in every environment.
 
 ```ruby
 # config/initializers/avo.rb
@@ -24,6 +41,22 @@ Avo.configure do |config|
   config.warn_on_unsaved_changes = false
 end
 ```
+
+</Option>
+
+## Built-in neutral themes now share one lightness curve
+
+<Option name="Built-in neutral presets keep their tint but use a consistent surface hierarchy">
+
+### What Changed
+
+Slate, Stone, Gray, Zinc, Neutral, Taupe, Mauve, Mist, and Olive now use Brand's lightness at every shade while preserving their original hue and chroma. Dark primary surfaces are also slightly softer. Navbar text continues to use each named preset's original 300 shade for contrast.
+
+Custom palettes supplied through [`neutral_colors`](./appearance-api.html#neutral_colors) are unchanged.
+
+### Action Required
+
+None, unless custom CSS depends on the previous built-in shade values. Review overrides that use `--color-avo-neutral-*` while a named preset is active, and use the [public appearance variables](./appearance-api.html#css-variables) when a surface needs a fixed color.
 
 </Option>
 
