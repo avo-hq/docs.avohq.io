@@ -46,7 +46,7 @@ function titleHtml(element: HTMLElement) {
 
 .nested {
   padding-right: 0;
-  padding-left: 4px;
+  padding-left: 8px;
 }
 
 .outline-link {
