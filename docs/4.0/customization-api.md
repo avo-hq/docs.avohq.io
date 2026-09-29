@@ -1250,6 +1250,21 @@ Full guide: [Resources](./resources.html).
 
 </Option>
 
+<Option name="`warn_on_unsaved_changes`" headingSize="3">
+
+Asks for confirmation before the user leaves a <New /> or <Edit /> form with unsaved changes. It is on by default; set it to `false` to turn it off.
+
+```ruby
+config.warn_on_unsaved_changes = false
+```
+
+- **Type:** Boolean
+- **Default:** `true`
+
+Full guide and reference: [Resources](./resources.html) / [`config.warn_on_unsaved_changes`](./resources-api.html#config.warn_on_unsaved_changes).
+
+</Option>
+
 ## Field discovery
 
 <Option name="`column_names_mapping`" headingSize="3">

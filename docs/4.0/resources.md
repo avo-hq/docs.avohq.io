@@ -389,6 +389,15 @@ Avo.configure do |config|
 end
 ```
 
+Avo asks for confirmation before a user leaves a `New` or `Edit` form with unsaved changes. If you don't want that, turn it off with [`config.warn_on_unsaved_changes`](./resources-api.html#config.warn_on_unsaved_changes):
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.warn_on_unsaved_changes = false
+end
+```
+
 If you use `devise` and update users without passing a password, stop the validation error with [`self.devise_password_optional`](./resources-api.html#self.devise_password_optional).
 
 ## Tweak the Index view

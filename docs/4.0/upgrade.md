@@ -4,6 +4,29 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo`: forms ask before you leave with unsaved changes
+
+<Option name="`warn_on_unsaved_changes` is on by default">
+
+### What changed
+
+Avo now asks for confirmation before a user leaves a `New` or `Edit` form with unsaved changes. Saving never asks, and a change that was undone does not count. See [`config.warn_on_unsaved_changes`](./resources-api.html#config.warn_on_unsaved_changes).
+
+### Action Required
+
+None in production. Check your system specs: one that changes a form and then navigates away without saving now meets the confirmation dialog. Accept it with `accept_custom_alert` from the [testing helpers](./testing.html#testing-helpers).
+
+### Maintaining Previous Behavior
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.warn_on_unsaved_changes = false
+end
+```
+
+</Option>
+
 ## Field authorization: `avo-authorization` 4.2.1
 
 <Option name="Nothing to add to your policies">
