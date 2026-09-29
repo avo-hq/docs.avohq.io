@@ -45,7 +45,7 @@ function titleHtml(element: HTMLElement) {
 }
 
 .nested {
-  padding-right: 16px;
+  padding-right: 0;
   padding-left: 8px;
 }
 
