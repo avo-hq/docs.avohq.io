@@ -67,25 +67,15 @@ function titleHtml(element: HTMLElement) {
   transition: color 0.25s;
 }
 
-/* On pages with <Option> arrows, give every row a gutter and hang the arrow in
-   it, so the option names line up with the other headings. */
-.root:has(.hidden) li {
+/* Hang the <Option> arrow in the indent to the left of the row, so option
+   names line up with the other headings. */
+li {
   position: relative;
-  padding-left: 16px;
 }
 
 .outline-link :deep(.hidden) {
   display: inline;
   position: absolute;
-  left: 0;
-}
-
-/* Nested option rows drop their gutter and hang the arrow into the indent. */
-.nested li:has(.hidden) {
-  padding-left: 0;
-}
-
-.nested li:has(.hidden) .outline-link :deep(.hidden) {
   left: -16px;
 }
 
