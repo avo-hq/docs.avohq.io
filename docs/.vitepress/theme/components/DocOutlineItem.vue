@@ -67,8 +67,17 @@ function titleHtml(element: HTMLElement) {
   transition: color 0.25s;
 }
 
+/* On pages with <Option> arrows, give every row a gutter and hang the arrow in
+   it, so the option names line up with the other headings. */
+.root:has(.hidden) li {
+  position: relative;
+  padding-left: 16px;
+}
+
 .outline-link :deep(.hidden) {
   display: inline;
+  position: absolute;
+  left: 0;
 }
 
 .outline-link :deep(code) {
