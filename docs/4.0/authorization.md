@@ -43,14 +43,17 @@ gem "pundit"
 
 If Pundit is new to the app, run `bin/rails g pundit:install` to generate `ApplicationPolicy`.
 
-Pundit is the default [`authorization_client`](./authorization-api.html#authorization_client), so you only need to set it if you want to be explicit:
+Then tell Avo to use it. The initializer Avo generates sets [`authorization_client`](./authorization-api.html#authorization_client) to `nil`, which turns authorization off, so change that line to `:pundit`:
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.authorization_client = :pundit
+  config.authorization_client = nil # [!code --]
+  config.authorization_client = :pundit # [!code ++]
 end
 ```
+
+While the client is `nil`, Avo doesn't call your policies, and anyone who can sign in to Avo can reach everything. If your initializer has no `authorization_client` line, Avo uses `:pundit`.
 
 Policies receive the current user, so make sure Avo knows who that is. `current_user` is usually right; see [the authentication guide](./authentication.html#customize-the-current-user-method) if yours differs.
 
