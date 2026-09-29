@@ -41,7 +41,7 @@ config.authorization_client = "Avo::ActionPolicyAuthorizationClient"
 | `String` | The class name of a custom client that implements the [client contract](#client-contract). |
 
 - **Type:** `Symbol`, `String`, or `nil`
-- **Default:** `:pundit`
+- **Default:** `:pundit` (the generated initializer sets it to `nil`)
 
 </Option>
 
