@@ -3,6 +3,7 @@ import sidebar20 from "./sidebar-2.0.js"
 import sidebar30 from "./sidebar-3.0.js"
 import fs from "node:fs"
 import path from "node:path"
+import { fileURLToPath } from "node:url"
 
 const fieldsMenuItems4 = getFiles('fields', '4.0')
 
@@ -95,6 +96,14 @@ const config = {
     }
   },
   vite: {
+    resolve: {
+      alias: [
+        {
+          find: /^.*\/VPDocOutlineItem\.vue$/,
+          replacement: fileURLToPath(new URL('./theme/components/DocOutlineItem.vue', import.meta.url)),
+        },
+      ],
+    },
     plugins: [
       {
         // Dev parity with the published .md files: serve them transformed
