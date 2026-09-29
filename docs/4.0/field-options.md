@@ -72,6 +72,33 @@ field :name, as: :text, visible: -> { resource.record.enabled? }
 field :name, as: :text, visible: -> { resource.record&.enabled? }
 ```
 
+## Hide fields that have no value
+
+<VersionReq version="4.2.11" />
+
+Some fields only matter when they're set. A customer might have a Stripe id or a Paddle id, never both. Pass [`hide_if_blank`](./field-options-api.html#hide_if_blank) the views where a blank field should disappear, instead of writing a `visible` block for each one.
+
+```ruby
+field :stripe_id, as: :text, visible: -> { resource.record&.stripe_id.present? } # [!code --]
+field :paddle_id, as: :text, visible: -> { resource.record&.paddle_id.present? } # [!code --]
+field :stripe_id, as: :text, hide_if_blank: :all # [!code ++]
+field :paddle_id, as: :text, hide_if_blank: :all # [!code ++]
+```
+
+It takes `:index`, `:show`, `:new`, `:edit`, the shorthands `:forms` and `:display`, or `:all`, alone or in an array. Use `:display` to keep the field on the forms so users can still fill it in.
+
+```ruby
+field :notes, as: :textarea, hide_if_blank: :display
+```
+
+A few things to know:
+
+- "Blank" is Rails' `blank?`: `nil`, `""`, `[]`, `{}`, and `false`. **A boolean set to `false` is hidden too.**
+- On the <Index /> view, the column shows as long as one row on the page has a value. Rows where it's blank show the usual `—`.
+- On the <Edit /> view, a field that is blank in the database is hidden, so it can't be filled in from the form.
+- On the <New /> view, a [`default`](./field-options-api.html#default) counts as a value, so a field with a default still shows.
+- It works on top of `visible`, `show_on`, `hide_on`, and the other visibility options. A field has to pass all of them to show.
+
 ## Compute the value with a block
 
 You might need to show a field with a value you don't have in a database row. In that case, you may compute the value using a block that receives the `record` (the actual database record), the `resource` (the configured Avo resource), and the current `view`.

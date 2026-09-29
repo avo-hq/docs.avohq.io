@@ -212,6 +212,31 @@ On form submissions, the `visible` block is evaluated in the `create` and `updat
 
 </Option>
 
+<Option name="`hide_if_blank`" headingSize="3">
+
+<VersionReq version="4.2.11" />
+
+Hides the field on the given views when its value is blank. It applies on top of the other visibility options: the field shows only when it passes all of them.
+
+```ruby
+field :stripe_id, as: :text, hide_if_blank: :all
+```
+
+| View     | When the value is blank                                                                                                |
+| -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `:index` | the column is hidden only when every row on the page is blank; otherwise it keeps its position and blank rows show `—` |
+| `:show`  | the field is hidden                                                                                                    |
+| `:edit`  | the field is hidden, so it can't be filled in from the form                                                            |
+| `:new`   | the field is hidden, unless a [`default`](#default) gives it a value                                                   |
+
+- **Type:** Symbol or Array of Symbols
+- **Default:** `nil`
+- **Values:** `:index`, `:show`, `:new`, `:edit`, `:forms`, `:display`, `:all`
+- **Blank:** Rails' `blank?` — `nil`, `""`, `[]`, `{}`, and `false`, so a boolean set to `false` is hidden
+- **Associations:** association fields (`has_many` and the like) are checked with an `EXISTS` query, without loading the records
+
+</Option>
+
 ## Formatting values
 
 Formatter blocks are executed in [`Avo::ExecutionContext`](./execution-context.html) and have access to `value`, `record`, `resource`, `view`, and `field`, plus the usual defaults (`context`, `params`, `view_context`, `current_user`).
