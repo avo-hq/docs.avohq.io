@@ -113,6 +113,18 @@ dynamic_filter :last_name,
   options: User.pluck(:last_name).compact
 ```
 
+A [boolean](./dynamic-filters-api#boolean) filter never renders a value input, so its conditions carry the whole query. Name them however you like and read the user's pick back in [`query`](./dynamic-filters-api#query):
+
+```ruby
+dynamic_filter label: "Capital",
+  type: :boolean,
+  conditions: {
+    capital: "Capital",
+    not_capital: "Not capital"
+  }.invert,
+  query: -> { query.where(is_capital: filter_param.condition == "capital") }
+```
+
 ### Write a custom query
 
 By default, the chosen condition is applied to the filter's attribute via Ransack. Take over with the [`query`](./dynamic-filters-api#query) option:

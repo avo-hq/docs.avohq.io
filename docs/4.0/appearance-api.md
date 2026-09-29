@@ -62,6 +62,8 @@ Available presets: `:brand`, `:slate`, `:stone`, `:gray`, `:zinc`, `:neutral`, `
 
 `:brand` selects the palette defined by `neutral_colors:` (see below).
 
+Every preset except `:brand` is normalized onto a shared lightness curve, keeping the source palette's chroma and hue at each shade — so the presets differ in tint, not in contrast. <VersionReq version="4.2.10" /> The curve's `L` values are listed in the [guide](./appearance.html#custom-neutral-palette).
+
 - **Type:** Symbol
 - **Default:** `nil` (Avo's built-in neutral)
 - **Lockable:** yes — list `:neutral` in `lock:` to hide the picker
@@ -126,6 +128,8 @@ config.appearance = {
 - **Default:** `nil`
 - **Values:** any string a CSS custom property accepts — `oklch(...)`, `#hex`, `rgb(...)`, `hsl(...)`, `var(...)`
 - **Validation:** raises `ArgumentError` if any shade is missing or `nil`
+
+Shades are emitted verbatim. Unlike the built-in presets, a brand palette is not normalized onto Avo's lightness curve — the contrast between shades is whatever you define.
 
 Setting `neutral_colors:` only defines the palette — pair it with `neutral: :brand` (or list `"brand"` in `neutrals:`) to make it selectable.
 

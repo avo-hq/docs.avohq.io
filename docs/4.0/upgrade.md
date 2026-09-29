@@ -4,6 +4,47 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to 4.2.10: the neutral presets share one lightness curve
+
+<Option name="Built-in neutral presets are normalized onto a common lightness ramp">
+
+### What changed
+
+The built-in neutral presets — `:slate`, `:stone`, `:gray`, `:zinc`, `:neutral`, `:taupe`, `:mauve`, `:mist` and `:olive` — used to map straight onto their source palettes, so each one carried that palette's own contrast. They are now mapped onto a single lightness ramp that keeps each palette's chroma and hue, which makes the presets differ in tint rather than in contrast.
+
+Surfaces, borders and muted text shift by a few percent of lightness on any install using one of those presets, and dark mode's `--color-primary` is now mixed slightly toward the page background rather than sitting flat on the darkest shade. Nothing is renamed: `--color-avo-neutral-*` stays the token to read and override. See [Choose a neutral palette](./appearance.html#preset).
+
+### Action Required
+
+None, this is a visual change. If you pinned a screenshot-based test to exact colors, re-baseline it.
+
+### Maintaining Previous Behavior
+
+A [`neutral_colors:`](./appearance-api.html#neutral_colors) palette is not normalized — its shades are emitted verbatim. To keep the exact colors you had, copy the preset's source values into `neutral_colors:` and select it with `neutral: :brand` — `:slate` shown here, the others follow the same shape with their own Tailwind palette.
+
+```ruby
+# config/initializers/avo.rb
+config.appearance = {
+  neutral: :brand,
+  neutral_colors: {
+    25 => "oklch(98.51% 0 89.88)",
+    50 => "var(--color-slate-50)",
+    100 => "var(--color-slate-100)",
+    200 => "var(--color-slate-200)",
+    300 => "var(--color-slate-300)",
+    400 => "var(--color-slate-400)",
+    500 => "var(--color-slate-500)",
+    600 => "var(--color-slate-600)",
+    700 => "var(--color-slate-700)",
+    800 => "var(--color-slate-800)",
+    900 => "var(--color-slate-900)",
+    950 => "var(--color-slate-950)"
+  }
+}
+```
+
+</Option>
+
 ## Field authorization: `avo-authorization` 4.2.1
 
 <Option name="Nothing to add to your policies">

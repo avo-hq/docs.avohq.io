@@ -501,6 +501,8 @@ The `Is null` / `Is not null` conditions (and `Is present` / `Is blank` on text 
 | `is_null` | Is null | `defaults.is_null` |
 | `is_not_null` | Is not null | `defaults.is_not_null` |
 
+A boolean filter never renders a value input — the condition is the whole query. That holds for a custom [`conditions`](#conditions) hash too: the condition the user picks is what a [`query`](#query) lambda reads from `filter_param.condition`.
+
 <Image src="/assets/img/4_0/dynamic-filters/boolean.webp" dark-src="/assets/img/4_0/dynamic-filters/boolean-dark.webp" width="3268" height="1082" alt="Avo Users index: the Is active dynamic filter pill and open card showing the Is true condition and Apply button, zoomed in over a short three-row table with pagination." />
 
 Test it on [avodemo](https://main.avodemo.com/avo/resources/users?filters[is_admin?][is_true][]=), check the [source code](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/user.rb#L38)
