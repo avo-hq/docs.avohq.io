@@ -68,7 +68,7 @@ function titleHtml(element: HTMLElement) {
   padding: 1px 4px;
   border-radius: 4px;
   background-color: var(--vp-code-bg);
-  color: var(--vp-code-color);
+  color: inherit;
 }
 
 .outline-link.nested {
