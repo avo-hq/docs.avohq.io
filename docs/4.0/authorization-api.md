@@ -77,7 +77,7 @@ Doesn't affect [field lists](#field-lists). A policy that declares neither `whit
 
 <Option name="`raise_error_on_missing_policy`" headingSize="3">
 
-Raises `Avo::NoPolicyError` when a resource has no policy class or a policy method is missing, instead of applying [`explicit_authorization`](#explicit_authorization).
+Raises `Avo::NoPolicyError` when a resource has no policy class, instead of applying [`explicit_authorization`](#explicit_authorization). It doesn't apply to a missing policy method.
 
 ```ruby
 config.raise_error_on_missing_policy = true

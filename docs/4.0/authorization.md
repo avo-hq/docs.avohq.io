@@ -465,7 +465,7 @@ Avo.configure do |config|
 end
 ```
 
-If you want a missing policy to fail loudly instead, set [`raise_error_on_missing_policy`](./authorization-api.html#raise_error_on_missing_policy). Avo raises `Avo::NoPolicyError` instead of silently allowing or denying.
+If you want a missing policy class to fail loudly instead, set [`raise_error_on_missing_policy`](./authorization-api.html#raise_error_on_missing_policy). Avo raises `Avo::NoPolicyError` instead of silently allowing or denying.
 
 ```ruby
 # config/initializers/avo.rb
