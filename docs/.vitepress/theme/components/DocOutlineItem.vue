@@ -51,6 +51,18 @@ function titleHtml(element: HTMLElement) {
   for (const arrow of clone.querySelectorAll('code > .hidden')) {
     arrow.parentElement!.before(arrow)
   }
+  // Keep only the text, code pills and that arrow. Anything else (links,
+  // line breaks, component markup) is unwrapped so it can't hijack the click
+  // or break the single-line row.
+  for (const el of [...clone.querySelectorAll('*')].reverse()) {
+    if (el.tagName === 'CODE' || el.classList.contains('hidden')) continue
+    el.replaceWith(...(el.tagName === 'BR' ? [' '] : el.childNodes))
+  }
+  for (const el of clone.querySelectorAll('*')) {
+    for (const attr of [...el.attributes]) {
+      if (attr.name !== 'class') el.removeAttribute(attr.name)
+    }
+  }
   return clone.innerHTML.trim()
 }
 </script>
