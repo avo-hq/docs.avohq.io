@@ -2,12 +2,41 @@
 // Replaces VitePress's VPDocOutlineItem (aliased in config.js) so headings
 // keep their inline `code` in the "On this page" outline instead of being
 // flattened to plain text.
+import { computed } from 'vue'
 import type { DefaultTheme } from 'vitepress/theme'
 
-defineProps<{
+const props = defineProps<{
   headers: DefaultTheme.OutlineItem[]
   root?: boolean
+  grouped?: boolean
 }>()
+
+const isOption = (h: DefaultTheme.OutlineItem) => !!h.element?.querySelector('.hidden')
+
+// <Option> headings default to h2, so they'd land at the top of the outline
+// even when they document the section above them. Nest each one under the
+// closest preceding non-option heading instead.
+function groupOptions(headers: DefaultTheme.OutlineItem[]) {
+  const flat: DefaultTheme.OutlineItem[] = []
+  const walk = (hs: DefaultTheme.OutlineItem[]) => hs.forEach((h) => { flat.push(h); walk(h.children ?? []) })
+  walk(headers)
+
+  const root: DefaultTheme.OutlineItem[] = []
+  const stack: DefaultTheme.OutlineItem[] = []
+  for (const h of flat) {
+    const node = { ...h, children: [] as DefaultTheme.OutlineItem[] }
+    if (isOption(h)) {
+      (stack.at(-1)?.children ?? root).push(node)
+      continue
+    }
+    while (stack.length && stack.at(-1)!.level >= h.level) stack.pop()
+    ;(stack.at(-1)?.children ?? root).push(node)
+    stack.push(node)
+  }
+  return root
+}
+
+const items = computed(() => (props.grouped ? props.headers : groupOptions(props.headers)))
 
 // Same nodes VitePress drops from outline titles.
 const ignoreRE = /\b(?:VPBadge|header-anchor|footnote-ref|ignore-header)\b/
@@ -28,11 +57,11 @@ function titleHtml(element: HTMLElement) {
 
 <template>
   <ul class="VPDocOutlineItem" :class="root ? 'root' : 'nested'">
-    <li v-for="{ children, link, title, element } in headers">
+    <li v-for="{ children, link, title, element } in items">
       <a v-if="element" class="outline-link" :href="link" :title v-html="titleHtml(element)" />
       <a v-else class="outline-link" :href="link" :title>{{ title }}</a>
       <template v-if="children?.length">
-        <DocOutlineItem :headers="children" />
+        <DocOutlineItem :headers="children" grouped />
       </template>
     </li>
   </ul>
