@@ -203,32 +203,7 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 | `field_options.options` | On choice fields: the values the field accepts, never the labels. |
 | `field_options.multiple` | `true` on a field that takes a list (`select` with `multiple`, `checkbox_list`, `boolean_group`); absent otherwise. |
 
-Each field's `field_type` says what to put under its `field_id` in a `POST` or `PATCH` body.
-
-| Field types | What you send |
-|-------------|---------------|
-| `text`, `number`, `boolean`, `select`, `belongs_to`, and every other single-value field | one value: `"name": "Acme"`, `"plan": "pro"` |
-| `select` with `multiple`, `checkbox_list`, `boolean_group` | a list of values: `"tags": ["ops", "eu"]` |
-| `location` on two columns (`stored_as: [:latitude, :longitude]`) | an object keyed by those columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
-| `location` on one column, `tags`, `key_value` | one string the field parses: `"home": "44.43,26.10"`, `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"` |
-| `code` | one string, stored as it is. Only a field declared with `pretty_generated: true` parses it as JSON |
-
-`null` clears any field, a list and a `location` on two columns included. The one exception is a `location` on one column, which splits the string it is given: clear it with `""`, since `null` is answered with a `500`. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
-
-Put together, the schema above is written as:
-
-```json
-{
-  "team": {
-    "name": "Acme",
-    "plan": "pro",
-    "tags": ["ops", "eu"],
-    "coordinates": { "latitude": 44.43, "longitude": 26.10 }
-  }
-}
-```
-
-Read views carry `field_id` and `field_type` only; form views add `field_options` and list only the fields a body may write.
+Each field's `field_type` says what to put under its `field_id` in a `POST` or `PATCH` body: see [Field value formats](#field-value-formats).
 
 :::info Refusals
 - `403` with `reason: "token_entitlement"` when the token lacks the action the view is named after.
@@ -339,7 +314,6 @@ A few consequences worth knowing:
 
 - **A leaked database yields no usable tokens.** Reversing SHA-256 is not feasible, and neither is guessing: a secret is 43 random alphanumeric characters, about 256 bits of entropy, so there is no dictionary or rainbow table to try. Rotation after a leak is prudent, not urgent.
 - **No pepper or key to manage.** Peppering defends short, low-entropy secrets like passwords. These are neither, so the digest is unkeyed — nothing to configure, nothing to rotate, nothing that breaks every token if it is lost.
-- **Nothing can show a secret again.** Not the panel, not a console, not support. If it was not copied at creation, mint a replacement and revoke the old one.
 - **The digest column is uniquely indexed**, so the lookup is a single indexed read and two tokens cannot collide.
 
 Who may mint and revoke tokens is your app's authorization decision, and the default is permissive — see [Who may manage tokens](#who-may-manage-tokens).
@@ -511,6 +485,7 @@ Different field types accept the formats you'd expect:
 | Boolean | `true`, `false` |
 | Date / datetime | `"2024-01-15"`, `"2024-01-15T10:30:00Z"` |
 | `belongs_to` | the foreign key: `"admin_id": 5` |
+| Polymorphic `belongs_to` | both parts: `"reactable_type": "Post"`, `"reactable_id": 7` |
 | `select` with `multiple`, `checkbox_list`, `boolean_group` | a list: `"tags": ["ops", "eu"]` |
 | `location` on two columns | an object keyed by its `stored_as` columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
 | `tags`, `key_value`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"`, `"home": "44.43,26.10"` |
@@ -812,7 +787,7 @@ An [array resource](./array-resource.html) is served like any other resource. Ge
 
 ### Accept writes
 
-Avo fills the record from the request body, but only your app knows where an array record is kept. Define `save_record_action` and `destroy_record_action` in the resource's API controller:
+An array record is saved by the two methods the [array resource page](./array-resource.html#create-edit-and-delete) describes, `save_record_action` and `destroy_record_action`. The panel's controller [is not inherited here](#your-admin-panel-controllers-are-not-inherited), so define them in the resource's API controller too, or share them through a concern:
 
 ```ruby
 # app/controllers/avo/api/resources/v1/bookmarks_controller.rb
@@ -831,10 +806,6 @@ module Avo::Api::Resources::V1
 end
 ```
 
-`save_record_action` runs on both create and update. A new record has a `nil` id, so set it after saving: the response serializes the record.
-
-The [panel's controller](./array-resource.html#create-edit-and-delete) overrides the same two methods, but [it is not inherited here](#your-admin-panel-controllers-are-not-inherited). Define them in both, or share them through a concern.
-
 Without them, a create, update or delete answers `422` and names the method the record lacks:
 
 ```json
@@ -849,6 +820,10 @@ Without them, a create, update or delete answers `422` and names the method the 
 - **`self.writable` is for the panel only.** It shows or hides the Create, Edit and Delete controls. Over the API, the token's [entitlements](#entitle-a-token) and the resource's policy decide who may write.
 - **Name the policy on the resource.** Avo builds the record's class at runtime, so set `self.authorization_policy = BookmarkPolicy` rather than rely on a lookup by class name.
 - **A policy scope does not narrow the list.** The rows are what `records` returns. The scope's `resolve` is handed the record's class, not a relation, so return it untouched.
+
+### Sorting
+
+An array resource [is not sorted](./array-resource.html#render-it-inside-another-resource). `sort_by` is ignored and the request still answers `200`, with the rows in the order `records` returns them.
 
 ## HTTP resources
 
