@@ -95,6 +95,14 @@ const config = {
     }
   },
   vite: {
+    resolve: {
+      alias: [
+        {
+          find: /^.*\/VPDocOutlineItem\.vue$/,
+          replacement: path.resolve(__dirname, 'theme/components/DocOutlineItem.vue'),
+        },
+      ],
+    },
     plugins: [
       {
         // Dev parity with the published .md files: serve them transformed
