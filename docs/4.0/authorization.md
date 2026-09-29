@@ -194,7 +194,7 @@ end
 Match the association's pluralization. For `has_many :comments`, write `detach_comments?`, not `detach_comment?`.
 :::
 
-Methods for panel-level controls (`view_`, `create_`, `attach_`, `act_on_`) get the parent `Post` as `record`. Methods for row controls (`show_`, `edit_`, `detach_`, `destroy_`) get each `Comment`. The [association policy methods](./authorization-api.html#association-policy-methods) reference lists which is which.
+Methods for panel-level controls (`view_`, `create_`, `attach_`, `act_on_`) get the parent `Post` as `record`. Methods for row controls (`show_`, `edit_`, `detach_`, `destroy_`, `reorder_`) get each `Comment`. The [association policy methods](./authorization-api.html#association-policy-methods) reference lists which is which.
 
 If you want to hide the whole comments panel, use `view_comments?`. If you want to hide only the view button on each row, use `show_comments?`.
 

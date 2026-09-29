@@ -256,8 +256,8 @@ Defined on the **parent** resource's policy. `{association}` is the association 
 
 | Method | `record` |
 | --- | --- |
-| `attach_`, `create_`, `act_on_`, `view_`, `reorder_` | The parent record |
-| `detach_`, `show_`, `edit_`, `destroy_` | The associated row record |
+| `attach_`, `create_`, `act_on_`, `view_` | The parent record |
+| `detach_`, `show_`, `edit_`, `destroy_`, `reorder_` | The associated row record |
 
 <Option name="`view_{association}?`" headingSize="3">
 
@@ -358,7 +358,7 @@ Controls the `Actions` dropdown on the association panel.
 Controls the [record reordering](./record-reordering.html) controls on a `has_many` association panel.
 
 - **Type:** `Boolean`
-- **`record`:** the parent record
+- **`record`:** the associated row record
 
 <Image src="/assets/img/4_0/authorization/policy-reorder-assoc.webp" dark-src="/assets/img/4_0/authorization/policy-reorder-assoc-dark.webp" width="2032" height="680" alt="A Course links association Index (on the Course Show page) with a row's record-reordering controls (drag handle and up, down, to-top, to-bottom arrows) highlighted, the controls the reorder_{association}? policy governs." prompt="Record reordering controls highlighted on an associated record row on the association Index view" />
 
