@@ -30,7 +30,7 @@ class PostPolicy < ApplicationPolicy
 end
 ```
 
-With the add-on enabled and nothing else configured, a resource without a policy, or an action whose policy method is missing, is denied. That strictness is controlled by [`explicit_authorization`](./authorization-api.html#explicit_authorization).
+Authorization is off until you [set the authorization client](#set-up-authorization). Once it's on, a resource without a policy, or an action whose policy method is missing, is denied. That strictness is controlled by [`explicit_authorization`](./authorization-api.html#explicit_authorization).
 
 ## Set up authorization
 
