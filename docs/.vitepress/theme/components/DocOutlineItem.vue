@@ -80,6 +80,15 @@ function titleHtml(element: HTMLElement) {
   left: 0;
 }
 
+/* Nested option rows drop their gutter and hang the arrow into the indent. */
+.nested li:has(.hidden) {
+  padding-left: 0;
+}
+
+.nested li:has(.hidden) .outline-link :deep(.hidden) {
+  left: -16px;
+}
+
 .outline-link :deep(code) {
   font-family: var(--vp-font-family-mono);
   font-size: 13px;
