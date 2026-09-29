@@ -17,6 +17,11 @@ function titleHtml(element: HTMLElement) {
   for (const node of [...clone.children]) {
     if (ignoreRE.test(node.className)) node.remove()
   }
+  // <Option> hides a "-> " marker in its heading for the outline; keep it
+  // outside the code pill.
+  for (const arrow of clone.querySelectorAll('code > .hidden')) {
+    arrow.parentElement!.before(arrow)
+  }
   return clone.innerHTML.trim()
 }
 </script>
@@ -60,6 +65,10 @@ function titleHtml(element: HTMLElement) {
 .outline-link.active {
   color: var(--vp-c-text-1);
   transition: color 0.25s;
+}
+
+.outline-link :deep(.hidden) {
+  display: inline;
 }
 
 .outline-link :deep(code) {
