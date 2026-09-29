@@ -131,6 +131,8 @@ config.appearance = {
 | `:mist`    | Light, airy blue-gray              |
 | `:olive`   | Gray with green-yellow undertones  |
 
+Avo's built-in presets share one lightness progression while retaining each preset's hue and chroma. Switching presets therefore changes the tint without changing the visual hierarchy between surfaces, borders, and text.
+
 :::warning Symbols only
 `neutral:` must be a Symbol — passing a String or a Hash raises an `ArgumentError`. Use [`neutral_colors:`](./appearance-api.html#neutral_colors) for full-color overrides.
 :::

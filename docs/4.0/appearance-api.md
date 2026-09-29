@@ -500,7 +500,7 @@ The top navbar exposes a scoped palette contract on `.top-navbar`. Override thes
 | Variable                                           | Default                          | Description                                                                                           |
 | -------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `--top-navbar-background`                          | `var(--color-navbar-background)` | Background color of the top navbar.                                                                   |
-| `--top-navbar-content`                             | `var(--color-avo-neutral-300)`   | Text and icon color for navbar links and icon buttons.                                                |
+| `--top-navbar-content`                             | Named preset 300; otherwise `var(--color-avo-neutral-300)` | Text and icon color for navbar links and icon buttons. Named presets keep their original navbar contrast; Brand and custom palettes use neutral-300. |
 | `--top-navbar-content-hover`                       | `var(--color-avo-neutral-50)`    | Text and icon color for hovered navbar links and icon buttons.                                        |
 | `--top-navbar-control-background`                  | `var(--color-avo-neutral-800)`   | Background for navbar controls such as search, picker trigger, and hovered sidebar toggle.            |
 | `--top-navbar-control-background-hover`            | `var(--color-avo-neutral-700)`   | Hover background for navbar controls.                                                                 |
