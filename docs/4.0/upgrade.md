@@ -4,6 +4,20 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo-mcp_server`: a shipped `count_records` tool
+
+<Option name="An app's own `count_records` tool is no longer served">
+
+### What changed
+
+The server ships a tenth tool, `count_records`, which answers "how many" with a number and no records. See [Tools](./mcp-api.html#tools).
+
+### Action Required
+
+Nothing, unless the app registers its own tool named `count_records` through [`extra_tools`](./mcp-api.html#extra_tools), including a subclass of Avo AI's count tool. The shipped tool now takes that name and the app's is dropped with a log line. Give the app's tool another name to keep serving it.
+
+</Option>
+
 ## `avo`: forms ask before you leave with unsaved changes
 
 <Option name="`warn_on_unsaved_changes` is on by default">
