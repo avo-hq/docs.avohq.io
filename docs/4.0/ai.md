@@ -247,7 +247,7 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **It works from your real schema, not a guess at it.** Every query, write, and action result carries the resource's real columns, model scopes, and required attributes back to the assistant — so it builds what comes next from your names. This is done by the tools, not merely requested in the prompt: it arrives with the answer rather than being asked for first, which is why a question rarely spends a round trip on structure, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters. A query that gets a column wrong comes back with the real ones attached, so the retry is built from names too.
 
-**Reading.** Query results are paginated, and "how many" goes to `count_records`, which returns the number and never a row — so a capped result set doesn't become a wrong number, and a count sends no record to the model provider. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
+**Reading.** Query results are paginated, and "how many" goes to `count_records`, which returns the number and never a row — so a capped result set doesn't become a wrong number, and a count sends no record to the model provider. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](./record-chips.html).
 
 **Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. A delete works one record at a time; an update works on one record or on many, and a batch is one card covering the whole set. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. The exception is an [import from a CSV](#reading-files-and-importing-from-them), which is proposed as one card and creates its rows only when you confirm. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
@@ -267,252 +267,13 @@ For the full reference — both agents, every tool and its gates, and how conver
 
 ### Record chips
 
-A record the assistant mentions is drawn inline as a **chip** — its picture, its title, and the
-parts its resource declares. A resource can also let the assistant append up to three fields that
-matter to this answer. Clicking the chip opens that record. The chip is part of the sentence, so an
-answer reads as one thought rather than as a paragraph followed by a card.
+A record the assistant mentions is drawn inline as a chip. By default it contains the record's
+picture and title, and clicking it opens the record. Resources can customize stable parts and let
+the assistant add current, answer-relevant Avo fields such as population or status. Sets of records
+render as full-width rows instead of inline chips.
 
-**The question can change the chip.** Ask "which city has the largest population?" and the result
-can include `Population: 1,716,983`; ask about its continent instead and the same city can include
-`Continent: Europe`. The assistant chooses those fields while querying the record. Avo reads their
-current values when it renders the message, formats them through the resource's fields, and appends
-them after the parts from `def chip`. A value already present in the declared parts is not repeated.
-
-Dynamic fields are disabled by default. Enable them inside the resource's `chip` declaration. Use
-`only:` when the assistant should choose from a specific set, or `except:` when most readable fields
-are suitable:
-
-```ruby
-# app/avo/resources/city.rb
-class Avo::Resources::City < Avo::BaseResource
-  def chip
-    part resource.avatar
-    part resource.record_title
-    dynamic_fields only: %i[population continent]
-  end
-end
-```
-
-Call `dynamic_fields` without options to allow every readable field. Call `dynamic_fields false` to
-disable it explicitly. `only:` and `except:` cannot be used together.
-
-Only fields the viewer may read can be added. Unknown fields, fields hidden by `visible:`, and
-fields withheld by the resource policy are ignored even if a reference containing their names is
-typed into a message. The field names select presentation only; they never call arbitrary methods
-on the record.
-
-A chip appears because the assistant named that record. A count or a total names none, so it brings
-no chip with it.
-
-A chip is looked up through the viewer's policy, the same `index?` and scope the query tool reads
-with, so a reference to a record the viewer is not allowed to read renders as the plain label text
-rather than as a chip. That holds for a reference the assistant wrote, one typed into a message, and
-one that arrived through record data or an uploaded file.
-
-A chip names its record the way your Avo pages do: by `to_param`, looked up through the resource's
-own `find_record_method`. If your app hides its primary keys behind friendly_id, hashids, or its own
-`to_param`, the assistant's references and the chip's link carry that same slug or hashid, never the
-raw key. A raw key such a resource doesn't answer to — `avo:Post/12` typed into a message — renders
-as plain text, the same as a record that doesn't exist. Resources on Avo's default finder are
-unaffected: their param is the primary key.
-
-**A set of records comes back as a list of rows.** When the answer *is* a set — "the last three
-users", "which projects are running", "show me the cities" — the assistant names one record per
-line, and the transcript draws those lines as a stack of rows instead of a bulleted paragraph: the
-same chip, given the whole width, so each row is scannable and clickable end to end the way an
-index table's rows are. A line that carries a sentence beside its record stays an ordinary bullet —
-there the record really is a word in a sentence.
-
-:::warning `def chip` is alpha
-The DSL is new and still moving. Expect it to change before it settles — the part vocabulary, the
-tones, and the names on this page are all still up for revision — and expect at least one change
-that a chip you wrote today will not survive untouched. Every one of them will be written down: a
-breaking change to `chip` ships with the release note that says what to do about it, the same as
-any other Avo API. Declare a chip where it earns its keep today, and plan on revisiting those
-declarations at an upgrade.
-:::
-
-**Declare what it carries.** A chip is a row of parts. Every resource has a default one — the
-record's picture and its title — and `def chip` replaces it, declaring one `part` per piece, the
-same shape as [`fields`](./resources.html#fields):
-
-```ruby
-class Avo::Resources::Project < Avo::BaseResource
-  def chip # [!code focus]
-    part resource.avatar # [!code focus]
-    part resource.record_title # [!code focus]
-    part record.status, tone: :danger # [!code focus]
-  end # [!code focus]
-end
-```
-
-`chip` is an ordinary instance method, so **`record` and `resource` are in scope** — the same two
-names Avo injects into every lambda you write on a resource. Everything a part is built from is
-reached through one of them, so a declaration says out loud where each piece came from and there
-is nothing new to learn:
-
-```ruby
-part resource.avatar              # the picture, or the initials Avo derives
-part resource.record_title        # what Avo calls this record
-part record.status                # anything the record answers to
-part "in review"                  # a literal
-part record.status, tone: :danger # coloured
-part icon: "tabler/outline/moon"  # a glyph, alone or beside text
-```
-
-**Give the whole chip a background.** Call `background` once inside `chip`, before or after its
-parts. A solid fill accepts an Avo palette name or a hex color:
-
-```ruby
-# app/avo/resources/project.rb
-class Avo::Resources::Project < Avo::BaseResource
-  def chip
-    background color: :violet
-    part resource.avatar
-    part resource.record_title
-    part record.status
-  end
-end
-```
-
-For a gradient, provide two or more palette names or hex colors. Avo draws them at 135 degrees:
-
-```ruby
-# app/avo/resources/project.rb
-def chip
-  background gradient: [:indigo, "#c026d3", :rose]
-  part resource.record_title
-  part record.status
-end
-```
-
-For a background image, provide an Avo photo such as `resource.cover`, an Active Storage-backed
-photo, or an image URL:
-
-```ruby
-# app/avo/resources/event.rb
-def chip
-  background image: resource.cover
-  part resource.avatar
-  part resource.record_title
-end
-```
-
-Avo chooses light or dark text by measuring the declared colors against the 4.5:1 contrast floor.
-If a gradient needs help at one end, or a photograph could contain light and dark pixels, Avo adds
-the smallest light or dark scrim needed to keep the words readable. Set `foreground: :light` or
-`foreground: :dark` only when the visual direction matters more than the automatic choice; Avo
-still adjusts the background enough to protect contrast.
-
-Backgrounds accept these palette names: `:red`, `:orange`, `:amber`, `:yellow`, `:lime`, `:green`,
-`:emerald`, `:teal`, `:cyan`, `:sky`, `:blue`, `:indigo`, `:violet`, `:purple`, `:fuchsia`, `:pink`,
-and `:rose`. Custom colors use three- or six-digit hex values. A filled chip uses one foreground
-color for all its parts, since semantic part colors cannot stay readable over every fill; a
-`:muted` part keeps its hierarchy through the chip's smaller secondary text size instead.
-
-Because it is an instance method on the hydrated resource, the rest of what Avo hands a lambda is
-there too — `view`, `params`, `request`, `context`, `current_user`, `view_context`, `main_app`,
-`avo`, `helpers` and `t`. Nothing is injected for them; the resource already delegates them.
-
-```ruby
-def chip
-  part resource.avatar
-  part resource.record_title
-  part view_context.number_to_currency(record.budget), tone: :muted # [!code focus]
-  part t("my_app.draft"), tone: :muted if record.draft? # [!code focus]
-end
-```
-
-:::info
-The one thing a `def chip` body does *not* get is a lambda's implicit forwarding to the view
-context, so a bare `number_to_currency(...)` won't resolve — name `view_context`, as above, or
-reach your app's own helpers through `helpers`.
-:::
-
-**What hovering shows.** A chip's tooltip is its title, so the hover repeats what the chip already
-spells out. A resource with something better to say declares `chip_tooltip`; a skill's chip uses
-this to show the skill's description. Blank falls back to the title, and a `chip_tooltip` that
-raises loses the tooltip, never the chip.
-
-```ruby
-class Avo::Resources::Project < Avo::BaseResource
-  def chip_tooltip # [!code focus]
-    record.summary # [!code focus]
-  end # [!code focus]
-end
-```
-
-**A chip renders in two places**, and that is worth knowing before you reach for anything
-request-scoped — it is drawn by two different things:
-
-| When | Rendered by |
-| ---- | ----------- |
-| The answer streaming in, live | a background job, broadcasting over Turbo Stream |
-| Opening or reloading the conversation | the usual controller and request |
-
-The whole vocabulary above works in **both** — including `view_context`, `main_app` and `avo`,
-which Avo lends the chip when there is no request to take them from. Your declaration behaves the
-same whether you watched the answer arrive or came back to the conversation a day later, which is
-the point: a chip that worked on every reload and came back empty mid-stream would be a miserable
-thing to catch.
-
-**Where the title sits is just where you declare it** — there is no "before" or "after" option,
-only order, and no limit on either side:
-
-```ruby
-class Avo::Resources::Issue < Avo::BaseResource
-  def chip
-    part resource.avatar
-    part icon: "tabler/outline/circle-dot", tone: :success # [!code focus]
-    part record.identifier, tone: :muted # [!code focus]
-    part resource.record_title # [!code focus]
-    part record.assignee_name, tone: :muted # [!code focus]
-  end
-end
-```
-
-Because the body is ordinary Ruby against those two objects, a part can be computed rather than
-read off a column. Keep the computing on the model, though, and let the declaration say only how
-the answer looks — "is it night there?" is a question about a city, not about how one is drawn.
-The chip is rarely the only place that wants the answer, either: the same `night?` can feed a
-[discreet information](./discreet-information.html) entry on the record's header without
-computing it twice.
-
-```ruby
-class City < ApplicationRecord
-  def night? # [!code focus]
-    local_hour < 6 || local_hour >= 20 # [!code focus]
-  end # [!code focus]
-end
-
-class Avo::Resources::City < Avo::BaseResource
-  def chip
-    part resource.avatar
-    part icon: record.night? ? "tabler/outline/moon" : "tabler/outline/sun", # [!code focus]
-         tone: record.night? ? :info : :warning # [!code focus]
-    part resource.record_title
-    part record.local_time, tone: :muted
-  end
-end
-```
-
-| Argument       | Values                                                                                          |
-| -------------- | ----------------------------------------------------------------------------------------------- |
-| first argument | The part's text — anything, used verbatim. `resource.avatar` is the one value that draws a picture instead |
-| `icon:`        | An [icon](./icons.html) name, e.g. `tabler/outline/moon`                                        |
-| `tone:`        | `:neutral` (default, the record's own ink), `:muted`, `:success`, `:warning`, `:danger`, `:info` |
-
-:::warning
-Defining `chip` replaces the default entirely — including the picture and the title. Declare
-`part resource.avatar` and `part resource.record_title` if you want them, and an empty `def chip`
-renders an empty chip.
-:::
-
-:::info
-A part with neither text nor an icon is skipped, so `part(record.draft? ? "draft" : nil)` is a
-normal thing to write. An unknown `tone:` falls back to `:neutral`. And if `chip` raises, the
-record still renders as a link rather than taking the answer down with it.
-:::
+See the [Record chips guide](./record-chips.html) to customize their content, appearance, dynamic
+fields, tooltips, and behavior in streamed or reloaded conversations.
 
 ## Answering the assistant's questions
 
@@ -686,7 +447,7 @@ Onboard the Avo AI assistant onto this app.
 
 It runs `bin/rails avo:ai:inventory` (below), reads your README and your initializer, tells you what it thinks the app is and asks whether it got that right, then interviews you in short rounds — a few related questions at a time, its best guess first — about the things the schema can't say. It writes the file once, at the end, after you've confirmed. Run it again after the app has changed and it proposes a diff rather than a rewrite.
 
-The same interview settles what a record's status means here, which is exactly what a [chip](#record-chips) should carry — so it also proposes a `def chip` on the resources people look up, and a record the assistant names in the chat shows its status beside its title.
+The same interview settles what a record's status means here, which is exactly what a [chip](./record-chips.html) should carry — so it also proposes a `def chip` on the resources people look up, and a record the assistant names in the chat shows its status beside its title.
 
 ### The inventory
 
@@ -912,7 +673,7 @@ Three things the server decides for you, whatever the entry says:
 - **Authorization is yours to call.** Nothing in the gem stops a tool reading the whole table — reach data through `authorized_relation` and `authorize_record_action!` so your tool sees exactly what the signed-in user sees in Avo, and rescue `Avo::Ai::ToolAuthorization::IdentityError` to report "not allowed" as a result instead of failing the run.
 - **Two tools can't share a wire name.** Registering a tool whose name collides with a shipped one raises when the roster is built. To replace a shipped tool, exclude it first — that's what [ejecting](#replace-a-shipped-tool-with-your-own-copy) does for you.
 
-**Returning records? Hand back a reference.** Put the string that names each record in your result — `"avo:#{short_name(resource_class)}/#{record.to_param}"` — and the model copies it into its answer, where it renders as a [chip](#record-chips). Build it from `to_param`, not `id`, so an app that hides its keys behind a slug or hashid keeps them hidden. When the model passes an id back to your tool, look it up with `find_authorized_record_by_param(resource_class, model_class, id)`: it takes the param out of a reference, or a primary key the model selected, and reads either through the signed-in user's scope.
+**Returning records? Hand back a reference.** Put the string that names each record in your result — `"avo:#{short_name(resource_class)}/#{record.to_param}"` — and the model copies it into its answer, where it renders as a [chip](./record-chips.html). Build it from `to_param`, not `id`, so an app that hides its keys behind a slug or hashid keeps them hidden. When the model passes an id back to your tool, look it up with `find_authorized_record_by_param(resource_class, model_class, id)`: it takes the param out of a reference, or a primary key the model selected, and reads either through the signed-in user's scope.
 
 ```ruby
 # app/tools/crm_tool.rb
@@ -1229,7 +990,7 @@ end
 
 A **skill** is a reusable instruction — a title, an optional one-line description, and a markdown body, written once by an admin and dropped into any chat. The description is for the person choosing and is never sent to the assistant. Type `/` at the start of a line or after a space to open a menu of every skill you're allowed to see, filtered by title and description as you type; pick one with the keyboard or a click and it lands in the composer as a chip. The **Skills** dropdown in the composer's toolbar, beside the model picker, lists the same skills and inserts the same chip at the cursor, for anyone who'd rather not remember the slash. It only appears once there's a skill to pick. Backspace removes the whole chip in one press, never one letter of its title.
 
-Write around the chip, or send it on its own — a message that's nothing but a skill chip is a valid send, the way a `/`-style slash command carries its own instruction. In the sent bubble the chip renders like any other [record chip](#record-chips) and links to the skill's page. Hover a skill chip, in the draft or in the transcript, to read its description.
+Write around the chip, or send it on its own — a message that's nothing but a skill chip is a valid send, the way a `/`-style slash command carries its own instruction. In the sent bubble the chip renders like any other [record chip](./record-chips.html) and links to the skill's page. Hover a skill chip, in the draft or in the transcript, to read its description.
 
 Picking a skill isn't a one-turn thing: its body joins the assistant's instructions for the **rest of the conversation**, and every later message in that chat reuses it too. Attach a second skill later and both apply together — there's no per-message detach in this version.
 

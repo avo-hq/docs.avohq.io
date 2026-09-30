@@ -212,6 +212,7 @@ const config = {
           items: [
             { text: "Overview", link: "/4.0/ai-overview.html" },
             { text: "Chat", link: "/4.0/ai.html" },
+            { text: "Record chips", link: "/4.0/record-chips.html" },
             { text: "What you can ask", link: "/4.0/ai-what-you-can-ask.html" },
             { text: "Agents and tools", link: "/4.0/ai-agents-and-tools.html" },
             { text: "MCP server", link: "/4.0/mcp.html" },
@@ -384,6 +385,7 @@ const config = {
               collapsed: false,
               items: [
                 { text: "Overview", link: "/4.0/ai.html" },
+                { text: "Record chips", link: "/4.0/record-chips.html" },
                 { text: "What you can ask", link: "/4.0/ai-what-you-can-ask.html" },
                 { text: "Agents and tools", link: "/4.0/ai-agents-and-tools.html" },
               ],

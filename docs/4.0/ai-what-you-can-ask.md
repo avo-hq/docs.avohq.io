@@ -48,7 +48,7 @@ Ask for several and they come back as a list of rows — "the last three users" 
 scan and click, not a bulleted paragraph.
 
 The resource supplies the chip's stable parts and decides whether the assistant can append
-answer-specific fields — see [Record chips](./ai.html#record-chips).
+answer-specific fields — see [Record chips](./record-chips.html).
 
 You can also ask the onboarding assistant to make those chips distinctive: "Give paid purchases a
 green chip and refunded purchases a red one", "Use an indigo-to-fuchsia gradient on city chips",
