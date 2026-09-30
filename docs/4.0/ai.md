@@ -267,9 +267,39 @@ For the full reference — both agents, every tool and its gates, and how conver
 
 ### Record chips
 
-A record the assistant mentions is drawn inline as a **chip** — its picture, its title, and
-whatever status you choose to put on it — and clicking it opens that record. The chip is part of
-the sentence, so an answer reads as one thought rather than as a paragraph followed by a card.
+A record the assistant mentions is drawn inline as a **chip** — its picture, its title, and the
+parts its resource declares. A resource can also let the assistant append up to three fields that
+matter to this answer. Clicking the chip opens that record. The chip is part of the sentence, so an
+answer reads as one thought rather than as a paragraph followed by a card.
+
+**The question can change the chip.** Ask "which city has the largest population?" and the result
+can include `Population: 1,716,983`; ask about its continent instead and the same city can include
+`Continent: Europe`. The assistant chooses those fields while querying the record. Avo reads their
+current values when it renders the message, formats them through the resource's fields, and appends
+them after the parts from `def chip`. A value already present in the declared parts is not repeated.
+
+Dynamic fields are disabled by default. Enable them inside the resource's `chip` declaration. Use
+`only:` when the assistant should choose from a specific set, or `except:` when most readable fields
+are suitable:
+
+```ruby
+# app/avo/resources/city.rb
+class Avo::Resources::City < Avo::BaseResource
+  def chip
+    part resource.avatar
+    part resource.record_title
+    dynamic_fields only: %i[population continent]
+  end
+end
+```
+
+Call `dynamic_fields` without options to allow every readable field. Call `dynamic_fields false` to
+disable it explicitly. `only:` and `except:` cannot be used together.
+
+Only fields the viewer may read can be added. Unknown fields, fields hidden by `visible:`, and
+fields withheld by the resource policy are ignored even if a reference containing their names is
+typed into a message. The field names select presentation only; they never call arbitrary methods
+on the record.
 
 A chip appears because the assistant named that record. A count or a total names none, so it brings
 no chip with it.
