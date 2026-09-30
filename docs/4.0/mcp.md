@@ -390,7 +390,7 @@ Who may change a grant is the policy's [`edit_entitlements?`](#decide-who-sees-a
 This is the same grid the [REST API](./rest-api.html#entitle-a-token) shows for an API token's entitlements, with the same controls and the same [way back](./rest-api.html#take-a-token-back-to-unrestricted). A panel running both add-ons asks "what may this credential reach?" in one form on both screens.
 :::
 
-The **Tools** card below it is the same grant read as the calls it turns into — `list_records`, `run_action` — grouped by the capability that unlocks each group. A narrowed grant is **counted** there (*on 3 resources*) rather than named, since the names are rows on the Entitlements card above. The write group says what it stands on, above its tools: *Everything in Read, plus:* — "Read & write" heads three calls only because the group carries read's five as well.
+The **Tools** card below it is the same grant read as the calls it turns into — `list_records`, `run_action` — grouped by the capability that unlocks each group. A narrowed grant is **counted** there (*on 3 resources*) rather than named, since the names are rows on the Entitlements card above. The write group says what it stands on, above its tools: *Everything in Read, plus:* — "Read & write" heads three calls only because the group carries read's six as well.
 
 ### Read a connection's access at a glance
 
