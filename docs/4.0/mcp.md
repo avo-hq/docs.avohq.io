@@ -177,11 +177,11 @@ A client names itself, so anything can call itself "Claude Code" and ask for wri
 
 Three capabilities cover the whole surface. Write means create, update, **and** delete, as in the [REST API](./rest-api.html).
 
-| Capability       | Scope                                  | Tools it unlocks                                                                  | At consent       |
-| ---------------- | -------------------------------------- | --------------------------------------------------------------------------------- | ---------------- |
-| **Read**         | `avo:read`, or `avo:read:<Resource>`   | `list_resources`, `list_records`, `show_record`, `search_records`, `list_actions` | Selected         |
-| **Read & write** | `avo:write`, or `avo:write:<Resource>` | `create_record`, `update_record`, `delete_record`                                 | **Not** selected |
-| **Run actions**  | `avo:actions`                          | `run_action`                                                                      | **Not** selected |
+| Capability       | Scope                                  | Tools it unlocks                                                                                   | At consent       |
+| ---------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------- | ---------------- |
+| **Read**         | `avo:read`, or `avo:read:<Resource>`   | `list_resources`, `list_records`, `count_records`, `show_record`, `search_records`, `list_actions` | Selected         |
+| **Read & write** | `avo:write`, or `avo:write:<Resource>` | `create_record`, `update_record`, `delete_record`                                                  | **Not** selected |
+| **Run actions**  | `avo:actions`                          | `run_action`                                                                                       | **Not** selected |
 
 **Choose per resource** on the authorize page lists every resource the admin can see and lets them pick *none*, *read*, or *read & write* for each. A narrowed grant holds everywhere: `list_resources` lists only the granted resources, a tool naming any other one is refused before a record is loaded, `search_records` with no resource searches only the granted ones, an association to an ungranted resource is left out of `show_record`'s payload, and run actions over a narrowed read means "on those resources". Write carries read.
 
@@ -212,7 +212,7 @@ A column no field declares, and a field the user may not reach, are the same thi
 
 ## Add tools of your own
 
-The nine tools reach any record, but a workflow an agent runs often — "issue the invoice for this order", "close these tickets and notify their reporters" — is better served as one tool than as a chain of `list_records`, `show_record` and `run_action` calls it has to get right every time. You can register tools of your own, and they're served beside the nine.
+The ten tools reach any record, but a workflow an agent runs often — "issue the invoice for this order", "close these tickets and notify their reporters" — is better served as one tool than as a chain of `list_records`, `show_record` and `run_action` calls it has to get right every time. You can register tools of your own, and they're served beside the ten.
 
 Scaffold one:
 
@@ -390,7 +390,7 @@ Who may change a grant is the policy's [`edit_entitlements?`](#decide-who-sees-a
 This is the same grid the [REST API](./rest-api.html#entitle-a-token) shows for an API token's entitlements, with the same controls and the same [way back](./rest-api.html#take-a-token-back-to-unrestricted). A panel running both add-ons asks "what may this credential reach?" in one form on both screens.
 :::
 
-The **Tools** card below it is the same grant read as the calls it turns into — `list_records`, `run_action` — grouped by the capability that unlocks each group. A narrowed grant is **counted** there (*on 3 resources*) rather than named, since the names are rows on the Entitlements card above. The write group says what it stands on, above its tools: *Everything in Read, plus:* — "Read & write" heads three calls only because the group carries read's five as well.
+The **Tools** card below it is the same grant read as the calls it turns into — `list_records`, `run_action` — grouped by the capability that unlocks each group. A narrowed grant is **counted** there (*on 3 resources*) rather than named, since the names are rows on the Entitlements card above. The write group says what it stands on, above its tools: *Everything in Read, plus:* — "Read & write" heads three calls only because the group carries read's six as well.
 
 ### Read a connection's access at a glance
 
@@ -610,4 +610,4 @@ end
 | [`connection_log_size`](./mcp-api.html#connection_log_size)     | `Integer` | `500`   |
 | [`extra_tools`](./mcp-api.html#extra_tools)                     | `Array`   | `[]`    |
 
-The route helper, the two generators, the nine tools and their arguments, the capabilities, every error code, and the policy methods are in the [MCP Server reference](./mcp-api.html).
+The route helper, the two generators, the ten tools and their arguments, the capabilities, every error code, and the policy methods are in the [MCP Server reference](./mcp-api.html).

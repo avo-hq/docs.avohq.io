@@ -103,7 +103,7 @@ config.mcp_server.connection_log_size = 2_000
 
 <Option name="`extra_tools`" headingSize="3">
 
-Tools of the app's own, served beside the nine. Each entry is a class name — never a constant, since the initializer runs before the app's classes are loadable — or a Hash whose `tool:` key names the class and whose other keys are passed to the tool's initializer. The class is either an `Avo::McpServer::Tool`, which the `avo:mcp_server:tool` generator scaffolds, or a `RubyLLM::Tool` written for [Avo AI](./ai.html#bring-your-own-tool) that declares `def self.capability`; the second is served through an adapter. Names are resolved on every request, and an entry that can't be served is dropped with a log line naming the reason. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+Tools of the app's own, served beside the ten. Each entry is a class name — never a constant, since the initializer runs before the app's classes are loadable — or a Hash whose `tool:` key names the class and whose other keys are passed to the tool's initializer. The class is either an `Avo::McpServer::Tool`, which the `avo:mcp_server:tool` generator scaffolds, or a `RubyLLM::Tool` written for [Avo AI](./ai.html#bring-your-own-tool) that declares `def self.capability`; the second is served through an adapter. Names are resolved on every request, and an entry that can't be served is dropped with a log line naming the reason. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
 
 ```ruby
 config.mcp_server.extra_tools = ["IssueInvoiceTool", {tool: "CrmTool", api_key: ENV["CRM_API_KEY"]}]
@@ -180,19 +180,20 @@ Writes `app/tools/issue_invoice_tool.rb`, defining `IssueInvoiceTool`, called `i
 
 ## Tools
 
-The nine tools a connection can call, each gated by the capability it declares. Tools the app registers through [`extra_tools`](#extra_tools) are served beside them, gated the same way by the capability each declares. Tool names are what a client prints in its transcript and are never translated.
+The ten tools a connection can call, each gated by the capability it declares. Tools the app registers through [`extra_tools`](#extra_tools) are served beside them, gated the same way by the capability each declares. Tool names are what a client prints in its transcript and are never translated.
 
-| Tool             | Capability    | Does                                            |
-| ---------------- | ------------- | ----------------------------------------------- |
-| `list_resources` | `avo:read`    | Lists the resources this panel serves           |
-| `list_records`   | `avo:read`    | Pages through a resource's records              |
-| `show_record`    | `avo:read`    | Opens one record in full, with its associations |
-| `search_records` | `avo:read`    | Searches records by text                        |
-| `list_actions`   | `avo:read`    | Lists the actions a resource registers          |
-| `create_record`  | `avo:write`   | Creates a record                                |
-| `update_record`  | `avo:write`   | Changes a record's fields                       |
-| `delete_record`  | `avo:write`   | Deletes a record                                |
-| `run_action`     | `avo:actions` | Runs one of this app's actions on records       |
+| Tool             | Capability    | Does                                              |
+| ---------------- | ------------- | ------------------------------------------------- |
+| `list_resources` | `avo:read`    | Lists the resources this panel serves             |
+| `list_records`   | `avo:read`    | Pages through a resource's records                |
+| `count_records`  | `avo:read`    | Counts a resource's records without returning any |
+| `show_record`    | `avo:read`    | Opens one record in full, with its associations   |
+| `search_records` | `avo:read`    | Searches records by text                          |
+| `list_actions`   | `avo:read`    | Lists the actions a resource registers            |
+| `create_record`  | `avo:write`   | Creates a record                                  |
+| `update_record`  | `avo:write`   | Changes a record's fields                         |
+| `delete_record`  | `avo:write`   | Deletes a record                                  |
+| `run_action`     | `avo:actions` | Runs one of this app's actions on records         |
 
 ### Arguments
 
@@ -200,6 +201,7 @@ The nine tools a connection can call, each gated by the capability it declares. 
 | ---------------- | ------------------------------ | ----------------------------------------------- |
 | `list_resources` | —                              | —                                               |
 | `list_records`   | `resource`                     | `page`, `per_page`, `sort_by`, `sort_direction` |
+| `count_records`  | `resource`                     | —                                               |
 | `show_record`    | `resource`, `id`               | —                                               |
 | `search_records` | `query`                        | `resource`, `limit`                             |
 | `list_actions`   | `resource`                     | —                                               |
@@ -213,6 +215,7 @@ The nine tools a connection can call, each gated by the capability it declares. 
 - `sort_by` must name a column the resource exposes to the connecting admin, or `created_at`, which the panel sorts by even when no field declares it; anything else is refused with `sortableColumns`. `sort_direction` is `asc` or `desc`. Left out, the resource's default sorting applies, falling back to `created_at` and then the primary key, as the panel does.
 - `attributes` maps field names (as `list_resources` reports them) or column names to values; a `belongs_to` is written as `user` or `user_id`. Only columns a declared, visible, writable field claims are accepted; `id`, `created_at`, `updated_at`, and columns matching `password`, `token`, `secret`, or `digest` never are. A refused attribute fails the call with `fields` naming it. `update_record` changes only the attributes passed.
 - `run_action` takes the `action` id from `list_actions` (the class name) and `fields` keyed by the input names it reports. A standalone action takes no `record_ids` and is refused if given any; every other action needs at least one. Every id is authorized individually, so a partly-allowed batch is refused rather than partly run.
+- `count_records` returns `{resource, count}` and nothing else. The count is `list_records`' `total` for the same connection: the resource's `index_query` narrowed by the admin's policy scope, with no default filter or scope from the index screen applied.
 - `show_record` returns a `belongs_to` as the record's id and title, and a `has_many` as a count plus up to 25 ids, already narrowed by the associated model's policy scope.
 - `search_records` runs each resource's own `self.search` block. A resource without one is an error when named directly and is listed under `unsearchable` in an all-resource search; it never falls back to listing the resource's records.
 - The MCP connections resource is excluded from every tool.
