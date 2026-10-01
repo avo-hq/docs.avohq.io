@@ -135,11 +135,12 @@ The token resource is skipped when routes are drawn, so no version namespace get
 
 ## Discovery
 
-Two `GET` endpoints describe what the API version exposes, so a client doesn't have to be told which resources exist, what key a write nests under, or what fields a request takes. Neither writes anything.
+Three read-only `GET` endpoints tell a client which resources exist, which key a write nests under, and which fields each request takes, so none of that has to be hardcoded.
 
 ```
 GET    /api/resources/v1/_schema                    # every resource the caller may reach
 GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on one view
+GET    /api/resources/v1/_openapi                   # the same, as one OpenAPI document
 ```
 
 ### The resource listing
@@ -234,6 +235,53 @@ Read views carry `field_id` and `field_type` only; form views add `field_options
 - `400` with `{ "error": "Unknown view", "views": ["index", "show", "create", "update"] }` for a view it doesn't know.
 - `404` when this version has no controller for the resource. No route exists then, so this one is Rails' own page, not the JSON body above.
 :::
+
+### OpenAPI document
+
+`GET /api/resources/v1/_openapi` returns the whole API as one [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0) file: every resource, every request, every field. Use it to plug the API into a tool that speaks OpenAPI. For your own requests, `_schema` above is smaller and enough.
+
+Nothing is stored on the server. The document is built from your resources and the token's entitlements on every request, so there is no file to find in the app and nothing to regenerate after a deploy: request it again and it is current.
+
+#### 1. Download the document
+
+You need two things: your app's URL and an API token [you created in the panel](#create-a-token). A plain browser visit answers `401`, because the token travels in a header. Send it with `curl` and save the response:
+
+```bash
+curl https://YOUR-APP.com/api/resources/v1/_openapi \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -o openapi.json
+```
+
+The file is saved where `-o` points. `-o openapi.json` puts it in the directory you ran the command from (`pwd` prints it). To save it somewhere else, give the full path, for example your Downloads folder:
+
+```bash
+curl https://YOUR-APP.com/api/resources/v1/_openapi \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -o ~/Downloads/openapi.json
+```
+
+Open `openapi.json` before importing it. It should start with `{"openapi":"3.1.0"`; if it holds `{"error":"Unauthorized"}` the token is wrong, and if it holds HTML the host or the mount path is.
+
+#### 2. Import it into your tool
+
+Import `openapi.json` into any tool that reads OpenAPI 3.1, such as Swagger, Postman, or an API client generator.
+
+:::warning Each token gets its own document
+The file describes what the requesting token may do, nothing more. A read-only token gets no create, update or delete operations; a token granted two resources gets only those two. So export with the token the tool will use, and export again after you change its [entitlements](#entitle-a-token).
+:::
+
+#### What is inside
+
+| Part             | Contents                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `servers[0].url` | The version's base URL, so every path in the file is the path you request                                                 |
+| Security         | Bearer token, applied to every operation. Left out when your app authenticates the API its own way, since the file cannot name your scheme |
+| Paths            | `/_schema`, `/{resource}/_schema`, and one operation per action the token may call (`get`, `post`, `patch`/`put`, `delete`) |
+| Record schemas   | `<Name>Index` and `<Name>Show` for what you read back; `<Name>Create` and `<Name>Update` for what you send, nested under `param_key` |
+| Shared schemas   | `Error`, `ValidationErrors`, `Pagination`                                                                                 |
+| Error responses  | `400`, `401`, `403`, `404`, `422`                                                                                         |
+
+Every field property also carries `x-avo-field-type` (for example `"belongs_to"`), so a generator that cannot tell what a JSON type stands for can still see the Avo field behind it.
 
 ## Authentication
 
@@ -1028,4 +1076,10 @@ The lifecycle chips say "3 minutes ago" through Rails' own `datetime.distance_in
 
 ```bash
 gem install avo-cli
+```
+
+To get the [OpenAPI document](#openapi-document) for the token the CLI is logged in with:
+
+```bash
+avo schema --format openapi > openapi.json
 ```

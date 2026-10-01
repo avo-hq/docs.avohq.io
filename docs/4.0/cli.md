@@ -128,6 +128,17 @@ Pass `--view update` for what an update may send, and `--view index` or `--view 
 
 A `belongs_to` is listed by the key that sets it, `team_id`.
 
+## Export an OpenAPI document
+
+`--format openapi` saves the whole API as one [OpenAPI document](./rest-api.html#openapi-document), for the token you are logged in with. `>` redirects it into a file, and the path decides where the file lands:
+
+```bash
+avo schema --format openapi > openapi.json               # the directory you ran it from
+avo schema --format openapi > ~/Downloads/openapi.json   # your Downloads folder
+```
+
+It takes no resource and no `--view`: the document always covers everything the token may reach.
+
 ## List records
 
 ```bash
