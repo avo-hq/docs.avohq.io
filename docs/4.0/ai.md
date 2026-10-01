@@ -1298,7 +1298,7 @@ When one reply makes several calls, each gets its own card, and the assistant ca
 
 **Ten in a row, then a card.** At most ten always-allowed calls run in a row before a card appears again. The count starts over when you send a message or answer a card.
 
-**A call that may have gone through isn't repeated behind your back.** A remote call gets 30 seconds. If the server doesn't answer in time, or the connection drops after the call was sent, the assistant is told the call may have happened and not to repeat it, and its card, if it had one, reads **Outcome unknown**. The next call to that tool shows a card even if you always-allowed it, so check the other system before you approve it.
+**A call that may have gone through isn't repeated behind your back.** A remote call ends after 30 seconds without an answer, or after a minute in all. If the server doesn't answer in time, or the connection drops after the call was sent, the assistant is told the call may have happened and not to repeat it, and its card, if it had one, reads **Outcome unknown**. The next call to that tool shows a card even if you always-allowed it, so check the other system before you approve it.
 
 A card left for more than an hour can't be approved anymore and reads **Expired**. If a server asks for more input in the middle of a call, the assistant tells you what it asked, and the call counts as not done.
 
@@ -1314,7 +1314,7 @@ The owner, or whoever else your app lets manage the connection, sets each tool:
 | **Always ask** | Every call shows a card, and **Always allow** isn't offered. Existing always-allows stop applying |
 | **Off**        | The assistant isn't offered the tool                                                              |
 
-Tools a server adds later arrive **On**. Switch off the tools nobody should use from a chat, especially on a shared connection. A change applies from the next reply in every chat.
+Tools a server adds later arrive **On**. Switch off the tools nobody should use from a chat, especially on a shared connection. A change applies from the next call, even in a reply that's already running: always-allows stop at once, and a tool switched **Off** is no longer sent.
 
 They also get three actions on the connection's page:
 
