@@ -841,6 +841,10 @@ module Avo::Api::Resources::V1
 end
 ```
 
+:::warning A guard on one controller does not cover the OpenAPI document
+`BaseResourcesController` serves the [OpenAPI document](#openapi-document), so a `before_action` you add to one resource's controller never runs for it, and that resource's fields are still listed. To keep a resource out of the document, use the token's [entitlements](#entitle-a-token) or the resource's `index?` policy.
+:::
+
 ## Manage tokens in the panel
 
 Tokens are minted, entitled, and revoked in Avo — never over the API. The resource ships with the gem, so there is nothing to generate. Two things decide whether it works for your team: whether people can **reach** it, and what they may **do** once they are there.
