@@ -130,7 +130,7 @@ A `belongs_to` is listed by the key that sets it, `team_id`.
 
 ## Export an OpenAPI document
 
-`--format openapi` saves the whole API as one [OpenAPI document](./rest-api.html#openapi-document), for the token you are logged in with. `>` redirects it into a file, and the path decides where the file lands:
+`--format openapi` prints the whole API as one [OpenAPI document](./rest-api.html#openapi-document), for the token you are logged in with. Redirect it into a file:
 
 ```bash
 avo schema --format openapi > openapi.json               # the directory you ran it from
@@ -361,7 +361,7 @@ avo <command> [RESOURCE] [ID] [flags]
 | -------------------------- | -------- | ----------------------------------------------------------------------------------------------- |
 | `avo login`                |          | [Save the host, token and API version](#_2-connect-to-your-app), so later commands need none    |
 | `avo logout`               |          | [Delete what `login` saved](#sign-out)                                                          |
-| `avo schema [RESOURCE]`    | `s`      | [List the resources](#_3-check-what-the-token-reaches), or [the fields of one](#look-up-what-you-can-send) |
+| `avo schema [RESOURCE]`    | `s`      | [List the resources](#_3-check-what-the-token-reaches), [the fields of one](#look-up-what-you-can-send), or [export the OpenAPI document](#export-an-openapi-document) |
 | `avo list RESOURCE`        | `l`      | [List records](#list-records), one page at a time                                               |
 | `avo get RESOURCE ID`      | `g`      | [Show one record](#read-one-record)                                                             |
 | `avo create RESOURCE`      | `c`      | [Create a record](#create-a-record)                                                             |
@@ -376,7 +376,7 @@ A shortcut goes in the command's slot: `avo l users` is `avo list users`. `avo h
 | `--token <secret>`             | every request                    | API token secret, sent as a Bearer token. Env: `AVO_API_TOKEN`                           |
 | `--api-version <name>`         | every request                    | API version segment of the URL. Defaults to the one `login` saved, then `v1`. Env: `AVO_API_VERSION` |
 | `--verbose`                    | every request                    | Log each request and response line to stderr                                             |
-| `--format table\|json`         | every response                   | Output format. Default `table`; `json` prints the body exactly as the server sent it, indented on a terminal     |
+| `--format table\|json`         | every response                   | Output format. Default `table`; `json` prints the body exactly as the server sent it, indented on a terminal. `schema` also takes [`openapi`](#export-an-openapi-document) |
 | `--fields <a,b,c>`             | `list`, `get`, `create`, `update` | Which fields to show, comma-separated, in that order. Columns on `list`, rows elsewhere |
 | `-d, --data <json\|@path\|->`  | `create`, `update`               | Required. Fields to write, as one JSON object. `@path` reads it from a file, `-` from stdin |
 | `--view <name>`                | `schema`                         | Which view's fields. `create` (default) and `update` list what a write may send; `index` and `show` what a record reads back. Needs a resource |

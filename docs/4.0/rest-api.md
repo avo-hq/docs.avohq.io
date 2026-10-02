@@ -244,7 +244,7 @@ Nothing is stored on the server. The document is built from your resources and t
 
 #### 1. Download the document
 
-You need two things: your app's URL and an API token [you created in the panel](#create-a-token). A plain browser visit answers `401`, because the token travels in a header. Send it with `curl` and save the response:
+You need two things: your app's URL and an API token [you created in the panel](#create-a-token). The token travels in a header, so send it with `curl` and save the response:
 
 ```bash
 curl https://YOUR-APP.com/api/resources/v1/_openapi \
@@ -252,7 +252,7 @@ curl https://YOUR-APP.com/api/resources/v1/_openapi \
   -o openapi.json
 ```
 
-The file is saved where `-o` points. `-o openapi.json` puts it in the directory you ran the command from (`pwd` prints it). To save it somewhere else, give the full path, for example your Downloads folder:
+To save it somewhere else, give the full path:
 
 ```bash
 curl https://YOUR-APP.com/api/resources/v1/_openapi \
@@ -264,7 +264,7 @@ Open `openapi.json` before importing it. It should start with `{"openapi":"3.1.0
 
 #### 2. Import it into your tool
 
-Import `openapi.json` into any tool that reads OpenAPI 3.1, such as Swagger, Postman, or an API client generator.
+Import `openapi.json` into any tool that reads OpenAPI 3.1, such as Swagger UI, Postman, or an API client generator.
 
 :::warning Each token gets its own document
 The file describes what the requesting token may do, nothing more. A read-only token gets no create, update or delete operations; a token granted two resources gets only those two. So export with the token the tool will use, and export again after you change its [entitlements](#entitle-a-token).
@@ -275,7 +275,7 @@ The file describes what the requesting token may do, nothing more. A read-only t
 | Part             | Contents                                                                                                                  |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `servers[0].url` | The version's base URL, so every path in the file is the path you request                                                 |
-| Security         | Bearer token, applied to every operation. Left out when your app authenticates the API its own way, since the file cannot name your scheme |
+| Security         | Bearer token, applied to every operation. Left out when no API token authenticated the request, as in an app that authenticates the API its own way, since the file cannot name your scheme |
 | Paths            | `/_schema`, `/{resource}/_schema`, and one operation per action the token may call (`get`, `post`, `patch`/`put`, `delete`) |
 | Record schemas   | `<Name>Index` and `<Name>Show` for what you read back; `<Name>Create` and `<Name>Update` for what you send, nested under `param_key` |
 | Shared schemas   | `Error`, `ValidationErrors`, `Pagination`                                                                                 |
