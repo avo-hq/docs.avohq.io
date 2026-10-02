@@ -1721,13 +1721,6 @@ Narrowing `Scope#resolve` reaches past the resource's own index: a skill the sco
 
 ### Set it up
 
-Connections are built on RubyLLM's MCP client, which isn't in a RubyLLM release yet. Until it is, bundle RubyLLM from its main branch. With a release that lacks the client, connections stay off even when the setting is on, and the app logs a warning at boot.
-
-```ruby
-# Gemfile
-gem "ruby_llm", github: "crmne/ruby_llm", branch: "main"
-```
-
 Connections store each server's credential with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html). If your app has no encryption keys yet, generate them and add them to your credentials:
 
 ```bash
