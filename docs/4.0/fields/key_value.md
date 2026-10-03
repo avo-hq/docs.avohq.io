@@ -116,6 +116,23 @@ Toggle on/off the ability to delete rows from that field. Turning this on will p
 <!-- @include: ./../common/default_boolean_false.md-->
 </Option>
 
+<Option name="`suggestions`">
+
+<VersionReq version="4.2.12" />
+
+Keys, and optionally values for each key, suggested in a dropdown under the input while editing. Suggestions are never saved unless the user picks or types them.
+
+#### Default value
+
+`nil`
+
+#### Possible values
+
+- An array of keys: `["Content-Type", "Accept"]`
+- A hash of keys to arrays of values: `{"Content-Type" => ["application/json", "text/html"]}`
+- A block that returns either of the above. It has access to `record`, `resource`, and `view`.
+</Option>
+
 ## Customizing the labels
 
 You can easily customize the labels displayed in the UI by mentioning custom values in `key_label`, `value_label`, `action_text`, and `delete_text` properties when defining the field.
@@ -128,6 +145,34 @@ field :meta, # The database field ID
   action_text: "New item", # Custom value for button to add a row. Defaults to 'Add'.
   delete_text: "Remove item" # Custom value for button to delete a row. Defaults to 'Delete'.
 ```
+
+## Suggest common keys and values
+
+<VersionReq version="4.2.12" />
+
+If your users keep typing the same keys, pass `suggestions` to offer them in a dropdown as the user types. Give a hash to also suggest values for each key. Once a row has a key, its value input suggests that key's values. Users can pick with the mouse or the arrow keys and Enter.
+
+```ruby
+field :headers,
+  as: :key_value,
+  suggestions: {
+    "Content-Type" => ["application/json", "text/html"],
+    "Accept" => ["application/json", "*/*"],
+    "Authorization" => []
+  }
+```
+
+Suggestions are only hints. Nothing is added to the record unless the user picks or types it, so an ignored suggestion never saves as an empty entry like `{"Content-Type": ""}`.
+
+If you only want to suggest keys, pass an array. If the suggestions depend on the record, pass a block.
+
+```ruby
+field :headers, as: :key_value, suggestions: ["Content-Type", "Accept"]
+
+field :headers, as: :key_value, suggestions: -> { record.default_headers }
+```
+
+Suggestions don't show on keys or values whose editing is disabled, and keys already used by another row aren't suggested again.
 
 ## Enforce restrictions
 
