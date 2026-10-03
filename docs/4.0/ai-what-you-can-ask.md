@@ -25,6 +25,8 @@ For how a turn actually unfolds — schema, confirmation cards, authorization �
 | "Show me every column for post 42"               | The full record, not just the common columns                             |
 | "Who signed up last?"                            | One record, named inline as a chip                                       |
 
+<Image src="/assets/img/4_0/ai/find-records.webm" dark-src="/assets/img/4_0/ai/find-records-dark.webm" width="1600" height="1000" alt="The Avo chat open over a dashboard. The question Which cancelled projects were more than half done? gets a list of four projects, each row linking to its record. A click on the first opens that project's page with the chat still open." />
+
 Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders over $500", "users older than 26", "posts with no author", "projects in draft or review".
 
 **Naming a record in words is enough.** "The user called John Deere", "the post about pricing", "find Acme" — the assistant looks the record up the way your admin does: a resource that [configures search](./search.html) gets that exact search, and one that doesn't is matched across every text column you're allowed to read. A multi-word name still finds the record when its words live in different columns, so a first and last name stored separately aren't a problem. And "no such record" is only ever reported after that search came back empty — never off a guessed column filter.
@@ -200,6 +202,8 @@ Check rows on an index — or in a has-many panel on a record's page — and "th
 - **"Which of these has no owner?"**
 
 The ribbon's **"3 records selected"** chip says how many; hovering it names each row by resource and label. See [The rows you checked](./ai.html#the-rows-you-checked).
+
+<Image src="/assets/img/4_0/ai/bulk-update.webm" dark-src="/assets/img/4_0/ai/bulk-update-dark.webm" width="1600" height="1000" alt="An Avo Projects index with three rows checked. The chat opens with a ribbon reading 3 records selected, the message Move these to On hold is sent, and the assistant answers with a card titled Update 3 Project records that lists the new stage and the three projects above Update and Cancel buttons." />
 
 ## Ask about a file you sent
 
