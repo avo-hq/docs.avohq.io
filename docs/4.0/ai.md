@@ -47,7 +47,7 @@ bin/rails generate avo:ai install
 bin/rails db:migrate
 ```
 
-This creates the `avo_ai_*` tables — plus RubyLLM 2.0's internal `ruby_llm_*` tables (model registry, tool calls, usage ledger, batches), unless the app already has them — and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
+This creates the `avo_ai_*` tables — plus RubyLLM 2.0's internal `ruby_llm_*` tables (model registry, tool calls, usage ledger, batches, MCP credentials), unless the app already has them — and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
 
 ### 3. Set your provider API key
 
@@ -158,6 +158,10 @@ Avo.configure do |config|
   # Close chat-bar pills nobody has opened for this long (see "Closing idle tabs automatically").
   # Unset (the default), nil, or false keeps them until closed.
   config.ai.tab_expiry = 30.days
+
+  # Let people connect remote MCP servers from the chat (see "Turn on MCP connections").
+  # Off by default. Needs Active Record encryption keys and the installer's migrations.
+  config.ai.connectors_enabled = true
 end
 ```
 
@@ -249,9 +253,11 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Reading.** Query results are paginated, and "how many" goes to `count_records`, which returns the number and never a row — so a capped result set doesn't become a wrong number, and a count sends no record to the model provider. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
 
+**Images load only from your app.** An image in an answer loads when its address is a path on your app, a `data:` image, or a URL on the host set in `Rails.application.routes.default_url_options`. Any other image renders as a link naming its host, so an image address written into a record, a document, or a [connected server's](#connect-other-tools-with-mcp) reply can't make the reader's browser send a request to that host. If `default_url_options` has no host, full URLs to your own app render as links too.
+
 **Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. A delete works one record at a time; an update works on one record or on many, and a batch is one card covering the whole set. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. The exception is an [import from a CSV](#reading-files-and-importing-from-them), which is proposed as one card and creates its rows only when you confirm. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
-**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "commit", "apply it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions). A typed confirmation reaches the latest card while nothing else has happened since: if an earlier "go ahead" of yours reached the assistant and it only reminded you to confirm, the next "do it" still confirms the card. Once you ask about something else, or the assistant looks something up or asks you a question, click the card's button instead. When one reply shows several cards, typing confirms none of them, because it can't know which one you mean; click each card you want.
+**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "commit", "apply it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions). A typed confirmation reaches the latest card while nothing else has happened since: if an earlier "go ahead" of yours reached the assistant and it only reminded you to confirm, the next "do it" still confirms the card. Once you ask about something else, or the assistant looks something up or asks you a question, click the card's button instead. When one reply shows several cards, typing confirms none of them, because it can't know which one you mean; click each card you want. Typing never approves a call to a connected MCP server: that card takes a click, because what the server sends back is text an outside system wrote. See [Approve a call](#approve-a-call).
 
 **Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
 
@@ -926,6 +932,10 @@ config.mcp_server.extra_tools = ["CrmTool"] # [!code focus]
 
 The chat ignores `capability`. Over MCP the server injects the connecting admin as `user:` the way the chat does, runs the capability gate first, and serves a Hash as structured content, a String as text, and an `{error: "..."}` Hash as a tool error. `chat` and `inspection_tracker` are never set there, so a tool that can run over MCP mustn't depend on either. See [Share a tool with Avo AI](./mcp.html#share-a-tool-with-avo-ai) for the details.
 
+:::info This is MCP in the other direction
+Here your app is the MCP *server*, and outside clients connect to it. To have the assistant call somebody else's MCP server from a chat, see [Connect other tools with MCP](#connect-other-tools-with-mcp).
+:::
+
 ### Replace a shipped tool with your own copy
 
 To change how a shipped tool behaves, eject it:
@@ -1231,6 +1241,99 @@ Ejecting `instructions` (see [Replace the shipped prompts](#replace-the-shipped-
 | Local    | Shape                     | Present when                                                                        |
 | -------- | ------------------------- | ------------------------------------------------------------------------------------ |
 | `skills` | Array of `Avo::Ai::Skill` | The chat has at least one skill attached, deduplicated and in first-attached order    |
+
+## Connect other tools with MCP
+
+Connect a remote [MCP](https://modelcontextprotocol.io) server from the chat, and the assistant can use that server's tools alongside Avo's own in the same turn, with the record you started the chat from as context. Every call it makes to the server waits for your approval on a card.
+
+Connections are off until your app turns them on and decides who may connect a server. See [Turn on MCP connections](#turn-on-mcp-connections).
+
+Type `/mcp` in the composer to open the **Connections** panel. On its own, `/mcp` lists the connections you can use, with each one's status and tools. With an address, `/mcp https://mcp.linear.app/mcp` starts connecting that server. `/mcp` is also a row in the `/` menu, next to your [skills](#attach-a-skill-with-a-message).
+
+**`/mcp` never reaches the model.** Avo answers it before anything is stored: no message is added to the conversation, no chat is created when you type it into a new-chat composer, and the assistant isn't told. The assistant has no tool that connects, shares, or disconnects a server, approves a call, or changes a tool's setting, and it can't read or change connection records. People do all of that with clicks.
+
+### Connect a server
+
+Give the panel the server's address and click **Connect**. The address must start with `https://`. Avo refuses anything else before it sends a request. It then asks the server what it needs:
+
+| The server needs | What happens                                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Nothing          | It connects right away                                                                                                               |
+| A sign-in        | **Continue to sign in** takes you to the provider's consent screen and back to the chat you started from. The link lasts ten minutes |
+| An access token  | A masked **Access token** field. Paste a token the provider gave you and click **Connect**                                           |
+
+A server that offers a sign-in Avo can't use, for example one that needs a client registered with it ahead of time, gets the token field instead, with the reason.
+
+Nothing is saved until the server accepts the connection. A rejected token, a sign-in that fails or that you abandon, or a server that doesn't answer within 15 seconds leaves no connection behind. When it works, the panel says so, the chat you connected from gets a line naming the server and how many tools it offers, and the assistant can use them from your next message.
+
+You have one connection per server address. Typing `/mcp` with the address of a server you already connected points you to **Reconnect** instead of adding a second one.
+
+People who can't connect servers still see the connections they can use, and a line telling them to ask an admin.
+
+### Share a connection
+
+A new connection is yours alone. It shows up only in your chats and your `/mcp` list. If your app lets you share, **Share with everyone** in the panel makes it usable in everyone's chats, and **Make private** takes it back. The connection's page on the **Connectors** resource has the same choice.
+
+A shared connection sends every call with your credential, so on the server's side a colleague's call looks like yours. Each card names whose connection the call goes through, and the audit log records the colleague whose chat made the call. Making a connection private again takes back the always-allows other people gave its tools.
+
+Only the owner can share a connection, make it private, or reconnect it.
+
+### Approve a call
+
+When the assistant calls a remote tool, the turn stops on a card showing the server and its host, the tool, whose connection the call goes through ("Your connection", or "Maria's connection" for a shared one), and the exact arguments that will leave your app. Nothing is sent until you click one of three buttons:
+
+| Button           | What it does                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| **Approve once** | Sends this call. The result comes back and the assistant carries on                        |
+| **Always allow** | Sends this call, and skips the card for this tool from now on                              |
+| **Decline**      | Sends nothing. The assistant is told you declined and carries on with what it can still do |
+
+:::warning A remote card only takes a click
+Typing "yes" or "do it" confirms Avo's own cards but never a remote one. What a server returns, and what the assistant reads in a record or a document, is text someone else wrote, and it could contain those words. A message you send while a remote card is open settles the card as **Not sent**, and the assistant answers your message instead.
+:::
+
+When one reply makes several calls, each gets its own card, and the assistant carries on once you've answered all of them.
+
+**Always allow is yours, for one tool.** It doesn't cover other people, other tools, or other connections. It stops applying when the connection's owner sets the tool to **Always ask**, when the server changes the tool's name, description, or arguments, and when the connection is reconnected. The next call then shows a card again.
+
+**Ten in a row, then a card.** At most ten always-allowed calls run in a row before a card appears again. The count starts over when you send a message or answer a card.
+
+**A call that may have gone through isn't repeated behind your back.** A remote call ends after 30 seconds without an answer, or after a minute in all. If the server doesn't answer in time, or the connection drops after the call was sent, the assistant is told the call may have happened and not to repeat it, and its card, if it had one, reads **Outcome unknown**. The next call to that tool shows a card even if you always-allowed it, so check the other system before you approve it.
+
+A card left for more than an hour can't be approved anymore and reads **Expired**. If a server asks for more input in the middle of a call, the assistant tells you what it asked, and the call counts as not done.
+
+### Manage a connection
+
+Each connection has a page on the **Connectors** resource, once your app adds it to the menu. It shows the owner, who can use the connection, its status, and its tools. Everyone who can use a shared connection can read its page. The credential is never shown, and neither is any part of the address after a `?`.
+
+The owner, or whoever else your app lets manage the connection, sets each tool:
+
+| Setting        | Means                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------- |
+| **On**         | The assistant can call it. Each call shows a card unless the user always-allowed the tool         |
+| **Always ask** | Every call shows a card, and **Always allow** isn't offered. Existing always-allows stop applying |
+| **Off**        | The assistant isn't offered the tool                                                              |
+
+Tools a server adds later arrive **On**. Switch off the tools nobody should use from a chat, especially on a shared connection. A change applies from the next call, even in a reply that's already running: always-allows stop at once, and a tool switched **Off** is no longer sent.
+
+They also get three actions on the connection's page:
+
+- **Refresh tools** reads the server's tool list now. Chats read it at the start of every reply anyway, so this only brings the page up to date between chats. A tool the server changed shows a card before its next call.
+- **Revoke always-allows** takes back every always-allow anyone gave the connection's tools. The next call to each one shows a card.
+- **Disconnect** removes the connection, its credential, its tools, and the always-allows on them. Its tools leave every chat from the next message, and past messages that used them stay readable.
+
+The `/mcp` panel has **Reconnect** and **Disconnect** too.
+
+### When a connection stops working
+
+A connection that fails never breaks the chat. That server's tools are left out, Avo's own tools keep working, and when you ask for something that needs the server, the assistant tells you which connection failed and that it can be reconnected with `/mcp`.
+
+| What happened                                            | What you see                                                                      |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| The server didn't answer in time, or couldn't be reached | Its tools are left out of that reply, and come back once the server answers again |
+| The server rejected the credential, or it can't be read  | The connection reads **Needs reconnecting** in `/mcp`                             |
+
+Only the owner can reconnect. **Reconnect** in the `/mcp` panel signs in again, takes a new token, or simply asks again for a server that needs neither. Other people see who to ask. Reconnecting takes back every always-allow on the connection, since the new credential may belong to a different account on the server.
 
 ## Dictate a message
 
@@ -1611,6 +1714,174 @@ end
 ```
 
 Narrowing `Scope#resolve` reaches past the resource's own index: a skill the scope excludes also drops out of the composer's `/` menu, and out of any chat that already referenced it — the same way a deleted skill does (see [Attach a skill with a message](#attach-a-skill-with-a-message)).
+
+## Turn on MCP connections
+
+[MCP connections](#connect-other-tools-with-mcp) are off by default. While they're off, nobody sees any of it: no `/mcp`, no connection pages, and no remote tools in any chat. Turning them on takes encryption keys, the installer's tables, one setting, and a policy that says who may connect.
+
+### Set it up
+
+Connections store each server's credential with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html). If your app has no encryption keys yet, generate them and add them to your credentials:
+
+```bash
+bin/rails db:encryption:init
+```
+
+A new install already has the tables. An app that installed avo-ai earlier runs the installer again, which writes only the migrations it's missing: avo-ai's connection tables and RubyLLM's MCP credentials table.
+
+```bash
+bin/rails generate avo:ai install
+bin/rails db:migrate
+```
+
+Turn the setting on:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.connectors_enabled = true
+```
+
+Add the **Connectors** resource to the menu beside the others:
+
+```ruby
+# config/initializers/avo.rb
+section "AI", icon: "heroicons/outline/sparkles" do
+  resource "avo_ai/chats"
+  resource "avo_ai/messages"
+  resource "avo_ai/models"
+  resource "avo_ai/skills"
+  resource "avo_ai/connectors" # [!code highlight]
+end
+```
+
+Migrate before you turn the setting on, since every chat reads the connection tables while it's on. If the encryption keys or RubyLLM's credentials table are missing, connecting a server tells the user the app isn't set up yet instead of failing.
+
+When someone signs in to a server, Avo registers itself with that provider on the spot, once per connection. The consent screen shows your Avo `app_name`.
+
+### Choose who can connect and share
+
+The setting alone lets nobody connect. `Avo::Ai::ConnectorPolicy` ships with `create?` (connecting a server) and `share?` (sharing one with everyone) both closed. Define your own class to open them. It wins over the gem's copy and, like the gem's, it's a plain class rather than one that inherits your `ApplicationPolicy`:
+
+```ruby
+# app/policies/avo/ai/connector_policy.rb
+class Avo::Ai::ConnectorPolicy
+  attr_reader :user, :record
+
+  def initialize(user, record)
+    @user = user
+    @record = record
+  end
+
+  # Connecting a server.
+  def create?
+    enabled? && admin?
+  end
+
+  # Sharing a connection with everyone.
+  def share?
+    enabled? && admin?
+  end
+
+  def index?
+    enabled?
+  end
+
+  def show?
+    enabled?
+  end
+
+  def new?
+    create?
+  end
+
+  def edit?
+    update?
+  end
+
+  # Tool settings, Refresh tools, and Revoke always-allows.
+  def update?
+    enabled? && owner?
+  end
+
+  # Disconnecting.
+  def destroy?
+    enabled? && owner?
+  end
+
+  def search?
+    enabled?
+  end
+
+  def act_on?
+    enabled?
+  end
+
+  # Tool rows come from the server, so the tools table on a connection's page
+  # offers no attach, detach, or create.
+  def attach_connector_tools? = false
+
+  def detach_connector_tools? = false
+
+  def create_connector_tools? = false
+
+  private
+
+  def enabled?
+    Avo.configuration.ai.connectors_enabled
+  end
+
+  def admin?
+    !!user&.admin?
+  end
+
+  def owner?
+    record.respond_to?(:owned_by?) && record.owned_by?(user)
+  end
+
+  class Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    # The user's own connections, plus shared ones whose owner may still connect.
+    def resolve
+      return @scope.none unless Avo.configuration.ai.connectors_enabled
+
+      mine = @scope.where(user_type: @user.class.name, user_id: @user.id)
+      usable = @scope.where(audience: "everyone").includes(:user).select do |connector|
+        connector.user && Avo::Ai::ConnectorPolicy.new(connector.user, connector).create?
+      end
+
+      mine.or(@scope.where(id: usable.map(&:id)))
+    end
+  end
+end
+```
+
+Keep the `enabled?` check in every method and the early return in `Scope#resolve`. The gem's policy answers no to everything while `config.ai.connectors_enabled` is off, and your class replaces it. The Connectors pages and the servers a chat can call both go through this policy, so without the check they keep working with the setting off.
+
+`Scope#resolve` decides what each person can use, in the chat and on the Connectors pages alike. Checking the owner's `create?` for shared connections is what stops a shared connection for everyone when its owner loses the permission.
+
+:::warning Answer from `user`, never from a current-user global
+`Scope#resolve` asks `create?` about the owner of somebody else's connection. A policy that reads `Current.user` answers about the wrong person and keeps sharing a connection whose owner should no longer have one.
+:::
+
+Sharing, making a connection private, and reconnecting stay with the owner whatever the policy says: each one decides whose credential everyone's calls go out with. If you want someone else to manage every connection, return `@scope.all` from `resolve` for them and let `update?` and `destroy?` through. That widens the admin pages only: a chat still reaches just its user's own connections and the shared ones, so no one's assistant calls out on another person's private credential. A narrower scope does narrow the chat.
+
+### Record remote calls in the audit log
+
+With [Audit Logging](./audit-logging.html) installed, every remote call leaves one activity when it ends, whether or not it was sent. It's recorded against the connection, under the person whose chat made the call, with the chat as its origin. It names the connection, its host, the tool, whether the call was approved on a card or always-allowed, and how it ended. The arguments are left out: they're the part most likely to carry customer data, and more people read the audit log than the chat. The gem's Connectors resource turns this on with `self.audit_logging`, so keep that line if you replace the resource with your own.
+
+### Before you open it up
+
+Weigh these before you grant `create?` and `share?`:
+
+- **Always-allowed calls send arguments nobody reviewed.** Once someone always-allows a tool, the assistant sends whatever arguments it chooses, with no card, up to ten calls in a row. Set tools that change or send things to **Always ask**, especially on shared connections.
+- **Sharing puts a server's text in front of everyone's assistant.** A server writes its own tool names and descriptions, and a shared connection puts them into the assistant's context in the chats of everyone it's shared with. The assistant treats them as data and every call still waits for a card, but a hostile or compromised server can still try to steer the conversation. Give `share?` to people you'd trust to vet a server for the whole team.
+- **HTTPS is the only network check.** Avo refuses plain `http`, follows no redirects, and verifies certificates, which keeps out cloud metadata endpoints and most internal services. An internal service with a publicly trusted certificate can still be reached from a connection address, so keep `create?` to people you'd trust with your network.
+- **Each reply pays for the connections in reach.** At the start of every reply, the chat reads the tool list of every connection its user can use, all within 30 seconds, and sends those tools to your model provider with every request, even for questions about your own data. Switch off tools nobody needs. A request offers at most 128 tools, Avo's included. Past that, tools from shared connections are left out before the user's own, and the assistant is told how many.
+- **Remote results go to your model provider.** Like any tool result, what a server returns is sent to the provider and stored on the tool call. A result over 100 KB is cut short.
 
 ## Who can see a chat
 
