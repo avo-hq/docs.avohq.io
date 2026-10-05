@@ -56,7 +56,7 @@ It asks for three things and checks them against the app before saving them:
 
 If the check fails, nothing is saved.
 
-Only a flag on the `login` line skips a prompt. `AVO_API_HOST`, `AVO_API_TOKEN` and `AVO_API_VERSION` exported in your shell are ignored by `login`, so it always asks for what it is about to save.
+Only a flag on the `login` line skips a prompt. `AVO_API_HOST`, `AVO_API_TOKEN` and `AVO_API_VERSION` set in your shell are ignored by `login`, so it always asks for what it is about to save.
 
 :::warning The token is saved as plain text
 `avo login` writes `~/.config/avo/config.json`, or `$XDG_CONFIG_HOME/avo/config.json` when that variable is set, `%LOCALAPPDATA%\avo\config.json` on Windows, and the directory `AVO_CONFIG_DIR` names over all of these. The `Saved to` line prints the path it used. Use a token you can revoke from the [API tokens](./rest-api.html#manage-tokens-in-the-panel) screen, and run `avo logout` on a machine you are leaving.
@@ -83,10 +83,7 @@ The first column is the name every other command takes.
 If you would rather not save anything, or you are running in a job, set the variables instead and skip `avo login`:
 
 ```bash
-export AVO_API_HOST=https://admin.example.com/api
-export AVO_API_TOKEN=avo_xxxx
-export AVO_API_VERSION=v1
-avo schema
+AVO_API_HOST=https://admin.example.com/api AVO_API_TOKEN=avo_xxxx AVO_API_VERSION=v1 avo schema
 ```
 
 | Variable          | Flag            | Default | What it sets                                                         |
@@ -121,13 +118,13 @@ users create view
 field id  field type  field options
 name      text        {"required":true}
 email     text        {"required":true}
-active    boolean     -
+active    boolean     {}
 role      select      {"options":["user","admin","moderator"]}
-team_id   belongs_to  -
+team_id   belongs_to  {}
 Try: avo schema users --view show
 ```
 
-The first line names the resource and the view the fields belong to. `field_options` appears on the two form views only. It is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required` when the field is required, the `options` a choice field accepts, and `multiple: true` on a field that takes a list. A `-` is a field that is not required and has no options.
+The first line names the resource and the view the fields belong to. `field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required: true` on a required field (a field without it is not required), the `options` a choice field accepts, and `multiple: true` on a field that takes a list. It appears on the two form views only.
 
 Pass `--view update` for what an update may send, and `--view index` or `--view show` for what a record reads back, where the `field_options` column is gone since nothing is sent. Each view needs the entitlement of the request it describes.
 
@@ -154,8 +151,8 @@ On a terminal the table is framed and fits the width: a long cell wraps inside i
 avo list users --sort name --dir desc --fields id,name,email --per-page 10
 ```
 
-:::warning Filtering is not supported
-`list` cannot select records by value, because the REST API has no filtering. To find "every user where ...", loop over `--page` with `--format json` and filter the output locally, for example with `jq`.
+:::warning Filters are not supported yet
+`list` cannot select records by value, because the REST API does not support filters yet. Page through the records with `--format json` and filter them locally, for example with `jq`.
 :::
 
 ## Read one record
@@ -264,7 +261,7 @@ Run in a terminal rather than piped, the same command prints the body indented a
 avo logout
 ```
 
-This deletes what `avo login` saved. Anything exported in your shell (`AVO_API_HOST`, `AVO_API_TOKEN`, `AVO_API_VERSION`) keeps working after it.
+This deletes what `avo login` saved. Anything set in your shell (`AVO_API_HOST`, `AVO_API_TOKEN`, `AVO_API_VERSION`) keeps working after it.
 
 ## When a command fails
 

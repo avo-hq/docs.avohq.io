@@ -185,10 +185,10 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
   "view": "create",
   "fields": [
     { "field_id": "name", "field_type": "text", "field_options": { "required": true } },
-    { "field_id": "admin_id", "field_type": "belongs_to", "field_options": { "required": false } },
-    { "field_id": "plan", "field_type": "select", "field_options": { "required": false, "options": ["free", "pro"] } },
-    { "field_id": "tags", "field_type": "select", "field_options": { "required": false, "options": ["ops", "eu", "us"], "multiple": true } },
-    { "field_id": "coordinates", "field_type": "location", "field_options": { "required": false } }
+    { "field_id": "admin_id", "field_type": "belongs_to", "field_options": {} },
+    { "field_id": "plan", "field_type": "select", "field_options": { "options": ["free", "pro"] } },
+    { "field_id": "tags", "field_type": "select", "field_options": { "options": ["ops", "eu", "us"], "multiple": true } },
+    { "field_id": "coordinates", "field_type": "location", "field_options": {} }
   ]
 }
 ```
@@ -199,7 +199,7 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 | `field_id` | The key the field reads back under, or, on `create` and `update`, the key the body sets it through (`admin_id`). |
 | `field_type` | The Avo field type. |
 | `field_options` | Form views only: one object holding what a write needs to know about the field, the keys below. Read views carry none. |
-| `field_options.required` | Whether a blank value is refused. |
+| `field_options.required` | `true` when a blank value is refused. Absent otherwise, so a missing key means not required. |
 | `field_options.options` | On choice fields: the values the field accepts, never the labels. |
 | `field_options.multiple` | `true` on a field that takes a list (`select` with `multiple`, `checkbox_list`, `boolean_group`); absent otherwise. |
 
@@ -352,6 +352,10 @@ Who may mint and revoke tokens is your app's authorization decision, and the def
 ```bash
 GET /api/resources/v1/teams?page=2&per_page=10&sort_by=name&sort_direction=asc
 ```
+
+:::warning Filters are not supported yet
+The index endpoint does not apply the resource's filters, and a `filters` parameter is ignored. To select records by value, page through the index and filter on the client.
+:::
 
 :::info `per_page` is remembered in a cookie
 Avo stores `per_page` in a cookie so the admin panel remembers the reader's choice. A client that keeps cookies between requests (a browser, or a scripted session with a cookie jar) will keep the last `per_page` it sent even when it omits the parameter. Send `per_page` explicitly on every request if you need a fixed page size.
