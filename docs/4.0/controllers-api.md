@@ -319,6 +319,10 @@ end
 
 - **Default behavior:** calls `@record.save!`. Exceptions raised here are caught, logged, and added to the record's errors, which triggers the fail action and message.
 
+:::info
+The call goes through the resource's `save_record(record)`, which a resource can define to own its writes under every controller. <VersionReq version="4.2.12" />
+:::
+
 </Option>
 
 <Option name="`destroy_record_action`" headingSize="3">
@@ -332,5 +336,9 @@ end
 ```
 
 - **Default behavior:** calls `@record.destroy!`. Exceptions raised here (a foreign key constraint, for example) are caught, logged, and added to the record's errors, which triggers the fail action and message. Override it to soft-delete or archive instead.
+
+:::info
+The call goes through the resource's `destroy_record(record)`, which a resource can define to own its deletes under every controller. <VersionReq version="4.2.12" />
+:::
 
 </Option>

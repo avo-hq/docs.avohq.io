@@ -66,7 +66,7 @@ Each hash becomes a record, so `field :name` reads the `name:` key and computed 
 
 <VersionReq version="4.2.10" />
 
-Array resources are read-only by default. Set `self.writable = true` to show the Create, Edit and Delete controls, then save the changes in the resource's controller. Avo fills the record from the form, but it can't save an array record by itself, so you override `save_record_action` and `destroy_record_action`:
+Array resources are read-only by default. Set `self.writable = true` to show the Create, Edit and Delete controls, then tell the resource how to write. Avo fills the record from the form, but it can't save an array record by itself, so you define `save_record` and `destroy_record`:
 
 ```ruby
 # app/avo/resources/bookmark.rb
@@ -80,25 +80,22 @@ class Avo::Resources::Bookmark < Avo::Resources::ArrayResource
     field :title, as: :text
     field :url, as: :text
   end
+
+  def save_record(record) # [!code focus]
+    record.id = BookmarkStore.save(id: record.id, title: record.title, url: record.url) # [!code focus]
+  end # [!code focus]
+
+  def destroy_record(record) # [!code focus]
+    BookmarkStore.destroy(record.id) # [!code focus]
+  end # [!code focus]
 end
 ```
 
-```ruby
-# app/controllers/avo/bookmarks_controller.rb
-class Avo::BookmarksController < Avo::ArrayController
-  private
+`BookmarkStore` stands in for wherever the data lives: a JSON file, a cache, or an external API. `save_record` handles both create and update. A new record has a `nil` id, so set it after saving: Avo uses it to redirect to the record's page. Both methods report success through their return value, so return something truthy, or raise to fail. The resource's policy still decides who can create, edit and delete.
 
-  def save_record_action
-    @record.id = BookmarkStore.save(id: @record.id, title: @record.title, url: @record.url)
-  end
-
-  def destroy_record_action
-    BookmarkStore.destroy(@record.id)
-  end
-end
-```
-
-`BookmarkStore` stands in for wherever the data lives: a JSON file, a cache, or an external API. `save_record_action` handles both create and update. A new record has a `nil` id, so set it after saving: Avo uses it to redirect to the record's page. The resource's policy still decides who can create, edit and delete.
+:::info
+Avo calls `save_record` and `destroy_record` on the resource. <VersionReq version="4.2.12" /> On earlier versions, override [`save_record_action`](./controllers-api.html#save_record_action) and [`destroy_record_action`](./controllers-api.html#destroy_record_action) in the resource's controller instead, where the record is `@record`.
+:::
 
 ## Render it inside another resource
 

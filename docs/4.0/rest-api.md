@@ -787,24 +787,7 @@ An [array resource](./array-resource.html) is served like any other resource. Ge
 
 ### Accept writes
 
-An array record is saved by the two methods the [array resource page](./array-resource.html#create-edit-and-delete) describes, `save_record_action` and `destroy_record_action`. The panel's controller [is not inherited here](#your-admin-panel-controllers-are-not-inherited), so define them in the resource's API controller too, or share them through a concern:
-
-```ruby
-# app/controllers/avo/api/resources/v1/bookmarks_controller.rb
-module Avo::Api::Resources::V1
-  class BookmarksController < BaseResourcesController
-    private
-
-    def save_record_action
-      @record.id = BookmarkStore.save(id: @record.id, title: @record.title, url: @record.url)
-    end
-
-    def destroy_record_action
-      BookmarkStore.destroy(@record.id)
-    end
-  end
-end
-```
+An array record is saved by the two methods the [array resource page](./array-resource.html#create-edit-and-delete) describes, `save_record` and `destroy_record`. They live on the resource, so the API uses the same ones as the panel and its controller needs no code.
 
 Without them, a create, update or delete answers `422` and names the method the record lacks:
 
