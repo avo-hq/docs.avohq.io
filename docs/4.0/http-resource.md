@@ -190,7 +190,7 @@ end
 Avo configures no `base_uri`, so a relative path — `HTTParty.post("/authors", ...)` — has no host to connect to and fails inside `Net::HTTP` on a nil address, long after the form was submitted. Always request the resource's full `endpoint`.
 :::
 
-These overrides apply to the admin panel only. For the [REST API](./rest-api.html#your-admin-panel-controllers-are-not-inherited), override `save_record_action` and `destroy_record_action` in the resource's API controller.
+These overrides apply to the admin panel only. The [REST API](./rest-api.html#http-resources) writes through the resource's `save_record(record)` and `destroy_record(record)`, so define those on the resource to change how the API writes. Both return whether the remote API accepted the change.
 
 ## Debug console
 

@@ -106,7 +106,7 @@ avo list users --host http://localhost:3000/api --token avo_yyyy
 Name a host or a token yourself and the saved pair is left out entirely, so a saved token never reaches another host.
 :::
 
-The CLI appends only `/resources/<version>/<path>` to it, so `--host https://admin.example.com/api` makes its requests to `https://admin.example.com/api/resources/v1/...`. Where an app mounts the API is [Mount the API](./rest-api.html#mount-the-api). It must start with `http://` or `https://`.
+The host is the API base URL: the address the API answers on, mount path included. The CLI appends only `/resources/<version>/<path>` to it, so `--host https://admin.example.com/api` makes its requests to `https://admin.example.com/api/resources/v1/...`. Where an app mounts the API is [Mount the API](./rest-api.html#mount-the-api). It must start with `http://` or `https://`.
 
 ## Look up what you can send
 
@@ -127,7 +127,7 @@ team_id   belongs_to  -
 Try: avo schema users --view show
 ```
 
-The first line names the resource and the view the fields belong to. `field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required` when the field is required, the `options` a choice field accepts, and `multiple: true` on a field that takes a list. A `-` is a field that is not required and has no options. It appears on the two form views only.
+The first line names the resource and the view the fields belong to. `field_options` appears on the two form views only. It is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required` when the field is required, the `options` a choice field accepts, and `multiple: true` on a field that takes a list. A `-` is a field that is not required and has no options.
 
 Pass `--view update` for what an update may send, and `--view index` or `--view show` for what a record reads back, where the `field_options` column is gone since nothing is sent. Each view needs the entitlement of the request it describes.
 
