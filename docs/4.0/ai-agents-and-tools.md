@@ -64,6 +64,16 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 
 ³ A batch update is one card for the whole set: it names the change once and then every record it will touch, capped at `config.ai.max_update_records` (50 by default, at most 500). Nothing is written until you click **Confirm**, and the records are then updated on the server one at a time, under the same authorization and field rules a single update uses — a record that fails validation is skipped and named on the card, and the rest are still updated. Each updated record is recorded on its own, but `write_history` lists the batch as one entry and undoes it on one card, restoring every record or only the ones you name. If something that isn't about one record stops the run partway — the database going away, say — the records already saved are kept and counted, and the card reads as stopped rather than done, naming the ones it never reached. When the resource registers an action that does what you asked, the assistant runs that instead — see `run_action` above.
 
+### Tools from connected MCP servers
+
+When your app has [MCP connections](./ai.html#connect-other-tools-with-mcp) turned on, the tools of every server the chat's user can use join the roster as tools of their own. Each one is named after its connection: `mcp`, the connection's id, then the server's name for the tool, as in `mcp12_search_issues`. The name stays the same when the connection is renamed, and two servers can both offer a `search` tool, or one named like an Avo tool, without clashing.
+
+The list is read from each server at the start of every reply, so a server that is down or needs reconnecting simply has no tools in that reply. Some remote tools are never offered: a tool its owner switched **Off**, a tool whose name a provider won't accept or that clashes with one of Avo's tools or your own, a tool whose description or arguments are too large, and any tool past 128 in total, Avo's included, with shared connections' tools left out before the user's own. Apart from **Off**, the assistant is told what was left out.
+
+Every remote call waits on a card unless the user always-allowed that tool, and that card only takes a click. See [Approve a call](./ai.html#approve-a-call).
+
+`config.ai.excluded_tools` can't name a remote tool. To take one away, set it to **Off** on its connection's page. To take them all away, turn the setting off.
+
 ### The shapes an ask can take
 
 Every ask is one card, but the card takes a few shapes — the model chooses per question, through the arguments it passes:
@@ -84,6 +94,8 @@ Clicking an option posts the option's *text* through the same path a typed reply
 A tool only accepts from the model the arguments listed in its schema — a resource name, attributes, a title. Everything sensitive is injected server-side when the roster is built: the acting user and the current conversation are set on each tool instance in Ruby, and are not parameters the model can pass.
 
 That is a deliberate security boundary. There is no argument the model could invent to act as a different user, and no id it could pass to rename or read a conversation other than the one it is speaking in. Combined with [authorization at the tool layer](./ai.html#how-the-assistant-works), it means a prompt-injection attempt riding in on your data has no lever to reach beyond what the chat's owner could already do in the Avo UI.
+
+The same goes for a connected MCP server. Its tool descriptions and results are text an outside system wrote, and the assistant treats them as data. Whatever they say, a remote call waits for the user's click, and connection records are out of the tools' reach.
 
 ### Schema comes back with the answer
 
@@ -126,6 +138,8 @@ A list that surprises you reads like this:
 | An error message where the names should be | An `extra_tools` entry naming a class that won't load, isn't a `RubyLLM::Tool`, or claims a wire name another tool already has |
 
 That last row is deliberate: the field renders the error instead of failing the page, because this is the page you came to in order to read it. The same configuration raises on an actual chat run — a missing tool the app asked for isn't something to pass over quietly.
+
+Tools from [connected MCP servers](#tools-from-connected-mcp-servers) aren't listed: they depend on which servers answer at the start of a reply. `/mcp` in the chat lists each connection's tools.
 
 The roster doesn't change with your authorization policies. Every tool checks permissions when it's called, rather than being withheld from the list, so a policy change shows up in what a tool *does* — not in what's listed here.
 

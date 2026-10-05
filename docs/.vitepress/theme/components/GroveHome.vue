@@ -47,7 +47,7 @@ const paths = [
         <a class="grove-home__button" href="/4.0/">Start with Avo 4</a>
         <a class="grove-home__link" href="https://github.com/avo-hq/avo">Star it on GitHub</a>
       </div>
-      <p class="grove-home__proof">Still on Avo 3? <a href="/3.0/">Its docs are here</a>.</p>
+      <p class="grove-home__proof">Already on Avo 4? <a href="/4.0/upgrade.html">Read the upgrade guide</a> before moving to a newer version. Still on Avo 3? <a href="/3.0/">Its docs are here</a>.</p>
     </div>
   </section>
 
