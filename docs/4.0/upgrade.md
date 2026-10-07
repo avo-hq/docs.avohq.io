@@ -4,7 +4,7 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
-## Upgrade to 4.3.1
+## Upgrade to `avo` `4.3.1`
 
 <Option name="Badges follow `except_on` and `show_on: :all` on forms">
 
