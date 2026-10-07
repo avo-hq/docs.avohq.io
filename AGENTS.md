@@ -263,7 +263,7 @@ Don't add an entry for a pure addition — document it on the feature page with 
 Newest first, directly under the page intro. One `##` per version, one `<Option>` per change inside it:
 
 ````markdown
-## Upgrade to 4.3.0
+## Upgrade to `avo` `4.3.0`
 
 <Option name="`decorate` deprecated in favor of `format_display_using`">
 
@@ -289,8 +289,8 @@ Only when the old behavior is still reachable — show the config that restores 
 
 Rules:
 
-1. **Heading is the version you upgrade _to_**: `## Upgrade to 4.3.0`. For an add-on gem, name the gem: `` ## Upgrade to `avo-kanban` `0.1.18` ``. Don't use ranges (`Upgrade from X to Y`) — the 3.0 page has both because it drifted; new entries use the short form.
-2. **Unreleased changes get the next version too: the next patch of the gem's current version.** Read it from the gem's source (see [Gems source code](#gems-source-code)): avo's `lib/avo/version.rb` at `4.3.0` means `## Upgrade to 4.3.1`. An add-on's `lib/avo/<namespace>/version.rb` at `4.2.7` means `` ## Upgrade to `avo-api` `4.2.8` ``. A prerelease takes the next prerelease, so `4.3.0.beta.2` means `4.3.0.beta.3`. If that heading is already at the top of the page, add your `<Option>` inside it. If the change ships in another version, such as a minor train cutting `4.4.0`, rename the heading then. Never use a heading without a version. Nothing renames it after the release, so the entry stays unplaceable for every reader.
+1. **Heading names the gem and the version you upgrade _to_**: `` ## Upgrade to `avo` `4.3.0` ``, `` ## Upgrade to `avo-kanban` `0.1.18` ``. Always name the gem, avo included, so a reader knows which `bundle update` the entry is about. Don't use ranges (`Upgrade from X to Y`) — the 3.0 page has both because it drifted; new entries use the short form.
+2. **Unreleased changes get the next version too: the next patch of the gem's current version.** Read it from the gem's source (see [Gems source code](#gems-source-code)): avo's `lib/avo/version.rb` at `4.3.0` means `` ## Upgrade to `avo` `4.3.1` ``. An add-on's `lib/avo/<namespace>/version.rb` at `4.2.7` means `` ## Upgrade to `avo-api` `4.2.8` ``. A prerelease takes the next prerelease, so `4.3.0.beta.2` means `4.3.0.beta.3`. If that heading is already at the top of the page, add your `<Option>` inside it. If the change ships in another version, such as a minor train cutting `4.4.0`, rename the heading then. Never use a heading without a version. Nothing renames it after the release, so the entry stays unplaceable for every reader.
 3. **One `<Option>` per change**, even when the version has only one. It gives each change a stable anchor (`upgrade.html#decorate-deprecated...`) to link from release notes and support replies. The `name` is a full statement of the change, not a topic — `"read_only and disabled options on has_one fields"`, not `"has_one"`. Backticks in the name render it as code; use them when the name is mostly an identifier.
 4. **`###` sub-headings inside the `<Option>`**, Title Case, only the ones that apply, in this order: `Breaking Change` → `Action Required` → `Steps to Update` → `Maintaining Previous Behavior`. These are below the outline cutoff, so the `<Option>` name has to carry the meaning on its own.
 5. **Always state the action, including when there is none** — `**Action required:** None, this is an internal fix.` Readers skim for that line to know they can skip.
@@ -315,7 +315,7 @@ Verify the change against the gem source before writing the note — what shippe
 
 ## Before you finish
 
-- [ ] Breaking change or behavior change? An upgrade note exists under its `## Upgrade to <version>` heading (see [Breaking changes and upgrade notes](#breaking-changes-and-upgrade-notes)) **and** the feature pages describe the new behavior.
+- [ ] Breaking change or behavior change? An upgrade note exists under its `` ## Upgrade to `<gem>` `<version>` `` heading (see [Breaking changes and upgrade notes](#breaking-changes-and-upgrade-notes)) **and** the feature pages describe the new behavior.
 - [ ] Guide is task-organized, plain English, skimmable.
 - [ ] Reference has one `<Option>` per option with Type + Default (+ Values/Validation where relevant).
 - [ ] Frontmatter cross-links both pages (`api_docs` ↔ `guide`) and sets `license`.
