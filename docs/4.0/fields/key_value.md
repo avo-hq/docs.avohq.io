@@ -118,7 +118,7 @@ Toggle on/off the ability to delete rows from that field. Turning this on will p
 
 <Option name="`suggestions`">
 
-<VersionReq version="4.2.12" />
+<VersionReq version="4.3.1" />
 
 Keys, and optionally values for each key, suggested in a dropdown under the input while editing. Suggestions are never saved unless the user picks or types them.
 
@@ -148,7 +148,7 @@ field :meta, # The database field ID
 
 ## Suggest common keys and values
 
-<VersionReq version="4.2.12" />
+<VersionReq version="4.3.1" />
 
 If your users keep typing the same keys, pass `suggestions` to offer them in a dropdown as the user types. Give a hash to also suggest values for each key. Once a row has a key, its value input suggests that key's values. Users can pick with the mouse or the arrow keys and Enter.
 
