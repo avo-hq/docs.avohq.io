@@ -133,3 +133,9 @@ pre code span.line:not(:last-child) {
 .cli-reference .vp-doc td:first-child code {
   white-space: nowrap;
 }
+
+/* The outline links are 26px tall (DocOutlineItem.vue) instead of VitePress's
+   32px; VitePress positions the active marker for 32px rows. */
+.VPDocAsideOutline .outline-marker {
+  margin-top: -3px;
+}

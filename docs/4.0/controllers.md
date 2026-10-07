@@ -108,3 +108,25 @@ end
 ```
 
 Errors raised inside these methods are caught and surfaced on the record, so the regular fail actions and messages kick in.
+
+Both methods go through the resource by default, calling its `save_record(record)` and `destroy_record(record)`. Define those on the resource when the change belongs to it under every controller, as a [writable array resource](./array-resource.html#create-edit-and-delete) does. <VersionReq version="4.2.12" />
+
+## Use the parent record
+
+<VersionReq version="4.2.11" />
+
+When a record is created, shown, or edited through another one, like a comment created from a post's comments panel, Avo loads that parent from the `via_*` params. After calling `super`, it's in `@via_record` and its resource is in `@via_resource`:
+
+```ruby
+# app/controllers/avo/comments_controller.rb
+class Avo::CommentsController < Avo::ResourcesController
+  def new
+    super
+
+    # Prefill the form when the comment is created from a post
+    @record.body = "Re: #{@via_record.name}" if @via_record.is_a?(Post)
+  end
+end
+```
+
+Both are `nil` when there is no parent. See [`via_record`](./controllers-api.html#via_record) to read them from any other hook.
