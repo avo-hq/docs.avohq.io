@@ -6,6 +6,18 @@ If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedica
 
 ## Upgrade to `avo` `4.3.1`
 
+<Option name="Selected rows come back when you go back to an index">
+
+### Breaking Change
+
+Going back to an index page now puts back the rows you had selected and where you had scrolled. That happens with the browser's Back button and with the **Go back** link on a record page. Reaching the index any other way, or reloading it, starts with nothing selected, and running an action forgets the selection. Before, **Go back** opened the index at the top with nothing selected. See [Coming back to the index](./select-all.html#coming-back-to-the-index).
+
+### Action Required
+
+None in production. Check your system specs: one that selects rows, opens a record, clicks **Go back** and expects nothing to be selected now finds those rows still checked.
+
+</Option>
+
 <Option name="Badges follow `except_on` and `show_on: :all` on forms">
 
 ### Breaking Change
