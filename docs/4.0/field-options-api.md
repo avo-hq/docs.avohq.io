@@ -407,7 +407,7 @@ field :one_time_password, as: :text, autocomplete: "one-time-code"
 
 <Option name="`autofocus`" headingSize="3">
 
-<VersionReq version="4.2.11" />
+<VersionReq version="4.3.1" />
 
 Adds the HTML `autofocus` attribute to the field's input on the <New /> and <Edit /> views and in [action](./actions.html) modals, so the cursor starts there when the form opens. The block is executed in [`Avo::ExecutionContext`](./execution-context.html) with access to `record`, `resource`, and `view`, plus the usual defaults (`context`, `params`, `view_context`, `current_user`). A falsy result leaves the input alone.
 

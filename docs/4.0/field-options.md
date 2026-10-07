@@ -321,7 +321,7 @@ field :name, as: :text, placeholder: 'John Doe'
 
 ## Focus a field when the form opens
 
-<VersionReq version="4.2.11" />
+<VersionReq version="4.3.1" />
 
 Set [`autofocus`](./field-options-api.html#autofocus) on the field users fill in first, and the cursor starts there when the <New /> or <Edit /> form opens. It works in action modals too, where it replaces the default of focusing the first input.
 
