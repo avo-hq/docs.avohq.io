@@ -1723,6 +1723,16 @@ Narrowing `Scope#resolve` reaches past the resource's own index: a skill the sco
 
 [MCP connections](#connect-other-tools-with-mcp) are off by default. While they're off, nobody sees any of it: no `/mcp`, no connection pages, and no remote tools in any chat. Turning them on takes encryption keys, the installer's tables, one setting, and a policy that says who may connect.
 
+:::warning Connections need a RubyLLM that ships its MCP client
+Avo AI talks to remote servers through RubyLLM's own MCP client, and `ruby_llm` 2.0.0 does not ship it. On a version that doesn't, `config.ai.connectors_enabled` reads back `false` however you set it, and avo-ai says so on boot:
+
+```
+[Avo::Ai] config.ai.connectors_enabled is on, but this ruby_llm has no MCP client, so connections stay off.
+```
+
+Everything else in Avo AI works as documented — only `/mcp`, the connection pages, and remote tools are missing. The rest of this section applies once you're on a `ruby_llm` that has the client.
+:::
+
 ### Set it up
 
 Connections store each server's credential with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html). If your app has no encryption keys yet, generate them and add them to your credentials:
