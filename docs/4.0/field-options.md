@@ -319,6 +319,24 @@ field :name, as: :text, placeholder: 'John Doe'
 
 <Image src="/assets/img/4_0/field-options/placeholder.webp" dark-src="/assets/img/4_0/field-options/placeholder-dark.webp" width="1256" height="254" alt="An Avo New form text field whose empty input shows the grey placeholder text “John Doe”." prompt="New form empty text input showing the placeholder text John Doe" />
 
+## Focus a field when the form opens
+
+<VersionReq version="4.3.1" />
+
+Set [`autofocus`](./field-options-api.html#autofocus) on the field users fill in first, and the cursor starts there when the <New /> or <Edit /> form opens. It works in action modals too, where it replaces the default of focusing the first input.
+
+```ruby
+field :title, as: :text, autofocus: true
+```
+
+Pass a block to decide per form. This one focuses the field on the <New /> view only, so opening an existing record for editing doesn't put the cursor in the title.
+
+```ruby
+field :title, as: :text, autofocus: -> { view.new? }
+```
+
+Most inputs and selects support it, `belongs_to` included. Date pickers, tag inputs, and rich text editors don't. A field inside a closed tab, or one that is `readonly` or `disabled`, can't take focus. The [API reference](./field-options-api.html#autofocus) lists every supported field.
+
 ## Place fields on the same row
 
 The [`width`](./field-options-api.html#width) option controls how much horizontal space a field takes inside its parent panel or card. Adjacent fields with a `width` below `100` (a percentage) sit side by side.

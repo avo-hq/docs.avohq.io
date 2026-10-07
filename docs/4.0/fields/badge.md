@@ -25,7 +25,7 @@ field :status, as: :badge,
 
 The Badge field displays a colored indicator with optional icons. You can customize the color through the `options` mapping, and the `style` and `icon` for each value dynamically using procs.
 
-The `Badge` field is intended to be displayed only on **Index** and **Show** views. To update the value shown by the badge field, use another field like [Text](./text.html) or [Select](./select.html) with `hide_on: [:index, :show]`.
+The `Badge` field shows on the <Index /> and <Show /> views. Add `show_on: :forms` to edit its value on <New /> and <Edit /> as well. See [Editing the value](#editing-the-value).
 
 ## Options
 
@@ -119,6 +119,71 @@ field :status, as: :badge,
 
 </Option>
 
+## Editing the value
+
+<VersionReq version="4.3.1" />
+
+Add [`show_on: :forms`](./../field-options-api.html#show_on) and the badge renders a select of the values listed in `options` on <New /> and <Edit />:
+
+```ruby
+# app/avo/resources/project.rb
+field :stage, as: :badge,
+  show_on: :forms,
+  options: {
+    info: ["discovery", "idea"],
+    success: "done",
+    danger: "cancelled"
+  }
+```
+
+Badges stay off forms unless you opt in. Any visibility option does it, so `only_on: [:show, :edit]` and `except_on: :index` put the select on forms too.
+
+- The select starts with a blank option, so a record with no value doesn't silently take the first one on its next save. A blank selection saves `""`. Add [`nullable: true`](./../field-options-api.html#nullable) to save `nil` instead.
+- A value that `options` doesn't map to a color still shows in the list for the record that holds it, so saving the form never erases it.
+- A computed badge, one declared with a block, stays off forms.
+- In an [action](./../actions.html) modal, a badge with `show_on: :forms` renders as the same select. Without it, the badge renders read-only.
+
+### Custom labels with a Select field
+
+The select lists the stored values as they are. For labels or a placeholder, keep the badge off forms and pair it with a [Select](./select.html) field on the same attribute:
+
+```ruby
+# app/avo/resources/project.rb
+field :stage,
+  as: :select,
+  hide_on: [:show, :index],
+  options: {
+    'Discovery': :discovery,
+    'Idea': :idea,
+    'Done': :done,
+    'On hold': 'on hold',
+    'Cancelled': :cancelled,
+    'Drafting': :drafting
+  },
+  placeholder: 'Choose the stage.'
+
+field :stage,
+  as: :badge,
+  options: {
+    info: ["Discovery", "Idea"],
+    success: :Done,
+    warning: "On hold",
+    danger: "Cancelled",
+    neutral: :Drafting
+  },
+  style: -> { ["Done", "Cancelled"].include?(record.stage) ? "solid" : "subtle" },
+  icon: -> {
+    {
+      "Discovery" => "tabler/outline/zoom",
+      "Idea" => "tabler/outline/bulb",
+      "Drafting" => "tabler/outline/file-text",
+      "Done" => "tabler/outline/circle-check",
+      "On hold" => "tabler/outline/player-pause",
+      "Cancelled" => "tabler/outline/xbox-x"
+    }[record.stage]
+  }
+```
+
 ## Examples
 
 ### Using semantic colors
@@ -154,44 +219,4 @@ field :status,
   as: :badge,
   options: {success: :active, warning: :expired, danger: :revoked},
   tooltip: -> { "Revoked at #{record.revoked_at}" if record.revoked_at? }
-```
-
-### Using Badge with a Select field for editing
-
-Since Badge is display-only, pair it with a Select field to allow editing:
-
-```ruby
-field :stage,
-  as: :select,
-  hide_on: [:show, :index],
-  options: {
-    'Discovery': :discovery,
-    'Idea': :idea,
-    'Done': :done,
-    'On hold': 'on hold',
-    'Cancelled': :cancelled,
-    'Drafting': :drafting
-  },
-  placeholder: 'Choose the stage.'
-
-field :stage,
-  as: :badge,
-  options: {
-    info: ["Discovery", "Idea"],
-    success: :Done,
-    warning: "On hold",
-    danger: "Cancelled",
-    neutral: :Drafting
-  },
-  style: -> { ["Done", "Cancelled"].include?(record.stage) ? "solid" : "subtle" },
-  icon: -> {
-    {
-      "Discovery" => "tabler/outline/zoom",
-      "Idea" => "tabler/outline/bulb",
-      "Drafting" => "tabler/outline/file-text",
-      "Done" => "tabler/outline/circle-check",
-      "On hold" => "tabler/outline/player-pause",
-      "Cancelled" => "tabler/outline/xbox-x"
-    }[record.stage]
-  }
 ```

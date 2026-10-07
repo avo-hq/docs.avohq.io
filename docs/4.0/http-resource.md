@@ -138,47 +138,44 @@ The controller rescues the exception and displays the message as a flash error i
 
 ## Customize create, update, and destroy
 
-Out of the box, the HTTP controller persists changes through the resource's client — `POST` to the endpoint on create, `PATCH` to `endpoint/:id` on update, and `DELETE` to `endpoint/:id` on destroy, each carrying the resource's [`headers`](#send-authentication-headers). The default implementation looks like this:
+Out of the box, the resource persists changes through its client: `POST` to the endpoint on create, `PATCH` to `endpoint/:id` on update, and `DELETE` to `endpoint/:id` on destroy, each carrying the resource's [`headers`](#send-authentication-headers). The default implementation looks like this:
 
 ```ruby
-def save_record
-  # Perform either a create or update request based on the current controller action
-  @response = @resource.client.send(action_name, @record)
-
-  # Should return true if the operation succeeded, false otherwise
-  @response.success?
+def save_record(record)
+  # Perform either a create or an update request, based on the view the resource was built for
+  client.send(view.create? ? :create : :update, record).success?
 end
 
-def destroy_model
+def destroy_record(record)
   # Perform a DELETE request to remove the record via the external API
-  @response = @resource.client.delete(@record.id)
+  client.delete(record.id).success?
 end
 ```
 
-If your API needs different paths, extra parameters, or conditional logic, override these methods in the resource's controller:
+If your API needs different paths, extra parameters, or conditional logic, override these methods on the resource. The admin panel and the [REST API](./rest-api.html#http-resources) both call them, so one override covers both.
 
-- `save_record` must return a **boolean** indicating whether the operation succeeded.
-- Inspect `action_name` (`"create"` or `"update"`) to tell the two operations apart.
+- Both must return a **boolean** indicating whether the remote API accepted the change.
+- Use `view.create?` to tell a create from an update.
 
 ```ruby
-# app/controllers/avo/authors_controller.rb
-class Avo::AuthorsController < Avo::Core::Controllers::Http
-  def save_record
+# app/avo/resources/author.rb
+class Avo::Resources::Author < Avo::Core::Resources::Http
+  def save_record(record)
     # Build the URL from the resource's own endpoint, and evaluate its headers
     # the same way the client does — `headers` may be a proc.
-    endpoint = resource.endpoint
-    headers = Avo::ExecutionContext.new(target: resource.headers).handle
-    body = { author: @record.as_json }
+    endpoint = self.class.endpoint
+    headers = Avo::ExecutionContext.new(target: self.class.headers).handle
+    body = { author: record.as_json }
 
     # HTTParty has no default timeout — the client sets one on its own class, so
     # a hand-rolled request has to bound itself.
-    response = if action_name == "create"
+    response = if view.create?
       HTTParty.post(endpoint, body: body, headers: headers, timeout: 10)
     else
       # `to_param` + encoding, like the client: a raw id breaks the moment a
       # resource obfuscates it (see `model_class_eval`) or it contains a
       # reserved character.
-      HTTParty.patch("#{endpoint}/#{ERB::Util.url_encode(@record.to_param)}", body: body, headers: headers, timeout: 10)
+      HTTParty.patch("#{endpoint}/#{ERB::Util.url_encode(record.to_param)}", body: body, headers: headers, timeout: 10)
     end
 
     response.success?
@@ -189,6 +186,8 @@ end
 :::warning Request an absolute URL
 Avo configures no `base_uri`, so a relative path — `HTTParty.post("/authors", ...)` — has no host to connect to and fails inside `Net::HTTP` on a nil address, long after the form was submitted. Always request the resource's full `endpoint`.
 :::
+
+A `save_record` or `destroy_model` defined in the resource's controller still works, but only in the admin panel: the REST API does not go through that controller.
 
 ## Debug console
 

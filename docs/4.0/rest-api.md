@@ -135,11 +135,12 @@ The token resource is skipped when routes are drawn, so no version namespace get
 
 ## Discovery
 
-Two `GET` endpoints describe what the API version exposes, so a client doesn't have to be told which resources exist, what key a write nests under, or what fields a request takes. Neither writes anything.
+Three read-only `GET` endpoints tell a client which resources exist, which key a write nests under, and which fields each request takes, so none of that has to be hardcoded.
 
 ```
 GET    /api/resources/v1/_schema                    # every resource the caller may reach
 GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on one view
+GET    /api/resources/v1/_openapi                   # the same, as one OpenAPI document
 ```
 
 ### The resource listing
@@ -182,6 +183,7 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 ```json
 {
   "param_key": "team",
+  "view": "create",
   "fields": [
     { "field_id": "name", "field_type": "text", "field_options": { "required": true } },
     { "field_id": "admin_id", "field_type": "belongs_to", "field_options": {} },
@@ -194,6 +196,7 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 
 | Key | Meaning |
 |-----|---------|
+| `view` | The view the fields belong to: the one the request named, or `create` when it named none. |
 | `field_id` | The key the field reads back under, or, on `create` and `update`, the key the body sets it through (`admin_id`). |
 | `field_type` | The Avo field type. |
 | `field_options` | Form views only: one object holding what a write needs to know about the field, the keys below. Read views carry none. |
@@ -201,32 +204,7 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 | `field_options.options` | On choice fields: the values the field accepts, never the labels. |
 | `field_options.multiple` | `true` on a field that takes a list (`select` with `multiple`, `checkbox_list`, `boolean_group`); absent otherwise. |
 
-Each field's `field_type` says what to put under its `field_id` in a `POST` or `PATCH` body.
-
-| Field types | What you send |
-|-------------|---------------|
-| `text`, `number`, `boolean`, `select`, `belongs_to`, and every other single-value field | one value: `"name": "Acme"`, `"plan": "pro"` |
-| `select` with `multiple`, `checkbox_list`, `boolean_group` | a list of values: `"tags": ["ops", "eu"]` |
-| `location` on two columns (`stored_as: [:latitude, :longitude]`) | an object keyed by those columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
-| `location` on one column, `tags`, `key_value` | one string the field parses: `"home": "44.43,26.10"`, `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"` |
-| `code` | one string, stored as it is. Only a field declared with `pretty_generated: true` parses it as JSON |
-
-`null` clears any field, a list and a `location` on two columns included. The one exception is a `location` on one column, which splits the string it is given: clear it with `""`, since `null` is answered with a `500`. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
-
-Put together, the schema above is written as:
-
-```json
-{
-  "team": {
-    "name": "Acme",
-    "plan": "pro",
-    "tags": ["ops", "eu"],
-    "coordinates": { "latitude": 44.43, "longitude": 26.10 }
-  }
-}
-```
-
-Read views carry `field_id` and `field_type` only; form views add `field_options` and list only the fields a body may write.
+Each field's `field_type` says what to put under its `field_id` in a `POST` or `PATCH` body: see [Field value formats](#field-value-formats).
 
 :::info Refusals
 - `403` with `reason: "token_entitlement"` when the token lacks the action the view is named after.
@@ -234,6 +212,53 @@ Read views carry `field_id` and `field_type` only; form views add `field_options
 - `400` with `{ "error": "Unknown view", "views": ["index", "show", "create", "update"] }` for a view it doesn't know.
 - `404` when this version has no controller for the resource. No route exists then, so this one is Rails' own page, not the JSON body above.
 :::
+
+### OpenAPI document
+
+`GET /api/resources/v1/_openapi` returns the whole API as one [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0) file: every resource, every request, every field. Use it to plug the API into a tool that speaks OpenAPI. For your own requests, `_schema` above is smaller and enough.
+
+Nothing is stored on the server. The document is built from your resources and the token's entitlements on every request, so there is no file to find in the app and nothing to regenerate after a deploy: request it again and it is current.
+
+#### 1. Download the document
+
+You need two things: your app's URL and an API token [you created in the panel](#create-a-token). The token travels in a header, so send it with `curl` and save the response:
+
+```bash
+curl https://YOUR-APP.com/api/resources/v1/_openapi \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -o openapi.json
+```
+
+To save it somewhere else, give the full path:
+
+```bash
+curl https://YOUR-APP.com/api/resources/v1/_openapi \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -o ~/Downloads/openapi.json
+```
+
+Open `openapi.json` before importing it. It should start with `{"openapi":"3.1.0"`; if it holds `{"error":"Unauthorized"}` the token is wrong, and if it holds HTML the host or the mount path is.
+
+#### 2. Import it into your tool
+
+Import `openapi.json` into any tool that reads OpenAPI 3.1, such as Swagger UI, Postman, or an API client generator.
+
+:::warning Each token gets its own document
+The file describes what the requesting token may do, nothing more. A read-only token gets no create, update or delete operations; a token granted two resources gets only those two. So export with the token the tool will use, and export again after you change its [entitlements](#entitle-a-token).
+:::
+
+#### What is inside
+
+| Part             | Contents                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `servers[0].url` | The version's base URL, so every path in the file is the path you request                                                 |
+| Security         | Bearer token, applied to every operation. Left out when no API token authenticated the request, as in an app that authenticates the API its own way, since the file cannot name your scheme |
+| Paths            | `/_schema`, `/{resource}/_schema`, and one operation per action the token may call (`get`, `post`, `patch`/`put`, `delete`) |
+| Record schemas   | `<Name>Index` and `<Name>Show` for what you read back; `<Name>Create` and `<Name>Update` for what you send, nested under `param_key` |
+| Shared schemas   | `Error`, `ValidationErrors`, `Pagination`                                                                                 |
+| Error responses  | `400`, `401`, `403`, `404`, `422`                                                                                         |
+
+Every field property also carries `x-avo-field-type` (for example `"belongs_to"`), so a generator that cannot tell what a JSON type stands for can still see the Avo field behind it.
 
 ## Authentication
 
@@ -337,7 +362,6 @@ A few consequences worth knowing:
 
 - **A leaked database yields no usable tokens.** Reversing SHA-256 is not feasible, and neither is guessing: a secret is 43 random alphanumeric characters, about 256 bits of entropy, so there is no dictionary or rainbow table to try. Rotation after a leak is prudent, not urgent.
 - **No pepper or key to manage.** Peppering defends short, low-entropy secrets like passwords. These are neither, so the digest is unkeyed — nothing to configure, nothing to rotate, nothing that breaks every token if it is lost.
-- **Nothing can show a secret again.** Not the panel, not a console, not support. If it was not copied at creation, mint a replacement and revoke the old one.
 - **The digest column is uniquely indexed**, so the lookup is a single indexed read and two tokens cannot collide.
 
 Who may mint and revoke tokens is your app's authorization decision, and the default is permissive — see [Who may manage tokens](#who-may-manage-tokens).
@@ -383,6 +407,10 @@ The index endpoint does not apply the resource's filters, and a `filters` parame
 
 :::info `per_page` is remembered in a cookie
 Avo stores `per_page` in a cookie so the admin panel remembers the reader's choice. A client that keeps cookies between requests (a browser, or a scripted session with a cookie jar) will keep the last `per_page` it sent even when it omits the parameter. Send `per_page` explicitly on every request if you need a fixed page size.
+:::
+
+:::warning Filtering is not supported
+The index has no supported way to select records by value. To find records matching a condition, page through the index and filter on the client.
 :::
 
 ### Show
@@ -437,7 +465,7 @@ A policy can also withhold a field from a user outright, with `whitelisted_field
 
 ## Writing data
 
-Send field data under the resource's singular key. Requests use JSON.
+Send field data as JSON, nested under the resource's `param_key`. It is usually the singular name (`team`), but not always: an [HTTP resource](#http-resources) uses `avo/http_resource/planet`. Read it from the [schema](#discovery) rather than guess it.
 
 ### Create
 
@@ -509,6 +537,7 @@ Different field types accept the formats you'd expect:
 | Boolean | `true`, `false` |
 | Date / datetime | `"2024-01-15"`, `"2024-01-15T10:30:00Z"` |
 | `belongs_to` | the foreign key: `"admin_id": 5` |
+| Polymorphic `belongs_to` | both parts: `"reactable_type": "Post"`, `"reactable_id": 7` |
 | `select` with `multiple`, `checkbox_list`, `boolean_group` | a list: `"tags": ["ops", "eu"]` |
 | `location` on two columns | an object keyed by its `stored_as` columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
 | `tags`, `key_value`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"`, `"home": "44.43,26.10"` |
@@ -793,6 +822,54 @@ module Avo::Api::Resources::V1
 end
 ```
 
+:::warning A guard on one controller does not cover the OpenAPI document
+`BaseResourcesController` serves the [OpenAPI document](#openapi-document), so a `before_action` you add to one resource's controller never runs for it, and that resource's fields are still listed. To keep a resource out of the document, use the token's [entitlements](#entitle-a-token) or the resource's `index?` policy.
+:::
+
+### Your admin panel controllers are not inherited
+
+Each resource has two controllers, one for the admin panel and one for the API. The API controller does not inherit from the admin panel one:
+
+| Serves      | File                                                       |
+| ----------- | ---------------------------------------------------------- |
+| Admin panel | `app/controllers/avo/users_controller.rb`                  |
+| API         | `app/controllers/avo/api/resources/v1/users_controller.rb` |
+
+A method you override in the admin panel controller has no effect on the API. To change how the API behaves, override the method in the API controller.
+
+## Array resources
+
+An [array resource](./array-resource.html) is served like any other resource. Generate its controller, and `index`, `show` and `_schema` work with no code in it.
+
+### Accept writes
+
+An array record is saved by the two methods the [array resource page](./array-resource.html#create-edit-and-delete) describes, `save_record` and `destroy_record`. They live on the resource, so the API uses the same ones as the panel and its controller needs no code.
+
+Without them, a create, update or delete answers `422` and names the method the record lacks:
+
+```json
+{
+  "errors": { "base": ["undefined method 'save!' for an instance of Avo::Movie"] },
+  "message": "Failed to create Movie"
+}
+```
+
+### What decides access
+
+- **`self.writable` is for the panel only.** It shows or hides the Create, Edit and Delete controls. Over the API, the token's [entitlements](#entitle-a-token) and the resource's policy decide who may write.
+- **Name the policy on the resource.** Avo builds the record's class at runtime, so set `self.authorization_policy = BookmarkPolicy` rather than rely on a lookup by class name.
+- **A policy scope does not narrow the list.** The rows are what `records` returns. The scope's `resolve` is handed the record's class, not a relation, so return it untouched.
+
+### Sorting
+
+An array resource [is not sorted](./array-resource.html#render-it-inside-another-resource). `sort_by` is ignored and the request still answers `200`, with the rows in the order `records` returns them.
+
+## HTTP resources
+
+An [HTTP resource](./http-resource.html) needs no code in its API controller. Sorting and paging reach the remote API [as they do in the panel](./http-resource.html#map-sorting-and-filtering-to-query-params). What differs is how a failing remote API answers.
+
+A failed read answers `502` with `{ "error": "Bad Gateway", "message": "<the error>" }`, and so does an update or delete, since both read the record first. A failed write answers `422`: a timeout or other exception lands in `errors.base`, and a non-success status from the remote API leaves `errors` empty.
+
 ## Manage tokens in the panel
 
 Tokens are minted, entitled, and revoked in Avo — never over the API. The resource ships with the gem, so there is nothing to generate. Two things decide whether it works for your team: whether people can **reach** it, and what they may **do** once they are there.
@@ -1028,4 +1105,10 @@ The lifecycle chips say "3 minutes ago" through Rails' own `datetime.distance_in
 
 ```bash
 gem install avo-cli
+```
+
+To get the [OpenAPI document](#openapi-document) for the token the CLI is logged in with:
+
+```bash
+avo schema --format openapi > openapi.json
 ```

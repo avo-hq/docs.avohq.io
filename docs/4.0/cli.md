@@ -114,19 +114,32 @@ avo schema users
 ```
 
 ```
+users create view
 field id  field type  field options
 name      text        {"required":true}
 email     text        {"required":true}
 active    boolean     {}
 role      select      {"options":["user","admin","moderator"]}
 team_id   belongs_to  {}
+Try: avo schema users --view show
 ```
 
-`field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required: true` on a required field (a field without it is not required), the `options` a choice field accepts, and `multiple: true` on a field that takes a list. It appears on the two form views only.
+The first line names the resource and the view the fields belong to. `field_options` is one JSON object per row, printed whole so a long `options` list is never cut. It carries `required: true` on a required field (a field without it is not required), the `options` a choice field accepts, and `multiple: true` on a field that takes a list. It appears on the two form views only.
 
 Pass `--view update` for what an update may send, and `--view index` or `--view show` for what a record reads back, where the `field_options` column is gone since nothing is sent. Each view needs the entitlement of the request it describes.
 
 A `belongs_to` is listed by the key that sets it, `team_id`.
+
+## Export an OpenAPI document
+
+`--format openapi` prints the whole API as one [OpenAPI document](./rest-api.html#openapi-document), for the token you are logged in with. Redirect it into a file:
+
+```bash
+avo schema --format openapi > openapi.json               # the directory you ran it from
+avo schema --format openapi > ~/Downloads/openapi.json   # your Downloads folder
+```
+
+It takes no resource and no `--view`: the document always covers everything the token may reach.
 
 ## List records
 
@@ -143,7 +156,7 @@ id  name          email              active
 Page 1 of 3 (58 records). Next: avo list users --page 2
 ```
 
-On a terminal the table is framed and fits the width: a long cell is shortened with an ellipsis, and columns past the right edge are dropped, in which case the footer says how many (`4 of 15 columns; --fields picks them, --format json has all`). Piped into another command or a file, every column prints at full width and nothing is cut. Narrow or reorder the columns with `--fields`, and page and sort with the rest:
+On a terminal the table is framed and fits the width: a long cell wraps inside its column, and columns past the right edge are dropped, in which case the footer says how many (`4 of 15 columns; --fields picks them, --format json has all`). Piped into another command or a file, every column prints at full width and nothing is cut. Narrow or reorder the columns with `--fields`, and page and sort with the rest:
 
 ```bash
 avo list users --sort name --dir desc --fields id,name,email --per-page 10
@@ -199,41 +212,15 @@ avo delete users 5
 
 `--data` (`-d`) takes one JSON object. Pass it inline, as `@path` to read a file, or as `-` to read stdin.
 
-Each key is a field name from `avo schema <resource>`. Write values in their natural JSON type (string, number, boolean, array, object) and the CLI sends them as they are. The app validates and casts them.
-
-### Arrays and hashes
-
-The `field_type` tells you when a field takes more than a scalar:
-
-| The view says                                              | You write                                              | Note                               |
-| ---------------------------------------------------------- | ------------------------------------------------------ | ---------------------------------- |
-| `select` with `multiple`, `checkbox_list`, `boolean_group` | `"roles": ["editor", "reviewer"]`                      | `null` clears it to `[]`           |
-| `location` on two columns (`stored_as`)                    | `"coordinates": {"latitude": 44.4, "longitude": 26.1}` | `null` sets both columns to `null` |
-| `location` on one column                                   | `"home": "44.4,26.1"`                                  | `""` clears it, not `null`         |
-
-A `has_many` or `has_one` is never listed on a form view and is not something `--data` can set: a key naming one is ignored, `null` included.
+Each key is a field name from `avo schema <resource>`, and each value is written as the REST API takes it: [Field value formats](./rest-api.html#field-value-formats) lists what every field type accepts and how to clear it. The CLI sends the values as they are, with one exception.
 
 ### Key-value and code fields
 
-Write a `key_value` or `code` field as a JSON object. The CLI serializes it to a string for you. A `key_value` parses it on the app side; a `code` field stores the string as it is, unless it is declared with `pretty_generated: true`:
+Write a `key_value` or `code` field as a JSON object rather than the string the API takes. The CLI serializes it for you:
 
 ```bash
 avo update users 5 --data '{"settings": {"theme": "dark"}}'
 ```
-
-### Tags
-
-A `tags` field takes one string and splits it on the field's delimiter, `,` by default:
-
-```bash
-avo update profiles 5 --data '{"skills": "ruby,rails"}'
-```
-
-### Associations
-
-- `belongs_to`: write the foreign key, `"team_id": 2`.
-- Polymorphic `belongs_to`: write both parts, `"reactable_type": "Post"` and `"reactable_id": 7`.
-- `has_one`, `has_many`, `has_and_belongs_to_many`: not writable from this side. Set the `belongs_to` on the child record instead.
 
 ### Files
 
@@ -277,8 +264,6 @@ avo get users 5 --format json | jq .record.email
 
 Run in a terminal rather than piped, the same command prints the body indented and coloured for reading. Only the piped form is the server's bytes, so a script always reads through a pipe or a file.
 
-The default `table` format shortens a long cell with an ellipsis only on a terminal, and only on `list` and the resource listing of `schema`, since `avo schema <resource>` wraps instead; piped output is never cut. When you see one, widen the terminal, pick fewer columns with `--fields`, or use `--format json` to get the whole value.
-
 `--verbose` logs each request and response line to stderr, so `--format json --verbose` still leaves only the body on stdout.
 
 ## Sign out
@@ -311,7 +296,7 @@ Add `--verbose` to also see the request and response lines on stderr.
 
 The message is one of two kinds.
 
-**The app answered with an error.** The message starts with `Unauthorized`, `Forbidden`, `Not found`, `Failed to create ...`, `Failed to update ...`, `HTTP 400` or `Server error 5xx`, and carries the app's own `error` and, when present, `reason`. These are the REST API's responses, so:
+**The app answered with an error.** The message starts with `Unauthorized`, `Forbidden`, `Not found`, `Failed to create ...`, `Failed to update ...`, `Failed to delete ...`, `HTTP 400` or `Server error 5xx`, and carries the app's own `error` and, when present, `reason`. These are the REST API's responses, so:
 
 - What each status means and where to fix it: the [status-code table](./rest-api-api.html#status-codes)
 - The two `Forbidden` reasons: [Tell the three refusals apart](./rest-api.html#tell-the-three-refusals-apart). `token_entitlement` suggests widening the token; `policy` suggests nothing, since another token will not help
@@ -331,7 +316,7 @@ The message is one of two kinds.
 Nothing was sent, so nothing changed on the app. The message names what to fix, and it is one of:
 
 - **The command line.** An unknown command (with a `Did you mean` when the typo is close), a flag the command does not take, an empty id, or `--view` without a resource
-- **The data.** `--data` that is not one JSON object, or names a file it cannot read, or includes a `file` field (files need a multipart upload the CLI does not send)
+- **The data.** `--data` that is not one JSON object, or names a file it cannot read, or includes a [`file` field](#files)
 - **The connection.** No host or no token, a host that is not an `http://` or `https://` URL or carries a username and password, or a token with a character a header cannot carry, such as a newline
 - **The saved login.** A file `avo login` wrote that cannot be read, written, or parsed
 - **The environment.** `avo login` with no terminal to ask on, or no Node 22 or newer on `PATH`
@@ -350,7 +335,7 @@ avo <command> [RESOURCE] [ID] [flags]
 | -------------------------- | -------- | ----------------------------------------------------------------------------------------------- |
 | `avo login`                |          | [Save the host, token and API version](#_2-connect-to-your-app), so later commands need none    |
 | `avo logout`               |          | [Delete what `login` saved](#sign-out)                                                          |
-| `avo schema [RESOURCE]`    | `s`      | [List the resources](#_3-check-what-the-token-reaches), or [the fields of one](#look-up-what-you-can-send) |
+| `avo schema [RESOURCE]`    | `s`      | [List the resources](#_3-check-what-the-token-reaches), [the fields of one](#look-up-what-you-can-send), or [export the OpenAPI document](#export-an-openapi-document) |
 | `avo list RESOURCE`        | `l`      | [List records](#list-records), one page at a time                                               |
 | `avo get RESOURCE ID`      | `g`      | [Show one record](#read-one-record)                                                             |
 | `avo create RESOURCE`      | `c`      | [Create a record](#create-a-record)                                                             |
@@ -365,7 +350,7 @@ A shortcut goes in the command's slot: `avo l users` is `avo list users`. `avo h
 | `--token <secret>`             | every request                    | API token secret, sent as a Bearer token. Env: `AVO_API_TOKEN`                           |
 | `--api-version <name>`         | every request                    | API version segment of the URL. Defaults to the one `login` saved, then `v1`. Env: `AVO_API_VERSION` |
 | `--verbose`                    | every request                    | Log each request and response line to stderr                                             |
-| `--format table\|json`         | every response                   | Output format. Default `table`; `json` prints the body exactly as the server sent it, indented on a terminal     |
+| `--format table\|json`         | every response                   | Output format. Default `table`; `json` prints the body exactly as the server sent it, indented on a terminal. `schema` also takes [`openapi`](#export-an-openapi-document) |
 | `--fields <a,b,c>`             | `list`, `get`, `create`, `update` | Which fields to show, comma-separated, in that order. Columns on `list`, rows elsewhere |
 | `-d, --data <json\|@path\|->`  | `create`, `update`               | Required. Fields to write, as one JSON object. `@path` reads it from a file, `-` from stdin |
 | `--view <name>`                | `schema`                         | Which view's fields. `create` (default) and `update` list what a write may send; `index` and `show` what a record reads back. Needs a resource |
