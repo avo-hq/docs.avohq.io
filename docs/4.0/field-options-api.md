@@ -405,6 +405,33 @@ field :one_time_password, as: :text, autocomplete: "one-time-code"
 
 </Option>
 
+<Option name="`autofocus`" headingSize="3">
+
+<VersionReq version="4.3.1" />
+
+Adds the HTML `autofocus` attribute to the field's input on the <New /> and <Edit /> views and in [action](./actions.html) modals, so the cursor starts there when the form opens. The block is executed in [`Avo::ExecutionContext`](./execution-context.html) with access to `record`, `resource`, and `view`, plus the usual defaults (`context`, `params`, `view_context`, `current_user`). A falsy result leaves the input alone.
+
+```ruby
+field :title, as: :text, autofocus: true
+```
+
+```ruby
+field :title, as: :text, autofocus: -> { view.new? }
+```
+
+In an action modal, the field takes the place of the default target, the modal's first input, so only one input gets the attribute. When several fields on a <New /> or <Edit /> form set it, the browser focuses the first one on the page.
+
+- **Type:** Boolean or Proc
+- **Default:** `nil`
+- **Supported fields:** `text`, `textarea`, `number`, `password`, `select`, `status`, `boolean`, `code`, `easy_mde`, `area`, `external_image`, `file`, `files`, `progress_bar`, `country`, `belongs_to`, and custom fields generated with `bin/rails generate avo:field`. Every other field (`date`, `date_time`, `time`, `tags`, `trix`, `tiptap`, `key_value`, `radio`, and the rest) ignores it.
+- **`belongs_to`:** focuses the record select. A `searchable` field ignores the option, and a polymorphic one focuses the type select.
+
+:::warning
+The browser can't focus a field inside a [tab](./fields-layout-api.html#tab) that isn't open when the page loads, or a [`readonly`](#readonly) or [`disabled`](#disabled) field. In an action modal, setting the option on a field that ignores it leaves the modal with nothing focused.
+:::
+
+</Option>
+
 ## Index view
 
 <Option name="`sortable`" headingSize="3">
