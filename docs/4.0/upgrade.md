@@ -4,6 +4,30 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo`: badges can be edited on forms
+
+<Option name="Badges follow `except_on` and `show_on: :all` on forms">
+
+### Breaking Change
+
+A badge can now render a select on <New /> and <Edit />. It still stays off forms by default. Before, a badge was forced off forms after its visibility options ran, so `except_on: :index` or `show_on: :all` left it display-only there. Now a badge follows those options like every other field, and both put the select on forms. See [Editing the value](./fields/badge.html#editing-the-value).
+
+### Action Required
+
+Search your resources for badges declared with `except_on` or `show_on: :all`. Each one now shows a select on <New /> and <Edit />. The select keeps the record's current value, so saving a form doesn't change it.
+
+### Maintaining Previous Behavior
+
+Add `:forms` to `except_on` to keep the badge display-only.
+
+```ruby
+# app/avo/resources/project.rb
+field :status, as: :badge, except_on: :index, options: {success: "done"} # [!code --]
+field :status, as: :badge, except_on: [:index, :forms], options: {success: "done"} # [!code ++]
+```
+
+</Option>
+
 ## `avo-mcp_server`: a shipped `count_records` tool
 
 <Option name="An app's own `count_records` tool is no longer served">
