@@ -1322,7 +1322,7 @@ Tools a server adds later arrive **On**. Switch off the tools nobody should use 
 
 They also get three actions on the connection's page:
 
-- **Refresh tools** reads the server's tool list now. Chats read it at the start of every reply anyway, so this only brings the page up to date between chats. A tool the server changed shows a card before its next call.
+- **Refresh tools** reads the server's tool list now. That list is what the assistant searches: a new tool arrives switched on, a tool the server no longer lists is removed unless it's set to **Always ask** or **Off** (a list with no tools at all removes nothing), and a tool the server changed shows a card before its next call. Chats also read the list just before each call, so a change on the server is never missed for long.
 - **Revoke always-allows** takes back every always-allow anyone gave the connection's tools. The next call to each one shows a card.
 - **Disconnect** removes the connection, its credential, its tools, and the always-allows on them. Its tools leave every chat from the next message, and past messages that used them stay readable.
 
@@ -1330,11 +1330,11 @@ The `/mcp` panel has **Reconnect** and **Disconnect** too.
 
 ### When a connection stops working
 
-A connection that fails never breaks the chat. That server's tools are left out, Avo's own tools keep working, and when you ask for something that needs the server, the assistant tells you which connection failed and that it can be reconnected with `/mcp`.
+A connection that fails never breaks the chat. Avo's own tools keep working, and when the assistant calls a tool on a server it can't reach, nothing is sent and it tells you which connection failed and that it can be reconnected with `/mcp`.
 
 | What happened                                            | What you see                                                                      |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| The server didn't answer in time, or couldn't be reached | Its tools are left out of that reply, and come back once the server answers again |
+| The server didn't answer in time, or couldn't be reached | That call isn't sent, and the assistant can try it again once the server answers  |
 | The server rejected the credential, or it can't be read  | The connection reads **Needs reconnecting** in `/mcp`                             |
 
 Only the owner can reconnect. **Reconnect** in the `/mcp` panel signs in again, takes a new token, or simply asks again for a server that needs neither. Other people see who to ask. Reconnecting takes back every always-allow on the connection, since the new credential may belong to a different account on the server.
@@ -1884,7 +1884,7 @@ Weigh these before you grant `create?` and `share?`:
 - **Always-allowed calls send arguments nobody reviewed.** Once someone always-allows a tool, the assistant sends whatever arguments it chooses, with no card, up to ten calls in a row. Set tools that change or send things to **Always ask**, especially on shared connections.
 - **Sharing puts a server's text in front of everyone's assistant.** A server writes its own tool names and descriptions, and a shared connection puts them into the assistant's context in the chats of everyone it's shared with. The assistant treats them as data and every call still waits for a card, but a hostile or compromised server can still try to steer the conversation. Give `share?` to people you'd trust to vet a server for the whole team.
 - **HTTPS is the only network check.** Avo refuses plain `http`, follows no redirects, and verifies certificates, which keeps out cloud metadata endpoints and most internal services. An internal service with a publicly trusted certificate can still be reached from a connection address, so keep `create?` to people you'd trust with your network.
-- **Each reply pays for the connections in reach.** At the start of every reply, the chat reads the tool list of every connection its user can use, all within 30 seconds, and sends those tools to your model provider with every request, even for questions about your own data. Switch off tools nobody needs. A request offers at most 128 tools, Avo's included. Past that, tools from shared connections are left out before the user's own, and the assistant is told how many.
+- **A remote action takes one more step.** The assistant searches a connection's stored tools before it calls one. Until it does, nothing about the connections goes to your model provider beyond two tools and a line per connection in its instructions. A search returns at most five tools, with their arguments.
 - **Remote results go to your model provider.** Like any tool result, what a server returns is sent to the provider and stored on the tool call. A result over 100 KB is cut short.
 
 ## Who can see a chat

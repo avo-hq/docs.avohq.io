@@ -66,13 +66,13 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 
 ### Tools from connected MCP servers
 
-When your app has [MCP connections](./ai.html#connect-other-tools-with-mcp) turned on, the tools of every server the chat's user can use join the roster as tools of their own. Each one is named after its connection: `mcp`, the connection's id, then the server's name for the tool, as in `mcp12_search_issues`. The name stays the same when the connection is renamed, and two servers can both offer a `search` tool, or one named like an Avo tool, without clashing.
+When your app has [MCP connections](./ai.html#connect-other-tools-with-mcp) turned on and the chat's user can use a connected one, two tools join the roster: `search_tool` and `execute_tool`. The servers' own tools never join it. The assistant searches the tool list stored for each connection, gets back the best matches with their arguments, and calls one by its connection and name. A connection with dozens of tools costs a request nothing until the assistant needs one of them.
 
-The list is read from each server at the start of every reply, so a server that is down or needs reconnecting simply has no tools in that reply. Some remote tools are never offered: a tool its owner switched **Off**, a tool whose name a provider won't accept or that clashes with one of Avo's tools or your own, a tool whose description or arguments are too large, and any tool past 128 in total, Avo's included, with shared connections' tools left out before the user's own. Apart from **Off**, the assistant is told what was left out.
+Each connection's tool list is stored when it connects and when its owner clicks **Refresh tools**, and it's read again just before every call, so a tool the server dropped or changed is never called on an old definition. A tool its owner switched **Off** never comes back from a search. A server that's down is found on the call that needs it: nothing is sent, Avo's own tools keep working, and the assistant says which connection failed.
 
 Every remote call waits on a card unless the user always-allowed that tool, and that card only takes a click. See [Approve a call](./ai.html#approve-a-call).
 
-`config.ai.excluded_tools` can't name a remote tool. To take one away, set it to **Off** on its connection's page. To take them all away, turn the setting off.
+`config.ai.excluded_tools` can't name a remote tool, or `search_tool` and `execute_tool`. To take one remote tool away, set it to **Off** on its connection's page. To take them all away, turn the setting off.
 
 ### The shapes an ask can take
 
