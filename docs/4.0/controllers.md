@@ -109,7 +109,7 @@ end
 
 Errors raised inside these methods are caught and surfaced on the record, so the regular fail actions and messages kick in.
 
-Both methods go through the resource by default, calling its `save_record(record)` and `destroy_record(record)`. Define those on the resource when the change belongs to it under every controller, as a [writable array resource](./array-resource.html#create-edit-and-delete) does. <VersionReq version="4.2.12" />
+Both methods go through the resource by default, calling its `save_record(record)` and `destroy_record(record)`. Define those on the resource when the change belongs to it under every controller, as a [writable array resource](./array-resource.html#create-edit-and-delete) does. <VersionReq version="4.3.0" />
 
 ## Use the parent record
 
