@@ -425,6 +425,7 @@ In an action modal, the field takes the place of the default target, the modal's
 - **Default:** `nil`
 - **Supported fields:** `text`, `textarea`, `number`, `password`, `select`, `status`, `boolean`, `code`, `easy_mde`, `area`, `external_image`, `file`, `files`, `progress_bar`, `country`, `belongs_to`, and custom fields generated with `bin/rails generate avo:field`. Every other field (`date`, `date_time`, `time`, `tags`, `trix`, `tiptap`, `key_value`, `radio`, and the rest) ignores it.
 - **`belongs_to`:** focuses the record select. A `searchable` field ignores the option, and a polymorphic one focuses the type select.
+- **Ignored in:** [nested association forms](./associations/has_many.html#nested-in-forms), a [`react_on`](#react_on) re-render, and the [Avo AI](./ai.html) chat's write cards. Each of those renders inside a form the reader is already working in, so the attribute would move the cursor away from it.
 
 :::warning
 The browser can't focus a field inside a [tab](./fields-layout-api.html#tab) that isn't open when the page loads, or a [`readonly`](#readonly) or [`disabled`](#disabled) field. In an action modal, setting the option on a field that ignores it leaves the modal with nothing focused.
