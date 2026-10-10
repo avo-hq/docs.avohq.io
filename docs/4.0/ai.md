@@ -1365,7 +1365,11 @@ In Chrome and Edge, dictating means uploading admin-panel audio to Google. If th
 
 ## While the assistant is replying
 
-Your message lands on the transcript the moment you send it, with a **Thinking** indicator underneath — it's saved as part of the send, not by the background job, so it never blinks out for the second or two the queue takes. Starting a fresh conversation keeps the composer you typed into on screen until the conversation is ready, then trades one for the other, so there's no empty panel in between. A second **Enter** while that's happening doesn't start a second chat.
+Your message lands on the transcript the moment you send it, with a **Thinking** indicator underneath. The browser puts it there as the request leaves, and the saved message replaces that copy when it arrives — so the turn is on screen for the whole round trip, not just the part after the server has it, and it never blinks out for the second or two the queue takes.
+
+Starting a fresh conversation does the same with the whole opening turn: your prompt and the **Thinking** indicator take the place of the greeting and its suggestions, and the real conversation replaces them once it's ready, so there's no empty panel in between. A second **Enter** while that's happening doesn't start a second chat.
+
+If the send fails, the prompt comes back out of the transcript, the greeting returns, and what you typed is back in the composer to retry. It also comes out when the send starts no turn at all — a [typed confirmation](#how-the-assistant-works) settles the card that was waiting, and the card flipping in place is the record of it — so the **Thinking** indicator never spins on a reply that isn't coming.
 
 When answering takes real work — a lookup, an inspection, a write — the assistant leaves short progress hints while it works: *Inspecting the schema*, *Checking today's signups*. They render small and muted, alongside the reasoning trace, so they read as status rather than replies — and they name the goal in your terms, never the tool it reaches for. It's what you read while the work happens instead of watching an empty panel.
 
