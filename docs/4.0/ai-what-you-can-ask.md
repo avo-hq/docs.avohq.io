@@ -24,6 +24,8 @@ For how a turn actually unfolds — schema, confirmation cards, authorization �
 | "List projects whose name contains 'orbit'"      | A partial-match list                                                     |
 | "Show me every column for post 42"               | The full record, not just the common columns                             |
 | "Who signed up last?"                            | One record, named inline as a chip                                       |
+| "Show the latest done project and include its visibility" | A project chip with its current visibility added                 |
+| "Which cities have more than one million people?" | City chips with their current population added                          |
 
 <Image src="/assets/img/4_0/ai/find-records.webm" dark-src="/assets/img/4_0/ai/find-records-dark.webm" width="1600" height="1000" alt="The Avo chat open over a dashboard. The question Which cancelled projects were more than half done? gets a list of four projects, each row linking to its record. A click on the first opens that project's page with the chat still open." />
 
@@ -36,9 +38,10 @@ Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders ov
 **Associations, without SQL.** "Which teams have no members?" and "show me users who have at least one order" are answered by checking whether the association exists, scoped to the child records you're allowed to see.
 
 **Records are named inline.** Any record the assistant mentions is rendered as a chip in the
-sentence itself — its picture, its title, and whatever status its resource declares — and clicking
-it opens the record. So "who signed up last?" reads as one sentence with the person in it, not as a
-paragraph followed by a card.
+sentence itself — its picture, its title, and whatever its resource declares — and clicking it
+opens the record. So "who signed up last?" reads as one sentence with the person in it, not as a
+paragraph followed by a card. When the resource enables dynamic fields, ask about population and
+the city chip can carry population; ask about continent and it can carry continent instead.
 
 A chip appears because the assistant named that record in its answer, which is why a count never
 brings one along: "how many projects?" names no project, so it shows none.
@@ -46,8 +49,8 @@ brings one along: "how many projects?" names no project, so it shows none.
 Ask for several and they come back as a list of rows — "the last three users" is three rows you can
 scan and click, not a bulleted paragraph.
 
-What a chip carries beyond the title is up to the resource — see
-[Record chips](./ai.html#record-chips).
+The resource supplies the chip's stable parts and decides whether the assistant can append
+answer-specific fields — see [Record chips](./record-chips.html).
 
 You can also ask the onboarding assistant to make those chips distinctive: "Give paid purchases a
 green chip and refunded purchases a red one", "Use an indigo-to-fuchsia gradient on city chips",
