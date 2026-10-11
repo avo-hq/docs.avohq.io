@@ -337,6 +337,8 @@ field :title, as: :text, autofocus: -> { view.new? }
 
 Most inputs and selects support it, `belongs_to` included. Date pickers, tag inputs, and rich text editors don't. A field inside a closed tab, or one that is `readonly` or `disabled`, can't take focus. The [API reference](./field-options-api.html#autofocus) lists every supported field.
 
+Some forms own focus themselves and ignore the option. A field of a [nested association form](./associations/has_many.html#nested-in-forms) leaves the cursor on the parent form, a [reactive](#react-to-changes-in-other-fields) re-render doesn't pull the cursor back to the field it replaces, and an action card in an [Avo AI](./ai.html) chat keeps focus in the chat composer.
+
 ## Place fields on the same row
 
 The [`width`](./field-options-api.html#width) option controls how much horizontal space a field takes inside its parent panel or card. Adjacent fields with a `width` below `100` (a percentage) sit side by side.
