@@ -243,6 +243,7 @@ const config = {
             { text: "Actions", link: "/4.0/actions.html" },
             { text: "Select All", link: "/4.0/select-all.html" },
             { text: "Cover and Avatar", link: "/4.0/cover-and-avatar.html" },
+            { text: "Record chips", link: "/4.0/record-chips.html" },
             {
               text: "Views",
               link: "/4.0/views.html",
