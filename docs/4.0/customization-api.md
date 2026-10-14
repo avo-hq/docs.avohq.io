@@ -78,7 +78,7 @@ The option defaults to `false` when `Rails.env.test?`, because the first-load so
 
 <Option name="`currency`" headingSize="3">
 
-The global currency used when displaying `currency` fields that don't set their own.
+A currency code stored on `Avo.configuration.currency` for your own code to read. No built-in field uses it. The [Money field](./fields/money.html) takes its currencies from its `currencies:` option.
 
 ```ruby
 config.currency = "USD"
