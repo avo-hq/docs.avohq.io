@@ -286,6 +286,14 @@ def picker_options(value)
 end
 ```
 
+Avo fills `locale.weekdays` and `locale.months` from the app locale and merges a `locale` you pass here over them, so starting the week on Monday keeps the localized names:
+
+```ruby
+def picker_options(value)
+  super.merge(locale: { firstDayOfWeek: 1 })
+end
+```
+
 - **Default:** computed from [`self.type`](#self.type) and [`self.mode`](#self.mode) — sets `defaultDate`, `enableTime`, `enableSeconds`, `time_24hr`, `noCalendar`, `mode`, `dateFormat`, and `minuteIncrement`
 
 :::warning
