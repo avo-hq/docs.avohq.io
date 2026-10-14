@@ -520,7 +520,7 @@ module Avo
 
     def authorize(user, record, action, policy_class: nil, **)
       self.user = user
-      authorize!(record, to: action, with: policy_class)
+      authorize!(record, to: action.to_sym, with: policy_class)
     rescue ActionPolicy::Unauthorized => error
       raise Avo::NotAuthorizedError, error.message
     end
@@ -550,6 +550,8 @@ module Avo
   end
 end
 ```
+
+Avo passes `action` as a String (`"index?"`), and Action Policy looks up `alias_rule` and `default_rule` by Symbol. Without `to_sym`, an aliased rule skips its alias and is denied.
 
 Place policies under the `Avo` namespace, or configure Action Policy's lookup to match your app:
 
