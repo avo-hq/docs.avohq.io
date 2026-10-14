@@ -413,7 +413,7 @@ field :body, as: :textarea, nullable: true, null_values: ['0', '', 'null', 'nil'
 
 ## Link the table cell to the record
 
-Sometimes, on the <Index /> view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click the <Show /> icon. Use [`link_to_record`](./field-options-api.html#link_to_record) to change a table cell into a link to that record. It's available on the [`id`](./fields/id.html), [`text`](./fields/text.html), [`gravatar`](./fields/gravatar.html), and [`belongs_to`](./associations/belongs_to.html) fields.
+Sometimes, on the <Index /> view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click the <Show /> icon. Use [`link_to_record`](./field-options-api.html#link_to_record) to change a table cell into a link to that record. It's available on the [`id`](./fields/id.html), [`text`](./fields/text.html), [`number`](./fields/number.html), [`date`](./fields/date.html), [`date_time`](./fields/date_time.html), [`time`](./fields/time.html), [`gravatar`](./fields/gravatar.html), [`file`](./fields/file.html), [`external_image`](./fields/external_image.html), and [`belongs_to`](./associations/belongs_to.html) fields.
 
 ```ruby
 field :id, as: :id, link_to_record: true

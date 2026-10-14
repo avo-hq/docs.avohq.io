@@ -477,7 +477,7 @@ field :name, as: :text, link_to_record: true
 
 - **Type:** Boolean
 - **Default:** `false`
-- **Available on:** [`id`](./fields/id.html), [`text`](./fields/text.html), [`gravatar`](./fields/gravatar.html), and [`belongs_to`](./associations/belongs_to.html) fields
+- **Available on:** [`id`](./fields/id.html), [`text`](./fields/text.html), [`number`](./fields/number.html), [`date`](./fields/date.html), [`date_time`](./fields/date_time.html), [`time`](./fields/time.html), [`gravatar`](./fields/gravatar.html), [`file`](./fields/file.html), [`external_image`](./fields/external_image.html), and [`belongs_to`](./associations/belongs_to.html) fields
 
 Related: the global [`id_links_to_resource`](./customization.html#id-links-to-resource) configuration links every `id` field automatically.
 
