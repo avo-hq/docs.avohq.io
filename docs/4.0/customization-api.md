@@ -61,11 +61,26 @@ config.timezone = "UTC"
 
 Render server-side dates and times in each visitor's own time zone instead of the app's `Time.zone`. **On by default** — set it to `false` to render everyone in the app's configured zone.
 
-Avo detects the browser's IANA time zone with JavaScript, stores it in the `avo.browser_timezone` cookie, and wraps every Avo request in `Time.use_zone` with it. The very first page a browser ever loads still renders in the app zone — no HTTP header carries the time zone — so Avo soft-reloads that one page through Turbo and shows an alert telling the user times are now displayed in their zone. Browsers with cookies disabled keep the app zone and never reload.
+Avo detects the browser's IANA time zone with JavaScript, stores it in the `avo.browser_timezone` cookie, and renders every Avo response in it. The very first page a browser ever loads still renders in the app zone — no HTTP header carries the time zone — so Avo soft-reloads that one page through Turbo and shows an alert telling the user times are now displayed in their zone. Browsers with cookies disabled keep the app zone and never reload.
 
 ```ruby
 config.use_browser_timezone = false
 ```
+
+:::warning This is a display setting
+The visitor's zone is applied around **rendering only**. Everything else in the request keeps the app's configured `Time.zone`, so your own code means what it means everywhere else in Rails:
+
+```ruby
+class Avo::Actions::ScheduleReport < Avo::BaseAction
+  def handle(**args)
+    # The app's configured zone, not the visitor's browser zone.
+    Time.zone.local(2026, 1, 1, 9, 0)
+  end
+end
+```
+
+The same holds for `Date.current` and `Time.current` in scopes, filters and query objects, for ActiveRecord's time-zone-aware attribute casting on write, and for model callbacks. If you want a value in the visitor's zone outside a template, convert it explicitly with `in_time_zone`.
+:::
 
 :::info Off in the test environment
 The option defaults to `false` when `Rails.env.test?`, because the first-load soft reload races browser tests — assertions run against a page that is about to be replaced. Enable it explicitly in a test if you are testing the time zone behavior itself.
