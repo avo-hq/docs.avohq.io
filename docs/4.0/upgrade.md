@@ -4,6 +4,31 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo`: field labels read the model's attribute translations
+
+<Option name="Fields pick up `activerecord.attributes` and `attributes` keys">
+
+### Breaking Change
+
+A field with no `name:` and no `translation_key:` now reads the model's attribute translation — `activerecord.attributes.<model>.<attribute>` (parent classes included), then `attributes.<attribute>` — after Avo's own `avo.resource_translations.<resource>.fields.<attribute>` and `avo.field_translations.<attribute>` keys, and before humanizing its id. These are the keys Rails already uses for form labels and error messages, so a localized app gets translated admin labels with no change to its Ruby. See [Localizing fields](./i18n.html#localizing-fields).
+
+Avo's own keys still win, and so do `name:` and `translation_key:`. A `translation_key:` that points at a missing key still falls back to the humanized id, not to the model's translation.
+
+### Action Required
+
+**Grep your locale files** for `activerecord:` and a top-level `attributes:` key. If you have neither, nothing changes. If you do, every field that was showing a humanized id and matches one of those keys now shows the translation instead. Association fields look up the association name (`user`), not the foreign key (`user_id`).
+
+### Maintaining Previous Behavior
+
+Keep one label as it was with `name:` or `translation_key:` on the field, or turn the lookup off for the whole admin:
+
+```ruby
+# config/initializers/avo.rb
+config.model_attribute_translations = false
+```
+
+</Option>
+
 ## Upgrade to `avo` `4.3.1`
 
 <Option name="Selected rows come back when you go back to an index">

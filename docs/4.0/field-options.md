@@ -32,7 +32,7 @@ field :is_available, as: :boolean, name: "Availability"
 
 <Image src="/assets/img/4_0/field-options/change-field-name.webp" dark-src="/assets/img/4_0/field-options/change-field-name-dark.webp" width="1776" height="570" alt="An Avo index table with three columns — ID, Name and a boolean column whose header reads “Availability”, the custom label set via the field's name option, highlighted." prompt="index with the column header Availability anotated" />
 
-If you localize your app, translate the label through the [i18n conventions](./i18n.html) instead of hardcoding it.
+If you localize your app, translate the label through the [i18n conventions](./i18n.html) instead of hardcoding it. Fields pick up the model's attribute translations (`activerecord.attributes.<model>.<attr>`) on their own, so a translated model usually needs no `name` at all.
 
 ## Show and hide fields on different views
 

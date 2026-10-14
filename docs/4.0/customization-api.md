@@ -1012,6 +1012,21 @@ Full guide: [Locale selector](./i18n.html#locale-selector).
 
 </Option>
 
+<Option name="`model_attribute_translations`" headingSize="3">
+
+Whether a field without `name:` or `translation_key:` reads the model's attribute translation (`activerecord.attributes.<model>.<attribute>`, then `attributes.<attribute>`) when none of Avo's own field keys match, before humanizing its id.
+
+```ruby
+config.model_attribute_translations = false
+```
+
+- **Type:** Boolean
+- **Default:** `true`
+
+Full guide: [Localizing fields](./i18n.html#localizing-fields).
+
+</Option>
+
 ## Appearance
 
 <Option name="`appearance`" headingSize="3">

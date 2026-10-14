@@ -28,15 +28,15 @@ Options that only certain field types respond to (like `options` on the [select 
 
 <Option name="`name`" headingSize="3">
 
-The label displayed for the field. When omitted, Avo humanizes the field's id (`is_available` becomes "Is available"), first checking for an [i18n translation](./i18n.html) under `avo.field_translations.<id>`.
+The label displayed for the field. When omitted, Avo checks for an [i18n translation](./i18n.html) under `avo.field_translations.<id>`, then the model's attribute translation (`activerecord.attributes.<model>.<id>`), and otherwise humanizes the field's id (`is_available` becomes "Is available").
 
 ```ruby
 field :is_available, as: :boolean, name: "Availability"
 ```
 
 - **Type:** String or Proc
-- **Default:** the humanized field id
-- **i18n key:** `avo.field_translations.<field_id>` — used when defined, otherwise the id is humanized
+- **Default:** the model's attribute translation, else the humanized field id
+- **i18n key:** `avo.field_translations.<field_id>`, then `activerecord.attributes.<model>.<field_id>` — the first one defined; otherwise the id is humanized
 
 </Option>
 
