@@ -138,7 +138,6 @@ The tables below mirror [`lib/avo/mappings.rb`](https://github.com/avo-hq/avo/bl
 | `email` | `text` |
 | `password`, `password_confirmation` | `password` |
 | `stage` | `select` |
-| `budget`, `money` | `currency` |
 | `country` | `country` |
 
 ### Column types
