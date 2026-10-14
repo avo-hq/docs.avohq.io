@@ -517,7 +517,7 @@ Every method must accept keyword arguments it doesn't use, usually through `**`.
 
 <Option name="`authorize`" headingSize="3">
 
-Checks whether `user` can perform `action` (for example `"index?"`) on `record`. Called for sidebar items, buttons, menu visibility, and controller requests.
+Checks whether `user` can perform `action`, a String such as `"index?"`, on `record`. Called for sidebar items, buttons, menu visibility, and controller requests.
 
 ```ruby
 def authorize(user, record, action, policy_class: nil, **)
