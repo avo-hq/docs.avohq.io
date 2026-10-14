@@ -330,7 +330,7 @@ class Avo::Actions::ReleaseFish < Avo::BaseAction
 end
 ```
 
-If the action is safe to run without asking, set [`confirmation`](./actions-api.html#confirmation) to `false` and it executes immediately on trigger. To stop the modal from closing when the user clicks outside it, set [`close_modal_on_backdrop_click`](./actions-api.html#close_modal_on_backdrop_click) to `false`. To give a larger form more room, set [`modal_width`](./actions-api.html#modal_width).
+If the action is safe to run without asking, set [`confirmation`](./actions-api.html#confirmation) to `false` and it executes immediately on trigger. To stop the modal from closing when the user clicks outside it, set [`close_modal_on_backdrop_click`](./actions-api.html#close_modal_on_backdrop_click) to `false`. To give a larger form more room, set [`modal_width`](./actions-api.html#modal_width). To leave out the modal's buttons, set [`hide_confirm_button`](./actions-api.html#hide_confirm_button) or [`hide_cancel_button`](./actions-api.html#hide_cancel_button): hiding Run also disables <kbd>Mod</kbd>+<kbd>Enter</kbd>, while Escape and the header X keep closing the modal.
 
 ## Run an action without records
 
