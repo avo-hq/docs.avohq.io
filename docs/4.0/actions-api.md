@@ -269,6 +269,40 @@ end
 
 </Option>
 
+<Option name="`hide_confirm_button`" headingSize="3">
+
+Whether the modal leaves out its confirm (**Run**) button. Hiding it also disables the <kbd>Mod</kbd>+<kbd>Enter</kbd> hotkey, so the action runs only from a control you render yourself. A form with a single text-like field still submits on <kbd>Enter</kbd> (the browser's implicit submission), so hiding the button does not make a one-field modal read-only.
+
+```ruby
+class Avo::Actions::ExportReport < Avo::BaseAction
+  self.hide_confirm_button = -> { view.index? }
+end
+```
+
+- **Type:** Boolean or Proc
+- **Default:** `false`
+
+</Option>
+
+<Option name="`hide_cancel_button`" headingSize="3">
+
+Whether the modal leaves out its cancel button. Only the button goes: <kbd>Escape</kbd> still closes the modal unless [`close_modal_on_backdrop_click`](#close_modal_on_backdrop_click) is `false`, and the X in the header always closes it. When both buttons are hidden the modal renders without a footer.
+
+```ruby
+class Avo::Actions::ExportReport < Avo::BaseAction
+  self.hide_cancel_button = true
+end
+```
+
+- **Type:** Boolean or Proc
+- **Default:** `false`
+
+:::warning
+Hiding the cancel button while `close_modal_on_backdrop_click` is `false` leaves keyboard users with only the Run button, because the header X needs a mouse.
+:::
+
+</Option>
+
 ## Behavior
 
 <Option name="`standalone`" headingSize="3">
