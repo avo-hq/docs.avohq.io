@@ -36,6 +36,23 @@ You can easily choose to display the `code` of the country on **Index** and **Sh
 `true`, `false`
 </Option>
 
+<Option name="`default`">
+
+The [`default`](../field-options-api.html#default) value is the country **code**, the same value the database stores — not the country's name.
+
+```ruby
+field :country, as: :country, default: "SE" # opens the form on Sweden
+```
+
+#### Default value
+
+`nil`
+
+#### Possible values
+
+Any [ISO 3166-1](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) alpha-2 code, or a block returning one.
+</Option>
+
 <Option name="`include_blank`">
 
 Because `Country` renders as a [`Select`](./select.html) field, it also accepts the `include_blank` option to control the first, empty option in the dropdown. See the [`Select` field's `include_blank` documentation](./select.html#include_blank) for the full behavior.

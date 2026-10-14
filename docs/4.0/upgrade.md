@@ -4,6 +4,27 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-ai` `4.3.0.beta.3`
+
+<Option name="The retracted chat pill draws its own icon partial">
+
+### Breaking Change
+
+Hiding the toolbar collapses the chat dock to a single pill, and that pill now renders `avo/ai/_pit_core_icon` instead of `avo/ai/_avocado_icon`. An app that replaced the assistant's icon with its own `app/views/avo/ai/_avocado_icon.html.erb` still changes the **Agent** button, the chat empty states and the *Open in assistant bar* button, but the retracted pill goes back to Avo's own mark. See [The retracted pill](./ai.html#the-retracted-pill).
+
+### Action Required
+
+None unless you override the assistant's icon. If you do, add a second partial next to the first:
+
+```erb
+<%# app/views/avo/ai/_pit_core_icon.html.erb %>
+<%= svg "tabler/outline/robot", class: local_assigns[:classes] %>
+```
+
+Pass `classes` through and don't add a size utility of your own — the stylesheet sizes this mark as a share of the button so it grows with the pill.
+
+</Option>
+
 ## Upgrade to `avo` `4.3.1`
 
 <Option name="Selected rows come back when you go back to an index">

@@ -768,7 +768,7 @@ Open a chat in the **Chats** resource and read its **Agent tools** field: it's c
 
 ## Replace the assistant's icon
 
-The avocado is a single partial, rendered everywhere the assistant appears: the **Agent** button, the collapsed bar, the empty state on new and full-page chats, and the *Open in assistant bar* button on a chat's record page. Create the same path in your application and all of them change at once:
+The avocado is a single partial, rendered in most places the assistant appears: the **Agent** button, the empty state on new and full-page chats, and the *Open in assistant bar* button on a chat's record page. Create the same path in your application and all of them change at once:
 
 ```erb
 <%# app/views/avo/ai/_avocado_icon.html.erb %>
@@ -785,6 +785,17 @@ An image file works the same way:
 Each place that renders the icon passes a `classes` local, because the sizes differ — `size-4` in the bar, `size-6` on the empty states. Pass it through to whatever you render, as both examples do, or the icon comes out the wrong size in half of them.
 
 The icon on the chat pages' breadcrumb isn't part of the partial and stays an avocado.
+
+### The retracted pill
+
+Hiding the toolbar collapses the dock down to a single round button, and that button draws its own mark — `avo/ai/_pit_core_icon`, the avocado with its glowing pit. Overriding `_avocado_icon` leaves it alone, so rebrand it with a second partial:
+
+```erb
+<%# app/views/avo/ai/_pit_core_icon.html.erb %>
+<%= svg "tabler/outline/robot", class: local_assigns[:classes] %>
+```
+
+Pass `classes` through here too, and don't add a size utility of your own. The stylesheet sizes this mark as a share of the button so it grows with the pill; a size class in your markup outranks that rule and the icon stays small while the button grows.
 
 ## What you start the chat from
 
