@@ -66,6 +66,8 @@ Formats the value on the <Index /> and <Show /> views. Form inputs always keep t
 `:delimited`, `:percentage`, or `:human`.
 </Option>
 
+<!-- @include: ./../common/link_to_record_common.md-->
+
 ## Formatting numbers
 
 Use `format` for the common display formats provided by Rails:

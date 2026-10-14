@@ -45,3 +45,5 @@ By default, flatpickr is [disabled on mobile](https://flatpickr.js.org/mobile-su
 <!-- @include: ./../common/default_boolean_false.md -->
 
 </Option>
+
+<!-- @include: ./../common/link_to_record_common.md-->
