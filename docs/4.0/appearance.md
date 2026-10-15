@@ -221,14 +221,14 @@ Only the listed entries appear in the picker. The default value (`neutral:` / `a
 
 ## Locking choices
 
-By default, users can change the scheme, neutral, and accent themselves. To force one or more values and hide their switchers, list them in [`lock:`](./appearance-api.html#lock).
+By default, users can change the scheme, neutral, and accent themselves, and turn off an active [festivity](#add-a-seasonal-look). To force one or more values and hide their switchers, list them in [`lock:`](./appearance-api.html#lock).
 
 ```ruby
 config.appearance = {
   scheme: :light,
   neutral: :slate,
   accent: :blue,
-  lock: [:scheme, :neutral, :accent] # any subset of these three
+  lock: [:scheme, :neutral, :accent] # any subset, plus :festivity
 }
 ```
 
@@ -237,6 +237,7 @@ config.appearance = {
 | `:scheme`      | Hides the light/dark/auto switcher                    |
 | `:neutral`     | Hides the neutral picker; forces the configured value |
 | `:accent`      | Hides the accent picker; forces the configured value  |
+| `:festivity`   | Hides the festivity toggle; ignores saved opt-outs    |
 
 A value not listed in `lock:` is treated as a **default** — users can override it.
 
@@ -278,8 +279,9 @@ config.appearance = {
 
 #### How the blocks receive data
 
-- `load_settings` should return a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`. Missing keys fall back to the configured defaults.
+- `load_settings` should return a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`, `:festivity_christmas`. Missing keys fall back to the configured defaults.
 - `save_settings` receives a `settings` local — a **partial** Hash containing only the keys the user just changed. Always merge into existing preferences rather than overwriting them.
+- A festivity opt-out arrives as `{festivity_christmas: "off"}`, or `"on"` when the user turns it back on.
 
 #### Required schema
 
@@ -336,6 +338,52 @@ config.appearance = {
 :::warning
 Chart colors are forwarded directly to Chart.js, so they must be hex values.
 :::
+
+## Add a seasonal look
+
+<VersionReq version="4.3.3" />
+
+Set [`config.festivity`](./appearance-api.html#festivity) to give the whole interface a seasonal look. For now there's one festivity, `:christmas`: an evergreen palette, red buttons, and a string of lights along the navbar. It's decorative only and doesn't change how anything works.
+
+`config.festivity` sits on `config` itself, next to `config.appearance` rather than inside it.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.festivity = :christmas
+end
+```
+
+While it's on, the festivity's colors win over Avo's defaults, your brand palette, and users' neutral and accent picks, locked ones included. Chart colors and the code editor keep their usual look, and your own [CSS overrides](#css-customization) in `avo-overrides.css` still win over the festivity.
+
+### Turn it on only for the season
+
+If you want the festivity to switch itself on and off, pass a lambda. It runs once per request and should return `:christmas` or `nil`:
+
+```ruby
+# config/initializers/avo.rb
+config.festivity = -> { :christmas if Date.current.month == 12 }
+```
+
+The lambda runs in Avo's execution context, so `current_user`, `params` and `request` are available too. When its answer changes while someone is using Avo, their next page visit reloads once and picks up the new look.
+
+### Let users turn it off
+
+While a festivity is on, the appearance switcher shows a "Christmas decorations" toggle. Turning it off brings back the user's own palette straight away, without a reload.
+
+The choice is saved with the user's other picks, through the same [persistence](#persist-picks-across-devices) setting. It's saved under the festivity's name, with no year, so a user who turned Christmas off this year won't see it next December either.
+
+### Make it mandatory
+
+If everyone should see the festivity, add `:festivity` to [`lock:`](#locking-choices). The toggle is hidden and saved opt-outs are ignored.
+
+```ruby
+# config/initializers/avo.rb
+config.festivity = :christmas
+config.appearance = {
+  lock: [:festivity]
+}
+```
 
 ## CSS customization
 
@@ -486,7 +534,7 @@ end
 | `accent_colors`  | Hash of 3 tokens         | `nil`                    | Three-token brand accent override                           |
 | `neutrals`       | Array of Strings         | All built-in presets     | Subset of neutrals exposed to the picker                    |
 | `accents`        | Array of Strings         | All built-in presets     | Subset of accents exposed to the picker                     |
-| `lock`           | Array of Symbols         | `[]`                     | Any of `:scheme`, `:neutral`, `:accent`                     |
+| `lock`           | Array of Symbols         | `[]`                     | Any of `:scheme`, `:neutral`, `:accent`, `:festivity`       |
 | `persistence`    | `:cookie` `:database`    | `:cookie`                | Where unlocked user picks are stored                        |
 | `load_settings`  | Proc                     | `nil`                    | Block returning a Hash of saved settings (database mode)    |
 | `save_settings`  | Proc                     | `nil`                    | Block called with a partial `settings` Hash (database mode) |
@@ -501,3 +549,5 @@ end
 | `favicon_dark`   | String                   | `"avo/favicon-dark.ico"` | Favicon for dark mode                                       |
 | `placeholder`    | String                   | `"avo/placeholder.svg"`  | Missing image placeholder                                   |
 | `chart_colors`   | Array of hex Strings     | 10 default colors        | Colors used in dashboard charts                             |
+
+`config.festivity` is set on `config`, outside `config.appearance`. See [Add a seasonal look](#add-a-seasonal-look).
