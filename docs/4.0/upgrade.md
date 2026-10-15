@@ -4,7 +4,7 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
-## `avo`: field labels read the model's attribute translations
+## Upgrade to `avo` `4.3.2`
 
 <Option name="Fields pick up `activerecord.attributes` and `attributes` keys">
 
@@ -61,6 +61,43 @@ Add `:forms` to `except_on` to keep the badge display-only.
 # app/avo/resources/project.rb
 field :status, as: :badge, except_on: :index, options: {success: "done"} # [!code --]
 field :status, as: :badge, except_on: [:index, :forms], options: {success: "done"} # [!code ++]
+```
+
+</Option>
+
+<Option name="`?set_locale=` is stored only for an authenticated request">
+
+### Breaking Change
+
+Avo writes `?set_locale=` into `Avo.configuration.locale` only after your [`authenticate_with`](./authentication.html#authenticate-with-method) block lets the request through. Before, the write happened in an `around_action` that ran first, so a request the block rejected still switched the language for **every user** until the server restarted. A controller that skips Avo's authentication altogether can no longer store it either ([#4893](https://github.com/avo-hq/avo/pull/4893)).
+
+### Action Required
+
+None in production. If a link or script outside the admin reached an Avo URL with `?set_locale=` while signed out to set the language, it no longer has any effect — set [`config.locale`](./customization-api.html#locale) for everyone, or let each user pick their own with the [locale selector](./i18n.html#locale-selector).
+
+:::warning
+On earlier versions anyone who could reach an Avo URL could change the admin's language for every user, signed in or not. Upgrade rather than working around it.
+:::
+
+</Option>
+
+<Option name="`?set_locale=` deprecated, and unknown locales in both locale params are ignored">
+
+### Breaking Change
+
+`?set_locale=` logs a deprecation warning and will be removed in a future version — it has always changed `Avo.configuration.locale` for the whole process, so it switches the language for every user until the server restarts. Both `?set_locale=` and `?force_locale=` now ignore a value missing from `I18n.available_locales` and move on to the next source. Before, an unknown `set_locale` was stored globally and made `I18n.with_locale` raise `I18n::InvalidLocale` on every later request. See [Setting the locale](./i18n.html#setting-the-locale).
+
+### Action Required
+
+A request carrying a locale your app doesn't list now keeps the configured locale instead of switching, so a spec that asserted a bogus `?force_locale=` renders in that locale needs updating. Everything else keeps working; the warning in the logs is the only new signal.
+
+### Steps to Update
+
+Grep your links, bookmarks and specs for `set_locale`. To change the language for everyone, set it in the initializer; to let each user choose, use the [locale selector](./i18n.html#locale-selector), which stores the choice per browser.
+
+```ruby
+# config/initializers/avo.rb
+config.locale = :"pt-BR"
 ```
 
 </Option>
