@@ -165,11 +165,28 @@ Required inputs you didn't mention arrive as empty fields on the card for you to
 | "Which of the emails in this CSV are signed-up users?" | The rows read in windows and matched against your records — matches and misses reported |
 | "Create users from this CSV"            | A card with the file, the mapping, and a preview of the first rows — nothing is created until you click **Confirm** |
 
-Files are referenced by blob id, and the Media Library URL carries one: `/avo/media-library/260/edit` is blob 260. The assistant never uploads bytes itself — a file gets in either by riding along on your message or through a URL you confirm. Purging a file stays a manual action. See [Files and attachments](./ai.html#files-and-attachments) and [Getting new files in](./ai.html#getting-new-files-in).
+Files are referenced by blob id, and the Media Library URL carries one: `/avo/media-library/260/edit` is blob 260. The assistant never uploads bytes itself — a file gets in either by riding along on your message or through a URL you confirm. Reading a web page doesn't change that: it creates no file (see [Read a web page](#read-a-web-page)). Purging a file stays a manual action. See [Files and attachments](./ai.html#files-and-attachments) and [Getting new files in](./ai.html#getting-new-files-in).
 
 **Reading a file works wherever the file lives.** A file you dropped into the chat, a file attached to a record you can read, and a Media Library file can all be read — markdown, plain text, CSV, TSV, and JSON. The assistant reads in windows (lines, or rows for CSV and TSV) rather than swallowing the whole file, so a long file is read a piece at a time and cross-referenced against your records as it goes. Spreadsheets and PDFs aren't read this way; a PDF still reaches a vision-capable model as an attachment.
 
 **Importing shows you the import before it happens.** "Create users from this CSV" reads the header, maps the file's columns to the resource's fields, and shows a card with the file and where it came from, the resource, the row count, the mapping, and a preview of the first rows. Nothing is created until you confirm. Rows are then created on the server, one create per row, and the card reports how many were created and lists any row that failed validation with its row number and reason — the rest are still created. See [Reading files and importing from them](./ai.html#reading-files-and-importing-from-them).
+
+## Read a web page
+
+Paste a link and the assistant reads the page: the article as markdown, without the site's navigation, a window at a time.
+
+| Ask                                                                     | What you get                                                                                       |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| "Update this record's body from https://example.com/docs/setup"         | The page read, a body composed from it, and an update card. Nothing changes until you click **Confirm** |
+| "Summarize https://example.com/changelog"                               | A summary of the page                                                                              |
+| "Does https://example.com/pricing still list a free plan?"              | An answer from what the page says now                                                              |
+| "Compare https://example.com/a with https://example.com/b"              | Both pages read and compared                                                                       |
+| "Create a project for each item on https://example.com/roadmap"         | The page read, then the records created one by one                                                 |
+| The same ask, against a page that builds its content in JavaScript      | When your app configured a renderer, the page read again through it. Without one, the assistant says the page came back nearly empty |
+
+**Only links you typed are read.** A URL the assistant finds in a record, on a page it read, or in any other result is refused, and it asks you to paste it instead. Paste it and it reads it. This is what stops a page or a record from steering the assistant to a link of its own choosing (prompt injection). A link with a username or password before the host is refused too.
+
+What a page says is data, not instructions: a sentence on it addressed to the assistant is reported, never acted on. A site that blocks automated access is reported as blocked, and pages behind a login aren't readable. See [Reading a web page](./ai.html#reading-a-web-page).
 
 ## Ask about the page you're on
 
@@ -256,6 +273,7 @@ Knowing the edges saves a round trip:
 | Apply its own updates, deletes, or undos  | The card is yours to confirm — a click, or a quick "do it" in your own words |
 | Delete a file from storage                | It can detach, never purge                                               |
 | Touch anything your policies hide         | Every read and write is authorized for the signed-in user                |
+| Follow a link it found in a record or a page | It only reads URLs you typed into the conversation. Paste the link and it reads it |
 | Take on substantial work unrelated to this app | Writing your blog post, debugging a codebase, a long translation, or a research report is someone else's job — it says so and offers what it can do instead |
 | Connect, share, or disconnect an MCP server | Those are clicks in the `/mcp` panel, behind your app's permission. Ask it to connect something and it tells you where to do it |
 | Approve its own call to a connected server | The card is yours, and it takes a click: a typed "do it" never approves a remote call |
