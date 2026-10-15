@@ -184,6 +184,36 @@ end
 
 The endpoint receives the search text in `params[:q]` and returns objects with `value` and `label` keys. Both alternatives submit the selected ID as `fields[:user_id]`.
 
+### Read a `belongs_to` field in `handle`
+
+A `belongs_to` field arrives in `fields` under its foreign key, not under the field's name: `field :user, as: :belongs_to` arrives as `fields[:user_id]`.
+
+A polymorphic one arrives as two keys, the type and the id. <VersionReq version="4.2.7" />
+
+```ruby
+# app/avo/actions/move_review.rb
+class Avo::Actions::MoveReview < Avo::BaseAction
+  def fields
+    field :reviewable, as: :belongs_to, polymorphic_as: :reviewable, types: [Post, Team]
+  end
+
+  def handle(query:, fields:, **)
+    query.each do |review|
+      review.update!(
+        reviewable_type: fields[:reviewable_type],
+        reviewable_id: fields[:reviewable_id]
+      )
+    end
+
+    succeed "Moved the review."
+  end
+end
+```
+
+:::warning
+Both values reach `handle` as the strings the form submitted. Unlike a `belongs_to` field on a resource form, an action does not check the type against the field's `types` list before handing it to you, so check it yourself before you store it or turn it into a class.
+:::
+
 ## Write the `handle` method
 
 `handle` is where your business logic lives. It receives keyword arguments:
