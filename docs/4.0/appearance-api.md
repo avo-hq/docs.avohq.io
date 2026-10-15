@@ -22,6 +22,8 @@ Avo.configure do |config|
 end
 ```
 
+One related option, [`festivity`](#festivity), is set on `config` directly.
+
 ## Theme selection
 
 <Option name="`scheme`">
@@ -209,8 +211,9 @@ config.appearance = {
 | `:scheme`      | Hides the light/dark/auto switcher                    |
 | `:neutral`     | Hides the neutral picker; forces the configured value |
 | `:accent`      | Hides the accent picker; forces the configured value  |
+| `:festivity`   | Hides the festivity toggle; ignores saved opt-outs    |
 
-- **Type:** Array of Symbols, any subset of `[:scheme, :neutral, :accent]`
+- **Type:** Array of Symbols, any subset of `[:scheme, :neutral, :accent, :festivity]`
 - **Default:** `[]`
 
 A value not listed in `lock:` is treated as a default — users can override it via the switcher.
@@ -288,6 +291,8 @@ config.appearance = {
 - **Type:** Symbol — `:cookie` or `:database`
 - **Default:** `:cookie`
 
+A [festivity](#festivity) opt-out is stored the same way: a `festivity_christmas` cookie that lasts a year, or a `festivity_christmas` key in the database settings.
+
 </Option>
 
 <Option name="`load_settings`">
@@ -303,13 +308,13 @@ load_settings: -> {
 - **Type:** Proc / Lambda
 - **Default:** `nil`
 - **Context:** evaluated in Avo's execution context with `current_user` available (plus `params`, `request`, `view_context`, `main_app`)
-- **Return:** a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`. Missing keys fall back to the configured defaults.
+- **Return:** a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`, `:festivity_christmas`. Missing keys fall back to the configured defaults.
 
 </Option>
 
 <Option name="`save_settings`">
 
-Block called whenever the user picks a new scheme, neutral, or accent. Receives a `settings` local — a **partial** Hash containing only the keys the user just changed.
+Block called whenever the user picks a new scheme, neutral, or accent, or turns a festivity's decorations on or off. Receives a `settings` local — a **partial** Hash containing only the keys the user just changed.
 
 ```ruby
 save_settings: -> {
@@ -326,7 +331,7 @@ save_settings: -> {
 - **Type:** Proc / Lambda
 - **Default:** `nil`
 - **Context:** evaluated in Avo's execution context with `current_user` available (plus `params`, `request`, `view_context`, `main_app`)
-- **Locals:** `settings` — partial Hash with whichever of `:color_scheme`, `:neutral`, `:accent` changed. It contains only the changed keys, so callers merge it into existing preferences rather than overwriting them.
+- **Locals:** `settings` — partial Hash with whichever of `:color_scheme`, `:neutral`, `:accent`, `:festivity_christmas` changed. It contains only the changed keys, so callers merge it into existing preferences rather than overwriting them.
 
 You'll need a JSON or JSONB column on whichever model backs `current_user`:
 
@@ -465,6 +470,38 @@ config.appearance = {
 :::warning
 Chart colors must be hex values — `oklch(...)` and other CSS color forms are not accepted by Chart.js.
 :::
+
+</Option>
+
+## Festivity
+
+<Option name="`festivity`">
+
+<VersionReq version="4.3.3" />
+
+A seasonal look for the whole interface. It's set on `config` directly, not inside `config.appearance`.
+
+```ruby
+config.festivity = :christmas
+config.festivity = -> { :christmas if Date.current.month == 12 }
+```
+
+| Value        | Behavior                                                            |
+| ------------ | ------------------------------------------------------------------- |
+| `nil`        | No festivity (default)                                              |
+| `:christmas` | Evergreen palette, red accent, and a string of lights on the navbar |
+| a lambda     | Runs once per request; returns `nil` or `:christmas`                |
+
+While a festivity is on, it wins over the default palette, the brand palette ([`neutral_colors`](#neutral_colors) / [`accent_colors`](#accent_colors)), and users' neutral and accent picks, locked ones included. Chart colors and the code editor theme are unchanged. CSS in `avo-overrides.css` still wins over it.
+
+- **Type:** Symbol, `nil`, or Proc / Lambda returning one of those
+- **Default:** `nil`
+- **Values:** `nil`, `:christmas`
+- **Validation:** any other value raises `ArgumentError` at boot, listing the valid values. Year-specific names such as `:christmas_2024` aren't accepted. A lambda that returns an unknown value logs a warning and counts as `nil`.
+- **Context:** a lambda is evaluated in Avo's execution context with `current_user` available (plus `params`, `request`, `view_context`, `main_app`)
+- **Persistence:** a user's opt-out is stored through [`persistence`](#persistence) under `festivity_christmas` (`"on"` / `"off"`)
+- **Lockable:** yes — list `:festivity` in [`lock:`](#lock) to hide the toggle and ignore saved opt-outs
+- **i18n key:** `avo.appearance.festivities_list.christmas` ("Christmas decorations")
 
 </Option>
 
