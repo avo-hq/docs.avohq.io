@@ -313,14 +313,14 @@ The method that persists the record on `create` and `update`.
 
 ```ruby
 def save_record_action
-  @record.save!
+  @resource.save_record(@record)
 end
 ```
 
-- **Default behavior:** calls `@record.save!`. Exceptions raised here are caught, logged, and added to the record's errors, which triggers the fail action and message.
+- **Default behavior:** calls the resource's [`save_record`](./resources-api.html#save_record), which runs `@record.save!`. Exceptions raised here are caught, logged, and added to the record's errors, which triggers the fail action and message.
 
 :::info
-The call goes through the resource's `save_record(record)`, which a resource can define to own its writes under every controller. <VersionReq version="4.2.12" />
+Override this when the change belongs to one controller. When it belongs to the resource under every controller — the admin panel, the [REST API](./rest-api.html), your own controllers — define [`save_record(record)`](./resources-api.html#save_record) on the resource instead. <VersionReq version="4.2.12" />
 :::
 
 </Option>
@@ -331,14 +331,14 @@ The method that removes the record on `destroy`.
 
 ```ruby
 def destroy_record_action
-  @record.destroy!
+  @resource.destroy_record(@record)
 end
 ```
 
-- **Default behavior:** calls `@record.destroy!`. Exceptions raised here (a foreign key constraint, for example) are caught, logged, and added to the record's errors, which triggers the fail action and message. Override it to soft-delete or archive instead.
+- **Default behavior:** calls the resource's [`destroy_record`](./resources-api.html#destroy_record), which runs `@record.destroy!`. Exceptions raised here (a foreign key constraint, for example) are caught, logged, and added to the record's errors, which triggers the fail action and message. Override it to soft-delete or archive instead.
 
 :::info
-The call goes through the resource's `destroy_record(record)`, which a resource can define to own its deletes under every controller. <VersionReq version="4.2.12" />
+Override this when the delete belongs to one controller. When it belongs to the resource under every controller, define [`destroy_record(record)`](./resources-api.html#destroy_record) on the resource instead. <VersionReq version="4.2.12" />
 :::
 
 </Option>

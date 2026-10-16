@@ -239,6 +239,8 @@ curl https://YOUR-APP.com/api/resources/v1/_openapi \
 
 Open `openapi.json` before importing it. It should start with `{"openapi":"3.1.0"`; if it holds `{"error":"Unauthorized"}` the token is wrong, and if it holds HTML the host or the mount path is.
 
+A `404` here while `GET /api/resources/v1/_schema` answers means the app's `avo-api` predates the export: upgrade the gem rather than looking for the mount path. If `_schema` is a `404` too, it is the mount or the license.
+
 #### 2. Import it into your tool
 
 Import `openapi.json` into any tool that reads OpenAPI 3.1, such as Swagger UI, Postman, or an API client generator.

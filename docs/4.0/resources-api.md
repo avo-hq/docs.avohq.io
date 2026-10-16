@@ -569,6 +569,74 @@ end
 
 </Option>
 
+<Option name="`save_record`" headingSize="3">
+
+<VersionReq version="4.2.12" />
+
+The method that persists a record on create and update. Avo calls it from the controller's [`save_record_action`](./controllers-api.html#save_record_action), so one definition covers the admin panel, the [REST API](./rest-api.html) and any controller of your own.
+
+```ruby
+class Avo::Resources::Course < Avo::BaseResource
+  def save_record(record)
+    record.save!
+    SyncCourseJob.perform_later(record)
+
+    true
+  end
+end
+```
+
+- **Type:** Instance method taking the record
+- **Default:** `record.save!`
+- **Returns:** something truthy on success. Raise to fail — the exception is caught, logged and added to the record's errors, which triggers the controller's fail action and message.
+
+A record that is not an Active Record model has no `save!`, so a resource not backed by one defines this method to be writable at all: see [array resources](./array-resource.html#create-edit-and-delete) and [HTTP resources](./http-resource.html#customize-create-update-and-destroy).
+
+</Option>
+
+<Option name="`destroy_record`" headingSize="3">
+
+<VersionReq version="4.2.12" />
+
+The method that removes a record on destroy. Avo calls it from the controller's [`destroy_record_action`](./controllers-api.html#destroy_record_action), so one definition covers every surface that deletes the record.
+
+```ruby
+class Avo::Resources::Course < Avo::BaseResource
+  def destroy_record(record)
+    record.archive!
+  end
+end
+```
+
+- **Type:** Instance method taking the record
+- **Default:** `record.destroy!`
+- **Returns:** something truthy on success. Raise to fail, the same way `save_record` does.
+
+</Option>
+
+<Option name="`new_record`" headingSize="3">
+
+<VersionReq version="4.2.12" />
+
+The blank record a `New` form is filled into. Override it on a resource whose records need more than `model_class.new` — a constructor argument, or a record that is not an Active Record model.
+
+```ruby
+class Avo::Resources::Invoice < Avo::BaseResource
+  def new_record
+    model_class.new(currency: Current.account.currency)
+  end
+end
+```
+
+- **Type:** Instance method taking no arguments
+- **Default:** `model_class.new`
+
+:::info
+[Array resources](./array-resource.html#create-edit-and-delete) already override this to build their record class before the form is filled, so they need nothing here.
+:::
+
+</Option>
+
 <Option name="`config.buttons_on_form_footers`" headingSize="3">
 
 Whether the `Back` and `Save` buttons are also rendered in the footer of `New` and `Edit` forms — useful when forms grow tall. Unlike the other options on this page, this one is set in the initializer and applies to all resources.
