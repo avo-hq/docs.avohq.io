@@ -319,6 +319,26 @@ Ask for it in whatever words you'd use with a colleague — "archive the Orbit p
 
 **The action's messages are the outcome.** Whatever your action reports — `succeed`, `warn`, `inform`, `error` — lands on the card once it has run, each with its severity, the same messages the Avo UI would toast. An action may report several at once, and an `error` message is part of the outcome, not a failure of the run. The values the action was handed stay on the settled card too, folded behind a click.
 
+**Get the chat window out of the way.** If your action leads the user somewhere else, or there's nothing left to say once it has run, call `close_chat_window` from `handle` and the window minimizes once the run is confirmed. The chat stays in the bar, one click away. Pass `remove_from_bar: true` to take it off the bar as well; the chat itself isn't deleted and stays in the recent-chats menu.
+
+```ruby
+# app/avo/actions/publish_post.rb
+class Avo::Actions::PublishPost < Avo::BaseAction
+  def handle(query:, **)
+    query.each { |post| post.update!(published_at: Time.current) }
+
+    succeed "Published"
+    close_chat_window
+  end
+end
+```
+
+```ruby
+close_chat_window(remove_from_bar: true)
+```
+
+It composes with the other response methods: `reload` together with `close_chat_window` reloads the page and minimizes the window. Run from the Actions dropdown instead of the chat, the action ignores it.
+
 [Actions that run without records](./actions.html#run-an-action-without-records) work too — the assistant runs them with no record at all.
 
 ### Finding an action without naming its resource
