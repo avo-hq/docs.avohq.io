@@ -181,7 +181,7 @@ Run `bundle install` and `bundler` picks up the token and uses it to authenticat
 
 ## Rotate the gem server token
 
-If someone outside your team may have your gem server token, replace it from your [dashboard](https://avohq.io/dashboard). Open the license, find **Rotate keys** at the bottom and click **Rotate gem server token**, or **Rotate both** to replace the license key at the same time. Only account admins see it.
+If someone outside your team may have your gem server token, replace it from your [dashboard](https://avohq.io/dashboard). Open the license and click **Rotate** next to the gem server token, or **Rotate both** to replace the license key at the same time. Only account admins see these buttons.
 
 The old token stops working right away, so every `bundle install` that fetches the paid gems fails until `BUNDLE_PACKAGER__DEV` holds the new one. Update it on developer machines, in CI and in your Docker builds. Apps that are already running are not affected.
 

@@ -62,7 +62,7 @@ end
 
 ### Rotate the license key
 
-If someone outside your team may have your license key, for example a former agency, replace it from your [dashboard](https://avohq.io/dashboard). Open the license, find **Rotate keys** at the bottom and click **Rotate license key**, or **Rotate both** to replace the gem server token at the same time. Only account admins see it.
+If someone outside your team may have your license key, for example a former agency, replace it from your [dashboard](https://avohq.io/dashboard). Open the license and click **Rotate** next to the license key, or **Rotate both** next to the gem server token to replace both at the same time. Only account admins see these buttons.
 
 The old key stops working right away and is never issued again. Your apps keep running on their last license check for a while, then report the license as invalid, so set the new key as `config.license_key` and deploy every environment straight after.
 
