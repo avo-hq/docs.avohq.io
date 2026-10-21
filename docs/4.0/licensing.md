@@ -60,6 +60,14 @@ Avo.configure do |config|
 end
 ```
 
+### Rotate the license key
+
+If someone outside your team may have your license key, for example a former agency, replace it from your [dashboard](https://avohq.io/dashboard). Open the license, find **Rotate keys** at the bottom and click **Rotate license key**, or **Rotate both** to replace the gem server token at the same time. Only account admins see it.
+
+The old key stops working right away and is never issued again. Your apps keep running on their last license check for a while, then report the license as invalid, so set the new key as `config.license_key` and deploy every environment straight after.
+
+To replace the gem server token, see [Rotate the gem server token](./gem-server-authentication.html#rotate-the-gem-server-token). The public key never changes.
+
 ## Configure the display of license request timeout error
 
 If you want to hide the badge displaying the license request timeout error, you can do it by setting the `display_license_request_timeout_error` configuration to `false`. It defaults to `true`.
