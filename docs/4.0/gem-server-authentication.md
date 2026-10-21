@@ -179,6 +179,12 @@ Now you are ready to add Avo to your `Gemfile`.
 
 Run `bundle install` and `bundler` picks up the token and uses it to authenticate on the server.
 
+## Rotate the gem server token
+
+If someone outside your team may have your gem server token, replace it from your [dashboard](https://avohq.io/dashboard). Open the license and click **Rotate** next to the gem server token. In the dialog, also tick **License key** if you want to replace both at once, read the warnings, tick **I understand and agree** and confirm. Only account admins see the button.
+
+The old token stops working right away, so every `bundle install` that fetches the paid gems fails until `BUNDLE_PACKAGER__DEV` holds the new one. Update it on developer machines, in CI and in your Docker builds. Apps that are already running are not affected.
+
 ## Bundle without the paid gems
 
 If you need to distribute your Rails app without the paid gems, move them to an optional group.
