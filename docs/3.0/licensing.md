@@ -44,7 +44,7 @@ More info [here](https://avohq.io/faq/one-license-per-url.html).
 
 ### Sites
 
-You can see your licenses and projects on your [dashboard](https://avohq.io/dashboard).
+You can see your licenses and projects on your [dashboard](https://avohq.io/licenses).
 
 ## Add the license key
 
