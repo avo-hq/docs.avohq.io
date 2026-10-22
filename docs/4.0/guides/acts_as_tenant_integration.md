@@ -32,8 +32,8 @@ Let's create model for tenant. We are using `Account` as our tenant.
 
 **Account Migration and Model class**
 
-:::code-group
-```ruby [db/migrate/random_number_create_accounts.rb]{3}
+```ruby
+# db/migrate/random_number_create_accounts.rb
 # Migration
 class CreateAccounts < ActiveRecord::Migration[7.1]
   def change
@@ -49,7 +49,9 @@ class CreateAccounts < ActiveRecord::Migration[7.1]
   end
 end
 ```
-```ruby [app/models/account.rb]{3}
+
+```ruby
+# app/models/account.rb
 # Account model handles Tenant management
 class Account < ApplicationRecord
   MAX_SUBDOMAIN_LENGTH = 20
@@ -60,7 +62,6 @@ class Account < ApplicationRecord
 
 end
 ```
-:::
 
 ## Scope models
 ___
@@ -68,8 +69,8 @@ ___
 Now let's add users to `Account`. Here I am assuming to have an existing user model which is used for `Authentication`.
 Similarly we can scope other models.
 
-:::code-group
-```ruby [db/migrate/random_number_add_account_to_users.rb]{3}
+```ruby
+# db/migrate/random_number_add_account_to_users.rb
 class AddAccountToUsers < ActiveRecord::Migration
   def up
     add_column :users, :account_id, :integer # if we have existing user set null to true then update the data using seed
@@ -77,21 +78,22 @@ class AddAccountToUsers < ActiveRecord::Migration
   end
 end
 ```
-```ruby [app/models/account.rb]{3}
+
+```ruby
+# app/models/user.rb
 # Authentication
 class User < ActiveRecord::Base
   acts_as_tenant(:account)
 end
 ```
-:::
 
 ## Setting the current tenant
 
 There are three ways to set the current tenant but we be using the subdomain to lookup the current tenant.
 Since Avo has it's own `Application Controller` so there is no point in setting the tenant in Rails default `Application Controller` but we will set it there as well just to be safe site and also we might have some other pages other than Admin Dashboard supported by Avo.
 
-:::code-group
-```ruby [app/controllers/concerns/multitenancy.rb]{3}
+```ruby
+# app/controllers/concerns/multitenancy.rb
 # Multitenancy, to set the current account/tenant.
 module Multitenancy
   extend ActiveSupport::Concern
@@ -120,7 +122,8 @@ module Multitenancy
 end
 ```
 
-```ruby [config/initializers/avo.rb]{3}
+```ruby
+# config/initializers/avo.rb
 Avo.configure do |config|
   # configuration values
 end
@@ -129,7 +132,6 @@ Rails.configuration.to_prepare do
   Avo::ApplicationController.include Multitenancy
 end
 ```
-:::
 
 Now, whenever we navigate to https://sahsantoshh.example.com/ the tenant & the tenant_id will be set to **sahsantoshh**.
 
@@ -138,8 +140,8 @@ Now, whenever we navigate to https://sahsantoshh.example.com/ the tenant & the t
 We might have to many users and other records which needs to be associated with `Account`.
 For example, we will only move users record to the account
 
-:::code-group
-```ruby [db/seeds.rb]{3}
+```ruby
+# db/seeds.rb
 # Create default/first account where we want to associate exiting data
 account = Account.find_or_create_by!(name: 'Nepal', subdomain: 'sahsantoshh')
 
@@ -148,6 +150,5 @@ User.unscoped.in_batches do |relation|
   sleep(0.01) # throttle
 end
 ```
-:::
 
 Now run the seed command to update existing records
