@@ -46,6 +46,13 @@ field :body, as: :textarea, hide_on: [:index, :show]
 
 Be aware that a few fields override those options — for example, the [`id`](./fields/id.html) field hides itself on the <Edit /> and <New /> views.
 
+You can declare the same field more than once, each for its own views. Saving the form goes through the declaration the form shows, so its `attach_scope`, `update_using`, and other save rules apply:
+
+```ruby
+field :user, as: :belongs_to, only_on: :forms, attach_scope: -> { query.where(active: true) }
+field :user, as: :belongs_to, only_on: :display
+```
+
 Please read the detailed [views](./views.html) page for more info.
 
 ## Show fields conditionally
