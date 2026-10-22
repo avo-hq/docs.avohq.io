@@ -77,7 +77,7 @@ None, unless an API client reads a `404` from a create or update as "the related
 
 When a resource declares the same field more than once for different views, saving the form now goes through the declaration the form shows. Before, the last declaration wrote the value, whichever view it was for, so the form's `attach_scope`, `update_using` and other save rules could be skipped. See [Show and hide fields on different views](./field-options.html#show-and-hide-fields-on-different-views).
 
-A polymorphic `belongs_to` or a money field that receives only one of its params now keeps the record's current value for the other. Before, an `<as>_id` or a currency sent alone was dropped, and an amount sent alone cleared the currency. The panel's forms always send both; this shows in the [REST API](./rest-api.html), the assistant and MCP clients.
+A money field that receives only one of its params now keeps the record's current value for the other, and a polymorphic `belongs_to` that receives only its `<as>_id` keeps the current type. An `<as>_type` sent alone keeps the current record when it is the current type. A new type needs its `<as>_id`, since the current id would name a different record: a linked record sent a new type alone gets "is invalid" on the field, and nothing is saved. Before, an `<as>_id` or a currency sent alone was dropped, an `<as>_type` sent alone cleared the id, and an amount sent alone cleared the currency. The panel's forms always send both; this shows in the [REST API](./rest-api.html), the assistant and MCP clients.
 
 `Avo::BaseResource#fields_by_database_id` is replaced by `fields_by_param`, which maps every form param to the field that writes it.
 
@@ -97,7 +97,7 @@ The assistant and connected MCP clients used to write the values they were given
 
 - **Save rules run:** [`update_using`](./field-options-api.html#update_using), a `belongs_to` looked up through its resource's finder and attach scope, a polymorphic field's `types`, and a key-value field's locks.
 - **Names are the form's:** a field's id, or the param the form submits. A column a field writes under another name is refused by name: `tag_list` (write `tags`), a money field's `price_cents`, a location's `stored_as` columns, a `for_attribute:` field's attribute. On the MCP server, so is a field the edit form doesn't render, such as a badge.
-- **Paired params:** a polymorphic `belongs_to` takes its `_type` and `_id`, and a money field with `enable_currency` its amount and currency. Either one sent alone keeps the record's current value for the other.
+- **Paired params:** a money field with `enable_currency` takes its amount and currency, either of which sent alone keeps the record's current value for the other. A polymorphic `belongs_to` takes its `_type` and `_id`: an `_id` sent alone keeps the current type, and a `_type` naming another type needs its `_id`.
 
 Undo in the chat still restores the stored row exactly as it was.
 
