@@ -204,6 +204,8 @@ So a connection can never do anything its admin couldn't do by hand. Granting a 
 
 The [`visible:`](./field-options-api.html#visible) blocks on your fields apply to reads *and* writes. A field the panel hides from this admin isn't returned by any read tool, isn't listed by `list_resources`, and can't be written even on a record they may otherwise edit. Read-only fields are refused the same way, and so are `id`, `created_at`, `updated_at`, and any column whose name looks like a credential (`password`, `token`, `secret`, `digest`). A refused attribute fails the call rather than being silently dropped.
 
+A write that is allowed is saved through your fields, the way the edit form saves it: `update_using`, a `belongs_to`'s attach scope and a key-value field's locks apply to a connected client too.
+
 The converse is the rule too: a field the panel **does** render this admin is returned, credentials included. There is no MCP-only redaction list — to keep something out of an AI client's reach, hide it with `visible:`, the same block that hides it from a person.
 
 When the rule is about *who* rather than *when*, the resource's policy can name the fields directly with `whitelisted_fields` / `blacklisted_fields`. A field it withholds is kept from every Avo surface at once, this one included, and cannot be widened back by a `visible:` block. `Avo::Current.interface` is `:mcp` for every call this add-on serves, so a policy that trusts the panel more than a connected client can say so in one place. See [Field authorization](./authorization.html#hide-fields-from-a-user).

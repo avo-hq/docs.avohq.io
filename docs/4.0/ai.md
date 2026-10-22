@@ -257,6 +257,8 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. A delete works one record at a time; an update works on one record or on many, and a batch is one card covering the whole set. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. The exception is an [import from a CSV](#reading-files-and-importing-from-them), which is proposed as one card and creates its rows only when you confirm. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
+**Writes go through your fields.** A create or update is saved the way the edit form saves it, so each field's save rules run: [`update_using`](./field-options-api.html#update_using), a `belongs_to` found through its resource's own finder and attach scope (a slug resolves), a key-value field's locks. The assistant writes the names the form takes — a field's id, or the param the form submits (`user_id`, a polymorphic field's `commentable_type` and `commentable_id` together). A column a field writes under another name (`tag_list`, `price_cents`) is refused, never silently dropped. Undo is the exception: it puts back the stored copy of the row.
+
 **Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "commit", "apply it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions). A typed confirmation reaches the latest card while nothing else has happened since: if an earlier "go ahead" of yours reached the assistant and it only reminded you to confirm, the next "do it" still confirms the card. Once you ask about something else, or the assistant looks something up or asks you a question, click the card's button instead. When one reply shows several cards, typing confirms none of them, because it can't know which one you mean; click each card you want. Typing never approves a call to a connected MCP server: that card takes a click, because what the server sends back is text an outside system wrote. See [Approve a call](#approve-a-call).
 
 **Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
@@ -657,6 +659,18 @@ It wraps your `execute` by prepending to the class it's included in. Included in
 :::
 
 Fill in the `description` — the model reads it to decide whether to call the tool, and a vague one is the usual reason a tool never gets called — then the `parameters` schema and `execute`.
+
+A tool that writes a record goes through the resource's fields, as the shipped write tools do — never `assign_attributes`, `Model.new(attrs)` or `update(attrs)`:
+
+```ruby
+# app/tools/crm_tool.rb
+scope = Avo::Ai::FieldScope.new(Avo::Resources::Contact, user: acting_user, view: :edit, record: contact)
+refused = attributes.keys.map(&:to_s) - scope.writable_params.keys
+return {error: "Not writable: #{refused.join(", ")}"} if refused.any?
+
+scope.fill(contact, attributes) # runs each field's fill_field, as a panel save does
+contact.save
+```
 
 Then register the class in your initializer:
 
