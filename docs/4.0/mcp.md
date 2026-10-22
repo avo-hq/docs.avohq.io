@@ -236,7 +236,7 @@ class IssueInvoiceTool < Avo::McpServer::Tool
 
   input_schema(
     properties: {
-      order_id: {type: "integer", description: "The order to invoice."}
+      order_id: {type: "string", description: "The order's id, as list_records returns it."}
     },
     required: ["order_id"]
   )
@@ -247,7 +247,7 @@ class IssueInvoiceTool < Avo::McpServer::Tool
     )
     invoice = Invoicing.issue!(order, by: identity.admin)
 
-    respond({invoiceId: invoice.id, number: invoice.number})
+    respond({invoiceId: invoice.to_param, number: invoice.number})
   end
 end
 ```
