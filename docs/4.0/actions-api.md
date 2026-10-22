@@ -72,6 +72,8 @@ end
 - **Type:** Hash or Proc returning a Hash
 - **Default:** `{}`
 
+Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults: `resource` and `record`, with `record` `nil` on an <Index /> view or an [association panel](./actions.html#run-actions-from-an-association-panel).
+
 :::info
 Arguments are encrypted and Base64-encoded when embedded in action URLs, so sensitive values don't leak into the query string.
 :::
@@ -133,6 +135,8 @@ end
 
 - **Type:** String or Proc
 - **Default:** `nil` — the class name is humanized (`ToggleInactive` → "Toggle inactive")
+
+Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults: `resource`, `record`, `view`, `arguments`, `query`. `record` is `nil` while the dropdown renders on an <Index /> view or an [association panel](./actions.html#run-actions-from-an-association-panel) — it holds a record only when the action was hydrated with one, from <Show /> or a row control.
 
 </Option>
 

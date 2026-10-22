@@ -350,6 +350,30 @@ end
 Standalone actions pair well with [fields](#collect-input-with-fields) to collect the input the operation needs.
 :::
 
+## Run actions from an association panel
+
+An association panel that lists records — `has_many`, `has_and_belongs_to_many` — carries the actions declared on the **associated** resource, and they run on the rows you check inside the panel, so it behaves like a small <Index /> view. Non-standalone actions stay disabled until you check at least one row. <VersionReq version="4.3.3" /> A [row control](./custom-controls.html#customize-the-row-controls) is the way to run one on a single row without checking it: Avo hydrates it with that row's record.
+
+```ruby
+# app/avo/resources/team.rb
+class Avo::Resources::Team < Avo::BaseResource
+  def fields
+    # The Team members panel offers the actions declared on Avo::Resources::User
+    field :team_members, as: :has_many
+  end
+end
+```
+
+While that dropdown renders, `record` is `nil`, exactly as on the main <Index /> view, so a [`name`](./actions-api.html#name) or [`arguments`](./actions-api.html#arguments) block has to handle its absence. The panel's parent record reaches the [`visible`](./actions-api.html#visible) block as `parent_resource.record`, which is how you hide an action depending on the record holding the panel:
+
+```ruby
+# app/avo/actions/toggle_inactive.rb
+class Avo::Actions::ToggleInactive < Avo::BaseAction
+  # `parent_resource` is nil everywhere outside an association panel.
+  self.visible = -> { parent_resource.nil? || !parent_resource.record.archived? }
+end
+```
+
 ## Control visibility and authorization
 
 By default actions show on every view except <New />. Use [`visible`](./actions-api.html#visible) to change where an action appears — for example, only on the <Index /> view:
