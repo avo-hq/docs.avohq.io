@@ -4,6 +4,41 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo` `4.3.3`
+
+<Option name="Non-standalone actions on an association panel need a selected row">
+
+### Breaking Change
+
+In a `has_many` panel, an action that isn't [standalone](./actions.html#run-an-action-without-records) is greyed out until you check a row, the same as on the resource's <Index /> view. Before, the panel built its actions with the parent record — the record whose <Show /> page holds the panel — so Avo treated every action as already having a target and let you open and run it with nothing selected ([#4904](https://github.com/avo-hq/avo/pull/4904)). See [Run actions from an association panel](./actions.html#run-actions-from-an-association-panel).
+
+### Action Required
+
+An action that shows on an association panel and reads `record` in its [`name`](./actions-api.html#name) or [`arguments`](./actions-api.html#arguments) block now gets `nil` there, as it already did on the main <Index /> view. Guard the block:
+
+```ruby
+# app/avo/actions/release_fish.rb
+class Avo::Actions::ReleaseFish < Avo::BaseAction
+  self.name = -> { "Release #{record.name}" } # [!code --]
+  self.name = -> { record.present? ? "Release #{record.name}" : "Release fish" } # [!code ++]
+end
+```
+
+Then check your system specs: one that opens an association panel's **Actions** dropdown and runs a non-standalone action without checking a row now finds that action disabled.
+
+### Maintaining Previous Behavior
+
+An action meant to run from the panel with nothing selected is a standalone action — set [`standalone`](./actions-api.html#standalone) to `true`. It stays enabled, and `handle` receives an empty `query`.
+
+```ruby
+# app/avo/actions/export_team_members.rb
+class Avo::Actions::ExportTeamMembers < Avo::BaseAction
+  self.standalone = true
+end
+```
+
+</Option>
+
 ## Upgrade to `avo` `4.3.2`
 
 <Option name="Fields pick up `activerecord.attributes` and `attributes` keys">
