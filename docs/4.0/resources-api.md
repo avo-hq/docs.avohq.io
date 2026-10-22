@@ -408,7 +408,14 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-The block is evaluated with `query`, `id`, `params`, and `model_class` available. In batch contexts (bulk actions, for example) `id` is an Array — return a collection with `query.where(...)` in that case.
+The block is evaluated with `query`, `id`, `params`, and `model_class` available. In batch contexts (bulk actions, for example) `id` is an Array — return a collection with `query.where(...)` in that case. Avo asks the block once per id for any id that collection leaves out, so a block that takes one id at a time still works. When Avo finds several records at once (bulk actions, `find_records`), it keeps only the records `query` also holds, so a block that ignores `query` can't reach past the user's [policy scope](./authorization.html#limit-which-records-a-user-sees) there. A single lookup (`Show`, `Edit`, a `belongs_to`) uses the block's answer as-is, so keep reading through `query`.
+
+To find several records in your own code, call the resource's `find_records`. It goes through the same block and returns one entry per id, in order, with `nil` for an id that matches no record. `query:` defaults to the current user's policy scope.
+
+```ruby
+Avo::Resources::Post.find_records(["hello-world", "missing"], query: Post.published)
+# => [#<Post slug: "hello-world">, nil]
+```
 
 - **Type:** Proc — receives `query`, `id`, `params`, and `model_class`; returns the record (or collection when `id` is an Array)
 - **Default:** `query.find(id)`. Models using [FriendlyId](https://github.com/norman/friendly_id) (without a scope) are detected automatically and found by slug.

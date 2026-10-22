@@ -4,6 +4,24 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo`: bulk actions find the selected records through `find_records`
+
+<Option name="`query` is an Array, in the order the records were selected">
+
+### What changed
+
+A bulk action now looks up the records the user selected through the resource's new [`find_records`](./resources-api.html#self.find_record_method), the same lookup the assistant and the MCP tools use.
+
+- **`query` is an Array**, in the order the records were selected. It used to be an `ActiveRecord::Relation` on a resource whose `find_record_method` returns `query.where(...)` for a list of ids, FriendlyId resources included. **Select all** still passes a relation.
+- **A `find_record_method` that ignores `query` stays inside the user's policy scope.** The records it returns that the scope doesn't hold drop out of `query`.
+- **A `find_record_method` that takes one id at a time works for bulk actions.** Avo asks it once per id when it fails on the whole list.
+
+### Action Required
+
+None, unless a bulk action calls a relation method such as `update_all`, `where` or `find_each` on `query`. Iterate over it instead, or build a relation with `Model.where(id: query.map(&:id))`.
+
+</Option>
+
 ## `avo-mcp_server`: records are named by `to_param`
 
 <Option name="Record ids are strings, resolved through the resource's own finder">
