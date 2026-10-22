@@ -178,6 +178,8 @@ Suggestions don't show on keys or values whose editing is disabled, and keys alr
 
 You can enforce some restrictions by removing the ability to edit the field's key or value by setting `disable_editing_keys` or `disable_editing_values` to `true` respectively. If `disable_editing_keys` is set to `true`, be aware that this option will also disable adding rows as well. You can separately remove the ability to add a new row by setting `disable_adding_rows` to `true`. Deletion of rows can be enforced by setting `disable_deleting_rows` to `true`.
 
+Avo applies these restrictions again when the record is saved, so a request that changes the submitted value directly can't get around them.
+
 ```ruby
 field :meta, # The database field ID
   as: :key_value, # The field type.
