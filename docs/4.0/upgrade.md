@@ -23,6 +23,20 @@ The MCP tools name every record by its `to_param`, the id in the panel's URL, an
 
 </Option>
 
+## `avo`: attaching a `has_many`, `has_one` or HABTM record follows `attach_scope`
+
+<Option name="The attach modal saves only the records its list offers">
+
+### What changed
+
+The attach modal of a `has_many`, `has_one` or `has_and_belongs_to_many` field listed the records its [`attach_scope`](./associations/has_many.html#attach_scope) returned, but saving looked the chosen record up through the policy scope alone. A record outside a narrowing `attach_scope` could still be attached by sending its id, and one a widening `attach_scope` listed was refused. Saving now goes through the same `attach_scope` as the list, the way a `belongs_to` already did. A record outside it is refused like an id that doesn't exist.
+
+### Action Required
+
+None for the modal's own list, which offers only records inside the `attach_scope`. A [searchable](./associations/searchable) picker backed by a [custom search provider](./search-api.html#custom-search-providers) returns hashes, which the `attach_scope` can't filter, so make that search return only records inside it. Anything that posts ids to the attach endpoint directly gets the same check.
+
+</Option>
+
 ## `avo`: a `belongs_to` value that matches no record is a form error
 
 <Option name="The form comes back with the error on the field, and the REST API answers `422`">
