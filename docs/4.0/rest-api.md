@@ -540,7 +540,8 @@ Different field types accept the formats you'd expect:
 | Polymorphic `belongs_to` | both parts: `"reactable_type": "Post"`, `"reactable_id": 7` |
 | `select` with `multiple`, `checkbox_list`, `boolean_group` | a list: `"tags": ["ops", "eu"]` |
 | `location` on two columns | an object keyed by its `stored_as` columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
-| `tags`, `key_value`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"`, `"home": "44.43,26.10"` |
+| `tags`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"home": "44.43,26.10"` |
+| `key_value` | an object, or the same JSON as a string: `"settings": { "theme": "dark" }`, `"settings": "{\"theme\":\"dark\"}"`. Older Avo versions wrote `{}` for an object, so send the string to stay compatible |
 | `code` | one string, stored as it is unless the field is declared with `pretty_generated: true`, which parses it as JSON |
 
 `null` clears any field, a list and a `location` on two columns included. The one exception is a `location` on one column, which splits the string it is given: clear it with `""`, since `null` is answered with a `500`. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
