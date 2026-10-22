@@ -208,5 +208,5 @@ raise Avo::Api::AuthenticationError if @api_user.nil?
 | `401` | Authentication failed or missing — an absent, malformed, unknown, expired, revoked, or orphaned token all look the same ([why](./rest-api.html#token-lifecycle)) |
 | `403` | Refused on permission. `reason` says which: `token_entitlement` (outside the token's [grants](./rest-api.html#entitle-a-token)) or `policy` (a policy method denied it) — see [the three refusals](./rest-api.html#tell-the-three-refusals-apart) |
 | `404` | Record not found, out of policy scope, or the `avo-api` feature isn't enabled on your license |
-| `422` | Validation errors, a write to an [array resource](./rest-api.html#array-resources) that defines no `save_record` or `destroy_record`, or a write the remote API of an [HTTP resource](./rest-api.html#http-resources) did not accept |
+| `422` | Validation errors, a `belongs_to` id that matches no record it may attach (named in `errors` under that field), a write to an [array resource](./rest-api.html#array-resources) that defines no `save_record` or `destroy_record`, or a write the remote API of an [HTTP resource](./rest-api.html#http-resources) did not accept |
 | `502` | The remote API of an [HTTP resource](./rest-api.html#http-resources) failed on a read. `message` carries the error |

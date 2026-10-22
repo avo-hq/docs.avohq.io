@@ -4,6 +4,20 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo`: a `belongs_to` value that matches no record is a form error
+
+<Option name="The form comes back with the error on the field, and the REST API answers `422`">
+
+### What changed
+
+A `belongs_to` value that matches no record the field may attach, because the record is gone or outside the field's [`attach_scope`](./associations/belongs_to.html#attach_scope), used to answer with a 404 page, and `avo-api` with a `404`. The form now comes back with "is invalid" on that field, and the API answers `422` with the field named in `errors`, the way a validation error does. Nothing is saved.
+
+### Action Required
+
+None, unless an API client reads a `404` from a create or update as "the related record doesn't exist". It gets a `422` now; read its `errors`.
+
+</Option>
+
 ## `avo-ai` and `avo-mcp_server`: writes go through the resource's fields
 
 <Option name="Creates and updates run each field's save rules and take the form's names">
