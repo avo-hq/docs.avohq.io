@@ -294,15 +294,9 @@ class PostPolicy < ApplicationPolicy
 end
 ```
 
-:::warning
-The scope doesn't apply to association panels. `CommentPolicy::Scope` doesn't filter a post's `has_many :comments`. If you want it to, pass the scope through the field's [`scope` option](./associations/has_many.html#add-scopes-to-associations):
+The scope also filters the rows of `has_many` and `has_and_belongs_to_many` association panels, using the policy of the resource the panel lists, not the parent's. A post's comments panel shows only what `CommentPolicy::Scope` returns, or the scope of the policy that resource sets with [`authorization_policy`](./authorization-api.html#authorization_policy). The panel's [buttons](#authorize-association-controls) still ask the parent's policy. A `has_one` panel isn't filtered: the associated resource's `show?` decides whether its record shows.
 
-```ruby
-# app/avo/resources/post.rb
-field :comments, as: :has_many, scope: -> { Pundit.policy_scope(parent, query) }
-```
-
-:::
+The field's [`scope` option](./associations/has_many.html#add-scopes-to-associations) runs on the query the policy scope already narrowed, so use it only to narrow further. If you added `scope: -> { Pundit.policy_scope(parent, query) }` from an earlier version of this page, remove it: it passes the post where Pundit expects the user.
 
 ## Hide fields from a user
 

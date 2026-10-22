@@ -387,19 +387,9 @@ class PostPolicy < ApplicationPolicy
 end
 ```
 
-:::warning
-This scope will be applied only to the <Index /> view of Avo. It will not be applied to the association view.
+The scope also filters the `has_many` and `has_and_belongs_to_many` association views, using the policy of the associated resource. A `Post` has_many `Comment`s, so `CommentPolicy::Scope` filters the comments on the post's `has_many` field.
 
-Example:
-
-A `Post` has_many `Comment`s. The `CommentPolicy::Scope` will not affect the `has_many` field. You need to add the [`scope` option](./associations/has_many.html#add-scopes-to-associations) to the `has_many` field where you can modify the query.
-
-```ruby
-# The `parent` is the Post instance that the user is seeing. ex: Post.find(1)
-# The `query` is the Active Record query being done on the comments. ex: post.comments
-field :comments, as: :has_many, scope: -> { Pundit.policy_scope(parent, query) }
-```
-:::
+The field's [`scope` option](./associations/has_many.html#add-scopes-to-associations) runs on the query the policy scope already narrowed, so use it only to narrow further. If you added `scope: -> { Pundit.policy_scope(parent, query) }` from an earlier version of this page, remove it: it passes the post where Pundit expects the user.
 
 ## Using different policy methods
 
