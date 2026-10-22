@@ -4,6 +4,30 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo-ai` and `avo-mcp_server`: writes go through the resource's fields
+
+<Option name="Creates and updates run each field's save rules and take the form's names">
+
+### What changed
+
+The assistant and connected MCP clients used to write the values they were given straight onto the model. They now save the way the panel's edit form does, through your fields:
+
+- **Save rules run:** [`update_using`](./field-options-api.html#update_using), a `belongs_to` looked up through its resource's finder and attach scope, a polymorphic field's `types`, and a key-value field's locks.
+- **Names are the form's:** a field's id, or the param the form submits. A column a field writes under another name is refused by name: `tag_list` (write `tags`), a money field's `price_cents`, a location's `stored_as` columns, a `for_attribute:` field's attribute. On the MCP server, so is a field the edit form doesn't render, such as a badge.
+- **Paired params go together:** a polymorphic `belongs_to` takes its `_type` and `_id` in the same call, and so does a money field with `enable_currency`.
+
+Undo in the chat still restores the stored row exactly as it was.
+
+### Action Required
+
+- **A client, prompt or skill that writes raw columns:** switch to the names the refusal lists, which are the ones `list_resources` and the edit form use.
+- **A tool of your own that writes records:** write through the fields — `Avo::Ai::FieldScope#fill` for the assistant, `FieldSupport.write_record!` for the MCP server. See [Bring your own tool](./ai.html#bring-your-own-tool).
+- **An `update_using` that isn't safe to run twice** now also runs on chat and MCP writes, as it does on the panel's.
+
+The MCP server still reports a record and its associations by primary key. On a resource whose `find_record_method` accepts only a slug, a `belongs_to` pointing at it can't be set with the id `show_record` returns.
+
+</Option>
+
 ## Upgrade to `avo` `4.3.2`
 
 <Option name="Fields pick up `activerecord.attributes` and `attributes` keys">

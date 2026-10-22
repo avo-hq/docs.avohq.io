@@ -665,8 +665,10 @@ A tool that writes a record goes through the resource's fields, as the shipped w
 ```ruby
 # app/tools/crm_tool.rb
 scope = Avo::Ai::FieldScope.new(Avo::Resources::Contact, user: acting_user, view: :edit, record: contact)
-params = attributes.slice(*scope.writable_params.keys)
-scope.fill(contact, params) # runs each field's fill_field, as a panel save does
+refused = attributes.keys.map(&:to_s) - scope.writable_params.keys
+return {error: "Not writable: #{refused.join(", ")}"} if refused.any?
+
+scope.fill(contact, attributes) # runs each field's fill_field, as a panel save does
 contact.save
 ```
 
