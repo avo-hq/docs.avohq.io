@@ -4,6 +4,25 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo-mcp_server`: records are named by `to_param`
+
+<Option name="Record ids are strings, resolved through the resource's own finder">
+
+### What changed
+
+The MCP tools name every record by its `to_param`, the id in the panel's URL, and find it through the resource's [`find_record_method`](./resources-api.html#self.find_record_method), within the admin's policy scope. They used to use the primary key.
+
+- **Ids are strings.** `list_records`, `search_records`, `show_record` and the write tools return a record's id as `"12"`, not `12`, and so do a `belongs_to`'s id, a `has_many`'s ids, and `run_action`'s `recordIds`. The `id` and `record_ids` arguments take strings; an integer is refused with `value at /id is not a string`.
+- **Hidden keys stay hidden.** Where a model hides its primary key (friendly_id, hashids, a prefixed id, a custom `to_param`), tools return the slug or hashid instead of the primary key, and take whatever the resource's finder takes. A record with no title attribute is titled `Post #<to_param>`.
+- **A `belongs_to` takes back the id `show_record` gives**, also on a resource found by slug alone.
+
+### Action Required
+
+- **A client, prompt or skill that sends or compares ids as numbers:** treat ids as strings and send back what the tools return.
+- **A tool of your own:** declare its id arguments `type: "string"`, pass them to `ToolSupport.find_authorized_record!` as received, and name records by `record.to_param` in what it returns. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+
+</Option>
+
 ## `avo`: a `belongs_to` value that matches no record is a form error
 
 <Option name="The form comes back with the error on the field, and the REST API answers `422`">
@@ -37,8 +56,6 @@ Undo in the chat still restores the stored row exactly as it was.
 - **A client, prompt or skill that writes raw columns:** switch to the names the refusal lists, which are the ones `list_resources` and the edit form use.
 - **A tool of your own that writes records:** write through the fields — `Avo::Ai::FieldScope#fill` for the assistant, `FieldSupport.write_record!` for the MCP server. See [Bring your own tool](./ai.html#bring-your-own-tool).
 - **An `update_using` that isn't safe to run twice** now also runs on chat and MCP writes, as it does on the panel's.
-
-The MCP server still reports a record and its associations by primary key. On a resource whose `find_record_method` accepts only a slug, a `belongs_to` pointing at it can't be set with the id `show_record` returns.
 
 </Option>
 
