@@ -100,10 +100,6 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-:::warning
-`query` already holds only the records the user's [policy scope](./../authorization.html#limit-which-records-a-user-sees) allows, so building on it keeps that limit. A fresh relation, like `-> { ::User.all }`, widens past it: the dropdown lists every record it returns, and saving the form accepts them too. Return one only when users should be able to pick records they can't otherwise see.
-:::
-
 For scenarios where you need to add a record associated with that resource (you create a `Post` through a `Category`), the `parent` is unavailable (the `Post` is not persisted in the database). Therefore, Avo makes the `parent` an instantiated object with its parent populated (a `Post` with the `category_id` populated with the parent `Category` from which you started the creation process) so you can better scope out the data (you know from which `Category` it was initiated).
 
 ## Allow detaching via the association

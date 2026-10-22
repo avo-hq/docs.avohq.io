@@ -15,6 +15,8 @@ field :user,
 ```
 
 Pass in a block where you attach scopes to the `query` object and `parent` object, which is the actual record where you want to assign the association. The block is executed in the [`ExecutionContext`](./../execution-context).
+
+`query` already holds only the records the user's [policy scope](./../authorization.html#limit-which-records-a-user-sees) allows, so building on it keeps that limit. A fresh relation, like `-> { ::User.all }`, widens the list past it. On a `belongs_to`, saving the form accepts those records too. On the other associations, attaching still accepts only records inside the policy scope.
 </Option>
 
 :::warning
