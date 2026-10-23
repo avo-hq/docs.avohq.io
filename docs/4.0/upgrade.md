@@ -4,6 +4,22 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo` `4.3.6`
+
+<Option name="Trix uploads on the New form are authorized with `create?`">
+
+### What changed
+
+A [Trix](./fields/trix) field on an Action Text attribute, or on a plain column with `attachments_disabled: false`, now accepts uploads on the `New` form. Those uploads are authorized with the resource policy's `create?`. Uploads on a saved record are still authorized with `update?`, and `attachment_key` uploads with `upload_{FIELD_ID}?`.
+
+Action Text attachments, images and other files, now keep their `sgid` and render on the `Show` view through your app's `active_storage/blobs/_blob.html.erb` partial. Before, non-image files rendered as missing ([#2715](https://github.com/avo-hq/avo/issues/2715)).
+
+### Action Required
+
+None, unless your `create?` policy is looser than `update?` and you want to keep users who can create a record from uploading files before it's saved. Set `attachments_disabled: true` on that field.
+
+</Option>
+
 ## `avo-ai`, `avo-mcp_server`, `avo-menu`: an action's `visible` block applies everywhere
 
 <Option name="An action hidden by `self.visible` is hidden from the assistant, MCP clients and the menu">
