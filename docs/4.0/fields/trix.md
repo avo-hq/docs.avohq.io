@@ -27,7 +27,9 @@ Trix field is hidden from the `Index` view.
 
 Hides the attachments button from the Trix toolbar.
 
-<!-- @include: ./../common/default_boolean_false.md-->
+#### Default value
+
+`false` on Action Text attributes and on fields with an `attachment_key`, `true` on other plain columns.
 </Option>
 
 <Option name="`hide_attachment_filename`">
@@ -82,7 +84,19 @@ class Post < ApplicationRecord
 end
 ```
 
-Now, when you upload a file in the Trix field, Avo will create an Active Record attachment.
+Now, when you upload a file in the Trix field, Avo will create an Active Record attachment. Because the file is attached to the record, uploads with an `attachment_key` work only once the record is saved.
+
+### Attachments without an `attachment_key`
+
+On a plain column you can also enable attachments without an association. Avo uploads the file to Active Storage and stores its URL in the HTML, without attaching it to the record. This works on the `New` form too.
+
+```ruby
+field :body, as: :trix, attachments_disabled: false
+```
+
+:::warning
+These blobs aren't attached to any record, so a job that purges unattached blobs (`ActiveStorage::Blob.unattached`) deletes them.
+:::
 
 ## Disable attachments
 
@@ -98,11 +112,13 @@ By default, Trix will add some meta-data in the editor (filename, filesize, and 
 
 ## Active Storage
 
-Trix integrates seamlessly with Active Storage. When you use it with a plain database column on a record table (not with Action Text) you have to set the `attachment_key` option (documented above).
+Trix integrates seamlessly with Active Storage. When you use it with a plain database column on a record table (not with Action Text), set the `attachment_key` option to attach uploads to the record, or `attachments_disabled: false` to upload them [without an association](#attachments-without-an-attachment-key).
 
 ## Action Text
 
 Trix integrates seamlessly with Action Text. It will automatically work with Action Text as well and it won't require you to add an `attachment_key`.
+
+Uploads work on the `New` form, before the record is saved, and any file type is stored as an Action Text attachment. Avo renders those attachments with your app's `active_storage/blobs/_blob.html.erb` partial, just like your app does.
 
 ## Demo app
 
@@ -116,7 +132,6 @@ You can customize the javascript alert messages for various actions in the Trix 
 avo:
   this_field_has_attachments_disabled: This field has attachments disabled.
   you_cant_upload_new_resource: You can't upload files into the Trix editor until you save the resource.
-  you_havent_set_attachment_key: You haven't set an `attachment_key` to this Trix field.
 ```
 
 Refer to the [default](https://github.com/avo-hq/avo/blob/main/lib/generators/avo/templates/locales/avo.en.yml) for more details.
