@@ -37,7 +37,7 @@ Keys of the `self.collaboration` hash.
 
 <Option name="`author`" headingSize="3">
 
-Configures how the timeline displays the author of comments, reactions, and automatic entries. The author itself is always resolved from `Avo::Current.user`; this hash only controls display.
+Configures how the timeline displays the author of comments, reactions, and automatic entries. The author itself is resolved from `Avo::Current.user`, unless a watcher sets its own [`author`](#watchers); this hash only controls display.
 
 ```ruby
 self.collaboration = {
@@ -83,8 +83,26 @@ self.collaboration = {
 | `property`         | Symbol or String | *(required)* The attribute to watch for changes.                                                        |
 | `message`          | Proc             | Builds a custom message for the entry. Executed with `resource`, `record`, `property`, `old_value`, and `new_value` in scope. |
 | `i18n_message_key` | String           | An I18n key used to translate the message instead of a `message` proc.                                  |
+| `author`           | Proc             | Returns the entry's author. Executed with the same scope as `message`. Defaults to `Avo::Current.user`. |
+| `hide_values`      | Boolean          | When `true`, the entry is saved without `old_value` and `new_value`, and the timeline shows the `message` instead of the change. Defaults to `false`. |
 
 When a watcher provides neither `message` nor `i18n_message_key`, Avo falls back to the `avo.collaboration.property_changed` translation.
+
+:::info Changes made outside Avo
+`Avo::Current.user` is only set inside Avo's controllers, so a change made from your app's own pages, a background job, or the console has no author by default. Use `author` to name one, for example the user your app tracks in `Current.user`.
+:::
+
+:::warning Watching secrets
+Use `hide_values: true` on columns that hold secrets, like API keys or tokens, so the value is never stored or shown in the timeline. The `message` and `author` procs still receive the real values, and the message is stored as-is, so don't interpolate the secret into it.
+
+```ruby
+self.collaboration = {
+  watchers: [
+    { property: :key, message: -> { "Rotated the license key" }, author: -> { Current.user }, hide_values: true }
+  ]
+}
+```
+:::
 
 :::info Safe HTML translations
 When the translation key ends in `_html`, Rails treats the value as safe HTML, so message translations may contain markup. See Rails' [safe HTML translations](https://guides.rubyonrails.org/i18n.html#using-safe-html-translations).
