@@ -440,7 +440,7 @@ end
 ```
 
 - **Type:** `Class` with a `resolve` method returning a relation
-- **Applies to:** the resource's own views. Not applied to association panels; use the association field's [`scope` option](./associations/has_many.html#add-scopes-to-associations).
+- **Applies to:** the resource's own views, and the rows of `has_many` and `has_and_belongs_to_many` panels that list this resource. The association field's [`scope` option](./associations/has_many.html#add-scopes-to-associations) runs after it, on the narrowed query.
 
 </Option>
 
