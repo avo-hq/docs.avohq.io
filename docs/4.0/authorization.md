@@ -198,7 +198,9 @@ Methods for panel-level controls (`view_`, `create_`, `attach_`, `act_on_`) get 
 
 If you want to hide the whole comments panel, use `view_comments?`. If you want to hide only the view button on each row, use `show_comments?`.
 
-These methods only control buttons. Access to the comment's own pages is still decided by `CommentPolicy`, so if `CommentPolicy#edit?` allows it, a user can reach the edit page by URL even when `edit_comments?` hides the button.
+Most of these methods only control buttons. Access to the comment's own pages is still decided by `CommentPolicy`, so if `CommentPolicy#edit?` allows it, a user can reach the edit page by URL even when `edit_comments?` hides the button.
+
+`view_comments?` is the exception: it guards the panel and the association's own route. `/resources/posts/:id/comments/:comment_id` renders one comment's show page — it is where a `has_one` panel loads its frame from, and it is reachable by URL for a `has_many` — and it asks `view_comments?` before rendering, then `CommentPolicy#show?` for the comment itself. A `has_many` record is looked up inside `CommentPolicy::Scope`, so a comment the scope doesn't hold is not found there. <VersionReq version="4.3.4" /> Before those checks, anyone who could see the post could open any of its comments ([GHSA-x65r-p6hf-94hv](https://github.com/avo-hq/avo/security/advisories/GHSA-x65r-p6hf-94hv)).
 
 ### Reuse another policy for an association
 

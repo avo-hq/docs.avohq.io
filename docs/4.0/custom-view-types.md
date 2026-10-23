@@ -21,7 +21,7 @@ Every view type is a ViewComponent that inherits from `Avo::ViewTypes::BaseViewT
 | `resource`        | The Avo resource class                                        |
 | `pagy`            | Pagination object                                             |
 | `query`           | The current query                                             |
-| `turbo_frame`     | The Turbo Frame ID                                            |
+| `turbo_frame`     | The surrounding Turbo Frame ID, passed on to the paginator    |
 | `index_params`    | Current index parameters                                      |
 | `reflection`      | Association reflection (if nested)                            |
 | `parent_record`   | Parent record (if nested)                                     |
@@ -73,6 +73,29 @@ Then create the template. You have full control over the HTML — render items h
 
 :::info
 The `paginator_component` method is inherited from the base class. Always render it to keep pagination working.
+:::
+
+### Name the listing with `list_frame_id`
+
+The base class also provides `list_frame_id` — the id of the listing's *own* frame, not the surrounding `turbo_frame` prop — and `resource_name_for(@resource)` is available from Avo's helpers. Use them for the Turbo Frame id and for the selection data attributes instead of `@resource.model_key`:
+
+```erb
+<turbo-frame id="<%= list_frame_id %>" target="_top"> <%# [!code highlight] %>
+  <div
+    data-controller="item-select-all"
+    data-resource-name="<%= resource_name_for(@resource) %>" <%# [!code highlight] %>
+    data-selected-resources-name="<%= resource_name_for(@resource) %>" <%# [!code highlight] %>
+    data-selected-resources="[]"
+  >
+    <%# rows… %>
+  </div>
+</turbo-frame>
+```
+
+Both use the association's field id when the view type renders inside an association panel, and fall back to the model key on a top-level index, so top-level listings are named exactly as before. The model key alone is the same string for every panel listing that resource, so hardcoding it makes two panels on one page collide: a search in one replaces the other's listing, and rows selected in one feed the other's actions. Two `has_many` fields pointing at the same resource, or [`for_attribute`](./field-options-api.html#for_attribute) fields on the same association, are the cases that hit it.
+
+:::warning
+<VersionReq version="4.3.4" /> `list_frame_id` and `resource_name_for` arrived in that release. Avo's own table and grid view types switched to them then, and so did the `avo-notifications` and `avo-calendar_view` view types.
 :::
 
 ## 2. Register the view type

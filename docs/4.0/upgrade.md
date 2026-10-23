@@ -4,6 +4,32 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo` `4.3.4`
+
+<Option name="The association show route checks `view_{association}?` and the related record's `show?`" id="association-show-authorization">
+
+### Breaking Change
+
+`GET /resources/:resource/:id/:related_name/:related_id` renders a related record's show page. A `has_one` panel loads its frame from it, and for every other association it is reachable by URL. It asked no policy at all: anyone who could see the parent record could open any record associated with it, whatever the related resource's `show?` or policy scope said. This closes [GHSA-x65r-p6hf-94hv](https://github.com/avo-hq/avo/security/advisories/GHSA-x65r-p6hf-94hv).
+
+The route now runs the checks the rest of Avo already ran:
+
+- **The parent's [`view_{association}?`](./authorization-api.html#view_association)**, as the association's index already did.
+- **The related record's own `show?`**, as the resource's show page does.
+- **A `has_many` row is looked up inside the related resource's [policy scope](./authorization.html#limit-which-records-a-user-sees)**, so a record the scope doesn't hold is not found.
+
+A denied policy method is refused the way any unauthorized page is; a row outside the policy scope behaves like an unknown id.
+
+### Action Required
+
+None if your policies already describe what your admins should reach. Three cases change what a user sees:
+
+- **A related resource whose `show?` is stricter than the parent's.** URLs that opened before are now refused. Moving the rule to `show_{association}?` only hides the row's button — it does not grant access to the page.
+- **A `has_one` field pointing at a record its resource's `show?` denies.** The panel's frame is refused instead of rendering the record. Allow `show?` for it, or hide the field with [`visible`](./field-options-api.html#visible).
+- **A policy scope that excludes records still listed in a panel.** Opening such a row now behaves like an unknown id. The scope also [filters the panel's rows](./authorization.html#limit-which-records-a-user-sees), so it should no longer list them.
+
+</Option>
+
 ## `avo`: bulk actions find the selected records through `find_records`
 
 <Option name="`query` is an Array, in the order the records were selected">
