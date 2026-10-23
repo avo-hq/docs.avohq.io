@@ -261,7 +261,7 @@ Defined on the **parent** resource's policy. `{association}` is the association 
 
 <Option name="`view_{association}?`" headingSize="3">
 
-Controls whether the association panel is displayed on the parent record.
+Controls whether the association panel is displayed on the parent record, and whether a related record can be opened through the association route (`/resources/:resource/:id/:related_name/:related_id`), which is where a `has_one` panel loads its frame from. That route also asks the related resource's own `show?`, and looks a `has_many` row up inside the related resource's [policy scope](#policy-scope). <VersionReq version="4.3.4" /> See the [upgrade note](./upgrade.html#association-show-authorization).
 
 - **Type:** `Boolean`
 - **`record`:** the parent record
