@@ -4,6 +4,26 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo-ai` 4.3.0.beta.5: RubyLLM 2.1 is the floor
+
+<Option name="`ruby_llm` is required as `~> 2.1`">
+
+### What changed
+
+avo-ai was pinned to RubyLLM's 2.0 line (`>= 2.0.0.rc4, < 2.1`); it now requires `~> 2.1`. 2.1.0 is the first release that ships RubyLLM's own MCP client, which [MCP connections](./ai.html#turn-on-mcp-connections) are built on, so the 2.0 line is no longer supported.
+
+### Action Required
+
+None — `bundle update avo-ai` pulls RubyLLM 2.1 along with it — unless your own `Gemfile` pins `ruby_llm` to the 2.0 line, in which case bundler refuses to resolve. Drop that pin, or raise it:
+
+```ruby
+# Gemfile
+gem "ruby_llm", "~> 2.0" # [!code --]
+gem "ruby_llm", "~> 2.1" # [!code ++]
+```
+
+</Option>
+
 ## `avo`: bulk actions find the selected records through `find_records`
 
 <Option name="`query` is an Array, in the order the records were selected">
@@ -62,6 +82,8 @@ None for the modal's own list, which offers only records inside the `attach_scop
 ### What changed
 
 A `belongs_to` value that matches no record the field may attach, because the record is gone or outside the field's [`attach_scope`](./associations/belongs_to.html#attach_scope), used to answer with a 404 page, and `avo-api` with a `404`. The form now comes back with "is invalid" on that field, and the API answers `422` with the field named in `errors`, the way a validation error does. Nothing is saved.
+
+The form that comes back keeps every other edit the user made, and names **every** `belongs_to` the submit couldn't resolve, not only the first one. Uploads on the same form are saved with the record, so a form that answers `422` stores no files.
 
 ### Action Required
 
