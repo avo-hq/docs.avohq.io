@@ -21,7 +21,7 @@ The feature and docs are both work in progress.
 
 - Avo 4
 - An API key for an LLM provider supported by [RubyLLM](https://rubyllm.com) (OpenAI, Anthropic, Gemini, and others)
-- RubyLLM 2, installed for you as a dependency.
+- RubyLLM 2.1 or newer, installed for you as a dependency. 2.0 doesn't ship the MCP client [connections](#turn-on-mcp-connections) are built on.
 - PostgreSQL
 
 ## Installation
@@ -47,7 +47,7 @@ bin/rails generate avo:ai install
 bin/rails db:migrate
 ```
 
-This creates the `avo_ai_*` tables — plus RubyLLM 2.0's internal `ruby_llm_*` tables (model registry, tool calls, usage ledger, batches, MCP credentials), unless the app already has them — and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
+This creates the `avo_ai_*` tables — plus RubyLLM's internal `ruby_llm_*` tables (model registry, tool calls, usage ledger, batches, MCP credentials), unless the app already has them — and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
 
 ### 3. Set your provider API key
 
