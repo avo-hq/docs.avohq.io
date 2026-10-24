@@ -94,7 +94,7 @@ end
 `BookmarkStore` stands in for wherever the data lives: a JSON file, a cache, or an external API. `save_record` handles both create and update. A new record has a `nil` id, so set it after saving: Avo uses it to redirect to the record's page. Both methods report success through their return value, so return something truthy, or raise to fail. The resource's policy still decides who can create, edit and delete.
 
 :::info
-Avo calls `save_record` and `destroy_record` on the resource. <VersionReq version="4.2.12" /> On earlier versions, override [`save_record_action`](./controllers-api.html#save_record_action) and [`destroy_record_action`](./controllers-api.html#destroy_record_action) in the resource's controller instead, where the record is `@record`.
+Avo calls `save_record` and `destroy_record` on the resource. <VersionReq version="4.3.0" /> On earlier versions, override [`save_record_action`](./controllers-api.html#save_record_action) and [`destroy_record_action`](./controllers-api.html#destroy_record_action) in the resource's controller instead, where the record is `@record`.
 :::
 
 ## Render it inside another resource
