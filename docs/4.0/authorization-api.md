@@ -292,7 +292,7 @@ Controls the detach button on each associated row.
 
 <Option name="`create_{association}?`" headingSize="3">
 
-Controls the `Create new {model}` button on the association panel.
+Controls the `Create new {model}` button on the association panel. When it returns `true`, it also authorizes the `new` and `create` requests that button leads to, even if the associated policy's `new?` or `create?` returns `false`. When it is not defined, those requests are answered by the associated policy alone.
 
 - **Type:** `Boolean`
 - **`record`:** the parent record

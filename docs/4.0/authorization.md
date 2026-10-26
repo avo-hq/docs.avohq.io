@@ -198,6 +198,32 @@ Methods for panel-level controls (`view_`, `create_`, `attach_`, `act_on_`) get 
 
 If you want to hide the whole comments panel, use `view_comments?`. If you want to hide only the view button on each row, use `show_comments?`.
 
+### Allow creating only through the parent
+
+If you want comments to be created only from a post, deny `create?` and `new?` in `CommentPolicy` and allow `create_comments?` in `PostPolicy`. The standalone **Create** button on the comments index stays hidden, while **Create new comment** on the post's panel opens a form that saves.
+
+```ruby
+# app/policies/comment_policy.rb
+class CommentPolicy < ApplicationPolicy
+  def create?
+    false
+  end
+
+  def new?
+    false
+  end
+end
+```
+
+```ruby
+# app/policies/post_policy.rb
+class PostPolicy < ApplicationPolicy
+  def create_comments?
+    user.admin?
+  end
+end
+```
+
 These methods only control buttons. Access to the comment's own pages is still decided by `CommentPolicy`, so if `CommentPolicy#edit?` allows it, a user can reach the edit page by URL even when `edit_comments?` hides the button.
 
 ### Reuse another policy for an association

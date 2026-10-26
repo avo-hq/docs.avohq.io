@@ -4,6 +4,20 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo` `4.3.5`
+
+<Option name="`create_{association}?` authorizes creating a record through its parent">
+
+### Breaking Change
+
+A parent policy's [`create_{association}?`](./authorization-api.html#create_association) that returns `true` now also lets the user open the new form and save it from the association panel, even when the associated policy's `new?` or `create?` returns `false`. Before, the button showed but the request was denied. See [Allow creating only through the parent](./authorization.html#allow-creating-only-through-the-parent).
+
+### Action Required
+
+Check every `create_{association}?` that returns `true` where the associated policy denies `create?`. If the user should not create those records from the parent either, make `create_{association}?` return `false`.
+
+</Option>
+
 ## `avo`: bulk actions find the selected records through `find_records`
 
 <Option name="`query` is an Array, in the order the records were selected">
