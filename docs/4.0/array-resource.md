@@ -66,28 +66,26 @@ Each hash becomes a record, so `field :name` reads the `name:` key and computed 
 
 <VersionReq version="4.3.6" />
 
-By default `records` returns every record and Avo cuts the page out of the array. When the data comes from a paginated API, fetch only the page being shown instead. `page` and `per_page` hold the index's current page and page size. Return that page's records together with the total, and Avo shows them as they are:
+By default `records` returns every record and Avo cuts the page out of the array. When the source can return one page by itself, such as a cache, a search index or a store of your own, fetch only the page being shown. `page` and `per_page` hold the index's current page and page size. Return that page's records together with the total, and Avo shows them as they are:
 
 ```ruby
-# app/avo/resources/invoice.rb
-class Avo::Resources::Invoice < Avo::Resources::ArrayResource
-  self.find_record_method = -> { Billing::Client.new.invoice(id).to_h } # [!code focus]
+# app/avo/resources/bookmark.rb
+class Avo::Resources::Bookmark < Avo::Resources::ArrayResource
+  self.find_record_method = -> { BookmarkStore.find(id) } # [!code focus]
 
   def records
-    response = Billing::Client.new.invoices(page:, per_page:) # [!code focus]
-
-    {records: response.invoices.map(&:to_h), count: response.total_count} # [!code focus]
+    {records: BookmarkStore.page(page, per: per_page), count: BookmarkStore.count} # [!code focus]
   end
 
   def fields
     field :id, as: :id
-    field :number, as: :text
-    field :amount, as: :number
+    field :title, as: :text
+    field :url, as: :text
   end
 end
 ```
 
-`count` is the total across all pages. The pagination bar reads it, so the index shows "1-24 of 1,250" without loading the other pages.
+`BookmarkStore` stands in for wherever the data lives. `count` is the total across all pages. The pagination bar reads it, so the index shows "1-24 of 1,250" without loading the other pages.
 
 Avo now holds one page, so it can't look a record up in it. The show page, the edit form and actions on selected rows ask for a record that may sit on another page. `find_record_method` tells Avo how to fetch one record by its `id`, and it can return a hash, like `records`.
 
@@ -98,6 +96,10 @@ Avo now holds one page, so it can't look a record up in it. The show page, the e
 :::
 
 The [`Array` field](./fields/array.html#paginate-at-the-source)'s block can paginate the same way.
+
+:::info Data from an external API
+Use an [HTTP Resource](./http-resource.html) instead. It is backed by the endpoint itself and sends the page to the API.
+:::
 
 ## Create, edit and delete
 

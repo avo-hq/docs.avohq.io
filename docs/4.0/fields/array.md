@@ -91,13 +91,14 @@ end
 The block can read `page` and `per_page`, the page the panel is showing and its size. Return that page's records with the total to fetch one page at a time, as an [Array Resource's `records`](./../array-resource.html#paginate-at-the-source) does:
 
 ```ruby
-# app/avo/resources/customer.rb
-class Avo::Resources::Customer < Avo::BaseResource
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
   def fields
-    field :invoices, as: :array do
-      response = Billing::Client.new.invoices(customer_id: record.billing_id, page:, per_page:)
-
-      {records: response.invoices.map(&:to_h), count: response.total_count}
+    field :bookmarks, as: :array do
+      {
+        records: BookmarkStore.page(page, per: per_page, user_id: record.id),
+        count: BookmarkStore.count(user_id: record.id)
+      }
     end
   end
 end
