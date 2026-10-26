@@ -343,7 +343,7 @@ dynamic_filter :status,
 ```
 
 - **Type:** Boolean
-- **Default:** `true`
+- **Default:** `true`, or `false` with [`control: :simple`](#control)
 
 Usually paired with [`apply_on_select: true`](#apply_on_select) for an immediate filtering experience.
 
@@ -362,6 +362,97 @@ dynamic_filter :category,
 
 - **Type:** Boolean
 - **Default:** `false`
+
+</Option>
+
+<Option name="`pinned`" headingSize="3">
+
+Keeps the filter's pill in the filter bar next to "Add filter", so users can filter by it without picking it from the dropdown first. The pill does nothing until someone picks a value and applies it. Removing an applied pinned filter puts the empty pill back.
+
+```ruby{4,9}
+# On a field
+field :owner, as: :belongs_to, filterable: {
+  label: "Owner",
+  pinned: true
+}
+
+# On a custom filter
+dynamic_filter :status,
+  type: :select,
+  pinned: true
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+A pinned filter keeps the usual condition and value picker. Add [`control: :simple`](#control) for a control that fits its type. A pinned filter is not listed in the "Add filter" dropdown. When a resource has a pinned filter, the filter bar shows even with [`always_expanded`](#always_expanded) set to `false`.
+
+</Option>
+
+<Option name="`control`" headingSize="3">
+
+`:simple` gives the filter a lighter dropdown: its conditions move into a menu next to the filter's name, and below it sits a value control that fits the condition picked. It works on its own or together with [`pinned`](#pinned).
+
+```ruby{2}
+field :status, as: :select, filterable: {
+  control: :simple,
+  pinned: true
+}
+```
+
+- **Type:** Symbol
+- **Default:** the app-wide [`control`](#control-1) setting, `:full` unless changed
+
+Each type opens on its most common condition, and the menu holds the rest:
+
+| Type    | Opens on      | Value control                                                                 |
+| ------- | ------------- | ----------------------------------------------------------------------------- |
+| Select  | Is            | A checklist of every option. Ticked options match any of them; under Is not, none of them. On a `badge` field, each option shows its badge colour. |
+| Text    | Contains      | A text box.                                                                    |
+| Boolean | (no menu)     | Any / Yes / No as one row of buttons. Picking one applies it straight away. Rename Yes and No with `options:`, see below. |
+| Number  | Is within     | A min and a max (fill either or both). Conditions such as `=` take one number. |
+| Date    | Is within     | Today, Last 7 days, Last 30 days and This month as one row of buttons, plus a from and to date. Change the buttons with [`presets`](#presets). Other conditions take one date. |
+| Tags    | Overlap       | A checklist of every suggestion. Contain matches records with all the ticked tags. |
+
+Conditions that need no value, like Is blank, show no value control. The pill reads like a sentence, with the name, condition and value in separate segments: `Status | is not | Open, Done`.
+
+The boolean's choices and its pill read "Yes" and "No", from the `avo.dynamic_filters.simple.yes` and `.no` locale keys. Give a filter its own words with `options:`, and use a lambda to translate them:
+
+```ruby
+field :urgent, as: :boolean, filterable: {
+  control: :simple,
+  options: -> { {true: I18n.t("tickets.urgent"), false: I18n.t("tickets.not_urgent")} }
+}
+```
+
+A simple control has no Apply button: each option you tick, and each condition you pick, filters the list straight away while the dropdown stays open, and the scroll position is kept. Text, number and date boxes apply on Enter or when the dropdown closes. Set `render_apply_button: true` to bring the button back.
+
+A tags filter without static `suggestions` and a `time` filter keep the usual condition and value picker. Custom `conditions:` fill the menu. Every other option still applies: `options`, `suggestions`, `query` and the rest.
+
+</Option>
+
+<Option name="`presets`" headingSize="3">
+
+The date range buttons a simple date or date time filter shows.
+
+```ruby
+# Pick from the built-ins
+field :due_on, as: :date, filterable: {control: :simple, presets: [:today, :this_month]}
+
+# Add your own; a built-in name with no range keeps its own
+field :due_on, as: :date, filterable: {
+  control: :simple,
+  presets: {
+    today: nil,
+    "Next 30 days" => -> { Date.current..(Date.current + 29) }
+  }
+}
+```
+
+- **Type:** Array of built-in names, or a Hash of label to range
+- **Default:** `[:today, :last_7_days, :last_30_days, :this_month]`
+
+Each range is a proc returning a `Range` of dates, run on every render so "today" stays current. A symbol label is translated under `avo.dynamic_filters.simple`, a string is shown as written. `presets: []` hides the buttons.
 
 </Option>
 
@@ -479,6 +570,21 @@ config.param_key = :df
 - **Default:** `:filters`
 
 With the default key, a filtered URL looks like `/avo/resources/users?filters[first_name][contains][]=Avo`. Change it if `filters` collides with another param in your app.
+
+</Option>
+
+<Option name="`control`" headingSize="3">
+
+The control every filter in the app uses unless it sets its own [`control`](#control).
+
+```ruby
+config.control = :simple
+```
+
+- **Type:** Symbol
+- **Default:** `:full`, the condition and value picker
+
+A filter keeps the full picker under this setting with `control: :full`.
 
 </Option>
 
