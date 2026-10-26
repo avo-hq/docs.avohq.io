@@ -4,6 +4,24 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-dynamic_filters` `4.3.1`
+
+<Option name="The dynamic filters bar has a refreshed UI">
+
+### What changed
+
+The filter bar was redesigned. Each pill shows the filter's name, condition and value as separate segments, and values no longer sit in quotes: `Status | is | Open`, not `Status is "Open"`. "Add filter" and "Reset filters" moved after the pills and share one style.
+
+Several values of one filter under a negative condition (`is not`, `does not contain`) now exclude all of them, not any of them.
+
+New options come with it: [`pinned`](./dynamic-filters-api.html#pinned), [`control: :simple`](./dynamic-filters-api.html#control) and [`presets`](./dynamic-filters-api.html#presets).
+
+### Action Required
+
+None. System tests that match a pill's text, like `Name contains "a"`, need the quotes dropped.
+
+</Option>
+
 ## `avo`: bulk actions find the selected records through `find_records`
 
 <Option name="`query` is an Array, in the order the records were selected">
