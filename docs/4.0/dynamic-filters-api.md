@@ -410,7 +410,7 @@ Each type opens on its most common condition, and the menu holds the rest:
 | Select  | Is            | A checklist of every option. Ticked options match any of them; under Is not, none of them. On a `badge` field, each option shows its badge colour. |
 | Text    | Contains      | A text box.                                                                    |
 | Boolean | (no menu)     | Any / Yes / No as one row of buttons. Picking one applies it straight away. Rename Yes and No with `options:`, see below. |
-| Number  | Is within     | A min and a max (fill either or both). Conditions such as `=` take one number. |
+| Number  | =             | One number. Is within takes a min and a max (fill either or both).            |
 | Date    | Is within     | Today, Last 7 days, Last 30 days and This month as one row of buttons, plus a from and to date. Change the buttons with [`presets`](#presets). Other conditions take one date. |
 | Tags    | Overlap       | A checklist of every suggestion. Contain matches records with all the ticked tags. |
 
