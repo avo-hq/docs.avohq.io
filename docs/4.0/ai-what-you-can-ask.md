@@ -13,6 +13,23 @@ The resource and field names in the examples are placeholders. Substitute your o
 
 For how a turn actually unfolds — schema, confirmation cards, authorization — see [How the assistant works](./ai.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./ai-agents-and-tools.html).
 
+## Add a reusable skill
+
+Paste a skill into the chat and ask **"Add this as a skill"**, or attach a `.md` or `.txt` file and ask **"Import the attached file as a skill"**. For example:
+
+```text
+Add this as a skill:
+
+---
+name: bro
+description: Restate the last message in plain human language. Use for /bro.
+---
+
+Restate your last message simply and concisely, without jargon.
+```
+
+The assistant saves the title, description, and instructions as an Avo AI skill if you have permission to create skills. It does not overwrite existing skills or apply the new skill automatically. Reload the page to refresh the skills menu, then select it to use it. ZIP files are refused before upload: the assistant cannot open skill archives or run scripts from advanced skills. The tool also refuses unsupported files already in the conversation. See [Import a skill](./ai.html#import-a-skill).
+
 ## Find records
 
 | Ask                                              | What you get                                                             |

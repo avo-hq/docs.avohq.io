@@ -425,7 +425,7 @@ The file can live in any of three places, and the read path is the same for all 
 
 Files are named by blob id, as everywhere else in the chat, and a filename works when the assistant has no id yet: it searches everything you can see and reads the file if exactly one matches, otherwise it lists the candidates and asks.
 
-**Text uploads are read on demand, not sent inline.** A markdown, text, CSV, TSV, or JSON file you drop into the composer is no longer pasted into the prompt whole. The model is told the file's name, type, size, and blob id, and reads it through `read_file` when it needs to — which is what keeps a 300-row CSV from flooding the conversation, and a much bigger one from failing the turn. Images, PDFs, and other non-text uploads keep going to the model as attachments, as before.
+**Text uploads are read on demand, not sent inline.** A markdown, text, CSV, TSV, or JSON file you drop into the composer is no longer pasted into the prompt whole. The model is told the file's name, type, size, and blob id, and reads it through `read_file` when it needs to — which is what keeps a 300-row CSV from flooding the conversation, and a much bigger one from failing the turn. ZIP uploads also stay metadata-only, so the assistant can explain that archives are unsupported. Images, PDFs, and other non-text uploads keep going to the model as attachments, as before.
 
 **Reading happens in windows.** Text, markdown, and JSON come back a range of lines at a time; CSV and TSV a range of rows, keyed by the header so column names survive into the answer. Every window reports the file's total, so the assistant knows to keep reading. One call returns at most `max_slice` lines or rows, and a file over `max_read_size` is refused with both sizes named rather than truncated quietly — raise the keys under `config.ai.files` if your files are bigger. See [Configuration](#configuration).
 
@@ -616,7 +616,7 @@ Set neither and the assistant gets every tool the gem ships. The roster is assem
 config.ai.excluded_tools = [:delete_record, :update_record]
 ```
 
-The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_skill`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
 
 `update_record` and `update_records` are separate names, so excluding the first leaves the second attached. An app that excludes `update_record` to stop the assistant writing columns wants both.
 
@@ -963,7 +963,7 @@ The one thing to check is the model: reading an image takes a vision model. The 
 
 ### What the composer accepts
 
-By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files — markdown, plain text, CSV, TSV, JSON — which it reads in windows. Files can be up to 25 MB.
+By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files - markdown, plain text, CSV, TSV, JSON - which it reads in windows. Files can be up to 25 MB. ZIP files are refused before upload with an explanation that the assistant cannot open archives or run scripts from advanced skills. Their bytes never reach storage through the default composer.
 
 Anything else is refused as you add it, before it uploads, with a line under the draft naming the file and why — so a 2 GB video never leaves the browser. The same rule is checked again when the message is sent, so a request that skips the composer can't attach a file it would have refused.
 
@@ -1042,6 +1042,10 @@ Summarise the attached record as a changelog entry…
 ```
 
 `name` works in place of `title`, so an agent `SKILL.md` pastes in unchanged. Other frontmatter keys are ignored. Without frontmatter there is no title to read, and the import says so rather than guessing one. Importing is creating — the action is available to whoever passes `create?` on the skill policy.
+
+You can also ask the chat to **"Add this as a skill"**, followed by the skill's text, or upload a `.md` or `.txt` file and ask **"Import the attached file as a skill"**. The assistant saves it through `create_skill`, under the same skill policy's `create?` permission. Files are imported directly from this conversation, without the assistant rewriting their contents. For plain instructions without frontmatter, give a title or let the assistant supply one. An existing skill with the same title is never overwritten.
+
+Only text instructions are supported. The composer refuses ZIP files before uploading or storing them and explains that archives cannot be opened and scripts from advanced skills cannot be run. If your app explicitly allows ZIP uploads, or a ZIP is already in the conversation, `create_skill` returns the same explanation as an error without opening it. Additional frontmatter settings do not install tools, dependencies, or scripts. Creating a skill does not apply it to the current chat; reload the page to refresh the skills menu, then select it when you want to use it.
 
 **Export skill**, on a skill's own page, goes the other way: it downloads that skill as a `.md` file in exactly this shape, ready to import into another app or keep in a repository.
 
