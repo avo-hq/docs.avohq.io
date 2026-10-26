@@ -84,6 +84,27 @@ class Avo::Resources::Attendee < Avo::Resources::ArrayResource
 end
 ```
 
+## Paginate at the source
+
+<VersionReq version="4.3.6" />
+
+The block can read `page` and `per_page`, the page the panel is showing and its size. Return that page's records with the total to fetch one page at a time, as an [Array Resource's `records`](./../array-resource.html#paginate-at-the-source) does:
+
+```ruby
+# app/avo/resources/customer.rb
+class Avo::Resources::Customer < Avo::BaseResource
+  def fields
+    field :invoices, as: :array do
+      response = Billing::Client.new.invoices(customer_id: record.billing_id, page:, per_page:)
+
+      {records: response.invoices.map(&:to_h), count: response.total_count}
+    end
+  end
+end
+```
+
+Give the resource that renders the field a `find_record_method` too, so a record's show page finds it outside the page the panel fetched.
+
 ## Summary of Data Fetching Hierarchy
 
 When using the `Array` field, Avo will fetch data in the following order:
