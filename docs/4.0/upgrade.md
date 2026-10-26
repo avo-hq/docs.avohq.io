@@ -4,6 +4,18 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-ai` `4.3.0.beta.6`
+
+<Option name="ZIP contents are kept out of model attachments">
+
+### Action Required
+
+**Action required:** None with the default upload settings. ZIP files remain blocked before upload, now with an explanation that skill archives and scripts are unsupported.
+
+If your app explicitly allows ZIP uploads, their contents no longer go to the model. The assistant receives metadata only, and [importing one as a skill](./ai.html#import-a-skill) returns an error without opening the archive or running scripts. Your custom upload list is unchanged.
+
+</Option>
+
 ## `avo`: bulk actions find the selected records through `find_records`
 
 <Option name="`query` is an Array, in the order the records were selected">
