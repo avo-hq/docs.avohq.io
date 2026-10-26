@@ -1,6 +1,7 @@
 ---
 license: community
 outline: [2, 3]
+api_docs: ./keyboard-shortcuts-api.html
 ---
 
 # Keyboard Shortcuts
@@ -23,9 +24,39 @@ Avo.configure do |config|
 end
 ```
 
-Set `enabled: false` to turn the whole system off — no shortcuts fire and the key badges disappear. Set `show_key_badges: false` to keep the shortcuts working but hide the inline badges from the UI.
+Set [`enabled: false`](./keyboard-shortcuts-api.html#enabled) to turn the whole system off — no shortcuts fire and the key badges disappear. Set [`show_key_badges: false`](./keyboard-shortcuts-api.html#show_key_badges) to keep the shortcuts working but hide the inline badges from the UI.
 
 Both default to `true`, so you only need to set the keys you want to change.
+
+## Change or disable a shortcut
+
+<VersionReq version="4.3.6" />
+
+Every shortcut in the tables below has a stable ID. Rebind it, or turn it off with `false`, through [`bindings`](./keyboard-shortcuts-api.html#bindings):
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.hotkeys = {
+    bindings: {
+      "record.edit": "Shift+E",          # edit with Shift+E instead of E
+      "record.delete": false,            # no delete shortcut at all
+      "index.next_row": "j,ArrowDown",   # either key moves to the next row
+      "advanced_search.open": "Mod+/"    # add-on shortcuts work the same way
+    }
+  }
+end
+```
+
+Shortcuts you don't list keep their defaults. The new key shows up everywhere the old one did: it fires the action, appears on the button's badge, and is listed in the <kbd>?</kbd> modal. A disabled shortcut disappears from all three.
+
+Keys are written in the [`@github/hotkey` format](./keyboard-shortcuts-api.html#hotkey-syntax): `Mod+k` is <kbd>Cmd</kbd>+<kbd>K</kbd> on macOS and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere, a space makes a sequence (`g i`), and a comma lists alternatives (`j,ArrowDown`). The [full list of IDs](./keyboard-shortcuts-api.html#shortcut-ids) is on the reference page.
+
+Avo checks your bindings when the app boots and raises if an ID is misspelled, if two shortcuts that can fire on the same page share a key, or if a single key would block a sequence (binding `v` alone would stop <kbd>V</kbd> <kbd>T</kbd> from ever firing).
+
+:::info Fixed keys
+<kbd>Esc</kbd> and <kbd>Cmd</kbd>/<kbd>Ctrl</kbd>+<kbd>↵</kbd> close and submit every modal and form, so they can't be rebound. The arrow keys, <kbd>↵</kbd> and <kbd>Space</kbd> inside tables, menus and editors are fixed too.
+:::
 
 ## Global shortcuts
 
@@ -130,7 +161,7 @@ Avo.configure do |config|
 end
 ```
 
-The menu item automatically renders a key badge next to its label and registers the binding. Hotkey strings use [`@github/hotkey`](https://github.com/github/hotkey) syntax — space-separate keys for a sequence like <kbd>g</kbd> <kbd>p</kbd>.
+The menu item automatically renders a key badge next to its label and registers the binding. Hotkey strings use the [`@github/hotkey` format](./keyboard-shortcuts-api.html#hotkey-syntax) — space-separate keys for a sequence like <kbd>g</kbd> <kbd>p</kbd>.
 
 For `resource` items you can set the hotkey on the resource class instead, and it applies wherever that resource appears in the menu:
 
@@ -148,10 +179,11 @@ Avo binds shortcuts declaratively through `data-hotkey` attributes, so any butto
 <a href="/avo/posts/new" data-hotkey="c">New post</a>
 ```
 
-To offer platform alternatives (Mac vs. non-Mac), space-separate the variants:
+Use `Mod` for a key that should be <kbd>Cmd</kbd> on macOS and <kbd>Ctrl</kbd> elsewhere, and a comma for alternatives. A space means a sequence, not an alternative:
 
 ```html
-<button data-hotkey="Meta+Enter Control+Enter">Save</button>
+<button data-hotkey="Mod+s">Save</button>
+<a href="/avo/reports" data-hotkey="g r,Shift+R">Reports</a>
 ```
 
 Bindings are re-applied on every Turbo navigation, so they survive `turbo:load` and `turbo:frame-render` without extra work.
