@@ -66,6 +66,20 @@ field :patrons,
   }
 ```
 
+Attach fields describe the join record, so a `belongs_to` the join model declares works among them too. The modal renders its picker and the attach writes the foreign key onto the new join row. <VersionReq version="4.3.5" />
+
+```ruby{6}
+field :patrons,
+  as: :has_many,
+  through: :patronships,
+  attach_fields: -> {
+    field :review, as: :text
+    field :referrer, as: :belongs_to
+  }
+```
+
+`Patronship` declares `belongs_to :referrer`, so picking someone in the modal stamps `referrer_id` on the row that attaches the patron. A value that matches no record fails the whole attach — nothing is written, and the error names the field.
+
 :::warning
 If the through model uses **polymorphism**, the type must be included as a hidden field:
 
