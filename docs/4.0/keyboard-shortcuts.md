@@ -8,7 +8,7 @@ api_docs: ./keyboard-shortcuts-api.html
 
 Avo ships with a built-in keyboard shortcut system that lets users navigate and operate the admin panel without touching the mouse. Press <kbd>?</kbd> at any time to open the shortcuts reference modal, which lists every shortcut available on the current page.
 
-With no configuration, all shortcuts are enabled and each bound button or link renders a small badge — for example <kbd>C</kbd> on a *Create* button — hinting at its shortcut. Shortcuts never fire while you're typing in an input, textarea, select, or contenteditable field, so search boxes and form fields behave normally.
+With no configuration, all shortcuts are enabled and each bound button or link renders a small badge — for example <kbd>C</kbd> on a *Create* button — hinting at its shortcut. A shortcut without <kbd>Cmd</kbd>/<kbd>Ctrl</kbd> or <kbd>Alt</kbd> never fires while you're typing in an input, textarea, select, or contenteditable field, so search boxes and form fields behave normally; a chord with one of those reaches fields.
 
 ## Configure keyboard shortcuts
 
