@@ -50,7 +50,7 @@ end
 
 Shortcuts you don't list keep their defaults. The new key shows up everywhere the old one did: it fires the action, appears on the button's badge, and is listed in the <kbd>?</kbd> modal. A disabled shortcut disappears from all three.
 
-Keys are written in the [`@github/hotkey` format](./keyboard-shortcuts-api.html#hotkey-syntax): `Mod+k` is <kbd>Cmd</kbd>+<kbd>K</kbd> on macOS and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere, a space makes a sequence (`g i`), and a comma lists alternatives (`j,ArrowDown`). The [full list of IDs](./keyboard-shortcuts-api.html#shortcut-ids) is on the reference page.
+Keys are written in the [`@github/hotkey` format](./keyboard-shortcuts-api.html#hotkey-syntax): `Mod+k` is <kbd>Cmd</kbd>+<kbd>K</kbd> on macOS and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere, a space makes a sequence (`g i`), and a comma lists alternatives (`j,ArrowDown`). The [full list of IDs](./keyboard-shortcuts-api.html#shortcut-ids) is on the reference page. A key without <kbd>Cmd</kbd>/<kbd>Ctrl</kbd> or <kbd>Alt</kbd> never fires while you type in a field, so binding the search palette to a plain letter is safe; a chord with one reaches fields, which is how the assistant's `Mod+j` works.
 
 Avo checks your bindings when the app boots and raises if an ID is misspelled, if two shortcuts that can fire on the same page share a key, or if a single key would block a sequence (binding `v` alone would stop <kbd>V</kbd> <kbd>T</kbd> from ever firing).
 
@@ -95,7 +95,7 @@ Requires the [Avo AI](./ai.html) add-on. Without it, the shortcut isn't bound an
 | ---------------------------------------------------------- | ------------------ |
 | <kbd>Cmd</kbd>+<kbd>J</kbd> / <kbd>Ctrl</kbd>+<kbd>J</kbd> | Open the assistant |
 
-This is the one shortcut that still fires while you're typing in a field — pulling the assistant up mid-edit is the point. It follows `enabled` like the rest, so `config.hotkeys = {enabled: false}` turns it off along with everything else.
+Its chord has a modifier, so it fires while you're typing in a field — pulling the assistant up mid-edit is the point. Rebind it to a key without <kbd>Cmd</kbd>/<kbd>Ctrl</kbd> or <kbd>Alt</kbd> and it stays out of fields like every other shortcut. It follows `enabled` like the rest, so `config.hotkeys = {enabled: false}` turns it off along with everything else.
 
 ## Index view
 
