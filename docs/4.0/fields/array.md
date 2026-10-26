@@ -84,6 +84,28 @@ class Avo::Resources::Attendee < Avo::Resources::ArrayResource
 end
 ```
 
+## Paginate at the source
+
+<VersionReq version="4.3.6" />
+
+The block can read `page` and `per_page`, the page the panel is showing and its size. Return that page's records with the total to fetch one page at a time, as an [Array Resource's `records`](./../array-resource.html#paginate-at-the-source) does:
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :bookmarks, as: :array do
+      {
+        records: BookmarkStore.page(page, per: per_page, user_id: record.id),
+        count: BookmarkStore.count(user_id: record.id)
+      }
+    end
+  end
+end
+```
+
+Give the resource that renders the field a `find_record_method` too, so a record's show page finds it outside the page the panel fetched.
+
 ## Summary of Data Fetching Hierarchy
 
 When using the `Array` field, Avo will fetch data in the following order:

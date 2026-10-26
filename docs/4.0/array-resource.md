@@ -60,7 +60,46 @@ class Avo::Resources::Movie < Avo::Resources::ArrayResource
 end
 ```
 
-Each hash becomes a record, so `field :name` reads the `name:` key and computed fields can call `record.fun_fact` directly. If you return Active Record objects or a relation instead, Avo uses their real model class and fields behave as they do on a regular resource. Pagination works out of the box.
+Each hash becomes a record, so `field :name` reads the `name:` key and computed fields can call `record.fun_fact` directly. If you return Active Record objects or a relation instead, Avo uses their real model class and fields behave as they do on a regular resource. Avo paginates the array for you, or lets the source do it: see [Paginate at the source](#paginate-at-the-source).
+
+## Paginate at the source
+
+<VersionReq version="4.3.6" />
+
+By default `records` returns every record and Avo cuts the page out of the array. When the source can return one page by itself, such as a cache, a search index or a store of your own, fetch only the page being shown. `page` and `per_page` hold the index's current page and page size. Return that page's records together with the total, and Avo shows them as they are:
+
+```ruby
+# app/avo/resources/bookmark.rb
+class Avo::Resources::Bookmark < Avo::Resources::ArrayResource
+  self.find_record_method = -> { BookmarkStore.find(id) } # [!code focus]
+
+  def records
+    {records: BookmarkStore.page(page, per: per_page), count: BookmarkStore.count} # [!code focus]
+  end
+
+  def fields
+    field :id, as: :id
+    field :title, as: :text
+    field :url, as: :text
+  end
+end
+```
+
+`BookmarkStore` stands in for wherever the data lives. `count` is the total across all pages. The pagination bar reads it, so the index shows "1-24 of 1,250" without loading the other pages.
+
+Avo now holds one page, so it can't look a record up in it. The show page, the edit form and actions on selected rows ask for a record that may sit on another page. `find_record_method` tells Avo how to fetch one record by its `id`, and it can return a hash, like `records`.
+
+`page` and `per_page` are `nil` outside an index, for example when Avo calls `records` to build the form for a new record.
+
+:::info
+**Select all matching** is hidden on a resource that paginates at the source: only the page shown is loaded, so there is nothing to select on the other pages.
+:::
+
+The [`Array` field](./fields/array.html#paginate-at-the-source)'s block can paginate the same way.
+
+:::info Data from an external API
+Use an [HTTP Resource](./http-resource.html) instead. It is backed by the endpoint itself and sends the page to the API.
+:::
 
 ## Create, edit and delete
 
@@ -103,7 +142,7 @@ The Array Resource pairs with the [`Array` field](./fields/array.html) to displa
 
 :::warning Limitations
 - Sorting is not supported.
-- Large datasets can be slow — the array is rebuilt on every request. If that becomes a bottleneck, cache the data inside `records`.
+- Large datasets can be slow — the array is rebuilt on every request. If that becomes a bottleneck, cache the data inside `records`, or [paginate at the source](#paginate-at-the-source).
 :::
 
 :::info Heavier workloads
