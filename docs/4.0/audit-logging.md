@@ -508,6 +508,29 @@ Nothing is recorded inside the block from any source: the panel, `Avo::AuditLogg
 
 To switch logging off everywhere, for example in the test environment, set `config.enabled = false`.
 
+## Read an activity in code
+
+<VersionReq version="4.3.1" />
+
+Most activities are about one record. Read it, and the classes behind the activity, straight from the activity:
+
+```ruby
+activity = Avo::AuditLogging::Activity.latest.first
+
+activity.record          # => #<Product id: 123>, the first one linked
+activity.record_type     # => "Product"
+activity.record_id       # => 123
+activity.records         # => every linked record
+
+activity.resource_class  # => Avo::Resources::Product
+activity.model_class     # => Product
+activity.policy_class    # => ProductPolicy
+```
+
+Each returns `nil` instead of raising when there's nothing to return: no linked record, a deleted record, or a class your app has since removed.
+
+`activity_class` and `record_type` answer different questions. `activity_class` is the Avo resource the change went through, such as `Avo::Resources::Product`, or the action class for an action run. `record_type` is the model of the record that changed, such as `Product`. For an action run, `resource_class` is `nil` and `model_class` comes from the linked record. `policy_class` is the resource's `authorization_policy` when it sets one, and otherwise the policy Pundit finds for the model.
+
 ## Disable specific actions logging
 
 By default, when audit logging is enabled for a resource or action, all actions, such as `index` visits, `show` visits, `edit`, `update`, etc. are logged.
