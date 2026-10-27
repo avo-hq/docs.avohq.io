@@ -254,6 +254,8 @@ Let the user query data across different time ranges via a dropdown in the card 
 
 The options shown in the range dropdown. The value is passed straight to Rails' [`options_for_select`](https://apidock.com/rails/v5.2.3/ActionView/Helpers/FormOptionsHelper/options_for_select), so it behaves like a `select_tag`. Integers are treated as a number of days; other strings (`"TODAY"`, `"MTD"`, `"ALL"`, …) are passed through as-is and it's up to your `query` to interpret them.
 
+A requested range the card doesn't list, such as `?range=365` in the URL on a card offering `[7, 30]`, is ignored: the card falls back to [`initial_range`](#self.initial_range), then the first entry. A card with no `ranges` takes any value.
+
 ```ruby
 self.ranges = {
   "7 days": 7,
@@ -270,7 +272,7 @@ self.ranges = {
 
 <Option name="`self.initial_range`" headingSize="3">
 
-The range selected by default when the card first loads. Falls back to the first entry of [`ranges`](#self.ranges).
+The range selected by default when the card first loads. Falls back to the first entry of [`ranges`](#self.ranges), the first value when `ranges` is a Hash.
 
 ```ruby
 self.initial_range = 30
