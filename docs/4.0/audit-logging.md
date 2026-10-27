@@ -391,7 +391,20 @@ end
 
 Avo finds the record's resource and links the activity to the record, so it shows up on the record's timeline like a change made in the panel. `payload` can be any hash; Avo stores it as JSON.
 
-The method returns the activity, or `nil` when audit logging is switched off. It raises `ArgumentError` when the record's model has no Avo resource. It records whether or not the resource opted in with [`self.audit_logging`](#enable-specific-resources-and-actions): calling it is the opt-in.
+Like the panel, it only records for resources that opted in with [`self.audit_logging`](#enable-specific-resources-and-actions), and it asks your `activity` block and `actions` the same way. It returns the activity, or `nil` when audit logging is switched off or the opt-in says no. It raises `ArgumentError` when the record's model has no Avo resource.
+
+A job has no current user, so if your `activity` block reads `current_user`, make it handle `nil`. To record regardless of the opt-in, pass `force: true`:
+
+```ruby
+Avo::AuditLogging.record(
+  action: :update,
+  record: product,
+  author: user,
+  force: true
+)
+```
+
+`force` skips only the resource's opt-in. Nothing is recorded while audit logging is switched off globally.
 
 ### Record changes no person made
 
