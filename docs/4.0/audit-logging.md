@@ -531,6 +531,36 @@ Each returns `nil` instead of raising when there's nothing to return: no linked 
 
 `activity_class` and `record_type` answer different questions. `activity_class` is the Avo resource the change went through, such as `Avo::Resources::Product`, or the action class for an action run. `record_type` is the model of the record that changed, such as `Product`. For an action run, `resource_class` is `nil` and `model_class` comes from the linked record. `policy_class` is the resource's `authorization_policy` when it sets one, and otherwise the policy Pundit finds for the model.
 
+## Let people see the history of records they can see
+
+<VersionReq version="4.3.1" />
+
+By default, activities use your app's usual authorization for the `Avo::AuditLogging::Activity` model. To let anyone read the history of exactly the records they may already see, set `activity_policy` to the policy Avo ships:
+
+```ruby
+# config/initializers/avo.rb
+Avo::AuditLogging.configure do |config|
+  config.activity_policy = "Avo::AuditLogging::InheritedRecordPolicy"
+end
+```
+
+With it, an activity is listed and shown only when the user may `show?` every record it touched, asked through each record's own Avo resource and policy scope. An activity on a deleted record, on a model without a resource, or linked to no record stays hidden. Undoing a change also needs `update?` on the record. The trail is read-only: nobody can edit or delete activities.
+
+To widen it, for example so admins see everything, subclass the policy:
+
+```ruby
+# app/policies/activity_policy.rb
+class ActivityPolicy < Avo::AuditLogging::InheritedRecordPolicy
+  def show? = user.admin? || super
+
+  class Scope < Avo::AuditLogging::InheritedRecordPolicy::Scope
+    def resolve = user.admin? ? scope.all : super
+  end
+end
+```
+
+Then set `config.activity_policy = "ActivityPolicy"`. This needs [authorization](./authorization) with the Pundit client.
+
 ## Disable specific actions logging
 
 By default, when audit logging is enabled for a resource or action, all actions, such as `index` visits, `show` visits, `edit`, `update`, etc. are logged.
