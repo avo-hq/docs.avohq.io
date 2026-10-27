@@ -438,6 +438,8 @@ end
 
 Search, filters, sorting, pagination, and view switches then stay asynchronous inside that frame while the URL keeps in sync. Loading stays eager on association indexes and on resources with a custom index component.
 
+To add a summary or notice around the existing index UI, declare [`index_slot`](./resources-api.html#index_slot) on the resource. See [Add content to the index](./views.html#add-content-to-the-index) for partial rendering, loaded-record summaries, and custom component support.
+
 ## Record previews
 
 Let users peek at a record from the `Index` view without opening it. Add a [`preview` field](./fields/preview.html) to the resource and mark the fields you want in the popover with `show_on: :preview`.

@@ -16,6 +16,111 @@ The page where you see all your resources listed in a [table](./table-view.html)
 <RelatedItem href="./resources-api.html#self.components">Resource custom components</RelatedItem>
 </RelatedList>
 
+### Add content to the index
+
+<VersionReq version="4.3.6" />
+
+Use [`index_slot`](./resources-api.html#index_slot) to add a summary, notice, or other content around the existing index UI without replacing its component:
+
+```ruby
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  index_slot :after_header do
+    render partial: "avo/projects/summary", locals: {resource: resource}
+  end
+end
+```
+
+Without registrations, the index is unchanged. Slots add content by default; replacing a built-in region requires `replace: true`. Slots do not grant permissions or run once per row. They apply only to index views, including association index panels, not Show, Edit, or New views.
+
+The generic form, `view_slot :index, :after_header do ... end`, is equivalent to `index_slot :after_header do ... end`. Both append to the same registrations in declaration order. Only `:index` is currently supported; other views raise an error rather than silently ignoring content.
+
+Pass partial locals explicitly. Avo does not add them automatically:
+
+```erb
+<%# app/views/avo/projects/_summary.html.erb %>
+<div class="mb-4 rounded border p-4">
+  Review these projects before starting a new one.
+</div>
+```
+
+Slots have no automatic wrapper or spacing. Use your own markup and classes. The `before_title` and `after_title` positions sit inline beside the title, so return inline content such as a badge rather than a full-width panel.
+
+See the [position reference](./resources-api.html#index_slot) for all fourteen positions and their placement. Register multiple blocks at a position to render them in registration order. A child resource keeps inherited registrations and can add its own without changing its parent or siblings.
+
+Use `before_collection` / `after_collection` for full-width content outside the complete table or grid and its paginator. Use `before_records` / `after_records` immediately around the records, inside the card for tables. Title slots are inside the header and pagination slots are inside the table footer. These are insertion points inside existing areas, not replacements for their built-in content.
+
+### Wrap or replace default content
+
+Use `replace: true` with one of `:cards`, `:header`, `:title`, `:toolbar`, `:collection`, `:records`, or `:pagination` to take ownership of that region. The generic `view_slot :index, :title, replace: true` form works too.
+
+`default_content.call` returns the built-in content, so you can wrap it without copying Avo's template:
+
+```ruby
+index_slot :title, replace: true do
+  tag.span(class: "flex items-center gap-2") do
+    safe_join([default_content.call, tag.span("Preview", class: "my-badge")])
+  end
+end
+
+index_slot :pagination, replace: true do
+  if params[:compact]
+    render partial: "avo/projects/compact_pagination", locals: {pagy: pagy}
+  else
+    default_content.call
+  end
+end
+```
+
+The default is rendered only if called and is memoized for that region's current render, not across requests. Calling it does not insert it automatically: return it, include it in your markup, or return different content to replace it. Returning `nil` hides the region. Inserting the same default twice duplicates its HTML and may duplicate IDs; do not use that as a way to render controls twice. Plain strings are escaped, just as in additive slots.
+
+Surrounding additions remain: replacing `:title` preserves `before_title` and `after_title`. Nested content is different: replacing `:header` without calling its default omits the title, description, controls, and nested title hooks. Replacing `:collection` without its default omits records, pagination, and their nested hooks. For empty results, `:records` wraps or replaces the empty state; pagination hooks do not run.
+
+Only one replacement may be declared per region on a resource. A child may override its inherited replacement without changing its parent or siblings. Its `default_content` still means Avo's built-in content, not the parent's replacement. Additive registrations keep accumulating independently.
+
+:::warning Replacement boundaries
+Avo retains the outer Turbo replacement targets, loading boundaries, and the resource search controller. Replacing a region can still remove its search, selection, or navigation controls. Call the default to preserve those controls; fully replacing their markup means owning their UI behavior. Skipping default rendering does not skip authorization or record loading. Lazy-loading and live-search refresh boundaries below apply equally to replacements.
+:::
+
+### Use loaded records in slot content
+
+Slot blocks run in [`Avo::ExecutionContext`](./execution-context.html), with rendering helpers and request context available. For a summary of the current page, use `resources`, whose entries are hydrated Avo resources, rather than assuming they are model records:
+
+```ruby
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  index_slot :before_records do
+    tag.p("Projects on this page: #{resources.size}", class: "p-4")
+  end
+end
+```
+
+Return a rendered partial or component, tag-helper HTML, plain text (which is escaped), or `nil` to show nothing. The [API reference](./resources-api.html#index_slot) lists the available context. In association panels, `parent_record` and `parent_resource` identify the parent. The `query` is already authorized, but is not necessarily an ActiveRecord relation; use only operations supported by your resource's query.
+
+:::warning Lazy indexes
+With [`self.index_view_loading = :lazy`](./resources-api.html#self.index_view_loading), cards and header slots render in the initial page shell, before `resources`, `query`, and `pagy` are loaded. Put data-dependent content in toolbar, collection, records, or pagination slots, which render in the deferred content instead. Toolbar slots render even when there is no toolbar. Collection and record slots surround the empty state too; pagination slots are absent for empty results.
+:::
+
+Live search refreshes the listing, not the toolbar or its slots. For summaries that must track the current search and page, use collection or record slots, or pagination slots when the summary is only needed for nonempty results. In the built-in table and grid, collection, records, and pagination slots refresh with live search; collection and record slots also surround the listing's empty state. Toolbar slots defer with the lazy body, but do not refresh on live search. Cards and header slots remain part of the page shell.
+
+Registrations are stored in memory. An unregistered position returns immediately without rendering or looking for a partial. Registered blocks run on each relevant render; partials use Rails' normal template lookup and caching, including development reload behavior. A slot does not cache your output or prevent queries, network calls, or other expensive work inside its block. Reuse loaded records and use ordinary Rails caching when appropriate.
+
+### Keep slots when customizing the index
+
+The built-in table and grid render collection, records, and pagination slots. Other view types, including custom and add-on views, must opt in. In a component inheriting from `Avo::ViewTypes::BaseViewTypeComponent`, call `render_index_slot` at each supported location. Surround the entire collection and paginator with collection slots, and the records markup with record slots. Place pagination slots immediately around the paginator, and omit them for empty results.
+
+For replacement support, pass the default markup as a block at the named region, leaving its before/after hooks outside:
+
+```erb
+<%= render_index_slot :before_records %>
+<%= render_index_slot :records do %>
+  <%# Your existing records markup goes here. %>
+<% end %>
+<%= render_index_slot :after_records %>
+```
+
+Existing [custom index components](./resources-api.html#self.components) must adopt slot rendering themselves; declaring slots on the resource does not insert them into an overridden template. See [custom view types](./custom-view-types.html) for the component setup.
+
 ## Show
 
 The page where you see one resource in more detail.
