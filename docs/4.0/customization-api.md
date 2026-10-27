@@ -729,7 +729,7 @@ end
 
 <Option name="`send_metadata`" headingSize="3">
 
-Controls whether Avo sends usage metadata to Avo HQ, such as fields count, resources count, and other relevant metrics that help the Avo team understand how the framework is used.
+Controls whether Avo sends usage metadata to Avo HQ: counts of resources, fields, actions, and similar, plus the installed Avo gems. It never includes records, source code, or visitor IPs. See [Usage metadata](./customization.html#usage-metadata) for the full list.
 
 ```ruby
 config.send_metadata = false
