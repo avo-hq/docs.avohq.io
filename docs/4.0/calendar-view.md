@@ -198,6 +198,37 @@ In the week view today's column is a pinned header that never leaves the screen,
 
 Two cases have nothing to reveal, and both are quiet rather than broken: `hide_weekends` can drop today from the grid entirely, and visitors who ask for reduced motion get the same jumps without the animation.
 
+## Customize the calendar index
+
+See the [Slots guide](./slots.html) for shared registrations, wrapping defaults, and all refresh and replacement caveats. The boundaries below are specific to Calendar.
+
+With the updated add-on and Avo's [`index_slot`](./resources-api.html#index_slot) API, add content around the calendar or wrap its built-in markup without copying its component:
+
+```ruby
+# app/avo/resources/event.rb
+class Avo::Resources::Event < Avo::BaseResource
+  self.view_types = [:table, :calendar]
+
+  index_slot :before_collection do
+    tag.p("All times use your selected time zone.", class: "mb-4") if view_type.to_sym == :calendar
+  end
+
+  index_slot :records, replace: true do
+    tag.section(default_content.call, class: "w-full event-calendar")
+  end
+end
+```
+
+Collection slots surround the whole calendar card, including its month/week controls. Records slots surround the month or week grid inside the card, leaving date navigation intact. Both support before/after additions and lazy default replacements, and refresh inside the calendar's Turbo Frame on date navigation and live search. Returning `nil` hides a replacement region; omitting `default_content.call` skips its built-in rendering.
+
+Slots add no wrapper or styles. Use `w-full` on your wrapper to preserve the grid's full width inside the card's flex layout.
+
+The resource shell already renders cards, header, title, and toolbar slots. The calendar's internal date heading does not fire those hooks again. Calendar has no paginator, so pagination slots do not run. With no index records, core's empty-state branch supplies collection and records slots instead.
+
+:::warning Calendar summaries
+Slot context is the standard index context: `resources` contains hydrated resources from the index page, `pagy` describes that page, and `query` is the authorized index query. The calendar independently queries the visible date range, ignoring index pagination. Do not use `resources.size` or `pagy.count` as the number of events on screen. A range summary must apply its own date-range conditions to the authorized query.
+:::
+
 :::info
 There is no drag-to-reschedule yet.
 :::

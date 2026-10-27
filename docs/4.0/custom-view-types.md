@@ -43,37 +43,55 @@ class MyPlugin::ViewTypes::TimelineViewTypeComponent < Avo::ViewTypes::BaseViewT
 end
 ```
 
-Then create the template. You have full control over the HTML — render items however you like and include the paginator at the bottom:
+Then create the template. Keep the list Turbo Frame and expose [`index_slot`](./resources-api.html#index_slot) positions so applications can extend your view without replacing it. Pass each region's built-in markup as a block; this enables replacements to preserve it through `default_content.call`:
 
 ```erb
 <%# app/components/my_plugin/view_types/timeline_view_type_component.html.erb %>
 
-<div class="timeline-view">
-  <% if empty? %>
-    <div class="p-8 text-center text-gray-500">
-      No records found.
-    </div>
-  <% else %>
-    <% grouped_resources.each do |date, resources| %>
-      <h3 class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
-        <%= date.strftime("%B %d, %Y") %>
-      </h3>
+<turbo-frame id="<%= list_frame_id %>" target="_top" class="flex w-full flex-col">
+  <%= render_index_slot :before_collection %>
+  <%= render_index_slot :collection do %>
+    <%= render_index_slot :before_records %>
+    <%= render_index_slot :records do %>
+      <div class="timeline-view">
+        <% if empty? %>
+          <div class="p-8 text-center text-gray-500">No records found.</div>
+        <% else %>
+          <% grouped_resources.each do |date, resources| %>
+            <h3 class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
+              <%= date.strftime("%B %d, %Y") %>
+            </h3>
 
-      <% resources.each do |resource| %>
-        <div class="px-4 py-3 border-b border-gray-100">
-          <%= resource.record.title %>
-        </div>
-      <% end %>
+            <% resources.each do |resource| %>
+              <div class="px-4 py-3 border-b border-gray-100">
+                <%= resource.record.title %>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+    <%= render_index_slot :after_records %>
+
+    <% unless empty? %>
+      <div class="timeline-pagination">
+        <%= render_index_slot :before_pagination %>
+        <%= render_index_slot(:pagination) { render paginator_component } %>
+        <%= render_index_slot :after_pagination %>
+      </div>
     <% end %>
   <% end %>
-</div>
-
-<%= render paginator_component %>
+  <%= render_index_slot :after_collection %>
+</turbo-frame>
 ```
 
 :::info
-The `paginator_component` method is inherited from the base class. Always render it to keep pagination working.
+The `paginator_component` and `list_frame_id` methods are inherited from the base class. Render the paginator for populated, paginated views. Keep collection hooks inside the frame, and leave before/after hooks outside the region's replacement block so they survive a full replacement.
 :::
+
+The core resource shell already owns cards, header, title, and toolbar hooks. Do not render those again for your view's internal heading. Slot declarations do not add markup to a custom template automatically; only positions you render are available. Slots add no wrapper or styles, and replacing controls means owning their behavior.
+
+For empty index pages, `ResourceListingComponent` renders the shared empty state instead of instantiating your view-type component. Core supplies collection and records hooks around that empty state, without pagination hooks. Your component's empty branch is useful if it is rendered directly, but does not replace core's empty-index behavior. See [Slots: coverage and caveats](./slots.html#keep-slots-when-customizing-the-index) for refresh boundaries and add-on differences.
 
 ## 2. Register the view type
 

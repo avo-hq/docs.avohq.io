@@ -438,6 +438,8 @@ end
 
 Search, filters, sorting, pagination, and view switches then stay asynchronous inside that frame while the URL keeps in sync. Loading stays eager on association indexes and on resources with a custom index component.
 
+To add a summary or notice around the existing index UI, declare [`index_slot`](./resources-api.html#index_slot) on the resource. See [Slots](./slots.html) for partial rendering, loaded-record summaries, and custom component support.
+
 ## Record previews
 
 Let users peek at a record from the `Index` view without opening it. Add a [`preview` field](./fields/preview.html) to the resource and mark the fields you want in the popover with `show_on: :preview`.
@@ -478,6 +480,10 @@ end
 Avo will display an external link button on the record that takes the user to that URL.
 
 ## Swap the view components
+
+For Index, Show, Edit, and New customizations, try [slots](./slots.html) first. They let you add notices, summaries, or badges, and wrap, replace, or hide individual regions while keeping the rest of Avo's default view. Use `index_slot`, `show_slot`, `edit_slot`, or `new_slot` for one view, or [`form_slot`](./resources-api.html#form_slot) for both Edit and New, including validation rerenders. A full component override is only needed when the available slot boundaries do not fit your change.
+
+The [Slots guide](./slots.html#choose-the-view-and-region) covers region placement, shared form ordering, replacement precedence, builder availability, and creation-modal boundaries. Index slots retain their collection, records, pagination, and refresh behavior.
 
 Each view is rendered by a ViewComponent (`Avo::Views::ResourceIndexComponent`, `ResourceShowComponent`, `ResourceEditComponent`). Replace any of them per resource with [`self.components`](./resources-api.html#self.components):
 

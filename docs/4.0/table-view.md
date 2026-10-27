@@ -12,6 +12,8 @@ The table view is the default way to display resources in Avo. It provides a pow
 
 With no configuration, every resource renders as a table with the row controls (show, edit, delete, actions) on the right side of each row and standard row styling. Two hooks let you customize it: [row controls placement](#row-controls) and [`row_options`](#style-rows-with-row_options) for per-row HTML attributes.
 
+To add content around the table or wrap, replace, or hide its records and pagination regions, use [slots](./slots.html). Slots customize the index layout, not individual rows.
+
 ## Row controls
 
 By default, resource controls are positioned on the right side of record rows. However, if the table contains many columns, these controls may become obscured. In such cases, you may prefer to move the controls to the left side, float them over the row, or reveal them only on hover.

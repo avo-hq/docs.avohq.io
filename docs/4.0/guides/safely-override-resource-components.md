@@ -1,5 +1,9 @@
 # How to safely override the resource views without maintaining core components
 
+:::tip Prefer slots for regional customization
+Use [slots](../slots.html) to add a message, share content across resources, or wrap and replace individual regions on Index, Show, Edit, and New without introducing a custom component. Shared form slots target both Edit and New, including validation rerenders. The component-override technique below remains useful when the available slot boundaries are insufficient; custom templates must retain rendering hooks for any slots they use.
+:::
+
 Sometimes it's the small things in a UI that make a big impact. One of those things is being able to show a helpful message at the top of an index view page. This is typically where users land to see lists of posts, products, orders, or anything else. You might want to point out something important, offer quick guidance, or simply highlight a recent change.
 
 :::info

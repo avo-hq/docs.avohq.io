@@ -13,12 +13,19 @@ The page where you see all your resources listed in a [table](./table-view.html)
 <br/>
 <RelatedList>
 <RelatedItem href="./customization.html#click-a-row-to-view-the-record">Click row to view record</RelatedItem>
+<RelatedItem href="./slots.html">Slots</RelatedItem>
 <RelatedItem href="./resources-api.html#self.components">Resource custom components</RelatedItem>
 </RelatedList>
+
+### Add content to the index
+
+Use [slots](./slots.html) to add content around the default index or wrap, replace, and hide individual regions without overriding the full component. The Slots guide covers shared registrations, default content, loaded records, refresh boundaries, add-on support, and caveats. See the [`index_slot` API reference](./resources-api.html#index_slot) for every position and validation rule.
 
 ## Show
 
 The page where you see one resource in more detail.
+
+Use [`show_slot`](./resources-api.html#show_slot) to add or replace content around the cards, header, title, controls, or complete resource body. See [Slots](./slots.html#customize-a-single-record-page) for examples and nested-region boundaries.
 <br/>
 <RelatedList>
 <RelatedItem href="./resources-api.html#self.components">Resource custom components</RelatedItem>
@@ -27,6 +34,8 @@ The page where you see one resource in more detail.
 ## Edit
 
 The page where you can edit one resource.
+
+Use [`edit_slot`](./resources-api.html#edit_slot) for Edit-only changes, or [`form_slot`](./resources-api.html#form_slot) to share them with New. Both support cards, header, title, controls, body, and form regions, including update validation rerenders. See [shared form slots](./slots.html#share-additions-across-edit-and-new) for builder availability and precedence.
 <br/>
 <RelatedList>
 <RelatedItem href="./resources-api.html#self.components">Resource custom components</RelatedItem>
@@ -35,6 +44,8 @@ The page where you can edit one resource.
 ## New
 
 The page where you can create a new resource.
+
+Use [`new_slot`](./resources-api.html#new_slot) for New-only changes, or shared `form_slot` registrations for both form views, including create validation rerenders. Belongs-to creation modals expose title, body, controls, and form hooks, but deliberately protect the native modal header. See [creation-modal slots](./slots.html#support-creation-modals-and-repeated-controls).
 <br/>
 <RelatedList>
 <RelatedItem href="./resources-api.html#self.components">Resource custom components</RelatedItem>
@@ -51,6 +62,8 @@ Three named groups let you target several views at once:
 ### Form
 
 `:form` is an alias for the `Edit` and `New` views for creating and editing records. The `create` and `update` requests that submit those forms also count as form views.
+
+For shared UI additions and replacements, [`form_slot`](./resources-api.html#form_slot) targets both views. Inside a slot, `view` is normalized to Edit or New, including validation-error rerenders.
 
 ### Single
 
@@ -172,6 +185,8 @@ You may also use a combination of views using an array.
 Field visibility options (`show_on`, `hide_on`, `only_on`, `except_on`) additionally accept `:preview` — see [Preview](#preview) above.
 
 ## View types
+
+For adding, wrapping, replacing, or hiding regions on Index, Show, Edit, and New without a component override, see [Slots](./slots.html). The guide also covers shared form content for Edit and New.
 
 The <Index /> view can render records through several view types, each with its own options, documented on its own page:
 
