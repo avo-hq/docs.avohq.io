@@ -902,17 +902,19 @@ end
 - **Values:** The fourteen additive positions above, or the replacement regions below when `replace: true`.
 - **Validation:** An unknown position, missing block, or duplicate replacement on the same resource raises `ArgumentError` at declaration time. Region names require `replace: true`; before/after positions reject it.
 - **Order:** Additive declarations accumulate in registration order, including inherited registrations. Replacements have one owner per region, with explicit child overrides. Neither form mutates parent or sibling resources.
+- **Inheritance:** Shared declarations belong in the application's base resource, before child declarations. Addition and replacement registrations use separate copy-on-write sets. A late parent addition does not reach a child that has already declared an addition; a late parent replacement does not reach a child that has already declared a replacement. There is no public removal or priority API. Repeating an additive declaration appends again.
 - **Output:** A rendered partial or component, tag-helper HTML, escaped plain text, or `nil` (no output). No wrapper or spacing is added. Partial locals are not supplied automatically.
+- **Execution:** The block's return value is used, not an implicit concatenation of every expression. Exceptions propagate normally; blocks are application code, not sandboxed code. There is no once-per-request guarantee across multiple rendered panels.
 - **Context:** Blocks run in `Avo::ExecutionContext`, with standard helpers, `render`, `current_user`, `params`, `request`, and `context`, plus the following index values:
 
 | Value | Meaning |
 | --- | --- |
-| `resource` | The index resource, not an individual row. |
-| `resources` | The current page of hydrated Avo resources, not raw model records. |
-| `query` | The authorized query; not necessarily an ActiveRecord relation. |
+| `resource` | The current index resource instance, not an individual row. |
+| `resources` | The current page of hydrated Avo resources, not raw model records. Each entry exposes its model through `.record`. |
+| `query` | The authorized index query, retaining the current index constraints; not necessarily an ActiveRecord relation. |
 | `pagy` | The index pagination object. |
-| `parent_record` | The parent record when rendered in an association index panel. |
-| `parent_resource` | The parent resource when rendered in an association index panel. |
+| `parent_record` | The parent record when rendered in an association index panel; otherwise `nil`. |
+| `parent_resource` | The parent resource when rendered in an association index panel; otherwise `nil`. |
 | `view_type` | The current index view type. |
 | `default_content` | Replacement blocks only: a callable returning the built-in region's rendered HTML. |
 
@@ -936,6 +938,8 @@ end
 
 `default_content.call` renders lazily and memoizes only for the current region render. The block's return value controls output: return the default to preserve it, include it in custom markup to wrap it, return different content to replace it, or return `nil` to hide the region. Calling the default does not insert it automatically. Do not insert the same default more than once, because this duplicates HTML IDs and controls.
 
+The callable is available only in replacement context, is not passed as a positional block argument, and is not automatically a partial local. Its memoization is not a fragment cache or a cache across requests. Returning `nil` also suppresses rendering of the default when the callable was never invoked.
+
 Only one replacement may be declared on a resource per region. Children may override inherited replacements without mutating parents or siblings. Their default is always Avo's built-in content, not the parent's replacement. Surrounding before/after hooks remain, but nested hooks render only when the replacement calls its default. Replacing a whole header or collection without its default therefore removes its nested hooks and controls. Avo keeps outer Turbo targets and loading boundaries; replacements own the behavior of controls whose markup they replace. Authorization and data loading still run. See [Wrap or replace default content](./views.html#wrap-or-replace-default-content).
 
 :::warning Lazy loading
@@ -944,9 +948,13 @@ Cards and header slots, including title slots, belong to the page shell. On an i
 
 **Refresh boundaries:** Live search replaces only `ResourceListingComponent`, not the toolbar. Toolbar slots defer with the lazy body but do not refresh on live search. In the built-in table and grid, collection, records, and pagination slots refresh with live search; the listing's empty branch renders collection and record slots too. Summaries that must track the search and page belong in collection, records, or pagination slots, not toolbar slots. Cards and header slots remain in the page shell.
 
-Collection, records, and pagination slots are supported by the built-in table and grid. Custom and add-on view types must opt in by calling `render_index_slot :before_records` (and the other supported positions) from a component inheriting from `Avo::ViewTypes::BaseViewTypeComponent`. Existing custom index components must adopt slots themselves; resource declarations alone do not update their templates. See [Keep slots when customizing the index](./views.html#keep-slots-when-customizing-the-index).
+Collection, records, and pagination slots are supported by the built-in table and grid and the updated [Notifications add-on](./notifications.html#customize-the-notification-index). The updated [Calendar add-on](./calendar-view.html#customize-the-calendar-index) supports collection and records slots, not pagination. These positions stay inside each view type's list Turbo Frame; date navigation and live-search visits re-render the slots in that frame. Calendar's `resources`, `query`, and `pagy` retain the index context, not its separate visible-date-range query.
 
-**Performance:** Registrations are stored in memory. Missing positions return without rendering or partial lookup. Registered blocks execute on each relevant render, using normal Rails template caching for partials. Output is not automatically cached, and queries or other IO inside a block remain the application's responsibility.
+Other view types must opt in by calling `render_index_slot :before_records` (and the other supported positions) from a component inheriting from `Avo::ViewTypes::BaseViewTypeComponent`. Existing custom index components must adopt slots themselves; resource declarations alone do not update their templates. Shell hooks must not be duplicated inside the view type. See [Keep slots when customizing the index](./views.html#keep-slots-when-customizing-the-index).
+
+**Other surfaces:** Map only exposes listing hooks through its optional embedded table; these do not wrap the map. Kanban boards are not resource index views. Bell updates and single-notification broadcasts do not render notification index slots. With an empty index page, core renders collection and records hooks around the shared empty state without instantiating the view-type component; pagination hooks are absent. The guide's [support matrix](./views.html#keep-slots-when-customizing-the-index) summarizes coverage.
+
+**Performance:** Registrations are stored in memory. Missing positions return without rendering or partial lookup. Dispatch does not spawn processes or discover slots through filesystem scans. Registered blocks execute on each relevant render, using normal Rails template lookup and caching for partials. Output is not automatically cached, and queries or other IO inside a block remain the application's responsibility. A replacement avoids the default's rendering work only when it does not invoke `default_content`; it does not avoid controller authorization, querying, pagination, or hydration.
 
 </Option>
 

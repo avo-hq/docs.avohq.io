@@ -334,6 +334,31 @@ Done notifications are archived out of every scope except **Done**.
 The generated resource sets `visible_on_sidebar = false`, so notifications are reached through the bell dropdown's "View all" link rather than the sidebar. It's a plain Avo resource — add fields, filters, or a `DeleteNotifications` action, or flip it onto the sidebar, by editing the generated file.
 :::
 
+## Customize the notification index
+
+The updated add-on supports Avo's [`index_slot`](./resources-api.html#index_slot) API on the notification resource. Use collection slots around the whole notification card, records slots around the grouped list, and pagination slots inside the footer. The notification header and selection controls remain outside the records region.
+
+```ruby
+# app/avo/resources/avo_notification.rb
+class Avo::Resources::AvoNotification < Avo::BaseResource
+  index_slot :before_records do
+    tag.p("Notifications on this page: #{resources.size}", class: "p-4")
+  end
+
+  index_slot :pagination, replace: true do
+    tag.div(default_content.call, class: "w-full notification-pagination")
+  end
+end
+```
+
+The example adds declarations to your existing resource; keep its fields, scopes, and user-scoping configuration. The inherited resource-shell slots are available too. The notification card's own heading does not fire resource title/header hooks a second time.
+
+Slots add no wrapper or styles. When wrapping the records or pagination, use `w-full` to retain the available width inside the card's flex layout.
+
+Collection, records, and pagination slots refresh with index pagination and live search. Returning `nil` from a replacement hides that region. Replacing the collection without its default removes the card's selection and navigation controls, while retaining the outer Turbo Frame. With no index results, collection and records slots surround core's empty state and pagination hooks do not run.
+
+Real-time updates to the bell or a single notification do not re-render index slots. Use the index's normal refresh when a slot's summary must reflect those changes.
+
 ## Cleanup
 
 Every notification is created with an `expires_at` derived from the [`ttl`](./notifications-api.html#ttl) configuration. Over time, expired notifications accumulate in the database — use the built-in rake task to clean them up:
