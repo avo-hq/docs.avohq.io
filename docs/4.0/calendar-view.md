@@ -200,6 +200,8 @@ Two cases have nothing to reveal, and both are quiet rather than broken: `hide_w
 
 ## Customize the calendar index
 
+See the [Slots guide](./slots.html) for shared registrations, wrapping defaults, and all refresh and replacement caveats. The boundaries below are specific to Calendar.
+
 With the updated add-on and Avo's [`index_slot`](./resources-api.html#index_slot) API, add content around the calendar or wrap its built-in markup without copying its component:
 
 ```ruby

@@ -336,6 +336,8 @@ The generated resource sets `visible_on_sidebar = false`, so notifications are r
 
 ## Customize the notification index
 
+See the [Slots guide](./slots.html) for shared registrations, wrapping defaults, and all refresh and replacement caveats. The boundaries below are specific to Notifications.
+
 The updated add-on supports Avo's [`index_slot`](./resources-api.html#index_slot) API on the notification resource. Use collection slots around the whole notification card, records slots around the grouped list, and pagination slots inside the footer. The notification header and selection controls remain outside the records region.
 
 ```ruby

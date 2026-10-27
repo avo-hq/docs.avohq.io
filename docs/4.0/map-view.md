@@ -9,6 +9,8 @@ outline: [2, 3]
 Some resources that contain geospatial data can benefit from being displayed on a map. For
 resources to be displayed to the map view they require a `coordinates` field, but that's customizable.
 
+The index's cards, header, title, and toolbar can use [slots](./slots.html). Collection, records, and pagination hooks belong only to the optional embedded table, not the map itself; see [slot coverage](./slots.html#keep-slots-when-customizing-the-index).
+
 ## Enable map view
 
 To enable map view for a resource, you need to add the `map_view` class attribute to a resource. That will add the view switcher to the <Index /> view.

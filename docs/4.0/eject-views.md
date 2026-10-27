@@ -7,6 +7,8 @@ outline: [2, 3]
 
 Avo renders its UI from partials, ViewComponents, and controllers that live inside the gem. When configuration isn't enough, run `bin/rails generate avo:eject` to copy any of them into your application and customize them however you need — your copy takes precedence over Avo's.
 
+For adding content or changing one region on Index, Show, Edit, or New, try [slots](./slots.html) before ejecting a template. Slots keep the rest of the default view intact without maintaining a copied component; shared form slots target both Edit and New. Ejected templates must retain the rendering hooks for any slots you want to use.
+
 :::warning You take over maintenance
 Ejected files stop receiving updates on new Avo releases; keeping them in sync becomes your responsibility. That's why the generator asks you to confirm every ejection.
 :::
