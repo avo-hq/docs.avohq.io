@@ -897,6 +897,31 @@ Clicking the window's own title bar minimizes it — the conversation stays in t
 
 To clear the dock in one go, open the history menu (the clock button next to **Agent**) and pick **Clear open chats** at the bottom. It does what every pill's × does, all at once, and closes the chat window: the pills go, and every conversation stays in the history list right above the button, one click from reopening. The entry only shows when there's at least one pill to close.
 
+### Use only full-page chats
+
+To offer AI chat only through your menu, disable the floating bar in your initializer:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.ai.chat_bar_enabled = false
+end
+```
+
+The bar is enabled by default. Setting this to `false` removes the dock, its Cmd+J / Ctrl+J shortcut,
+and the controls that open or minimize a conversation into the bar. Full-page chats, their composers,
+and existing conversations remain available.
+
+Add a link to the end-user chat list inside your `config.main_menu` block:
+
+```ruby
+# config/initializers/avo.rb
+link "AI chat", path: "/admin/chats", icon: "tabler/outline/message"
+```
+
+Replace `/admin` if your Avo mount path differs. This opens the full-page chat product, not the
+`avo_ai/chats` resource used by super admins to inspect raw chat records.
+
 ### Closing idle tabs automatically
 
 Pills you stop using pile up. Set `config.ai.tab_expiry` and a pill nobody has opened for that long closes itself the next time an Avo page loads:
