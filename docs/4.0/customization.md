@@ -609,7 +609,18 @@ end
 
 ## Usage metadata
 
-On the community tier, Avo sends usage metadata (fields count, resources count, and similar metrics) to Avo HQ to help the team understand how the framework is used. Opt out with [`send_metadata`](./customization-api.html#send_metadata).
+Avo sends a small usage report to Avo HQ to help the team understand how the framework is used. On the community tier it goes out at most once a day, from production only, in a background thread. On paid tiers it travels with the license check.
+
+The report contains:
+
+- **Versions:** Avo, Rails, Ruby, and the Rails environment.
+- **App identity:** the application name, the host and port, your license key (if any), and an anonymous install ID derived one-way from `secret_key_base`.
+- **Counts:** resources, dashboards, fields and fields per resource, field types, actions, filters, boards, tools, forms, and pages.
+- **Setup:** the Avo gems you have installed and their versions, whether the main and profile menus are configured, the cache store class and whether it works, and `root_path`.
+
+It never contains your records, database contents, source code, the names of your resources or fields, or your visitors' IP addresses. Custom field types are sent as `custom_1`, `custom_2`, and so on, not by name. Avo reads the counts by parsing the files in `app/avo` without running them, so collecting the report never touches your database. On Ruby versions before 3.3 the counts are skipped.
+
+If you want to stop the report on the community tier, set [`send_metadata`](./customization-api.html#send_metadata) to `false`.
 
 ```ruby
 # config/initializers/avo.rb
@@ -617,6 +628,10 @@ Avo.configure do |config|
   config.send_metadata = false
 end
 ```
+
+:::info
+Paid tiers always send the report with the license check, regardless of `send_metadata`.
+:::
 
 ## Generators
 
