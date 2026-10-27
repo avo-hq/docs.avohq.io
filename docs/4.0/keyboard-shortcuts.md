@@ -108,6 +108,9 @@ Its chord has a modifier, so it fires while you're typing in a field — pulling
 | <kbd>↑</kbd> / <kbd>↓</kbd> | Navigate rows (once the table is focused)    |
 | <kbd>↵</kbd>               | Open the focused record                      |
 | <kbd>Space</kbd>          | Select / deselect the row                    |
+| <kbd>E</kbd>               | Edit the focused record                      |
+| <kbd>D</kbd>               | Delete the focused record                    |
+| <kbd>A</kbd>               | Open the focused row's actions list, when its [row controls](./custom-controls.html) have one |
 | <kbd>Esc</kbd>            | Clear row focus / deselect rows              |
 | <kbd>V</kbd> <kbd>T</kbd> | Switch to table view                         |
 | <kbd>V</kbd> <kbd>G</kbd> | Switch to grid view                          |

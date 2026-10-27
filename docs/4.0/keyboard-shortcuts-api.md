@@ -130,7 +130,7 @@ Key badges and the <kbd>?</kbd> modal show the first alternative of a binding.
 | `appearance.cycle_accent` | `Shift+A` | Cycle the accent color | everywhere |
 | `appearance.toggle_sound` | `Shift+S` | Toggle the pick sound | everywhere |
 | `resource.new` | `c` | Create a new record | index, show |
-| `resource.actions` | `a` | Open the actions menu | index, show, edit |
+| `resource.actions` | `a` | Open the actions menu | index, show, edit, focused index row |
 | `resource.go_to_index` | `i` | Go back to the index | show, edit |
 | `record.edit` | `e` | Edit the record | show, focused index row |
 | `record.delete` | `d` | Delete the record | show, focused index row |
