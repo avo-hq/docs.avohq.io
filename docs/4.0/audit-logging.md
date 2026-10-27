@@ -487,6 +487,27 @@ end
 
 Both settings apply only to `has_avo_audit_log`. A payload you pass to `Avo::AuditLogging.record` is stored as you give it.
 
+### Pause logging for a block of code
+
+<VersionReq version="4.3.1" />
+
+Bulk imports, data backfills, and test setup can write thousands of activities you don't need. Wrap that work in `Avo::AuditLogging.disabled` to record nothing inside the block:
+
+```ruby
+# lib/tasks/backfill.rake
+task backfill_prices: :environment do
+  Avo::AuditLogging.disabled do
+    Product.find_each do |product|
+      product.update!(price: product.price * 100)
+    end
+  end
+end
+```
+
+Nothing is recorded inside the block from any source: the panel, `Avo::AuditLogging.record`, `has_avo_audit_log`, the API, the AI chat, or MCP. Logging resumes when the block ends, even if it raises. The block only affects the current thread, so other requests keep recording.
+
+To switch logging off everywhere, for example in the test environment, set `config.enabled = false`.
+
 ## Disable specific actions logging
 
 By default, when audit logging is enabled for a resource or action, all actions, such as `index` visits, `show` visits, `edit`, `update`, etc. are logged.
