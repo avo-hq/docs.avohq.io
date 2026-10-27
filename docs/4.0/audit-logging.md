@@ -367,6 +367,37 @@ en:
 Activities recorded before you upgraded have no origin, and neither do activities recorded by an app that hasn't run the new migration yet. Both keep working — they just read as the panel's own.
 :::
 
+### Record changes no person made
+
+<VersionReq version="4.3.1" />
+
+A background job, an importer, or a rake task usually has no user behind it. Record its activity with no author, and let the origin say what made the change. You don't need a placeholder user:
+
+```ruby
+# app/jobs/nightly_import_job.rb
+class NightlyImportJob < ApplicationJob
+  def perform(import)
+    Avo::AuditLogging::Origin.with("nightly_importer", record: import) do
+      import.products.each do |product|
+        product.update!(price: import.price_for(product))
+
+        Avo::AuditLogging::Recorder.record(
+          activity_class: Avo::Resources::Product,
+          action: :update,
+          author: nil,
+          payload: {price: product.price},
+          records: product
+        )
+      end
+    end
+  end
+end
+```
+
+The record's timeline names the origin as the author, so the entry above reads *Nightly importer*. You can pass `origin:` to `Recorder.record` instead of wrapping the work in `Origin.with`. With no author and no origin, `Recorder.record` raises `ArgumentError`, because the entry would not say who or what made the change.
+
+The resource's [`self.audit_logging`](#enable-specific-resources-and-actions) opt-in still applies. If its `activity` block reads `current_user`, make sure it handles `nil`, since a job has no current user.
+
 ## Disable specific actions logging
 
 By default, when audit logging is enabled for a resource or action, all actions, such as `index` visits, `show` visits, `edit`, `update`, etc. are logged.
