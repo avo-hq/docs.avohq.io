@@ -310,7 +310,7 @@ You can try this flow on the [avodemo](https://main.avodemo.com/avo/resources/ci
 
 ## Customize the modal
 
-The modal's texts can each be a string or a block — blocks run in [`Avo::ExecutionContext`](./execution-context) with access to `resource`, `record`, `view`, `arguments`, and `query`:
+The modal's texts can each be a string or a block — blocks run in [`Avo::ExecutionContext`](./execution-context) with access to `resource`, `record`, `view`, `arguments`, `query`, and [`index_query`](#work-with-every-record-on-the-index):
 
 - [`name`](./actions-api.html#name) — the action's display name in the dropdown and modal
 - [`description`](./actions-api.html#description) — a short explanation under the name in the modal header
@@ -349,6 +349,31 @@ end
 :::tip
 Standalone actions pair well with [fields](#collect-input-with-fields) to collect the input the operation needs.
 :::
+
+## Work with every record on the Index
+
+`query` holds only the records the user selected. When the action needs the whole list the user is looking at, read `index_query`: the <Index /> query with the current filters, scopes, search, and sort applied, before pagination. It is the same whether the user selected one record, a page, all matching records, or nothing, so it suits standalone exports of "everything I filtered".
+
+It is available in `handle`, in `fields`, and in the modal's text blocks:
+
+```ruby
+# app/avo/actions/export_csv.rb
+class Avo::Actions::ExportCsv < Avo::BaseAction
+  self.standalone = true
+  self.message = -> { "Export #{index_query.count} records?" }
+
+  def fields
+    field :only_selected, as: :boolean, help: "Out of #{index_query.count} matching records"
+  end
+
+  def handle(query:, fields:, **)
+    records = fields[:only_selected] ? query : index_query
+    # ...
+  end
+end
+```
+
+`index_query` is `nil` when the action wasn't started from an <Index /> list: on a <Show /> or <Edit /> page, and on an [array resource](./array-resource). Guard with `index_query&.count` when the action runs in those places too.
 
 ## Control visibility and authorization
 
