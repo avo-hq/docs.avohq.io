@@ -405,7 +405,7 @@ field :urgent, as: :boolean, filterable: {
 
 It works on a [pinned](#pinned) filter of these types: boolean, text, number, date, date time, time, and a select of up to 6 options, whose checklist becomes a row of chips. Other filters ignore it and keep their pill.
 
-An inline filter has no condition menu and uses its type's default condition (see [`control`](#control)). A filter applied under another condition, from a link or a saved URL, shows as its pill. On phones every inline filter shows as its pill, since a row of controls doesn't fit.
+An inline filter shows the same condition menu as the pill's dropdown, right after its name, and changing it filters in place. On phones every inline filter shows as its pill, since a row of controls doesn't fit.
 
 Ticks and buttons filter straight away. Boxes apply on Enter or when they lose focus.
 
