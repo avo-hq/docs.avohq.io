@@ -154,6 +154,8 @@ end
 `ui.panel` and `panel.with_card` are the same building blocks Avo renders everywhere else — the [`Avo::UI::PanelComponent`](./native-components/avo-panel-component.html) and the [`Avo::UI::CardComponent`](./native-components/avo-card-component.html) it wraps content in. Reaching for them (instead of hand-rolling `<div>`s) keeps your custom tool visually consistent with the rest of the app and gives you dark mode for free. Prefer their built-in options over patching the markup with utility classes — `padded: true` gives the card body Avo's standard padding instead of adding your own `px-*`/`py-*`, and `title:`/`description:` build the header for you. When your content is a **list of fields**, wrap it in `ui.description_list` so they get full width and dividers. For colors, spacing, and dark-mode tokens, follow the [theming guide](./appearance.html).
 :::
 
+If you use the [Dashboards add-on](./dashboards.html), a tool can also show dashboard-style cards, with ranges and metric values, without building a dashboard. See [Show a card in a custom tool](./cards.html#show-a-card-in-a-custom-tool).
+
 ### Using path helpers
 
 Because you're in a Rails engine, you will have to prepend the engine object to the path.

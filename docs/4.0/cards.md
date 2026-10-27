@@ -963,3 +963,50 @@ class Avo::Cards::PostsCount < Avo::Cards::MetricCard
   end
 end
 ```
+
+## Show a card in a custom tool
+
+<VersionReq version="4.3.2" />
+
+Card classes need a dashboard or a resource to render on. When a [custom tool](./custom-tools.html) wants the same look with its own data, render [`Avo::Cards::StandaloneCardComponent`](./cards-api.html#standalone-card-component) and pass it plain values. Its block is the card's body. Put [`Avo::Cards::MetricComponent`](./cards-api.html#metric-component) inside it to show a number the way a metric card does.
+
+```ruby
+# app/controllers/avo/tools_controller.rb
+class Avo::ToolsController < Avo::ApplicationController
+  def traffic
+    @page_title = "Traffic"
+    @range = params[:visitors_range].presence || "7"
+    @visitors = Visit.where(created_at: @range.to_i.days.ago..).count
+  end
+end
+```
+
+```erb
+<%# app/views/avo/tools/traffic.html.erb %>
+<div class="dashboard-grid dashboard-grid--cols-3">
+  <%= render Avo::Cards::StandaloneCardComponent.new(
+    label: "Recent visitors",
+    description: "Unique visitors in the selected range",
+    ranges: {"7 days" => 7, "30 days" => 30},
+    range: @range,
+    range_param: :visitors_range,
+    cols: 2
+  ) do %>
+    <%= render Avo::Cards::MetricComponent.new(value: number_with_delimiter(@visitors)) %>
+  <% end %>
+
+  <%= render Avo::Cards::StandaloneCardComponent.new(label: "Notes") do %>
+    <div class="px-4 pb-4">Any markup your tool needs.</div>
+  <% end %>
+</div>
+```
+
+The component does not query anything. Your controller action computes the data, and the component only draws it.
+
+### Let the user pick a range
+
+Pass [`ranges`](./cards-api.html#standalone-card-component) and the header shows the same dropdown a dashboard card has. Picking a range reloads the page with the value in the URL, under the [`range_param`](./cards-api.html#standalone-card-component) you chose, so your action reads it from `params`. Give each card its own `range_param` when a page has several, or one dropdown changes all of them.
+
+### Size cards on a grid
+
+[`cols`](./cards-api.html#standalone-card-component) and [`rows`](./cards-api.html#standalone-card-component) work like a card class's [`self.cols`](./cards-api.html#self.cols) and [`self.rows`](./cards-api.html#self.rows). They only take effect inside the dashboard grid, so wrap your cards in `<div class="dashboard-grid dashboard-grid--cols-N">`, where `N` is between `3` and `6`. Leave both out and the card fills the width of whatever holds it.
