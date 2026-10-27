@@ -367,11 +367,35 @@ en:
 Activities recorded before you upgraded have no origin, and neither do activities recorded by an app that hasn't run the new migration yet. Both keep working — they just read as the panel's own.
 :::
 
-### Record changes no person made
+### Record activity from your own code
 
 <VersionReq version="4.3.1" />
 
-A background job, an importer, or a rake task usually has no user behind it. Record its activity with no author, and let the origin say what made the change. You don't need a placeholder user:
+Changes made outside the panel, such as in a background job, an importer, or a service object, aren't logged on their own. Record them with `Avo::AuditLogging.record`:
+
+```ruby
+# app/services/price_updater.rb
+class PriceUpdater
+  def call(product, price, user)
+    product.update!(price: price)
+
+    Avo::AuditLogging.record(
+      action: :update,
+      record: product,
+      author: user,
+      payload: {price: price}
+    )
+  end
+end
+```
+
+Avo finds the record's resource and links the activity to the record, so it shows up on the record's timeline like a change made in the panel. `payload` can be any hash; Avo stores it as JSON.
+
+The method returns the activity, or `nil` when audit logging is switched off. It raises `ArgumentError` when the record's model has no Avo resource. It records whether or not the resource opted in with [`self.audit_logging`](#enable-specific-resources-and-actions): calling it is the opt-in.
+
+### Record changes no person made
+
+A background job or an importer usually has no user behind it. Leave out `author`, and let the [origin](#mark-your-own-origins) say what made the change. You don't need a placeholder user:
 
 ```ruby
 # app/jobs/nightly_import_job.rb
@@ -381,12 +405,10 @@ class NightlyImportJob < ApplicationJob
       import.products.each do |product|
         product.update!(price: import.price_for(product))
 
-        Avo::AuditLogging::Recorder.record(
-          activity_class: Avo::Resources::Product,
+        Avo::AuditLogging.record(
           action: :update,
-          author: nil,
-          payload: {price: product.price},
-          records: product
+          record: product,
+          payload: {price: product.price}
         )
       end
     end
@@ -394,9 +416,7 @@ class NightlyImportJob < ApplicationJob
 end
 ```
 
-The record's timeline names the origin as the author, so the entry above reads *Nightly importer*. You can pass `origin:` to `Recorder.record` instead of wrapping the work in `Origin.with`. With no author and no origin, `Recorder.record` raises `ArgumentError`, because the entry would not say who or what made the change.
-
-The resource's [`self.audit_logging`](#enable-specific-resources-and-actions) opt-in still applies. If its `activity` block reads `current_user`, make sure it handles `nil`, since a job has no current user.
+The record's timeline names the origin as the author, so these entries read *Nightly importer*. You can pass `origin:` to `Avo::AuditLogging.record` instead of wrapping the work in `Origin.with`. With no author and no origin, it raises `ArgumentError`, because the entry would not say who or what made the change.
 
 ## Disable specific actions logging
 
