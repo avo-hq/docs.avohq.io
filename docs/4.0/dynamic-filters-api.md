@@ -343,7 +343,7 @@ dynamic_filter :status,
 ```
 
 - **Type:** Boolean
-- **Default:** `true`, or `false` with [`control: :simple`](#control)
+- **Default:** `false`, or `true` under the deprecated [`control: :full`](#control)
 
 Usually paired with [`apply_on_select: true`](#apply_on_select) for an immediate filtering experience.
 
@@ -385,23 +385,26 @@ dynamic_filter :status,
 - **Type:** Boolean
 - **Default:** `false`
 
-A pinned filter keeps the usual condition and value picker. Add [`control: :simple`](#control) for a control that fits its type. A pinned filter is not listed in the "Add filter" dropdown. When a resource has a pinned filter, the filter bar shows even with [`always_expanded`](#always_expanded) set to `false`.
+A pinned filter is not listed in the "Add filter" dropdown. When a resource has a pinned filter, the filter bar shows even with [`always_expanded`](#always_expanded) set to `false`.
 
 </Option>
 
 <Option name="`control`" headingSize="3">
 
-`:simple` gives the filter a lighter dropdown: its conditions move into a menu next to the filter's name, and below it sits a value control that fits the condition picked. It works on its own or together with [`pinned`](#pinned).
+Every filter's dropdown puts its conditions in a menu next to the filter's name, and below it a value control that fits the condition picked. `control: :full` brings back the older dropdown, with the condition and value as two fields, for one filter.
 
 ```ruby{2}
 field :status, as: :select, filterable: {
-  control: :simple,
-  pinned: true
+  control: :full
 }
 ```
 
-- **Type:** Symbol
-- **Default:** the app-wide [`control`](#control-1) setting, `:full` unless changed
+- **Type:** Symbol, `:simple` or `:full`
+- **Default:** the app-wide [`control`](#control-1) setting, `:simple` unless changed
+
+:::warning Deprecated
+`control: :full` logs a deprecation warning. A future release removes the option, and every filter will use the dropdown described here.
+:::
 
 Each type opens on its most common condition, and the menu holds the rest:
 
@@ -409,10 +412,12 @@ Each type opens on its most common condition, and the menu holds the rest:
 | ------- | ------------- | ----------------------------------------------------------------------------- |
 | Select  | Is            | A checklist of every option. Ticked options match any of them; under Is not, none of them. On a `badge` field, each option shows its badge colour. |
 | Text    | Contains      | A text box.                                                                    |
-| Boolean | (no menu)     | Any / Yes / No as one row of buttons. Picking one applies it straight away. Rename Yes and No with `options:`, see below. |
+| Boolean | (no menu)     | Any / Yes / No as one row of buttons. Picking one applies it straight away. Rename them with `options:`, and add Empty with `nullable: true`, see below. |
 | Number  | =             | One number. Is within takes a min and a max (fill either or both).            |
 | Date    | Is within     | Today, Last 7 days, Last 30 days and This month as one row of buttons, plus a from and to date. Change the buttons with [`presets`](#presets). Other conditions take one date. |
-| Tags    | Overlap       | A checklist of every suggestion. Contain matches records with all the ticked tags. |
+| Date time | Is within   | The same as Date, and the from and to boxes pick a time as well as a day.    |
+| Time    | Is within     | A from and to time. No presets.                                               |
+| Tags    | Overlap       | A checklist of every suggestion. Contain matches records with all the ticked tags. Without static `suggestions`, from `fetch_values_from` or typed freely, a tag box instead. |
 
 Conditions that need no value, like Is blank, show no value control. The pill reads like a sentence, with the name, condition and value in separate segments: `Status | is not | Open, Done`.
 
@@ -420,28 +425,32 @@ The boolean's choices and its pill read "Yes" and "No", from the `avo.dynamic_fi
 
 ```ruby
 field :urgent, as: :boolean, filterable: {
-  control: :simple,
   options: -> { {true: I18n.t("tickets.urgent"), false: I18n.t("tickets.not_urgent")} }
 }
 ```
 
-A simple control has no Apply button: each option you tick, and each condition you pick, filters the list straight away while the dropdown stays open, and the scroll position is kept. Text, number and date boxes apply on Enter or when the dropdown closes. Set `render_apply_button: true` to bring the button back.
+On a column that can be empty, `nullable: true` adds an Empty choice that finds the records with no value. It reads from `avo.dynamic_filters.simple.empty`, and `options: {nil: "Not set"}` renames it.
 
-A tags filter without static `suggestions` and a `time` filter keep the usual condition and value picker. Custom `conditions:` fill the menu. Every other option still applies: `options`, `suggestions`, `query` and the rest.
+```ruby
+field :billable, as: :boolean, filterable: {nullable: true}
+```
+
+The dropdown has no Apply button: each option you tick, and each condition you pick, filters the list straight away while the dropdown stays open, and the scroll position is kept. Text, number and date boxes apply on Enter or when the dropdown closes. Set `render_apply_button: true` to bring the button back.
+
+Custom `conditions:` fill the menu. Every other option still applies: `options`, `suggestions`, `query` and the rest.
 
 </Option>
 
 <Option name="`presets`" headingSize="3">
 
-The date range buttons a simple date or date time filter shows.
+The date range buttons a date or date time filter shows.
 
 ```ruby
 # Pick from the built-ins
-field :due_on, as: :date, filterable: {control: :simple, presets: [:today, :this_month]}
+field :due_on, as: :date, filterable: {presets: [:today, :this_month]}
 
 # Add your own; a built-in name with no range keeps its own
 field :due_on, as: :date, filterable: {
-  control: :simple,
   presets: {
     today: nil,
     "Next 30 days" => -> { Date.current..(Date.current + 29) }
@@ -575,16 +584,18 @@ With the default key, a filtered URL looks like `/avo/resources/users?filters[fi
 
 <Option name="`control`" headingSize="3">
 
-The control every filter in the app uses unless it sets its own [`control`](#control).
+The control every filter in the app uses unless it sets its own [`control`](#control). `:full` brings back the older dropdown everywhere while you move over.
 
 ```ruby
-config.control = :simple
+config.control = :full
 ```
 
-- **Type:** Symbol
-- **Default:** `:full`, the condition and value picker
+- **Type:** Symbol, `:simple` or `:full`
+- **Default:** `:simple`
 
-A filter keeps the full picker under this setting with `control: :full`.
+:::warning Deprecated
+`config.control = :full` logs a deprecation warning. A future release removes the setting, and every filter will use the [`control`](#control) dropdown.
+:::
 
 </Option>
 
