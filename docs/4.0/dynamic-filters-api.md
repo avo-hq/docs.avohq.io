@@ -389,6 +389,28 @@ A pinned filter is not listed in the "Add filter" dropdown. When a resource has 
 
 </Option>
 
+<Option name="`inline`" headingSize="3">
+
+Lays a pinned filter's control out in the filter bar, so using it takes no click to open the pill.
+
+```ruby{2}
+field :urgent, as: :boolean, filterable: {
+  pinned: true,
+  inline: true
+}
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+It works on a [pinned](#pinned) filter of these types: boolean, text, number, date, date time, time, and a select of up to 6 options, whose checklist becomes a row of chips. Other filters ignore it and keep their pill.
+
+An inline filter has no condition menu and uses its type's default condition (see [`control`](#control)). A filter applied under another condition, from a link or a saved URL, shows as its pill. On phones every inline filter shows as its pill, since a row of controls doesn't fit.
+
+Ticks and buttons filter straight away. Boxes apply on Enter or when they lose focus.
+
+</Option>
+
 <Option name="`control`" headingSize="3">
 
 Every filter's dropdown puts its conditions in a menu next to the filter's name, and below it a value control that fits the condition picked. `control: :full` brings back the older dropdown, with the condition and value as two fields, for one filter.
