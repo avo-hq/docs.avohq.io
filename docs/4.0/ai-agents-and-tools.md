@@ -103,7 +103,7 @@ Every result the query, write, and action tools return carries the resource it t
 
 It is sent once per resource per turn, and only for resources the signed-in user is allowed to list. `resource_inspector` remains for the deeper report — field types, a resource's actions and filters, its associations and attachments — when the assistant wants structure it cannot get from a result. Excluding it costs you that report, not the grounding: every result still comes back with its schema.
 
-`run_action` adds two checks of its own: the resource's `act_on?` policy method and the action's `self.authorize` block, both checked when the run is proposed and again when you confirm it. See [What it's allowed to run](./ai.html#what-it-s-allowed-to-run).
+`run_action` adds two checks of its own: the resource's `act_on?` policy method and the action's `self.visible` and `self.authorize` blocks, both checked when the run is proposed and again when you confirm it. See [What it's allowed to run](./ai.html#what-it-s-allowed-to-run).
 
 ## Renaming conversations
 

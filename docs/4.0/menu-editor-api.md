@@ -219,6 +219,7 @@ action Avo::Actions::ExportData, resource: :projects
 Also accepts the shared [`icon`](#icon), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options.
 
 - **Validation:** only [standalone actions](./actions-api.html#standalone) (`self.standalone = true`) can be added — the menu has no selected records. Non-standalone actions are skipped with a log warning.
+- **Visibility:** the item is left out when the action's [`self.visible`](./actions-api.html#visible) or [`self.authorize`](./actions-api.html#authorize) block hides it on the resource's index, as the resource's Actions dropdown would.
 
 </Option>
 

@@ -4,6 +4,23 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## `avo-ai`, `avo-mcp_server`, `avo-menu`: an action's `visible` block applies everywhere
+
+<Option name="An action hidden by `self.visible` is hidden from the assistant, MCP clients and the menu">
+
+### What changed
+
+The assistant, the MCP tools and a menu `action` item now check an action's [`self.visible`](./actions-api.html#visible) block as well as its `self.authorize`, the way the panel's Actions dropdown does.
+
+- **The assistant and `list_actions`** leave out an action that is hidden on both the index and a record's page, and refuse to run one that is hidden on the page the run starts from: a record's page for one record, the index otherwise.
+- **A menu `action` item** is left out when its action is hidden on the resource's index.
+
+### Action Required
+
+None, unless an action hides itself with `self.visible` but is still meant to run from the assistant, an MCP client or the menu. Move that rule into `self.authorize`, or widen `self.visible`.
+
+</Option>
+
 ## `avo`: bulk actions find the selected records through `find_records`
 
 <Option name="`query` is an Array, in the order the records were selected">

@@ -340,7 +340,7 @@ Naming the action alone is enough when one resource registers it. When two do, t
 Two gates, both yours, both checked when the run is proposed and again when you confirm it:
 
 - **`act_on?` on the record**, the same policy method that decides whether the Actions dropdown appears in the UI. It's checked per record, so an owner-gated policy behaves in the chat exactly as it does on the page.
-- **The action's own `self.authorize` block**, evaluated with the record in place.
+- **The action's own `self.visible` and `self.authorize` blocks**, evaluated with the record in place. An action the panel would hide from the signed-in user is left out of the assistant's lists too.
 
 :::warning A policy with no `act_on?` refuses every action
 `act_on?` fails closed. If a resource has a policy that doesn't define it, the assistant can't run that resource's actions — the same way Avo hides the Actions dropdown. Add `act_on?` to the policy to allow it.
