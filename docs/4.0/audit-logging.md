@@ -431,6 +431,34 @@ end
 
 The record's timeline names the origin as the author, so these entries read *Nightly importer*. You can pass `origin:` to `Avo::AuditLogging.record` instead of wrapping the work in `Origin.with`. With no author and no origin, it raises `ArgumentError`, because the entry would not say who or what made the change.
 
+### Log every change to a model
+
+<VersionReq version="4.3.1" />
+
+Calling `Avo::AuditLogging.record` yourself works when you know where the changes happen. To log every create, update, and delete on a model, wherever it happens (a job, an importer, another API, the console), declare `has_avo_audit_log` on the model:
+
+```ruby
+# app/models/product.rb
+class Product < ApplicationRecord
+  has_avo_audit_log
+end
+```
+
+Pass `only:` to log fewer events:
+
+```ruby
+# app/models/product.rb
+class Product < ApplicationRecord
+  has_avo_audit_log only: %i[update destroy]
+end
+```
+
+Each change is recorded after its transaction commits, against the model's Avo resource. An update records the attributes that changed, without `created_at` and `updated_at`, and an update that only touched those timestamps records nothing. A delete records the record's `id`.
+
+These entries have no author. They carry the origin set with [`Origin.with`](#mark-your-own-origins) when there is one, and otherwise the `model` origin, which reads as *System* on the record's timeline.
+
+Changes made through Avo itself (the panel, the API, the AI chat, or an MCP client) are already logged by Avo, so the model doesn't log them a second time. Declaring `has_avo_audit_log` counts as opting in, so the resource's `self.audit_logging` setting isn't checked. If recording fails, the error is logged and the change is kept.
+
 ## Disable specific actions logging
 
 By default, when audit logging is enabled for a resource or action, all actions, such as `index` visits, `show` visits, `edit`, `update`, etc. are logged.
