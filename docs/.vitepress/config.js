@@ -250,6 +250,7 @@ const config = {
               collapsed: false,
               items: [
                 { text: "Overview", link: "/4.0/views.html" },
+                { text: "Slots", link: "/4.0/slots.html" },
                 { text: "Table view", link: "/4.0/table-view.html" },
                 { text: "Grid view", link: "/4.0/grid-view.html" },
                 { text: "Map view", link: "/4.0/map-view.html" },

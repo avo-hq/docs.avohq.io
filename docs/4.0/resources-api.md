@@ -870,7 +870,7 @@ A key can only vary by what it contains. A `visible:` or computed field that rea
 
 <Option name="`index_slot`" headingSize="3">
 
-Adds a block at a named position on the resource's index, including association index panels. Slots are additive unless `replace: true` is supplied for a named region. They do not change authorization or render per row. They do not apply to Show, Edit, or New views. For examples, see [Add content to the index](./views.html#add-content-to-the-index).
+Adds a block at a named position on the resource's index, including association index panels. Slots are additive unless `replace: true` is supplied for a named region. They do not change authorization or render per row. For other views, see [`show_slot`](#show_slot), [`edit_slot`](#edit_slot), [`new_slot`](#new_slot), and [`form_slot`](#form_slot). For examples and caveats, see the [Slots guide](./slots.html).
 
 ```ruby
 class Avo::Resources::Project < Avo::BaseResource
@@ -902,7 +902,7 @@ end
 - **Values:** The fourteen additive positions above, or the replacement regions below when `replace: true`.
 - **Validation:** An unknown position, missing block, or duplicate replacement on the same resource raises `ArgumentError` at declaration time. Region names require `replace: true`; before/after positions reject it.
 - **Order:** Additive declarations accumulate in registration order, including inherited registrations. Replacements have one owner per region, with explicit child overrides. Neither form mutates parent or sibling resources.
-- **Inheritance:** Shared declarations belong in the application's base resource, before child declarations. Addition and replacement registrations use separate copy-on-write sets. A late parent addition does not reach a child that has already declared an addition; a late parent replacement does not reach a child that has already declared a replacement. There is no public removal or priority API. Repeating an additive declaration appends again.
+- **Inheritance:** Shared declarations belong in the application's base resource, before child declarations. Addition and replacement registrations use separate per-view copy-on-write sets. Late parent registrations may not reach children that have customized the corresponding set for that view. There is no public removal or priority API. Repeating an additive declaration appends again.
 - **Output:** A rendered partial or component, tag-helper HTML, escaped plain text, or `nil` (no output). No wrapper or spacing is added. Partial locals are not supplied automatically.
 - **Execution:** The block's return value is used, not an implicit concatenation of every expression. Exceptions propagate normally; blocks are application code, not sandboxed code. There is no once-per-request guarantee across multiple rendered panels.
 - **Context:** Blocks run in `Avo::ExecutionContext`, with standard helpers, `render`, `current_user`, `params`, `request`, and `context`, plus the following index values:
@@ -916,6 +916,9 @@ end
 | `parent_record` | The parent record when rendered in an association index panel; otherwise `nil`. |
 | `parent_resource` | The parent resource when rendered in an association index panel; otherwise `nil`. |
 | `view_type` | The current index view type. |
+| `record` | `resource.record`; Index has no individual current row. |
+| `view` | The normalized `Avo::ViewInquirer` for Index. |
+| `form` | `nil` on Index. |
 | `default_content` | Replacement blocks only: a callable returning the built-in region's rendered HTML. |
 
 **Replacement regions:**
@@ -940,7 +943,7 @@ end
 
 The callable is available only in replacement context, is not passed as a positional block argument, and is not automatically a partial local. Its memoization is not a fragment cache or a cache across requests. Returning `nil` also suppresses rendering of the default when the callable was never invoked.
 
-Only one replacement may be declared on a resource per region. Children may override inherited replacements without mutating parents or siblings. Their default is always Avo's built-in content, not the parent's replacement. Surrounding before/after hooks remain, but nested hooks render only when the replacement calls its default. Replacing a whole header or collection without its default therefore removes its nested hooks and controls. Avo keeps outer Turbo targets and loading boundaries; replacements own the behavior of controls whose markup they replace. Authorization and data loading still run. See [Wrap or replace default content](./views.html#wrap-or-replace-default-content).
+Only one replacement may be declared on a resource per region. Children may override inherited replacements without mutating parents or siblings. Their default is always Avo's built-in content, not the parent's replacement. Surrounding before/after hooks remain, but nested hooks render only when the replacement calls its default. Replacing a whole header or collection without its default therefore removes its nested hooks and controls. Avo keeps outer Turbo targets and loading boundaries; replacements own the behavior of controls whose markup they replace. Authorization and data loading still run. See [Wrap or replace default content](./slots.html#wrap-or-replace-default-content).
 
 :::warning Lazy loading
 Cards and header slots, including title slots, belong to the page shell. On an initial lazy render, `resources`, `query`, and `pagy` are not loaded there. Toolbar, collection, records, and pagination slots render in the deferred content and support data-dependent work. See [`self.index_view_loading`](#self.index_view_loading).
@@ -950,29 +953,138 @@ Cards and header slots, including title slots, belong to the page shell. On an i
 
 Collection, records, and pagination slots are supported by the built-in table and grid and the updated [Notifications add-on](./notifications.html#customize-the-notification-index). The updated [Calendar add-on](./calendar-view.html#customize-the-calendar-index) supports collection and records slots, not pagination. These positions stay inside each view type's list Turbo Frame; date navigation and live-search visits re-render the slots in that frame. Calendar's `resources`, `query`, and `pagy` retain the index context, not its separate visible-date-range query.
 
-Other view types must opt in by calling `render_index_slot :before_records` (and the other supported positions) from a component inheriting from `Avo::ViewTypes::BaseViewTypeComponent`. Existing custom index components must adopt slots themselves; resource declarations alone do not update their templates. Shell hooks must not be duplicated inside the view type. See [Keep slots when customizing the index](./views.html#keep-slots-when-customizing-the-index).
+Other view types must opt in by calling `render_index_slot :before_records` (and the other supported positions) from a component inheriting from `Avo::ViewTypes::BaseViewTypeComponent`. Existing custom index components must adopt slots themselves; resource declarations alone do not update their templates. Shell hooks must not be duplicated inside the view type. See [Keep slots when customizing the index](./slots.html#keep-slots-when-customizing-the-index).
 
-**Other surfaces:** Map only exposes listing hooks through its optional embedded table; these do not wrap the map. Kanban boards are not resource index views. Bell updates and single-notification broadcasts do not render notification index slots. With an empty index page, core renders collection and records hooks around the shared empty state without instantiating the view-type component; pagination hooks are absent. The guide's [support matrix](./views.html#keep-slots-when-customizing-the-index) summarizes coverage.
+**Other surfaces:** Map only exposes listing hooks through its optional embedded table; these do not wrap the map. Kanban boards are not resource index views. Bell updates and single-notification broadcasts do not render notification index slots. With an empty index page, core renders collection and records hooks around the shared empty state without instantiating the view-type component; pagination hooks are absent. The guide's [support matrix](./slots.html#keep-slots-when-customizing-the-index) summarizes coverage.
 
 **Performance:** Registrations are stored in memory. Missing positions return without rendering or partial lookup. Dispatch does not spawn processes or discover slots through filesystem scans. Registered blocks execute on each relevant render, using normal Rails template lookup and caching for partials. Output is not automatically cached, and queries or other IO inside a block remain the application's responsibility. A replacement avoids the default's rendering work only when it does not invoke `default_content`; it does not avoid controller authorization, querying, pagination, or hydration.
 
 </Option>
 
-<Option name="`view_slot`" headingSize="3">
+<Option name="`show_slot`" headingSize="3">
 
-The generic form of [`index_slot`](#index_slot). It takes a view `Symbol`, a position `Symbol`, and a block:
+Adds or replaces content on Show. Equivalent to `view_slot :show, position, replace: false` with the same block.
 
 ```ruby
-view_slot :index, :after_header do
-  render partial: "avo/projects/summary", locals: {resource: resource}
+show_slot :after_title do
+  tag.span(record.status)
 end
 ```
 
-`view_slot :index, position` and `index_slot position` share the same registrations, execution context, validation, and rendering order. Both accept `replace: true` for the named replacement regions and can be mixed on a resource. Currently only `:index` is supported; any other view raises `ArgumentError` at declaration time. Generic naming does not add rendering hooks to Show, Edit, or New.
+- **Type:** DSL method taking a position `Symbol`, optional `replace: Boolean`, and a block.
+- **Default:** `replace: false`; no registrations; built-in Show is unchanged.
+- **Values:** `before_REGION` / `after_REGION` additions for each region below; bare region names require `replace: true`.
+- **Validation:** Unknown positions, missing blocks, bare regions without replacement, before/after positions with replacement, and duplicate same-view, same-region replacements declared by the same resource class raise `ArgumentError`.
+- **Inheritance:** Per-view copy-on-write. Additions accumulate; children can override inherited replacements without mutating parents or siblings.
+- **Context:** `Avo::ExecutionContext` with helpers and request context as for Index. `resource` is the current resource, `record` is `resource.record`, `view` is a normalized `Avo::ViewInquirer` for Show, and `form` is `nil`. Index collection values are not a single-record query API.
+- **Output:** Rendered HTML, escaped plain text, or `nil`; the block's return value is used. No wrapper, spacing, or implicit partial locals are added.
+
+| Region | Placement / default content |
+| --- | --- |
+| `:cards` | Resource dashboard cards, outside the body. |
+| `:body` | All resource items, including the primary header on full pages, fields, panels, tabs, tools, and associations. |
+| `:header` | The primary header, including title and controls. |
+| `:title` | Title content; before/after additions are inline. |
+| `:controls` | Built-in record controls. |
+
+Each region has symmetric before/after additions. Surrounding additions remain when a region is replaced. Replacing the body without its default removes nested header, title, and controls hooks; replacing the header without its default removes its nested title and controls hooks.
+
+Replacement blocks receive `default_content`, a lazy callable memoized once per region render. It always renders Avo's built-in content, not an inherited replacement. It does not insert itself automatically or cache across requests. Returning `nil` hides the region. No replacement chaining occurs. See [Wrap or replace default content](./slots.html#wrap-or-replace-default-content).
+
+</Option>
+
+<Option name="`edit_slot`" headingSize="3">
+
+Adds or replaces content on Edit, including rerenders after update validation failures. Equivalent to `view_slot :edit, position, replace: false` with the same block.
+
+```ruby
+edit_slot :after_controls do
+  tag.span("Review your changes before saving.")
+end
+```
+
+- **Type:** DSL method taking a position `Symbol`, optional `replace: Boolean`, and a block.
+- **Default:** `replace: false`; no registrations; built-in Edit is unchanged.
+- **Values:** All Show regions (`cards`, `header`, `title`, `controls`, `body`), plus `form`. Every region supports symmetric before/after additions or replacement of the bare region with `replace: true`.
+- **Validation / output / inheritance:** Same contract as [`show_slot`](#show_slot), scoped to Edit.
+- **Context:** `record` is `resource.record`; `view` is normalized to Edit, including update validation rerenders. Inside the form region and nested body, header, title, and controls, `form` is the current Rails form builder. It is `nil` outside the form.
+- **Order:** Shared [`form_slot`](#form_slot) additions precede Edit additions at every position; declaration order is preserved within each group.
+- **Replacement precedence:** An Edit replacement wins over a shared form replacement, even if the Edit replacement is inherited and the shared form replacement belongs to a child. Its `default_content` is always Avo's built-in content, never the shared or inherited replacement.
+
+The `form` region contains the original form's contents after protected hidden referrer parameters. Replacing it retains the outer form tag, CSRF protection, HTTP method handling, and Stimulus wiring. `before_form` and `after_form` are outside the form, with no builder; cards are also outside the form. The full-page body includes the primary header and all resource items. Replacing that body without its default suppresses its nested header, title, and controls hooks.
+
+Controls hooks also render at the optional footer when [`config.buttons_on_form_footers`](#config.buttons_on_form_footers) is enabled. Fixed IDs in those hooks can therefore be duplicated. See [Share additions across Edit and New](./slots.html#share-additions-across-edit-and-new).
+
+</Option>
+
+<Option name="`new_slot`" headingSize="3">
+
+Adds or replaces content on New, including rerenders after create validation failures and belongs-to creation modals. Equivalent to `view_slot :new, position, replace: false` with the same block.
+
+```ruby
+new_slot :before_body do
+  tag.p("Choose an owner before saving.")
+end
+```
+
+- **Type:** DSL method taking a position `Symbol`, optional `replace: Boolean`, and a block.
+- **Default:** `replace: false`; no registrations; built-in New is unchanged.
+- **Values:** `cards`, `header`, `title`, `controls`, `body`, `form`, each supporting symmetric before/after additions or bare-region replacement with `replace: true`.
+- **Validation / output / inheritance:** Same contract as [`show_slot`](#show_slot), scoped to New.
+- **Context:** Same builder and form boundaries as [`edit_slot`](#edit_slot). `record` is `resource.record`, including the unsaved New record; `view` is normalized to New, including create validation rerenders.
+- **Order:** Shared form additions precede New additions, preserving registration order within each group.
+- **Replacement precedence:** A New replacement wins over the shared form fallback, including an inherited New replacement versus a child form replacement. Defaults never chain through other replacements.
+
+In belongs-to creation modals, title, body, controls, and form hooks are available. Main header hooks are deliberately unavailable to preserve native modal chrome, close behavior, and ARIA structure. Title hooks are inline in the modal heading; controls hooks are in the footer. The modal body default excludes the header; title and controls are outside that body. Builder availability follows the actual form boundary, not the slot's name. See [Creation modals and repeated controls](./slots.html#support-creation-modals-and-repeated-controls).
+
+</Option>
+
+<Option name="`form_slot`" headingSize="3">
+
+Registers shared content for both Edit and New, including create/update validation rerenders and belongs-to creation modals. Equivalent to `view_slot :form, position, replace: false` with the same block. This method targets both form views; it is distinct from the `:form` region inside those views.
+
+```ruby
+form_slot :form, replace: true do
+  tag.div(default_content.call, class: "project-form-content")
+end
+```
+
+- **Type:** DSL method taking a position `Symbol`, optional `replace: Boolean`, and a block.
+- **Default:** `replace: false`; no registrations; built-in forms are unchanged.
+- **Values:** `cards`, `header`, `title`, `controls`, `body`, `form`, each supporting symmetric before/after additions or bare-region replacement with `replace: true`.
+- **Validation / output / inheritance:** Same contract as [`show_slot`](#show_slot), scoped to the shared `:form` registrations. An Edit or New replacement and a shared form replacement are not duplicates.
+- **Context:** The active [`edit_slot`](#edit_slot) or [`new_slot`](#new_slot) context. `view` identifies Edit or New, not Form. `form` is the current Rails builder only inside the form; it is `nil` for cards, `before_form`, `after_form`, and any other outside-form rendering.
+- **Order:** Shared additions always precede view-specific additions at each position, preserving registration order within each group.
+- **Replacement precedence:** Shared replacements are fallbacks. View-specific replacements win regardless of inheritance depth. `default_content.call` always means the built-in region, rendered lazily at most once per region render, not another replacement.
+
+The form region begins after the protected hidden referrer parameters; the original form, CSRF/method handling, and Stimulus wiring remain. Modal header hooks are unavailable; modal title, body, controls, and form hooks follow the boundaries documented under [`new_slot`](#new_slot). Controls may render again in optional full-page footers. See the [shared form guide](./slots.html#share-additions-across-edit-and-new).
+
+</Option>
+
+<Option name="`view_slot`" headingSize="3">
+
+Generic registration method for the named slot DSLs.
+
+```ruby
+view_slot :show, :title, replace: true do
+  tag.span(default_content.call, class: "custom-title")
+end
+```
+
+- **Type:** DSL method `view_slot(view, position, replace: false, &block)`.
+- **Default:** `replace: false`; no registered blocks.
+- **Values:** View `Symbol`: `:index`, `:show`, `:edit`, `:new`, or `:form`. Positions are those supported by the corresponding named method.
+- **Validation:** Unsupported views raise `ArgumentError` at declaration time; position, block, and duplicate-replacement validation matches the named method.
+- **Equivalence:** `view_slot :index, position` is `index_slot position`; likewise for `show_slot`, `edit_slot`, `new_slot`, and `form_slot`. Generic and named methods share registrations, ordering, inheritance, context, and replacement semantics and can be mixed.
+- **Rendering:** No additional IO or partial discovery is performed by slot dispatch. Registered blocks may explicitly render partials using Rails' normal lookup; unregistered hooks do not look up partials. Output is not automatically cached.
+
+See [Choose the view and region](./slots.html#choose-the-view-and-region) for the complete support matrix. Custom or ejected components must retain the appropriate rendering hooks; a resource registration does not insert hooks into an overridden template.
 
 </Option>
 
 <Option name="`self.components`" headingSize="3">
+
+For additions and region-level replacements on Index, Show, Edit, and New, [slots](./slots.html) preserve the rest of the default component without an override. Shared form slots apply to Edit and New. Component replacement remains available when those boundaries are insufficient.
 
 The ViewComponent classes rendered for each view. By default, each view renders:
 
