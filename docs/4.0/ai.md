@@ -889,7 +889,7 @@ repeats from it. The tools accept either.
 
 ## Open the chat
 
-The chat bar sits at the bottom of every Avo page. **Cmd+J** (or **Ctrl+J**) opens it from anywhere, including from inside a field you're typing in — that's the point, so you can pull the assistant up mid-edit without losing your place. Clicking **Agent** does the same.
+The chat bar sits at the bottom of every Avo page. **Cmd+J** on macOS (**Ctrl+J** elsewhere) opens it from anywhere, including from inside a field you're typing in — that's the point, so you can pull the assistant up mid-edit without losing your place. Clicking **Agent** does the same.
 
 Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. Drag a pill to reorder them. The chat window lines its end edge up with the pill it was opened from and slides across when you switch, so it's always clear which conversation you're looking at. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. The open chats, their order, and the collapsed state are all remembered per device.
 
@@ -956,7 +956,7 @@ The button is there before you've sent anything, too. On the new-chat view it po
 A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message. The greeting text is translated through i18n (`avo.ai.empty_state.title` / `.subtitle`) like any other copy; the suggested prompts themselves are generic by default but can be replaced with your own via [`config.ai.empty_state_suggestions`](#configuration).
 
 :::info
-Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {enabled: false}` in `config/initializers/avo.rb`, the shortcut is off along with the rest — the Agent button still works.
+The shortcut is `ai.toggle_assistant` in Avo's hotkey settings. If you've set `config.hotkeys = {enabled: false}` in `config/initializers/avo.rb`, it is off along with the rest — the Agent button still works — and you can [rebind or disable it](./keyboard-shortcuts.html#change-or-disable-a-shortcut) on its own through `config.hotkeys[:bindings]`.
 :::
 
 ## Full-page chats
@@ -965,7 +965,7 @@ Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` 
 
 The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Ai::Chat` resource from the sidebar.
 
-Avo's resource hotkeys work here too: **C** starts a new chat from the list or from a conversation, and **I** takes you from a conversation back to the list.
+Avo's resource hotkeys work here too: **C** starts a new chat from the list or from a conversation, and **I** takes you from a conversation back to the list. They are `resource.new` and `resource.go_to_index`, so a rebinding in `config.hotkeys[:bindings]` applies here as well.
 
 ## The conversation menu
 
