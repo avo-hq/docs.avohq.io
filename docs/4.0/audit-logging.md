@@ -241,6 +241,8 @@ end
 
 Each entry shows a compact relative time — hover over an entry to reveal its full date and time. Clicking an entry opens a detailed page displaying the full payload.
 
+<VersionReq version="4.3.1" /> The activity's page is titled after the record it changed, such as *Update on Product #123*, and its **Record** field links back to that record. The activity list shows the same link in its **Record** column. The payload is pretty-printed when it holds JSON, and shown as stored when it doesn't.
+
 <Image src="/assets/img/4_0/audit-logging/hover-activities.webp" dark-src="/assets/img/4_0/audit-logging/hover-activities-dark.webp" width="356" height="422" alt="The History activity timeline card showing compact relative timestamps" />
 
 ### Enable change logs and revert changes
