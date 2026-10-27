@@ -912,6 +912,16 @@ The bar is enabled by default. Setting this to `false` removes the dock, its Cmd
 and the controls that open or minimize a conversation into the bar. Full-page chats, their composers,
 and existing conversations remain available.
 
+With the default configuration, the floating **Agent** dock appears on resource pages too.
+The red outline highlights it in the bottom-right corner of this Projects page:
+
+<Image src="/assets/img/4_0/ai/chat-bar-enabled.webp" width="1280" height="820" alt="The Projects index with a red outline highlighting the floating Agent dock in the bottom-right corner. The sidebar Chats link is also visible." />
+
+With `config.ai.chat_bar_enabled = false`, the same page has no floating dock. The red outline marks
+where it used to be. The **Chats** link in the sidebar still opens the full-page chat list:
+
+<Image src="/assets/img/4_0/ai/chat-bar-disabled.webp" width="1280" height="820" alt="The same Projects index with the floating Agent dock removed. A red outline marks its former bottom-right location, while the sidebar Chats link remains visible." />
+
 Add a link to the end-user chat list inside your `config.main_menu` block:
 
 ```ruby
