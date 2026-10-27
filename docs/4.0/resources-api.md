@@ -12,7 +12,7 @@ next: false
 
 Per-option reference for resource configuration. For task-oriented documentation and worked examples, see the [Resources guide](./resources.html).
 
-All options are class attributes declared at the top of the resource file:
+Configuration is declared inside the resource class, using class attributes or DSL methods such as `index_slot`:
 
 ```ruby
 # app/avo/resources/post.rb
@@ -867,6 +867,102 @@ A key can only vary by what it contains. A `visible:` or computed field that rea
 </Option>
 
 ## Customization
+
+<Option name="`index_slot`" headingSize="3">
+
+Adds a block at a named position on the resource's index, including association index panels. Slots are additive unless `replace: true` is supplied for a named region. They do not change authorization or render per row. They do not apply to Show, Edit, or New views. For examples, see [Add content to the index](./views.html#add-content-to-the-index).
+
+```ruby
+class Avo::Resources::Project < Avo::BaseResource
+  index_slot :after_header do
+    render partial: "avo/projects/summary", locals: {resource: resource}
+  end
+end
+```
+
+| Position | Placement |
+| --- | --- |
+| `:before_cards` | Before the cards area in the page shell. |
+| `:after_cards` | After the cards area in the page shell. |
+| `:before_header` | Before the header containing the title, description, and controls. |
+| `:after_header` | After the entire header. |
+| `:before_title` | Inline immediately before the title, inside the header. |
+| `:after_title` | Inline immediately after the title, inside the header. |
+| `:before_toolbar` | Before the toolbar location, even when the toolbar is absent. |
+| `:after_toolbar` | After the toolbar location, even when the toolbar is absent. |
+| `:before_collection` | Outside and before the complete table or grid and its paginator, or the empty state. |
+| `:after_collection` | Outside and after the complete table or grid and its paginator, or the empty state. |
+| `:before_records` | Immediately before the records, inside the card for tables; also before the empty state. |
+| `:after_records` | Immediately after the records, inside the card for tables and before pagination; also after the empty state. |
+| `:before_pagination` | Immediately before the table or grid paginator; absent for empty results. |
+| `:after_pagination` | Immediately after the table or grid paginator; absent for empty results. |
+
+- **Type:** DSL method taking a position `Symbol`, optional `replace: true`, and a block.
+- **Default:** No registered blocks; the built-in index is unchanged.
+- **Values:** The fourteen additive positions above, or the replacement regions below when `replace: true`.
+- **Validation:** An unknown position, missing block, or duplicate replacement on the same resource raises `ArgumentError` at declaration time. Region names require `replace: true`; before/after positions reject it.
+- **Order:** Additive declarations accumulate in registration order, including inherited registrations. Replacements have one owner per region, with explicit child overrides. Neither form mutates parent or sibling resources.
+- **Output:** A rendered partial or component, tag-helper HTML, escaped plain text, or `nil` (no output). No wrapper or spacing is added. Partial locals are not supplied automatically.
+- **Context:** Blocks run in `Avo::ExecutionContext`, with standard helpers, `render`, `current_user`, `params`, `request`, and `context`, plus the following index values:
+
+| Value | Meaning |
+| --- | --- |
+| `resource` | The index resource, not an individual row. |
+| `resources` | The current page of hydrated Avo resources, not raw model records. |
+| `query` | The authorized query; not necessarily an ActiveRecord relation. |
+| `pagy` | The index pagination object. |
+| `parent_record` | The parent record when rendered in an association index panel. |
+| `parent_resource` | The parent resource when rendered in an association index panel. |
+| `view_type` | The current index view type. |
+| `default_content` | Replacement blocks only: a callable returning the built-in region's rendered HTML. |
+
+**Replacement regions:**
+
+| Region | Default content |
+| --- | --- |
+| `:cards` | Resource dashboard cards, not individual grid cards. |
+| `:header` | The header with title, description, and controls, including nested title hooks. |
+| `:title` | The title text inside its existing text-value wrapper; surrounding badges and controls are not replaced. |
+| `:toolbar` | Scopes, search, filters, view toggles, and dynamic filters at the toolbar location. |
+| `:collection` | The complete table card or grid and its paginator, or the empty-state branch; surrounding Turbo targets remain. |
+| `:records` | The table records area or grid records, excluding pagination; the empty state for empty results. |
+| `:pagination` | The paginator inside its existing footer; absent for empty results. |
+
+```ruby
+index_slot :title, replace: true do
+  tag.span(default_content.call, class: "custom-title")
+end
+```
+
+`default_content.call` renders lazily and memoizes only for the current region render. The block's return value controls output: return the default to preserve it, include it in custom markup to wrap it, return different content to replace it, or return `nil` to hide the region. Calling the default does not insert it automatically. Do not insert the same default more than once, because this duplicates HTML IDs and controls.
+
+Only one replacement may be declared on a resource per region. Children may override inherited replacements without mutating parents or siblings. Their default is always Avo's built-in content, not the parent's replacement. Surrounding before/after hooks remain, but nested hooks render only when the replacement calls its default. Replacing a whole header or collection without its default therefore removes its nested hooks and controls. Avo keeps outer Turbo targets and loading boundaries; replacements own the behavior of controls whose markup they replace. Authorization and data loading still run. See [Wrap or replace default content](./views.html#wrap-or-replace-default-content).
+
+:::warning Lazy loading
+Cards and header slots, including title slots, belong to the page shell. On an initial lazy render, `resources`, `query`, and `pagy` are not loaded there. Toolbar, collection, records, and pagination slots render in the deferred content and support data-dependent work. See [`self.index_view_loading`](#self.index_view_loading).
+:::
+
+**Refresh boundaries:** Live search replaces only `ResourceListingComponent`, not the toolbar. Toolbar slots defer with the lazy body but do not refresh on live search. In the built-in table and grid, collection, records, and pagination slots refresh with live search; the listing's empty branch renders collection and record slots too. Summaries that must track the search and page belong in collection, records, or pagination slots, not toolbar slots. Cards and header slots remain in the page shell.
+
+Collection, records, and pagination slots are supported by the built-in table and grid. Custom and add-on view types must opt in by calling `render_index_slot :before_records` (and the other supported positions) from a component inheriting from `Avo::ViewTypes::BaseViewTypeComponent`. Existing custom index components must adopt slots themselves; resource declarations alone do not update their templates. See [Keep slots when customizing the index](./views.html#keep-slots-when-customizing-the-index).
+
+**Performance:** Registrations are stored in memory. Missing positions return without rendering or partial lookup. Registered blocks execute on each relevant render, using normal Rails template caching for partials. Output is not automatically cached, and queries or other IO inside a block remain the application's responsibility.
+
+</Option>
+
+<Option name="`view_slot`" headingSize="3">
+
+The generic form of [`index_slot`](#index_slot). It takes a view `Symbol`, a position `Symbol`, and a block:
+
+```ruby
+view_slot :index, :after_header do
+  render partial: "avo/projects/summary", locals: {resource: resource}
+end
+```
+
+`view_slot :index, position` and `index_slot position` share the same registrations, execution context, validation, and rendering order. Both accept `replace: true` for the named replacement regions and can be mixed on a resource. Currently only `:index` is supported; any other view raises `ArgumentError` at declaration time. Generic naming does not add rendering hooks to Show, Edit, or New.
+
+</Option>
 
 <Option name="`self.components`" headingSize="3">
 
