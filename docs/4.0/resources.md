@@ -400,6 +400,37 @@ end
 
 If you use `devise` and update users without passing a password, stop the validation error with [`self.devise_password_optional`](./resources-api.html#self.devise_password_optional).
 
+## Warn before deleting dependent records
+
+<VersionReq version="4.3.8" />
+
+When a model removes other records on destroy, the delete confirmation says so. Avo reads the model's `dependent:` associations and adds a line under "Are you sure?":
+
+```ruby
+# app/models/author.rb
+class Author < ApplicationRecord
+  has_many :books, dependent: :destroy
+end
+
+# app/models/book.rb
+class Book < ApplicationRecord
+  has_many :reviews, dependent: :destroy
+end
+```
+
+Deleting an author then asks "Are you sure?" and adds "This will also delete 3 books and 12 reviews."
+
+There's nothing to configure. A few things to know:
+
+- The counts load when the user clicks Delete, so Index pages run no extra queries. The dialog shows "Checking related records..." until they arrive.
+- The count follows `dependent: :destroy` and `:destroy_async` down every level and counts each record once. `:delete` and `:delete_all` are counted too, but the cascade stops there because they skip callbacks. `:nullify` and `:restrict_with_*` leave records in place, so they aren't counted.
+- Records removed by a database `ON DELETE CASCADE` foreign key aren't counted, since Rails doesn't know about them. Nor are `through` associations, polymorphic `belongs_to`, composite keys, or nested associations whose scope takes the parent record.
+- The line only shows to users who are allowed to delete the record.
+- Models with no `dependent:` associations keep the plain confirmation.
+- A custom [`confirmation_message`](./custom-controls-api.html#confirmation_message) on `delete_button` is kept, with the dependents line below it.
+
+Association names come from the model's attribute translations when you have them. See [Localizing the delete confirmation](./i18n.html#localizing-the-delete-confirmation).
+
 ## Tweak the Index view
 
 Display records as a grid or on a map instead of a table with [`self.default_view_type`](./resources-api.html#self.default_view_type):
