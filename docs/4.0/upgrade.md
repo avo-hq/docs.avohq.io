@@ -4,6 +4,361 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo` `4.3.8`
+
+This release closes five places where a signed-in user could reach a record past the policy the resource's own pages ask ([GHSA-5qcq-2vq9-62hj](https://github.com/avo-hq/avo/security/advisories/GHSA-5qcq-2vq9-62hj)). Every entry below is a policy that now runs where none ran before, so read them against the policies you have.
+
+<Option name="`update?` is asked twice: on the record as loaded, and again with the submitted values">
+
+### What changed
+
+`update` used to fill the submitted values into the record *before* asking the policy, so the policy judged the record the user was trying to create rather than the one that exists. Under an owner-only `update?`, submitting a new `user_id` made the record pass its own check and the write went through.
+
+Avo now asks the policy twice:
+
+1. On the record as loaded from the database, before any submitted value is applied.
+2. On the filled record, as before.
+
+The same pair runs on a reactive `Edit` request (a field with [`react_on`](./field-options-api.html#react_on)), where the check is `edit?` instead of `update?`.
+
+### Action Required
+
+None for a policy that only reads `user` and the record's own persisted state.
+
+Check any `update?` (or `edit?`) that reads an attribute a form can change. A rule like `record.user_id == user.id` now has to hold **before** the submitted values land, which is what it was always meant to mean. If you deliberately allowed a user to hand a record over to someone else, express it as its own policy method and a [`disabled`](./field-options-api.html#disabled) or [field authorization](./authorization.html#hide-fields-from-a-user) rule on that field, rather than relying on the filled record passing `update?`.
+
+</Option>
+
+<Option name="Listing a parent's association asks the parent's `view_{association}?`">
+
+### What changed
+
+An association panel always asked the parent's `view_{association}?` before rendering. The requests that *fill* such a panel did not, so a signed-in user could list a parent's association by crafting the `via_*` params, under any resource:
+
+- the index with `via_record_id` / `via_resource_class` / `association_name` params,
+- the `has_many` search,
+- an association's [distribution chart](./field-options-api.html#summarizable),
+- and, with [avo-scopes](./scopes.html), a scope's count on an association panel.
+
+All four now go through the field the panel lists with, and ask that field's `view_{association}?`. Two refusals are possible:
+
+| Condition | Answer |
+| --- | --- |
+| The resource in the URL is not the one the association field lists with (its `use_resource`, else the target resource) | `ActiveRecord::RecordNotFound` |
+| `view_{association}?` denies | `Avo::NotAuthorizedError` |
+
+### Action Required
+
+None if your policies already define `view_{association}?` for the panels you render, which [`explicit_authorization`](./authorization-api.html#explicit_authorization) has required since 4.0.
+
+If a panel renders today because `view_{association}?` is defined and allows it, nothing changes. If you reach an association index through your own link or a custom control and you never defined the method, define it, or Avo's missing-policy handling answers it the way it answers every other check.
+
+</Option>
+
+<Option name="A summary chart asks `index?`">
+
+### What changed
+
+A [`summarizable`](./field-options-api.html#summarizable) column's distribution chart ran no policy at all. It now asks `index?` on the resource, the same method the index it summarizes asks, or on an association page the `view_{association}?` check above.
+
+It still does not ask `distribution_chart?` or `distribution_chart_full?`. Those were never meant to be policy methods; they only ever surfaced because `explicit_authorization` defaults to `true`.
+
+### Action Required
+
+None. A user who can see the index can see the chart.
+
+</Option>
+
+<Option name="A `has_one` show and detach follow the related policy scope">
+
+### What changed
+
+Two `has_one` routes trusted the URL:
+
+- The show route loaded the associated record straight off the association, without the related resource's policy [`Scope`](./authorization.html#limit-which-records-a-user-sees). A record the scope withholds now answers `ActiveRecord::RecordNotFound`.
+- Detach cleared the association whatever record the URL named. It now detaches only the record the association actually holds.
+
+### Action Required
+
+None, unless a policy `Scope` on the related resource withholds a record you still expect the `has_one` frame to open. The panel and the frame now agree.
+
+</Option>
+
+## Upgrade to `avo-notifications` `4.3.1`
+
+<Option name="The generated notification resource needs `find_record_method` to stay scoped to the recipient">
+
+### Breaking Change
+
+The generated `Avo::Resources::AvoNotification` scoped only `index_query` to the signed-in user. `Show`, `Edit`, `Destroy` and actions find a record through [`find_record_method`](./resources-api.html#self.find_record_method), not through `index_query`, so a signed-in user could open, delete or act on another user's notification by id. This holds with or without an authorization client, since the notification is the gem's own record rather than one of yours.
+
+The generator now writes both. A resource generated by `4.3.0` or earlier does not have the second one.
+
+### Action Required
+
+Open `app/avo/resources/avo_notification.rb` and add `find_record_method` beside the existing `index_query`:
+
+```ruby
+# app/avo/resources/avo_notification.rb
+class Avo::Resources::AvoNotification < Avo::BaseResource
+  self.index_query = -> {
+    query.for_user(Avo::Current.user).newest_first
+  }
+
+  # Show, edit, destroy and actions find records here, not through index_query. # [!code ++]
+  self.find_record_method = -> { # [!code ++]
+    query.for_user(Avo::Current.user).find(id) # [!code ++]
+  } # [!code ++]
+end
+```
+
+Re-running the installer does not patch an existing resource. See [Notification resource](./notifications.html#notification-resource).
+
+</Option>
+
+## Upgrade to `avo-forms` `4.3.1`
+
+<Option name="A form can refuse to open and submit with `self.authorize`">
+
+### What changed
+
+Forms had no authorization: any signed-in Avo user could open a form's URL and submit it, `handle` included. A form now answers [`self.authorize`](./forms-and-pages-api.html#self.authorize), a Boolean or a Proc evaluated through `Avo::ExecutionContext`, defaulting to `true`.
+
+When it is falsy, `GET` and `POST` on the form's route are refused the way Avo refuses an action, the form does not render on a page or through `.component`, `form` and `all_forms` menu entries skip it, and a sub-page whose forms are all refused drops out of its page's navigation.
+
+### Action Required
+
+None: the default allows everyone who can reach Avo, which is what forms did before.
+
+If a form was only reachable through a menu entry you hid, that was never a gate. `handle` is a controller action on a known URL. Move the rule into `self.authorize`. See [Restrict who can use a form](./forms-and-pages.html#restrict-who-can-use-a-form).
+
+</Option>
+
+## Upgrade to `avo-record_reordering` `4.3.1`
+
+<Option name="Moving a record asks `reorder?` and redirects only within your app">
+
+### What changed
+
+The reorder endpoint ran the resource's ordering lambda without asking any policy, so the [`reorder?`](./authorization-api.html#reorder) method the docs have always asked you to define was not enforced on the request. It is now asked on the loaded record before the move.
+
+The endpoint also redirected to whatever URL the `referrer` param named. A referrer on another host is dropped now, falling back to the `Referer` header or the resource index.
+
+### Action Required
+
+Define `reorder?` on the policy of every resource with [record reordering](./record-reordering.html#authorization) enabled, association panels included. On an association panel the controls follow the parent's `reorder_{association}?`, but the move asks the moved record's own `reorder?`. Without it, Avo's missing-policy handling answers the check, and under [`explicit_authorization`](./authorization-api.html#explicit_authorization) (the default) that means the move is refused, quietly.
+
+```ruby
+# app/policies/course_link_policy.rb
+class CourseLinkPolicy < ApplicationPolicy
+  def reorder? = edit?
+end
+```
+
+</Option>
+
+## Upgrade to `avo-kanban` `4.3.2`
+
+<Option name="Every board route asks the policy method behind its button, and a card asks its own record's `update?`">
+
+### What changed
+
+The board's buttons checked [`Avo::Kanban::BoardPolicy`](./kanban-boards.html#authorization), but the routes behind them did not. Each route now finds the board through the Board resource's policy `Scope` and asks the same method its button asks:
+
+| Request | Policy method |
+| --- | --- |
+| Opening and moving cards | `show?` |
+| Searching for and adding items | `add_item?` |
+| Removing or reordering columns, removing cards | `manage_column?` |
+
+Placing a card also needs the card's own record in its resource's policy scope and its `update?`, and the column value is written through that record's field rather than assigned to the column attribute. Cards whose record the policy scope does not find are not rendered, and avo-menu's [`all_boards`](./menu-editor-api.html#all_boards) lists only boards in scope.
+
+### Action Required
+
+Make sure `Avo::Kanban::BoardPolicy` defines `show?`, `add_item?` and `manage_column?`, and that the policies of the models you put on boards allow `update?` for the users who drag cards. A method you do not define falls back to `ApplicationPolicy`, and under [`explicit_authorization`](./authorization-api.html#explicit_authorization) a method nothing defines refuses.
+
+A column's reset route is now `POST` rather than `GET`. The board's own button already uses it; change any link you built to it yourself.
+
+</Option>
+
+## Upgrade to `avo-nested` `4.3.2`
+
+<Option name="A nested form writes only the children the user may update or create">
+
+### Breaking Change
+
+Saving a parent filled every child from the submitted rows **by position**, asking no child policy. A user who could edit the parent could overwrite all of its children, and a form submitting fewer rows than there are children raised `NoMethodError`.
+
+Rows are now matched to children by id, and each row is authorized:
+
+- An existing child is written only when the child resource's policy `Scope` holds it and `update?` allows it, asked on the record as loaded and again with the submitted values.
+- A new row needs the child's `create?` and the parent's `create_{association}?`. When `create_{association}?` refuses, the **Add** button is left out of the form, the way core's association panel hides "Create new".
+
+### Action Required
+
+Check the child resources' policies. A nested form that saved for a user before now needs `update?` on the child, or `create?` plus the parent's `create_{association}?` for a new row, to write anything.
+
+</Option>
+
+## Upgrade to `avo-api` `4.3.1`
+
+<Option name="Association fields follow `view_{association}?` and the related policy scope, and a HABTM serializes as a count">
+
+### Breaking Change
+
+A record read through the API serialized its association fields without the checks the panel makes:
+
+- A `has_and_belongs_to_many` had no serializer branch, so the whole relation went through `as_json`: every linked row, every column, past the related resource's `Scope`, its `show?` and its field filtering.
+- `has_many` counts and `has_one` ids never asked the parent's `view_{association}?`, and counted or loaded past the related `Scope`.
+
+Association fields are now left out of the response when `view_{association}?` refuses, and the value that is serialized is read through the related resource's policy scope. A `has_and_belongs_to_many` serializes like a `has_many`, as `{ "count": N }`. The [schema](./rest-api.html#discovery) describes the new shape.
+
+### Action Required
+
+Update any client that read rows out of a HABTM key. It is a count now, like every other collection association; fetch the rows from the related resource's own index with a filter.
+
+Define `view_{association}?` on the policies of the resources the API serves for every association you want clients to see. Under [`explicit_authorization`](./authorization-api.html#explicit_authorization) a method nothing defines refuses, and the association key is then absent from the response rather than empty.
+
+</Option>
+
+## Upgrade to `avo-mcp_server` `4.3.0.beta.2`
+
+<Option name="Association values follow `view_{association}?` and the related policy scope">
+
+### What changed
+
+`show_record` and the other tools that return a record's payload kept association fields in the result whatever the record's `view_{association}?` answered, and read a `has_one` straight off the association, past the related resource's policy `Scope`.
+
+A refused association is now left out of the payload, a `has_one` the related scope does not hold is `null`, and both `has_one` and `has_many` are read through the associated resource's policy.
+
+### Action Required
+
+None, unless an MCP client depends on an association key that your policies refuse. Define `view_{association}?` on the resource's policy to keep it in the payload. See [Every call stays inside the admin's own permissions](./mcp.html#every-call-stays-inside-the-admin-s-own-permissions).
+
+</Option>
+
+## Upgrade to `avo-audit_logging` `4.3.1`
+
+<Option name="Undo asks the record's `update?` (or `create?`), and the activity payload hides withheld fields">
+
+### Breaking Change
+
+The **Undo** action restored a PaperTrail version without asking the record's policy, so anyone who could open an activity could revert the record it describes. It now authorizes the way the panel's own writes do: `update?` on the record as found through its policy `Scope`, or `create?` when it is bringing back a destroyed record. A refusal hides the button and refuses the request.
+
+The activity page also rendered the stored payload unfiltered. It now drops every key naming a column the viewer's [field authorization](./authorization.html#hide-fields-from-a-user) withholds on the records the activity touched, the same answer the changeset diff already gave.
+
+### Action Required
+
+None, unless you relied on the Undo button being available to anyone who can read the audit trail. Grant `update?` (and `create?`) on the audited models to the users who should be able to revert a change.
+
+</Option>
+
+## Upgrade to `avo-scopes` `4.3.1`
+
+<Option name="A scope's count asks the same policy as the index it counts">
+
+### What changed
+
+The count endpoint behind the scope counters skipped authorization, so a signed-in user could read a scope's count for a resource whose `index?` the policy denies. It now asks `index?`, or on an association panel the parent's `view_{association}?`, matching core's own charts controller. A refusal renders the empty counter frame with a `403`.
+
+### Action Required
+
+None. This needs `avo` `4.3.8` or newer, which is where the association check it asks lives.
+
+</Option>
+
+## Upgrade to `avo-dashboards` `4.3.2`
+
+<Option name="A card's own URL asks what the page that renders it asks">
+
+### What changed
+
+The endpoint that serves a single card answered by index, without the checks the page around it runs. It now asks the same questions:
+
+- A dashboard card asks the dashboard's [`self.authorize`](./dashboards-api.html#self.authorize).
+- A card hidden by [`self.visible`](./dashboards-api.html#self.visible) is not served at all (`404`).
+- A resource card asks the resource's `index?`, or `show?` on the record it renders for.
+
+### Action Required
+
+None, unless a card was reachable only because its own URL skipped the dashboard's `authorize`. Widen the dashboard's `authorize` if that card should stay visible.
+
+</Option>
+
+## Upgrade to `avo-dynamic_filters` `4.3.1`
+
+<Option name="A filter applies only the conditions its own dropdown offers">
+
+### Breaking Change
+
+The condition read from the URL was appended to the filter's Ransack key without being checked against the conditions the filter offers, so a crafted condition rewrote the query against a column no field shows. The query builder now drops any condition the filter's dropdown does not offer, and the bar shows no pill for it.
+
+### Action Required
+
+Check any link or bookmark that builds `filters[...]` params by hand. A condition the filter does not list is now dropped instead of applied, so that filter contributes nothing to the query and shows no pill in the bar.
+
+The conditions a filter offers depend on its type: a number or select filter offers `is_null` and `is_not_null` rather than `is_present` and `is_blank`, for instance. Open the filter's own dropdown to see its list. See [Dynamic filters](./dynamic-filters.html).
+
+</Option>
+
+## Upgrade to `avo-http_resource` `4.3.1`
+
+<Option name="A debug console probe asks the policy method its own page asks">
+
+### What changed
+
+The debug console asked only `index?` on the resource and then sent `show`, `create`, `update` and `delete` requests to the remote API with the resource's credentials. Each probe now asks the method the matching page asks (`index?` for index and count, then `show?`, `create?`, `update?`, `destroy?`), and a refused probe is reported as not authorized rather than sent.
+
+### Action Required
+
+None, unless a user who could open the debug console is meant to exercise a verb their policy denies. See [HTTP resource](./http-resource.html).
+
+</Option>
+
+## Upgrade to `avo-collaboration` `4.3.2`
+
+<Option name="Timeline requests ask for the record and the timeline, not only the rendered panel">
+
+### What changed
+
+The timeline panel checked [`collaboration_view_timeline?`](./collaboration-api.html#collaboration_view_timeline) before rendering, but the requests behind it did not. Reading, posting, reacting to and deleting entries now find the record through its resource's policy `Scope` and ask `show?` and `collaboration_view_timeline?` first. Posting also asks [`collaboration_create_entry?`](./collaboration-api.html#collaboration_create_entry), deleting asks [`collaboration_destroy_entry?`](./collaboration-api.html#collaboration_destroy_entry), and a refusal answers `403`.
+
+Reactions are addressed by entry id rather than by a record GlobalID plus a resource name sent from the browser, and the timeline streams per record instead of over one stream shared by every page.
+
+### Action Required
+
+Define the three policy methods on the policies of the models whose timelines you render, as [Authorization](./collaboration.html#authorization) describes. A method nothing defines is answered by Avo's missing-policy handling, which under [`explicit_authorization`](./authorization-api.html#explicit_authorization) refuses.
+
+</Option>
+
+## Upgrade to `avo-menu` `4.3.1`
+
+<Option name="A sidebar `action` item asks the resource policy's `act_on?`">
+
+### What changed
+
+The resource's Actions dropdown asks `act_on?` on the model class before listing an action. A sidebar [`action`](./menu-editor-api.html#action) item did not, so it could be shown to a user who is then refused on click.
+
+### Action Required
+
+None, unless a menu action is meant to be reachable for a user whose policy denies `act_on?`. That is the same method the resource's own Actions dropdown asks.
+
+</Option>
+
+## Upgrade to `avo-ai` `4.3.0.beta.8`
+
+<Option name="The assistant reads a record's fields and files only when `show?` allows it">
+
+### What changed
+
+A record the resource's policy `Scope` holds but whose `show?` is denied was still listed by the assistant's record queries with its full field values. The query now returns only its id and reference for such a row, and `read_file`, the attachment tool and a chip's model-chosen fields refuse it.
+
+### Action Required
+
+None. If the assistant should read a record, allow `show?` on it, which is the same answer its `Show` page gives. See [Authorization](./authorization.html).
+
+</Option>
+
 ## Upgrade to `avo` `4.3.6`
 
 <Option name="Trix uploads on the New form are authorized with `create?`">

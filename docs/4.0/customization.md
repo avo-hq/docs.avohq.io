@@ -137,6 +137,8 @@ end
 
 By default, clicking anywhere on a row navigates to that record's <Show /> view. If you'd rather reserve navigation for the explicit controls, disable [`click_row_to_view_record`](./customization-api.html#click_row_to_view_record).
 
+The row behaves like a link rather than a click target <VersionReq version="4.3.6" />. A middle-click or a Cmd/Ctrl-click opens the record in a new tab, selecting text inside a row does not navigate, Shift-click is left to row selection, and a link, button or form control in a cell keeps its own behavior.
+
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
@@ -615,7 +617,7 @@ The report contains:
 
 - **Versions:** Avo, Rails, Ruby, and the Rails environment.
 - **App identity:** the application name, the host and port, your license key (if any), and an anonymous install ID derived one-way from `secret_key_base`.
-- **Counts:** resources, dashboards, fields and fields per resource, field types, actions, filters, boards, tools, forms, and pages.
+- **Counts:** resources, dashboards, fields and fields per resource, field types, actions, filters, scopes and scopes per resource, how many resources remove the `All` scope, boards, tools, forms, and pages.
 - **Setup:** the Avo gems you have installed and their versions, whether the main and profile menus are configured, the cache store class and whether it works, and `root_path`.
 
 It never contains your records, database contents, source code, the names of your resources or fields, or your visitors' IP addresses. Custom field types are sent as `custom_1`, `custom_2`, and so on, not by name. Avo reads the counts by parsing the files in `app/avo` without running them, so collecting the report never touches your database. On Ruby versions before 3.3 the counts are skipped.

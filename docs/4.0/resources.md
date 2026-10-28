@@ -400,6 +400,41 @@ end
 
 If you use `devise` and update users without passing a password, stop the validation error with [`self.devise_password_optional`](./resources-api.html#self.devise_password_optional).
 
+## Delete a record
+
+The delete button asks for confirmation, and the dialog names what the delete takes with it <VersionReq version="4.3.8" />:
+
+> Are you sure you want to delete this post?
+>
+> This will also delete 3 books, 12 chapters and 1 review.
+
+Avo reads the count when the dialog opens, from a request only a user whose policy allows `destroy?` on that record is answered. Rendering a list of records runs no dependents queries.
+
+What it counts:
+
+- Associations declared `dependent: :destroy`, `:destroy_async`, `:delete` or `:delete_all`. Those are the ones that remove rows. `:nullify` and `:restrict_with_*` leave the records in place, so they are not named.
+- The whole chain, following `:destroy` and `:destroy_async` associations down to the bottom. `:delete` and `:delete_all` skip callbacks, so nothing below them is removed and nothing below them is counted.
+- Each record once, even when two associations reach the same rows.
+
+A `has_many :through`, a polymorphic association, a model with a composite primary key and an association whose scope takes the owner are left out of the deeper levels, because a single query cannot express them.
+
+### Name the associations in the dialog
+
+Each association is named by its own model attribute translation when your app defines one, pluralized by the count:
+
+```yaml
+# config/locales/en.yml
+en:
+  activerecord:
+    attributes:
+      post:
+        books:
+          one: book
+          other: books
+```
+
+Without a translation, Avo humanizes the association name. The sentence around it is [`avo.destroy_also_deletes`](./i18n.html) ("This will also delete %{records}."), and the dialog shows `avo.checking_dependents` ("Checking related records...") while the count is in flight.
+
 ## Tweak the Index view
 
 Display records as a grid or on a map instead of a table with [`self.default_view_type`](./resources-api.html#self.default_view_type):

@@ -307,6 +307,32 @@ def handle
 end
 ```
 
+## Restrict who can use a form
+
+A form is a controller action on a known URL, so hiding its menu entry is not a gate. Put the rule in [`self.authorize`](./forms-and-pages-api.html#self.authorize):
+
+```ruby
+# app/avo/forms/app_settings.rb
+class Avo::Forms::AppSettings < Avo::Forms::Core::Form
+  self.authorize = -> { current_user.admin? }
+end
+```
+
+It runs on every request and can be a Boolean or a Proc. It defaults to `true`, so every user who can reach Avo can use a form until you set it.
+
+When it returns a falsy value:
+
+- `GET` and `POST` on the form's own URL are refused the way Avo refuses an unauthorized action, and `handle` never runs.
+- The form is left out of the page it sits on, and `.component` renders nothing.
+- [`form`](./menu-editor-api.html#form) and [`all_forms`](./menu-editor-api.html#all_forms) menu entries skip it.
+- A sub-page whose forms are *all* refused drops out of its main page's navigation, so nobody lands on an empty screen.
+
+Pages have no gate of their own. Authorize the forms, and the pages follow.
+
+:::warning
+`self.authorize` decides who may *reach* the form. It does not validate what they submit. Keep permitting params inside [`handle`](./forms-and-pages-api.html#handle).
+:::
+
 ## Reusable vs. inline forms
 
 The generator gives each form its own file under `app/avo/forms/` — the default, and the right choice for anything you'll show on more than one page or render as a component. The class name is its public handle.
