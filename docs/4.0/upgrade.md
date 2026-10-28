@@ -4,6 +4,53 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-api` `4.4.0`
+
+<Option name="Your initializer's settings are no longer overridden">
+
+### Breaking Change
+
+`avo-api` used to ship a `config/initializers/avo.rb`, and Rails ran it in your app before your own initializer. Any of these settings your initializer left unset took `avo-api`'s value instead of Avo's default:
+
+| Setting | `avo-api` set it to | Avo's default |
+| --- | --- | --- |
+| `root_path` | `"/admin"` | `"/avo"` |
+| `license_key` | `ENV["AVO_LICENSE_KEY"]` | `nil` |
+| `current_user_method` | `:current_user` | none: Avo has no current user |
+
+The gem no longer ships that file, so your `config/initializers/avo.rb` is the only one that configures Avo. Settings your initializer sets were never overridden and don't change.
+
+### Action Required
+
+Check your initializer for all three. Set each one your app relied on `avo-api` for:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.root_path = "/admin" # [!code ++]
+  config.license_key = ENV["AVO_LICENSE_KEY"] # [!code ++]
+  config.current_user_method = :current_user # [!code ++]
+end
+```
+
+Without them, the panel moves to `/avo`, and so does an API mounted under `Avo.configuration.root_path`. Avo runs without your license, so `avo-api` answers every request with `404`. With no current user, policies receive `nil`, and creating an API token fails with "Owner must exist".
+
+</Option>
+
+<Option name="`belongs_to` and `has_one` ids are the related record's `to_param`">
+
+### Breaking Change
+
+A `belongs_to` or `has_one` field now reads back with the related record's `to_param`, the id in its panel URL, instead of its primary key. It's always a string: `{ "id": "5", "label": "John Doe" }`, not `{ "id": 5, "label": "John Doe" }`. Where a model hides its primary key (friendly_id, a prefixed id, a custom `to_param`), the response carries the slug or prefixed id instead of the key. The OpenAPI document types both ids as strings. See [Field serialization](./rest-api.html#field-serialization).
+
+A `belongs_to` write takes that value back, also on a resource found by slug alone. A record's own `id` field doesn't change.
+
+### Action Required
+
+Update API clients that read these ids as numbers or compare them with numbers. Send back the value a read returns.
+
+</Option>
+
 ## Upgrade to `avo` `4.3.9`
 
 <Option name="`act_on?` authorizes running an action, not only the Actions button">

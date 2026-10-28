@@ -274,7 +274,7 @@ Raise [`Avo::Api::AuthenticationError`](./rest-api-api.html#Avo::Api::Authentica
 
 Once the [tokens table is installed](#install-the-api-tokens-table), an **API tokens** entry appears in the Avo sidebar. Create a token there with a name and, optionally, an expiry date.
 
-The token belongs to whoever created it. The form has no owner field, and a token cannot be moved to another owner afterwards, so a crafted request cannot mint a credential belonging to somebody else.
+The token belongs to whoever created it, the user [`config.current_user_method`](./authentication.html) returns; without one, creating a token fails with "Owner must exist". The form has no owner field, and a token cannot be moved to another owner afterwards, so a crafted request cannot mint a credential belonging to somebody else.
 
 **The secret is shown once**, on the new token's page immediately after creation, with a copy button. Only a digest of it is stored, so nothing can show it again — not a console, not a support tool, not a database dump. Miss it and there is no recovery beyond minting a replacement and revoking the one you lost.
 
@@ -423,7 +423,7 @@ The index has no supported way to select records by value. To find records match
     "id": 1,
     "name": "Development Team",
     "url": "https://dev.company.com",
-    "admin": { "id": 5, "label": "John Doe" },
+    "admin": { "id": "5", "label": "John Doe" },
     "team_members": { "count": 12 }
   }
 }
@@ -436,9 +436,9 @@ Fields are respected according to their view visibility, and typed values are se
 | Field type | Shape |
 | --- | --- |
 | Text, number, boolean, date/datetime | The raw value |
-| `belongs_to` | `{ "id": 5, "label": "John Doe" }` |
+| `belongs_to` | `{ "id": "5", "label": "John Doe" }`. The `id` is the related record's `to_param`, always a string: the slug or prefixed id where the model has one |
 | `has_many`, `has_and_belongs_to_many` | `{ "count": 12 }`, counted through the related resource's `Scope` |
-| `has_one` | `{ "id": 5 }`, or `null` when the related resource's `Scope` hides it |
+| `has_one` | `{ "id": "5" }`, the related record's `to_param`, or `null` when the related resource's `Scope` hides it |
 | `file` | `{ "filename": "…", "content_type": "…", "byte_size": 1234, "url": "…" }` |
 | `files` | a list of those objects, one per attachment |
 
@@ -474,14 +474,14 @@ Send field data as JSON, nested under the resource's `param_key`. It is usually 
 curl -X POST https://example.com/api/resources/v1/teams \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
-  -d '{ "team": { "name": "Mobile Team", "url": "https://mobile.company.com", "admin_id": 5 } }'
+  -d '{ "team": { "name": "Mobile Team", "url": "https://mobile.company.com", "admin_id": "5" } }'
 ```
 
 On success the response is `201 Created` with the record serialized on its `:show` view:
 
 ```json
 {
-  "record": { "id": 3, "name": "Mobile Team", "url": "https://mobile.company.com", "admin": { "id": 5, "label": "John Doe" } }
+  "record": { "id": 3, "name": "Mobile Team", "url": "https://mobile.company.com", "admin": { "id": "5", "label": "John Doe" } }
 }
 ```
 
@@ -537,8 +537,8 @@ Different field types accept the formats you'd expect:
 | Number | `42`, `19.99` |
 | Boolean | `true`, `false` |
 | Date / datetime | `"2024-01-15"`, `"2024-01-15T10:30:00Z"` |
-| `belongs_to` | the foreign key: `"admin_id": 5` |
-| Polymorphic `belongs_to` | both parts: `"reactable_type": "Post"`, `"reactable_id": 7` |
+| `belongs_to` | the foreign key, as the `id` a read returns: `"admin_id": "5"` |
+| Polymorphic `belongs_to` | both parts: `"reactable_type": "Post"`, `"reactable_id": "7"` |
 | `select` with `multiple`, `checkbox_list`, `boolean_group` | a list: `"tags": ["ops", "eu"]` |
 | `location` on two columns | an object keyed by its `stored_as` columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
 | `tags`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"home": "44.43,26.10"` |
@@ -676,7 +676,7 @@ Avo.configure do |config|
 end
 ```
 
-So with the default setting, **the API controller's `current_user` method is what the policies see**. Make that method return the authenticated user:
+So with that setting, **the API controller's `current_user` method is what the policies see**. Make that method return the authenticated user:
 
 ```ruby
 # app/controllers/avo/api/resources/v1/base_resources_controller.rb
