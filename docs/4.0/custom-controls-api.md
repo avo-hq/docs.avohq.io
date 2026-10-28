@@ -340,6 +340,8 @@ Sets the `size` attribute for the [`Avo::ButtonComponent`](https://github.com/av
 
 The message shown in the confirmation dialog before running `delete_button` or `detach_button`.
 
+On `delete_button`, when the record has `dependent:` associations, Avo adds a line below this message naming the records the delete also removes. See [Warn before deleting dependent records](./resources.html#warn-before-deleting-dependent-records).
+
 - **Type:** String
 - **Default:** `nil` ("Are you sure?" for the default row controls)
 
