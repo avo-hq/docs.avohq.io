@@ -310,7 +310,7 @@ You can try this flow on the [avodemo](https://main.avodemo.com/avo/resources/ci
 
 ## Customize the modal
 
-The modal's texts can each be a string or a block — blocks run in [`Avo::ExecutionContext`](./execution-context) with access to `resource`, `record`, `view`, `arguments`, and `query`:
+The modal's texts can each be a string or a block — blocks run in [`Avo::ExecutionContext`](./execution-context) with access to `resource`, `record`, `view`, `arguments`, `query`, and [`index_query`](#work-with-every-record-on-the-index) (`nil` while `name` renders in the dropdown):
 
 - [`name`](./actions-api.html#name) — the action's display name in the dropdown and modal
 - [`description`](./actions-api.html#description) — a short explanation under the name in the modal header
@@ -349,6 +349,32 @@ end
 :::tip
 Standalone actions pair well with [fields](#collect-input-with-fields) to collect the input the operation needs.
 :::
+
+## Work with every record on the Index
+
+`query` holds only the records the user selected. When the action needs the whole list the user is looking at, read `index_query`: the <Index /> query with the current filters, scopes, search, and sort applied, before pagination. It is the same whether the user selected one record, a page, all matching records, or nothing, so it suits standalone exports of "everything I filtered".
+
+It is available in `handle`, in `fields`, and in the modal's text blocks:
+
+```ruby
+# app/avo/actions/export_csv.rb
+class Avo::Actions::ExportCsv < Avo::BaseAction
+  self.standalone = true
+  self.visible = -> { view.index? }
+  self.message = -> { "Export #{index_query&.count.to_i} records?" }
+
+  def fields
+    field :only_selected, as: :boolean, help: "Out of #{index_query&.count.to_i} matching records"
+  end
+
+  def handle(query:, fields:, **)
+    records = fields[:only_selected] ? query : index_query
+    # ...
+  end
+end
+```
+
+`index_query` is `nil` when there is no list to read it from: on a <Show /> or <Edit /> page (an action started from a has-many table on that page gets that table's query), when the filters match no records, on a [map view](./map-view.html) with its table hidden, on an [array resource](./array-resource.html) that paginates at the source, and when the query can't be serialized (see [Select All](./select-all.html#serialization-known-issues)). A `name` block also sees `nil` while the dropdown renders. Guard with `index_query&.` wherever one of those can happen.
 
 ## Control visibility and authorization
 
