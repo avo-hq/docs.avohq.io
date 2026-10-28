@@ -433,7 +433,7 @@ Optionally you can enable the global config `id_links_to_resource`, which links 
 
 ## Summarize a column
 
-The [`summarizable`](./field-options-api.html#summarizable) option generates a visual summary of a column's data distribution. A chart icon appears in the table header; clicking it displays a summary chart based on the data in that column.
+The [`summarizable`](./field-options-api.html#summarizable) option generates a visual summary of a column's data distribution. A chart icon appears in the table header; clicking it displays a summary chart based on the data in that column. The chart reads the same query the index reads, and asks the same policy: `index?`, or the parent's `view_{association}?` on an association panel.
 
 ```ruby
 field :status, as: :select, summarizable: true

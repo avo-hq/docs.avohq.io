@@ -183,3 +183,11 @@ class CourseLinkPolicy < ApplicationPolicy
   # other policy methods
 end
 ```
+
+`reorder?` is asked on the record being moved, for every move <VersionReq version="4.3.1" />. Before that the method only hid the <Index /> controls, so the endpoint behind them moved a record whatever the policy answered.
+
+On a `has_many` association panel the controls follow [`reorder_{association}?`](./authorization-api.html#reorder_association) on the parent's policy, but the move itself still asks the moved record's `reorder?`. Define `reorder?` even when records are only ever reordered inside an association panel.
+
+:::warning
+A denied `reorder?` is quiet by design: the controls are not rendered and the move is refused, with no error on the page. If reordering has stopped working after an upgrade, that is the first thing to check.
+:::

@@ -437,9 +437,15 @@ Fields are respected according to their view visibility, and typed values are se
 | --- | --- |
 | Text, number, boolean, date/datetime | The raw value |
 | `belongs_to` | `{ "id": 5, "label": "John Doe" }` |
-| `has_many`, `has_one` | `{ "count": 12 }` (or `{ "id": 5 }` for a single loaded record) |
+| `has_many`, `has_and_belongs_to_many`, `has_one` | `{ "count": 12 }` (or `{ "id": 5 }` for a single loaded record) |
 | `file` | `{ "filename": "…", "content_type": "…", "byte_size": 1234, "url": "…" }` |
 | `files` | a list of those objects, one per attachment |
+
+An association field is serialized only when the parent's [`view_{association}?`](./authorization.html#authorize-association-controls) allows it <VersionReq version="4.3.1" />; a refused association is absent from the response rather than empty. The count or id it serializes is read through the related resource's policy `Scope`, so a client sees the same association the panel shows.
+
+:::warning Breaking in `avo-api` `4.3.1`
+A `has_and_belongs_to_many` used to serialize the whole relation: every linked row with every column, past the related resource's `Scope`, its `show?` and its field filtering. It now serializes as a count, like any other collection association. Read the rows from the related resource's own index instead.
+:::
 
 Field visibility follows your resource's view settings, so you can shape the API per view:
 
@@ -934,7 +940,7 @@ Each one gates both whether the control renders and whether it can be run, so a 
 | `act_on?` | The Actions menu as a whole |
 | `revoke?` | The **Revoke** action. Offered only on an *active* token whatever this returns — an expired or revoked one has nothing left to withdraw |
 | `edit_entitlements?` | The [Entitlements](#entitle-a-token) grid. Denying it renders the grid **read-only** rather than hiding it, and the form's write path strips what it refuses, so what is shown and what is accepted can't drift apart |
-| `view_audit_trail?` | The [Audit trail](#see-what-a-token-changed) table on a token's page, *and* the request that fills it. Avo's own `view_<field>?` for a `has_many`: under `explicit_authorization` (the default) the table is hidden until the policy answers it |
+| `view_audit_trail?` | The [Audit trail](#see-what-a-token-changed) table on a token's page, *and* the request that fills it. Avo's own `view_{association}?` for a `has_many`: under `explicit_authorization` (the default) the table is hidden until the policy answers it |
 
 The last four aren't Avo's standard CRUD set, but they're asked exactly the same way — through the resource's authorization service, so a client other than Pundit answers them in its own idiom, and names you remapped through [`config.authorization_methods`](./authorization-api.html#authorization_methods) are honored.
 

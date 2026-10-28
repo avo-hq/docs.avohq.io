@@ -141,7 +141,9 @@ class PostPolicy < ApplicationPolicy
 end
 ```
 
-`create?` and `update?` run when the form is saved, so `record` already holds the submitted values. Use that if the answer depends on what the user typed.
+`create?` runs when the form is saved, so `record` already holds the submitted values. Use that if the answer depends on what the user typed.
+
+`update?` runs twice. <VersionReq version="4.3.8" /> Avo asks it on the record as loaded from the database, then again on the record with the submitted values filled in, and both have to allow the write. A rule like `record.user_id == user.id` therefore has to hold for the record that exists, so submitting a new `user_id` can no longer make a record pass its own check. An `Edit` request from a [`react_on`](./field-options-api.html#react_on) field asks `edit?` the same way.
 
 If you use the [menu editor](./menu-editor.html), `index?` doesn't hide its items. Add the check to the item's [`visible`](./menu-editor.html#item-visibility) block instead.
 
@@ -198,7 +200,9 @@ Methods for panel-level controls (`view_`, `create_`, `attach_`, `act_on_`) get 
 
 If you want to hide the whole comments panel, use `view_comments?`. If you want to hide only the view button on each row, use `show_comments?`.
 
-These methods only control buttons. Access to the comment's own pages is still decided by `CommentPolicy`, so if `CommentPolicy#edit?` allows it, a user can reach the edit page by URL even when `edit_comments?` hides the button.
+Most of these methods only control buttons. Access to the comment's own pages is still decided by `CommentPolicy`, so if `CommentPolicy#edit?` allows it, a user can reach the edit page by URL even when `edit_comments?` hides the button.
+
+`view_comments?` is the exception: it gates the panel *and* every request that lists the association. <VersionReq version="4.3.8" /> Avo asks it for the index reached with `via_*` params, the `has_many` search, an association's [distribution chart](./field-options-api.html#summarizable) and, with [avo-scopes](./scopes.html), a scope's count on the panel. A request that lists the association under a resource the field does not list with answers `ActiveRecord::RecordNotFound`, and one `view_comments?` denies answers `Avo::NotAuthorizedError`.
 
 ### Reuse another policy for an association
 

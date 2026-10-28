@@ -186,9 +186,12 @@ Controls the edit button on the resource row and access to the <Edit /> view.
 
 <Option name="`update?`" headingSize="3">
 
-Controls whether changes to a record can be saved. `record` holds the submitted form values.
+Controls whether changes to a record can be saved.
+
+Asked twice per save <VersionReq version="4.3.8" />: once on the record as loaded from the database, then again once the submitted form values are filled in. Both answers have to allow the write.
 
 - **Type:** `Boolean`
+- **`record`:** the persisted record on the first check, the record carrying the submitted values on the second
 
 <Image src="/assets/img/4_0/authorization/policy-update.webp" dark-src="/assets/img/4_0/authorization/policy-update-dark.webp" width="1960" height="722" alt="The Avo resource edit form with the Save button highlighted, illustrating the Pundit update? policy that controls whether a user can save changes." prompt="Save button highlighted on the resource edit form" />
 
@@ -261,10 +264,11 @@ Defined on the **parent** resource's policy. `{association}` is the association 
 
 <Option name="`view_{association}?`" headingSize="3">
 
-Controls whether the association panel is displayed on the parent record.
+Controls whether the association panel is displayed on the parent record, and whether the requests that list the association answer at all <VersionReq version="4.3.8" />: the index reached with `via_*` params, the `has_many` search, the association's [distribution chart](./field-options-api.html#summarizable) and, with [avo-scopes](./scopes.html), a scope's count on the panel.
 
 - **Type:** `Boolean`
 - **`record`:** the parent record
+- **Refusal:** `Avo::NotAuthorizedError`. A list requested under a resource the association field does not list with (its `use_resource`, else the target resource) answers `ActiveRecord::RecordNotFound`
 
 </Option>
 

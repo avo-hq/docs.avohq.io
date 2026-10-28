@@ -102,6 +102,28 @@ self.container_width = :lg
 
 </Option>
 
+## Form attributes
+
+Class attributes that only `Avo::Forms::Core::Form` exposes.
+
+<Option name="`self.authorize`">
+
+Decides, per request, whether a user may reach the form. A falsy answer refuses `GET` and `POST` on the form's route with `Avo::NotAuthorizedError`, keeps the form out of pages and `.component` renders, skips it in [`form`](./menu-editor-api.html#form) and [`all_forms`](./menu-editor-api.html#all_forms) menu entries, and drops a sub-page whose forms are all refused from its main page's navigation.
+
+```ruby
+class Avo::Forms::AppSettings < Avo::Forms::Core::Form
+  self.authorize = -> { current_user.admin? }
+end
+```
+
+- **Type:** Boolean or Proc / Lambda
+- **Default:** `true`
+- **Context:** evaluated through `Avo::ExecutionContext`, so a Proc reaches `current_user`, `params`, `request`, `context`, `view_context` and `locale`
+- **Scope:** forms only; `Avo::Forms::Core::Page` has no equivalent attribute
+- **Note:** it gates reaching the form, not what the submission contains. Permit and validate params in [`handle`](#handle)
+
+</Option>
+
 ## Form methods
 
 <Option name="`fields`">
