@@ -73,7 +73,7 @@ Counts come from the database, never from counting the rows on screen.
 
 **A "how many" question reads no records.** It goes to a counting tool that returns numbers and nothing else — no ids, no names, no column values — so answering it sends none of your data to the model provider. The same filters, scopes, and search apply as when listing records, and the answer says what was counted: "412 orders placed this month".
 
-Counting within a parent record goes through the same checks as opening that record's association in the admin: you have to be allowed to see the parent, to view it, and to view that association. A column hidden from you can't be counted by, grouped by, or filtered on either — a count over a column you can't see would still tell you what's in it.
+Counting within a parent record goes through the same checks as opening that record's association in the admin: you have to be allowed to see the parent, to view it, and to view that association. A column hidden from you can't be counted by, grouped by, or filtered on either — a count over a column you can't see would still tell you what's in it. For the same reason, a count by a column the Index doesn't show includes only the records you may open.
 
 A count that runs longer than 10 seconds on PostgreSQL is stopped and reported as an error. You get a request to narrow it, never an estimate.
 
