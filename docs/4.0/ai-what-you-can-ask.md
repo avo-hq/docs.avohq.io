@@ -31,7 +31,7 @@ For how a turn actually unfolds — schema, confirmation cards, authorization �
 
 Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders over $500", "users older than 26", "posts with no author", "projects in draft or review".
 
-**Naming a record in words is enough.** "The user called John Deere", "the post about pricing", "find Acme" — the assistant looks the record up the way your admin does: a resource that [configures search](./search.html) gets that exact search, and one that doesn't is matched across every text column you're allowed to read. A multi-word name still finds the record when its words live in different columns, so a first and last name stored separately aren't a problem. And "no such record" is only ever reported after that search came back empty — never off a guessed column filter.
+**Naming a record in words is enough.** "The user called John Deere", "the post about pricing", "find Acme" — the assistant looks the record up the way your admin does: a resource that [configures search](./search.html) gets that exact search, and one that doesn't is matched across every text column you're allowed to read, where a column the Index doesn't show only matches records you may open. A multi-word name still finds the record when its words live in different columns, so a first and last name stored separately aren't a problem. And "no such record" is only ever reported after that search came back empty — never off a guessed column filter.
 
 **Your scopes are part of the vocabulary.** Domain words like "admins", "active", or "published" are usually named scopes on the model rather than columns, and the assistant prefers the scope over guessing at a filter — so "list the published posts" runs `Post.published`, whatever that scope actually does.
 
@@ -73,7 +73,7 @@ Counts come from the database, never from counting the rows on screen.
 
 **A "how many" question reads no records.** It goes to a counting tool that returns numbers and nothing else — no ids, no names, no column values — so answering it sends none of your data to the model provider. The same filters, scopes, and search apply as when listing records, and the answer says what was counted: "412 orders placed this month".
 
-Counting within a parent record goes through the same checks as opening that record's association in the admin: you have to be allowed to see the parent, to view it, and to view that association. A column hidden from you can't be counted by, grouped by, or filtered on either — a count over a column you can't see would still tell you what's in it.
+Counting within a parent record goes through the same checks as opening that record's association in the admin: you have to be allowed to see the parent, to view it, and to view that association. A column hidden from you can't be counted by, grouped by, or filtered on either — a count over a column you can't see would still tell you what's in it. For the same reason, a count by a column the Index doesn't show includes only the records you may open.
 
 A count that runs longer than 10 seconds on PostgreSQL is stopped and reported as an error. You get a request to narrow it, never an estimate.
 
