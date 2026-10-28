@@ -6,37 +6,6 @@ If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedica
 
 ## Upgrade to `avo-api` `4.4.0`
 
-<Option name="Your initializer's settings are no longer overridden">
-
-### Breaking Change
-
-`avo-api` used to ship a `config/initializers/avo.rb`, and Rails ran it in your app before your own initializer. Any of these settings your initializer left unset took `avo-api`'s value instead of Avo's default:
-
-| Setting | `avo-api` set it to | Avo's default |
-| --- | --- | --- |
-| `root_path` | `"/admin"` | `"/avo"` |
-| `license_key` | `ENV["AVO_LICENSE_KEY"]` | `nil` |
-| `current_user_method` | `:current_user` | none: Avo has no current user |
-
-The gem no longer ships that file, so your `config/initializers/avo.rb` is the only one that configures Avo. Settings your initializer sets were never overridden and don't change.
-
-### Action Required
-
-Check your initializer for all three. Set each one your app relied on `avo-api` for:
-
-```ruby
-# config/initializers/avo.rb
-Avo.configure do |config|
-  config.root_path = "/admin" # [!code ++]
-  config.license_key = ENV["AVO_LICENSE_KEY"] # [!code ++]
-  config.current_user_method = :current_user # [!code ++]
-end
-```
-
-Without them, the panel moves to `/avo`, and so does an API mounted under `Avo.configuration.root_path`. Avo runs without your license, so `avo-api` answers every request with `404`. With no current user, policies receive `nil`, and creating an API token fails with "Owner must exist".
-
-</Option>
-
 <Option name="`belongs_to` and `has_one` ids are the related record's `to_param`">
 
 ### Breaking Change
