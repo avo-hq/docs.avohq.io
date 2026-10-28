@@ -260,6 +260,8 @@ end
 
 Once enabled, the changelog will be visible, along with an action to revert changes.
 
+With [authorization](./authorization.html) enabled, reverting asks the record's policy: [`update?`](./authorization-api.html#update) on the record, found through its policy scope, or [`create?`](./authorization-api.html#create) to bring back a destroyed record. Users the policy refuses don't see the revert action. The changeset diff and the payload leave out fields the user's [field policy](./authorization.html#hide-fields-from-a-user) withholds.
+
 <Image src="/assets/img/4_0/audit-logging/activity-details.webp" dark-src="/assets/img/4_0/audit-logging/activity-details-dark.webp" width="2848" height="2114" alt="An update activity detail page showing the changeset diff and payload, with breadcrumbs and title" />
 
 :::warning Missing `changeset` field

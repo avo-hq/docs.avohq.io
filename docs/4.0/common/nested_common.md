@@ -64,3 +64,24 @@ end
 ```
 
 </Option>
+
+### Authorization
+
+With [authorization](./../authorization.html) enabled, a nested form writes a child only when the child's own pages would let the user write it.
+
+- **Existing records** are saved only when they are inside the child resource's [policy scope](./../authorization-api.html#Scope) and the child policy allows [`update?`](./../authorization-api.html#update). `update?` is asked twice: once with the record as loaded, and again with the submitted values. A row the user may not update is skipped, and the rest of the form still saves.
+- **New records** need the child policy's [`create?`](./../authorization-api.html#create) and the parent policy's [`create_{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}?`](./../authorization-api.html#create_association). If either refuses, the save is refused.
+- When `create_{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}?` refuses, the form hides its "Add" button, the same way the association panel hides "Create new".
+
+:::info
+With [`explicit_authorization`](./../authorization-api.html#explicit_authorization) on, a parent policy that doesn't define `create_{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}?` refuses new rows. Define it to let users add records from the form:
+
+```ruby-vue
+# app/policies/book_policy.rb
+class BookPolicy < ApplicationPolicy
+  def create_{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}?
+    user.admin?
+  end
+end
+```
+:::

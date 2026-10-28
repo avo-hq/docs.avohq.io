@@ -294,3 +294,5 @@ class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   end
 end
 ```
+
+A dashboard that fails `authorize` also refuses its cards' own URLs, not only the dashboard page.

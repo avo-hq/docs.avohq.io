@@ -202,6 +202,17 @@ class Post < ApplicationRecord
 end
 ```
 
+Avo writes the property through the resource's fields, as the record's edit form would, so the `Post` resource needs a field for `status`. A `disabled` field still writes, which suits a property you only change by dragging. Without a field that writes the property (or with only a computed one), the board refuses to move or add that resource's cards.
+
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  def fields
+    field :status, as: :text, disabled: true
+  end
+end
+```
+
 ## Customize the card
 
 :::warning
@@ -251,11 +262,11 @@ Each method maps to an `authorize_action(:action)` call in the board's controlle
 
 ### Authorization Methods
 
-You can control access to various parts of the Kanban board by defining the following methods in your `Avo::Kanban::BoardPolicy`:
+You can control access to various parts of the Kanban board by defining the following methods in your `Avo::Kanban::BoardPolicy`. Each method also refuses the routes behind its buttons, so a request sent directly is refused too.
 
 - `show?`
 
-  Controls access to the board page itself. When this returns `false` the board can't be visited.
+  Controls access to the board page itself, and moving cards on it. When this returns `false` the board can't be visited.
 
 - `edit?`
 
@@ -270,11 +281,15 @@ You can control access to various parts of the Kanban board by defining the foll
 
 - `add_item?`
 
-  Controls the visibility of every "Add a card" button — on the board header, on each column header, and at the bottom of each column.
+  Controls the visibility of every "Add a card" button — on the board header, on each column header, and at the bottom of each column — and guards the record picker and adding the card.
 
 - `manage_column?`
 
-  Controls the visibility of the three-dot menu on each column (remove column, remove all items, and column settings).
+  Controls the visibility of the three-dot menu on each column (remove column, remove all items, and column settings). It also guards dragging columns, clearing a column, and removing a card.
+
+The policy's `Scope` decides which boards a user can open.
+
+Cards follow their record's own policy. A card shows only when its record is inside its resource's policy scope, and moving or adding a card needs `update?` on that record, since it changes the record's property.
 
 ## Customizing kanban models for your business logic
 

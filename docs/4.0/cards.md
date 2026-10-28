@@ -831,6 +831,8 @@ end
 
 :::
 
+A card hidden by `visible` is not served by its URL either. Resource cards follow the resource's policy: [`index?`](./authorization-api.html#index) for cards rendered without a record, [`show?`](./authorization-api.html#show) on the record otherwise, with the record found through the [policy scope](./authorization-api.html#Scope).
+
 ## Dividers
 
 You may want to separate the cards. You can use dividers to do that.
