@@ -285,11 +285,11 @@ You can control access to various parts of the Kanban board by defining the foll
 
 - `manage_column?`
 
-  Controls the visibility of the three-dot menu on each column (remove column, remove all items, and column settings). It also guards dragging columns, clearing a column, and removing a card.
+  Controls the visibility of the three-dot menu on each column (remove column, remove all items, and column settings) and of each card's "Remove" action. It also guards dragging columns, clearing a column, and removing a card.
 
 The policy's `Scope` decides which boards a user can open.
 
-Cards follow their record's own policy. A card shows only when its record is inside its resource's policy scope, and moving or adding a card needs `update?` on that record, since it changes the record's property.
+Cards follow their record's own policy. A card shows, and counts toward its column's total, only when its record is inside its resource's policy scope. Moving or adding a card needs `update?` on that record, since it changes the record's property, so a card without it can't be dragged.
 
 ## Customizing kanban models for your business logic
 
