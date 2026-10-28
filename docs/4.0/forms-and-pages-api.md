@@ -102,6 +102,22 @@ self.container_width = :lg
 
 </Option>
 
+## Form attributes
+
+<Option name="`self.authorize`" headingSize="3">
+
+Decides who may open and submit the form. Evaluated on every request through `Avo::ExecutionContext`, with `current_user`, `params`, `request`, and `context` available.
+
+```ruby
+self.authorize = -> { current_user.admin? }
+```
+
+- **Type:** Boolean or Proc
+- **Default:** `true`
+- **When falsy:** opening or submitting the form redirects back with a "not authorized" message, and [`handle`](#handle) doesn't run. The form doesn't render on pages or through `.component`, the [`form`](./menu-editor-api.html#form) and [`all_forms`](./menu-editor-api.html#all_forms) menu entries skip it, and page navigation drops a sub-page whose forms are all refused.
+
+</Option>
+
 ## Form methods
 
 <Option name="`fields`">

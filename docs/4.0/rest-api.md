@@ -437,7 +437,8 @@ Fields are respected according to their view visibility, and typed values are se
 | --- | --- |
 | Text, number, boolean, date/datetime | The raw value |
 | `belongs_to` | `{ "id": 5, "label": "John Doe" }` |
-| `has_many`, `has_one` | `{ "count": 12 }` (or `{ "id": 5 }` for a single loaded record) |
+| `has_many`, `has_and_belongs_to_many` | `{ "count": 12 }`, counted through the related resource's `Scope` |
+| `has_one` | `{ "id": 5 }`, or `null` when the related resource's `Scope` hides it |
 | `file` | `{ "filename": "…", "content_type": "…", "byte_size": 1234, "url": "…" }` |
 | `files` | a list of those objects, one per attachment |
 
@@ -765,6 +766,7 @@ Your existing Pundit policies apply to the API automatically — the same `Scope
 
 - **Index** resolves through the resource's `Scope`, so `GET /api/resources/v1/comments` returns only the records that user may see.
 - **Show, update, and destroy** look the record up through the same scope, so a record outside it is **`404 Not Found`**, not a `403` — the API doesn't confirm that an out-of-scope record exists.
+- **Association fields** appear only when the record's policy allows [`view_<field>?`](./authorization-api.html#view_association). Under [`explicit_authorization`](./authorization-api.html#explicit_authorization) they are also hidden when the policy doesn't define the method, as on the panel.
 
 ```ruby
 # app/policies/comment_policy.rb
@@ -786,6 +788,8 @@ Policy scoping requires all three of the following. If any is missing, the query
 | The `avo-authorization` add-on installed | `Gemfile` |
 | The `avo-authorization` feature enabled on your license | Your Avo plan |
 | An authorization client configured | `config.authorization_client = :pundit` |
+
+One exception: when your initializer sets a client and your license lacks the add-on, the API returns no records at all, and every policy method answers `403` with `reason: "policy"`. See [When the license lapses](./authorization.html#when-the-license-lapses).
 
 :::info A `nil` user fails differently
 Those three are configuration — miss one and the query is silently unscoped. A missing **user** is the opposite failure: with Pundit configured, scoping still runs, so `nil` reaches your `Scope#resolve` and the usual `user.admin?` raises `NoMethodError`. You get a 500, not a leak — the same trap described under [Authentication examples](#authentication-examples).
@@ -915,7 +919,7 @@ resource :"avo_api/token", visible: -> {
 The model is `Avo::Api::Token`, so the policy is `Avo::Api::TokenPolicy` at `app/policies/avo/api/token_policy.rb` — the ordinary derivation, with nothing registered on the resource to redirect it.
 
 :::danger Without an authorization client, every panel user can mint a token
-And a token carries its owner's full privileges over every record. If `avo-authorization` isn't installed, isn't enabled on your license, or no `config.authorization_client` is set, nothing stands between a user who can sign in to Avo and a credential that reaches your whole API. That's your app's configuration rather than anything this feature decides, but decide it deliberately.
+And a token carries its owner's full privileges over every record. If `avo-authorization` isn't installed, `config.authorization_client` is `nil`, or the add-on isn't on your license and your initializer sets no client, nothing stands between a user who can sign in to Avo and a credential that reaches your whole API. That's your app's configuration rather than anything this feature decides, but decide it deliberately.
 :::
 
 The opposite is just as true. With [`config.explicit_authorization`](./authorization-api.html#explicit_authorization) at its default of `true`, a resource whose policy class is missing is **denied**, so the token resource is unreachable until you write one — the same rule that applies to every other resource in that app.

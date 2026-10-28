@@ -4,6 +4,33 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-notifications` `4.3.1`
+
+<Option name="The notification resource finds records through the current user">
+
+### Breaking Change
+
+The generated notification resource scoped the list to the current user, but not the record lookup. A signed-in user could open, delete or run actions on another user's notification by id. New installs generate a resource that scopes both. See [Notification resource](./notifications.html#notification-resource).
+
+### Steps to Update
+
+If you generated `app/avo/resources/avo_notification.rb` with avo-notifications 4.3.0 or earlier, add the lookup below `index_query`:
+
+```ruby
+# app/avo/resources/avo_notification.rb
+class Avo::Resources::AvoNotification < Avo::BaseResource
+  self.index_query = -> {
+    query.for_user(Avo::Current.user).newest_first
+  }
+
+  self.find_record_method = -> { # [!code ++]
+    query.for_user(Avo::Current.user).find(id) # [!code ++]
+  } # [!code ++]
+end
+```
+
+</Option>
+
 ## Upgrade to `avo` `4.3.6`
 
 <Option name="Trix uploads on the New form are authorized with `create?`">

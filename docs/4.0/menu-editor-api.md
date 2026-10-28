@@ -219,7 +219,7 @@ action Avo::Actions::ExportData, resource: :projects
 Also accepts the shared [`icon`](#icon), [`hotkey`](#hotkey), [`data`](#data), and [`visible`](#visible) options.
 
 - **Validation:** only [standalone actions](./actions-api.html#standalone) (`self.standalone = true`) can be added — the menu has no selected records. Non-standalone actions are skipped with a log warning.
-- **Visibility:** the item is left out when the action's [`self.visible`](./actions-api.html#visible) or [`self.authorize`](./actions-api.html#authorize) block hides it on the resource's index, as the resource's Actions dropdown would.
+- **Visibility:** the item shows only where the resource's own **Actions** dropdown would offer the action: the resource's policy must allow [`act_on?`](./authorization-api.html#act_on), and the action's [`self.visible`](./actions-api.html#visible) and [`self.authorize`](./actions-api.html#authorize) blocks must pass on the index view.
 
 </Option>
 
@@ -299,7 +299,7 @@ end
 
 <Option name="`all_boards`" headingSize="3">
 
-Adds every [kanban board](./kanban-boards.html).
+Adds every [kanban board](./kanban-boards.html) the user can open: only the boards the [`Avo::Kanban::BoardPolicy::Scope`](./kanban-boards.html#authorization) returns are listed.
 
 ```ruby
 section "Boards", icon: "tabler/outline/layout-kanban" do

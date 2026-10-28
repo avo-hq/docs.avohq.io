@@ -307,6 +307,23 @@ def handle
 end
 ```
 
+## Restrict who can use a form
+
+By default, every signed-in Avo user can open and submit every form. Set [`self.authorize`](./forms-and-pages-api.html#self.authorize) to limit a form to some users:
+
+```ruby
+# app/avo/forms/app_settings.rb
+class Avo::Forms::AppSettings < Avo::Forms::Core::Form
+  self.authorize = -> { current_user.admin? }
+end
+```
+
+Everyone else is refused: opening or submitting the form redirects back with a "not authorized" message, and `handle` never runs. The form also disappears from pages, `.component` renders, and the menu.
+
+:::warning
+Hiding a form's menu link is not access control. A user who knows the form's URL can still open it unless `self.authorize` refuses them.
+:::
+
 ## Reusable vs. inline forms
 
 The generator gives each form its own file under `app/avo/forms/` — the default, and the right choice for anything you'll show on more than one page or render as a component. The class name is its public handle.
