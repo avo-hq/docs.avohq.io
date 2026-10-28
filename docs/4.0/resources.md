@@ -400,6 +400,25 @@ end
 
 If you use `devise` and update users without passing a password, stop the validation error with [`self.devise_password_optional`](./resources-api.html#self.devise_password_optional).
 
+## Change how records are saved or destroyed
+
+<VersionReq version="4.2.12" />
+
+Avo saves a record with `save!` and removes it with `destroy!`. To use something else — a service object, a soft delete, extra bookkeeping — define [`save_record`](./resources-api.html#save_record) or [`destroy_record`](./resources-api.html#destroy_record) on the resource:
+
+```ruby
+# app/avo/resources/course.rb
+class Avo::Resources::Course < Avo::BaseResource
+  def destroy_record(record)
+    record.archive!
+  end
+end
+```
+
+Both report success through their return value, so return something truthy, or raise to fail: the exception is caught and added to the record's errors, which surfaces in the fail flash.
+
+Every surface that writes the record goes through them — the admin panel, the [REST API](./rest-api.html), your own controllers — so one definition covers them all, and it is what makes an [array resource](./array-resource.html#create-edit-and-delete) writable or changes the requests an [HTTP resource](./http-resource.html#customize-create-update-and-destroy) sends. For a change that belongs to a single controller, override [`save_record_action`](./controllers-api.html#save_record_action) or [`destroy_record_action`](./controllers-api.html#destroy_record_action) there instead.
+
 ## Tweak the Index view
 
 Display records as a grid or on a map instead of a table with [`self.default_view_type`](./resources-api.html#self.default_view_type):
