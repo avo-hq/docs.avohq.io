@@ -134,6 +134,24 @@ Avo.configure do |config|
     max_import_rows: 1000        # data rows one confirmed import may create
   }
 
+  # What reading a web page may cost (see "Reading a web page"). Set only the keys you want to change.
+  config.ai.web = {
+    max_page_size: 5.megabytes,     # ceiling on a page the tool will download
+    max_slice: 500,                 # lines one read_url call may return
+    max_slice_bytes: 256.kilobytes, # bytes one read_url call may return
+    provider_timeout: 30,           # seconds a renderer call may take
+    max_fetches_per_turn: 10,       # pages one turn may fetch
+    min_yield_chars: 200            # below this, the result offers the renderer retry
+  }
+
+  # A renderer for pages that build their content in JavaScript (see "Read pages that need
+  # JavaScript"). Off until set; the gem ships no provider and no key.
+  config.ai.web_provider = {
+    adapter: :jina,
+    api_key: ENV["JINA_API_KEY"], # optional for Jina; without one it runs at a low rate limit
+    endpoint: "https://r.jina.ai" # optional; must be https://
+  }
+
   # What the composer lets people upload (see "Send files with a message"). Set only the keys
   # you want to change. accept takes what an HTML accept attribute does: MIME types, wildcards
   # ("image/*", or "*/*" for anything) and extensions (".csv").
@@ -443,6 +461,165 @@ An import creates records only — updating or upserting from a file isn't offer
 Batch updates are capped too, at `max_update_records` records (50 by default). Raise it to at most 500; a higher value, zero, or anything that isn't an Integer raises at boot. An import's rows are new, so the only cost of a big one is the time it takes; a batch update changes records that already exist. However large it is, a batch counts as one entry in the undo history and is undone from one card. Checked rows stop at 50 whatever the cap is.
 :::
 
+## Reading a web page
+
+Paste a link into your message and the assistant can read the page: "update this record's body from https://example.com/docs/setup", "summarize https://example.com/changelog". It fetches the page, pulls out the article as markdown (headings, lists, code blocks, and links kept; navigation and site chrome dropped), and reads it in windows the way it reads a file. Then it does what you asked with it, through the same tools and cards as anything else: a body composed from a page reaches the record through the update card, and nothing is written until you click **Confirm**.
+
+Reading a page writes nothing and shows no card. It also creates no file: the page is read, not saved, so the Media Library and your attachments are untouched.
+
+### Only the links you typed
+
+The assistant reads a URL only when you wrote it in a message in this conversation. A URL it found anywhere else is refused, even when it is the obvious next link to follow:
+
+| The URL came from                                     | Read?   |
+| ----------------------------------------------------- | ------- |
+| Your message, as plain text, a markdown link, or `<...>` | Yes  |
+| A record the assistant looked up                      | No      |
+| A page it already read                                | No      |
+| Any other tool's result                               | No      |
+| Your message, but with a username or password before the host (`https://user@host/...`) | No |
+
+When it refuses, it says so and asks you to paste the link. That is the fix: paste it, and it reads it.
+
+The rule exists because of prompt injection. A record or a web page can carry text written to steer the assistant, and a link inside that text is the attacker's link, not yours. If following it were allowed, one hostile page could walk the assistant from page to page, or send it to an address that carries your data out in the URL. Restricting reads to what a person typed closes that path entirely. What a page says comes back framed as page data, never as instructions: a sentence on it addressed to the assistant can be reported, not acted on. Content hidden from a reader (HTML comments, `hidden` and `aria-hidden` elements, invisible styling) is stripped before the assistant sees the page.
+
+A `#fragment` on the URL doesn't matter: pasting `.../theming#dark-mode` lets the assistant read `.../theming`. Redirects are followed, and the result names where the content actually came from, so a link that redirected somewhere else is visible rather than silent.
+
+### What it fetches, and what it refuses
+
+The fetch goes out from your app's server and is hardened the same way as [attaching a file from a link](#getting-new-files-in): only public `https://` URLs, private and internal addresses refused on every redirect, and a size ceiling (5 MB by default) enforced while downloading.
+
+- **A long page is read in windows**, 100 lines by default and at most `max_slice` per call. Paging through a page already read in the same turn doesn't fetch it again.
+- **A turn can fetch at most 10 pages** (`max_fetches_per_turn`). Past that the assistant works with what it has or asks you to continue in a new message.
+- **A site that blocks automated access is reported as blocked.** A 401 or 403 comes back as "this site blocks automated access", never as an empty page the assistant might mistake for real content. Sites behind bot protection, such as Cloudflare's agent blocking, aren't readable this way.
+- **Pages behind a login aren't readable.** The fetch carries no cookies or credentials.
+- **Markdown and plain-text URLs are read as they are**; HTML is extracted. A binary file, such as a PDF or an image, is refused.
+
+The limits live under `config.ai.web`. See [Configuration](#configuration).
+
+### Read pages that need JavaScript
+
+Some pages build their content in the browser, so the HTML the server sends carries almost nothing. When a read extracts fewer than `min_yield_chars` characters (200 by default), the result says so, and the assistant can read the page again through a renderer that runs the page's JavaScript.
+
+That renderer is a provider you configure. None is set by default, and the gem ships no credential: with no provider, the assistant tells you the page came back nearly empty and that it can't render it.
+
+The gem ships one adapter, for [Jina Reader](https://jina.ai/reader/):
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.ai.web_provider = {
+    adapter: :jina,
+    api_key: ENV["JINA_API_KEY"] # optional; without one Jina runs at a low rate limit
+  }
+end
+```
+
+`api_key` is your own key from your own Jina account. Leave it out and Jina still works, keyless and rate limited, which is fine for trying it out. `endpoint` points the adapter elsewhere, such as a reader you host yourself; it must be an `https://` URL, and anything else raises `ArgumentError` at boot.
+
+Before any adapter is called, the URL's host is resolved and refused if it points at a private or reserved address. The renderer's response is capped at `max_page_size`, the whole call at `provider_timeout` seconds, and an empty answer is an error, not an empty page.
+
+### What leaves your app
+
+Be clear about where URLs go before you switch a renderer on:
+
+| Read                         | Who sees the URL                                                                 |
+| ---------------------------- | -------------------------------------------------------------------------------- |
+| An ordinary read             | Only the site itself. Your server fetches it directly                            |
+| `render: true`, any provider | The provider receives the **full URL** of every rendered read, query string included |
+| `render: true`, Jina keyless | Jina's hosted service, `r.jina.ai`. No account, no contract, no key              |
+| `render: true`, self-hosted  | Nobody outside your network                                                      |
+
+The keyless Jina path is the easy one to miss: it needs no sign-up, so turning it on sends URLs to a third party without any procurement step. If your app can't send URLs outside, self-host the open-source [jina-ai/reader](https://github.com/jina-ai/reader) and point the same adapter at it:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.web_provider = {
+  adapter: :jina,
+  endpoint: "https://reader.internal.example.com"
+}
+```
+
+The endpoint has to be `https://` even inside your network, so put TLS in front of the reader.
+
+:::warning A self-hosted renderer runs a real browser inside your network
+Run it in its own container, on its own network, and block its outbound traffic to private address ranges at the network level: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `169.254.0.0/16` (which includes the cloud metadata service at `169.254.169.254`), and localhost.
+
+The gem's own check covers only the URL it hands the renderer: it resolves that one host once and refuses a private address. It can't see the requests the page's JavaScript makes once it runs in the browser, or a redirect the renderer follows. A page can point those at your internal services or your cloud credentials, and only network-level egress rules stop them.
+:::
+
+### Write your own adapter
+
+Any other renderer works through an adapter of your own: a subclass of `Avo::Ai::PageProviders::Base` that implements one private method, `render(url)`, returning the page as a String. Name the class as a String in `adapter:`:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.web_provider = {
+  adapter: "FirecrawlPageProvider",
+  api_key: ENV["FIRECRAWL_API_KEY"]
+}
+```
+
+What `Base` gives you:
+
+| Method or setting                | What it does                                                                                       |
+| -------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `api_key`, `endpoint`            | The values from `config.ai.web_provider`. `endpoint` falls back to `self.default_endpoint`          |
+| `self.default_endpoint`          | Override to give the adapter a default endpoint                                                    |
+| `self.output_format`             | `:markdown` (the default) when `render` returns markdown; `:html` to run the built-in extractor over the result |
+| `endpoint_uri(path)`             | The endpoint with `path` appended, as a `URI`                                                      |
+| `perform(request)`               | Sends a `Net::HTTP` request and returns the body of a 2xx. Refuses a non-https endpoint, caps the body at `max_page_size`, and holds the call to `provider_timeout` |
+| `parse_json(body)`               | Parses JSON, raising a fixed error rather than one that quotes the body                            |
+| `failure(kind)`, `status_failure(code)` | The shared errors to raise: `:empty`, `:blocked`, `:quota`, `:rate_limited`, `:timeout`, `:malformed`, and more; `status_failure` maps 402, 403, 429, 408 and 504 |
+
+Your adapter inherits the guards: the private-address refusal runs before `render` is called, empty content is an error under any status, and a provider's response body never reaches an error message, so a provider that echoes the request can't leak your key into the transcript.
+
+This is a complete [Firecrawl](https://www.firecrawl.dev) adapter. Save it as `app/avo/firecrawl_page_provider.rb`, or anywhere your app autoloads:
+
+```ruby
+# A Firecrawl adapter for read_url's `render: true` path, written against the documented adapter
+# interface. Save it as app/avo/firecrawl_page_provider.rb (or anywhere autoloaded) and point the
+# provider at it:
+#
+#   config.ai.web_provider = {
+#     adapter: "FirecrawlPageProvider",
+#     api_key: ENV["FIRECRAWL_API_KEY"]
+#   }
+#
+# Firecrawl answers `success: true` even when the target page was a 404 or a bot block: the real
+# status sits in data.metadata.statusCode and the markdown comes back empty. Base refuses empty
+# content on every adapter, so that case surfaces as an error without any code here.
+class FirecrawlPageProvider < Avo::Ai::PageProviders::Base
+  def self.default_endpoint
+    "https://api.firecrawl.dev"
+  end
+
+  private
+
+  def render(url)
+    request = Net::HTTP::Post.new(endpoint_uri("/v2/scrape"))
+    request["Content-Type"] = "application/json"
+    request["Authorization"] = "Bearer #{api_key}"
+    request.body = {url: url, formats: ["markdown"], onlyMainContent: true}.to_json
+
+    parse_json(perform(request)).dig("data", "markdown")
+  end
+end
+```
+
+The same shape fits ScrapingBee, Browserless, Scrapfly, Zyte, and similar services. One that returns raw HTML sets `self.output_format` to `:html`, and the built-in extractor turns it into markdown.
+
+### Turn it off
+
+`read_url` is in the roster by default, so an app that upgrades gets it switched on. To stop the assistant reading the web at all, exclude it:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.excluded_tools = [:read_url]
+```
+
+To keep ordinary reads but never render, leave `config.ai.web_provider` unset.
+
 ## Teach the assistant your app
 
 Out of the box the assistant knows Avo, not your application. It reads columns, enums, and scopes from its tools at run time, but nothing tells it that "customers" are `User` records with a `role` of `client`, that a "booking" is the `Reservation` resource, or that nobody on your team has ever asked about webhook deliveries. That's what it guesses wrong at, and guessing is what it has to do until you write the app down. That's why this is the last step of the install, not an extra.
@@ -616,7 +793,7 @@ Set neither and the assistant gets every tool the gem ships. The roster is assem
 config.ai.excluded_tools = [:delete_record, :update_record]
 ```
 
-The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `read_url`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
 
 `update_record` and `update_records` are separate names, so excluding the first leaves the second attached. An app that excludes `update_record` to stop the assistant writing columns wants both.
 
