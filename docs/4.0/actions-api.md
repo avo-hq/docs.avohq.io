@@ -30,7 +30,7 @@ class Avo::Actions::ToggleInactive < Avo::BaseAction
 end
 ```
 
-Options that accept a block are executed using [`Avo::ExecutionContext`](./execution-context), with access to `resource`, `record`, `view`, `arguments`, and `query` (plus the extras listed on each option).
+Options that accept a block are executed using [`Avo::ExecutionContext`](./execution-context), with access to `resource`, `record`, `view`, `arguments`, `query`, and `index_query` (plus the extras listed on each option).
 
 ## Registration
 
@@ -384,11 +384,12 @@ The method every action implements. Receives keyword arguments:
 | --- | --- |
 | `query` | The selected record(s). A single record is wrapped in an array for consistency. |
 | `records` | Alias of `query`. |
-| `index_query` | Not an argument: the `index_query` reader. The <Index /> query with filters, scopes, search, and sort applied, before pagination. `nil` outside an <Index /> list. See [Work with every record on the Index](./actions.html#work-with-every-record-on-the-index). |
 | `fields` | The values submitted through the action's form fields. |
 | `current_user` | The currently authenticated user. |
 | `resource` | The Avo resource instance that triggered the action. |
 | `request` | The current `ActionDispatch::Request` object. |
+
+Besides these, the action can read `index_query`, the <Index /> query with filters, scopes, search, and sort applied, before pagination. It can be `nil`; see [Work with every record on the Index](./actions.html#work-with-every-record-on-the-index).
 
 ```ruby
 def handle(query:, fields:, current_user:, resource:, request:, **args)

@@ -310,7 +310,7 @@ You can try this flow on the [avodemo](https://main.avodemo.com/avo/resources/ci
 
 ## Customize the modal
 
-The modal's texts can each be a string or a block — blocks run in [`Avo::ExecutionContext`](./execution-context) with access to `resource`, `record`, `view`, `arguments`, `query`, and [`index_query`](#work-with-every-record-on-the-index):
+The modal's texts can each be a string or a block — blocks run in [`Avo::ExecutionContext`](./execution-context) with access to `resource`, `record`, `view`, `arguments`, `query`, and [`index_query`](#work-with-every-record-on-the-index) (`nil` while `name` renders in the dropdown):
 
 - [`name`](./actions-api.html#name) — the action's display name in the dropdown and modal
 - [`description`](./actions-api.html#description) — a short explanation under the name in the modal header
@@ -360,10 +360,11 @@ It is available in `handle`, in `fields`, and in the modal's text blocks:
 # app/avo/actions/export_csv.rb
 class Avo::Actions::ExportCsv < Avo::BaseAction
   self.standalone = true
-  self.message = -> { "Export #{index_query.count} records?" }
+  self.visible = -> { view.index? }
+  self.message = -> { "Export #{index_query&.count.to_i} records?" }
 
   def fields
-    field :only_selected, as: :boolean, help: "Out of #{index_query.count} matching records"
+    field :only_selected, as: :boolean, help: "Out of #{index_query&.count.to_i} matching records"
   end
 
   def handle(query:, fields:, **)
@@ -373,7 +374,7 @@ class Avo::Actions::ExportCsv < Avo::BaseAction
 end
 ```
 
-`index_query` is `nil` when the action wasn't started from an <Index /> list: on a <Show /> or <Edit /> page, and on an [array resource](./array-resource). Guard with `index_query&.count` when the action runs in those places too.
+`index_query` is `nil` when there is no list to read it from: on a <Show /> or <Edit /> page (an action started from a has-many table on that page gets that table's query), when the filters match no records, on a [map view](./map-view.html) with its table hidden, on an [array resource](./array-resource.html) that paginates at the source, and when the query can't be serialized (see [Select All](./select-all.html#serialization-known-issues)). A `name` block also sees `nil` while the dropdown renders. Guard with `index_query&.` wherever one of those can happen.
 
 ## Control visibility and authorization
 
