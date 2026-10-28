@@ -63,15 +63,18 @@ self.name = -> { I18n.t("avo.dashboard_titles.dashy", default: "Dashy") }
 
 Use the [`grid_cols`](dashboards-api#self.grid_cols) parameter to organize the cards in a grid of `3`, `4`, `5`, or `6` columns. The default is `3`.
 
-## Global ranges
+## Range filter
 
-Cards each carry their own [range dropdown](cards#ranges), but you can also render a row of range buttons at the top of the dashboard that update every card at once. Pass the day counts you want as [`global_ranges`](dashboards-api#self.global_ranges):
+Cards each carry their own [range dropdown](cards#ranges), but you can also render a row of range buttons at the top of the dashboard panel, above the cards, that update every card at once. Declare a `range` button group in `filters`:
 
-```ruby{4}
+```ruby{5-7}
 class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
   self.id = "dashy"
   self.name = "Dashy"
-  self.global_ranges = [7, 30, 60, 365]
+
+  def filters
+    filter :range, type: :button_group, options: {"7D" => 7, "30D" => 30, "60D" => 60, "1Y" => 365}, default: 30
+  end
 
   def cards
     card Avo::Cards::UsersCount
@@ -79,7 +82,9 @@ class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
 end
 ```
 
-Each entry's button label resolves the `avo.<value>` translation key, falling back to the humanized value — so `"three_days"` reads "Three days" with no translation at all. Avo ships no key for any value, so add your own under `avo.<value>` when the humanized form isn't what you want. The default is an empty array (no global range bar).
+A click sets each card's `range`, the same value its own dropdown sets, so the card's `query` reads it as `range`. A card that lists `ranges` ignores a value it doesn't offer and keeps its `initial_range` (or its first range). A card with no `ranges` takes any value.
+
+Array `options` labels resolve the `avo.<value>` translation key, falling back to the humanized value — so `"three_days"` reads "Three days" with no translation at all. Avo ships no key for any value, so add your own under `avo.<value>` when the humanized form isn't what you want.
 
 ## Localization
 
