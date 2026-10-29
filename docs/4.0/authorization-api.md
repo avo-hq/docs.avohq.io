@@ -135,7 +135,7 @@ Called with the current `user` and the `record` (or the model class when there i
 
 <Option name="`index?`" headingSize="3">
 
-Controls the resource's sidebar entry in the auto-generated menu and access to the <Index /> view.
+Controls the resource's sidebar entry in the auto-generated menu and access to the <Index /> view. A [`summarizable`](./field-options-api.html#summarizable) column's distribution chart asks it too, or the parent's [`view_{association}?`](#view_association) for a column on an association panel.
 
 - **Type:** `Boolean`
 
@@ -187,7 +187,7 @@ Controls the edit button on the resource row and access to the <Edit /> view.
 
 <Option name="`update?`" headingSize="3">
 
-Controls whether changes to a record can be saved. `record` holds the submitted form values.
+Controls whether changes to a record can be saved. Asked twice on a save: once with the record as it is stored, then again with `record` holding the submitted form values. Both have to pass.
 
 - **Type:** `Boolean`
 
@@ -262,7 +262,7 @@ Defined on the **parent** resource's policy. `{association}` is the association 
 
 <Option name="`view_{association}?`" headingSize="3">
 
-Controls whether the association panel is displayed on the parent record.
+Controls whether the association panel is displayed on the parent record. It also answers the requests behind the panel: its rows, its search, a [`summarizable`](./field-options-api.html#summarizable) column's chart, and [scope](./scopes.html) counts. Those requests must name the resource the field lists with, its [`use_resource`](./associations/has_many.html#use_resource) when the field sets one, and answer `404` otherwise.
 
 - **Type:** `Boolean`
 - **`record`:** the parent record
