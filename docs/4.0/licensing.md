@@ -97,7 +97,7 @@ The **Avo Status** indicator in the sidebar footer is green while everything is 
 - **The subscription behind the trial was cancelled.** Access stops on the cancellation date, which the status page reports as the trial's end date. Adding a payment method does not change that — resume the subscription, or resubscribe, on the same page.
 - **An Avo 4 trial running beside your Avo 3 subscription.** A payment method does not keep Avo 4 here. Press **Migrate to Avo 4** on the same page before the trial's end date to keep it. If you don't, Avo 4 stops working in your app when the trial ends. Your Avo 3 license stays active, so you can move the app back to Avo 3. Older versions of `avo-licensing` show the add-a-payment-method steps for this trial instead; they link to the same page.
 
-While the indicator is amber, the status page shows an **Action needed** tag above the license name, spells out which of these you're in, and lists the steps for it. Once you've done them, press **Refresh license** on that page: Avo caches the license response between checks, so the app can show older billing state than avohq.io until it refreshes.
+While the indicator is amber, the status page shows an **Action needed before** tag with the date access stops, below the license name. It also spells out which of these you're in, and lists the steps for it. Once you've done them, press **Refresh license** on that page: Avo caches the license response between checks, so the app can show older billing state than avohq.io until it refreshes.
 
 :::info
 Trial state requires `avo-licensing` `4.0.10` or newer. The amber indicator requires Avo `4.0.20` or newer — an older Avo renders the dot without color rather than breaking.
