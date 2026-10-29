@@ -44,12 +44,12 @@ The `locale` of the app.
 
 <Option name="`tenant_id`">
 
-You can set the `tenant_id` for the current request.
+The id of the tenant the current user acts for. Set from [`config.tenancy`](./multitenancy) on every request, or by your own `before_action` when `config.tenancy` is unset.
 </Option>
 
 <Option name="`tenant`">
 
-You can set the `tenant` for the current request.
+The tenant the current user acts for. Set from [`config.tenancy`](./multitenancy) on every request, or by your own `before_action` when `config.tenancy` is unset.
 </Option>
 
 **Related:**

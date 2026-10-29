@@ -134,7 +134,7 @@ end
 if defined? ::Avo
   Avo::Engine.routes.draw do
     # new route in new controller
-    put "switch_accounts/:id", to: "switch_accounts#update", as: :switch_account
+    get "stats", to: "stats#index", as: :stats
 
     scope :resources do
       # append a route to a resource controller
@@ -143,12 +143,10 @@ if defined? ::Avo
   end
 end
 
-# app/controllers/avo/switch_accounts_controller.rb
-class Avo::SwitchAccountsController < Avo::ApplicationController
-  def update
-    session[:tenant_id] = params[:id]
-
-    redirect_back fallback_location: root_path
+# app/controllers/avo/stats_controller.rb
+class Avo::StatsController < Avo::ApplicationController
+  def index
+    render json: {users: User.count}
   end
 end
 ```
