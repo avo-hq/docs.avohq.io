@@ -137,6 +137,8 @@ self.collaboration = {
 }
 ```
 
+Only the emoji on this list can be added. Reactions already on a timeline with an emoji you later drop from the list keep showing, and their author can still take them back.
+
 ## Place the timeline
 
 Call [`collaboration_timeline`](./collaboration-api.html#collaboration_timeline) inside `fields` to render the timeline where you want it. It shows comments, reactions, and automatic property-change entries.

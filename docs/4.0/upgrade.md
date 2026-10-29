@@ -59,6 +59,79 @@ None, unless a test or client expects the redirect to the home page.
 
 </Option>
 
+## Upgrade to `avo` `4.3.8`
+
+<Option name="`update?` is asked of the record as stored and again with the submitted values">
+
+### Breaking Change
+
+Saving an edit now asks [`update?`](./authorization-api.html#update) twice: once with the record as it is stored, then again once the submitted values are assigned. Both have to pass. Before, only the filled record was authorized, so a value the user submitted could make a record pass a policy it fails as stored, such as a new owner under an owner-only `update?`. A [`react_on`](./field-options-api.html#react_on) re-render of an open edit form asks [`edit?`](./authorization-api.html#edit) the same way.
+
+### Action Required
+
+None for a policy that answers from the user and the record's stored values. A policy that passes only once the user submits a value is now refused by the first check, and a policy that does work of its own does it twice.
+
+```ruby
+# app/policies/project_policy.rb
+class ProjectPolicy < ApplicationPolicy
+  # Asked before and after the form's values land on the record, so submitting
+  # your own id as the new owner no longer makes this pass.
+  def update?
+    record.user_id == user.id
+  end
+end
+```
+
+</Option>
+
+<Option name="Listing a parent's association by URL asks `view_{association}?`">
+
+### Breaking Change
+
+Every request that lists a parent's association now asks the parent policy's [`view_{association}?`](./authorization-api.html#view_association), as the panel itself does: the panel's rows, its search, the chart of a [`summarizable`](./field-options-api.html#summarizable) column in it, and [scope](./scopes.html) counts under it. The request also has to name the resource the association field lists with, and answers `404` otherwise. Before, these requests listed a parent's association under any resource, whatever the parent's policy said.
+
+### Action Required
+
+None in most apps: a panel is only shown when `view_<association>?` allows it, so the same method now answers the requests behind it. Two cases to check:
+
+- a link or bookmark you build by hand to an association list has to name the field's resource, which is its [`use_resource`](./associations/has_many.html#use_resource) when the field sets one;
+- under [`explicit_authorization`](./authorization-api.html#explicit_authorization) (the default), a parent policy with no `view_<association>?` refuses these requests, as it already hid the panel.
+
+```ruby
+# app/policies/post_policy.rb
+class PostPolicy < ApplicationPolicy
+  def view_comments? = true # [!code ++]
+end
+```
+
+</Option>
+
+<Option name="A `summarizable` column's chart asks `index?`">
+
+### Breaking Change
+
+The distribution chart behind a [`summarizable`](./field-options-api.html#summarizable) column ran no policy check. It now asks [`index?`](./authorization-api.html#index), or, for a column on an association panel, the parent's `view_{association}?`. Its rows were already narrowed by the policy [`Scope`](./authorization-api.html#Scope); what changes is that a user whose `index?` refuses the list no longer gets its distribution either.
+
+It asks `index?` and not a chart method of its own: `distribution_chart?` and `distribution_chart_full?` are not policy methods Avo asks for, `explicit_authorization` included.
+
+### Action Required
+
+None. A user who can open the index sees the same chart.
+
+</Option>
+
+<Option name="A `has_one` panel reads its record through the related policy scope, and detach clears only the attached record">
+
+### Breaking Change
+
+The request that renders a `has_one` panel now finds its record through the related resource's [`Scope`](./authorization-api.html#Scope), and answers `404` for a record outside it. Detaching a `has_one` clears the association only when the URL names the record currently attached, and answers `404` otherwise, so a detach request can no longer clear the association by naming some other record.
+
+### Action Required
+
+None, unless a related resource's `Scope` hides records your users open from a `has_one` panel. Widen that `Scope` for them.
+
+</Option>
+
 ## Upgrade to `avo-authorization` `4.3.3`
 
 <Option name="An app with an authorization client and no `avo-authorization` license refuses every resource">

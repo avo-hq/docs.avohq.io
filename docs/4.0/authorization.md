@@ -141,7 +141,7 @@ class PostPolicy < ApplicationPolicy
 end
 ```
 
-`create?` and `update?` run when the form is saved, so `record` already holds the submitted values. Use that if the answer depends on what the user typed.
+`create?` runs when the form is saved, so `record` already holds the submitted values. Use that if the answer depends on what the user typed. `update?` is asked twice on a save, once with the record as it is stored and again with the submitted values assigned, and both have to pass, so a value the user submits can't make a record pass a policy it fails as stored.
 
 If you use the [menu editor](./menu-editor.html), `index?` doesn't hide its items. Add the check to the item's [`visible`](./menu-editor.html#item-visibility) block instead.
 
@@ -199,6 +199,8 @@ Methods for panel-level controls (`view_`, `create_`, `attach_`, `act_on_`) get 
 If you want to hide the whole comments panel, use `view_comments?`. If you want to hide only the view button on each row, use `show_comments?`.
 
 These methods only control buttons. Access to the comment's own pages is still decided by `CommentPolicy`, so if `CommentPolicy#edit?` allows it, a user can reach the edit page by URL even when `edit_comments?` hides the button. Likewise, running an action from the comments panel also needs `CommentPolicy#act_on?` for each selected comment, whatever `act_on_comments?` allows.
+
+`view_comments?` is the exception: besides showing the panel, it answers the requests behind it, the rows, the search, a [`summarizable`](./field-options-api.html#summarizable) column's chart and [scope](./scopes.html) counts. Each of those also has to name the resource the association field lists with.
 
 ### Reuse another policy for an association
 

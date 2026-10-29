@@ -441,6 +441,8 @@ field :status, as: :select, summarizable: true
 
 <Image src="/assets/img/4_0/field-options/summarizable.webm" dark-src="/assets/img/4_0/field-options/summarizable-dark.webm" width="900" height="397" alt="An animated Avo Projects index table (ID, Name, Status, Country columns) with the summarizable summary popover open over it, cycling a hover across each segment of the Status distribution pie chart to reveal each value's label and count." prompt="Index table header showing the summarizable chart icon and summary popover for a column" />
 
+The chart reads the same query the list does, so it follows the policy [`Scope`](./authorization-api.html#Scope) and asks [`index?`](./authorization-api.html#index), or the parent's [`view_{association}?`](./authorization-api.html#view_association) for a column on an association panel.
+
 ## Let users copy the value
 
 The [`copyable`](./field-options-api.html#copyable) option shows a clipboard icon when hovering over the field's value, allowing easy copying. Particularly useful for unique identifiers, URLs, or other text users frequently need to copy.
