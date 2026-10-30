@@ -524,7 +524,7 @@ When the limit is reached, the `belongs_to` select shows a note under it ("Too m
 
 Using [searchable](./associations/searchable.html) is recommended for listing unlimited records with better performance and user experience.
 
-<Image src="/assets/img/4_0/customization/associations-lookup-list-limit.webp" dark-src="/assets/img/4_0/customization/associations-lookup-list-limit-dark.webp" width="1770" height="224" alt="An Avo new form where a belongs_to course select shows 'Too many options to show on this form.' under it, followed by a 'Make this field searchable to find the rest.' link, when the lookup list limit is reached." />
+<Image src="/assets/img/4_0/customization/associations-lookup-list-limit.webp" dark-src="/assets/img/4_0/customization/associations-lookup-list-limit-dark.webp" width="1770" height="224" alt="An Avo new form where a belongs_to course select shows a red warning icon and 'Too many options to show on this form.' under it, followed by a 'Make this field searchable to find the rest.' link, when the lookup list limit is reached." />
 
 ### Association frames
 
