@@ -37,6 +37,17 @@ A hash with the following options:
 Setting `nested: true` is a shortcut for `nested: { on: :forms }`.
 :::
 
+#### Deleting existing records
+
+A record added in the form but not saved yet can be removed at any time. An existing record gets a "Delete" button only when the parent model opts in with `allow_destroy: true`:
+
+```ruby-vue
+# app/models/book.rb
+accepts_nested_attributes_for :{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}, allow_destroy: true
+```
+
+Clicking it marks the record for deletion. It stays in the form, dimmed, with an "Undo" link, and is deleted only when the parent form is saved. With [authorization](./../authorization.html) enabled, the child policy's [`destroy?`](./../authorization-api.html#destroy) must allow it, otherwise the save is refused.
+
 #### Example
 
 ```ruby-vue{4,5,7,8,10,11,13-14,16-19}
