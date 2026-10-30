@@ -103,6 +103,10 @@ See [below](#grid-item-badge) a list of options you can configure for the badge.
 
 </Option>
 
+## Select records
+
+Grid cards carry the same selection checkbox table rows do, so [actions](./actions.html) run on a selection here too. <VersionReq version="4.3.10" /> A bar above the cards selects the whole page, and across pages every record the current query matches. See [Select all](./select-all.html#on-the-grid-view).
+
 ## Make grid the default view
 
 To make the grid the default way of viewing a resource **Index**, we have to use the `default_view_type` class attribute.

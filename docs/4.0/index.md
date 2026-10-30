@@ -112,7 +112,7 @@ Avo ships as a [gem](https://rubygems.org/gems/avo), so none of its internals li
 bin/rails avo:update
 ```
 
-That resolves every Avo gem you have — core plus any add-ons — and updates them together, conservatively.
+That resolves every Avo gem you have — core plus any add-ons — and updates them together, conservatively. It can [commit and push the updated lockfile](./installation.html#commit-and-push-the-update) too.
 
 ## Start here
 
