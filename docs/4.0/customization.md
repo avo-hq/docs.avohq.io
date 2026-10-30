@@ -520,16 +520,11 @@ end
 
 By default, there is a limit of 1000 records per query when listing the association options. This limit ensures that the page will not crash due to large collections. Use `lookup_list_limit` to change it.
 
-The message `There are more records available.` is shown when the limit is reached. To localize the message you can use `I18n.translate("avo.more_records_available")`.
+When the limit is reached, the `belongs_to` select shows a note under it ("Too many options to show on this form.") with a link to the [searchable associations](./associations/searchable.html) docs. To localize it, override `avo.lookup_list_capped` and `avo.lookup_list_capped_link`. The record that's already selected, or prefilled from the parent you came from, is always listed, even when it's past the limit.
 
 Using [searchable](./associations/searchable.html) is recommended for listing unlimited records with better performance and user experience.
 
-<!-- REDO MANUALLY: this shot shows an open native browser <select> dropdown listing the
-    records + the disabled "There are more records available." option. Playwright cannot open
-    a native browser dropdown (the OS renders it outside the page), so the automated pipeline
-    can't capture it. Re-shoot by hand (CleanShot) in both light and dark and replace the two
-    assets, keeping the same filenames. -->
-<Image src="/assets/img/4_0/customization/associations-lookup-list-limit.webp" dark-src="/assets/img/4_0/customization/associations-lookup-list-limit-dark.webp" width="1952" height="820" alt="An Avo new form where a belongs_to user select lists five records followed by a disabled 'There are more records available.' message when the lookup list limit is reached." />
+<Image src="/assets/img/4_0/customization/associations-lookup-list-limit.webp" dark-src="/assets/img/4_0/customization/associations-lookup-list-limit-dark.webp" width="1770" height="224" alt="An Avo new form where a belongs_to course select shows a red warning icon and 'Too many options to show on this form.' under it, followed by a 'Make this field searchable to find the rest.' link, when the lookup list limit is reached." />
 
 ### Association frames
 

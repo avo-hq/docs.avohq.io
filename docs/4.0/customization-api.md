@@ -579,7 +579,7 @@ config.associations = {
 
 | Key | Default | Description |
 |---|---|---|
-| `lookup_list_limit` | `1000` | Caps how many records a `belongs_to`/attach lookup lists before showing the "There are more records available." notice. |
+| `lookup_list_limit` | `1000` | Caps how many records a `belongs_to`/attach lookup lists before the `belongs_to` select notes that there are too many options to show. The attach modal still shows "There are more records available." |
 | `frames.loading` | `:lazy` | Render mode for association turbo frames (`has_one`, `has_many`, `has_and_belongs_to_many`) when a field doesn't set its own [`loading:`](./associations/has_many.html#loading). `:lazy` fetches the frame when revealed; `:manual` renders a placeholder with a **Load** button. |
 | `frames.auto_load_for` | `15.minutes` | For manual frames, how long an opened frame is remembered before the placeholder returns. `0`/`nil` disables it. |
 
