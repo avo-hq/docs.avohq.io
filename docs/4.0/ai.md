@@ -150,7 +150,7 @@ Avo.configure do |config|
     adapter: :jina,
     api_key: ENV["JINA_API_KEY"], # optional for Jina; without one it runs at a low rate limit
     endpoint: "https://r.jina.ai" # optional; must be https://
-  }
+  } # or adapter: :browserless (paid, a real Chrome), with api_key: ENV["BROWSERLESS_API_KEY"]
 
   # What the composer lets people upload (see "Send files with a message"). Set only the keys
   # you want to change. accept takes what an HTML accept attribute does: MIME types, wildcards
@@ -501,7 +501,14 @@ Some pages build their content in the browser, so the HTML the server sends carr
 
 That renderer is a provider you configure. None is set by default, and the gem ships no credential: with no provider, the assistant tells you the page came back nearly empty and that it can't render it.
 
-The gem ships one adapter, for [Jina Reader](https://jina.ai/reader/):
+The gem ships two adapters:
+
+| Adapter        | What it is                                                         | Cost                                       |
+| -------------- | ------------------------------------------------------------------ | ------------------------------------------ |
+| `:jina`        | [Jina Reader](https://jina.ai/reader/). Returns the page as markdown | Free and keyless at a low rate limit; a key raises it |
+| `:browserless` | [Browserless](https://www.browserless.io). Loads the page in a real Chrome and returns the rendered HTML, which the gem extracts like any other read | Paid, billed by browser time |
+
+Jina is the free way to start. Browserless is a paid alternative under your own account: it returns the page as the browser rendered it, lets you pick a region, and runs as the same service in a container you host.
 
 ```ruby
 # config/initializers/avo.rb
@@ -515,6 +522,19 @@ end
 
 `api_key` is your own key from your own Jina account. Leave it out and Jina still works, keyless and rate limited, which is fine for trying it out. `endpoint` points the adapter elsewhere, such as a reader you host yourself; it must be an `https://` URL, and anything else raises `ArgumentError` at boot.
 
+Browserless needs a key from your own Browserless account. `endpoint` picks another region, or a Browserless container you run yourself:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.web_provider = {
+  adapter: :browserless,
+  api_key: ENV["BROWSERLESS_API_KEY"],
+  endpoint: "https://production-sfo.browserless.io" # optional; the default
+}
+```
+
+Browserless answers with the target page's own status, so a page that returned 404 or blocked the browser is reported as an error rather than read as content. It also reports the address the browser finally reached, and a private one is refused, which catches a redirect into your network when you run the container yourself.
+
 Before any adapter is called, the URL's host is resolved and refused if it points at a private or reserved address. The renderer's response is capped at `max_page_size`, the whole call at `provider_timeout` seconds, and an empty answer is an error, not an empty page.
 
 ### What leaves your app
@@ -526,6 +546,7 @@ Be clear about where URLs go before you switch a renderer on:
 | An ordinary read             | Only the site itself. Your server fetches it directly                            |
 | `render: true`, any provider | The provider receives the **full URL** of every rendered read, query string included |
 | `render: true`, Jina keyless | Jina's hosted service, `r.jina.ai`. No account, no contract, no key              |
+| `render: true`, Browserless  | Browserless's hosted Chrome, under your own account                             |
 | `render: true`, self-hosted  | Nobody outside your network                                                      |
 
 The keyless Jina path is the easy one to miss: it needs no sign-up, so turning it on sends URLs to a third party without any procurement step. If your app can't send URLs outside, self-host the open-source [jina-ai/reader](https://github.com/jina-ai/reader) and point the same adapter at it:
