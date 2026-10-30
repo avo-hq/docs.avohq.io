@@ -21,7 +21,7 @@ If you need several add-ons, a bundle is the cheaper way to get them:
 
 - **Essentials** — the building blocks most admins need: Authorization, the Menu Editor, Global Search, Resource Scopes, Record Reordering, and more.
 - **Growth** — Kanban Boards, Dynamic Filters, Dashboards, Collaboration, and more.
-- **AI Bundle** — AI Chat, the MCP server, the REST API, the CLI, and Authorization.
+- **AI Bundle** — AI Chat, the MCP server, the API (with the CLI), and Authorization.
 - **Everything** — every add-on Avo offers, billed monthly or yearly.
 
 Avo 4 is a subscription per app, with unlimited users. The `avo-pro` and `avo-advanced` gems and the Pro and Advanced plans belong to Avo 3. See the [pricing page](https://avohq.io/pricing) for what each bundle includes and costs today.

@@ -13,7 +13,7 @@ The `avo-api` add-on exposes a JSON REST API for every Avo resource. It reuses y
 This page covers installation, mounting, API tokens and authentication, reading and writing data, token entitlements, authorization, how the current user is established, and managing tokens in the panel. Every generator, hook, and option is in the [API reference](./rest-api-api.html).
 
 :::info Add-on
-The REST API ships as the separate `avo-api` gem. [See the add-on page →](https://avohq.io/addons/api)
+The REST API ships as the separate `avo-api` gem. On [avohq.io/pricing](https://avohq.io/pricing) the add-on is called **API**; earlier pages and invoices may call it "JSON API" or "REST API". It's the same add-on, and it includes the [CLI](./cli.html). [See the add-on page →](https://avohq.io/addons/api)
 :::
 
 ## Installation
