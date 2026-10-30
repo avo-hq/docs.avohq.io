@@ -86,6 +86,28 @@ To install Avo in a Jumpstart Pro app use [this template](https://avohq.io/templ
 bin/rails app:template LOCATION=https://v3.avohq.io/templates/jumpstart-pro.template
 ```
 
+## Update Avo
+
+`avo:update` resolves every Avo gem in your bundle, core plus any add-on, and updates them together with `bundle update --conservative`, so nothing else in your lockfile moves.
+
+```bash
+bin/rails avo:update
+```
+
+Use it rather than `bundle update avo`, which moves core alone and leaves each add-on pinned where it was.
+
+### Commit and push the update
+
+<VersionReq version="4.3.10" />
+
+With `AVO_UPDATE_PUSH=1` the task also commits the updated `Gemfile.lock` and pushes it to the current branch's upstream, so a scheduled job or an agent can keep the gems current on its own.
+
+```bash
+AVO_UPDATE_PUSH=1 bin/rails avo:update
+```
+
+Before updating anything, it checks that it runs inside a Git repository, that no tracked file has uncommitted changes (untracked files are fine), and that the branch has an upstream. The commit carries `Gemfile.lock` and nothing else, with the message `Update Avo gems`. When the update leaves the lockfile unchanged, nothing is committed or pushed, and any failing step stops the task and says what it left behind.
+
 ## Install from GitHub
 
 You may also install Avo from GitHub but when you do that you must compile the assets yourself. You do that using the `rake avo:build-assets` command.
