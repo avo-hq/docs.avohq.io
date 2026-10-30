@@ -484,7 +484,7 @@ end
 
 ## Persist UI state
 
-By default, association pagination and static filter selections reset on every request. To retain them while the user's session is active, enable [`persistence`](./customization-api.html#persistence) with the `:session` driver.
+By default, the page you are on, filter selections ([static](./basic-filters.html) and [dynamic](./dynamic-filters.html)), the sort picked from a table header, and the rows selected on a table reset on every request (a resource table's `per_page` alone is kept in a cookie). To retain them while the user's session is active, enable [`persistence`](./customization-api.html#persistence) with the `:session` driver. The selection is the exception: it stays in the browser tab, and goes when the tab closes or the user signs out.
 
 ```ruby
 # config/initializers/avo.rb
@@ -495,8 +495,21 @@ Avo.configure do |config|
 end
 ```
 
+If you want some of that state to keep resetting, turn its key off next to the driver. Everything you leave out stays on. <VersionReq version="4.3.11" />
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.persistence = {
+    driver: :session,
+    sorting: false,
+    selection: false
+  }
+end
+```
+
 :::warning Cookie store size limit
-Rails' default cookie session store is limited to 4096 bytes. Storing many pagination states and filter selections can exceed it and raise `ActionDispatch::Cookies::CookieOverflow`. Use a scalable [session store](https://guides.rubyonrails.org/configuring.html#config-session-store) such as Redis or MemCache instead.
+Rails' default cookie session store is limited to 4096 bytes. Storing many pagination states, filter selections, and sorts can exceed it and raise `ActionDispatch::Cookies::CookieOverflow`. Use a scalable [session store](https://guides.rubyonrails.org/configuring.html#config-session-store) such as Redis or MemCache instead.
 :::
 
 ## Associations

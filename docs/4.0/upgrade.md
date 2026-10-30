@@ -4,6 +4,35 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo` `4.3.11`
+
+<Option name="Session persistence also keeps the sort, the resource table page, and the selected rows">
+
+### Breaking Change
+
+With `config.persistence = { driver: :session }`, the session used to keep only association pagination and static filter selections. It now also keeps the `page` and `per_page` of resource tables (the `per_page` cookie is no longer read), the sort picked from a table header, and the rows checked on a table, which stay in the browser tab. Dynamic filter selections are kept too, with `avo-dynamic_filters` `4.3.2` or newer. A plain visit, such as the sidebar link, lands on the remembered page, sorted and filtered as the user left it, with the rows still checked. Nothing changes without the driver. See [Persist UI state](./customization.html#persist-ui-state).
+
+### Action Required
+
+None, if you want the new state to stick. Check your system specs: one that sorts, pages, or selects rows with the driver on and then expects a plain visit to start fresh now finds that state still there.
+
+### Maintaining Previous Behavior
+
+Turn the new kinds off next to the driver. `pagination` covers resource and association tables together, so association pagination alone can't be kept.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.persistence = {
+    driver: :session,
+    sorting: false,
+    selection: false
+  }
+end
+```
+
+</Option>
+
 ## Upgrade to `avo-api` `4.4.0`
 
 <Option name="`belongs_to` and `has_one` ids are the related record's `to_param`">
