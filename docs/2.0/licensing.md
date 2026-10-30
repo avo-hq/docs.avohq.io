@@ -1,5 +1,9 @@
 # Licensing
 
+::: warning Avo 2 licensing
+This page describes how Avo 2 was licensed: the Community and Pro editions. Avo 4 is licensed per app as a subscription to add-ons and bundles, with a 14-day trial. Current plans and prices are on the [pricing page](https://avohq.io/pricing), and the Avo 4 rules are in [Avo 4 licensing](https://docs.avohq.io/4.0/licensing.html).
+:::
+
 Avo has two types of licenses. The **Community edition** is free to use and works best for personal, hobby, and small commercial projects, and the **Pro edition** for when you need more advanced features.
 
 ## Community vs. Pro

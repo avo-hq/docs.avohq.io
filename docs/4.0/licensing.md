@@ -19,11 +19,12 @@ Each advanced feature ships as its own installable gem, so you only pay for what
 
 If you need several add-ons, a bundle is the cheaper way to get them:
 
-- **`avo-pro`** — Dashboards and the Menu Editor.
-- **`avo-advanced`** — everything in `avo-pro`, plus Dynamic Filters.
-- **`avo-everything`** — every add-on Avo offers.
+- **Essentials** — the building blocks most admins need: Authorization, the Menu Editor, Global Search, Resource Scopes, Record Reordering, and more.
+- **Growth** — Kanban Boards, Dynamic Filters, Dashboards, Collaboration, and more.
+- **AI Bundle** — AI Chat, the MCP server, the REST API, the CLI, and Authorization.
+- **Everything** — every add-on Avo offers, billed monthly or yearly.
 
-See the [pricing page](https://avohq.io/pricing) for what each one includes.
+Avo 4 is a subscription per app, with unlimited users. The `avo-pro` and `avo-advanced` gems and the Pro and Advanced plans belong to Avo 3. See the [pricing page](https://avohq.io/pricing) for what each bundle includes and costs today.
 
 ## Enterprise
 
@@ -84,6 +85,8 @@ end
 You can purchase a license from the [pricing](https://avohq.io/pricing) page.
 
 ## Trials
+
+Each license can start one 14-day trial of the add-ons and bundles you pick on the [pricing page](https://avohq.io/pricing). Checkout asks for a card, and the trial turns into a paid subscription when it ends unless you cancel it first. An Avo 4 trial running beside an Avo 3 subscription is the exception: it needs no card and stops on its own unless you migrate.
 
 A trial is a fully valid license. Every add-on it covers behaves exactly as it does on a paid license for as long as the trial runs, and nothing in your app is gated or degraded while it does.
 
