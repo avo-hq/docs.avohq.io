@@ -5,29 +5,101 @@ outline: [2, 3]
 
 # Multitenancy
 
-Multitenancy is a very talked-about subject. We're not going to go very deep into how to achieve it on the database level, but will talk a little bit about how it's supported in Avo.
+<VersionReq version="4.3.10" />
 
-## Breakdown
+Multitenancy adds a layer just below authentication: a signed-in user acts on behalf of a tenant, an `Account`, a `Team` or any other model you design. Tell Avo which tenants the current user may act for, and it resolves the tenant on every request, renders an account switcher at the bottom of the sidebar and handles switching.
 
-Usually, with multitenancy you add a new layer just one level below authentication. You don't have just a user to think about, but now that user might act on the behalf of a tenant. That tenant can be an `Account` or a `Team`, or any other model you design in your database.
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.tenancy = {
+    tenants: -> { current_user.accounts }
+  }
+end
+```
 
-So now, the mission is to pinpoint which tenant is the user acting for. Because Avo has such an integrated experience and we use our own `ApplicationController`, you might think it's difficult to add that layer, when in fact it's really not. There are a couple of steps to do.
+Avo stores the picked account in the session and sets [`Avo::Current.tenant`](./avo-current#tenant) and [`Avo::Current.tenant_id`](./avo-current#tenant_id) before authorization and resource queries run. Nothing changes until you set `config.tenancy`.
 
-Avo ships two attributes on [`Avo::Current`](./avo-current) — [`tenant_id`](./avo-current#tenant_id) and [`tenant`](./avo-current#tenant) — that are left empty for you to populate. There's no dedicated config option; you set them yourself in a `before_action`, and everything below is a recipe for doing that.
-
-:::info
-We'll use the `foo` tenant id from now on.
+:::warning Setting the tenant does not filter the data
+Avo only resolves the tenant. Scope your data with it, or every account keeps seeing every record.
 :::
 
-## Route-based tenancy
+A [policy scope](./authorization.html#limit-which-records-a-user-sees) covers the index, the show and edit pages, search and associations in one place.
 
-There are a couple of strategies here, but a common one is to use route-based tenancy. That means that your user uses a URL like `https://example.com/foo/` and the app should know to scope everything to that `foo` tenant.
+```ruby
+# app/policies/project_policy.rb
+class ProjectPolicy < ApplicationPolicy
+  class Scope < Scope
+    def resolve
+      scope.where(account: Avo::Current.tenant)
+    end
+  end
+end
+```
 
-We need to do a few things:
+Without the authorization add-on, scope both the index and single-record lookups on the resource. [`index_query`](./resources-api.html#self.index_query) alone leaves another account's record reachable by its id.
 
-### 1. Set the proper routing pattern
+```ruby
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  self.index_query = -> { query.where(account: Avo::Current.tenant) }
+  self.find_record_method = -> { query.where(account: Avo::Current.tenant).find(id) }
+end
+```
 
-Mount Avo under the `tenant_id` scope
+## Return the user's accounts
+
+`tenants:` returns the accounts the current user may act for, as an Active Record relation. It runs in the request, with `current_user`, `params` and `request` available.
+
+Avo only ever looks a tenant up through that relation. An id from the session, the switcher or the URL that is not in it never resolves, so a user can't reach an account they don't belong to by changing an id.
+
+Order the relation if the default account matters. A user without a stored pick lands on its first record.
+
+```ruby
+# config/initializers/avo.rb
+config.tenancy = {
+  tenants: -> { current_user.accounts.order(:name) }
+}
+```
+
+## Switch accounts from the sidebar
+
+With the session strategy, the default, Avo renders an account switcher at the bottom of the sidebar, above the user menu. It lists the user's accounts, marks the current one and hides itself when the user has only one.
+
+Picking an account sends a `PATCH` with Rails' CSRF token and reloads the whole page. Avo then:
+
+- refuses an id that is not in `tenants:` with a `404` and keeps the current account;
+- clears the saved filters and page numbers, which point into the old account;
+- lands on the current resource's index, or the Avo root, never back on a record from the old account.
+
+The switcher shows each account's `name`. Pass `title:` to call another method.
+
+```ruby
+# config/initializers/avo.rb
+config.tenancy = {
+  tenants: -> { current_user.organizations },
+  title: :display_name
+}
+```
+
+## What Avo checks on every request
+
+- **Membership.** The stored account is looked up through `tenants:` again on every request. Remove a membership and the user moves to another of their accounts on the next request.
+- **The user.** The session remembers which user picked the account. Signing in as someone else, or impersonating them, starts from that user's own first account.
+- **No account.** When `tenants:` is empty, Avo renders a "No account to show" page with a `403` instead of the admin. It never renders the admin with a `nil` tenant, which many apps would read as "every account".
+
+If super admins should see every account, make that an explicit choice in `tenants:`. They still act for one account at a time.
+
+```ruby
+# config/initializers/avo.rb
+config.tenancy = {
+  tenants: -> { current_user.super_admin? ? Account.all : current_user.accounts }
+}
+```
+
+## Put the tenant in the URL
+
+To keep the tenant in the URL, `https://example.com/42/...`, mount Avo under a `tenant_id` segment, keep the segment in every URL Avo generates and use the `:route` strategy.
 
 ```ruby
 # config/routes.rb
@@ -38,117 +110,45 @@ Rails.application.routes.draw do
 end
 ```
 
-### 2. Keep the tenant in every generated URL
-
-Because Avo mounts under `/:tenant_id`, every path Avo generates needs that segment or the links will drop the tenant and break. Add `tenant_id` to [`default_url_options`](./customization-api#default_url_options) so Avo appends it automatically.
-
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.default_url_options = [:tenant_id]
+
+  config.tenancy = {
+    tenants: -> { current_user.accounts },
+    strategy: :route
+  }
 end
 ```
 
-### 3. Set the tenant for each request
-
-```ruby{7}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  # configuration values
-end
-
-Rails.configuration.to_prepare do
-  Avo::ApplicationController.include Multitenancy
-end
-```
-
-```ruby
-# app/controllers/concerns/multitenancy.rb
-module Multitenancy
-  extend ActiveSupport::Concern
-
-  included do
-    prepend_before_action :set_tenant
-  end
-
-  def set_tenant
-    Avo::Current.tenant_id = params[:tenant_id]
-    Avo::Current.tenant = Account.find params[:tenant_id]
-  end
-end
-```
-
-Now, whenever you navigate to `https://example.com/foo` the `tenant_id` will be set to `foo`.
-
-## Session-based tenancy
-
-Using a session-based tenancy strategy is a bit simpler as we don't meddle with the routing.
+Avo looks `params[:tenant_id]` up through `tenants:` and responds with a `404` when the user doesn't belong to that account. There is no switcher in this mode; link to another account's URL instead.
 
 :::warning
-The code below shows how it's possible to do session-based multitenancy but your use-case or model names may vary a bit.
+Skip `config.default_url_options = [:tenant_id]` and every link Avo generates drops the tenant segment.
 :::
 
-We need to do a few things:
+## Record account switches
 
-### 1. Set the tenant for each request
-
-```ruby{7}
-# config/initializers/avo.rb
-Avo.configure do |config|
-  # configuration values
-end
-
-Rails.configuration.to_prepare do
-  Avo::ApplicationController.include Multitenancy
-end
-```
+Every switch emits a `switch_tenant.avo` event with the `user`, the account it came `from` and the account it went `to`. Subscribe to it to write an audit trail.
 
 ```ruby
-# app/controllers/concerns/multitenancy.rb
-module Multitenancy
-  extend ActiveSupport::Concern
-
-  included do
-    prepend_before_action :set_tenant
-  end
-
-  def set_tenant
-    Avo::Current.tenant = Account.find(session[:tenant_id] || current_user.accounts.first.id)
-  end
+# config/initializers/tenant_audit.rb
+ActiveSupport::Notifications.subscribe("switch_tenant.avo") do |event|
+  Rails.logger.info "#{event.payload[:user].email} switched from #{event.payload[:from]&.id} to #{event.payload[:to].id}"
 end
 ```
 
-### 2. Add an account switcher
+## Known limits
 
-Add a route for the switcher, a controller to update the session, and a view to render the links.
+- Tabs share one session. A form opened under one account and submitted after switching accounts in another tab is submitted under the new account. Scope record lookups by `Avo::Current.tenant` so updates to the old account's records are not found.
+- The switcher loads every account `tenants:` returns. It filters the list once there are more than eight.
 
-```ruby
-# config/routes.rb
-Rails.application.routes.draw do
-  put "switch_account/:id", to: "avo/switch_accounts#update", as: :switch_account
-end
-```
+## Set the tenant yourself
 
-```ruby
-# app/controllers/avo/switch_accounts_controller.rb
-class Avo::SwitchAccountsController < Avo::ApplicationController
-  def update
-    # set the new tenant in session
-    session[:tenant_id] = params[:id]
-
-    redirect_back fallback_location: root_path
-  end
-end
-```
-
-```erb
-<%# app/views/avo/_session_switcher.html.erb %>
-<% current_user.accounts.each do |account| %>
-  <%= link_to account.name, switch_account_path(account.id), class: class_names({"underline": session[:tenant_id].to_s == account.id.to_s}), data: {turbo_method: :put} %>
-<% end %>
-```
+`config.tenancy` covers most apps. When you need something else, such as a subdomain per tenant, leave it unset and set `Avo::Current.tenant` and `tenant_id` in a `before_action` that you include into `Avo::ApplicationController`. Look the tenant up through the user's own accounts, never by the raw id. For subdomains, see the [Acts As Tenant integration](./guides/acts_as_tenant_integration).
 
 ## See also
 
-- [`Avo::Current`](./avo-current) — the `tenant_id` and `tenant` attributes you populate.
-- [Integrate with Acts As Tenant](./guides/acts_as_tenant_integration) — subdomain / row-level multitenancy using the [`acts_as_tenant`](https://github.com/ErwinM/acts_as_tenant) gem.
+- [`Avo::Current`](./avo-current): the `tenant_id` and `tenant` attributes.
+- [Integrate with Acts As Tenant](./guides/acts_as_tenant_integration): subdomain and row-level multitenancy with the [`acts_as_tenant`](https://github.com/ErwinM/acts_as_tenant) gem.
