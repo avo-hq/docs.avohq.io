@@ -537,7 +537,7 @@ config.resource_default_view = :edit
 
 <Option name="`persistence`" headingSize="3">
 
-Retains UI state — association pagination (`page`, `per_page`) and static filter selections — across requests by storing it in the session.
+Retains UI state across requests by storing it in the session: pagination (`page`, `per_page`), static filter selections, the sort picked from a table header, and the rows selected on an index page.
 
 ```ruby
 config.persistence = {
@@ -553,9 +553,28 @@ config.persistence = -> do
 end
 ```
 
+Each kind of state has a key next to `driver`. Set it to `false` to leave that one out while the others persist. <VersionReq version="4.3.11" />
+
+```ruby
+config.persistence = {
+  driver: :session,
+  pagination: true,
+  filters: true,
+  sorting: true,
+  selection: false
+}
+```
+
+| Key | What it remembers | Where |
+| --- | --- | --- |
+| `pagination` | `page` and `per_page`, on resource and association tables | session |
+| `filters` | static filter selections, on resource and association tables | session |
+| `sorting` | the sort column and direction picked from a table header, until the user resets it | session |
+| `selection` | the rows checked on an index page, until an action runs on them | the browser tab's `sessionStorage` |
+
 - **Type:** Hash or Proc returning a Hash
 - **Default:** `{ driver: nil }` — no persistence
-- **Values:** `driver:` accepts `:session` or `nil`
+- **Values:** `driver:` accepts `:session` or `nil`; `pagination:`, `filters:`, `sorting:` and `selection:` accept `true` (default) or `false`
 
 :::warning Cookie store size limit
 Rails' default cookie session store is limited to 4096 bytes. Storing many pagination states and filter selections can exceed it and raise `ActionDispatch::Cookies::CookieOverflow`. Use a scalable [session store](https://guides.rubyonrails.org/configuring.html#config-session-store) such as Redis or MemCache instead.
