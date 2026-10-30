@@ -37,6 +37,19 @@ A hash with the following options:
 Setting `nested: true` is a shortcut for `nested: { on: :forms }`.
 :::
 
+#### Deleting existing records
+
+<VersionReq version="4.3.3" />
+
+A record added in the form but not saved yet can be removed at any time. An existing record gets a "Delete" button only when the parent model opts in with `allow_destroy: true`:
+
+```ruby-vue
+# app/models/book.rb
+accepts_nested_attributes_for :{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}, allow_destroy: true
+```
+
+Clicking it asks for confirmation, then marks the record for deletion. It stays in the form, dimmed, with an "Undo" link, and nothing happens until the parent form is saved. {{ $frontmatter.field_type === 'has_and_belongs_to_many' ? 'Saving removes the join row only; the record itself is kept.' : 'Saving destroys the record.' }} See [Authorization](#authorization) for the policy check that applies.
+
 #### Example
 
 ```ruby-vue{4,5,7,8,10,11,13-14,16-19}
@@ -70,6 +83,7 @@ end
 With [authorization](./../authorization.html) enabled, a nested form writes a child only when the child's own pages would let the user write it.
 
 - **Existing records** are saved only when they are inside the child resource's [policy scope](./../authorization-api.html#Scope) and the child policy allows [`update?`](./../authorization-api.html#update). `update?` is asked twice: once with the record as loaded, and again with the submitted values. A row the user may not update is skipped, and the rest of the form still saves.
+- **Records marked for deletion** are destroyed only when they are inside the policy scope and the child policy allows [`destroy?`](./../authorization-api.html#destroy). If `destroy?` refuses, the save is refused.
 - **New records** need the child policy's [`create?`](./../authorization-api.html#create) and the parent policy's [`create_{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}?`](./../authorization-api.html#create_association). If either refuses, the save is refused.
 - When `create_{{ $frontmatter.field_type === 'has_one' ? 'author' : 'authors' }}?` refuses, the form hides its "Add" button, the same way the association panel hides "Create new".
 
