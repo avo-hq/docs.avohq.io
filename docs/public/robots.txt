@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# LLM-readable documentation (full text and per-version maps):
+# https://docs.avohq.io/llms.txt
+# https://docs.avohq.io/4.0/docs-map.md (also /3.0/ and /2.0/)
