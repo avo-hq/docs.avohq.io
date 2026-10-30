@@ -170,7 +170,7 @@ You can do that check yourself using the `Avo::Current.user_is_admin?`.
 
 #### When does Avo check if the use is an admin (`is_admin?`)
 
-Admin users can access the private **Avo Status** page at `/avo_private/status` (under your Avo mount path) and see the status link in the sidebar on production.
+Admin users can access the private **Avo Status** page at `/status` (under your Avo mount path) and see the status link in the sidebar on production.
 
 </Option>
 
