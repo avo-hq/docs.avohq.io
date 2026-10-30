@@ -537,7 +537,7 @@ config.resource_default_view = :edit
 
 <Option name="`persistence`" headingSize="3">
 
-Retains UI state across requests by storing it in the session: pagination (`page`, `per_page`), static filter selections, the sort picked from a table header, and the rows selected on an index page.
+Retains UI state across requests by storing it in the session: pagination (`page`, `per_page`), filter selections (static and dynamic), the sort picked from a table header, and the rows selected on an index page.
 
 ```ruby
 config.persistence = {
@@ -568,7 +568,7 @@ config.persistence = {
 | Key | What it remembers | Where |
 | --- | --- | --- |
 | `pagination` | `page` and `per_page`, on resource and association tables | session |
-| `filters` | static filter selections, on resource and association tables | session |
+| `filters` | static and dynamic filter selections, on resource and association tables | session |
 | `sorting` | the sort column and direction picked from a table header, until the user resets it | session |
 | `selection` | the rows checked on an index page, until an action runs on them | the browser tab's `sessionStorage` |
 

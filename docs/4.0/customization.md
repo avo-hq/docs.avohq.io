@@ -484,7 +484,7 @@ end
 
 ## Persist UI state
 
-By default, pagination, static filter selections, the sort picked from a table header and the rows selected on an index page reset on every request. To retain them while the user's session is active, enable [`persistence`](./customization-api.html#persistence) with the `:session` driver.
+By default, pagination, filter selections (static and dynamic), the sort picked from a table header and the rows selected on an index page reset on every request. To retain them while the user's session is active, enable [`persistence`](./customization-api.html#persistence) with the `:session` driver.
 
 ```ruby
 # config/initializers/avo.rb
