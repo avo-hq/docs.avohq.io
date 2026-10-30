@@ -86,7 +86,7 @@ You can purchase a license from the [pricing](https://avohq.io/pricing) page.
 
 ## Trials
 
-Each license can start one 14-day trial of the add-ons and bundles you pick on the [pricing page](https://avohq.io/pricing). Checkout asks for a card, and the trial turns into a paid subscription when it ends unless you cancel it first. An Avo 4 trial running beside an Avo 3 subscription is the exception: it needs no card and stops on its own unless you migrate.
+Each license can start one 14-day trial of the add-ons and bundles you pick on the [pricing page](https://avohq.io/pricing). No card is needed to start. Add a payment method before the trial ends to keep the add-ons; without one, they stop when the trial does.
 
 A trial is a fully valid license. Every add-on it covers behaves exactly as it does on a paid license for as long as the trial runs, and nothing in your app is gated or degraded while it does.
 
