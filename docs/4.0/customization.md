@@ -593,7 +593,7 @@ end
 
 ## Status page
 
-The status page (`/avo_private/status`) hides the license key by default. Control which items appear there with [`exclude_from_status`](./customization-api.html#exclude_from_status) — set it to `[]` to show everything, or add more items to hide them.
+The status page (`/status`) hides the license key by default. Control which items appear there with [`exclude_from_status`](./customization-api.html#exclude_from_status) — set it to `[]` to show everything, or add more items to hide them.
 
 ```ruby
 # config/initializers/avo.rb

@@ -710,7 +710,7 @@ config.model_generator_hook = false
 
 <Option name="`exclude_from_status`" headingSize="3">
 
-Which items to hide from the status page (`/avo_private/status`). The license key is hidden by default for security reasons; set the option to `[]` to show it.
+Which items to hide from the status page (`/status`). The license key is hidden by default for security reasons; set the option to `[]` to show it.
 
 ```ruby
 config.exclude_from_status = ["license_key", "ip"]
