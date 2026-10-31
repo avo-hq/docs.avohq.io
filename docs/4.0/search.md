@@ -156,7 +156,8 @@ end
 
 The global search palette searches every resource that has `self.search` configured, all at once. Open it by clicking the trigger on the navbar or with the <kbd>Cmd</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on Windows).
 
-- <kbd>Cmd</kbd> + <kbd>K</kbd> / <kbd>Ctrl</kbd> + <kbd>K</kbd> - Open the global search. Its ID is `advanced_search.open`, so you can [rebind or disable it](./keyboard-shortcuts.html#change-or-disable-a-shortcut) through `config.hotkeys[:bindings]`.
+- <kbd>Cmd</kbd> + <kbd>K</kbd> / <kbd>Ctrl</kbd> + <kbd>K</kbd> - Open the navbar search, including on the dedicated results page. Its ID is `advanced_search.open`, so you can [rebind or disable it](./keyboard-shortcuts.html#change-or-disable-a-shortcut) through `config.hotkeys[:bindings]`.
+- <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> - Focus and select the search input on the dedicated results page. Its ID is `advanced_search.focus_results`.
 - <kbd>Up</kbd> and <kbd>Down</kbd> arrow keys - Navigate through search results
 - <kbd>Enter</kbd> - Visit the selected record
 - <kbd>Esc</kbd> - Close the search modal

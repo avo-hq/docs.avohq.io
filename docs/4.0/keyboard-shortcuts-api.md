@@ -150,6 +150,7 @@ An add-on's IDs start with its gem name minus `avo-`: `avo-advanced_search` regi
 | ID | Default | Action | Add-on |
 | --- | --- | --- | --- |
 | `advanced_search.open` | `Mod+k` | Focus the global search | [Advanced search](./search.html) |
+| `advanced_search.focus_results` | `Mod+Shift+K` | Focus the search input on the dedicated results page | [Advanced search](./search.html) |
 | `ai.toggle_assistant` | `Mod+j` | Open the assistant. Fires from inside fields too | [Avo AI](./ai.html) |
 
 ### Fixed keys

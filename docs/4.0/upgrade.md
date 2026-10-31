@@ -4,6 +4,20 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-advanced_search` `4.3.3`
+
+<Option name="Global search shortcuts target the navbar and results-page inputs separately">
+
+### Breaking Change
+
+On the dedicated results page, `Mod+k` now focuses the navbar search, just as it does elsewhere. It no longer focuses the page input on the first press and the navbar on a double-tap. Use `Mod+Shift+K` to focus the page input instead. See [Global search](./search.html#global-search).
+
+### Action Required
+
+**Action required:** None. To customize either shortcut, use `advanced_search.open` for the navbar and `advanced_search.focus_results` for the page input in [`config.hotkeys[:bindings]`](./keyboard-shortcuts-api.html#bindings).
+
+</Option>
+
 ## Upgrade to `avo` `4.3.11`
 
 <Option name="Session persistence also keeps the sort, the resource table page, and the selected rows">
