@@ -34,6 +34,10 @@ end
 
 The `card` block runs once per record through `Avo::ExecutionContext`, with access to `record`, `resource`, and the standard defaults (`current_user`, `params`, view helpers).
 
+Cards carry the same selection checkbox as table rows, so actions can run on a picked set of records. Hide it with
+[`self.record_selector`](./resources-api.html#self.record_selector), and see [Select all](./select-all.html) for
+selecting every record the current query matches.
+
 ## Options
 
 Next, you should configure a few things for the grid card.
