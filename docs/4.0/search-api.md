@@ -170,6 +170,8 @@ config.global_search = {
 
 Whether typing in the palette triggers the search automatically. When `false`, the dropdown still opens on focus or <kbd>Cmd</kbd> + <kbd>K</kbd>, but the user must press <kbd>Enter</kbd> to run the search and navigate to the dedicated results page.
 
+For a non-empty query, "Show all results for..." is highlighted by default. Arrow keys select a matching resource in the "Go to" section; <kbd>Enter</kbd> then opens that resource instead.
+
 ```ruby
 config.global_search = {
   search_on_type: false
