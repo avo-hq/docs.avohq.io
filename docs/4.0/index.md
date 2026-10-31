@@ -114,6 +114,16 @@ bin/rails avo:update
 
 That resolves every Avo gem you have — core plus any add-ons — and updates them together, conservatively.
 
+Set `AVO_UPDATE_PUSH=1` and the task also commits the updated `Gemfile.lock` and pushes it to the current branch's
+upstream, which is what you want from CI or an agent session. <VersionReq version="4.3.10" />
+
+```bash
+AVO_UPDATE_PUSH=1 bin/rails avo:update
+```
+
+It refuses to start unless you're on a branch with an upstream and your tracked files are clean (untracked files are
+fine), and it stops without committing when the gem update fails or when the lockfile comes back unchanged.
+
 ## Start here
 
 1. [Install Avo in your app](./installation.html)

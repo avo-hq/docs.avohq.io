@@ -10,6 +10,9 @@ When a user toggles the "Select all" checkbox, Avo will first check to see if th
 
 This is being done through serializing the query to be unserialized back in the action.
 
+The [grid view](./grid-view.html) has the same bar above its cards, with its own "Select all" checkbox since there is no
+header row to carry one, and the same **Select all matching** and **Undo** choices. <VersionReq version="4.3.10" />
+
 ## Coming back to the index
 
 <VersionReq version="4.3.1" />
