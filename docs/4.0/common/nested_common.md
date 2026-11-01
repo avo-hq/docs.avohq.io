@@ -39,7 +39,7 @@ Setting `nested: true` is a shortcut for `nested: { on: :forms }`.
 
 #### Deleting existing records
 
-<VersionReq version="4.3.3" />
+Requires `avo-nested` `4.3.3` or newer.
 
 A record added in the form but not saved yet can be removed at any time. An existing record gets a "Delete" button only when the parent model opts in with `allow_destroy: true`:
 
@@ -49,6 +49,9 @@ accepts_nested_attributes_for :{{ $frontmatter.field_type === 'has_one' ? 'autho
 ```
 
 Clicking it asks for confirmation, then marks the record for deletion. It stays in the form, dimmed, with an "Undo" link, and nothing happens until the parent form is saved. {{ $frontmatter.field_type === 'has_and_belongs_to_many' ? 'Saving removes the join row only; the record itself is kept.' : 'Saving destroys the record.' }} See [Authorization](#authorization) for the policy check that applies.
+
+The confirmation and the pending notice read from `avo.nested.mark_for_deletion_confirmation` and
+`avo.nested.pending_deletion`, so you can [translate or reword them](./../i18n.html) like any other Avo string.
 
 #### Example
 
