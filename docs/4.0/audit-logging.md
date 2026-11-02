@@ -457,11 +457,15 @@ class Product < ApplicationRecord
 end
 ```
 
-Each change is recorded after its transaction commits, against the model's Avo resource. An update records the attributes that changed, without `created_at` and `updated_at`, and an update that only touched those timestamps records nothing. A delete records the record's `id`.
+Each change is recorded after its transaction commits, against the model's Avo resource (or, for an STI subclass without one, its base class's). A transaction that saves a record several times records one entry with everything it changed. An update records the attributes that changed, without `created_at` and `updated_at`, and an update that only touched those timestamps records nothing. A delete records the record's `id`. Attributes your app filters from its logs (`config.filter_parameters`, and `encrypts` columns) are recorded as `[FILTERED]`.
 
-These entries have no author. They carry the origin set with [`Origin.with`](#mark-your-own-origins) when there is one, and otherwise the `model` origin, which reads as *System* on the record's timeline.
+When the change is made through Avo (the panel, the API, the AI chat, or an MCP client), the author is the user Avo acted for. Elsewhere, such as a job, the console, or your own controllers, the entry has no author and carries the origin set with [`Origin.with`](#mark-your-own-origins) when there is one, and otherwise the `model` origin, which reads as *System* on the record's timeline.
 
-Changes made through Avo itself (the panel, the API, the AI chat, or an MCP client) are already logged by Avo, so the model doesn't log them a second time. Declaring `has_avo_audit_log` counts as opting in, so the resource's `self.audit_logging` setting isn't checked. If recording fails, the error is logged and the change is kept.
+When Avo also logs the change (the panel, the API, the AI chat, or an MCP client, on a resource that opted in with `self.audit_logging`), or you record it with `Avo::AuditLogging.record`, the record gets that one entry, not a second one from the model. An action run is logged as the run, and the model logs the changes it made.
+
+Declaring `has_avo_audit_log` counts as opting in, so the resource's `self.audit_logging` setting isn't checked. If recording fails, the error is logged and the change is kept.
+
+Writes that skip Active Record callbacks aren't logged: `update_column`, `update_columns`, `update_all`, `insert_all`, `upsert_all`, `delete`, `delete_all`, and `dependent: :delete_all`. Use `update!` and `destroy` where the log has to see the change.
 
 ## Disable specific actions logging
 
