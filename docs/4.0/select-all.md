@@ -18,6 +18,8 @@ When you go back to an index page, with the browser's Back button or the **Go ba
 
 The selection is kept per browser tab and per URL, so each combination of filters, sorting and page keeps its own. A **Select all matching** choice isn't kept: select it again.
 
+With [session persistence](./customization.html#persist-ui-state) on, the selection comes back however you reach the index, and is kept per page rather than per URL. <VersionReq version="4.3.11" />
+
 ## Serializing the query
 
 The query might include various filters, sorting parameters, and other custom elements. Reconstructing this query at the time of the action request can be complex. Therefore, the system serializes the entire query object into a secure format before sending it with the action request.

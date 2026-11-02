@@ -9,7 +9,7 @@ field :certifications, as: :has_many, per_page: 24
 The page size is picked in this order:
 
 1. A `per_page` value picked from the per-page dropdown (the `?per_page=` param)
-2. The value saved in the session, when [session persistence](./../customization-api.html#persistence) is on
+2. The value saved in the session, when [session persistence](./../customization-api.html#persistence) is on and its `pagination` key is not turned off
 3. The field's `per_page`
 4. `config.via_per_page`
 

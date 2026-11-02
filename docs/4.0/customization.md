@@ -484,7 +484,7 @@ end
 
 ## Persist UI state
 
-By default, association pagination and static filter selections reset on every request. To retain them while the user's session is active, enable [`persistence`](./customization-api.html#persistence) with the `:session` driver.
+By default, the page you are on, filter selections ([static](./basic-filters.html) and [dynamic](./dynamic-filters.html)), the sort picked from a table header, and the rows selected on a table reset on every request (a resource table's `per_page` alone is kept in a cookie). To retain them while the user's session is active, enable [`persistence`](./customization-api.html#persistence) with the `:session` driver. The selection is the exception: it stays in the browser tab, and goes when the tab closes or the user signs out.
 
 ```ruby
 # config/initializers/avo.rb
@@ -495,8 +495,21 @@ Avo.configure do |config|
 end
 ```
 
+If you want some of that state to keep resetting, turn its key off next to the driver. Everything you leave out stays on. <VersionReq version="4.3.11" />
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.persistence = {
+    driver: :session,
+    sorting: false,
+    selection: false
+  }
+end
+```
+
 :::warning Cookie store size limit
-Rails' default cookie session store is limited to 4096 bytes. Storing many pagination states and filter selections can exceed it and raise `ActionDispatch::Cookies::CookieOverflow`. Use a scalable [session store](https://guides.rubyonrails.org/configuring.html#config-session-store) such as Redis or MemCache instead.
+Rails' default cookie session store is limited to 4096 bytes. Storing many pagination states, filter selections, and sorts can exceed it and raise `ActionDispatch::Cookies::CookieOverflow`. Use a scalable [session store](https://guides.rubyonrails.org/configuring.html#config-session-store) such as Redis or MemCache instead.
 :::
 
 ## Associations
@@ -520,16 +533,11 @@ end
 
 By default, there is a limit of 1000 records per query when listing the association options. This limit ensures that the page will not crash due to large collections. Use `lookup_list_limit` to change it.
 
-The message `There are more records available.` is shown when the limit is reached. To localize the message you can use `I18n.translate("avo.more_records_available")`.
+When the limit is reached, the `belongs_to` select shows a note under it ("Too many options to show on this form.") with a link to the [searchable associations](./associations/searchable.html) docs. To localize it, override `avo.lookup_list_capped` and `avo.lookup_list_capped_link`. The record that's already selected, or prefilled from the parent you came from, is always listed, even when it's past the limit.
 
 Using [searchable](./associations/searchable.html) is recommended for listing unlimited records with better performance and user experience.
 
-<!-- REDO MANUALLY: this shot shows an open native browser <select> dropdown listing the
-    records + the disabled "There are more records available." option. Playwright cannot open
-    a native browser dropdown (the OS renders it outside the page), so the automated pipeline
-    can't capture it. Re-shoot by hand (CleanShot) in both light and dark and replace the two
-    assets, keeping the same filenames. -->
-<Image src="/assets/img/4_0/customization/associations-lookup-list-limit.webp" dark-src="/assets/img/4_0/customization/associations-lookup-list-limit-dark.webp" width="1952" height="820" alt="An Avo new form where a belongs_to user select lists five records followed by a disabled 'There are more records available.' message when the lookup list limit is reached." />
+<Image src="/assets/img/4_0/customization/associations-lookup-list-limit.webp" dark-src="/assets/img/4_0/customization/associations-lookup-list-limit-dark.webp" width="1770" height="224" alt="An Avo new form where a belongs_to course select shows a red warning icon and 'Too many options to show on this form.' under it, followed by a 'Make this field searchable to find the rest.' link, when the lookup list limit is reached." />
 
 ### Association frames
 

@@ -19,11 +19,12 @@ Each advanced feature ships as its own installable gem, so you only pay for what
 
 If you need several add-ons, a bundle is the cheaper way to get them:
 
-- **`avo-pro`** — Dashboards and the Menu Editor.
-- **`avo-advanced`** — everything in `avo-pro`, plus Dynamic Filters.
-- **`avo-everything`** — every add-on Avo offers.
+- **Essentials** — the building blocks most admins need: Authorization, the Menu Editor, Global Search, Resource Scopes, Record Reordering, and more.
+- **Growth** — Kanban Boards, Dynamic Filters, Dashboards, Collaboration, and more.
+- **AI Bundle** — AI Chat, the MCP server, the API (with the CLI), and Authorization.
+- **Everything** — every add-on Avo offers, billed monthly or yearly.
 
-See the [pricing page](https://avohq.io/pricing) for what each one includes.
+Avo 4 is a subscription per app, with unlimited users. The `avo-pro` and `avo-advanced` gems and the Pro and Advanced plans belong to Avo 3. See the [pricing page](https://avohq.io/pricing) for what each bundle includes and costs today.
 
 ## Enterprise
 
@@ -85,18 +86,21 @@ You can purchase a license from the [pricing](https://avohq.io/pricing) page.
 
 ## Trials
 
+Each license can start one 14-day trial of the add-ons and bundles you pick on the [pricing page](https://avohq.io/pricing). No card is needed to start. Add a payment method before the trial ends to keep the add-ons; without one, they stop when the trial does.
+
 A trial is a fully valid license. Every add-on it covers behaves exactly as it does on a paid license for as long as the trial runs, and nothing in your app is gated or degraded while it does.
 
 The [license status page](./license-troubleshooting.html#check-the-license-status-page) is where the trial reports itself: when access stops, and whether a payment method is on file. It also says when this app last checked in with Avo HQ, because the state you're reading is the one from that check.
 
 ### Fix a trial at risk
 
-The **Avo Status** item in the sidebar profile menu is green while everything is in order, amber while a trial needs attention, and orange when the license is invalid. Amber and orange also show as a dot on the profile row. Amber means one of two things, and the remedy is different for each:
+The **Avo Status** item in the sidebar profile menu is green while everything is in order, amber while a trial needs attention, and orange when the license is invalid. Amber and orange also show as a dot on the profile row. Amber means one of three things, and the remedy is different for each:
 
 - **No payment method on file.** Access stops on the trial's end date. Add a payment method on the [Avo HQ Licenses](https://avohq.io/licenses) page.
 - **The subscription behind the trial was cancelled.** Access stops on the cancellation date, which the status page reports as the trial's end date. Adding a payment method does not change that — resume the subscription, or resubscribe, on the same page.
+- **An Avo 4 trial running beside your Avo 3 subscription.** A payment method does not keep Avo 4 here. Press **Migrate to Avo 4** on the same page before the trial's end date to keep it. If you don't, Avo 4 stops working in your app when the trial ends. Your Avo 3 license stays active, so you can move the app back to Avo 3. Older versions of `avo-licensing` show the add-a-payment-method steps for this trial instead; they link to the same page.
 
-The status page spells out which of the two you're in and lists the steps for it. Once you've done them, press **Refresh license** on that page: Avo caches the license response between checks, so the app can show older billing state than avohq.io until it refreshes.
+While the indicator is amber, the status page shows an **Action needed before** tag with the date access stops, below the license name. It also spells out which of these you're in, and lists the steps for it. Once you've done them, press **Refresh license** on that page: Avo caches the license response between checks, so the app can show older billing state than avohq.io until it refreshes.
 
 :::info
 Trial state requires `avo-licensing` `4.0.10` or newer. The amber indicator requires Avo `4.0.20` or newer — an older Avo renders the dot without color rather than breaking.
