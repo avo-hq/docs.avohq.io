@@ -181,6 +181,8 @@ Setting it here does not turn on the per-card controls; the two are independent,
 
 ## Add header controls
 
+<VersionReq version="4.3.4" />
+
 Install `avo-custom_controls` alongside `avo-dashboards`, with a license that enables custom controls. Assign [`self.controls`](./dashboards-api.html#self.controls) to declare links, dropdowns, and partials in the native header:
 
 ```ruby
@@ -218,7 +220,60 @@ Use a [`partial`](./custom-controls-api.html#partial) for normal Rails forms. Th
 Cards must read and validate these parameters themselves. The refresh button reloads cards without submitting the form.
 
 :::warning
-Dashboard authorization runs before controls evaluation. Resource actions and default resource buttons are unavailable on dashboards. For writes, use Rails forms with CSRF protection and application-owned endpoints that perform their own authorization. Hiding a control does not authorize its endpoint.
+Dashboard authorization runs before controls evaluation. Default resource buttons are unavailable on dashboards. For writes, use Rails forms with CSRF protection and application-owned endpoints that perform their own authorization. Hiding a control does not authorize its endpoint.
+:::
+
+## Run actions from the header
+
+<VersionReq version="4.3.4" />
+
+A dashboard can run [actions](./actions.html) of its own, with no resource behind it. Declare them in `actions`:
+
+```ruby{5-8}
+# app/avo/dashboards/operations.rb
+class Avo::Dashboards::Operations < Avo::Dashboards::BaseDashboard
+  self.id = "operations"
+  self.name = "Operations"
+
+  def actions
+    action Avo::Actions::ClearQueue
+    divider
+    action Avo::Actions::Reindex, arguments: {full: true}
+  end
+end
+```
+
+They appear in an Actions dropdown in the header and open in the usual modal. With `avo-custom_controls` you choose the placement instead: `actions_list` renders that dropdown, and [`action`](./custom-controls-api.html#action) renders one as its own button, whether or not `actions` lists it. `default_controls` adds the dropdown and follows `self.refresh_button`.
+
+```ruby
+self.controls = -> {
+  action Avo::Actions::ClearQueue, label: "Clear", icon: "tabler/outline/trash"
+  actions_list
+  refresh_button
+}
+```
+
+An action belongs to the dashboard that declares it, so there's nothing to select and it's always enabled. Its `handle` receives `dashboard:`, and no records:
+
+```ruby
+class Avo::Actions::ClearQueue < Avo::BaseAction
+  self.name = "Clear queue"
+
+  def fields
+    field :reason, as: :text
+  end
+
+  def handle(fields:, dashboard:, **)
+    ClearQueueJob.perform_later(dashboard: dashboard.id, reason: fields[:reason])
+    succeed "Queue cleared"
+  end
+end
+```
+
+Running one requires the dashboard's [`self.authorize`](./dashboards-api.html#self.authorize) and the action's own `authorize` to pass.
+
+:::warning
+`belongs_to` and `trix` fields need a resource, so they don't work in a dashboard action's modal yet. Use a `select` instead of `belongs_to`, and a `textarea` instead of `trix`.
 :::
 
 ## Cards
