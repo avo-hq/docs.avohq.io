@@ -7,7 +7,7 @@ outline: [2, 3]
 
 <VersionReq version="4.3.10" />
 
-Multitenancy adds a layer just below authentication: a signed-in user acts on behalf of a tenant, an `Account`, a `Team` or any other model you design. Tell Avo which tenants the current user may act for, and it resolves the tenant on every request, renders an account switcher at the bottom of the sidebar and handles switching.
+Multitenancy adds a layer just below authentication: a signed-in user acts on behalf of a tenant, an `Account`, a `Team` or any other model you design. Tell Avo which tenants the current user may act for, and it resolves the tenant on every request, turns the sidebar's profile row into an account switcher and handles switching.
 
 ```ruby
 # config/initializers/avo.rb
@@ -64,7 +64,7 @@ config.tenancy = {
 
 ## Switch accounts from the sidebar
 
-With the session strategy, the default, Avo renders an account switcher at the bottom of the sidebar, above the user menu. It lists the user's accounts, marks the current one and hides itself when the user has only one.
+With the session strategy, the default, the sidebar's profile row becomes the account switcher when the user has more than one account. It shows the current account and the user's name, and its menu lists the accounts above the usual profile items. A user with one account keeps the plain profile row.
 
 Picking an account sends a `PATCH` with Rails' CSRF token and reloads the whole page. Avo then:
 

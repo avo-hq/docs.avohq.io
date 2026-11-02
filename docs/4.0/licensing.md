@@ -91,7 +91,7 @@ The [license status page](./license-troubleshooting.html#check-the-license-statu
 
 ### Fix a trial at risk
 
-The **Avo Status** indicator in the sidebar footer is green while everything is in order, amber while a trial needs attention, and orange when the license is invalid. Amber means one of two things, and the remedy is different for each:
+The **Avo Status** item in the sidebar profile menu is green while everything is in order, amber while a trial needs attention, and orange when the license is invalid. Amber and orange also show as a dot on the profile row. Amber means one of two things, and the remedy is different for each:
 
 - **No payment method on file.** Access stops on the trial's end date. Add a payment method on the [Avo HQ Licenses](https://avohq.io/licenses) page.
 - **The subscription behind the trial was cancelled.** Access stops on the cancellation date, which the status page reports as the trial's end date. Adding a payment method does not change that — resume the subscription, or resubscribe, on the same page.
