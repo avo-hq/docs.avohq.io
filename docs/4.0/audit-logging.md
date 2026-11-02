@@ -393,9 +393,11 @@ end
 
 Avo finds the record's resource and links the activity to the record, so it shows up on the record's timeline like a change made in the panel. `payload` can be any hash; Avo stores it as JSON.
 
-Like the panel, it only records for resources that opted in with [`self.audit_logging`](#enable-specific-resources-and-actions), and it asks your `activity` block and `actions` the same way. It returns the activity, or `nil` when audit logging is switched off or the opt-in says no. It raises `ArgumentError` when the record's model has no Avo resource.
+Like the panel, it only records for resources that opted in with [`self.audit_logging`](#enable-specific-resources-and-actions), and it asks your `activity` block and `actions` the same way. It returns the activity, or `nil` when audit logging is switched off or the opt-in says no. It raises `ArgumentError` when the record's model has no Avo resource, or when the record hasn't been saved yet. The activity and its link to the record are saved together, or not at all.
 
-A job has no current user, so if your `activity` block reads `current_user`, make it handle `nil`. To record regardless of the opt-in, pass `force: true`:
+The `actions` switches cover the panel's own actions: `index`, `new`, `create`, `edit`, `update`, `show`, `destroy`, `attach`, `detach` and `handle`. Any other action, such as `:publish`, returns `nil` unless you add it to your resource's `actions` (`actions: {publish: true}`) or pass `force: true`.
+
+Inside your `activity` block, `current_user` is the `author:` you pass, so a job gets the same answer the panel would give that user. With no `author:` it falls back to the signed-in user, which is `nil` in a job, so make the block handle `nil` if you record without an author. To record regardless of the opt-in, pass `force: true`:
 
 ```ruby
 Avo::AuditLogging.record(
@@ -431,7 +433,7 @@ class NightlyImportJob < ApplicationJob
 end
 ```
 
-The record's timeline names the origin as the author, so these entries read *Nightly importer*. You can pass `origin:` to `Avo::AuditLogging.record` instead of wrapping the work in `Origin.with`. With no author and no origin, it raises `ArgumentError`, because the entry would not say who or what made the change.
+The record's timeline names the origin as the author, so these entries read *Nightly importer*. You can pass `origin:` (and `origin_record:`) to `Avo::AuditLogging.record` instead of wrapping the work in `Origin.with`; `origin_record:` without `origin:` raises `ArgumentError`. With no author and no origin, it raises `ArgumentError`, because the entry would not say who or what made the change. It raises the same way in an app that hasn't run the [origin migration](#_3-migrate) yet, because the origin couldn't be stored.
 
 ## Disable specific actions logging
 
