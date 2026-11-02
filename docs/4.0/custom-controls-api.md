@@ -278,6 +278,19 @@ Forms use normal Rails helpers and CSRF protection. Write endpoints belong to th
 
 </Option>
 
+<Option name="`refresh_button`">
+
+Renders the button that reloads every card, in the position you declare it. Available only in a dashboard's [`self.controls`](./dashboards-api.html#self.controls) block, not inside a `list`.
+
+```ruby
+refresh_button
+```
+
+- **Signature:** `refresh_button`, with no options.
+- **Validation:** raises `ArgumentError` on a resource.
+
+</Option>
+
 <Option name="`default_controls`">
 
 Re-adds the current area's default controls, so you can add controls before or after them without re-declaring them all.
