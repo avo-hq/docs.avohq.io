@@ -491,9 +491,9 @@ Writes that skip Active Record callbacks aren't logged: `update_column`, `update
 
 <VersionReq version="4.3.1" />
 
-A `store`, `store_accessor`, or [`attr_json`](https://github.com/jrochkind/attr_json) column changes as one JSON blob. `has_avo_audit_log` records the keys inside it that changed instead, so the entry reads `color: ["red", "blue"]`, not the whole column twice.
+A `store`, `store_accessor`, or [`attr_json`](https://github.com/jrochkind/attr_json) column changes as one JSON blob. `has_avo_audit_log` records the keys inside it that changed instead, named after the column, so the entry reads `settings.color: ["red", "blue"]`, not the whole column twice. The name is the key stored in the column, so `store_accessor :settings, :color, prefix: true` and an `attr_json` attribute with `store_key:` log the stored key, not the accessor. A column whose value isn't a hash is logged whole.
 
-To leave more columns out of every `has_avo_audit_log` entry, set `ignored_attributes`. The default is `created_at` and `updated_at`:
+To leave more columns out of every `has_avo_audit_log` entry, set `ignored_attributes`. The default is `created_at` and `updated_at`, and your list replaces it, so keep them in the list to leave them out. Listing a store column leaves out every key in it; you can also list a single key, such as `settings.color`:
 
 ```ruby
 # config/initializers/avo.rb
@@ -502,18 +502,18 @@ Avo::AuditLogging.configure do |config|
 end
 ```
 
-To reshape the payload further, set `payload_builder`. It gets the record and the changes, after containers are expanded and ignored attributes are removed. Return a hash to record it, or `nil` or `{}` to skip the entry:
+To reshape the payload further, set `payload_builder`. Inside the block you have `record`, `event` (`:create`, `:update` or `:destroy`) and `changes`, after containers are expanded, ignored attributes are removed and filtered attributes are masked. Return a hash to record it, or `nil` or `{}` to skip the entry:
 
 ```ruby
 # config/initializers/avo.rb
 Avo::AuditLogging.configure do |config|
-  config.payload_builder = ->(record, changes) {
+  config.payload_builder = -> {
     changes.except("last_synced_at").presence
   }
 end
 ```
 
-Both settings apply only to `has_avo_audit_log`. A payload you pass to `Avo::AuditLogging.record` is stored as you give it.
+A delete always records the record's `id`, even when `id` is in `ignored_attributes`. Both settings apply only to `has_avo_audit_log`. A payload you pass to `Avo::AuditLogging.record` is stored as you give it.
 
 ## Disable specific actions logging
 
