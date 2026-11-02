@@ -487,6 +487,34 @@ Declaring `has_avo_audit_log` counts as opting in, so the resource's `self.audit
 
 Writes that skip Active Record callbacks aren't logged: `update_column`, `update_columns`, `update_all`, `insert_all`, `upsert_all`, `delete`, `delete_all`, and `dependent: :delete_all`. Use `update!` and `destroy` where the log has to see the change.
 
+### Shape what a model logs
+
+<VersionReq version="4.3.1" />
+
+A `store`, `store_accessor`, or [`attr_json`](https://github.com/jrochkind/attr_json) column changes as one JSON blob. `has_avo_audit_log` records the keys inside it that changed instead, so the entry reads `color: ["red", "blue"]`, not the whole column twice.
+
+To leave more columns out of every `has_avo_audit_log` entry, set `ignored_attributes`. The default is `created_at` and `updated_at`:
+
+```ruby
+# config/initializers/avo.rb
+Avo::AuditLogging.configure do |config|
+  config.ignored_attributes = %w[created_at updated_at synced_at]
+end
+```
+
+To reshape the payload further, set `payload_builder`. It gets the record and the changes, after containers are expanded and ignored attributes are removed. Return a hash to record it, or `nil` or `{}` to skip the entry:
+
+```ruby
+# config/initializers/avo.rb
+Avo::AuditLogging.configure do |config|
+  config.payload_builder = ->(record, changes) {
+    changes.except("last_synced_at").presence
+  }
+end
+```
+
+Both settings apply only to `has_avo_audit_log`. A payload you pass to `Avo::AuditLogging.record` is stored as you give it.
+
 ## Disable specific actions logging
 
 By default, when audit logging is enabled for a resource or action, all actions, such as `index` visits, `show` visits, `edit`, `update`, etc. are logged.
