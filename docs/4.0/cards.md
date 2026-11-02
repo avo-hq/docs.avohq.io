@@ -164,6 +164,23 @@ Someone clicking the card's [refresh control](#refresh-a-card-on-demand) is aski
 Partial and HTML cards build their content at render time instead of running a `query`, so `cache_for` does nothing for them. Wrap the markup in Rails' own `cache` block instead.
 :::
 
+## Load cards only when they're needed
+
+<VersionReq version="4.3.4" />
+
+Every card loads in its own request after the page renders, so a slow card never holds up the page. A card also waits until it scrolls into view: a card further down a long dashboard runs its `query` only when the viewer reaches it.
+
+If a card is too expensive to run on every visit, even when it's visible, set [`loading`](./cards-api.html#self.loading) to `:manual`, the same value tabs and association fields take. The card renders its title, description, and a load button instead of its content, and runs its `query` only when someone clicks it.
+
+```ruby{3}
+class Avo::Cards::RevenueBreakdown < Avo::Cards::ChartkickCard
+  self.id = 'revenue_breakdown'
+  self.loading = :manual
+end
+```
+
+Once loaded, the card behaves like any other card: its range select, [refresh control](#refresh-a-card-on-demand), and `refresh_every` polling all work. Refreshing the whole dashboard skips cards that weren't loaded yet.
+
 ## Localization
 
 The shortest path is a locale key. Avo resolves `avo.card_translations.<class_path>.{label,description,discreet_description}` before falling back to the class attribute, the same way it does for [resources and actions](./i18n.html#localizing-scopes-cards-and-dashboards):
@@ -260,12 +277,13 @@ sv:
     cards:
       refresh: Refresh card
       refresh_labeled: Refresh %{label}
+      load: Load card
       dashboard:
         learn_more: Learn more
         refresh: Refresh all cards
 ```
 
-`refresh_labeled` names the card being refreshed and is used when the card has a label; `refresh` is the fallback for a card without one.
+`refresh_labeled` names the card being refreshed and is used when the card has a label; `refresh` is the fallback for a card without one. `load` is the Load button of a manual card without a label; with one, the button uses Avo's own `avo.load_item`, already translated in every locale Avo ships.
 
 **Keep the `%{label}` placeholder.** Dropping it is harmless — the sentence just renders without the card name. *Renaming* it (to `%{card}`, say) is what I18n treats as an error, and Avo catches that and falls back to `refresh` plus the label rather than letting one translation break the dashboard header.
 

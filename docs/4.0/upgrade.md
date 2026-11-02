@@ -4,6 +4,20 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-dashboards` `4.3.4`
+
+<Option name="Cards load when they scroll into view">
+
+### Breaking Change
+
+Cards used to load as soon as the page rendered, all at once. Now a card waits until it scrolls into view, so a card further down a long dashboard or resource page runs its `query` only when the viewer reaches it. See [Load cards only when they're needed](./cards.html#load-cards-only-when-they-re-needed).
+
+### Action Required
+
+**Action required:** None. If your system tests assert on a card below the fold, scroll to it first.
+
+</Option>
+
 ## Upgrade to `avo-advanced_search` `4.3.3`
 
 <Option name="Global search shortcuts target the navbar and results-page inputs separately">
