@@ -10,6 +10,16 @@ When a user toggles the "Select all" checkbox, Avo will first check to see if th
 
 This is being done through serializing the query to be unserialized back in the action.
 
+## Select all on the grid view
+
+<VersionReq version="4.3.10" />
+
+The [grid view](./grid-view.html) carries the same selection bar as the table. A card's checkbox shows when you hover it, and the **Select all** checkbox above the grid takes the whole page. On a resource with more than one page the bar then offers **Select all matching**, which selects every queried record, and **Undo** to drop back to just the page.
+
+Actions receive the selection exactly as they do from the table, so an action that already works on the index needs no change to work on the grid.
+
+Turning [`self.record_selector`](./resources-api.html#self.record_selector) off hides the bar along with the card checkboxes.
+
 ## Coming back to the index
 
 <VersionReq version="4.3.1" />
