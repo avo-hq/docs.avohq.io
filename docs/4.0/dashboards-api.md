@@ -122,6 +122,30 @@ Off by default because refreshing a dashboard runs every card's query at once. T
 
 </Option>
 
+## Header controls
+
+<Option name="`self.controls`" headingSize="3">
+
+Declares native header controls using `avo-custom_controls`. The block collects controls in declaration order; its HTML return value is not rendered.
+
+```ruby
+self.controls = -> {
+  link_to "Home", main_app.root_path
+  partial "avo/dashboards/controls", locals: {dashboard: dashboard}
+}
+```
+
+- **Type:** Proc or `nil`
+- **Default:** `nil`
+- **Requires:** `avo-custom_controls` installed and `enabled_feature?("avo-custom_controls")` enabled on the license.
+- **Context:** `dashboard`, `current_user`, `params`, `request`, `view_context`, `helpers`, `main_app`, and `avo` are available, including inside lists.
+- **Inheritance:** inherited; assigning `nil` removes inherited controls.
+- **Controls:** `link_to`, `list`, `divider`, and `partial`. Lists cannot contain partials or nested lists. Resource actions and default resource buttons are unavailable; `default_controls` adds nothing.
+
+Dashboard authorization runs before evaluation. `refresh_button` is independent of these controls and their license gate. See the [header controls guide](./dashboards.html#add-header-controls) for forms and endpoint authorization.
+
+</Option>
+
 ## Visibility and authorization
 
 <Option name="`self.visible`" headingSize="3">

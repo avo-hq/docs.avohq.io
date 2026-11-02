@@ -179,6 +179,46 @@ It's off by default, as the [per-card control](cards-api#self.refresh_button) is
 
 Setting it here does not turn on the per-card controls; the two are independent, and a dashboard button reloads every card whether or not the cards carry one.
 
+## Add header controls
+
+Install `avo-custom_controls` alongside `avo-dashboards`, with a license that enables custom controls. Assign [`self.controls`](./dashboards-api.html#self.controls) to declare links, dropdowns, and partials in the native header:
+
+```ruby
+# app/avo/dashboards/operations.rb
+class Avo::Dashboards::Operations < Avo::Dashboards::BaseDashboard
+  self.id = "operations"
+  self.name = "Operations"
+  self.controls = -> {
+    link_to "Home", main_app.root_path
+    list label: "More" do
+      link_to "Admin home", avo.root_path
+      divider
+      link_to "Application home", main_app.root_path
+    end
+    partial "avo/dashboards/operations_controls", locals: {dashboard: dashboard}
+  }
+end
+```
+
+Controls are absent by default. The block uses the existing custom-controls collector, not an HTML return value. `list` takes keyword options such as `label:`, not a positional label. See [custom controls](./custom-controls-api.html#link_to) for link and list options.
+
+Use a [`partial`](./custom-controls-api.html#partial) for normal Rails forms. For example, let users reload the dashboard with a queue parameter:
+
+```erb
+<%# app/views/avo/dashboards/_operations_controls.html.erb %>
+<%= form_with url: avo_dashboards.dashboard_path(dashboard), method: :get do |form| %>
+  <%= form.label :queue %>
+  <%= form.text_field :queue, value: params[:queue] %>
+  <%= form.submit "Apply" %>
+<% end %>
+```
+
+Cards must read and validate these parameters themselves. Refresh remains independent: it reloads cards without submitting the form, even when custom controls are unavailable.
+
+:::warning
+Dashboard authorization runs before controls evaluation. Resource actions and default resource buttons are unavailable on dashboards; `default_controls` adds nothing. For writes, use Rails forms with CSRF protection and application-owned endpoints that perform their own authorization. Hiding a control does not authorize its endpoint.
+:::
+
 ## Cards
 
 Dashboards host cards — metrics, charts, tables, lists, and custom content. You declare them in the `cards` method, as shown in the [generated dashboard](#generate-a-dashboard) above.

@@ -261,6 +261,23 @@ Renders a divider line between the items of a [`list`](#list) dropdown.
 
 </Option>
 
+<Option name="`partial`">
+
+Renders a Rails partial as a top-level control. Available on resource bars and dashboard headers, but not inside a `list`.
+
+```ruby
+partial "avo/dashboards/controls", locals: {dashboard: dashboard}
+```
+
+- **Signature:** `partial(path, locals: {})`
+- **Type:** path is a String; `locals` is a Hash.
+- **Default:** `locals: {}`
+- **Validation:** raises `ArgumentError` inside a list.
+
+Forms use normal Rails helpers and CSRF protection. Write endpoints belong to the application and must authorize requests separately from dashboard access.
+
+</Option>
+
 <Option name="`default_controls`">
 
 Re-adds the current area's default controls, so you can add controls before or after them without re-declaring them all.
