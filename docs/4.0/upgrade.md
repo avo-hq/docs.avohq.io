@@ -4,6 +4,24 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+To pull the new versions, update every Avo gem you have (core plus any add-ons) in one go:
+
+```bash
+bin/rails avo:update
+```
+
+Set `AVO_UPDATE_PUSH=1` and the task also stages `Gemfile.lock`, commits it as `Update Avo gems`, and pushes the current branch to its upstream. <VersionReq version="4.3.10" />
+
+```bash
+AVO_UPDATE_PUSH=1 bin/rails avo:update
+```
+
+It refuses to start unless it is run inside a Git repository, the working tree has no changes to tracked files (untracked files are fine), and the current branch already has an upstream. Those checks run before the gems are touched, so a branch that fails them keeps its current bundle. When the update leaves `Gemfile.lock` unchanged there is nothing to ship, and the task commits and pushes nothing.
+
+:::warning
+`AVO_UPDATE_PUSH=1` pushes to the current branch's upstream. Run it on a branch you are happy to push to, not on the one you deploy from.
+:::
+
 ## Upgrade to `avo-advanced_search` `4.3.3`
 
 <Option name="Global search shortcuts target the navbar and results-page inputs separately">
