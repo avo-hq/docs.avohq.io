@@ -553,7 +553,9 @@ task backfill_prices: :environment do
 end
 ```
 
-Nothing is recorded inside the block from any source: the panel, `Avo::AuditLogging.record`, `has_avo_audit_log`, the API, the AI chat, or MCP. Logging resumes when the block ends, even if it raises. The block only affects the current thread, so other requests keep recording.
+Nothing is recorded inside the block from any source: the panel, `Avo::AuditLogging.record` (which returns `nil`), `has_avo_audit_log`, the API, the AI chat, or MCP, and PaperTrail or Audited versions written inside it aren't linked to an activity. A model change counts as inside the block when it was saved inside it, even if its transaction commits after the block ends. Logging resumes when the block ends, even if it raises. The block only affects the current thread, so other requests keep recording.
+
+A background job enqueued inside the block runs later, outside it, so its changes are logged. Wrap the job's own work in `Avo::AuditLogging.disabled` if they shouldn't be.
 
 To switch logging off everywhere, for example in the test environment, set `config.enabled = false`.
 
