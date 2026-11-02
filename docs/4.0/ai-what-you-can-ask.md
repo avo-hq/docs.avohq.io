@@ -28,7 +28,7 @@ description: Restate the last message in plain human language. Use for /bro.
 Restate your last message simply and concisely, without jargon.
 ```
 
-The assistant saves the title, description, and instructions as an Avo AI skill if you have permission to create skills. It does not overwrite existing skills or apply the new skill automatically. Reload the page to refresh the skills menu, then select it to use it. ZIP files are refused before upload: the assistant cannot open skill archives or run scripts from advanced skills. The tool also refuses unsupported files already in the conversation. See [Import a skill](./ai.html#import-a-skill).
+The assistant shows the title, description, and full instructions on a card, and saves the skill when you click **Save skill**, if you have permission to create skills. It does not overwrite existing skills or apply the new skill automatically. Reload the page to refresh the skills menu, then select it to use it. Only `.md` and `.txt` files can be imported. See [Import a skill](./ai.html#import-a-skill).
 
 ## Find records
 
