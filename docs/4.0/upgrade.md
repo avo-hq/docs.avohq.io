@@ -4,6 +4,34 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-dashboards` `4.3.4`
+
+<Option name="A dashboard's `actions` method now fills an Actions dropdown in its header">
+
+### Breaking Change
+
+Dashboards can now [run actions](./dashboards.html#run-actions-from-the-header). Avo calls a dashboard's `actions` method on every render and shows what it declares in an Actions dropdown. A dashboard that already defines `actions` for its own purposes now has that method called, and `action` or `divider` inside it mean something new.
+
+To run those actions, a dashboard now also answers to `action`, `get_actions`, `visible_actions`, `find_action`, `view`, `view_type`, `records_path`, `record`, `user`, `params`, `model_key`, `route_key`, `authorization`, `hydrate`, `resource_name_for`, `translation_key` and `get_stimulus_controllers`. A method of yours with one of these names replaces Avo's, and an action started from that dashboard uses yours.
+
+### Action Required
+
+**Action required:** Only if a class in `app/avo/dashboards` defines one of these methods. Otherwise, none.
+
+### Steps to Update
+
+Rename your method.
+
+```ruby
+# app/avo/dashboards/operations.rb
+def actions # [!code --]
+def queue_actions # [!code ++]
+  # ...
+end
+```
+
+</Option>
+
 ## Upgrade to `avo-advanced_search` `4.3.3`
 
 <Option name="Global search shortcuts target the navbar and results-page inputs separately">

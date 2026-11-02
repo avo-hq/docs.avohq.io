@@ -29,6 +29,14 @@ Any area you don't customize keeps its default controls:
 
 Inside a block you can mix the built-in controls (like [`back_button`](./custom-controls-api.html#back_button) or [`actions_list`](./custom-controls-api.html#actions_list)) with your own [`link_to`](./custom-controls-api.html#link_to) links and [`action`](./custom-controls-api.html#action) buttons. See the [API reference](./custom-controls-api.html) for every control and the options each one accepts.
 
+## Add controls to dashboard headers
+
+<VersionReq version="4.3.3" />
+
+With `avo-dashboards` installed, assign a dashboard's [`self.controls`](./dashboards-api.html#self.controls) block to add native [`link_to`](./custom-controls-api.html#link_to), [`list`](./custom-controls-api.html#list), [`divider`](./custom-controls-api.html#divider), [`partial`](./custom-controls-api.html#partial), [`action`](./custom-controls-api.html#action), [`actions_list`](./custom-controls-api.html#actions_list), and [`refresh_button`](./custom-controls-api.html#refresh_button) controls. Use `list label: "More" do`, not a positional label. Declare controls rather than returning raw HTML.
+
+Dashboard controls default to `nil` and require a license enabling `avo-custom_controls`. The block replaces the whole header, so declare `refresh_button` if you want the button. Default resource buttons are not available on dashboards. See [dashboard header controls](./dashboards.html#add-header-controls) for a complete example, Rails forms, and authorization requirements.
+
 ## Customize the show controls
 
 On the <Show /> view the default configuration is `back_button`, `delete_button`, `detach_button`, `actions_list`, and `edit_button`. Assign a `show_controls` block and declare the controls you want, in the order you want them:
