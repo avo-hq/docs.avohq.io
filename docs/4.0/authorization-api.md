@@ -42,6 +42,7 @@ config.authorization_client = "Avo::ActionPolicyAuthorizationClient"
 
 - **Type:** `Symbol`, `String`, or `nil`
 - **Default:** `:pundit` (the generated initializer sets it to `nil`)
+- **Without the add-on on your license:** a client set in the initializer refuses every resource, and no policy runs. Left unset or `nil`, policies are skipped. See [When the license lapses](./authorization.html#when-the-license-lapses).
 
 </Option>
 
@@ -206,7 +207,7 @@ Controls the delete button and whether a record can be deleted. Per-file deletio
 
 <Option name="`act_on?`" headingSize="3">
 
-Controls the actions button on the <Index /> view.
+Controls the actions button, and running an action: Avo asks it of the record on the page and of each selected record (the model class when there are none, and for Select all), and refuses the run if any is denied.
 
 - **Type:** `Boolean`
 
@@ -216,7 +217,7 @@ Controls the actions button on the <Index /> view.
 
 <Option name="`reorder?`" headingSize="3">
 
-Controls the [record reordering](./record-reordering.html) controls on the <Index /> view.
+Controls the [record reordering](./record-reordering.html) controls on the <Index /> view. It also authorizes the move itself, from any panel.
 
 - **Type:** `Boolean`
 
@@ -292,7 +293,7 @@ Controls the detach button on each associated row.
 
 <Option name="`create_{association}?`" headingSize="3">
 
-Controls the `Create new {model}` button on the association panel.
+Controls the `Create new {model}` button on the association panel. It also controls adding new rows to a [nested form](./associations/has_many.html#nested-in-forms): the form hides its "Add" button, and a save with a new row is refused.
 
 - **Type:** `Boolean`
 - **`record`:** the parent record
@@ -344,7 +345,7 @@ Controls the delete button on each associated row.
 
 <Option name="`act_on_{association}?`" headingSize="3">
 
-Controls the `Actions` dropdown on the association panel.
+Controls the `Actions` dropdown on the association panel. Running an action from the panel also needs [`act_on?`](#act_on) on each selected record's own policy.
 
 - **Type:** `Boolean`
 - **`record`:** the parent record
@@ -355,7 +356,7 @@ Controls the `Actions` dropdown on the association panel.
 
 <Option name="`reorder_{association}?`" headingSize="3">
 
-Controls the [record reordering](./record-reordering.html) controls on a `has_many` association panel.
+Controls the [record reordering](./record-reordering.html) controls on a `has_many` association panel. The move itself also needs [`reorder?`](#reorder) on the record's policy.
 
 - **Type:** `Boolean`
 - **`record`:** the associated row record

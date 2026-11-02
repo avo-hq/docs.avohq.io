@@ -16,6 +16,7 @@ field :users, as: :has_and_belongs_to_many
 ## Options
 <!-- @include: ./../common/associations_searchable_option_common.md-->
 <!-- @include: ./../common/associations_attach_scope_option_common.md-->
+<!-- @include: ./../common/associations_attach_detach_hooks_option_common.md-->
 <!-- @include: ./../common/associations_scope_option_common.md-->
 <!-- @include: ./../common/associations_name_option_common.md-->
 <!-- @include: ./../common/associations_description_option_common.md-->
@@ -24,6 +25,7 @@ field :users, as: :has_and_belongs_to_many
 <!-- @include: ./../common/associations_attach_using_option_common.md-->
 <!-- @include: ./../common/associations_discreet_pagination_option_common.md-->
 <!-- @include: ./../common/associations_per_page_option_common.md-->
+<!-- @include: ./../common/associations_refresh_on_destroy_option_common.md-->
 <!-- @include: ./../common/associations_hide_search_input_option_common.md-->
 <!-- @include: ./../common/associations_hide_filter_button_option_common.md-->
 <!-- @include: ./../common/associations_link_to_child_resource_common.md-->

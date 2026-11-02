@@ -630,3 +630,52 @@ end
 - **`visible`:** Boolean or Proc — conditionally show the divider. Default `true`. As a Proc it has access to `context`, `params`, `parent`, `dashboard`, and `resource`.
 
 </Option>
+
+## Standalone card components
+
+<VersionReq version="4.3.2" />
+
+View components that draw a card from plain values, for pages with no dashboard or resource behind them, such as a [custom tool](./custom-tools.html). See [Show a card in a custom tool](./cards.html#show-a-card-in-a-custom-tool).
+
+<Option name="`Avo::Cards::StandaloneCardComponent`" id="standalone-card-component" headingSize="3">
+
+The card's chrome: header, ranges dropdown, discreet description, and grid sizing. The block renders as the card's body.
+
+```erb
+<%= render Avo::Cards::StandaloneCardComponent.new(label: "Recent visitors", ranges: [7, 30], range: params[:range]) do %>
+  <%= render Avo::Cards::MetricComponent.new(value: @visitors) %>
+<% end %>
+```
+
+| Argument | Type | Default | Behavior |
+| --- | --- | --- | --- |
+| `label` | String | `nil` | The card's title. |
+| `description` | String | `nil` | Subtitle under the title. |
+| `discreet_description` | String | `nil` | Text for the info icon tooltip in the bottom-end corner. |
+| `ranges` | Array or Hash | `[]` | Options for the ranges dropdown, in the shape `options_for_select` takes. The dropdown is hidden when empty. |
+| `range` | String or Integer | `nil` | The selected range. |
+| `range_param` | Symbol or String | `:range` | The query param a picked range is written to. |
+| `display_header` | Boolean | `true` | Set to `false` to drop the header even when `label`, `description`, or `ranges` are set. |
+| `cols` | Integer, `1` to `6` | `nil` | Grid columns the card spans. Setting `cols` or `rows` makes the card a grid item; the other one defaults to `1`. |
+| `rows` | Integer, `1` to `12` | `nil` | Grid rows the card spans. |
+
+- **Slot:** `with_header_actions` renders content in the header, before the ranges dropdown.
+- **Header:** rendered only when `display_header` is `true` and at least one of `label`, `description`, or `ranges` is present.
+
+</Option>
+
+<Option name="`Avo::Cards::MetricComponent`" id="metric-component" headingSize="3">
+
+A metric card's value with its prefix and suffix. The value is printed as given, so format it before passing it in.
+
+```erb
+<%= render Avo::Cards::MetricComponent.new(value: number_to_social(@revenue), prefix: "$") %>
+```
+
+| Argument | Type | Default |
+| --- | --- | --- |
+| `value` | Any | required |
+| `prefix` | String | `nil` |
+| `suffix` | String | `nil` |
+
+</Option>

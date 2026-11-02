@@ -153,7 +153,7 @@ Policy methods, defined on your resource's Pundit-style policy, that gate access
 
 <Option name="`collaboration_view_timeline?`" headingSize="3">
 
-Whether the user can view the timeline on a record.
+Whether the user can view the timeline on a record, read its entries and react to them.
 
 ```ruby
 # app/policies/project_policy.rb

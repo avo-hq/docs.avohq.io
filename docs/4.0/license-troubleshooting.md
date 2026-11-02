@@ -6,7 +6,7 @@ There might be times when the configurations isn't up to date and you'd like to 
 
 Every Avo app has the license status page where you can see a few things about your license and the response from the license checking server.
 
-Go to `https://yourapp.com/avo/avo_private/status`. If you mounted Avo under a different path (like `admin`) it will be `https://yourapp.com/admin/avo_private/status`.
+Go to `https://yourapp.com/avo/status`. If you mounted Avo under a different path (like `admin`) it will be `https://yourapp.com/admin/status`.
 
 In order to see that page your user has to be an an admin in Avo. Follow [this guide](./authentication#user-roles) to mark your user as an admin.
 
@@ -32,9 +32,9 @@ In order to check that, use the status page described above.
 
 <Option name="The sidebar status indicator is amber">
 
-Amber is not a license failure — it's a running trial that needs attention, either because no payment method is on file or because the subscription behind it was cancelled. Access continues until the date the status page reports.
+Amber is not a license failure — it's a running trial that needs attention: no payment method is on file, the subscription behind it was cancelled, or it's an Avo 4 trial beside your Avo 3 subscription that you haven't migrated to yet. Access continues until the date the status page reports.
 
-The status page names which of the two applies and lists the steps. See [Licensing → Fix a trial at risk](./licensing.html#fix-a-trial-at-risk) for the full picture.
+The status page names which one applies and lists the steps. See [Licensing → Fix a trial at risk](./licensing.html#fix-a-trial-at-risk) for the full picture.
 
 </Option>
 

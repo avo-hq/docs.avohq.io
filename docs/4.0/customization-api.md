@@ -537,7 +537,7 @@ config.resource_default_view = :edit
 
 <Option name="`persistence`" headingSize="3">
 
-Retains UI state — association pagination (`page`, `per_page`) and static filter selections — across requests by storing it in the session.
+Retains UI state across requests: pagination (`page`, `per_page`), filter selections ([static](./basic-filters.html) and [dynamic](./dynamic-filters.html)), the sort picked from a table header, and the rows selected on a table. Everything but the selection is stored in the session; the selection stays in the browser tab. Before `avo` `4.3.11`, only association pagination and static filter selections were kept.
 
 ```ruby
 config.persistence = {
@@ -553,12 +553,31 @@ config.persistence = -> do
 end
 ```
 
+Each kind of state has a key next to `driver`. Set it to `false` to leave that one out while the others persist. <VersionReq version="4.3.11" />
+
+```ruby
+config.persistence = {
+  driver: :session,
+  pagination: true,
+  filters: true,
+  sorting: true,
+  selection: false
+}
+```
+
+| Key | Default | Description |
+| --- | --- | --- |
+| `pagination` | `true` | `page` and `per_page` on resource and association tables. |
+| `filters` | `true` | Static and dynamic filter selections on resource and association tables. Dynamic ones need `avo-dynamic_filters` `4.3.2` or newer. |
+| `sorting` | `true` | The sort column and direction picked from a table header, until the user sorts another column or clicks the sorted header a third time (**Reset sorting**). |
+| `selection` | `true` | The rows checked on a resource or association table, kept in the browser tab's `sessionStorage` until an action runs on them, the user signs out, or the tab closes. |
+
 - **Type:** Hash or Proc returning a Hash
-- **Default:** `{ driver: nil }` — no persistence
-- **Values:** `driver:` accepts `:session` or `nil`
+- **Default:** `{ driver: nil, pagination: true, filters: true, sorting: true, selection: true }` — no persistence until `driver` is `:session`
+- **Values:** `driver:` accepts `:session` or `nil`; `pagination:`, `filters:`, `sorting:`, and `selection:` accept `true` or `false`
 
 :::warning Cookie store size limit
-Rails' default cookie session store is limited to 4096 bytes. Storing many pagination states and filter selections can exceed it and raise `ActionDispatch::Cookies::CookieOverflow`. Use a scalable [session store](https://guides.rubyonrails.org/configuring.html#config-session-store) such as Redis or MemCache instead.
+Rails' default cookie session store is limited to 4096 bytes. Storing many pagination states, filter selections, and sorts can exceed it and raise `ActionDispatch::Cookies::CookieOverflow`. Use a scalable [session store](https://guides.rubyonrails.org/configuring.html#config-session-store) such as Redis or MemCache instead.
 :::
 
 </Option>
@@ -579,7 +598,7 @@ config.associations = {
 
 | Key | Default | Description |
 |---|---|---|
-| `lookup_list_limit` | `1000` | Caps how many records a `belongs_to`/attach lookup lists before showing the "There are more records available." notice. |
+| `lookup_list_limit` | `1000` | Caps how many records a `belongs_to`/attach lookup lists before the `belongs_to` select notes that there are too many options to show. The attach modal still shows "There are more records available." |
 | `frames.loading` | `:lazy` | Render mode for association turbo frames (`has_one`, `has_many`, `has_and_belongs_to_many`) when a field doesn't set its own [`loading:`](./associations/has_many.html#loading). `:lazy` fetches the frame when revealed; `:manual` renders a placeholder with a **Load** button. |
 | `frames.auto_load_for` | `15.minutes` | For manual frames, how long an opened frame is remembered before the placeholder returns. `0`/`nil` disables it. |
 
@@ -710,7 +729,7 @@ config.model_generator_hook = false
 
 <Option name="`exclude_from_status`" headingSize="3">
 
-Which items to hide from the status page (`/avo_private/status`). The license key is hidden by default for security reasons; set the option to `[]` to show it.
+Which items to hide from the status page (`/status`). The license key is hidden by default for security reasons; set the option to `[]` to show it.
 
 ```ruby
 config.exclude_from_status = ["license_key", "ip"]
@@ -729,7 +748,7 @@ end
 
 <Option name="`send_metadata`" headingSize="3">
 
-Controls whether Avo sends usage metadata to Avo HQ, such as fields count, resources count, and other relevant metrics that help the Avo team understand how the framework is used.
+Controls whether Avo sends usage metadata to Avo HQ: counts of resources, fields, actions, and similar, plus the installed Avo gems. It never includes records, source code, or visitor IPs. See [Usage metadata](./customization.html#usage-metadata) for the full list.
 
 ```ruby
 config.send_metadata = false

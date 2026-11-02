@@ -260,6 +260,8 @@ end
 
 Once enabled, the changelog will be visible, along with an action to revert changes.
 
+With [authorization](./authorization.html) enabled, reverting asks the record's policy: [`update?`](./authorization-api.html#update) on the record, found through its policy scope, or [`create?`](./authorization-api.html#create) to bring back a destroyed record. Users the policy refuses don't see the revert action. The changeset diff and the payload leave out fields the user's [field policy](./authorization.html#hide-fields-from-a-user) withholds.
+
 <Image src="/assets/img/4_0/audit-logging/activity-details.webp" dark-src="/assets/img/4_0/audit-logging/activity-details-dark.webp" width="2848" height="2114" alt="An update activity detail page showing the changeset diff and payload, with breadcrumbs and title" />
 
 :::warning Missing `changeset` field
@@ -366,6 +368,70 @@ en:
 :::info
 Activities recorded before you upgraded have no origin, and neither do activities recorded by an app that hasn't run the new migration yet. Both keep working — they just read as the panel's own.
 :::
+
+### Record activity from your own code
+
+<VersionReq version="4.3.1" />
+
+Changes made outside the panel, such as in a background job, an importer, or a service object, aren't logged on their own. Record them with `Avo::AuditLogging.record`:
+
+```ruby
+# app/services/price_updater.rb
+class PriceUpdater
+  def call(product, price, user)
+    product.update!(price: price)
+
+    Avo::AuditLogging.record(
+      action: :update,
+      record: product,
+      author: user,
+      payload: {price: price}
+    )
+  end
+end
+```
+
+Avo finds the record's resource and links the activity to the record, so it shows up on the record's timeline like a change made in the panel. `payload` can be any hash; Avo stores it as JSON.
+
+Like the panel, it only records for resources that opted in with [`self.audit_logging`](#enable-specific-resources-and-actions), and it asks your `activity` block and `actions` the same way. It returns the activity, or `nil` when audit logging is switched off or the opt-in says no. It raises `ArgumentError` when the record's model has no Avo resource.
+
+A job has no current user, so if your `activity` block reads `current_user`, make it handle `nil`. To record regardless of the opt-in, pass `force: true`:
+
+```ruby
+Avo::AuditLogging.record(
+  action: :update,
+  record: product,
+  author: user,
+  force: true
+)
+```
+
+`force` skips only the resource's opt-in. Nothing is recorded while audit logging is switched off globally.
+
+### Record changes no person made
+
+A background job or an importer usually has no user behind it. Leave out `author`, and let the [origin](#mark-your-own-origins) say what made the change. You don't need a placeholder user:
+
+```ruby
+# app/jobs/nightly_import_job.rb
+class NightlyImportJob < ApplicationJob
+  def perform(import)
+    Avo::AuditLogging::Origin.with("nightly_importer", record: import) do
+      import.products.each do |product|
+        product.update!(price: import.price_for(product))
+
+        Avo::AuditLogging.record(
+          action: :update,
+          record: product,
+          payload: {price: product.price}
+        )
+      end
+    end
+  end
+end
+```
+
+The record's timeline names the origin as the author, so these entries read *Nightly importer*. You can pass `origin:` to `Avo::AuditLogging.record` instead of wrapping the work in `Origin.with`. With no author and no origin, it raises `ArgumentError`, because the entry would not say who or what made the change.
 
 ## Disable specific actions logging
 

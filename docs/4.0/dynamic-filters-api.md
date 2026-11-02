@@ -108,6 +108,8 @@ dynamic_filter :first_name,
 
 Custom condition keys that aren't Ransack predicates need a custom [`query`](#query) to handle them.
 
+A request applies only the conditions the filter offers (these, or the type's defaults); any other condition in the URL is ignored.
+
 An empty hash (`{}`) hides the conditions dropdown entirely and applies the filter type's first default condition — "Is" for a select filter, "Contains" for a text filter, and so on. Useful when only one condition makes sense:
 
 ```ruby{3}

@@ -1,5 +1,9 @@
 # Licensing
 
+::: warning Avo 3 licensing
+This page describes how Avo 3 was licensed: the Pro and Advanced tiers and the perpetual fallback license. Avo 4 is licensed per app as a subscription to add-ons and bundles, with a 14-day trial. Current plans and prices are on the [pricing page](https://avohq.io/pricing), and the Avo 4 rules are in [Avo 4 licensing](https://docs.avohq.io/4.0/licensing.html).
+:::
+
 Avo runs on the [Open-Core model](https://en.wikipedia.org/wiki/Open-core_model). The **Community** edition is free to use and works best for personal, hobby, and small commercial projects.
 There are a couple of paid tiers (**Pro**, **Advanced**, and **Enterprise**) that give you more features, more customization, a higher level of control, and more support.
 
