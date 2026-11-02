@@ -572,19 +572,19 @@ Most activities are about one record. Read it, and the classes behind the activi
 ```ruby
 activity = Avo::AuditLogging::Activity.latest.first
 
-activity.record          # => #<Product id: 123>, the first one linked
-activity.record_type     # => "Product"
-activity.record_id       # => 123
-activity.records         # => every linked record
+activity.record               # => #<Product id: 123>
+activity.record_type          # => "Product"
+activity.record_id            # => 123
+activity.records              # => every linked record
 
-activity.resource_class  # => Avo::Resources::Product
-activity.model_class     # => Product
-activity.policy_class    # => ProductPolicy
+activity.resource_class       # => Avo::Resources::Product
+activity.model_class          # => Product
+activity.record_policy_class  # => ProductPolicy
 ```
 
-Each returns `nil` instead of raising when there's nothing to return: no linked record, a deleted record, or a class your app has since removed.
+`record`, `record_type`, `record_id` and `model_class` describe the first record linked to the activity; use `records` when an action ran on several. Each returns `nil` instead of raising when there's nothing to return: no linked record, a deleted record, or a class your app has since removed.
 
-`activity_class` and `record_type` answer different questions. `activity_class` is the Avo resource the change went through, such as `Avo::Resources::Product`, or the action class for an action run. `record_type` is the model of the record that changed, such as `Product`. For an action run, `resource_class` is `nil` and `model_class` comes from the linked record. `policy_class` is the resource's `authorization_policy` when it sets one, and otherwise the policy Pundit finds for the model.
+`activity_class` and `record_type` answer different questions. `activity_class` is the Avo resource the change went through, such as `Avo::Resources::Product`, or the action class for an action run. `record_type` is the model of the record that changed, such as `Product`. For an action run, `resource_class` is `nil` and `model_class` comes from the linked record, so a record of an STI subclass gives its base class. `record_policy_class` is the resource's `authorization_policy` when it sets one, and otherwise the policy Pundit finds for the model. It isn't called `policy_class` because Pundit reads that method to authorize the activity itself.
 
 ## Disable specific actions logging
 
