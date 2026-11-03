@@ -10,6 +10,9 @@ export default {
       html: name.replace(/`([^`]+)`/g, '<code>$1</code>'),
       anchor,
       anchorName: `#${anchor}`,
+      // VitePress slugifies the hash of markdown links, so `#self.icon` arrives as `#self-icon`.
+      // The heading keeps its original id for URLs already shared.
+      slug: anchor.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
       headingSize: props.headingSize || 2,
     }
   },
@@ -17,6 +20,7 @@ export default {
 </script>
 
 <template>
+  <span v-if="slug !== anchor" :id="slug"></span>
   <component :is="`h${headingSize}`" :id="anchor" tabindex="-1">
     <span class="hidden">-> </span>
     <span v-html="html" />
