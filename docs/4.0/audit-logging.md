@@ -489,7 +489,7 @@ Writes that skip Active Record callbacks aren't logged: `update_column`, `update
 
 ### Shape what a model logs
 
-<VersionReq version="4.3.1" />
+<VersionReq version="4.3.2" />
 
 A `store`, `store_accessor`, or [`attr_json`](https://github.com/jrochkind/attr_json) column changes as one JSON blob. `has_avo_audit_log` records the keys inside it that changed instead, named after the column, so the entry reads `settings.color: ["red", "blue"]`, not the whole column twice. The name is the key stored in the column, so `store_accessor :settings, :color, prefix: true` and an `attr_json` attribute with `store_key:` log the stored key, not the accessor. A column whose value isn't a hash is logged whole.
 
