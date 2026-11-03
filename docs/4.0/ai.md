@@ -638,7 +638,7 @@ Set neither and the assistant gets every tool the gem ships. The roster is assem
 config.ai.excluded_tools = [:delete_record, :update_record]
 ```
 
-The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_skill`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
 
 `update_record` and `update_records` are separate names, so excluding the first leaves the second attached. An app that excludes `update_record` to stop the assistant writing columns wants both.
 
@@ -1020,7 +1020,7 @@ The one thing to check is the model: reading an image takes a vision model. The 
 
 ### What the composer accepts
 
-By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files — markdown, plain text, CSV, TSV, JSON — which it reads in windows. Files can be up to 25 MB.
+By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files - markdown, plain text, CSV, TSV, JSON - which it reads in windows. Files can be up to 25 MB.
 
 Anything else is refused as you add it, before it uploads, with a line under the draft naming the file and why — so a 2 GB video never leaves the browser. The same rule is checked again when the message is sent, so a request that skips the composer can't attach a file it would have refused.
 
@@ -1099,6 +1099,10 @@ Summarise the attached record as a changelog entry…
 ```
 
 `name` works in place of `title`, so an agent `SKILL.md` pastes in unchanged. Other frontmatter keys are ignored. Without frontmatter there is no title to read, and the import says so rather than guessing one. Importing is creating — the action is available to whoever passes `create?` on the skill policy.
+
+You can also ask the chat to **"Add this as a skill"**, followed by the skill's text, or upload a `.md` or `.txt` file and ask **"Import the attached file as a skill"**. The assistant proposes it through `create_skill`, and a card shows the title, the description and the full text. Nothing is saved until you click **Save skill**, because a skill's text becomes instructions for every chat that picks it. The skill policy's `create?` permission is checked when the card is proposed and again when you confirm it. Files are imported directly from this conversation, without the assistant rewriting their contents. For plain instructions without frontmatter, give a title or let the assistant supply one. An existing skill with the same title is never overwritten.
+
+Only `.md` and `.txt` files are supported; `create_skill` returns an error for any other file. Additional frontmatter settings do not install tools, dependencies, or scripts. Creating a skill does not apply it to the current chat; reload the page to refresh the skills menu, then select it when you want to use it.
 
 **Export skill**, on a skill's own page, goes the other way: it downloads that skill as a `.md` file in exactly this shape, ready to import into another app or keep in a repository.
 
