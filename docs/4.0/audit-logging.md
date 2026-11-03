@@ -260,6 +260,8 @@ end
 
 Once enabled, the changelog will be visible, along with an action to revert changes.
 
+With [authorization](./authorization.html) enabled, reverting asks the record's policy: [`update?`](./authorization-api.html#update) on the record, found through its policy scope, or [`create?`](./authorization-api.html#create) to bring back a destroyed record. Users the policy refuses don't see the revert action. The changeset diff and the payload leave out fields the user's [field policy](./authorization.html#hide-fields-from-a-user) withholds.
+
 <Image src="/assets/img/4_0/audit-logging/activity-details.webp" dark-src="/assets/img/4_0/audit-logging/activity-details-dark.webp" width="2848" height="2114" alt="An update activity detail page showing the changeset diff and payload, with breadcrumbs and title" />
 
 :::warning Missing `changeset` field
@@ -366,6 +368,124 @@ en:
 :::info
 Activities recorded before you upgraded have no origin, and neither do activities recorded by an app that hasn't run the new migration yet. Both keep working — they just read as the panel's own.
 :::
+
+### Record activity from your own code
+
+<VersionReq version="4.3.2" />
+
+Changes made outside the panel, such as in a background job, an importer, or a service object, aren't logged on their own. Record them with `Avo::AuditLogging.record`:
+
+```ruby
+# app/services/price_updater.rb
+class PriceUpdater
+  def call(product, price, user)
+    product.update!(price: price)
+
+    Avo::AuditLogging.record(
+      action: :update,
+      record: product,
+      author: user,
+      payload: {price: price}
+    )
+  end
+end
+```
+
+Avo finds the record's resource and links the activity to the record, so it shows up on the record's timeline like a change made in the panel. `payload` can be any hash; Avo stores it as JSON.
+
+Like the panel, it only records for resources that opted in with [`self.audit_logging`](#enable-specific-resources-and-actions), and it asks your `activity` block and `actions` the same way. It returns the activity, or `nil` when audit logging is switched off or the opt-in says no. It raises `ArgumentError` when the record's model has no Avo resource, or when the record hasn't been saved yet. The activity and its link to the record are saved together, or not at all.
+
+The `actions` switches cover the panel's own actions: `index`, `new`, `create`, `edit`, `update`, `show`, `destroy`, `attach`, `detach` and `handle`. Any other action, such as `:publish`, returns `nil` unless you add it to your resource's `actions` (`actions: {publish: true}`) or pass `force: true`.
+
+Inside your `activity` block, `current_user` is the `author:` you pass, so a job gets the same answer the panel would give that user. With no `author:` it falls back to the signed-in user, which is `nil` in a job, so make the block handle `nil` if you record without an author. To record regardless of the opt-in, pass `force: true`:
+
+```ruby
+Avo::AuditLogging.record(
+  action: :update,
+  record: product,
+  author: user,
+  force: true
+)
+```
+
+`force` skips only the resource's opt-in. Nothing is recorded while audit logging is switched off globally.
+
+### Record changes no person made
+
+A background job or an importer usually has no user behind it. Leave out `author`, and let the [origin](#mark-your-own-origins) say what made the change. You don't need a placeholder user:
+
+```ruby
+# app/jobs/nightly_import_job.rb
+class NightlyImportJob < ApplicationJob
+  def perform(import)
+    Avo::AuditLogging::Origin.with("nightly_importer", record: import) do
+      import.products.each do |product|
+        product.update!(price: import.price_for(product))
+
+        Avo::AuditLogging.record(
+          action: :update,
+          record: product,
+          payload: {price: product.price}
+        )
+      end
+    end
+  end
+end
+```
+
+The record's timeline names the origin as the author, so these entries read *Nightly importer*. You can pass `origin:` (and `origin_record:`) to `Avo::AuditLogging.record` instead of wrapping the work in `Origin.with`; `origin_record:` without `origin:` raises `ArgumentError`. With no author and no origin, it raises `ArgumentError`, because the entry would not say who or what made the change. It raises the same way in an app that hasn't run the [origin migration](#_3-migrate) yet, because the origin couldn't be stored.
+
+### Log every change to a model
+
+<VersionReq version="4.3.2" />
+
+Calling `Avo::AuditLogging.record` yourself works when you know where the changes happen. To log every create, update, and delete on a model, wherever it happens (a job, an importer, another API, the console), declare `has_avo_audit_log` on the model:
+
+```ruby
+# app/models/product.rb
+class Product < ApplicationRecord
+  has_avo_audit_log
+end
+```
+
+Pass `only:` to log fewer events:
+
+```ruby
+# app/models/product.rb
+class Product < ApplicationRecord
+  has_avo_audit_log only: %i[update destroy]
+end
+```
+
+Each change is recorded after its transaction commits, against the model's Avo resource (or, for an STI subclass without one, its base class's). The model needs that resource: without one, nothing is recorded and the error goes to the Rails log. A transaction that saves a record several times records one entry with everything it changed, even when it saves the record through different copies of it, such as a `belongs_to ... touch: true` on a child. A savepoint that rolls back leaves out what it undid. An update records the attributes that changed, without `created_at` and `updated_at`, and an update that only touched those timestamps records nothing. A delete records the record's `id`, and a record created and deleted in one transaction records nothing. Attributes your app filters from its logs (`config.filter_parameters`, and `encrypts` columns) are recorded as `[FILTERED]`.
+
+When the change is made through Avo (the panel, the API, the AI chat, or an MCP client), the author is the user Avo acted for. A change made through the AI chat or an MCP client also names the chat or the connection, as Avo's own entries for them do. Elsewhere the entry has no author. It carries the origin set with [`Origin.with`](#mark-your-own-origins) when there is one, and otherwise names what was running when the record was saved:
+
+| Saved in                        | The timeline shows                    |
+| ------------------------------- | ------------------------------------- |
+| A job (Active Job)              | *Background job (Import products)*    |
+| Your own controllers, not Avo's | *App (Orders)*                        |
+| `rails console`                 | *Developer console*                   |
+| A rake task, such as `db:seed`  | *Script (db:seed)*                    |
+| Anything else                   | *System*                              |
+
+Hover the name to see the full job, controller, or task, such as `ImportProductsJob` or `Admin::OrdersController#update`. The origin is stored the same way (`job:ImportProductsJob`, `request:Admin::OrdersController#update`, `console`, `rake:db:seed`, or `model`), which is what `from_origin` takes. A rake task is stored by name only, without the arguments in brackets, since those can hold a password. To word the labels for your admins, set them in your locale file:
+
+```yaml
+# config/locales/en.yml
+en:
+  avo:
+    audit_logging:
+      origins:
+        job: "Scheduled task"
+        request: "Storefront"
+```
+
+When Avo also logs the change (the panel, the API, the AI chat, or an MCP client, on a resource that opted in with `self.audit_logging`), or you record it with `Avo::AuditLogging.record`, the record gets that one entry, not a second one from the model. An entry recorded before the save, as the panel records an update or a delete, covers that one save and not later ones. An entry recorded after the save replaces the model's and keeps its diff under `changes`. An action run is logged as the run, and the model logs the changes it made.
+
+Declaring `has_avo_audit_log` counts as opting in, so the resource's `self.audit_logging` setting isn't checked. If recording fails, the error is logged and the change is kept.
+
+Writes that skip Active Record callbacks aren't logged: `update_column`, `update_columns`, `update_all`, `insert_all`, `upsert_all`, `delete`, `delete_all`, and `dependent: :delete_all`. Use `update!` and `destroy` where the log has to see the change.
 
 ## Disable specific actions logging
 

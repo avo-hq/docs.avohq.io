@@ -147,7 +147,7 @@ The `visible` proc additionally receives `parent_record` and `parent_resource`, 
 
 Displays a count badge next to the scope's label showing how many records match the scope.
 
-The count is computed against the resource's authorization-scoped query and ignores any active search or filters, so it always reflects the whole scope.
+The count is computed against the resource's authorization-scoped query and ignores any active search or filters, so it always reflects the whole scope. It asks the same policy as the index: [`index?`](./authorization-api.html#index), or on an association panel the parent's [`view_<association>?`](./authorization-api.html#view_association).
 
 ```ruby
 # app/avo/scopes/active.rb

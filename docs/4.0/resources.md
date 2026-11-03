@@ -400,6 +400,37 @@ end
 
 If you use `devise` and update users without passing a password, stop the validation error with [`self.devise_password_optional`](./resources-api.html#self.devise_password_optional).
 
+## Warn before deleting dependent records
+
+<VersionReq version="4.3.8" />
+
+When a model removes other records on destroy, the delete confirmation says so. Avo reads the model's `dependent:` associations and adds a line under "Are you sure?":
+
+```ruby
+# app/models/author.rb
+class Author < ApplicationRecord
+  has_many :books, dependent: :destroy
+end
+
+# app/models/book.rb
+class Book < ApplicationRecord
+  has_many :reviews, dependent: :destroy
+end
+```
+
+Deleting an author then asks "Are you sure?" and adds "This will also delete 3 books and 12 reviews."
+
+There's nothing to configure. A few things to know:
+
+- The counts load when the user clicks Delete, so Index pages run no extra queries. The dialog shows "Checking related records..." until they arrive.
+- The count follows `dependent: :destroy` and `:destroy_async` down every level and counts each record once. `:delete` and `:delete_all` are counted too, but the cascade stops there because they skip callbacks. `:nullify` and `:restrict_with_*` leave records in place, so they aren't counted.
+- Records removed by a database `ON DELETE CASCADE` foreign key aren't counted, since Rails doesn't know about them. Nor are `through` associations, polymorphic `belongs_to`, composite keys, or nested associations whose scope takes the parent record.
+- The line only shows to users who are allowed to delete the record.
+- Models with no `dependent:` associations keep the plain confirmation.
+- A custom [`confirmation_message`](./custom-controls-api.html#confirmation_message) on `delete_button` is kept, with the dependents line below it.
+
+Association names come from the model's attribute translations when you have them. See [Localizing the delete confirmation](./i18n.html#localizing-the-delete-confirmation).
+
 ## Tweak the Index view
 
 Display records as a grid or on a map instead of a table with [`self.default_view_type`](./resources-api.html#self.default_view_type):
@@ -437,6 +468,8 @@ end
 ```
 
 Search, filters, sorting, pagination, and view switches then stay asynchronous inside that frame while the URL keeps in sync. Loading stays eager on association indexes and on resources with a custom index component.
+
+To add a summary or notice around the existing index UI, declare [`index_slot`](./resources-api.html#index_slot) on the resource. See [Slots](./slots.html) for partial rendering, loaded-record summaries, and custom component support.
 
 ## Record previews
 
@@ -478,6 +511,10 @@ end
 Avo will display an external link button on the record that takes the user to that URL.
 
 ## Swap the view components
+
+For Index, Show, Edit, and New customizations, try [slots](./slots.html) first. They let you add notices, summaries, or badges, and wrap, replace, or hide individual regions while keeping the rest of Avo's default view. Use `index_slot`, `show_slot`, `edit_slot`, or `new_slot` for one view, or [`form_slot`](./resources-api.html#form_slot) for both Edit and New, including validation rerenders. A full component override is only needed when the available slot boundaries do not fit your change.
+
+The [Slots guide](./slots.html#choose-the-view-and-region) covers region placement, shared form ordering, replacement precedence, builder availability, and creation-modal boundaries. Index slots retain their collection, records, pagination, and refresh behavior.
 
 Each view is rendered by a ViewComponent (`Avo::Views::ResourceIndexComponent`, `ResourceShowComponent`, `ResourceEditComponent`). Replace any of them per resource with [`self.components`](./resources-api.html#self.components):
 

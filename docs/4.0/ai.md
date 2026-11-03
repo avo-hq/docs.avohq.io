@@ -267,7 +267,9 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Per-field means the policy's field lists too.** A field the resource's policy withholds with `whitelisted_fields` / `blacklisted_fields` is not returned by any tool, not named in a record context or a confirmation card, and cannot be written. A column no field declares does not exist for the chat at all: it is not returned, filtered, sorted, grouped, searched, written, imported, or named in a schema, an inspector report or a validation message. What the panel shows or accepts without a field counts as declared: the timestamps or id a resource lists in `discreet_information` are readable, `created_at` stays a sort key whenever the column exists, and the columns a resource opens through `extra_params` are writable. Associations are reachable only through an association field the user may reach, and a model with no Avo resource is never queried or described. Undo reverses exactly what the chat did: a deleted record comes back whole, and an update or action is restored column for column, refused only where a restored column now belongs to a field the user may not write. `Avo::Current.interface` is `:ai` for the whole of a response and for a confirmed write, so a policy can withhold more from the chat than from the panel. See [Field authorization](./authorization.html#hide-fields-from-a-user).
 
-The assistant reads the same rows the resource's Index shows: its [`index_query`](./resources-api.html#self.index_query) first, then the policy scope on top. Rows, counts, grouped answers, "has any" checks, and the records a write or action can target all stay inside that set, so tenant or soft-delete scoping you put in `index_query` bounds the chat too. Avo's show page finds a record through the policy alone, so a rule that must hold on every page still belongs in the policy's scope.
+The assistant reads the same rows the resource's Index shows: its [`index_query`](./resources-api.html#self.index_query) first, then the policy scope on top. Rows, counts, grouped answers, "has any" checks, and the records a write or action can target all stay inside that set, so tenant or soft-delete scoping you put in `index_query` bounds the chat too. Avo's show page finds a record through the policy alone, so a rule that must hold on every page still belongs in the policy's scope. Reading a row's field values, its files, or its chip fields also needs [`show?`](./authorization-api.html#show) on that record: a row the user may list but not open comes back with only its id and reference.
+
+Querying on a column reads it too. A filter, a "has any" check, a sort, a grouping, or a distinct count on a column the Index doesn't show matches, counts, and orders only the rows the user may open, so a row they can only list never reveals that column through which rows come back. Columns the Index shows filter every listed row as before, and sorting by `created_at` stays a sort the Index already does. To keep this bounded, a query that would have to check more than 1,000 listed rows is refused, and the assistant asks to narrow it with a filter on a column the list shows, a scope, or a search. A resource's own [configured search](./search.html) runs as the admin runs it and isn't checked row by row. Without one, the assistant's search matches the text columns the Index shows on every row and the others only on rows the user may open; past the same 1,000 rows it searches the Index's columns alone rather than refusing. Without an authorization client every row opens, so none of this applies.
 
 The chat runs in a background job, with no request. A resource whose field definitions read request-only context (`Avo::Current.context[:account]`, `params`) can't have its field rules checked there, so the assistant refuses that resource rather than read it without them. A single field whose `visible:` proc raises is treated as hidden.
 
@@ -321,6 +323,26 @@ Ask for it in whatever words you'd use with a colleague — "archive the Orbit p
 
 **The action's messages are the outcome.** Whatever your action reports — `succeed`, `warn`, `inform`, `error` — lands on the card once it has run, each with its severity, the same messages the Avo UI would toast. An action may report several at once, and an `error` message is part of the outcome, not a failure of the run. The values the action was handed stay on the settled card too, folded behind a click.
 
+**Get the chat window out of the way.** If your action leads the user somewhere else, or there's nothing left to say once it has run, call `close_chat_window` from `handle` and the window minimizes once the run is confirmed. The chat stays in the bar, one click away. Pass `remove_from_bar: true` to take it off the bar as well; the chat itself isn't deleted and stays in the recent-chats menu.
+
+```ruby
+# app/avo/actions/publish_post.rb
+class Avo::Actions::PublishPost < Avo::BaseAction
+  def handle(query:, **)
+    query.each { |post| post.update!(published_at: Time.current) }
+
+    succeed "Published"
+    close_chat_window
+  end
+end
+```
+
+```ruby
+close_chat_window(remove_from_bar: true)
+```
+
+It composes with the other response methods: `reload` together with `close_chat_window` reloads the page and minimizes the window. Run from the Actions dropdown instead of the chat, the action ignores it.
+
 [Actions that run without records](./actions.html#run-an-action-without-records) work too — the assistant runs them with no record at all.
 
 ### Finding an action without naming its resource
@@ -340,7 +362,7 @@ Naming the action alone is enough when one resource registers it. When two do, t
 Two gates, both yours, both checked when the run is proposed and again when you confirm it:
 
 - **`act_on?` on the record**, the same policy method that decides whether the Actions dropdown appears in the UI. It's checked per record, so an owner-gated policy behaves in the chat exactly as it does on the page.
-- **The action's own `self.authorize` block**, evaluated with the record in place.
+- **The action's own `self.visible` and `self.authorize` blocks**, evaluated with the record in place. An action the panel would hide from the signed-in user is left out of the assistant's lists too.
 
 :::warning A policy with no `act_on?` refuses every action
 `act_on?` fails closed. If a resource has a policy that doesn't define it, the assistant can't run that resource's actions — the same way Avo hides the Actions dropdown. Add `act_on?` to the policy to allow it.
@@ -616,7 +638,7 @@ Set neither and the assistant gets every tool the gem ships. The roster is assem
 config.ai.excluded_tools = [:delete_record, :update_record]
 ```
 
-The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_skill`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
 
 `update_record` and `update_records` are separate names, so excluding the first leaves the second attached. An app that excludes `update_record` to stop the assistant writing columns wants both.
 
@@ -889,13 +911,48 @@ repeats from it. The tools accept either.
 
 ## Open the chat
 
-The chat bar sits at the bottom of every Avo page. **Cmd+J** (or **Ctrl+J**) opens it from anywhere, including from inside a field you're typing in — that's the point, so you can pull the assistant up mid-edit without losing your place. Clicking **Agent** does the same.
+The chat bar sits at the bottom of every Avo page. **Cmd+J** on macOS (**Ctrl+J** elsewhere) opens it from anywhere, including from inside a field you're typing in — that's the point, so you can pull the assistant up mid-edit without losing your place. Clicking **Agent** does the same.
 
 Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. Drag a pill to reorder them. The chat window lines its end edge up with the pill it was opened from and slides across when you switch, so it's always clear which conversation you're looking at. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. The open chats, their order, and the collapsed state are all remembered per device.
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way. The **×** in the title bar does the same thing: it closes the window, not the conversation. To take a chat out of the dock, use the × on its own pill; the conversation itself is kept either way, and it's still on your [chat list](#full-page-chats).
 
 To clear the dock in one go, open the history menu (the clock button next to **Agent**) and pick **Clear open chats** at the bottom. It does what every pill's × does, all at once, and closes the chat window: the pills go, and every conversation stays in the history list right above the button, one click from reopening. The entry only shows when there's at least one pill to close.
+
+### Use only full-page chats
+
+To offer AI chat only through your menu, disable the floating bar in your initializer:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.ai.chat_bar_enabled = false
+end
+```
+
+The bar is enabled by default. Setting this to `false` removes the dock, its Cmd+J / Ctrl+J shortcut,
+and the controls that open or minimize a conversation into the bar. Full-page chats, their composers,
+and existing conversations remain available.
+
+With the default configuration, the floating **Agent** dock appears on resource pages too.
+The red outline highlights it in the bottom-right corner of this Projects page:
+
+<Image src="/assets/img/4_0/ai/chat-bar-enabled.webp" width="1280" height="820" alt="The Projects index with a red outline highlighting the floating Agent dock in the bottom-right corner. The sidebar Chats link is also visible." />
+
+With `config.ai.chat_bar_enabled = false`, the same page has no floating dock. The red outline marks
+where it used to be. The **Chats** link in the sidebar still opens the full-page chat list:
+
+<Image src="/assets/img/4_0/ai/chat-bar-disabled.webp" width="1280" height="820" alt="The same Projects index with the floating Agent dock removed. A red outline marks its former bottom-right location, while the sidebar Chats link remains visible." />
+
+Add a link to the end-user chat list inside your `config.main_menu` block:
+
+```ruby
+# config/initializers/avo.rb
+link "AI chat", path: "/admin/chats", icon: "tabler/outline/message"
+```
+
+Replace `/admin` if your Avo mount path differs. This opens the full-page chat product, not the
+`avo_ai/chats` resource used by super admins to inspect raw chat records.
 
 ### Closing idle tabs automatically
 
@@ -921,7 +978,7 @@ The button is there before you've sent anything, too. On the new-chat view it po
 A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message. The greeting text is translated through i18n (`avo.ai.empty_state.title` / `.subtitle`) like any other copy; the suggested prompts themselves are generic by default but can be replaced with your own via [`config.ai.empty_state_suggestions`](#configuration).
 
 :::info
-Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {enabled: false}` in `config/initializers/avo.rb`, the shortcut is off along with the rest — the Agent button still works.
+The shortcut is `ai.toggle_assistant` in Avo's hotkey settings. If you've set `config.hotkeys = {enabled: false}` in `config/initializers/avo.rb`, it is off along with the rest — the Agent button still works — and you can [rebind or disable it](./keyboard-shortcuts.html#change-or-disable-a-shortcut) on its own through `config.hotkeys[:bindings]`.
 :::
 
 ## Full-page chats
@@ -930,7 +987,7 @@ Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` 
 
 The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Ai::Chat` resource from the sidebar.
 
-Avo's resource hotkeys work here too: **C** starts a new chat from the list or from a conversation, and **I** takes you from a conversation back to the list.
+Avo's resource hotkeys work here too: **C** starts a new chat from the list or from a conversation, and **I** takes you from a conversation back to the list. They are `resource.new` and `resource.go_to_index`, so a rebinding in `config.hotkeys[:bindings]` applies here as well.
 
 ## The conversation menu
 
@@ -963,7 +1020,7 @@ The one thing to check is the model: reading an image takes a vision model. The 
 
 ### What the composer accepts
 
-By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files — markdown, plain text, CSV, TSV, JSON — which it reads in windows. Files can be up to 25 MB.
+By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files - markdown, plain text, CSV, TSV, JSON - which it reads in windows. Files can be up to 25 MB.
 
 Anything else is refused as you add it, before it uploads, with a line under the draft naming the file and why — so a 2 GB video never leaves the browser. The same rule is checked again when the message is sent, so a request that skips the composer can't attach a file it would have refused.
 
@@ -1042,6 +1099,10 @@ Summarise the attached record as a changelog entry…
 ```
 
 `name` works in place of `title`, so an agent `SKILL.md` pastes in unchanged. Other frontmatter keys are ignored. Without frontmatter there is no title to read, and the import says so rather than guessing one. Importing is creating — the action is available to whoever passes `create?` on the skill policy.
+
+You can also ask the chat to **"Add this as a skill"**, followed by the skill's text, or upload a `.md` or `.txt` file and ask **"Import the attached file as a skill"**. The assistant proposes it through `create_skill`, and a card shows the title, the description and the full text. Nothing is saved until you click **Save skill**, because a skill's text becomes instructions for every chat that picks it. The skill policy's `create?` permission is checked when the card is proposed and again when you confirm it. Files are imported directly from this conversation, without the assistant rewriting their contents. For plain instructions without frontmatter, give a title or let the assistant supply one. An existing skill with the same title is never overwritten.
+
+Only `.md` and `.txt` files are supported; `create_skill` returns an error for any other file. Additional frontmatter settings do not install tools, dependencies, or scripts. The card warns that everyone who can use the chat can pick the skill. A saved skill is listed in the conversation's write history, so the assistant can undo it. The assistant can't edit an existing skill; change it on the Skills page. Creating a skill does not apply it to the current chat; reload the page to refresh the skills menu, then select it when you want to use it.
 
 **Export skill**, on a skill's own page, goes the other way: it downloads that skill as a `.md` file in exactly this shape, ready to import into another app or keep in a repository.
 

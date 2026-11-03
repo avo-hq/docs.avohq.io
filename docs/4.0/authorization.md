@@ -85,7 +85,7 @@ Each method answers one question for the current `user` and `record`. Avo calls 
 | [`new?`](./authorization-api.html#new) / [`create?`](./authorization-api.html#create) | The "Create new" button, and saving a new record |
 | [`edit?`](./authorization-api.html#edit) / [`update?`](./authorization-api.html#update) | The edit button, and saving changes |
 | [`destroy?`](./authorization-api.html#destroy) | The delete button and deleting |
-| [`act_on?`](./authorization-api.html#act_on) | The actions dropdown |
+| [`act_on?`](./authorization-api.html#act_on) | The actions dropdown, and running actions |
 | [`reorder?`](./authorization-api.html#reorder) | The [record reordering](./record-reordering.html) controls |
 | [`search?`](./authorization-api.html#search) | The resource search input |
 | [`preview?`](./authorization-api.html#preview) | The [preview field](./fields/preview.html) endpoint |
@@ -198,7 +198,7 @@ Methods for panel-level controls (`view_`, `create_`, `attach_`, `act_on_`) get 
 
 If you want to hide the whole comments panel, use `view_comments?`. If you want to hide only the view button on each row, use `show_comments?`.
 
-These methods only control buttons. Access to the comment's own pages is still decided by `CommentPolicy`, so if `CommentPolicy#edit?` allows it, a user can reach the edit page by URL even when `edit_comments?` hides the button.
+These methods only control buttons. Access to the comment's own pages is still decided by `CommentPolicy`, so if `CommentPolicy#edit?` allows it, a user can reach the edit page by URL even when `edit_comments?` hides the button. Likewise, running an action from the comments panel also needs `CommentPolicy#act_on?` for each selected comment, whatever `act_on_comments?` allows.
 
 ### Reuse another policy for an association
 
@@ -377,7 +377,7 @@ The policy removes fields first, then any `visible:` block narrows what's left. 
 
 ### Limits
 
-- **Unlicensed or without a client, it's inert.** Without the `avo-authorization` add-on on your license, or while [`authorization_client`](./authorization-api.html#authorization_client) is `nil`, every policy check is skipped, these lists included. They aren't a security boundary in either case.
+- **Without a client, it's inert.** While [`authorization_client`](./authorization-api.html#authorization_client) is `nil`, or left unset on a license without the `avo-authorization` add-on, every policy check is skipped, these lists included, so they aren't a security boundary. A client your initializer sets on a license without the add-on refuses every resource instead; see [When the license lapses](#when-the-license-lapses).
 - **Only Avo's surfaces.** `record.ssn` in a custom partial, a `self.search[:item]` block, a background job or raw SQL reads the attribute regardless.
 - **A column no field declares can't be governed.** To govern a column, declare a field for it.
 - **"May see but may not write"** isn't expressible in one list. See [Let a user see a field but not change it](#let-a-user-see-a-field-but-not-change-it).
@@ -470,6 +470,22 @@ end
 
 :::warning
 With `explicit_authorization` on, adding a policy with only `destroy?` denies every other method, so the resource disappears from the sidebar. Define every method whose control you want to show.
+:::
+
+## When the license lapses
+
+Your policies run only while your license includes the `avo-authorization` add-on. If your initializer sets [`authorization_client`](./authorization-api.html#authorization_client) and the license doesn't include the add-on, Avo fails closed instead of skipping your policies:
+
+- every resource is refused, and lists come back empty;
+- show and edit pages answer `404`;
+- a banner in the panel explains why.
+
+That covers a lapsed or downgraded license, and a development, test or CI environment that runs without your license key. The [license status page](./license-troubleshooting.html#check-the-license-status-page) stays reachable, so you can check the license from the panel.
+
+If your initializer has no `authorization_client` line (Avo then uses `:pundit`), or sets it to `nil`, an unlicensed app skips your policies instead, and anyone who can sign in to Avo can reach everything.
+
+:::tip
+If every resource is refused at once, check the license before the policies.
 :::
 
 ## Debug a denied action

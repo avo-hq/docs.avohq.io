@@ -13,7 +13,7 @@ The `avo-api` add-on exposes a JSON REST API for every Avo resource. It reuses y
 This page covers installation, mounting, API tokens and authentication, reading and writing data, token entitlements, authorization, how the current user is established, and managing tokens in the panel. Every generator, hook, and option is in the [API reference](./rest-api-api.html).
 
 :::info Add-on
-The REST API ships as the separate `avo-api` gem. [See the add-on page →](https://avohq.io/addons/api)
+The REST API ships as the separate `avo-api` gem. On [avohq.io/pricing](https://avohq.io/pricing) the add-on is called **API**; earlier pages and invoices may call it "JSON API" or "REST API". It's the same add-on, and it includes the [CLI](./cli.html). [See the add-on page →](https://avohq.io/addons/api)
 :::
 
 ## Installation
@@ -274,7 +274,7 @@ Raise [`Avo::Api::AuthenticationError`](./rest-api-api.html#Avo::Api::Authentica
 
 Once the [tokens table is installed](#install-the-api-tokens-table), an **API tokens** entry appears in the Avo sidebar. Create a token there with a name and, optionally, an expiry date.
 
-The token belongs to whoever created it. The form has no owner field, and a token cannot be moved to another owner afterwards, so a crafted request cannot mint a credential belonging to somebody else.
+The token belongs to whoever created it, the user [`config.current_user_method`](./authentication.html) returns; without one, creating a token fails with "Owner must exist". The form has no owner field, and a token cannot be moved to another owner afterwards, so a crafted request cannot mint a credential belonging to somebody else.
 
 **The secret is shown once**, on the new token's page immediately after creation, with a copy button. Only a digest of it is stored, so nothing can show it again — not a console, not a support tool, not a database dump. Miss it and there is no recovery beyond minting a replacement and revoking the one you lost.
 
@@ -423,7 +423,7 @@ The index has no supported way to select records by value. To find records match
     "id": 1,
     "name": "Development Team",
     "url": "https://dev.company.com",
-    "admin": { "id": 5, "label": "John Doe" },
+    "admin": { "id": "5", "label": "John Doe" },
     "team_members": { "count": 12 }
   }
 }
@@ -436,8 +436,9 @@ Fields are respected according to their view visibility, and typed values are se
 | Field type | Shape |
 | --- | --- |
 | Text, number, boolean, date/datetime | The raw value |
-| `belongs_to` | `{ "id": 5, "label": "John Doe" }` |
-| `has_many`, `has_one` | `{ "count": 12 }` (or `{ "id": 5 }` for a single loaded record) |
+| `belongs_to` | `{ "id": "5", "label": "John Doe" }`. The `id` is the related record's `to_param`, always a string: the slug or prefixed id where the model has one |
+| `has_many`, `has_and_belongs_to_many` | `{ "count": 12 }`, counted through the related resource's `Scope` |
+| `has_one` | `{ "id": "5" }`, the related record's `to_param`, or `null` when the related resource's `Scope` hides it |
 | `file` | `{ "filename": "…", "content_type": "…", "byte_size": 1234, "url": "…" }` |
 | `files` | a list of those objects, one per attachment |
 
@@ -473,14 +474,14 @@ Send field data as JSON, nested under the resource's `param_key`. It is usually 
 curl -X POST https://example.com/api/resources/v1/teams \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
-  -d '{ "team": { "name": "Mobile Team", "url": "https://mobile.company.com", "admin_id": 5 } }'
+  -d '{ "team": { "name": "Mobile Team", "url": "https://mobile.company.com", "admin_id": "5" } }'
 ```
 
 On success the response is `201 Created` with the record serialized on its `:show` view:
 
 ```json
 {
-  "record": { "id": 3, "name": "Mobile Team", "url": "https://mobile.company.com", "admin": { "id": 5, "label": "John Doe" } }
+  "record": { "id": 3, "name": "Mobile Team", "url": "https://mobile.company.com", "admin": { "id": "5", "label": "John Doe" } }
 }
 ```
 
@@ -536,8 +537,8 @@ Different field types accept the formats you'd expect:
 | Number | `42`, `19.99` |
 | Boolean | `true`, `false` |
 | Date / datetime | `"2024-01-15"`, `"2024-01-15T10:30:00Z"` |
-| `belongs_to` | the foreign key: `"admin_id": 5` |
-| Polymorphic `belongs_to` | both parts: `"reactable_type": "Post"`, `"reactable_id": 7` |
+| `belongs_to` | the foreign key, as the `id` a read returns: `"admin_id": "5"` |
+| Polymorphic `belongs_to` | both parts: `"reactable_type": "Post"`, `"reactable_id": "7"` |
 | `select` with `multiple`, `checkbox_list`, `boolean_group` | a list: `"tags": ["ops", "eu"]` |
 | `location` on two columns | an object keyed by its `stored_as` columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
 | `tags`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"home": "44.43,26.10"` |
@@ -675,7 +676,7 @@ Avo.configure do |config|
 end
 ```
 
-So with the default setting, **the API controller's `current_user` method is what the policies see**. Make that method return the authenticated user:
+So with that setting, **the API controller's `current_user` method is what the policies see**. Make that method return the authenticated user:
 
 ```ruby
 # app/controllers/avo/api/resources/v1/base_resources_controller.rb
@@ -765,6 +766,7 @@ Your existing Pundit policies apply to the API automatically — the same `Scope
 
 - **Index** resolves through the resource's `Scope`, so `GET /api/resources/v1/comments` returns only the records that user may see.
 - **Show, update, and destroy** look the record up through the same scope, so a record outside it is **`404 Not Found`**, not a `403` — the API doesn't confirm that an out-of-scope record exists.
+- **Association fields** appear only when the record's policy allows [`view_<field>?`](./authorization-api.html#view_association). Under [`explicit_authorization`](./authorization-api.html#explicit_authorization) they are also hidden when the policy doesn't define the method, as on the panel.
 
 ```ruby
 # app/policies/comment_policy.rb
@@ -786,6 +788,8 @@ Policy scoping requires all three of the following. If any is missing, the query
 | The `avo-authorization` add-on installed | `Gemfile` |
 | The `avo-authorization` feature enabled on your license | Your Avo plan |
 | An authorization client configured | `config.authorization_client = :pundit` |
+
+One exception: when your initializer sets a client and your license lacks the add-on, the API returns no records at all, and every policy method answers `403` with `reason: "policy"`. See [When the license lapses](./authorization.html#when-the-license-lapses).
 
 :::info A `nil` user fails differently
 Those three are configuration — miss one and the query is silently unscoped. A missing **user** is the opposite failure: with Pundit configured, scoping still runs, so `nil` reaches your `Scope#resolve` and the usual `user.admin?` raises `NoMethodError`. You get a 500, not a leak — the same trap described under [Authentication examples](#authentication-examples).
@@ -915,7 +919,7 @@ resource :"avo_api/token", visible: -> {
 The model is `Avo::Api::Token`, so the policy is `Avo::Api::TokenPolicy` at `app/policies/avo/api/token_policy.rb` — the ordinary derivation, with nothing registered on the resource to redirect it.
 
 :::danger Without an authorization client, every panel user can mint a token
-And a token carries its owner's full privileges over every record. If `avo-authorization` isn't installed, isn't enabled on your license, or no `config.authorization_client` is set, nothing stands between a user who can sign in to Avo and a credential that reaches your whole API. That's your app's configuration rather than anything this feature decides, but decide it deliberately.
+And a token carries its owner's full privileges over every record. If `avo-authorization` isn't installed, `config.authorization_client` is `nil`, or the add-on isn't on your license and your initializer sets no client, nothing stands between a user who can sign in to Avo and a credential that reaches your whole API. That's your app's configuration rather than anything this feature decides, but decide it deliberately.
 :::
 
 The opposite is just as true. With [`config.explicit_authorization`](./authorization-api.html#explicit_authorization) at its default of `true`, a resource whose policy class is missing is **denied**, so the token resource is unreachable until you write one — the same rule that applies to every other resource in that app.

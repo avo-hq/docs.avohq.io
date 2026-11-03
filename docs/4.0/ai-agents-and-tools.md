@@ -46,7 +46,8 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 | `count_records`              | Counts records — a total, per value, per day, week or month, distinct values, or within one parent record — with the same filters, scopes, search and field rules as `active_record_query`. Returns numbers only, never a row | read-only         |
 | `active_storage_insights`    | Storage reports — totals, orphans, duplicates, growth, biggest files — and finding/showing files                     | read-only         |
 | `active_storage_attachment`  | Attaches or detaches a Media Library blob (or a chat upload) on a record's attachment; can also fetch a URL onto one | immediately¹      |
-| `read_file`                  | Reads a markdown, text, CSV, TSV, or JSON file in windows — a file you uploaded in the chat, a file on a record you can read, or a [Media Library](./media-library.html) file — by blob id or filename | read-only         |
+| `read_file`                  | Reads a markdown, text, CSV, TSV, or JSON file in windows — a file you uploaded in the chat, a file on a record you can open, or a [Media Library](./media-library.html) file — by blob id or filename | read-only         |
+| `create_skill`               | Proposes a reusable skill from pasted instructions or a `.md` or `.txt` upload in this chat; respects the skill creation policy | after you confirm |
 | `create_record`              | Creates a record                                                                                                     | immediately       |
 | `update_record`              | Changes a record's attributes                                                                                        | after you confirm |
 | `update_records`             | Proposes the same field changes across many records of one resource, as a single card                                | after you confirm³ |
@@ -103,7 +104,7 @@ Every result the query, write, and action tools return carries the resource it t
 
 It is sent once per resource per turn, and only for resources the signed-in user is allowed to list. `resource_inspector` remains for the deeper report — field types, a resource's actions and filters, its associations and attachments — when the assistant wants structure it cannot get from a result. Excluding it costs you that report, not the grounding: every result still comes back with its schema.
 
-`run_action` adds two checks of its own: the resource's `act_on?` policy method and the action's `self.authorize` block, both checked when the run is proposed and again when you confirm it. See [What it's allowed to run](./ai.html#what-it-s-allowed-to-run).
+`run_action` adds two checks of its own: the resource's `act_on?` policy method and the action's `self.visible` and `self.authorize` blocks, both checked when the run is proposed and again when you confirm it. See [What it's allowed to run](./ai.html#what-it-s-allowed-to-run).
 
 ## Renaming conversations
 

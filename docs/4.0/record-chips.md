@@ -88,7 +88,7 @@ Dynamic values appear exactly where `dynamic_fields` is declared and render mute
 repeated when a declared part already contains that value. If the query requests no permitted
 field, the declared chip remains unchanged.
 
-Use [`only`](./record-chips-api.html#only) to offer a small set or [`except`](./record-chips-api.html#except) to exclude unsuitable readable fields. Authorization, field policy, and `visible:` always win. Unknown fields and arbitrary record methods are ignored.
+Use [`only`](./record-chips-api.html#only) to offer a small set or [`except`](./record-chips-api.html#except) to exclude unsuitable readable fields. Authorization, field policy, and `visible:` always win: a record the viewer may not open ([`show?`](./authorization-api.html#show)) gets no dynamic fields. Unknown fields and arbitrary record methods are ignored.
 
 Call `dynamic_fields false` when conditional Ruby should explicitly turn the feature off:
 
