@@ -241,7 +241,7 @@ end
 
 Each entry shows a compact relative time — hover over an entry to reveal its full date and time. Clicking an entry opens a detailed page, with the payload when the entry has one.
 
-<VersionReq version="4.3.1" /> The activity's page is titled after the record it changed, such as *Update on Product #123*, or *Update on Product #123 and 2 more* when it changed several, and its **Record** field links back to that record. An action run keeps the action's name, such as *Handle on ChangePrice*, and its **Impacted records** list every record it ran on. The activity list shows the same link in its **Record** column. The payload is pretty-printed when it holds JSON, and shown as stored when it doesn't.
+<VersionReq version="4.3.2" /> The activity's page is titled after the record it changed, such as *Update on Product #123*, or *Update on Product #123 and 2 more* when it changed several, and its **Record** field links back to that record. An action run keeps the action's name, such as *Handle on ChangePrice*, and its **Impacted records** list every record it ran on. The activity list shows the same link in its **Record** column. The payload is pretty-printed when it holds JSON, and shown as stored when it doesn't.
 
 <Image src="/assets/img/4_0/audit-logging/hover-activities.webp" dark-src="/assets/img/4_0/audit-logging/hover-activities-dark.webp" width="356" height="422" alt="The History activity timeline card showing compact relative timestamps" />
 
