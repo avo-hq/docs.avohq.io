@@ -250,8 +250,6 @@ end
 
 ## Describe the selected scope in the header
 
-<VersionReq version="4.3.2" />
-
 The resource reads the scope its index shows through `resource.active_scope`: the scope picked in the tab bar, or the [default](./scopes-api.html#default) one when none is picked. It is `nil` on the `All` tab. Use it to make the index header say what the current tab lists, for example by repeating the scope's [`description`](./scopes-api.html#description):
 
 ```ruby{3-5}
@@ -268,7 +266,7 @@ class Avo::Resources::License < Avo::BaseResource
 end
 ```
 
-The header follows every tab change, including on a [lazy-loaded index](./resources-api.html#self.index_view_loading) (`avo` <Version version="4.3.11" /> or later).
+`resource.active_scope` needs `avo-scopes` `4.3.2` or later. The header follows every tab change, including on a [lazy-loaded index](./resources-api.html#self.index_view_loading) from `avo` <Version version="4.3.11" />.
 
 ## Full example
 
