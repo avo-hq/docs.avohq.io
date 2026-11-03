@@ -25,7 +25,7 @@ Declare slots inside the resource class. Each region supports `before_REGION` an
 
 | Method | Views | Regions |
 | --- | --- | --- |
-| [`index_slot`](./resources-api.html#index_slot) | Index, including association index panels | `cards`, `header`, `title`, `toolbar`, `collection`, `records`, `pagination` |
+| [`index_slot`](./resources-api.html#index_slot) | Index, including association index panels | `cards`, `header`, `title`, `controls`, `toolbar`, `collection`, `records`, `pagination` |
 | [`show_slot`](./resources-api.html#show_slot) | Show | `cards`, `header`, `title`, `controls`, `body` |
 | [`edit_slot`](./resources-api.html#edit_slot) | Edit, including update validation rerenders | `cards`, `header`, `title`, `controls`, `body`, `form` |
 | [`new_slot`](./resources-api.html#new_slot) | New, including create validation rerenders | `cards`, `header`, `title`, `controls`, `body`, `form` |
@@ -37,7 +37,7 @@ The generic [`view_slot`](./resources-api.html#view_slot) takes `:index`, `:show
 
 <VersionReq version="4.3.6" />
 
-Use `index_slot` to add a summary, notice, or badge around the existing listing. Index has seven regions and fourteen additive positions; it does not gain the single-record views' `body`, `controls`, or `form` regions.
+Use `index_slot` to add a summary, notice, or badge around the existing listing. Index has eight regions and sixteen additive positions; it does not gain the single-record views' `body` or `form` regions.
 
 Pass partial locals explicitly. Avo does not add them automatically:
 
@@ -50,7 +50,7 @@ Pass partial locals explicitly. Avo does not add them automatically:
 
 Slots have no automatic wrapper or spacing. Use your own markup and classes. The `before_title` and `after_title` positions sit inline beside the title, so return inline content such as a badge rather than a full-width panel.
 
-See the [position reference](./resources-api.html#index_slot) for all fourteen positions and their placement. Register multiple blocks at a position to render them in registration order. A child resource keeps inherited registrations and can add its own without changing its parent or siblings.
+See the [position reference](./resources-api.html#index_slot) for all sixteen positions and their placement. Register multiple blocks at a position to render them in registration order. A child resource keeps inherited registrations and can add its own without changing its parent or siblings.
 
 Use `before_collection` / `after_collection` for full-width content outside the complete table or grid and its paginator. Use `before_records` / `after_records` immediately around the records, inside the card for tables. Title slots are inside the header and pagination slots are inside the table footer. These are insertion points inside existing areas, not replacements for their built-in content.
 
@@ -111,7 +111,7 @@ class Avo::Resources::Project < Avo::BaseResource
 end
 ```
 
-`before_form` and `after_form` render outside the form, with `form` set to `nil`. Cards are outside the form too. Inside the `form` region and its nested `body`, `header`, `title`, and `controls` regions, `form` is the current Rails builder. Show and Index always have `form: nil`. Do not open another form inside a slot or put inputs in outside-form hooks expecting them to submit with Avo's form.
+`before_form` and `after_form` render outside the form, with `form` set to `nil`, except in belongs-to creation modals. Cards are outside the form too. Inside the `form` region and its nested `body`, `header`, `title`, and `controls` regions, `form` is the current Rails builder. Show and Index always have `form: nil`. Do not open another form inside a slot or put inputs in outside-form hooks expecting them to submit with Avo's form.
 
 ### Choose a shared or view-specific replacement
 
@@ -121,7 +121,7 @@ A replacement declared with `edit_slot` or `new_slot` takes precedence over the 
 
 In belongs-to creation modals, `new_slot` and shared `form_slot` support title, body, controls, and form hooks. Main `header` hooks deliberately do not run: the modal's native chrome, close control, and ARIA structure remain protected. Title additions sit inline in the modal heading; controls additions appear in its footer.
 
-The modal body's default already excludes the header. Its title and controls are outside the body, so replacing the modal body does not remove those hooks. Both receive the current form builder because Avo's form wraps the modal. Cards, `before_form`, and `after_form` remain outside that form and have no builder.
+The modal body's default already excludes the header. Its title and controls are outside the body, so replacing the modal body does not remove those hooks. Both receive the current form builder because Avo's form wraps the modal. `before_form` and `after_form` move inside the dialog, around the form region, so they are inside that form and receive the builder. Don't render a nested form or `button_to` from them. Cards remain outside the form and have no builder.
 
 On normal form pages, controls hooks also render at the optional form footer when [`config.buttons_on_form_footers`](./resources-api.html#config.buttons_on_form_footers) is enabled. Do not use globally fixed HTML IDs or assume a controls block runs only once.
 
@@ -167,7 +167,7 @@ Inheritance uses per-view copy-on-write registrations. Adding shared declaration
 
 ## Wrap or replace default content
 
-Use `replace: true` with a region supported by the chosen view to take ownership of it. For Index, these are `:cards`, `:header`, `:title`, `:toolbar`, `:collection`, `:records`, and `:pagination`. Show, Edit, New, and shared forms use the regions in [Choose the view and region](#choose-the-view-and-region). The generic `view_slot :index, :title, replace: true` form works too.
+Use `replace: true` with a region supported by the chosen view to take ownership of it. For Index, these are `:cards`, `:header`, `:title`, `:controls`, `:toolbar`, `:collection`, `:records`, and `:pagination`. Show, Edit, New, and shared forms use the regions in [Choose the view and region](#choose-the-view-and-region). The generic `view_slot :index, :title, replace: true` form works too.
 
 `default_content.call` returns the built-in content, so you can wrap it without copying Avo's template:
 
@@ -281,6 +281,8 @@ For replacement support, pass the default markup as a block at the named region,
 <% end %>
 <%= render_index_slot :after_records %>
 ```
+
+A subclass of `Avo::ViewTypes::TableComponent` with its own template must call `prepare_table_rows` if its resource replaces `:records` or `:collection`. Avo skips row preparation for those resources, so `@table_row_components` and `@header_fields` are `nil` until that call.
 
 Existing [custom index components](./resources-api.html#self.components) must adopt slot rendering themselves; declaring slots on the resource does not insert them into an overridden template. See [custom view types](./custom-view-types.html) for the component setup.
 

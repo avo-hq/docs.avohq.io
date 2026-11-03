@@ -223,7 +223,7 @@ Collection slots surround the whole calendar card, including its month/week cont
 
 Slots add no wrapper or styles. Use `w-full` on your wrapper to preserve the grid's full width inside the card's flex layout.
 
-The resource shell already renders cards, header, title, and toolbar slots. The calendar's internal date heading does not fire those hooks again. Calendar has no paginator, so pagination slots do not run. With no index records, core's empty-state branch supplies collection and records slots instead.
+The resource shell already renders cards, header, title, controls, and toolbar slots. The calendar's internal date heading does not fire those hooks again. Calendar has no paginator, so pagination slots do not run. With no index records, core's empty-state branch supplies collection and records slots instead.
 
 :::warning Calendar summaries
 Slot context is the standard index context: `resources` contains hydrated resources from the index page, `pagy` describes that page, and `query` is the authorized index query. The calendar independently queries the visible date range, ignoring index pagination. Do not use `resources.size` or `pagy.count` as the number of events on screen. A range summary must apply its own date-range conditions to the authorized query.

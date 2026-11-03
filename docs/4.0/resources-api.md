@@ -888,6 +888,8 @@ end
 | `:after_header` | After the entire header. |
 | `:before_title` | Inline immediately before the title, inside the header. |
 | `:after_title` | Inline immediately after the title, inside the header. |
+| `:before_controls` | Before the header controls, inside the header. |
+| `:after_controls` | After the header controls, inside the header. |
 | `:before_toolbar` | Before the toolbar location, even when the toolbar is absent. |
 | `:after_toolbar` | After the toolbar location, even when the toolbar is absent. |
 | `:before_collection` | Outside and before the complete table or grid and its paginator, or the empty state. |
@@ -899,7 +901,7 @@ end
 
 - **Type:** DSL method taking a position `Symbol`, optional `replace: true`, and a block.
 - **Default:** No registered blocks; the built-in index is unchanged.
-- **Values:** The fourteen additive positions above, or the replacement regions below when `replace: true`.
+- **Values:** The sixteen additive positions above, or the replacement regions below when `replace: true`.
 - **Validation:** An unknown position, missing block, or duplicate replacement on the same resource raises `ArgumentError` at declaration time. Region names require `replace: true`; before/after positions reject it.
 - **Order:** Additive declarations accumulate in registration order, including inherited registrations. Replacements have one owner per region, with explicit child overrides. Neither form mutates parent or sibling resources.
 - **Inheritance:** Shared declarations belong in the application's base resource, before child declarations. Addition and replacement registrations use separate per-view copy-on-write sets. Late parent registrations may not reach children that have customized the corresponding set for that view. There is no public removal or priority API. Repeating an additive declaration appends again.
@@ -928,6 +930,7 @@ end
 | `:cards` | Resource dashboard cards, not individual grid cards. |
 | `:header` | The header with title, description, and controls, including nested title hooks. |
 | `:title` | The title text inside its existing text-value wrapper; surrounding badges and controls are not replaced. |
+| `:controls` | The header controls from `self.index_controls` or Avo's defaults, such as Create and Actions. |
 | `:toolbar` | Scopes, search, filters, view toggles, and dynamic filters at the toolbar location. |
 | `:collection` | The complete table card or grid and its paginator, or the empty-state branch; surrounding Turbo targets remain. |
 | `:records` | The table records area or grid records, excluding pagination; the empty state for empty results. |
@@ -1011,7 +1014,7 @@ end
 - **Order:** Shared [`form_slot`](#form_slot) additions precede Edit additions at every position; declaration order is preserved within each group.
 - **Replacement precedence:** An Edit replacement wins over a shared form replacement, even if the Edit replacement is inherited and the shared form replacement belongs to a child. Its `default_content` is always Avo's built-in content, never the shared or inherited replacement.
 
-The `form` region contains the original form's contents after protected hidden referrer parameters. Replacing it retains the outer form tag, CSRF protection, HTTP method handling, and Stimulus wiring. `before_form` and `after_form` are outside the form, with no builder; cards are also outside the form. The full-page body includes the primary header and all resource items. Replacing that body without its default suppresses its nested header, title, and controls hooks.
+The `form` region contains the original form's contents after protected hidden referrer parameters. Replacing it retains the outer form tag, CSRF protection, HTTP method handling, and Stimulus wiring. `before_form` and `after_form` are outside the form, with no builder; cards are also outside the form. In belongs-to creation modals they render inside the dialog, around the form region, and so inside the form with the current builder. The full-page body includes the primary header and all resource items. Replacing that body without its default suppresses its nested header, title, and controls hooks.
 
 Controls hooks also render at the optional footer when [`config.buttons_on_form_footers`](#config.buttons_on_form_footers) is enabled. Fixed IDs in those hooks can therefore be duplicated. See [Share additions across Edit and New](./slots.html#share-additions-across-edit-and-new).
 
@@ -1053,7 +1056,7 @@ end
 - **Default:** `replace: false`; no registrations; built-in forms are unchanged.
 - **Values:** `cards`, `header`, `title`, `controls`, `body`, `form`, each supporting symmetric before/after additions or bare-region replacement with `replace: true`.
 - **Validation / output / inheritance:** Same contract as [`show_slot`](#show_slot), scoped to the shared `:form` registrations. An Edit or New replacement and a shared form replacement are not duplicates.
-- **Context:** The active [`edit_slot`](#edit_slot) or [`new_slot`](#new_slot) context. `view` identifies Edit or New, not Form. `form` is the current Rails builder only inside the form; it is `nil` for cards, `before_form`, `after_form`, and any other outside-form rendering.
+- **Context:** The active [`edit_slot`](#edit_slot) or [`new_slot`](#new_slot) context. `view` identifies Edit or New, not Form. `form` is the current Rails builder only inside the form; it is `nil` for cards and any other outside-form rendering, including `before_form` and `after_form` outside belongs-to creation modals.
 - **Order:** Shared additions always precede view-specific additions at each position, preserving registration order within each group.
 - **Replacement precedence:** Shared replacements are fallbacks. View-specific replacements win regardless of inheritance depth. `default_content.call` always means the built-in region, rendered lazily at most once per region render, not another replacement.
 

@@ -89,7 +89,7 @@ Then create the template. Keep the list Turbo Frame and expose [`index_slot`](./
 The `paginator_component` and `list_frame_id` methods are inherited from the base class. Render the paginator for populated, paginated views. Keep collection hooks inside the frame, and leave before/after hooks outside the region's replacement block so they survive a full replacement.
 :::
 
-The core resource shell already owns cards, header, title, and toolbar hooks. Do not render those again for your view's internal heading. Slot declarations do not add markup to a custom template automatically; only positions you render are available. Slots add no wrapper or styles, and replacing controls means owning their behavior.
+The core resource shell already owns cards, header, title, controls, and toolbar hooks. Do not render those again for your view's internal heading. Slot declarations do not add markup to a custom template automatically; only positions you render are available. Slots add no wrapper or styles, and replacing controls means owning their behavior.
 
 For empty index pages, `ResourceListingComponent` renders the shared empty state instead of instantiating your view-type component. Core supplies collection and records hooks around that empty state, without pagination hooks. Your component's empty branch is useful if it is rendered directly, but does not replace core's empty-index behavior. See [Slots: coverage and caveats](./slots.html#keep-slots-when-customizing-the-index) for refresh boundaries and add-on differences.
 
