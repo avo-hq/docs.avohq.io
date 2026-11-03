@@ -38,6 +38,9 @@ function transformRawMd(src, relativePath) {
 const config = {
   title: "Avo docs",
   description: "Avo Admin for Rails docs.",
+  sitemap: {
+    hostname: "https://docs.avohq.io",
+  },
   markdown: {
     image: {
       lazyLoading: true,
