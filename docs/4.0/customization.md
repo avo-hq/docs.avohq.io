@@ -126,6 +126,8 @@ end
 
 Control how much vertical space rows take up in tables and dashboard list cards with [`density`](./customization-api.html#density) — `:tight`, `:normal` (default), or `:relaxed`. Dashboard table and list cards can [override it per card](./customization-api.html#density).
 
+For interface-wide spacing and an optional user picker, use [appearance density](./appearance.html#adjust-spacing-and-corners). When `config.appearance[:density]` is omitted, it inherits this legacy setting.
+
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|

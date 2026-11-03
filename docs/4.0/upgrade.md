@@ -48,6 +48,18 @@ On the dedicated results page, `Mod+k` now focuses the navbar search, just as it
 
 ## Upgrade to `avo` `4.3.11`
 
+<Option name="Density now controls interface-wide spacing">
+
+### Breaking Change
+
+[Appearance density](./appearance-api.html#density) now covers table and grid rows, sidebar spacing, headers, titles, actions, buttons, and description fields. When `config.appearance[:density]` is omitted, it inherits legacy `config.density`, so an existing `:tight` or `:relaxed` setting applies beyond table rows. Tight uses moderated compact spacing, including a 37px description-field ID row.
+
+### Action Required
+
+**Action required:** Check existing `config.density` settings and review the affected screens. No option rename is required. To use standard spacing throughout the interface, set `density: :normal` in `config.appearance`. The optional user picker remains off unless `density_picker: true` is configured.
+
+</Option>
+
 <Option name="Session persistence also keeps the sort, the resource table page, and the selected rows">
 
 ### Breaking Change

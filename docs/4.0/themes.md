@@ -6,19 +6,22 @@ api_docs: ./themes-api.html
 
 # Themes
 
-A theme is a named, finished look for Avo: a stylesheet drawn for one color scheme, and optionally a set of partial overrides and brand assets, bundled under one id. Avo discovers every installed theme, lists it in the appearance picker with a live preview tile, remembers each user's pick, and applies the theme's scheme, partials, and assets only while it is active. Themes come from three places — the eighteen Avo ships, `app/avo/themes/` in your app, and gems — and the picker treats them all the same.
+<VersionReq version="4.3.11" />
+
+A theme is a named, finished look for Avo: a stylesheet drawn for one color scheme, and optionally a set of partial overrides and brand assets, bundled under one id. When themes are enabled, Avo discovers every installed theme, lists it in the appearance picker with a live preview tile, remembers each user's pick, and applies the theme's scheme, partials, and assets only while it is active. Themes come from three places — the twenty Avo ships, `app/avo/themes/` in your app, and gems — and the picker treats them all the same.
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.appearance = {
+    themes_enabled: true,
     theme: :coastal,                         # the default look
     themes: [:paper, :coastal, :monokai]     # what the picker offers, in this order within each group
   }
 end
 ```
 
-With no configuration at all, every install already has themes: the picker lists all eighteen built-ins, Paper (Avo's stock look) is the default, and each user's pick is remembered in a cookie.
+Themes are opt-in: [`themes_enabled`](./themes-api.html#themes_enabled) defaults to `false`. Without it, Avo keeps its stock appearance and ignores saved theme picks. With themes enabled and no restricted list, the picker offers all twenty built-ins, Paper (Avo's stock look) is the default, and each user's pick is remembered in a cookie.
 
 Paper is the one theme that is a *base* rather than a look: on Paper the user picks a neutral, an accent, and a light/dark/auto scheme. Every other theme owns those three — it is drawn for one scheme and one palette, so while it is active the neutral, accent, and scheme pickers disappear, and the scheme follows the theme (pick Dracula and the interface goes dark, whatever the OS says). Pick Paper again and the pickers come back with the user's earlier choices intact, no reload needed.
 
@@ -52,6 +55,8 @@ Open the appearance picker in the top navbar. The **Theme** section comes first:
 | Catppuccin Mocha | `catppuccin_mocha` | dark   | Pastel mocha ground, mauve accent                        |
 | Tokyo Night Day  | `tokyo_night_day`  | light  | Soft blue-grey day surfaces, blue accent                 |
 | Tokyo Night      | `tokyo_night`      | dark   | Deep navy, soft blue and cyan accents                    |
+| Redaction 50     | `redaction`       | light  | Neutral palette and Inter body text; Redaction 50 headings |
+| Playfair Display | `playfair_display` | light  | Neutral palette and Inter body text; Playfair headings and page-header descriptions |
 
 A look that exists in two schemes is two themes, one per published variant, so the picker says exactly what you get and no palette is stretched into a scheme it was never designed for. Four of the light themes keep a light navbar — the dark bar is Paper's choice, not a rule. See the [built-in themes table](./themes-api.html#built-in-themes) for the source of each palette.
 
@@ -62,6 +67,7 @@ Pass [`theme`](./themes-api.html#theme) to choose the look a user lands on befor
 ```ruby
 # config/initializers/avo.rb
 config.appearance = {
+  themes_enabled: true,
   theme: :coastal,
   themes: [:paper, :coastal, :monokai]
 }
@@ -74,6 +80,7 @@ If you want one theme and no picker at all, add `:theme` to [`lock`](./themes-ap
 ```ruby
 # config/initializers/avo.rb
 config.appearance = {
+  themes_enabled: true,
   theme: :coastal,
   lock: [:theme]
 }
@@ -119,7 +126,7 @@ bin/rails generate avo:theme ocean
       create  app/assets/stylesheets/avo/themes/ocean.css
 ```
 
-Restart the server and Ocean is in the picker. Two files carry the whole theme. The name becomes the theme id: `Ocean`, `ocean_theme`, and `OceanTheme` all produce `ocean`. A theme is drawn for one scheme, light unless you pass `--scheme dark`; a look you want in both is two themes:
+Enable themes with `themes_enabled: true`, then restart the server and Ocean is in the picker. Two files carry the whole theme. The name becomes the theme id: `Ocean`, `ocean_theme`, and `OceanTheme` all produce `ocean`. A theme is drawn for one scheme, light unless you pass `--scheme dark`; a look you want in both is two themes:
 
 ```bash
 bin/rails generate avo:theme ocean_light
@@ -198,6 +205,18 @@ Locking the theme dimension itself is the host app's call through `config.appear
 ### Fonts and images a theme uses
 
 Reference files the theme ships from the stylesheet the way you would in `avo-overrides.css`: `@font-face` for typefaces, `url()` for backgrounds. A local theme keeps them under `app/assets/`; a gem theme ships them in its own `app/assets/`. Under a strict Content Security Policy, allow the source in `font-src` for self-hosted fonts, exactly as [Change the font](./theming.html#change-the-font) describes.
+
+Use `--font-sans` for body text, `--font-heading` for headings, and `--font-description` for page-header descriptions; `--text-sm` and `--text-base` adjust the shared text sizes. Redaction 50 and Playfair Display keep Inter for body text and use their named font for headings. Playfair Display also sets `--font-description` to `var(--font-heading)`, not field help or other body text.
+
+:::warning Google Fonts and CSP
+The two typography themes load their fonts through Google Fonts, not bundled files. A strict CSP must allow `https://fonts.googleapis.com` in `style-src` and `https://fonts.gstatic.com` in `font-src`.
+:::
+
+Set `--color-background`, `--color-main-content-background`, `--color-sidebar-background`, and `--color-navbar-background` independently to distinguish the page surfaces. Main content can also carry a background image with its own size, position, and repeat through the [`--main-content-background-*` tokens](./appearance-api.html#background-images). The generated stylesheet lists the available tokens, including [density layout tokens](./appearance-api.html#density-and-roundness-variants); use it as the catalog when building a theme.
+
+## Adjust spacing and corners
+
+Set [density and roundness](./appearance.html#adjust-spacing-and-corners) independently of the theme. Their user pickers are off by default. When enabled, each offers a hover preview that reverts on leaving, Escape, or closing the picker; only a click saves the choice. Host locks can force either value for everyone.
 
 ## Override partials
 
@@ -283,7 +302,7 @@ Point your app at the checkout with `path:` while you work on it — the generat
 gem "avo-ocean_theme", path: "avo-ocean_theme"
 ```
 
-Restart the server after `bundle install` and the theme appears in the picker, exactly like a local one.
+With themes enabled, restart the server after `bundle install` and the theme appears in the picker, exactly like a local one.
 
 ### Publish it
 
@@ -336,7 +355,7 @@ Use the Avo themes guide at https://docs.avohq.io/4.0/themes.html. Run `bin/rail
 
 :::
 
-Coastal, Rose, and Sunset already ship as built-ins, so the first three prompts are for a look of your own in that direction; for the stock ones, `theme: :coastal` is the whole job. Each prompt makes one theme for one scheme; ask for a second run with the other `--scheme` if you want the pair.
+Coastal, Rose, and Sunset already ship as built-ins, so the first three prompts are for a look of your own in that direction; for the stock ones, enable themes and set `theme: :coastal`. Each prompt makes one theme for one scheme; ask for a second run with the other `--scheme` if you want the pair.
 
 ## Full example
 
@@ -368,6 +387,7 @@ end
 # config/initializers/avo.rb
 Avo.configure do |config|
   config.appearance = {
+    themes_enabled: true,
     theme: :ocean,
     themes: [:ocean, :paper, :midnight]
   }

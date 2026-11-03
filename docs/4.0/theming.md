@@ -12,7 +12,7 @@ Theming is how you make Avo look like your product — its colors, fonts, surfac
 :::tip Hand your agent these pages
 Theming and customizing draws on a handful of Avo surfaces. Give your agent any of these (or read them yourself) — together they're the full toolbox:
 
-- [Themes](./themes.html) — named, switchable looks: eighteen built-ins, `rails g avo:theme` for your own, and gems to share them
+- [Themes](./themes.html) — opt-in named, switchable looks: twenty built-ins, `rails g avo:theme` for your own, and gems to share them
 - [Custom CSS & styling](./tailwindcss-integration.html) — the [TailwindCSS integration](./tailwindcss-integration.html) and the [`avo-overrides.css` / `avo-overrides.js`](./tailwindcss-integration.html#override-styles-and-scripts-avo-overrides-css-avo-overrides-js) no-build escape hatch
 - [JavaScript & Stimulus](./javascript.html) — add behavior to any screen
 - [Asset handling](./asset-handling.html) — load your own CSS/JS through the app pipeline
@@ -58,11 +58,12 @@ This covers the palette that drives most of the interface. For everything it del
 
 ## Pick or build a theme
 
-A [theme](./themes.html) is a named, finished look — a stylesheet drawn for one scheme, optionally partials and brand assets — that shows up in the appearance picker, with a live preview, and is remembered per user. Avo ships eighteen (Paper, Coastal, Rose, Sunset, Midnight, and editor palettes such as Monokai, Dracula, Nord, and Solarized Light and Dark), so the quickest re-skin is a single line:
+A [theme](./themes.html) is a named, finished look — a stylesheet drawn for one scheme, optionally partials and brand assets — that shows up in the appearance picker, with a live preview, and is remembered per user. Avo ships twenty, including Paper, Coastal, editor palettes such as Monokai and Nord, and the Redaction 50 and Playfair Display typography themes. Themes are off by default; enable them and choose a look:
 
 ```ruby
 # config/initializers/avo.rb
 config.appearance = {
+  themes_enabled: true,
   theme: :coastal
 }
 ```

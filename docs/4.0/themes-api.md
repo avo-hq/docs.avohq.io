@@ -193,9 +193,24 @@ end
 
 These keys are set on `config.appearance` in `config/initializers/avo.rb`, alongside the options on the [Appearance API](./appearance-api.html) page.
 
+<Option name="`themes_enabled`">
+
+Enables named themes and the Theme section of the appearance picker. When disabled, saved theme choices are ignored and the stock appearance remains active.
+
+```ruby
+config.appearance = {
+  themes_enabled: true
+}
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+</Option>
+
 <Option name="`theme`">
 
-The default theme: the one a request lands on when the user has no valid pick, and the forced value when `:theme` is locked.
+The default theme when `themes_enabled: true`: the one a request lands on when the user has no valid pick, and the forced value when `:theme` is locked.
 
 ```ruby
 config.appearance = {
@@ -239,7 +254,7 @@ config.appearance = {
 }
 ```
 
-- **Type:** Array of Symbols, any subset of `[:scheme, :neutral, :accent, :theme]`
+- **Type:** Array of Symbols, any subset of `[:scheme, :neutral, :accent, :theme, :density, :roundness]`
 - **Default:** `[]`
 
 When `theme:` names a theme that is not installed, the locked value falls back to the first offered theme. The `:scheme`, `:neutral`, and `:accent` entries of the same list remove those pickers for every theme; a theme's own [`lock`](#self.lock) only hides them while that theme is active.
@@ -248,7 +263,7 @@ When `theme:` names a theme that is not installed, the locked value falls back t
 
 ## Built-in themes
 
-Eighteen themes ship with Avo, under `Avo::BuiltinThemes`. Their stylesheet blocks compile into one file, `avo/themes.css`, so `stylesheet` is `nil` on each. Paper is the only one with `lock = []`; every other built-in owns the neutral, accent, and scheme pickers and is drawn for the one scheme in the table. An editor palette that publishes two variants is two themes.
+Twenty themes ship with Avo, under `Avo::BuiltinThemes`. Their stylesheet blocks compile into one file, `avo/themes.css`, so `stylesheet` is `nil` on each. Paper is the only one with `lock = []`; every other built-in owns the neutral, accent, and scheme pickers and is drawn for the one scheme in the table. An editor palette that publishes two variants is two themes.
 
 | Id                 | Title            | Scheme | Palette                                  | Navbar |
 | ------------------ | ---------------- | ------ | ---------------------------------------- | ------ |
@@ -270,8 +285,12 @@ Eighteen themes ship with Avo, under `Avo::BuiltinThemes`. Their stylesheet bloc
 | `catppuccin_mocha` | Catppuccin Mocha | dark   | Catppuccin Mocha                         | dark   |
 | `tokyo_night_day`  | Tokyo Night Day  | light  | Tokyo Night Day                          | dark   |
 | `tokyo_night`      | Tokyo Night      | dark   | Tokyo Night                              | dark   |
+| `redaction`        | Redaction 50     | light  | Neutral palette; Inter body, Redaction 50 headings | dark |
+| `playfair_display` | Playfair Display | light  | Neutral palette; Inter body, Playfair headings and page-header descriptions | dark |
 
 Monokai, Dracula, and Nord have no upstream light variant and ship dark only. The editor palettes are reused under their licenses (MIT, and the freely reused 2006 Monokai values), credited in each class's `attribution` and in the gem's `NOTICE`.
+
+Redaction 50 and Playfair Display load through a Google Fonts stylesheet at `fonts.googleapis.com`, with font binaries from `fonts.gstatic.com`; neither font is bundled. A strict CSP must permit the stylesheet origin in `style-src` and the binaries origin in `font-src`. Playfair Display sets `--font-description` to `--font-heading` for page-header descriptions; field help and body text stay in Inter.
 
 Built-in ids are reserved: a local or gem theme with one of these ids raises at boot.
 
@@ -315,4 +334,4 @@ bin/rails generate avo:eject --partial :logo --theme ocean
 | `avo.theme` | Cookie, scoped to the Avo mount point           | The picked theme id under cookie persistence. Set by the picker; read on every request.                                                |
 | `:theme`    | The settings Hash under `persistence: :database` | The picked theme id. [`load_settings`](./appearance-api.html#load_settings) may return it and [`save_settings`](./appearance-api.html#save_settings) receives it in the partial `settings` Hash, alongside `:color_scheme`, `:neutral`, and `:accent`. |
 
-A stored value is honored only when it matches the id format and names a theme that is both installed and offered. Anything else is ignored and the request falls back to [`theme`](#theme).
+A stored value is honored only when themes are enabled, `:theme` is unlocked, and it matches the id format and names a theme that is both installed and offered. Anything else is ignored and the request falls back to [`theme`](#theme), or the stock appearance when themes are disabled. Density and roundness use separate [cookie and settings keys](./appearance-api.html#density-and-roundness).
