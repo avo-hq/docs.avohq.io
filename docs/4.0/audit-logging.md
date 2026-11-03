@@ -538,7 +538,7 @@ Writes PaperTrail doesn't version aren't logged: `update_column`, `update_column
 
 ### Pause logging for a block of code
 
-<VersionReq version="4.3.1" />
+<VersionReq version="4.3.2" />
 
 Bulk imports, data backfills, and test setup can write thousands of activities you don't need. Wrap that work in `Avo::AuditLogging.disabled` to record nothing inside the block:
 
