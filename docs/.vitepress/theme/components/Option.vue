@@ -20,8 +20,8 @@ export default {
 </script>
 
 <template>
-  <span v-if="slug !== anchor" :id="slug"></span>
   <component :is="`h${headingSize}`" :id="anchor" tabindex="-1">
+    <span v-if="slug !== anchor" :id="slug" class="option-anchor"></span>
     <span class="hidden">-> </span>
     <span v-html="html" />
     <a class="header-anchor" :href="anchorName" aria-hidden="true"></a>
