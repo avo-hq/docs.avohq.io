@@ -459,7 +459,27 @@ end
 
 Each change is recorded after its transaction commits, against the model's Avo resource (or, for an STI subclass without one, its base class's). A transaction that saves a record several times records one entry with everything it changed. An update records the attributes that changed, without `created_at` and `updated_at`, and an update that only touched those timestamps records nothing. A delete records the record's `id`. Attributes your app filters from its logs (`config.filter_parameters`, and `encrypts` columns) are recorded as `[FILTERED]`.
 
-When the change is made through Avo (the panel, the API, the AI chat, or an MCP client), the author is the user Avo acted for. Elsewhere, such as a job, the console, or your own controllers, the entry has no author and carries the origin set with [`Origin.with`](#mark-your-own-origins) when there is one, and otherwise the `model` origin, which reads as *System* on the record's timeline.
+When the change is made through Avo (the panel, the API, the AI chat, or an MCP client), the author is the user Avo acted for. Elsewhere the entry has no author. It carries the origin set with [`Origin.with`](#mark-your-own-origins) when there is one, and otherwise names what was running when the record was saved:
+
+| Saved in                        | The timeline shows                    |
+| ------------------------------- | ------------------------------------- |
+| A job (Active Job)              | *Background job (Import products)*    |
+| Your own controllers, not Avo's | *App (Orders)*                        |
+| `rails console`                 | *Developer console*                   |
+| A rake task, such as `db:seed`  | *Script (db:seed)*                    |
+| Anything else                   | *System*                              |
+
+Hover the name to see the full job, controller, or task, such as `ImportProductsJob` or `Admin::OrdersController#update`. The origin is stored the same way (`job:ImportProductsJob`, `request:Admin::OrdersController#update`, `console`, `rake:db:seed`, or `model`), which is what `from_origin` takes. To word the labels for your admins, set them in your locale file:
+
+```yaml
+# config/locales/en.yml
+en:
+  avo:
+    audit_logging:
+      origins:
+        job: "Scheduled task"
+        request: "Storefront"
+```
 
 When Avo also logs the change (the panel, the API, the AI chat, or an MCP client, on a resource that opted in with `self.audit_logging`), or you record it with `Avo::AuditLogging.record`, the record gets that one entry, not a second one from the model. An action run is logged as the run, and the model logs the changes it made.
 
