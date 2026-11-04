@@ -462,7 +462,7 @@ end
 
 Each change gets its own entry, linked to its version, so its page shows the [change log and the revert action](#enable-change-logs-and-revert-changes) like a change made in the panel. A create's page shows what the record was created with, and no revert, since there's nothing to go back to. The entry is saved in the same transaction as the change, so a change that's rolled back leaves no entry. The payload is empty, because what changed is in the change log.
 
-The resource that sets `outside_avo` is the one whose settings are asked and whose timeline shows the entries, even when another resource uses the same model. In the panel or through the API, a change the panel logs links its version to the panel's own entry, as before. A change the panel doesn't log, such as one made by an action that doesn't opt in, is logged by `outside_avo` under the signed-in user.
+The resource that sets `outside_avo` is the one whose settings are asked and whose timeline shows the entries, even when another resource uses the same model. In the panel or through the API, a change the panel logs links its version to the panel's own entry, as before. A version written while the panel logs the request, even a `show` visit, links to that entry. A change made where the panel logs nothing, such as an action that doesn't opt in, is logged by `outside_avo` under the signed-in user.
 
 The resource's opt-in is asked the same way the panel asks it. The `create`, `update`, and `destroy` switches in [`actions`](#disable-specific-actions-logging) turn single events off, and your `activity` block runs for each change. In a job or the console `current_user` is `nil`, so make the block handle `nil`. A block that raises logs the error and records nothing.
 
@@ -492,7 +492,7 @@ en:
 
 When the panel's create, the AI chat, an MCP client, or your own `Avo::AuditLogging.record` records a change on a record after the save, in the same request or job, its entry replaces the ones logged from that record's versions for the same action and links the first of those versions. A create also replaces the updates written while the record was new, such as an attachment touching it. Record after the save: an entry recorded before it is a second one.
 
-An STI subclass without its own resource is logged under its base class's, and a model with PaperTrail but no Avo resource is skipped. If recording fails, the error is logged and the change is kept.
+An STI subclass is logged under its own resource when that one sets `outside_avo`, and otherwise under its base class's resource when that one does. A model with PaperTrail but no Avo resource is skipped. If recording fails, the error is logged and the change is kept.
 
 Writes PaperTrail doesn't version aren't logged: `update_column`, `update_columns`, `update_all`, `insert_all`, `upsert_all`, `delete`, `delete_all`, and `dependent: :delete_all`. Use `update!` and `destroy` where the log has to see the change, or `record.paper_trail.update_columns(...)` to skip callbacks and still write a version. A model that has PaperTrail version its destroys after the delete (`paper_trail.on_destroy(:after)`) has its deletes skipped, because the row is gone by then.
 
