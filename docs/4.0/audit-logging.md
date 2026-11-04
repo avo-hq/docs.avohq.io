@@ -472,13 +472,13 @@ When the change is made through Avo (the panel, the API, the AI chat, or an MCP 
 
 | Saved in                        | The timeline shows                    |
 | ------------------------------- | ------------------------------------- |
-| A job's `perform` (Active Job)  | *Background job (Import products)*    |
+| A job (Active Job)              | *Background job (Import products)*    |
 | Your own controllers, not Avo's | *App (Orders)*                        |
 | `rails console`                 | *Developer console*                   |
 | A rake task, such as `db:seed`  | *Script (db:seed)*                    |
 | Anything else                   | *System*                              |
 
-Hover the name to see the full job, controller, or task, such as `ImportProductsJob` or `Admin::OrdersController#update`. The origin is stored the same way (`job:ImportProductsJob`, `request:Admin::OrdersController#update`, `console`, `rake:db:seed`, or `model`), which is what `from_origin` takes. A rake task is stored by name only, without the arguments in brackets, since those can hold a password. To word the labels for your admins, set them in your locale file:
+A job's own saves name it, its `rescue_from` handlers included. A save after a job your controller ran inline with `perform_now` names the controller. Hover the name to see the full job, controller, or task, such as `ImportProductsJob` or `Admin::OrdersController#update`. The origin is stored the same way (`job:ImportProductsJob`, `request:Admin::OrdersController#update`, `console`, `rake:db:seed`, or `model`), which is what `from_origin` takes. A rake task is stored by name only, without the arguments in brackets, since those can hold a password. To word the labels for your admins, set them in your locale file:
 
 ```yaml
 # config/locales/en.yml
@@ -490,7 +490,7 @@ en:
         request: "Storefront"
 ```
 
-The panel's create, the AI chat, and MCP clients claim the saves they record. The versions those saves write go to their own entry, which links the first one, so the record gets one entry with the change log, whether or not its resource sets `outside_avo`. Other records the save changes, such as through callbacks, are logged by `outside_avo` on their own.
+The panel's create, the AI chat, and MCP clients claim the saves they record. The versions those saves write go to their own entry, which links the first one, so the record gets one entry with the change log, whether or not its resource sets `outside_avo`. A create's entry links only a create's version. What the writer doesn't log, such as another record its callbacks change, or the records an action changes when the action doesn't opt in, is logged by `outside_avo` on its own, even when the writer raises after saving.
 
 When your own code records a change with `Avo::AuditLogging.record` on a resource that sets `outside_avo`, claim the save the same way, or the change is logged twice:
 
