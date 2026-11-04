@@ -457,7 +457,9 @@ class Product < ApplicationRecord
 end
 ```
 
-Each change is recorded after its transaction commits, against the model's Avo resource (or, for an STI subclass without one, its base class's). The model needs that resource: without one, nothing is recorded and the error goes to the Rails log. A transaction that saves a record several times records one entry with everything it changed, even when it saves the record through different copies of it, such as a `belongs_to ... touch: true` on a child. A savepoint that rolls back leaves out what it undid. An update records the attributes that changed, without `created_at` and `updated_at`, and an update that only touched those timestamps records nothing. A delete records the record's `id`, and a record created and deleted in one transaction records nothing. Attributes your app filters from its logs (`config.filter_parameters`, and `encrypts` columns) are recorded as `[FILTERED]`.
+Each change is recorded after its transaction commits, against the model's Avo resource (or, for an STI subclass without one, its base class's). The model needs that resource: without one, nothing is recorded and the error goes to the Rails log. A transaction that saves a record several times records one entry, even when it saves the record through different copies of it, such as a `belongs_to ... touch: true` on a child. An update that only touched `created_at` and `updated_at` records nothing, and neither does a record created and deleted in one transaction.
+
+Like a change made in the panel, the entry links the PaperTrail version its save wrote, so its page shows the [change log and the revert action](#enable-change-logs-and-revert-changes). That needs `has_paper_trail` on the model as well. Without it, the entry says who or what changed the record and when, but not what changed. The entry's payload is the request's params, filtered by `config.filter_parameters`, when the record was saved in one of your own controllers. A change made in the console, a job, or a rake task has no request, so its payload is empty.
 
 When the change is made through Avo (the panel, the API, the AI chat, or an MCP client), the author is the user Avo acted for. A change made through the AI chat or an MCP client also names the chat or the connection, as Avo's own entries for them do. Elsewhere the entry has no author. It carries the origin set with [`Origin.with`](#mark-your-own-origins) when there is one, and otherwise names what was running when the record was saved:
 
@@ -481,7 +483,7 @@ en:
         request: "Storefront"
 ```
 
-When Avo also logs the change (the panel, the API, the AI chat, or an MCP client, on a resource that opted in with `self.audit_logging`), or you record it with `Avo::AuditLogging.record`, the record gets that one entry, not a second one from the model. An entry recorded before the save, as the panel records an update or a delete, covers that one save and not later ones. An entry recorded after the save replaces the model's and keeps its diff under `changes`. An action run is logged as the run, and the model logs the changes it made.
+When Avo also logs the change (the panel, the API, the AI chat, or an MCP client, on a resource that opted in with `self.audit_logging`), or you record it with `Avo::AuditLogging.record`, the record gets that one entry, not a second one from the model. An entry recorded before the save, as the panel records an update or a delete, covers that one save and not later ones. An entry recorded after the save replaces the model's and keeps its link to the PaperTrail version. An action run is logged as the run, and the model logs the changes it made.
 
 Declaring `has_avo_audit_log` counts as opting in, so the resource's `self.audit_logging` setting isn't checked. If recording fails, the error is logged and the change is kept.
 
