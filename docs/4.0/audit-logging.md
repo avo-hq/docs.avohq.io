@@ -468,6 +468,12 @@ The resource's opt-in is asked the same way the panel asks it. The `create`, `up
 
 PaperTrail decides what counts as a change, so its own options apply: `only:`, `ignore:`, `if:`, and `unless:` on `has_paper_trail`, and `PaperTrail.request(enabled: false) { ... }` around an import you don't want in the log. An update that changed only `created_at` or `updated_at`, such as a `touch` from a `belongs_to ..., touch: true` child or an attached file, records nothing.
 
+A few PaperTrail settings change what the log can show:
+
+- A version whose event you renamed with `paper_trail_event` is logged under that name, so it needs its own switch in `actions`, such as `actions: {import: true}`.
+- The change log needs PaperTrail's `object_changes` column, which its installer adds with `--with-changes`. Without it, entries have no change log, and a touch can't be told from a real update, so it's logged too.
+- With `version_limit`, an entry whose version PaperTrail pruned keeps no change log.
+
 When the change is made through Avo (the panel, the API, the AI chat, or an MCP client), the author is the user Avo acted for. A change made through the AI chat or an MCP client also names the chat or the connection, as Avo's own entries for them do. Elsewhere the entry has no author. It carries the origin set with [`Origin.with`](#mark-your-own-origins) when there is one, and otherwise names what was running when the record was saved:
 
 | Saved in                        | The timeline shows                    |
