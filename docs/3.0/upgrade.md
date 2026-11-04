@@ -4,6 +4,45 @@ We'll update this page when we release new Avo 3 versions.
 
 If you're looking for the Avo 2 to Avo 3 upgrade guide, please visit [the dedicated page](./avo-2-avo-3-upgrade).
 
+## Upgrade to 3.34.0
+
+<Option name="Avo 3 works with pagy `43`">
+
+### What changed
+
+Avo 3 used to require pagy below `43`. From 3.34.0 it works with pagy `7` to `9` and with pagy `43`, and it sets no upper bound on pagy. Avo's index pages, associations and Media Library paginate the same way on every version.
+
+This means `bundle update avo` can now move your app from pagy `9` to pagy `43`. Most apps need nothing else. The cases below need a line in your `Gemfile` first.
+
+### Action Required
+
+**If your app runs on Rails 8.0, 7.1, 7.0 or 6.1, or on Rails 7.2 below 7.2.4**, keep json below `3`. Pagy `43` depends on json, so Bundler can install json `3`, and the JSON encoder of those Rails versions raises `ArgumentError` with json `3`. Rails 7.2.4 and later, and Rails 8.1, work with json `3`.
+
+```ruby
+# Gemfile
+gem "json", "< 3"
+```
+
+**If your own code uses pagy** (`Pagy::Backend`, `Pagy::Frontend`, `pagy_nav` and the other pagy `9` helpers), keep pagy `9` until you move that code to the pagy `43` API. Pagy `43` removed those modules and helpers.
+
+```ruby
+# Gemfile
+gem "pagy", "~> 9.4"
+```
+
+Pin pagy `9` the same way in two more cases.
+
+- You followed the [REST API integration guide](./guides/rest-api-integration) and override `pagy_get_items` or `pagy_get_vars`. Pagy `43` no longer calls them.
+- Your app runs on Ruby `3.2`. Ruby `3.2` can install pagy up to `43.4.4`, which is affected by the pagy advisory [GHSA-2xmw-f8j8-wfxc](https://github.com/advisories/GHSA-2xmw-f8j8-wfxc). Avo's own use of pagy isn't exposed to it, but your own code might be.
+
+**If you ejected `Avo::PaginatorComponent`** and move to pagy `43`, replace `helpers.pagy_info` with `helpers.avo_pagy_info` and `helpers.pagy_nav` with `helpers.avo_pagy_nav` in your copy. They take the same arguments and work with every pagy version Avo supports.
+
+**If you set the pagination `size` as an Array**, like `[1, 2, 2, 1]`, consider a number instead. Pagy `43` only takes a number of page links, so Avo converts the Array (`[1, 2, 2, 1]` becomes `9`) and the links can differ slightly from pagy `9`.
+
+Apps on Ruby `3.1` stay on pagy `9.4`, because pagy `43` needs Ruby `3.2` or later.
+
+</Option>
+
 ## Upgrade to 3.32.4
 
 <Option name="`config.visible` now controls Media Library access, not just the menu item">
