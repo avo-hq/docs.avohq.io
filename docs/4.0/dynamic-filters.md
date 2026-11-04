@@ -58,6 +58,8 @@ When multiple filters are applied:
 
 For example, two filters on `name` (one for "John", one for "Jane") find records where the name is either "John" `OR` "Jane". A filter on `name` for "John" plus a filter on `status` for "active" finds records where the name is "John" `AND` the status is "active".
 
+Negative conditions read the other way: several `Is not` or `Does not contain` values on one attribute are combined with `AND`, so the records match none of them.
+
 ## Filter types
 
 The filter type determines the input the user sees and the conditions they can choose from. A [text](./dynamic-filters-api#text) filter renders a text input with conditions like `Contains` or `Starts with`; a [number](./dynamic-filters-api#number) filter renders a number input with `=`, `>`, `<=`, and so on.
@@ -193,6 +195,33 @@ field :is_capital,
   }
 ```
 
+## Keep a filter in the bar
+
+If people reach for a filter all the time, set [`pinned`](./dynamic-filters-api.html#pinned) on it. Its pill sits next to "Add filter" before anyone picks a value, and stays out of the URL until it is applied.
+
+```ruby
+# app/avo/resources/ticket.rb
+field :status, as: :select, filterable: {pinned: true}
+```
+
+## Try the new filter dropdown
+
+If you want dropdowns that fit each filter type and filter as you click, with no Apply button, turn on [`simple_filters`](./dynamic-filters-api.html#simple_filters). It is off by default and becomes the default in a future release.
+
+```ruby
+# config/initializers/avo.rb
+Avo::DynamicFilters.configure do |config|
+  config.simple_filters = true
+end
+```
+
+With it on, [`inline`](./dynamic-filters-api.html#inline) lays a pinned filter's control out in the bar, and [`presets`](./dynamic-filters-api.html#presets) sets the range buttons on a date filter. [The filter dropdown](./dynamic-filters-api.html#the-filter-dropdown) lists what each type shows.
+
+```ruby
+# app/avo/resources/ticket.rb
+field :urgent, as: :boolean, filterable: {pinned: true, inline: true}
+```
+
 ## Configure the filters bar
 
 The bar itself is configured globally in the initializer — the toggle button's label, whether the bar starts expanded, and the URL param it reads from:
@@ -288,7 +317,7 @@ sv:
 
 **Condition labels** — the entries in the condition dropdown — resolve per filter type first, then fall back to `defaults`. That is why a number filter shows `=` where a text filter shows `Is`, without you having to repeat every shared label under all six types. Override a type only where it differs.
 
-**Pill conditions** are the inline phrase inside a filter pill: the `is` in `Name is "Oradea"`. They resolve `pill_conditions.<type>` → `pill_conditions.defaults` → the dropdown label, so translating only `conditions` still gets you a localized pill — you just get the dropdown's capitalization inside the sentence. A menu item and a mid-sentence fragment often inflect differently, which is why the two are separate.
+**Pill conditions** are the phrase inside a filter pill: the `is` in `Name | is | Oradea`. They resolve `pill_conditions.<type>` → `pill_conditions.defaults` → the dropdown label, so translating only `conditions` still gets you a localized pill — you just get the dropdown's capitalization inside the sentence. A menu item and a mid-sentence fragment often inflect differently, which is why the two are separate.
 
 :::warning Condition labels must be unique within a filter type
 The condition dropdown is built from a `label => condition_key` hash, so two conditions that translate to the same string would collapse into one and quietly disappear from the dropdown. Avo raises `Avo::DynamicFilters::DuplicateConditionLabelError` instead, naming the filter type and the duplicated label.

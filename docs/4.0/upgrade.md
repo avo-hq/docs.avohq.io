@@ -4,6 +4,33 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
+## Upgrade to `avo-dynamic_filters` `4.3.2`
+
+<Option name="Filter pills show the name, condition and value as separate segments">
+
+### What changed
+
+A pill reads `Name | is | Oradea` rather than `Name is "Oradea"`, without the quotes. "Add filter" and "Reset filters" sit after the pills.
+
+### Action Required
+
+None, unless a system test or custom CSS relies on the old pill text or on the position of those two buttons.
+
+</Option>
+
+<Option name="Several negative values on one filter exclude all of them">
+
+### What changed
+
+Several `Is not` or `Does not contain` values on one attribute are now combined with `AND`, as [How conditions combine](./dynamic-filters.html#how-conditions-combine) describes. They used to be combined with `OR`, which matched nearly every record.
+
+### Action Required
+
+None, unless you link to a filtered URL with several negative values. It now returns fewer records.
+
+</Option>
+
+||||||| 1c358b69
 ## Upgrade to `avo-dashboards` `4.3.4`
 
 <Option name="A dashboard's `actions` method now fills an Actions dropdown in its header">
