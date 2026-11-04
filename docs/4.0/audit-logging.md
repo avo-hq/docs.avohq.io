@@ -490,7 +490,7 @@ en:
         request: "Storefront"
 ```
 
-The panel's create, the AI chat, and MCP clients claim the saves they record. Each entry they record links the version of its own change (a create's, the destroy, or the first update), so it has the change log whether or not its resource sets `outside_avo`. Every other version written during the claim is logged by `outside_avo` on its own, as it would be outside one: another record a callback changes, an earlier save of the same record, or the records an action changes when the action doesn't opt in. That holds even when the writer raises after saving.
+On a resource that sets `outside_avo`, the panel's create, the AI chat, and MCP clients claim the saves they record. Each entry they record links the version of its own change (a create's, the destroy, or the first update), so it has the change log. Every other version written during the claim is logged by `outside_avo` on its own, as it would be outside one: another record a callback changes, an earlier save of the same record, or the records an action changes when the action doesn't opt in. That holds even when the writer raises after saving.
 
 When your own code records a change with `Avo::AuditLogging.record` on a resource that sets `outside_avo`, claim the save the same way, or the change is logged twice:
 
