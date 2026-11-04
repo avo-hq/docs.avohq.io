@@ -103,7 +103,7 @@ config.mcp_server.connection_log_size = 2_000
 
 <Option name="`extra_tools`" headingSize="3">
 
-Tools of the app's own, served beside the ten. Each entry is a class name — never a constant, since the initializer runs before the app's classes are loadable — or a Hash whose `tool:` key names the class and whose other keys are passed to the tool's initializer. The class is either an `Avo::McpServer::Tool`, which the `avo:mcp_server:tool` generator scaffolds, or a `RubyLLM::Tool` written for [Avo AI](./ai.html#bring-your-own-tool) that declares `def self.capability`; the second is served through an adapter. Names are resolved on every request, and an entry that can't be served is dropped with a log line naming the reason. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+Tools of the app's own, served beside the ten. Each entry is a class name — never a constant, since the initializer runs before the app's classes are loadable — or a Hash whose `tool:` key names the class and whose other keys are passed to the tool's initializer. The class is either an `Avo::McpServer::Tool`, which the `avo:mcp_server:tool` generator scaffolds, or a `RubyLLM::Tool` written for [Avo AI](./ai.html#bring-your-own-tool) that declares `def self.capability`; the second is served through an adapter. Either shape names the resources it touches (`resources "Ticket", "Project"`, or `def self.resources` on a `RubyLLM::Tool`), which a connection narrowed to named resources must all grant; one that names none and takes no `resource` argument is refused on such a connection. Names are resolved on every request, and an entry that can't be served is dropped with a log line naming the reason. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
 
 ```ruby
 config.mcp_server.extra_tools = ["IssueInvoiceTool", {tool: "CrmTool", api_key: ENV["CRM_API_KEY"]}]
@@ -180,7 +180,7 @@ Writes `app/tools/issue_invoice_tool.rb`, defining `IssueInvoiceTool`, called `i
 
 ## Tools
 
-The ten tools a connection can call, each gated by the capability it declares. Tools the app registers through [`extra_tools`](#extra_tools) are served beside them, gated the same way by the capability each declares. Tool names are what a client prints in its transcript and are never translated.
+The ten tools a connection can call, each gated by the capability it declares. Tools the app registers through [`extra_tools`](#extra_tools) are served beside them, gated the same way by the capability each declares, and on a narrowed connection by the [`resources`](./mcp.html#add-tools-of-your-own) each declares. Tool names are what a client prints in its transcript and are never translated.
 
 | Tool             | Capability    | Does                                              |
 | ---------------- | ------------- | ------------------------------------------------- |
@@ -318,6 +318,7 @@ A tool call's arguments are stored after the app's `filter_parameters` and cappe
 
 | Method           | Decides                                                                                                   |
 | ---------------- | --------------------------------------------------------------------------------------------------------- |
+| `use?`           | **Required.** Whether the admin gets the server at all: every call, code exchange and refresh, the consent screen, the connect page and its buttons. Never revocation or the list. A policy without it refuses every admin. See [Turn MCP on or off per admin](./mcp.html#turn-mcp-on-or-off-per-admin) |
 | `Scope#resolve`  | Which connections are listed and findable                                                                 |
 | `index?`         | Whether the resource appears at all under `explicit_authorization`                                        |
 | `show?`          | A connection's page — and every card on it that the three methods below do not claim                      |

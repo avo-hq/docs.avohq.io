@@ -183,7 +183,7 @@ Three capabilities cover the whole surface. Write means create, update, **and** 
 | **Read & write** | `avo:write`, or `avo:write:<Resource>` | `create_record`, `update_record`, `delete_record`                                                  | **Not** selected |
 | **Run actions**  | `avo:actions`                          | `run_action`                                                                                       | **Not** selected |
 
-**Choose per resource** on the authorize page lists every resource the admin can see and lets them pick *none*, *read*, or *read & write* for each. A narrowed grant holds everywhere: `list_resources` lists only the granted resources, a tool naming any other one is refused before a record is loaded, `search_records` with no resource searches only the granted ones, an association to an ungranted resource is left out of `show_record`'s payload, and run actions over a narrowed read means "on those resources". Write carries read.
+**Choose per resource** on the authorize page lists every resource the admin can see and lets them pick *none*, *read*, or *read & write* for each. A narrowed grant holds everywhere: `list_resources` lists only the granted resources, a tool naming any other one is refused before a record is loaded, `search_records` with no resource searches only the granted ones, an association to an ungranted resource is left out of `show_record`'s payload, a [tool of your own](#add-tools-of-your-own) runs only when every resource it declares is granted, and run actions over a narrowed read means "on those resources". Write carries read.
 
 The decision made at consent isn't final. An admin the policy allows widens or narrows a connection later from its [Entitlements card](#see-and-change-what-a-connection-may-reach), and the change binds the client's next call.
 
@@ -222,13 +222,14 @@ Scaffold one:
 bin/rails generate avo:mcp_server:tool issue_invoice
 ```
 
-That writes `app/tools/issue_invoice_tool.rb`, defining `IssueInvoiceTool` — a subclass of `Avo::McpServer::Tool`, the same contract the shipped tools follow. A client calls it `issue_invoice`. Fill in four things:
+That writes `app/tools/issue_invoice_tool.rb`, defining `IssueInvoiceTool` — a subclass of `Avo::McpServer::Tool`, the same contract the shipped tools follow. A client calls it `issue_invoice`. Fill in five things:
 
 ```ruby
 # app/tools/issue_invoice_tool.rb
 class IssueInvoiceTool < Avo::McpServer::Tool
   tool_name "issue_invoice"
   capability "avo:actions" # [!code focus]
+  resources "Order", "Invoice" # [!code focus]
 
   description <<~DESC
     Issues the invoice for an order and emails it to the customer.
@@ -253,8 +254,9 @@ end
 ```
 
 - **`capability`** is which of the [three capabilities](#choose-what-a-connection-can-do) unlocks the tool: `avo:read` for one that only reads, `avo:write` for one that changes records, `avo:actions` for one that runs a workflow. A connection without it is refused before `perform` runs, exactly as for the shipped tools.
+- **`resources`** names every resource the tool reads or changes, as `list_resources` names them. A connection [narrowed to named resources](#choose-what-a-connection-can-do) must grant each one, or the call is refused before `perform` runs and the error names the one that's missing. A connection with a global grant isn't affected. List static names only: a tool that picks its resource at call time takes a `resource` argument instead.
 - **`description`** is what the client's model reads to decide whether to call the tool. Its first sentence is also what the connection's **Tools** card shows.
-- **`input_schema`** is the JSON schema of the arguments. Everything in `required` is checked before your code runs. A `resource` argument, if the tool takes one, is also checked against a grant narrowed to named resources.
+- **`input_schema`** is the JSON schema of the arguments. Everything in `required` is checked before your code runs. A `resource` argument declared here is also checked against a grant narrowed to named resources; a `resource` key the schema doesn't declare counts for nothing.
 - **`perform`** receives the identity — the connection, and the admin it acts as — plus the arguments. Reach records through `Avo::McpServer::ToolSupport`, which runs the admin's own policies and reports a record they can't reach as one that doesn't exist; raise one of `Avo::McpServer::ToolErrors` to refuse with a structured error. With [Audit Logging](./audit-logging.html) installed, `Avo::McpServer::Audit.record` puts a change the tool makes in the audit log, marked as made through the connection.
 
 Then register the class in your initializer:
@@ -266,13 +268,17 @@ config.mcp_server.extra_tools = ["IssueInvoiceTool"]
 
 Entries are class **names**, not constants — this initializer runs before your own classes are loadable — and each is resolved when a request arrives, so editing a tool in development is served on the next call. An entry that can't be served (a class that doesn't load, one that isn't a tool, one with no `capability`, one claiming a shipped tool's name) is dropped with a line in the log saying why, and the rest keep serving.
 
+:::warning A tool that names no resource is refused on a narrowed connection
+A tool with no `resources` declaration and no `resource` argument gives the server no way to tell what it reads, so a connection narrowed to named resources refuses it. Tools registered before `resources` existed were let through such connections; declare `resources` on each one when you upgrade, or connections narrowed per resource can no longer call it.
+:::
+
 :::warning Custom tools share the consent capabilities
 There is no per-tool grant: an admin grants **Read**, **Read & write** or **Run actions**, and your tool is unlocked by whichever one it declares. That cuts both ways — a connection that already holds `avo:actions` can call a tool you register tomorrow, without anyone re-authorizing. Declare the capability that matches what the tool really does, and put a tool that changes data behind `avo:write` or `avo:actions`, never `avo:read`.
 :::
 
 ### Share a tool with Avo AI
 
-Running [Avo AI](./ai.html) too? Write the tool once, for the chat, and serve it over MCP as well. A [`RubyLLM::Tool`](./ai.html#bring-your-own-tool) needs one more line — the capability — and the same class goes in both settings:
+Running [Avo AI](./ai.html) too? Write the tool once, for the chat, and serve it over MCP as well. A [`RubyLLM::Tool`](./ai.html#bring-your-own-tool) needs two more lines — the capability and the resources it touches — and the same class goes in both settings:
 
 ```ruby
 # app/tools/issue_invoice_tool.rb
@@ -280,6 +286,7 @@ class IssueInvoiceTool < RubyLLM::Tool
   include Avo::Ai::ToolAuthorization
 
   def self.capability = "avo:actions" # [!code focus]
+  def self.resources = %w[Order Invoice] # [!code focus]
 
   description "Issues the invoice for an order and emails it to the customer."
   parameter :order_id, type: :integer, description: "The order to invoice."
@@ -300,7 +307,7 @@ config.ai.extra_tools = ["IssueInvoiceTool"]
 config.mcp_server.extra_tools = ["IssueInvoiceTool"]
 ```
 
-Over MCP the server reads the name, description and argument schema off the class, builds an instance per call with the connecting admin as `user:` (and the entry's other keys as settings, as the chat does), and translates the answer: a Hash is served as structured content, a String as text, and an `{error: "..."}` Hash — the shape the chat's tools use for "not allowed" — as a tool error. The capability gate runs first, exactly as for every other tool. An entry's `user:` key is ignored, and `chat` and `inspection_tracker` are never set: the admin is always the one the connection was authorized by, and there is no conversation.
+Over MCP the server reads the name, description and argument schema off the class, builds an instance per call with the connecting admin as `user:` (and the entry's other keys as settings, as the chat does), and translates the answer: a Hash is served as structured content, a String as text, and an `{error: "..."}` Hash — the shape the chat's tools use for "not allowed" — as a tool error. The capability gate runs first, `resources` included, exactly as for every other tool. The chat ignores both lines. An entry's `user:` key is ignored, and `chat` and `inspection_tracker` are never set: the admin is always the one the connection was authorized by, and there is no conversation.
 
 The reverse isn't offered — an `Avo::McpServer::Tool` can't be handed to the chat. Write a tool you want in both places the RubyLLM way.
 
@@ -443,6 +450,9 @@ This add-on ships no policy for the resource. Without one, Avo's defaults apply 
 ```ruby
 # app/policies/avo/mcp_server/connection_policy.rb
 class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
+  # Whether this admin gets the MCP server at all. Required: see "Turn MCP on or off per admin" below.
+  def use? = true
+
   def index? = true
 
   def show? = user.owner? || record.user == user
@@ -489,6 +499,31 @@ Each card below the fields has an optional method of its own, and the four `view
 
 Refusing one leaves the rest of the page intact.
 
+### Turn MCP on or off per admin
+
+`use?` on the same policy decides whether an admin gets the MCP server at all. Key it off a role, a plan, or a feature flag:
+
+```ruby
+# app/policies/avo/mcp_server/connection_policy.rb
+class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
+  def use? = Flipper.enabled?(:mcp, user) # [!code focus]
+
+  # ...the rest of the policy
+end
+```
+
+Its record is the admin's connection when there is one, and an unsaved `Avo::McpServer::Connection` of theirs before they've connected. An admin it refuses:
+
+- can't open the consent screen, which tells them the server is turned off for their account, so no connection or code is created;
+- can't open the connect page, and the buttons that lead there are hidden;
+- loses the connections they already have on their next call: the token answers `401 invalid_token`, and the client's refresh and any code it hasn't exchanged yet are refused with `invalid_grant`. The refused code or refresh token isn't spent, so turning MCP back on lets the client continue where it was.
+
+Revoking is never gated by `use?`. The admin can still see their connections and revoke them, and a client can still revoke its own token.
+
+:::warning Every `ConnectionPolicy` needs `use?`
+The server asks `use?` the way Avo asks any policy method, so a `ConnectionPolicy` without it **turns MCP off for every admin**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ConnectionPolicy`, add `def use? = true` when you upgrade to keep MCP on for everyone. With no `ConnectionPolicy` at all, Avo's defaults apply: on under `explicit_authorization = false`, and off under `explicit_authorization = true`, which is Avo's default. So an app that never wrote one adds it with `use?` to keep MCP on.
+:::
+
 ## Run it in production
 
 ### Pin the server address
@@ -524,7 +559,7 @@ The authorize, token, and registration endpoints have fixed per-IP limits. All o
 
 ### Turn it off without losing the connections resource
 
-`config.mcp_server.enabled = false` answers `404` on every protocol endpoint and the consent screen, but the connections resource stays — it's part of the panel, not the server — so you can still revoke during an incident. If `enabled` is `true` but the routes aren't mounted, the server logs a warning at boot and the connections resource says so.
+`config.mcp_server.enabled = false` answers `404` on every protocol endpoint and the consent screen, but the connections resource stays — it's part of the panel, not the server — so you can still revoke during an incident. If `enabled` is `true` but the routes aren't mounted, the server logs a warning at boot and the connections resource says so. To turn it off for some admins only, see [`use?`](#turn-mcp-on-or-off-per-admin).
 
 ### Keep credentials out of your logs
 
@@ -573,6 +608,8 @@ Refusals come back as JSON-RPC errors with a numeric `code`, a message, and a `d
 | `-32000` | Capability not granted                             | The connection's [Entitlements](#see-and-change-what-a-connection-may-reach) — grant what was withheld |
 | `-32001` | Capability granted, the admin's policy said no     | Your policy for that admin                                   |
 | `-32002` | Authorization isn't being enforced, nothing ran    | The license — both add-ons must be enabled                   |
+
+A token that was working and now answers `401 invalid_token`, with its refresh refused as `invalid_grant`, usually means your `ConnectionPolicy#use?` refuses that admin, or the policy has no `use?` at all. See [Turn MCP on or off per admin](#turn-mcp-on-or-off-per-admin).
 
 A record outside the admin's policy scope reports as **not found** (`-32602`), identical to an id that never existed, so a read tool can't be used to probe for hidden records. A resource they may not list reports as **unauthorized** (`-32001`) and says so, because the caller already sees the sidebar.
 

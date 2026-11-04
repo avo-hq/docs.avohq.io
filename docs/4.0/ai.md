@@ -1753,6 +1753,33 @@ Weigh these before you grant `create?` and `share?`:
 - **A remote action takes one more step.** The assistant searches a connection's stored tools before it calls one. Until it does, nothing about the connections goes to your model provider beyond two tools and a line per connection in its instructions. A search returns at most five tools, with their arguments.
 - **Remote results go to your model provider.** Like any tool result, what a server returns is sent to the provider and stored on the tool call. A result over 100 KB is cut short.
 
+## Turn the chat on or off per user
+
+`use?` on your `Avo::Ai::ChatPolicy` decides whether a user gets the chat at all. Key it off a role, a plan, or a feature flag:
+
+```ruby
+# app/policies/avo/ai/chat_policy.rb
+class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.admin? || user.support? # [!code focus]
+
+  # ...the rest of the policy
+end
+```
+
+A user it refuses:
+
+- sees no chat bar, and Cmd+J / Ctrl+J opens nothing;
+- is told they're not authorized on every chat page, and on every request behind them, sending a message included;
+- gets no reply to a message they sent before you turned the chat off. The queued reply posts a short notice instead of calling the model, and no title is generated for it.
+
+The **Chats** and **Messages** admin resources keep following their own policy methods, so a super admin can still review conversations there.
+
+If your menu links to the chats, hide the link for the same users with `visible: -> { Avo::Ai::Chat.usable_by?(current_user) }`.
+
+:::warning Your own `ChatPolicy` needs `use?`
+The chat asks `use?` the way Avo asks any policy method, so a `ChatPolicy` of your own without it **turns the chat off for every user**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ChatPolicy`, add `def use? = user.present?` when you upgrade to keep the chat on for everyone. The policy avo-ai ships, used when you have none, answers `true` for every signed-in user.
+:::
+
 ## Who can see a chat
 
 The chat UI only ever loads the signed-in user's own conversations, and the **Chats** and **Messages** admin resources list only theirs. Those resources still open any record by id, though, so close them with policies that scope to the owner:
@@ -1760,6 +1787,7 @@ The chat UI only ever loads the signed-in user's own conversations, and the **Ch
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
 class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.present?
   def index? = user.present?
   def show? = owner?
   def create? = user.present?
