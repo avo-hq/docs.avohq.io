@@ -47,6 +47,14 @@ class AgingOrderResource < Avo::BaseResource
 end
 ```
 
+:::warning
+The `pagy_get_items` and `pagy_get_vars` overrides below work with pagy `7` to `9`. Pagy `43` no longer calls them, so keep pagy `9` in your `Gemfile` while you use this controller:
+
+```ruby
+gem "pagy", "~> 9.4"
+```
+:::
+
 `app/controllers/avo/aging_orders_controller.rb`
 ```ruby
 module Avo

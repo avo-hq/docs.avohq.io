@@ -1015,6 +1015,8 @@ The exposed pagination setting above have the default value for each key.
 
 [Pagy docs - Control the page links](https://ddnexus.github.io/pagy/docs/how-to/#control-the-page-links)
 
+With pagy `43` or later, use a number. Pagy `43` only takes a number of page links, so Avo converts an Array to one (`[1, 2, 2, 1]` becomes `9`), and the links can differ slightly from pagy `9`. <VersionReq version="3.34.0" />
+
 #### Default
 
 `[1, 2, 2, 1]` - before <Version version="3.11.5" />
