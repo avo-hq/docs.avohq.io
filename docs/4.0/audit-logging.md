@@ -466,7 +466,7 @@ The resource that sets `outside_avo` is the one whose settings are asked and who
 
 The resource's opt-in is asked the same way the panel asks it. The `create`, `update`, and `destroy` switches in [`actions`](#disable-specific-actions-logging) turn single events off, and your `activity` block runs for each change. In a job or the console `current_user` is `nil`, so make the block handle `nil`. A block that raises logs the error and records nothing.
 
-PaperTrail decides what counts as a change, so its own options apply: `only:`, `ignore:`, `if:`, and `unless:` on `has_paper_trail`, and `PaperTrail.request(enabled: false) { ... }` around an import you don't want in the log. PaperTrail versions `touch` by default, so a `belongs_to :post, touch: true` logs an update on the post each time one of its comments is saved. Leave touches out with `has_paper_trail on: %i[create update destroy]`.
+PaperTrail decides what counts as a change, so its own options apply: `only:`, `ignore:`, `if:`, and `unless:` on `has_paper_trail`, and `PaperTrail.request(enabled: false) { ... }` around an import you don't want in the log. An update that changed only `created_at` or `updated_at`, such as a `touch` from a `belongs_to ..., touch: true` child or an attached file, records nothing.
 
 When the change is made through Avo (the panel, the API, the AI chat, or an MCP client), the author is the user Avo acted for. A change made through the AI chat or an MCP client also names the chat or the connection, as Avo's own entries for them do. Elsewhere the entry has no author. It carries the origin set with [`Origin.with`](#mark-your-own-origins) when there is one, and otherwise names what was running when the record was saved:
 
@@ -478,7 +478,7 @@ When the change is made through Avo (the panel, the API, the AI chat, or an MCP 
 | A rake task, such as `db:seed`  | *Script (db:seed)*                    |
 | Anything else                   | *System*                              |
 
-A job's own saves name it, its `rescue_from` handlers included. A save after a job your controller ran inline with `perform_now` names the controller. Hover the name to see the full job, controller, or task, such as `ImportProductsJob` or `Admin::OrdersController#update`. The origin is stored the same way (`job:ImportProductsJob`, `request:Admin::OrdersController#update`, `console`, `rake:db:seed`, or `model`), which is what `from_origin` takes. A rake task is stored by name only, without the arguments in brackets, since those can hold a password. To word the labels for your admins, set them in your locale file:
+A job's own saves name it, its `rescue_from` handlers included, but not saves on threads it starts. A save after a job your controller ran inline with `perform_now` names the controller. Hover the name to see the full job, controller, or task, such as `ImportProductsJob` or `Admin::OrdersController#update`. The origin is stored the same way (`job:ImportProductsJob`, `request:Admin::OrdersController#update`, `console`, `rake:db:seed`, or `model`), which is what `from_origin` takes. A rake task is stored by name only, without the arguments in brackets, since those can hold a password. To word the labels for your admins, set them in your locale file:
 
 ```yaml
 # config/locales/en.yml
@@ -490,7 +490,7 @@ en:
         request: "Storefront"
 ```
 
-The panel's create, the AI chat, and MCP clients claim the saves they record. The versions those saves write go to their own entry, which links the first one, so the record gets one entry with the change log, whether or not its resource sets `outside_avo`. A create's entry links only a create's version. What the writer doesn't log, such as another record its callbacks change, or the records an action changes when the action doesn't opt in, is logged by `outside_avo` on its own, even when the writer raises after saving.
+The panel's create, the AI chat, and MCP clients claim the saves they record. Each entry they record links the version of its own change (a create's, the destroy, or the first update), so it has the change log whether or not its resource sets `outside_avo`. Every other version written during the claim is logged by `outside_avo` on its own, as it would be outside one: another record a callback changes, an earlier save of the same record, or the records an action changes when the action doesn't opt in. That holds even when the writer raises after saving.
 
 When your own code records a change with `Avo::AuditLogging.record` on a resource that sets `outside_avo`, claim the save the same way, or the change is logged twice:
 
