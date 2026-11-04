@@ -248,6 +248,26 @@ end
 `field_whitelist` and `field_blacklist` only change which columns render on the index. They are **not** an authorization boundary — the data is still loaded and stays visible on the show and edit views and through the API. To actually restrict access, use a [policy](./authorization.html) or a field's [`visible`](./field-options.html) option.
 :::
 
+## Describe the selected scope in the header
+
+The resource reads the scope its index shows through `resource.active_scope`: the scope picked in the tab bar, or the [default](./scopes-api.html#default) one when none is picked. It is `nil` on the `All` tab. Use it to make the index header say what the current tab lists, for example by repeating the scope's [`description`](./scopes-api.html#description):
+
+```ruby{3-5}
+# app/avo/resources/license.rb
+class Avo::Resources::License < Avo::BaseResource
+  self.description = -> {
+    resource.active_scope&.description || "Every license, archived ones included."
+  }
+
+  def scopes
+    scope Avo::Scopes::Paying, default: true
+    scope Avo::Scopes::Archived
+  end
+end
+```
+
+`resource.active_scope` needs `avo-scopes` `4.3.2` or later. The header follows every tab change, including on a [lazy-loaded index](./resources-api.html#self.index_view_loading) from `avo` <Version version="4.3.11" />.
+
 ## Full example
 
 ```ruby
