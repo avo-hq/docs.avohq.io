@@ -472,7 +472,7 @@ When the change is made through Avo (the panel, the API, the AI chat, or an MCP 
 
 | Saved in                        | The timeline shows                    |
 | ------------------------------- | ------------------------------------- |
-| A job (Active Job)              | *Background job (Import products)*    |
+| A job's `perform` (Active Job)  | *Background job (Import products)*    |
 | Your own controllers, not Avo's | *App (Orders)*                        |
 | `rails console`                 | *Developer console*                   |
 | A rake task, such as `db:seed`  | *Script (db:seed)*                    |
@@ -490,7 +490,16 @@ en:
         request: "Storefront"
 ```
 
-When the panel's create, the AI chat, an MCP client, or your own `Avo::AuditLogging.record` records a change on a record after the save, in the same request or job, its entry replaces the ones logged from that record's versions for the same action and links the first of those versions. A create also replaces the updates written while the record was new, such as an attachment touching it. Record after the save: an entry recorded before it is a second one.
+The panel's create, the AI chat, and MCP clients claim the saves they record. The versions those saves write go to their own entry, which links the first one, so the record gets one entry with the change log, whether or not its resource sets `outside_avo`. Other records the save changes, such as through callbacks, are logged by `outside_avo` on their own.
+
+When your own code records a change with `Avo::AuditLogging.record` on a resource that sets `outside_avo`, claim the save the same way, or the change is logged twice:
+
+```ruby
+Avo::AuditLogging::Recorder.claiming do
+  product.update!(price: price)
+  Avo::AuditLogging.record(action: :update, record: product, author: user, payload: {price: price})
+end
+```
 
 An STI subclass is logged under its own resource when that one sets `outside_avo`, and otherwise under its base class's resource when that one does. A model with PaperTrail but no Avo resource is skipped. If recording fails, the error is logged and the change is kept.
 
