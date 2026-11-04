@@ -470,7 +470,7 @@ PaperTrail decides what counts as a change, so its own options apply: `only:`, `
 
 A few PaperTrail settings change what the log can show:
 
-- A version whose event you renamed with `paper_trail_event` is logged under that name, so it needs its own switch in `actions`, such as `actions: {import: true}`.
+- A version whose event you renamed with `paper_trail_event` is logged under that name, so it needs its own switch in `actions`, such as `actions: {import: true}`. It's logged on its own, never as part of an AI chat or MCP entry, and a renamed delete has no revert action.
 - The change log needs PaperTrail's `object_changes` column, which its installer adds with `--with-changes`. Without it, entries have no change log, and a touch can't be told from a real update, so it's logged too.
 - With `version_limit`, an entry whose version PaperTrail pruned keeps no change log.
 
