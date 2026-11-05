@@ -456,7 +456,7 @@ field :last_commented_at,
 
 <Option name="`summarizable`" headingSize="3">
 
-Adds a chart icon to the column's table header. Clicking it opens a popover with a chart of the column's data distribution.
+Adds a chart icon to the column's table header. Clicking it opens a popover with a chart of the column's data distribution. The chart asks the same policy as the list it summarizes: [`index?`](./authorization-api.html#index), or the parent's [`view_{association}?`](./authorization-api.html#view_association) on an association panel.
 
 ```ruby
 field :status, as: :select, summarizable: true
