@@ -21,9 +21,9 @@ const fullVersion = computed(() => {
   }
 })
 const unreleased = computed(() => version.value === "unreleased")
-const release = computed(() => `${props.package} v${version.value}`)
+const requirement = computed(() => `${props.package} >= v${version.value}`)
 const href = computed(() => unreleased.value ? null : `https://avohq.io/releases/${props.package}/${fullVersion.value}`)
-const title = computed(() => unreleased.value ? "This feature hasn't been released yet." : `You must run at least ${release.value} to enjoy this feature.`)
+const title = computed(() => unreleased.value ? "This feature hasn't been released yet." : `You must run at least ${props.package} v${version.value} to enjoy this feature.`)
 </script>
 
 <template>
@@ -33,11 +33,17 @@ const title = computed(() => unreleased.value ? "This feature hasn't been releas
     class="version-req text-sm inline-flex items-center rounded !text-white !no-underline px-2 py-1 leading-none bg-gray-500">
     <InformationCircleIcon class="h-4 inline mr-1" />
     <span v-if="unreleased">Unreleased yet</span>
-    <span v-else>Since <code>{{ release }}</code></span>
+    <span v-else class="version-req__since">Since <code>{{ requirement }}</code></span>
   </a>
 </template>
 
 <style scoped>
+.version-req__since {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .version-req code {
   padding: 1px 4px;
   color: inherit;

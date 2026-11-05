@@ -207,8 +207,8 @@ CI runs it on PRs touching `docs/4.0/` and weekly on `main`, to catch slugs rena
 
 Every gem has its own version numbers, so `4.3.2` of `avo-audit_logging` says nothing about `4.3.2` of Avo, and a bare "Since v4.3.2" reads as Avo's. A version always comes with the package it belongs to.
 
-- **A feature in a gem:** `<VersionReq package="avo-audit_logging" version="4.3.2" />` renders "Since `avo-audit_logging v4.3.2`" and links to that gem's release. Use the gem's own version, read from its source (see [Gems source code](#gems-source-code)), never Avo's.
-- **A feature in Avo core:** `<VersionReq version="4.3.2" />`. `package` defaults to `avo`, so the badge says "Since `avo v4.3.2`".
+- **A feature in a gem:** `<VersionReq package="avo-audit_logging" version="4.3.2" />` renders "Since `avo-audit_logging >= v4.3.2`" and links to that gem's release. Use the gem's own version, read from its source (see [Gems source code](#gems-source-code)), never Avo's.
+- **A feature in Avo core:** `<VersionReq version="4.3.2" />`. `package` defaults to `avo`, so the badge says "Since `avo >= v4.3.2`".
 - **In prose:** write the package next to the version, `` `avo-scopes` `4.3.2` ``. `<Version version="4.3.11" />` links to core's releases only, so use it for `avo` alone: `` `avo` <Version version="4.3.11" /> ``.
 
 ## House style
@@ -304,7 +304,7 @@ Rules:
 4. **`###` sub-headings inside the `<Option>`**, Title Case, only the ones that apply, in this order: `Breaking Change` → `Action Required` → `Steps to Update` → `Maintaining Previous Behavior`. These are below the outline cutoff, so the `<Option>` name has to carry the meaning on its own.
 5. **Always state the action, including when there is none** — `**Action required:** None, this is an internal fix.` Readers skim for that line to know they can skip.
 6. **Show the migration as a diff** with `[!code --]` / `[!code ++]` when it's a line-level rename, and as separate `# Before` / `# After` blocks when the shape changes enough that a diff is unreadable. Snippets that map to a real file carry the path comment (`# config/initializers/avo.rb`, `# app/avo/resources/user.rb`) — upgrade snippets are things the reader edits, so the "skip it on reference pages" exception doesn't apply here.
-7. **Reference versions with the components**, never bare text, and [name the package](#name-the-package-on-every-version): `<Version version="3.10.6" />` links to Avo core's release page for "in version X"; `<VersionReq version="3.10.7" />` renders a "Since `avo v3.10.7`" badge linking to that release.
+7. **Reference versions with the components**, never bare text, and [name the package](#name-the-package-on-every-version): `<Version version="3.10.6" />` links to Avo core's release page for "in version X"; `<VersionReq version="3.10.7" />` renders a "Since `avo >= v3.10.7`" badge linking to that release.
 8. **Link out to the docs that describe the new state** — the guide section or the `<Option>` anchor on the API page (`./field-options.html#format_view_using`). The upgrade entry documents the _transition_; the feature pages document the _result_. Don't restate the whole feature here.
 9. **Use callouts for the sharp edges**: `:::warning` for footguns (cookie overflow, a lowercase translation now rendering lowercase), `:::info` for context. Link the PR or issue when the change is subtle enough that someone will want the reasoning ([#3469](https://github.com/avo-hq/avo/pull/3469)).
 10. **Broken intermediate releases get their own `##` section** without an `<Option>` — see `## Skip versions 3.8.x and 3.9.0`. Say which version to jump straight to and why.
