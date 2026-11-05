@@ -948,7 +948,8 @@ Add a link to the end-user chat list inside your `config.main_menu` block:
 
 ```ruby
 # config/initializers/avo.rb
-link "AI chat", path: "/admin/chats", icon: "tabler/outline/message"
+link "AI chat", path: "/admin/chats", icon: "tabler/outline/message",
+  visible: -> { Avo::Ai::Chat.usable_by?(current_user) }
 ```
 
 Replace `/admin` if your Avo mount path differs. This opens the full-page chat product, not the
@@ -1769,12 +1770,20 @@ end
 A user it refuses:
 
 - sees no chat bar, and Cmd+J / Ctrl+J opens nothing;
-- is told they're not authorized on every chat page, and on every request behind them, sending a message included;
+- doesn't see the **Chats**, **Messages**, **Models**, **Skills**, **Feedback** or **Connectors** resources in the sidebar, whether Avo generates it or your `main_menu` lists them with `resource`. **Models** and **Skills** leave global search too;
+- is told they're not authorized on every chat page and on those resources' pages, and on every request behind them, sending a message included;
 - gets no reply to a message they sent before you turned the chat off. The queued reply posts a short notice instead of calling the model, and no title is generated for it.
 
-The **Chats** and **Messages** admin resources keep following their own policy methods, so a super admin can still review conversations there.
+The switch covers all of Avo AI, so someone who manages models or skills, or reviews conversations, needs `use?` too.
 
-If your menu links to the chats, hide the link for the same users with `visible: -> { Avo::Ai::Chat.usable_by?(current_user) }`.
+Avo asks `use?` several times on every page, so keep it cheap. And if you don't set `home_path`, Avo opens the first resource alphabetically, which can be one of these. Set it to a page everyone can open, or a refused user lands on the not-authorized page.
+
+Avo can't hide a plain link of your own in the menu, so give it the same check:
+
+```ruby
+# config/initializers/avo.rb
+link_to "Chats", "/admin/chats", visible: -> { Avo::Ai::Chat.usable_by?(current_user) }
+```
 
 :::warning Your own `ChatPolicy` needs `use?`
 The chat asks `use?` the way Avo asks any policy method, so a `ChatPolicy` of your own without it **turns the chat off for every user**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ChatPolicy`, add `def use? = user.present?` when you upgrade to keep the chat on for everyone. The policy avo-ai ships, used when you have none, answers `true` for every signed-in user.

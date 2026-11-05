@@ -10,7 +10,7 @@ If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedica
 
 ### Breaking Change
 
-The server now asks `use?` on `Avo::McpServer::ConnectionPolicy` before it serves an admin: on every call, on code exchange and refresh, on the consent screen and on the connect page. A `ConnectionPolicy` without `use?` turns the server off for every admin. See [Turn MCP on or off per admin](./mcp.html#turn-mcp-on-or-off-per-admin).
+The server now asks `use?` on `Avo::McpServer::ConnectionPolicy` before it serves an admin: on every call, on code exchange and refresh, on the consent screen and on the connections pages, whose sidebar entry goes with them. A `ConnectionPolicy` without `use?` turns all of that off for every admin. See [Turn MCP on or off per admin](./mcp.html#turn-mcp-on-or-off-per-admin).
 
 ### Action Required
 
@@ -24,6 +24,8 @@ end
 ```
 
 If it has none, Avo's defaults decide, as for any missing policy. Under `explicit_authorization = true`, which is Avo's default, the server is off for every admin until you add the policy above. Under `explicit_authorization = false` it stays on. With `raise_error_on_missing_policy = true`, the missing policy raises on the server's endpoints instead.
+
+If your profile menu or `main_menu` has a plain link to the connections, add `visible: -> { Avo::McpServer::AuthorizationGate.use?(current_user) }` to it. A `resource` entry hides itself from `avo-menu` `4.3.2`.
 
 </Option>
 
@@ -56,7 +58,7 @@ def self.resources = %w[Ticket Project] # [!code ++]
 
 ### Breaking Change
 
-The chat now asks `use?` on `Avo::Ai::ChatPolicy` before it serves a user: on the chat bar, on every chat page and request, and in a reply or title already queued. The policy avo-ai ships answers it for every signed-in user, but a `ChatPolicy` of your own without `use?` turns the chat off for everyone. See [Turn the chat on or off per user](./ai.html#turn-the-chat-on-or-off-per-user).
+The chat now asks `use?` on `Avo::Ai::ChatPolicy` before it serves a user: on the chat bar, on every chat page and request, on the AI resources and their sidebar entries, and in a reply or title already queued. The policy avo-ai ships answers it for every signed-in user, but a `ChatPolicy` of your own without `use?` turns the chat off for everyone. See [Turn the chat on or off per user](./ai.html#turn-the-chat-on-or-off-per-user).
 
 ### Action Required
 
@@ -70,6 +72,8 @@ end
 ```
 
 With `avo-permissions` as your authorization client, a role needs a `use?` permission on `Avo::Resources::AvoAi::Chat` to keep the chat, and the permissions screen doesn't offer it yet. Add the row from a console for each role that should keep the chat.
+
+If your `main_menu` has a plain link to the chats, add `visible: -> { Avo::Ai::Chat.usable_by?(current_user) }` to it. A `resource` entry hides itself from `avo-menu` `4.3.2`.
 
 </Option>
 
