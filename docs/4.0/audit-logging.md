@@ -536,6 +536,33 @@ An STI subclass is logged under its own resource when that one sets `outside_avo
 
 Writes PaperTrail doesn't version aren't logged: `update_column`, `update_columns`, `update_all`, `insert_all`, `upsert_all`, `delete`, `delete_all`, and `dependent: :delete_all`. Use `update!` and `destroy` where the log has to see the change, or `record.paper_trail.update_columns(...)` to skip callbacks and still write a version. A model that has PaperTrail version its destroys after the delete (`paper_trail.on_destroy(:after)`) has its deletes skipped, because the row is gone by then.
 
+### Pause logging for a block of code
+
+<VersionReq package="avo-audit_logging" version="4.3.2" />
+
+Bulk imports, data backfills, and test setup can write thousands of activities you don't need. Wrap that work in `Avo::AuditLogging.disabled` to record nothing inside the block:
+
+```ruby
+# lib/tasks/backfill.rake
+task backfill_prices: :environment do
+  Avo::AuditLogging.disabled do
+    Product.find_each do |product|
+      product.update!(price: product.price * 100)
+    end
+  end
+end
+```
+
+Nothing is recorded inside the block from any source: the panel, `Avo::AuditLogging.record` (which returns `nil`), [changes made outside Avo](#log-changes-made-outside-avo), the API, the AI chat, or MCP, and PaperTrail or Audited versions written inside it aren't linked to an activity. A model change counts as inside the block when it was saved inside it, even if its transaction commits after the block ends. Logging resumes when the block ends, even if it raises. The pause covers the block's code and any fibers it starts, such as `Async` tasks. Other requests, threads and processes keep recording, including a thread started inside the block.
+
+A background job enqueued inside the block runs later, outside it, so its changes are logged. Wrap the job's own work in `Avo::AuditLogging.disabled` if they shouldn't be.
+
+To switch logging off everywhere, for example in the test environment, set `config.enabled = false`.
+
+:::info Falcon and other fiber-based servers
+Set [`config.active_support.isolation_level = :fiber`](https://guides.rubyonrails.org/configuring.html#config-active-support-isolation-level), as Rails asks for these servers, so each request keeps its own current user and origin. A fiber or thread you start yourself doesn't inherit them, so a change saved there has no author.
+:::
+
 ## Disable specific actions logging
 
 By default, when audit logging is enabled for a resource or action, all actions, such as `index` visits, `show` visits, `edit`, `update`, etc. are logged.
