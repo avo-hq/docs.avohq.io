@@ -245,14 +245,20 @@ Each entry shows a compact relative time — hover over an entry to reveal its f
 
 ### Keep secrets out of the payload
 
-<VersionReq package="avo-audit_logging" version="4.3.2" /> Avo masks the payload with your app's [`filter_parameters`](https://guides.rubyonrails.org/configuring.html#config-filter-parameters), the list Rails uses for your log file. A password typed into a form is stored as `[FILTERED]`, at any depth, whether the entry came from the panel, an action, an AI client or your own `Avo::AuditLogging.record` call. To mask another key, add it to that list.
+<VersionReq package="avo-audit_logging" version="4.3.2" /> Avo masks the payload with your app's [`filter_parameters`](https://guides.rubyonrails.org/configuring.html#config-filter-parameters), the list Rails uses for your log file, and with the columns the record's model filters, which include its [`encrypts`](https://guides.rubyonrails.org/active_record_encryption.html) columns. A password typed into a form is stored as `[FILTERED]`, at any depth, whether the entry came from the panel, an action, an AI client or your own `Avo::AuditLogging.record` call. To mask another key, add it to that list. New Rails apps list `:email` there, so emails show as `[FILTERED]` in the payload too, while the [change log](#enable-change-logs-and-revert-changes) still shows them.
+
+The list matches keys, as it does in your logs. Keys inside a value stored as a JSON string, such as a [key-value field](./fields/key_value.html)'s, aren't matched. The [change log](#enable-change-logs-and-revert-changes) comes from PaperTrail and isn't masked, so keep a sensitive column out of it with PaperTrail's [`skip` option](https://github.com/paper-trail-gem/paper_trail#2c-choosing-attributes-to-monitor).
+
+If a block you added to `filter_parameters` raises, the entry is saved without its payload and the error's class goes to the Rails log, so the request still finishes and nothing unmasked is stored.
 
 The AI assistant adds `code`, `state` and `token` to that list, and the MCP server adds `code` and its OAuth tokens, so with those installed a field with one of those names shows as `[FILTERED]` too.
 
 Entries written before this version keep what they stored, and their pages still show it. Run this once in a console to mask them:
 
 ```ruby
-filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
+Rails.application.eager_load!
+filters = Rails.application.config.filter_parameters | ActiveRecord::Base.descendants.flat_map(&:filter_attributes)
+filter = ActiveSupport::ParameterFilter.new(filters)
 
 Avo::AuditLogging::Activity.where.not(payload: nil).find_each do |activity|
   payload = JSON.parse(activity.payload)
