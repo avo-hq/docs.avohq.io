@@ -245,7 +245,7 @@ Each entry shows a compact relative time — hover over an entry to reveal its f
 
 ### Keep secrets out of the payload
 
-<VersionReq version="4.3.2" /> Avo masks the payload with your app's [`filter_parameters`](https://guides.rubyonrails.org/configuring.html#config-filter-parameters), the list Rails uses for your log file. A password typed into a form is stored as `[FILTERED]`, at any depth, whether the entry came from the panel, an action, an AI client or your own `Avo::AuditLogging.record` call. To mask another key, add it to that list.
+<VersionReq package="avo-audit_logging" version="4.3.2" /> Avo masks the payload with your app's [`filter_parameters`](https://guides.rubyonrails.org/configuring.html#config-filter-parameters), the list Rails uses for your log file. A password typed into a form is stored as `[FILTERED]`, at any depth, whether the entry came from the panel, an action, an AI client or your own `Avo::AuditLogging.record` call. To mask another key, add it to that list.
 
 The AI assistant adds `code`, `state` and `token` to that list, and the MCP server adds `code` and its OAuth tokens, so with those installed a field with one of those names shows as `[FILTERED]` too.
 
