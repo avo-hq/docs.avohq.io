@@ -565,7 +565,7 @@ Set [`config.active_support.isolation_level = :fiber`](https://guides.rubyonrail
 
 ## Read an activity in code
 
-<VersionReq version="4.3.2" />
+<VersionReq package="avo-audit_logging" version="4.3.2" />
 
 Most activities are about one record. Read it, and the classes behind the activity, straight from the activity:
 
