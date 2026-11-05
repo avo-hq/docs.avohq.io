@@ -318,7 +318,7 @@ A tool call's arguments are stored after the app's `filter_parameters` and cappe
 
 | Method           | Decides                                                                                                   |
 | ---------------- | --------------------------------------------------------------------------------------------------------- |
-| `use?`           | **Required.** Whether the admin gets the server at all: every call, code exchange and refresh, the consent screen, and the connections pages and their sidebar entry. Never a client revoking its own token. A policy without it refuses every admin. See [Turn MCP on or off per admin](./mcp.html#turn-mcp-on-or-off-per-admin) |
+| `use?`           | **Required.** Whether the admin gets the server at all: every call, code exchange and refresh, the consent screen, the connect page and its buttons. Never revocation or the list. A policy without it refuses every admin. See [Turn MCP on or off per admin](./mcp.html#turn-mcp-on-or-off-per-admin) |
 | `Scope#resolve`  | Which connections are listed and findable                                                                 |
 | `index?`         | Whether the resource appears at all under `explicit_authorization`                                        |
 | `show?`          | A connection's page — and every card on it that the three methods below do not claim                      |

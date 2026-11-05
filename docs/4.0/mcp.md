@@ -341,8 +341,7 @@ If your initializer lists resources explicitly in `config.resources`, add `"Avo:
 config.profile_menu = -> do
   link_to "MCP connections",
     path: Avo::Engine.routes.url_helpers.resources_mcp_connections_path,
-    icon: "plug-connected",
-    visible: -> { Avo::McpServer::AuthorizationGate.use?(current_user) }
+    icon: "plug-connected"
 end
 ```
 
@@ -502,7 +501,7 @@ Refusing one leaves the rest of the page intact.
 
 ### Turn MCP on or off per admin
 
-`use?` on the same policy decides whether an admin gets the MCP server at all. Key it off a role, a plan, or a feature flag:
+`use?` on the same policy decides whether an admin can use the MCP server. Key it off a role, a plan, or a feature flag:
 
 ```ruby
 # app/policies/avo/mcp_server/connection_policy.rb
@@ -516,15 +515,10 @@ end
 Its record is the admin's connection when there is one, and the `Avo::McpServer::Connection` class otherwise, so key it off `user`. An admin it refuses:
 
 - can't open the consent screen, which tells them the server is turned off for their account, so no connection or code is created;
-- doesn't see **MCP connections** in the sidebar, and is told they're not authorized on the connections list, on a connection's page and on the connect page;
+- can't open the connect page, and the buttons that lead there are hidden;
 - loses the connections they already have on their next call: the token answers `401 invalid_token`, and the client's refresh and any code it hasn't exchanged yet are refused with `invalid_grant`. The refused code or refresh token isn't spent, but a client may discard a token answered with `invalid_grant`, and then it has to connect again once MCP is back on.
-- can't reach **MCP connections** through [Avo AI](./ai.html)'s chat either: its tools don't list or find them for this admin.
 
-The switch covers the connections resource for everyone it refuses, so someone who only audits or revokes other admins' connections needs `use?` too. A client can always revoke its own token. An admin it refuses has no **Revoke** button, but their tokens do nothing while it says no. Turning MCP back on brings the connections back as they were, so revoke them from another admin's account if they shouldn't come back.
-
-Avo asks `use?` several times on every page, so keep it cheap. And if you don't set `home_path`, Avo opens the first resource alphabetically, which can be this one. Set it to a page everyone can open, or a refused admin lands on the not-authorized page.
-
-With the [Menu editor](./menu-editor.html), a `resource` entry for the connections goes away on its own. A plain link of your own needs the same check, as the [profile menu example](#review-and-revoke-connections) shows.
+`use?` only decides whether they can use the server. It doesn't hide anything else: the **MCP connections** menu entry and pages keep following `index?` and `show?`, so the admin can still see their connections and revoke them, and a client can still revoke its own token. To take the entry away too, refuse `index?` for the same admins.
 
 :::warning Every `ConnectionPolicy` needs `use?`
 The server asks `use?` the way Avo asks any policy method, so a `ConnectionPolicy` without it **turns MCP off for every admin**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ConnectionPolicy`, add `def use? = true` when you upgrade to keep MCP on for everyone. With no `ConnectionPolicy` at all, Avo's defaults apply: on under `explicit_authorization = false`, and off under `explicit_authorization = true`, which is Avo's default. So an app that never wrote one adds it with `use?` to keep MCP on.

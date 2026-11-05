@@ -948,8 +948,7 @@ Add a link to the end-user chat list inside your `config.main_menu` block:
 
 ```ruby
 # config/initializers/avo.rb
-link "AI chat", path: "/admin/chats", icon: "tabler/outline/message",
-  visible: -> { Avo::Ai::Chat.usable_by?(current_user) }
+link "AI chat", path: "/admin/chats", icon: "tabler/outline/message"
 ```
 
 Replace `/admin` if your Avo mount path differs. This opens the full-page chat product, not the
@@ -1756,7 +1755,7 @@ Weigh these before you grant `create?` and `share?`:
 
 ## Turn the chat on or off per user
 
-`use?` on your `Avo::Ai::ChatPolicy` decides whether a user gets the chat at all. Key it off a role, a plan, or a feature flag:
+`use?` on your `Avo::Ai::ChatPolicy` decides whether a user can use the chat. Key it off a role, a plan, or a feature flag:
 
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
@@ -1770,21 +1769,12 @@ end
 A user it refuses:
 
 - sees no chat bar, and Cmd+J / Ctrl+J opens nothing;
-- doesn't see the **Chats**, **Messages**, **Models**, **Skills**, **Feedback** or **Connectors** resources in the sidebar, whether Avo generates it or your `main_menu` lists them with `resource`. **Models** and **Skills** leave search too;
-- is told they're not authorized on every chat page and on those resources' pages, and on every request behind them, sending a message included;
-- gets no reply to a message still queued when you turned the chat off. The queued reply posts a short notice instead of calling the model, and no title is generated for it. A reply already running finishes;
-- can't reach those resources through [the MCP server](./mcp.html)'s tools either, even if its own `use?` lets them connect.
+- is told they're not authorized on every chat page, and on every request behind them, sending a message included;
+- gets no reply to a message still queued when you turned the chat off. The queued reply posts a short notice instead of calling the model, and no title is generated for it. A reply already running finishes.
 
-The switch covers all of Avo AI, so someone who manages models or skills, or reviews conversations, needs `use?` too.
+`use?` only decides whether they can use the chat. It doesn't hide anything else: the **Chats**, **Messages**, **Models**, **Skills**, **Feedback** and **Connectors** menu entries and pages keep following their own policy methods, so a super admin can still review conversations there. To take an entry away, refuse `index?` for the same users.
 
-Avo asks `use?` many times on every page, about 30 with all six resources in the menu, so keep it cheap: a database query is cached for the request, but a call to a remote flag service isn't. And if you don't set `home_path`, Avo opens the first resource alphabetically, which can be one of these. Set it to a page everyone can open, or a refused user lands on the not-authorized page.
-
-Avo can't hide a plain link of your own in the menu, so give it the same check:
-
-```ruby
-# config/initializers/avo.rb
-link_to "Chats", "/admin/chats", visible: -> { Avo::Ai::Chat.usable_by?(current_user) }
-```
+If your menu links to the chats, hide the link for the same users with `visible: -> { Avo::Ai::Chat.usable_by?(current_user) }`.
 
 :::warning Your own `ChatPolicy` needs `use?`
 The chat asks `use?` the way Avo asks any policy method, so a `ChatPolicy` of your own without it **turns the chat off for every user**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ChatPolicy`, add `def use? = user.present?` when you upgrade to keep the chat on for everyone. The policy avo-ai ships, used when you have none, answers `true` for every signed-in user.
