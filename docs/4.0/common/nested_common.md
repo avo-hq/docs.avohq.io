@@ -39,7 +39,7 @@ Setting `nested: true` is a shortcut for `nested: { on: :forms }`.
 
 #### Deleting existing records
 
-<VersionReq version="4.3.3" />
+<VersionReq package="avo-nested" version="4.3.3" />
 
 A record added in the form but not saved yet can be removed at any time. An existing record gets a "Delete" button only when the parent model opts in with `allow_destroy: true`:
 

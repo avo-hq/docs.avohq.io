@@ -126,7 +126,7 @@ Off by default because refreshing a dashboard runs every card's query at once. T
 
 <Option name="`self.controls`" headingSize="3">
 
-<VersionReq version="4.3.4" />
+<VersionReq package="avo-dashboards" version="4.3.4" />
 
 Declares native header controls using `avo-custom_controls`. The block collects controls in declaration order; its HTML return value is not rendered.
 
@@ -153,7 +153,7 @@ The block replaces the whole header: `self.refresh_button` is ignored once it ru
 
 <Option name="`actions`" headingSize="3">
 
-<VersionReq version="4.3.4" />
+<VersionReq package="avo-dashboards" version="4.3.4" />
 
 Declares the actions a dashboard can run. They render in an Actions dropdown in the header, unless `self.controls` takes the header over.
 

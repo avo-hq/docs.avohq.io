@@ -181,7 +181,7 @@ Setting it here does not turn on the per-card controls; the two are independent,
 
 ## Add header controls
 
-<VersionReq version="4.3.4" />
+<VersionReq package="avo-dashboards" version="4.3.4" />
 
 Install `avo-custom_controls` alongside `avo-dashboards`, with a license that enables custom controls. Assign [`self.controls`](./dashboards-api.html#self.controls) to declare links, dropdowns, and partials in the native header:
 
@@ -225,7 +225,7 @@ Dashboard authorization runs before controls evaluation. Default resource button
 
 ## Run actions from the header
 
-<VersionReq version="4.3.4" />
+<VersionReq package="avo-dashboards" version="4.3.4" />
 
 A dashboard can run [actions](./actions.html) of its own, with no resource behind it. Declare them in `actions`:
 

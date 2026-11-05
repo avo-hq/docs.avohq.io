@@ -371,7 +371,7 @@ Activities recorded before you upgraded have no origin, and neither do activitie
 
 ### Record activity from your own code
 
-<VersionReq version="4.3.2" />
+<VersionReq package="avo-audit_logging" version="4.3.2" />
 
 Changes made outside the panel, such as in a background job, an importer, or a service object, aren't logged on their own unless the resource [logs changes made outside Avo](#log-changes-made-outside-avo). Record them with `Avo::AuditLogging.record`:
 
@@ -437,7 +437,7 @@ The record's timeline names the origin as the author, so these entries read *Nig
 
 ### Log changes made outside Avo
 
-<VersionReq version="4.3.2" />
+<VersionReq package="avo-audit_logging" version="4.3.2" />
 
 Calling `Avo::AuditLogging.record` yourself works when you know where the changes happen. To log every create, update, and delete on a model wherever it happens (a job, an importer, another API, the console), set `outside_avo: true` on its resource:
 

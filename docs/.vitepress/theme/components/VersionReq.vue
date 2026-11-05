@@ -2,6 +2,8 @@
 import {computed} from 'vue'
 
 const props = defineProps({
+  // Every gem has its own version numbers, so a bare version doesn't say whose it is.
+  package: {type: String, default: 'avo'},
   version: String,
 })
 const version = computed(() => props.version || '2.0')
@@ -18,16 +20,27 @@ const fullVersion = computed(() => {
     return `${props.version}.0`
   }
 })
-const href = computed(() => version.value === "unreleased" ? null : `https://avohq.io/releases/${fullVersion.value}`)
-const label = computed(() => version.value === "unreleased" ? "Unreleased yet" : `Since v${version.value}`)
-const title = computed(() => version.value === "unreleased" ? "This feature hasn't been released yet." : `You must run at least Avo v${version.value} to enjoy this feature.`)
+const unreleased = computed(() => version.value === "unreleased")
+const release = computed(() => `${props.package} v${version.value}`)
+const href = computed(() => unreleased.value ? null : `https://avohq.io/releases/${props.package}/${fullVersion.value}`)
+const title = computed(() => unreleased.value ? "This feature hasn't been released yet." : `You must run at least ${release.value} to enjoy this feature.`)
 </script>
 
 <template>
   <a :href="href"
     target="_blank"
     :title="title"
-    class="text-sm inline-flex items-center rounded !text-white !no-underline px-2 py-1 leading-none bg-gray-500">
-    <InformationCircleIcon class="h-4 inline mr-1" /> {{label}}
+    class="version-req text-sm inline-flex items-center rounded !text-white !no-underline px-2 py-1 leading-none bg-gray-500">
+    <InformationCircleIcon class="h-4 inline mr-1" />
+    <span v-if="unreleased">Unreleased yet</span>
+    <span v-else>Since <code>{{ release }}</code></span>
   </a>
 </template>
+
+<style scoped>
+.version-req code {
+  padding: 1px 4px;
+  color: inherit;
+  background-color: rgb(255 255 255 / 0.18);
+}
+</style>

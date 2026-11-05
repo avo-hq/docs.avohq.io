@@ -106,7 +106,7 @@ self.container_width = :lg
 
 <Option name="`self.authorize`" headingSize="3">
 
-<VersionReq version="4.3.1" />
+<VersionReq package="avo-forms" version="4.3.1" />
 
 Decides who may open and submit the form. Evaluated on every request through `Avo::ExecutionContext`, with `current_user`, `params`, `request`, and `context` available.
 
