@@ -243,6 +243,25 @@ Each entry shows a compact relative time — hover over an entry to reveal its f
 
 <Image src="/assets/img/4_0/audit-logging/hover-activities.webp" dark-src="/assets/img/4_0/audit-logging/hover-activities-dark.webp" width="356" height="422" alt="The History activity timeline card showing compact relative timestamps" />
 
+### Keep secrets out of the payload
+
+<VersionReq version="4.3.2" /> Avo masks the payload with your app's [`filter_parameters`](https://guides.rubyonrails.org/configuring.html#config-filter-parameters), the list Rails uses for your log file. A password typed into a form is stored as `[FILTERED]`, at any depth, whether the entry came from the panel, an action, an AI client or your own `Avo::AuditLogging.record` call. To mask another key, add it to that list.
+
+The AI assistant adds `code`, `state` and `token` to that list, and the MCP server adds `code` and its OAuth tokens, so with those installed a field with one of those names shows as `[FILTERED]` too.
+
+Entries written before this version keep what they stored, and their pages still show it. Run this once in a console to mask them:
+
+```ruby
+filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
+
+Avo::AuditLogging::Activity.where.not(payload: nil).find_each do |activity|
+  payload = JSON.parse(activity.payload)
+  activity.update_column(:payload, filter.filter(payload).to_json) if payload.is_a?(Hash)
+rescue JSON::ParserError
+  next # A row written by hand may not hold JSON.
+end
+```
+
 ### Enable change logs and revert changes
 
 By default, update activities do not display a change log, and there is no way to revert changes. This is because PaperTrail has not yet been enabled on the model. The change log and revert action are `paper_trail`-only — if you're using `audited`, activities are still tracked, but this section doesn't apply. To enable it, simply add `has_paper_trail` to the model:
@@ -391,7 +410,7 @@ class PriceUpdater
 end
 ```
 
-Avo finds the record's resource and links the activity to the record, so it shows up on the record's timeline like a change made in the panel. `payload` can be any hash; Avo stores it as JSON.
+Avo finds the record's resource and links the activity to the record, so it shows up on the record's timeline like a change made in the panel. `payload` can be any hash; Avo stores it as JSON, [with secrets masked](#keep-secrets-out-of-the-payload).
 
 Like the panel, it only records for resources that opted in with [`self.audit_logging`](#enable-specific-resources-and-actions), and it asks your `activity` block and `actions` the same way. It returns the activity, or `nil` when audit logging is switched off or the opt-in says no. It raises `ArgumentError` when the record's model has no Avo resource, or when the record hasn't been saved yet. The activity and its link to the record are saved together, or not at all.
 
