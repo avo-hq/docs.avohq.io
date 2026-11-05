@@ -180,7 +180,7 @@ Writes `app/tools/issue_invoice_tool.rb`, defining `IssueInvoiceTool`, called `i
 
 ## Tools
 
-The ten tools a connection can call, each gated by the capability it declares. Tools the app registers through [`extra_tools`](#extra_tools) are served beside them, gated the same way by the capability each declares, and on a narrowed connection by the [`resources`](./mcp.html#add-tools-of-your-own) each declares. Tool names are what a client prints in its transcript and are never translated.
+The ten tools a connection can call, each gated by the capability it declares. Tools the app registers through [`extra_tools`](#extra_tools) are served beside them, gated the same way by the capability each declares, and by the [`resources`](./mcp.html#add-tools-of-your-own) each declares. Tool names are what a client prints in its transcript and are never translated.
 
 | Tool             | Capability    | Does                                              |
 | ---------------- | ------------- | ------------------------------------------------- |

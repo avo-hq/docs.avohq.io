@@ -254,9 +254,9 @@ end
 ```
 
 - **`capability`** is which of the [three capabilities](#choose-what-a-connection-can-do) unlocks the tool: `avo:read` for one that only reads, `avo:write` for one that changes records, `avo:actions` for one that runs a workflow. A connection without it is refused before `perform` runs, exactly as for the shipped tools.
-- **`resources`** names every resource the tool reads or changes, as `list_resources` names them. A connection [narrowed to named resources](#choose-what-a-connection-can-do) must grant each one, or the call is refused before `perform` runs and the error names the one that's missing. A connection with a global grant isn't affected. List static names only: a tool that picks its resource at call time takes a `resource` argument instead.
+- **`resources`** names every resource the tool reads or changes, as `list_resources` names them. A connection [narrowed to named resources](#choose-what-a-connection-can-do) must grant each one, or the call is refused before `perform` runs and the error names the one that's missing. The connecting admin's own policy must also answer `index?` for each one, on any connection, so a tool can't read past a role that changed after the grant. List static names only: a tool that picks its resource at call time takes a `resource` argument instead.
 - **`description`** is what the client's model reads to decide whether to call the tool. Its first sentence is also what the connection's **Tools** card shows.
-- **`input_schema`** is the JSON schema of the arguments. Everything in `required` is checked before your code runs. A `resource` argument declared here is also checked against a grant narrowed to named resources; a `resource` key the schema doesn't declare counts for nothing.
+- **`input_schema`** is the JSON schema of the arguments. Everything in `required` is checked before your code runs. A `resource` argument declared here gets the same two checks, and a name that matches no resource is refused; a `resource` key the schema doesn't declare counts for nothing.
 - **`perform`** receives the identity — the connection, and the admin it acts as — plus the arguments. Reach records through `Avo::McpServer::ToolSupport`, which runs the admin's own policies and reports a record they can't reach as one that doesn't exist; raise one of `Avo::McpServer::ToolErrors` to refuse with a structured error. With [Audit Logging](./audit-logging.html) installed, `Avo::McpServer::Audit.record` puts a change the tool makes in the audit log, marked as made through the connection.
 
 Then register the class in your initializer:
@@ -513,11 +513,12 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 end
 ```
 
-Its record is the admin's connection when there is one, and an unsaved `Avo::McpServer::Connection` of theirs before they've connected. An admin it refuses:
+Its record is the admin's connection when there is one, and the `Avo::McpServer::Connection` class otherwise, so key it off `user`. An admin it refuses:
 
 - can't open the consent screen, which tells them the server is turned off for their account, so no connection or code is created;
 - doesn't see **MCP connections** in the sidebar, and is told they're not authorized on the connections list, on a connection's page and on the connect page;
-- loses the connections they already have on their next call: the token answers `401 invalid_token`, and the client's refresh and any code it hasn't exchanged yet are refused with `invalid_grant`. The refused code or refresh token isn't spent, so turning MCP back on lets the client continue where it was.
+- loses the connections they already have on their next call: the token answers `401 invalid_token`, and the client's refresh and any code it hasn't exchanged yet are refused with `invalid_grant`. The refused code or refresh token isn't spent, but a client may discard a token answered with `invalid_grant`, and then it has to connect again once MCP is back on.
+- can't reach **MCP connections** through [Avo AI](./ai.html)'s chat either: its tools don't list or find them for this admin.
 
 The switch covers the connections resource for everyone it refuses, so someone who only audits or revokes other admins' connections needs `use?` too. A client can always revoke its own token. An admin it refuses has no **Revoke** button, but their tokens do nothing while it says no. Turning MCP back on brings the connections back as they were, so revoke them from another admin's account if they shouldn't come back.
 

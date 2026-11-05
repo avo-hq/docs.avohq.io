@@ -1770,13 +1770,14 @@ end
 A user it refuses:
 
 - sees no chat bar, and Cmd+J / Ctrl+J opens nothing;
-- doesn't see the **Chats**, **Messages**, **Models**, **Skills**, **Feedback** or **Connectors** resources in the sidebar, whether Avo generates it or your `main_menu` lists them with `resource`. **Models** and **Skills** leave global search too;
+- doesn't see the **Chats**, **Messages**, **Models**, **Skills**, **Feedback** or **Connectors** resources in the sidebar, whether Avo generates it or your `main_menu` lists them with `resource`. **Models** and **Skills** leave search too;
 - is told they're not authorized on every chat page and on those resources' pages, and on every request behind them, sending a message included;
-- gets no reply to a message they sent before you turned the chat off. The queued reply posts a short notice instead of calling the model, and no title is generated for it.
+- gets no reply to a message still queued when you turned the chat off. The queued reply posts a short notice instead of calling the model, and no title is generated for it. A reply already running finishes;
+- can't reach those resources through [the MCP server](./mcp.html)'s tools either, even if its own `use?` lets them connect.
 
 The switch covers all of Avo AI, so someone who manages models or skills, or reviews conversations, needs `use?` too.
 
-Avo asks `use?` several times on every page, so keep it cheap. And if you don't set `home_path`, Avo opens the first resource alphabetically, which can be one of these. Set it to a page everyone can open, or a refused user lands on the not-authorized page.
+Avo asks `use?` many times on every page, about 30 with all six resources in the menu, so keep it cheap: a database query is cached for the request, but a call to a remote flag service isn't. And if you don't set `home_path`, Avo opens the first resource alphabetically, which can be one of these. Set it to a page everyone can open, or a refused user lands on the not-authorized page.
 
 Avo can't hide a plain link of your own in the menu, so give it the same check:
 

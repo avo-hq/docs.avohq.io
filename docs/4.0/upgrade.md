@@ -33,7 +33,7 @@ If your profile menu or `main_menu` has a plain link to the connections, add `vi
 
 ### Breaking Change
 
-A connection narrowed to named resources now refuses a tool of your own that takes no `resource` argument and declares no `resources`, because the server can't tell what it reads. Before, such a tool ran on those connections. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+A connection narrowed to named resources now refuses a tool of your own that takes no `resource` argument and declares no `resources`, because the server can't tell what it reads. Before, such a tool ran on those connections. On every connection, a tool of your own is now also refused when the connecting admin's `index?` refuses a resource it declares or names, and when its `resource` argument matches no resource. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
 
 ### Action Required
 
