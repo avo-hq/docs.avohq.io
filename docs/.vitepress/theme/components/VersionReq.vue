@@ -51,8 +51,16 @@ const title = computed(() => unreleased.value ? "This feature hasn't been releas
 }
 
 .version-req code {
-  padding: 1px 4px;
+  /* Monospace fonts sit high in their line box, so equal padding leaves the wrapper hanging below the text. */
+  padding: 2px 4px 0;
   color: inherit;
   background-color: rgb(255 255 255 / 0.18);
+}
+
+@supports (text-box: trim-both cap alphabetic) {
+  .version-req code {
+    padding: 3.5px 4px;
+    text-box: trim-both cap alphabetic;
+  }
 }
 </style>
