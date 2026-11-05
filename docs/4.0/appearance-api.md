@@ -24,6 +24,23 @@ end
 
 ## Theme selection
 
+<Option name="`themes_enabled`">
+
+Enables named themes and the Theme picker. When disabled, saved theme choices are ignored and the stock appearance remains active.
+
+```ruby
+config.appearance = {
+  themes_enabled: true
+}
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+See the [Themes guide](./themes.html) for the built-ins and custom themes.
+
+</Option>
+
 <Option name="`scheme`">
 
 The default color scheme.
@@ -45,6 +62,25 @@ Unless locked, users can change the scheme from the navbar switcher.
 - **Type:** Symbol — `:auto`, `:light`, or `:dark`
 - **Default:** `:auto`
 - **Lockable:** yes — list `:scheme` in `lock:` to hide the switcher
+
+</Option>
+
+<Option name="`theme`">
+
+The default [theme](./themes.html) — the look a user lands on before picking one, and the forced value when `:theme` is locked.
+
+```ruby
+config.appearance = {
+  theme: :coastal
+}
+```
+
+- **Type:** Symbol — a theme id
+- **Default:** `nil` (the first offered theme; `:paper` unless `themes:` reorders or omits it)
+- **Validation:** raises `ArgumentError` when the value is not a Symbol. Whether the id is installed is checked per request, not at boot; an id that is not installed falls back to the default.
+- **Lockable:** yes — list `:theme` in `lock:` to hide the picker
+
+Requires `themes_enabled: true`. Full details, including the built-in ids, are on the [Themes API](./themes-api.html#theme) page.
 
 </Option>
 
@@ -93,6 +129,91 @@ Available presets: `:brand`, `:red`, `:orange`, `:amber`, `:yellow`, `:lime`, `:
 :::warning Symbols only
 Passing a String or a Hash to `accent:` raises an `ArgumentError`. Use [`accent_colors:`](#accent_colors) for full-color overrides.
 :::
+
+</Option>
+
+## Density and roundness
+
+<Option name="`density`">
+
+The interface spacing preset. Applies to table and grid rows, sidebar spacing, headers, titles, actions, buttons, and description fields.
+
+```ruby
+config.appearance = {
+  density: :tight
+}
+```
+
+| Value | Behavior |
+| ----- | -------- |
+| `:tight` | Moderately compact spacing; the description-field ID row is 37px tall |
+| `:normal` | Standard spacing |
+| `:relaxed` | More spacious layout |
+
+- **Type:** Symbol
+- **Default:** inherits legacy [`config.density`](./customization-api.html#density) when omitted
+- **Values:** `:tight`, `:normal`, `:relaxed`
+- **Lockable:** yes — `lock: [:density]` forces the configured value and hides the picker
+
+Saved values are whitelisted against these presets and ignored when `density_picker` is disabled or `:density` is locked.
+
+</Option>
+
+<Option name="`density_picker`">
+
+Enables user control of density, unless `:density` is locked. In the inline layout, the control opens a dropdown containing an icon-and-label button group; the unified appearance panel includes the same group. Hover previews a preset; leaving, Escape, or closing reverts an uncommitted preview. Only clicking saves it.
+
+```ruby
+config.appearance = {
+  density_picker: true
+}
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+- **Persistence:** `avo.density` cookie or `:density` database settings key
+
+</Option>
+
+<Option name="`roundness`">
+
+The corner-radius preset for finite radii, including buttons, cards, fields, dropdowns, and navbar notches. Explicit circles and full pills retain their shape.
+
+```ruby
+config.appearance = {
+  roundness: :tight
+}
+```
+
+| Value | Behavior |
+| ----- | -------- |
+| `:square` | Zero radius |
+| `:tight` | Half the standard radius scale |
+| `:normal` | Standard radii, unchanged |
+| `:relaxed` | 1.5× the standard scale; outer cards use 18px and inner cards 14px |
+
+- **Type:** Symbol
+- **Default:** `:normal`
+- **Values:** `:square`, `:tight`, `:normal`, `:relaxed`
+- **Lockable:** yes — `lock: [:roundness]` forces the configured value and hides the picker
+
+Saved values are whitelisted against these presets and ignored when `roundness_picker` is disabled or `:roundness` is locked.
+
+</Option>
+
+<Option name="`roundness_picker`">
+
+Enables user control of roundness, unless `:roundness` is locked. In the inline layout, the control opens a dropdown containing an icon-and-label button group; the unified appearance panel includes the same group. Hover previews a preset; leaving, Escape, or closing reverts an uncommitted preview. Only clicking saves it.
+
+```ruby
+config.appearance = {
+  roundness_picker: true
+}
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+- **Persistence:** `avo.roundness` cookie or `:roundness` database settings key
 
 </Option>
 
@@ -161,6 +282,24 @@ When either palette is set, Avo renders it as an inline `:root` `<style>` block 
 
 ## Picker control
 
+<Option name="`themes`">
+
+Restrict the [themes](./themes.html) the picker offers, and order them within each scheme group (Light & dark, Light, Dark).
+
+```ruby
+config.appearance = {
+  themes: [:paper, :coastal, :monokai]
+}
+```
+
+- **Type:** Array of Symbols (theme ids)
+- **Default:** `nil` — every installed theme: the built-ins in their shipped order, then local and gem themes by title
+- **Values:** ids of installed themes; unknown ids are dropped at render time. The list may omit `:paper`.
+
+See [`themes`](./themes-api.html#themes) on the Themes API page.
+
+</Option>
+
 <Option name="`neutrals`">
 
 Restrict which neutral presets appear in the picker.
@@ -200,7 +339,7 @@ config.appearance = {
   scheme: :light,
   neutral: :slate,
   accent: :blue,
-  lock: [:scheme, :neutral, :accent] # any subset
+  lock: [:scheme, :neutral, :accent, :theme] # any subset
 }
 ```
 
@@ -209,8 +348,11 @@ config.appearance = {
 | `:scheme`      | Hides the light/dark/auto switcher                    |
 | `:neutral`     | Hides the neutral picker; forces the configured value |
 | `:accent`      | Hides the accent picker; forces the configured value  |
+| `:theme`       | Hides the theme picker; forces the configured `theme:` |
+| `:density`     | Hides the density picker; forces the configured density |
+| `:roundness`   | Hides the roundness picker; forces the configured roundness |
 
-- **Type:** Array of Symbols, any subset of `[:scheme, :neutral, :accent]`
+- **Type:** Array of Symbols, any subset of `[:scheme, :neutral, :accent, :theme, :density, :roundness]`
 - **Default:** `[]`
 
 A value not listed in `lock:` is treated as a default — users can override it via the switcher.
@@ -303,13 +445,13 @@ load_settings: -> {
 - **Type:** Proc / Lambda
 - **Default:** `nil`
 - **Context:** evaluated in Avo's execution context with `current_user` available (plus `params`, `request`, `view_context`, `main_app`)
-- **Return:** a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`. Missing keys fall back to the configured defaults.
+- **Return:** a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`, `:theme`, `:density`, `:roundness`. Missing keys fall back to the configured defaults. Theme picks require `themes_enabled`; density and roundness picks require their enabled, unlocked picker. Invalid saved values are ignored.
 
 </Option>
 
 <Option name="`save_settings`">
 
-Block called whenever the user picks a new scheme, neutral, or accent. Receives a `settings` local — a **partial** Hash containing only the keys the user just changed.
+Block called whenever the user picks a new scheme, neutral, accent, theme, density, or roundness. Receives a `settings` local — a **partial** Hash containing only the keys the user just changed. Hover previews do not save settings.
 
 ```ruby
 save_settings: -> {
@@ -326,7 +468,7 @@ save_settings: -> {
 - **Type:** Proc / Lambda
 - **Default:** `nil`
 - **Context:** evaluated in Avo's execution context with `current_user` available (plus `params`, `request`, `view_context`, `main_app`)
-- **Locals:** `settings` — partial Hash with whichever of `:color_scheme`, `:neutral`, `:accent` changed. It contains only the changed keys, so callers merge it into existing preferences rather than overwriting them.
+- **Locals:** `settings` — partial Hash with whichever of `:color_scheme`, `:neutral`, `:accent`, `:theme` changed. It contains only the changed keys, so callers merge it into existing preferences rather than overwriting them.
 
 You'll need a JSON or JSONB column on whichever model backs `current_user`:
 
@@ -476,7 +618,16 @@ These are CSS custom properties, not `config.appearance` keys — some colors an
 
 | Variable                          | Default                        | Description                                                                                                                                            |
 | --------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--color-navbar-background`       | `var(--color-avo-neutral-900)` | Global source for the top navbar background. Kept for compatibility. For full navbar palette changes, prefer the scoped `.top-navbar` variables below. |
+| `--color-navbar-background`       | `var(--color-avo-neutral-900)` | Global source for the top navbar background. Themes set it in their block; the dark bar is a default, not a rule.                                      |
+| `--color-navbar-content`          | `var(--avo-neutral-source-300, var(--color-avo-neutral-300))` | Global source for navbar text and icons. Named presets keep their original navbar contrast; Brand and custom palettes use neutral-300. Set it with the background: a light navbar needs dark ink here. |
+| `--color-navbar-content-hover`    | `var(--color-avo-neutral-50)`  | Global source for hovered navbar text and icons.                                                                                                       |
+| `--color-navbar-control-background` | `var(--color-avo-neutral-800)` | Global source for the navbar's controls (search, the appearance picker's pill and trigger).                                                          |
+| `--color-navbar-control-background-hover` | `var(--color-avo-neutral-700)` | Hover background for those controls; also the shortcut badges' background.                                                                     |
+| `--color-navbar-control-border`   | `var(--color-avo-neutral-700)` | Border of those controls.                                                                                                                              |
+| `--color-navbar-control-content`  | `var(--color-avo-neutral-50)`  | Text inside those controls.                                                                                                                            |
+| `--color-navbar-control-muted`    | `var(--color-avo-neutral-400)` | Muted text and icons inside those controls.                                                                                                            |
+| `--color-navbar-active-background` | `var(--color-avo-neutral-950)` | Background of the active button in the inline appearance switcher.                                                                                   |
+| `--color-navbar-active-content`   | `var(--color-avo-neutral-50)`  | Text and icon color of that active button.                                                                                                             |
 | `--navbar-notch-enabled`          | `true`                         | Whether the inverted corner arches under the navbar render. Set to `false` to hide them when the navbar and content share a background.                |
 | `--navbar-notch-radius`           | `1rem`                         | Radius of the navbar arches that fill the content panel's top corners. Set to `0` to flatten them.                                                     |
 | `--main-content-radius`           | `var(--navbar-notch-radius)`   | Radius of the main content panel's top corners. Defaults to the notch radius so the panel and the navbar arches stay aligned; override to differ.      |
@@ -484,34 +635,76 @@ These are CSS custom properties, not `config.appearance` keys — some colors an
 | `--color-main-content-background` | `var(--color-primary)`         | Background of the main content panel and the breadcrumb bar, which blends into it. Defaults to the primary surface; resolves per-scheme.               |
 | `--color-main-content-border`     | `var(--border-color)`          | Color of the border between the sidebar and the main content panel. Tracks the shared app border color by default; override to restyle just it.        |
 
+### Background images
+
+Themes can set these alongside the surface color tokens. Values are CSS image, size, position, and repeat values, not Ruby appearance options.
+
+| Variable | Purpose |
+| -------- | ------- |
+| `--main-content-background-image` | Main content background image, such as `url(...)` or a gradient |
+| `--main-content-background-size` | Main content background sizing, such as `cover` |
+| `--main-content-background-position` | Main content background alignment, such as `center` |
+| `--main-content-background-repeat` | Main content background repetition, such as `no-repeat` |
+| `--sidebar-background-image` | Sidebar background image |
+
 ### Fonts
 
-Two Tailwind theme variables carry Avo's typefaces. Every screen inherits `--font-sans` through the root element, so overriding it on `:root` changes the whole interface. See [Change the font](./theming.html#change-the-font) in the theming guide for loading a hosted or self-hosted family.
+Tailwind theme variables carry Avo's typefaces and shared text sizes. Body text inherits `--font-sans`; headings use `--font-heading`. See [Change the font](./theming.html#change-the-font) in the theming guide for loading a hosted or self-hosted family, and [theme fonts](./themes.html#fonts-and-images-a-theme-uses) for the Google Fonts CSP requirements of Redaction 50 and Playfair Display.
 
 | Variable      | Default                                                                                              | Description                                                                                                                                                                 |
 | ------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--font-sans` | `"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, …`      | Font family for all interface text. Avo self-hosts Inter (Latin subset) in weights 400, 500, 600, and 700 and falls back to the system stack.                                |
+| `--font-heading` | `var(--font-sans)` | Font family for headings; independent of body text. |
+| `--font-description` | `var(--font-sans)` | Font family for page-header descriptions; Playfair Display sets it to `var(--font-heading)`. Does not change field help. |
+| `--text-sm` | `0.875rem` | Shared small text size. |
+| `--text-base` | `1rem` | Shared base text size. |
 | `--font-mono` | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` | Font family for monospace text: code snippets in alerts, file details in the media library, the welcome page's commands. Not bundled — resolves to the device's monospace font. |
+
+### Density and roundness variants
+
+Custom Tailwind markup can use root-aware `density-tight:`, `density-normal:`, and `density-relaxed:` variants, and `roundness-square:`, `roundness-tight:`, `roundness-normal:`, and `roundness-relaxed:` variants. There is no root `data-density` selector. Themes can override density layout tokens; the generated theme stylesheet is the token catalog.
+
+| Variable | Purpose |
+| -------- | ------- |
+| `--density-factor` | Shared density scaling factor |
+| `--table-cell-padding-block` | Vertical table cell padding |
+| `--field-padding-block` | Vertical field padding |
+| `--field-stacked-padding-block` | Vertical padding for stacked fields |
+| `--sidebar-item-padding-block` | Vertical sidebar item padding |
+| `--sidebar-subitem-padding-block` | Vertical sidebar subitem padding |
+| `--sidebar-group-gap` | Gap between sidebar groups |
+| `--panel-gap` | Panel spacing |
+| `--panel-stack-gap` | Spacing between stacked panels |
+| `--header-gap` | Header spacing |
+| `--content-padding` | Main content padding |
+| `--grid-card-gap` | Gap between grid cards |
+| `--grid-card-padding` | Grid card padding |
+| `--card-padding` | Card padding |
+| `--header-title-font-size` | Page-header title size |
+| `--header-title-line-height` | Page-header title line height |
+| `--control-padding-block` | Vertical control padding |
+| `--control-font-size` | Control text size |
+| `--control-line-height` | Control line height |
 
 ### Top navbar
 
-The top navbar exposes a scoped palette contract on `.top-navbar`. Override these variables on `.top-navbar` so the navbar can change without leaking those colors into dropdown panels, popovers, or the main content.
+The top navbar exposes a scoped palette contract on `.top-navbar`, sourced from the global `--color-navbar-*` variables above. Override the scoped variables on `.top-navbar` for a one-off change in an app; set the global ones from a [theme](./themes.html)'s block, which cannot reach `.top-navbar`.
 
 | Variable                                           | Default                          | Description                                                                                           |
 | -------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `--top-navbar-background`                          | `var(--color-navbar-background)` | Background color of the top navbar.                                                                   |
-| `--top-navbar-content`                             | Named preset 300; otherwise `var(--color-avo-neutral-300)` | Text and icon color for navbar links and icon buttons. Named presets keep their original navbar contrast; Brand and custom palettes use neutral-300. |
-| `--top-navbar-content-hover`                       | `var(--color-avo-neutral-50)`    | Text and icon color for hovered navbar links and icon buttons.                                        |
-| `--top-navbar-control-background`                  | `var(--color-avo-neutral-800)`   | Background for navbar controls such as search, picker trigger, and hovered sidebar toggle.            |
-| `--top-navbar-control-background-hover`            | `var(--color-avo-neutral-700)`   | Hover background for navbar controls.                                                                 |
-| `--top-navbar-control-border`                      | `var(--color-avo-neutral-700)`   | Border color for navbar controls.                                                                     |
-| `--top-navbar-control-content`                     | `var(--color-avo-neutral-50)`    | Main text color inside navbar controls, such as the search input value.                               |
-| `--top-navbar-control-muted`                       | `var(--color-avo-neutral-400)`   | Muted text and icon color inside navbar controls, such as placeholders and search icons.              |
-| `--top-navbar-control-shortcut-background`         | `var(--color-avo-neutral-700)`   | Background for shortcut badges inside navbar controls.                                                |
-| `--top-navbar-control-shortcut-border`             | `var(--color-avo-neutral-600)`   | Border color for shortcut badges inside navbar controls.                                              |
-| `--top-navbar-control-shortcut-content`            | `var(--color-avo-neutral-200)`   | Text color for shortcut badges inside navbar controls.                                                |
-| `--top-navbar-active-background`                   | `var(--color-avo-neutral-950)`   | Background for active inline appearance switcher buttons.                                             |
-| `--top-navbar-active-content`                      | `var(--color-avo-neutral-50)`    | Text and icon color for active inline appearance switcher buttons.                                    |
+| `--top-navbar-content`                             | `var(--color-navbar-content)`   | Text and icon color for navbar links and icon buttons. By default, named presets keep their original navbar contrast; Brand and custom palettes use neutral-300. |
+| `--top-navbar-content-hover`                       | `var(--color-navbar-content-hover)`    | Text and icon color for hovered navbar links and icon buttons.                                        |
+| `--top-navbar-control-background`                  | `var(--color-navbar-control-background)`   | Background for navbar controls such as search, picker trigger, and hovered sidebar toggle.            |
+| `--top-navbar-control-background-hover`            | `var(--color-navbar-control-background-hover)`   | Hover background for navbar controls.                                                                 |
+| `--top-navbar-control-border`                      | `var(--color-navbar-control-border)`   | Border color for navbar controls.                                                                     |
+| `--top-navbar-control-content`                     | `var(--color-navbar-control-content)`    | Main text color inside navbar controls, such as the search input value.                               |
+| `--top-navbar-control-muted`                       | `var(--color-navbar-control-muted)`   | Muted text and icon color inside navbar controls, such as placeholders and search icons.              |
+| `--top-navbar-control-shortcut-background`         | `var(--color-navbar-control-background-hover)`   | Background for shortcut badges inside navbar controls.                                                |
+| `--top-navbar-control-shortcut-border`             | a mix of the control border and content colors   | Border color for shortcut badges inside navbar controls.                                              |
+| `--top-navbar-control-shortcut-content`            | `var(--color-navbar-content)`   | Text color for shortcut badges inside navbar controls.                                                |
+| `--top-navbar-active-background`                   | `var(--color-navbar-active-background)`   | Background for active inline appearance switcher buttons.                                             |
+| `--top-navbar-active-content`                      | `var(--color-navbar-active-content)`    | Text and icon color for active inline appearance switcher buttons.                                    |
 | `--top-navbar-start-notch-align-with-main-content` | `false`                          | Set to `true` to move the start notch to the `.main-content` start edge for a different rounded look. |
 
 :::info
