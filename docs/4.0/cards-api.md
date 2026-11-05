@@ -210,7 +210,7 @@ Avo caches through `Avo.configuration.cache_store`. The key is scoped to the cur
 | Part | Why |
 | --- | --- |
 | Card class, parent, and position | Separates cards, and two registrations of the same class |
-| [`range`](#self.ranges) and the dashboard's global range | Each range is its own result |
+| [`range`](#self.ranges) and the dashboard's filter values | Each range is its own result |
 | Current user and tenant | Keeps per-user and per-tenant queries apart |
 | Current locale | A [localized](./cards.html#localization) card, or a `query` returning translated content, caches per language |
 | The resource's view and record | A [resource card](./cards.html) caches per record and per view |

@@ -90,20 +90,7 @@ self.grid_cols = 4
 
 </Option>
 
-## Ranges
-
-<Option name="`self.global_ranges`" headingSize="3">
-
-Renders a row of range buttons at the top of the dashboard that update every card's range at once. Each entry is a number of days; its button label comes from the `avo.<days>` translation key.
-
-```ruby
-self.global_ranges = [7, 30, 60, 365]
-```
-
-- **Type:** Array of Integers
-- **Default:** `[]` (no global range bar)
-
-</Option>
+## Refresh
 
 <Option name="`self.refresh_button`" headingSize="3">
 
