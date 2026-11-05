@@ -10,6 +10,12 @@ When a user toggles the "Select all" checkbox, Avo will first check to see if th
 
 This is being done through serializing the query to be unserialized back in the action.
 
+## On the grid view
+
+<VersionReq version="4.3.10" />
+
+The [grid view](./grid-view.html) gets the same bar, above the cards: a **Select all** checkbox for the page and, when the resource has more than one page, the **Select all matching** link and the **Undo** that drops back to the page's selection. A resource that hides its checkboxes with [`self.record_selector`](./resources-api.html#self.record_selector) renders no bar.
+
 ## Coming back to the index
 
 <VersionReq version="4.3.1" />
