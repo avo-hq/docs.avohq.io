@@ -553,11 +553,15 @@ task backfill_prices: :environment do
 end
 ```
 
-Nothing is recorded inside the block from any source: the panel, `Avo::AuditLogging.record` (which returns `nil`), [changes made outside Avo](#log-changes-made-outside-avo), the API, the AI chat, or MCP, and PaperTrail or Audited versions written inside it aren't linked to an activity. A model change counts as inside the block when it was saved inside it, even if its transaction commits after the block ends. Logging resumes when the block ends, even if it raises. The block only affects the current thread, so other requests keep recording.
+Nothing is recorded inside the block from any source: the panel, `Avo::AuditLogging.record` (which returns `nil`), [changes made outside Avo](#log-changes-made-outside-avo), the API, the AI chat, or MCP, and PaperTrail or Audited versions written inside it aren't linked to an activity. A model change counts as inside the block when it was saved inside it, even if its transaction commits after the block ends. Logging resumes when the block ends, even if it raises. The pause covers the block's code and any fibers it starts, such as `Async` tasks. Other requests, threads and processes keep recording, including a thread started inside the block.
 
 A background job enqueued inside the block runs later, outside it, so its changes are logged. Wrap the job's own work in `Avo::AuditLogging.disabled` if they shouldn't be.
 
 To switch logging off everywhere, for example in the test environment, set `config.enabled = false`.
+
+:::info Falcon and other fiber-based servers
+Set [`config.active_support.isolation_level = :fiber`](https://guides.rubyonrails.org/configuring.html#config-active-support-isolation-level), as Rails asks for these servers, so each request keeps its own current user and origin. A fiber or thread you start yourself doesn't inherit them, so a change saved there has no author.
+:::
 
 ## Disable specific actions logging
 
