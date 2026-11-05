@@ -61,15 +61,13 @@ const title = computed(() => unreleased.value ? "This feature hasn't been releas
 }
 
 @supports (text-box: trim-both ex alphabetic) {
-  /* "Since" has a capital and no descenders, so it centers on its capital; the lowercase code on its letters. */
-  .version-req__since > span {
-    text-box: trim-both cap alphabetic;
+  .version-req__since > * {
+    text-box: trim-both ex alphabetic;
   }
 
   /* 16px tall in any font: an odd height can't sit in the exact middle of the 24px badge. */
   .version-req code {
     padding: calc((16px - 1ex) / 2) 4px;
-    text-box: trim-both ex alphabetic;
   }
 }
 </style>
