@@ -53,20 +53,21 @@ const title = computed(() => unreleased.value ? "This feature hasn't been releas
 }
 
 .version-req code {
-  /* Monospace fonts sit high in their line box, so equal padding leaves the wrapper hanging below the text. */
-  padding: 2px 4px 0;
+  /* Monospace fonts sit high in their line box, so equal padding would leave the wrapper hanging below the text. */
+  padding: 2.5px 4px 1.25px;
   font-size: 1em;
   color: inherit;
   background-color: rgb(255 255 255 / 0.18);
 }
 
-@supports (text-box: trim-both cap alphabetic) {
+@supports (text-box: trim-both ex alphabetic) {
   .version-req__since > * {
-    text-box: trim-both cap alphabetic;
+    text-box: trim-both ex alphabetic;
   }
 
+  /* 16px tall in any font: an odd height can't sit in the exact middle of the 24px badge. */
   .version-req code {
-    padding: 3.5px 4px;
+    padding: calc((16px - 1ex) / 2) 4px;
   }
 }
 </style>
