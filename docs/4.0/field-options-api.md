@@ -214,7 +214,7 @@ On form submissions, the `visible` block is evaluated in the `create` and `updat
 
 <Option name="`hide_if_blank`" headingSize="3">
 
-<VersionReq version="4.2.11" />
+<VersionReq package="avo" version="4.2.11" />
 
 Hides the field on the given views when its value is blank. It applies on top of the other visibility options: the field shows only when it passes all of them.
 
@@ -407,7 +407,7 @@ field :one_time_password, as: :text, autocomplete: "one-time-code"
 
 <Option name="`autofocus`" headingSize="3">
 
-<VersionReq version="4.3.1" />
+<VersionReq package="avo" version="4.3.1" />
 
 Adds the HTML `autofocus` attribute to the field's input on the <New /> and <Edit /> views and in [action](./actions.html) modals, so the cursor starts there when the form opens. The block is executed in [`Avo::ExecutionContext`](./execution-context.html) with access to `record`, `resource`, and `view`, plus the usual defaults (`context`, `params`, `view_context`, `current_user`). A falsy result leaves the input alone.
 

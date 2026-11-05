@@ -495,7 +495,7 @@ Avo.configure do |config|
 end
 ```
 
-If you want some of that state to keep resetting, turn its key off next to the driver. Everything you leave out stays on. <VersionReq version="4.3.11" />
+If you want some of that state to keep resetting, turn its key off next to the driver. Everything you leave out stays on. <VersionReq package="avo" version="4.3.11" />
 
 ```ruby
 # config/initializers/avo.rb

@@ -2,8 +2,8 @@
 import {computed} from 'vue'
 
 const props = defineProps({
-  // Every gem has its own version numbers, so a bare version doesn't say whose it is.
-  package: {type: String, default: 'avo'},
+  // Left out on the 2.0 and 3.0 pages, where a bare version can be Avo's or a paid package's, such as avo-pro.
+  package: String,
   version: String,
 })
 const version = computed(() => props.version || '2.0')
@@ -21,9 +21,15 @@ const fullVersion = computed(() => {
   }
 })
 const unreleased = computed(() => version.value === "unreleased")
+const namesPackage = computed(() => props.package && !unreleased.value)
 const requirement = computed(() => `${props.package} >= v${version.value}`)
-const href = computed(() => unreleased.value ? null : `https://avohq.io/releases/${props.package}/${fullVersion.value}`)
-const title = computed(() => unreleased.value ? "This feature hasn't been released yet." : `You must run at least ${props.package} v${version.value} to enjoy this feature.`)
+const href = computed(() => {
+  if (unreleased.value) return null
+
+  return `https://avohq.io/releases/${props.package ? `${props.package}/` : ""}${fullVersion.value}`
+})
+const label = computed(() => unreleased.value ? "Unreleased yet" : `Since v${version.value}`)
+const title = computed(() => unreleased.value ? "This feature hasn't been released yet." : `You must run at least ${props.package || "Avo"} v${version.value} to enjoy this feature.`)
 </script>
 
 <template>
@@ -32,8 +38,8 @@ const title = computed(() => unreleased.value ? "This feature hasn't been releas
     :title="title"
     class="version-req text-sm inline-flex items-center rounded !text-white !no-underline px-2 py-1 leading-none bg-gray-500">
     <InformationCircleIcon class="h-4 inline mr-1" />
-    <span v-if="unreleased">Unreleased yet</span>
-    <span v-else class="version-req__since">Since <code>{{ requirement }}</code></span>
+    <span v-if="namesPackage" class="version-req__since">Since <code>{{ requirement }}</code></span>
+    <template v-else>{{ label }}</template>
   </a>
 </template>
 

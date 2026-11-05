@@ -402,7 +402,7 @@ If you use `devise` and update users without passing a password, stop the valida
 
 ## Warn before deleting dependent records
 
-<VersionReq version="4.3.8" />
+<VersionReq package="avo" version="4.3.8" />
 
 When a model removes other records on destroy, the delete confirmation says so. Avo reads the model's `dependent:` associations and adds a line under "Are you sure?":
 
