@@ -64,7 +64,7 @@ Each hash becomes a record, so `field :name` reads the `name:` key and computed 
 
 ## Paginate at the source
 
-<VersionReq version="4.3.6" />
+<VersionReq package="avo" version="4.3.6" />
 
 By default `records` returns every record and Avo cuts the page out of the array. When the source can return one page by itself, such as a cache, a search index or a store of your own, fetch only the page being shown. `page` and `per_page` hold the index's current page and page size. Return that page's records together with the total, and Avo shows them as they are:
 
@@ -103,7 +103,7 @@ Use an [HTTP Resource](./http-resource.html) instead. It is backed by the endpoi
 
 ## Create, edit and delete
 
-<VersionReq version="4.2.10" />
+<VersionReq package="avo" version="4.2.10" />
 
 Array resources are read-only by default. Set `self.writable = true` to show the Create, Edit and Delete controls, then tell the resource how to write. Avo fills the record from the form, but it can't save an array record by itself, so you define `save_record` and `destroy_record`:
 
@@ -133,7 +133,7 @@ end
 `BookmarkStore` stands in for wherever the data lives: a JSON file, a cache, or an external API. `save_record` handles both create and update. A new record has a `nil` id, so set it after saving: Avo uses it to redirect to the record's page. Both methods report success through their return value, so return something truthy, or raise to fail. The resource's policy still decides who can create, edit and delete.
 
 :::info
-Avo calls `save_record` and `destroy_record` on the resource. <VersionReq version="4.2.12" /> On earlier versions, override [`save_record_action`](./controllers-api.html#save_record_action) and [`destroy_record_action`](./controllers-api.html#destroy_record_action) in the resource's controller instead, where the record is `@record`.
+Avo calls `save_record` and `destroy_record` on the resource. <VersionReq package="avo" version="4.2.12" /> On earlier versions, override [`save_record_action`](./controllers-api.html#save_record_action) and [`destroy_record_action`](./controllers-api.html#destroy_record_action) in the resource's controller instead, where the record is `@record`.
 :::
 
 ## Render it inside another resource

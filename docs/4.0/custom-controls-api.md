@@ -263,7 +263,7 @@ Renders a divider line between the items of a [`list`](#list) dropdown.
 
 <Option name="`partial`">
 
-<VersionReq version="4.3.3" />
+<VersionReq package="avo-custom_controls" version="4.3.3" />
 
 Renders a Rails partial as a top-level control. Available on resource bars and dashboard headers, but not inside a `list`.
 
@@ -282,7 +282,7 @@ Forms use normal Rails helpers and CSRF protection. Write endpoints belong to th
 
 <Option name="`refresh_button`">
 
-<VersionReq version="4.3.3" />
+<VersionReq package="avo-custom_controls" version="4.3.3" />
 
 Renders the button that reloads every card, in the position you declare it. Available only in a dashboard's [`self.controls`](./dashboards-api.html#self.controls) block, not inside a `list`.
 

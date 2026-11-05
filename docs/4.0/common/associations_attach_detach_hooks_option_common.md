@@ -1,6 +1,6 @@
 <Option name="`before_attach`, `after_attach`, `before_detach`, `after_detach`" id="attach-detach-hooks">
 
-<VersionReq version="4.3.11" />
+<VersionReq package="avo" version="4.3.11" />
 
 Run your own code when a user attaches or detaches a record from the association, for example to send a notification or write an audit entry.
 

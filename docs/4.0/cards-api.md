@@ -445,7 +445,7 @@ self.partial = "avo/cards/map_card"
 
 ## HTML card
 
-<VersionReq version="4.1" />
+<VersionReq package="avo-dashboards" version="4.1" />
 
 `Avo::Cards::HtmlCard` builds its body from Ruby instead of a partial file. It has no extra class attributes — you implement a `body` method.
 
@@ -478,7 +478,7 @@ Inline template strings go through ActionView, so interpolated ERB values are HT
 
 ## Data cards (table & list)
 
-<VersionReq version="4.1" />
+<VersionReq package="avo-dashboards" version="4.1" />
 
 `Avo::Cards::TableCard` and `Avo::Cards::ListCard` both inherit from `Avo::Cards::DataCard`: you declare columns with `fields` and return records from `query`. The table card renders a `<table>` with column headers; the list card renders a `<ul>` with no headers, the first field as each row's primary content and the rest trailing at the end edge.
 
@@ -633,7 +633,7 @@ end
 
 ## Standalone card components
 
-<VersionReq version="4.3.2" />
+<VersionReq package="avo-dashboards" version="4.3.2" />
 
 View components that draw a card from plain values, for pages with no dashboard or resource behind them, such as a [custom tool](./custom-tools.html). See [Show a card in a custom tool](./cards.html#show-a-card-in-a-custom-tool).
 

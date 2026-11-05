@@ -553,7 +553,7 @@ config.persistence = -> do
 end
 ```
 
-Each kind of state has a key next to `driver`. Set it to `false` to leave that one out while the others persist. <VersionReq version="4.3.11" />
+Each kind of state has a key next to `driver`. Set it to `false` to leave that one out while the others persist. <VersionReq package="avo" version="4.3.11" />
 
 ```ruby
 config.persistence = {

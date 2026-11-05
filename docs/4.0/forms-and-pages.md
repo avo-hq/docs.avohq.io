@@ -309,7 +309,7 @@ end
 
 ## Restrict who can use a form
 
-<VersionReq version="4.3.1" />
+<VersionReq package="avo-forms" version="4.3.1" />
 
 By default, every signed-in Avo user can open and submit every form. Set [`self.authorize`](./forms-and-pages-api.html#self.authorize) to limit a form to some users:
 

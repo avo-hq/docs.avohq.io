@@ -54,7 +54,7 @@ Because a singular association owns exactly one join record, detaching is checke
 
 <Option name="`attach_fields`">
 
-<VersionReq version="4.0.25" />
+<VersionReq package="avo" version="4.0.25" />
 
 If the join model has extra columns you want to fill in while attaching, declare them with `attach_fields` and they'll show up in the attach modal.
 
