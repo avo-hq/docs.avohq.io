@@ -65,7 +65,7 @@ end
 
 If someone outside your team may have your license key, for example a former agency, replace it from your [dashboard](https://avohq.io/licenses). Open the license and click **Rotate** next to the license key. In the dialog, also tick **Gem server token** if you want to replace both at once, read the warnings, tick **I understand and agree** and confirm. Only account admins see the button.
 
-The old key stops working right away and is never issued again. Your apps keep running on their last license check for a while, then report the license as invalid, so set the new key as `config.license_key` and deploy every environment straight after.
+The old key stops working right away and is never issued again. Your apps keep running on their last license check for a while, then pause the admin (see [When the license can't be validated](#when-the-license-can-t-be-validated)), so set the new key as `config.license_key` and deploy every environment straight after.
 
 To replace the gem server token, see [Rotate the gem server token](./gem-server-authentication.html#rotate-the-gem-server-token). The public key never changes.
 
@@ -79,6 +79,41 @@ Avo.configure do |config|
   config.display_license_request_timeout_error = false
 end
 ```
+
+## When the license can't be validated
+
+Avo keeps the last valid answer from the license server and checks again once it is 24 hours old. If that check fails, because the server can't be reached or because it answers that the license is invalid, your admin keeps running on the last valid answer for 72 more hours and retries every hour. In production that is 96 hours after the last successful check. <VersionReq package="avo-licensing" version="4.4.0" />
+
+While the grace runs, the sidebar indicator turns amber and the [status page](./license-troubleshooting.html#check-the-license-status-page) shows **Action needed before** with the date access stops.
+
+After the grace, the admin is blocked. The same happens when Avo has never held a valid answer, for example on the first boot while the license server is unreachable, after a deploy that lost the cached answer, or with an invalid key. Every admin page then shows **Temporarily unavailable**, and requests that aren't HTML (JSON, API, MCP) get a `503`. Admin and developer users also see a link to the status page. It says why access stopped, when the last successful check was, and that the app retries every 5 minutes. Press **Refresh license** there to retry at once. The first successful check unblocks the admin right away.
+
+The license server can also answer with a specific error: the license is locked, its trial ended, its subscription lapsed, or the app's URL is blocked. Those block the admin immediately, with no grace, and show a reference code on the page.
+
+A valid license that doesn't include an add-on doesn't block anything. That add-on switches off, and [authorization](./authorization.html#when-the-license-lapses) fails closed if your initializer sets a client.
+
+### Keep the last answer across deploys
+
+Avo keeps the license answer in your Rails cache. Use a persistent cache store shared by all your processes, like Solid Cache, Redis or Memcached. With a per-process memory store, a deploy or a worker restart loses the answer, and an app that can't reach the license server at that moment is blocked. The status page shows which cache store the app uses.
+
+### Run the admin without a valid license
+
+If you'd rather keep the admin available when the license can't be validated, opt out of the block:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.run_community_admin_without_valid_license = true # [!code ++]
+end
+```
+
+The admin then runs as the open source Avo does. Paid add-ons stay off and your authorization policies are not applied, so anyone who can sign in to Avo can reach everything. The status page says so with an orange indicator: "Running without a valid license: paid add-ons are off and authorization policies are not applied". The setting defaults to `false`.
+
+A valid license that lacks `avo-authorization` still fails closed when your initializer sets an authorization client, with the setting on or off.
+
+:::warning
+Don't set this where your policies protect sensitive data. Without a valid license nothing enforces them.
+:::
 
 ## Purchase a license
 
@@ -129,6 +164,6 @@ Avo pings the [HQ](https://avohq.io) (the license validation service) with some 
 ```
 
 That information helps us to identify your license and return a license valid/invalid response to Avo.
-The requests are made at boot time and every hour when you use Avo on any license type.
+The first request is made when the app first needs the license. After a successful check Avo reuses the answer for 24 hours, on any license type.
 
 If you need a special build without the license validation mechanism please [get in touch](mailto:adrian@avohq.io).
