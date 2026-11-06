@@ -31,7 +31,7 @@ Avo.configure do |config|
 end
 ```
 
-The server is **off by default**: adding the gem changes nothing until you mount it and enable it. With nothing else configured, its address is your panel's origin plus `/avo/mcp`, each connection may make 300 tool calls a minute, and every request a connection makes is kept in a log on its page.
+The server is **off by default**: adding the gem changes nothing until you mount it and enable it, and, with an authorization client running, until a `ConnectionPolicy` [answers `use?`](#_5-decide-who-can-use-it). With nothing else configured, its address is your panel's origin plus `/avo/mcp`, each connection may make 300 tool calls a minute, and every request a connection makes is kept in a log on its page.
 
 ## Requirements
 
@@ -267,7 +267,7 @@ end
 ```
 
 - **`capability`** is which of the [three capabilities](#choose-what-a-connection-can-do) unlocks the tool: `avo:read` for one that only reads, `avo:write` for one that changes records, `avo:actions` for one that runs a workflow. A connection without it is refused before `perform` runs, exactly as for the shipped tools.
-- **`resources`** names every resource the tool reads or changes, as `list_resources` names them. A connection [narrowed to named resources](#choose-what-a-connection-can-do) must grant each one, or the call is refused before `perform` runs and the error names the one that's missing. The connecting admin's own policy must also answer `index?` for each one, on any connection, so a tool can't read past a role that changed after the grant. List static names only: a tool that picks its resource at call time takes a `resource` argument instead. A resource not backed by Active Record can't be granted on a connection, so a tool declaring one can't run on a narrowed connection.
+- **`resources`** names every resource the tool reads or changes, as `list_resources` names them. A connection [narrowed to named resources](#choose-what-a-connection-can-do) must grant each one, or the call is refused before `perform` runs and the error names the one that's missing. The connecting admin's own policy must also answer `index?` for each one, on any connection, so a tool can't read past a role that changed after the grant. List static names only: a tool that picks its resource at call time takes a `resource` argument instead. A resource not backed by Active Record can't be granted on a connection, so a tool declaring one can't run on a narrowed connection, and a name that matches no resource refuses every call, on any connection.
 - **`description`** is what the client's model reads to decide whether to call the tool. Its first sentence is also what the connection's **Tools** card shows.
 - **`input_schema`** is the JSON schema of the arguments. Everything in `required` is checked before your code runs. A `resource` argument declared here gets the same two checks, and a name that matches no resource is refused; a `resource` key the schema doesn't declare is checked the same way, but doesn't count as the tool saying what it reads.
 - **`perform`** receives the identity — the connection, and the admin it acts as — plus the arguments. Reach records through `Avo::McpServer::ToolSupport`, which runs the admin's own policies and reports a record they can't reach as one that doesn't exist; raise one of `Avo::McpServer::ToolErrors` to refuse with a structured error. With [Audit Logging](./audit-logging.html) installed, `Avo::McpServer::Audit.record` puts a change the tool makes in the audit log, marked as made through the connection.
@@ -282,7 +282,7 @@ config.mcp_server.extra_tools = ["IssueInvoiceTool"]
 Entries are class **names**, not constants — this initializer runs before your own classes are loadable — and each is resolved when a request arrives, so editing a tool in development is served on the next call. An entry that can't be served (a class that doesn't load, one that isn't a tool, one with no `capability`, one claiming a shipped tool's name) is dropped with a line in the log saying why, and the rest keep serving.
 
 :::warning A call that names no resource is refused on a narrowed connection
-When a tool has no `resources` declaration and the call sends no `resource` argument the schema declares, the server can't tell what it reads, so a connection narrowed to named resources refuses it. The connection's **Tools** card still lists such a tool. Tools registered before `resources` existed were let through such connections; declare `resources` on each one when you upgrade, or connections narrowed per resource can no longer call it.
+When a tool has no `resources` declaration and the call sends no `resource` argument the schema declares, the server can't tell what it reads, so a connection narrowed to named resources refuses it. The connection's **Tools** card still lists such a tool. Tools registered before `resources` existed were let through such connections; declare `resources` on each one when you upgrade, or connections narrowed per resource can no longer call it. A tool that reaches no resource at all, say one that only calls an outside API, has nothing to declare, so it can't run on a narrowed connection.
 :::
 
 :::warning Custom tools share the consent capabilities
@@ -525,16 +525,16 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 end
 ```
 
-Its record is always the `Avo::McpServer::Connection` class, so key it off `user`, not `Avo::Current` or tenant state, which aren't set on every path it runs on. If it raises, say because a flag store is down, the server answers `500` and leaves the client's tokens alone, and the connections list errors too until it's back, since its connect button asks. An admin it refuses:
+Its record is always the `Avo::McpServer::Connection` class, so key it off `user`, not a tenant or other request state, which isn't set on every path it runs on. If it raises, say because a flag store is down, the server answers `500` and leaves the client's tokens alone, and the connections list errors too until it's back, since its connect button asks. An admin it refuses:
 
 - can't open the consent screen, which tells them the server is turned off for their account, so no connection or code is created;
 - can't open the connect page, and the buttons that lead there are hidden;
-- loses the connections they already have on their next call: the token answers `401 invalid_token`, and the client's refresh and any code it hasn't exchanged yet are refused with `invalid_grant`. The refused code or refresh token isn't spent, but a client may discard a token answered with `invalid_grant`, and then it has to connect again once MCP is back on.
+- can't use the connections they already have, from their next call: the token answers `401 invalid_token`, and the client's refresh and any code it hasn't exchanged yet are refused with `invalid_grant`. The refused code or refresh token isn't spent, but a client may discard a token answered with `invalid_grant`, and then it has to connect again once MCP is back on.
 
 `use?` only decides whether they can use the server. It doesn't hide anything else: the **MCP connections** menu entry and pages keep following `index?` and `show?`, so the admin can still see their connections and revoke them, and a client can still revoke its own token. To take the entry away too, refuse `index?` for the same admins.
 
 :::warning Every `ConnectionPolicy` needs `use?`
-The server asks `use?` the way Avo asks any policy method, so a `ConnectionPolicy` without it **turns MCP off for every admin**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ConnectionPolicy`, add `def use? = true` when you upgrade to keep MCP on for everyone. With no `ConnectionPolicy` at all, Avo's defaults apply: on under `explicit_authorization = false`, and off under `explicit_authorization = true`, which is Avo's default. So an app that never wrote one adds it with `use?` to keep MCP on. `use?` needs an authorization client: with `config.authorization_client = nil` no policy runs, so the server stays on and nobody is blocked.
+The server asks `use?` the way Avo asks any policy method, so a `ConnectionPolicy` without it **turns MCP off for every admin**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ConnectionPolicy`, add `def use? = true` when you upgrade to keep MCP on for everyone. With no `ConnectionPolicy` at all, Avo's defaults apply: on under `explicit_authorization = false`, and off under `explicit_authorization = true`, which is Avo's default. So an app that never wrote one adds it with `use?` to keep MCP on. `use?` needs an authorization client: with `config.authorization_client = nil` no policy runs, so the server stays on and nobody is blocked. With `avo-permissions` as the client, a role needs a `use?` permission on `Avo::Resources::McpConnection` instead, and no policy is asked.
 :::
 
 ## Run it in production
@@ -622,7 +622,9 @@ Refusals come back as JSON-RPC errors with a numeric `code`, a message, and a `d
 | `-32001` | Capability granted, the admin's policy said no     | Your policy for that admin                                   |
 | `-32002` | Authorization isn't being enforced, nothing ran    | The license — both add-ons must be enabled                   |
 
-A token that was working and now answers `401 invalid_token`, with its refresh refused as `invalid_grant`, usually means your `ConnectionPolicy#use?` refuses that admin, or the policy has no `use?` at all. See [Turn MCP on or off per admin](#turn-mcp-on-or-off-per-admin).
+A token that was working and now answers `401 invalid_token`, with its refresh refused as `invalid_grant`, on a connection that still reads **Open**, usually means your `ConnectionPolicy#use?` refuses that admin, the policy has no `use?`, or, under `explicit_authorization = true`, you have no `ConnectionPolicy` at all. See [Turn MCP on or off per admin](#turn-mcp-on-or-off-per-admin).
+
+A tool of your own refused with a bare `requiredCapability` (`avo:read`, no resource) on a connection narrowed to named resources has no `resources` declaration. Declare them rather than widening the grant.
 
 A record outside the admin's policy scope reports as **not found** (`-32602`), identical to an id that never existed, so a read tool can't be used to probe for hidden records. A resource they may not list reports as **unauthorized** (`-32001`) and says so, because the caller already sees the sidebar.
 
@@ -648,6 +650,13 @@ Avo.configure do |config|
   config.mcp_server.connection_log = true
   config.mcp_server.connection_log_size = 500
   config.mcp_server.extra_tools = ["IssueInvoiceTool"]
+end
+```
+
+```ruby
+# app/policies/avo/mcp_server/connection_policy.rb
+class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
+  def use? = true
 end
 ```
 

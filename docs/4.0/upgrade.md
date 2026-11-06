@@ -27,6 +27,12 @@ If it has none, Avo's defaults decide, as for any missing policy. Under `explici
 
 With `config.authorization_client = nil` no policy runs: the server stays on, `use?` is never asked, and nobody is blocked.
 
+With `avo-permissions` as your authorization client, no `ConnectionPolicy` is asked and `explicit_authorization` doesn't apply: a role needs a `use?` permission on `Avo::Resources::McpConnection`, or the server is off for it. The permissions screen doesn't offer it yet, so add the row from a console for each role that should keep MCP:
+
+```ruby
+Avo::Permissions::Permission.create!(role: role, resource_class: "Avo::Resources::McpConnection", method: "use?")
+```
+
 </Option>
 
 <Option name="A tool of your own declares the resources it touches">
@@ -37,7 +43,7 @@ A connection narrowed to named resources now refuses a call to a tool of your ow
 
 ### Action Required
 
-Only if you register tools through `config.mcp_server.extra_tools`. Declare the resources each one reads or changes:
+Only if you register tools through `config.mcp_server.extra_tools`. Declare the resources each one reads or changes. A tool that reaches no resource at all, say one that only calls an outside API, has nothing to declare, so it can't run on a narrowed connection. With `avo-permissions` as your authorization client, a tool that declares `resources` or takes a `resource` argument is refused on every connection, as the shipped tools already are, because the server's policy checks don't pass that client the resource its rows match on.
 
 ```ruby
 # app/tools/ticket_summary_tool.rb
@@ -62,7 +68,7 @@ The chat now asks `use?` on `Avo::Ai::ChatPolicy` before it serves a user: on th
 
 ### Action Required
 
-Only if your app has its own `Avo::Ai::ChatPolicy`. Add `use?` to it:
+If your app has its own `Avo::Ai::ChatPolicy`, add `use?` to it:
 
 ```ruby
 # app/policies/avo/ai/chat_policy.rb

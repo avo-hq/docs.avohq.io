@@ -762,7 +762,7 @@ config.ai.extra_tools = ["CrmTool"]
 config.mcp_server.extra_tools = ["CrmTool"] # [!code focus]
 ```
 
-The chat ignores both. A connection [narrowed to named resources](./mcp.html#add-tools-of-your-own) must grant everything `resources` lists, and refuses a call that names no resource. Over MCP the server injects the connecting admin as `user:` the way the chat does, runs the capability gate first, and serves a Hash as structured content, a String as text, and an `{error: "..."}` Hash as a tool error. `chat` and `inspection_tracker` are never set there, so a tool that can run over MCP mustn't depend on either. See [Share a tool with Avo AI](./mcp.html#share-a-tool-with-avo-ai) for the details.
+The chat ignores both. A connection [narrowed to named resources](./mcp.html#add-tools-of-your-own) must grant everything `resources` lists, and refuses a call that names no resource. A tool that takes a `resource:` argument, like the `execute` above, is checked on the resource each call names, so list in `resources` only what it reads on every call. Over MCP the server injects the connecting admin as `user:` the way the chat does, runs the capability gate first, and serves a Hash as structured content, a String as text, and an `{error: "..."}` Hash as a tool error. `chat` and `inspection_tracker` are never set there, so a tool that can run over MCP mustn't depend on either. See [Share a tool with Avo AI](./mcp.html#share-a-tool-with-avo-ai) for the details.
 
 :::info This is MCP in the other direction
 Here your app is the MCP *server*, and outside clients connect to it. To have the assistant call somebody else's MCP server from a chat, see [Connect other tools with MCP](#connect-other-tools-with-mcp).
@@ -1260,7 +1260,8 @@ The row carries one sentence, chosen by what went wrong:
 | The chat's model isn't in the registry                                    | Names the provider; pick another model or refresh the models   | Yes       |
 | The conversation is longer than the model's context window                | Start a new chat                                               | No        |
 | The provider called the request invalid, or refused an attachment type    | Names the provider; start a new chat, or resend without the attachment | No |
-| Anything else                                                             | Something went wrong                                           | Yes       |
+| The chat was [turned off for this user](#turn-the-chat-on-or-off-per-user) while a reply was queued | Says the assistant is turned off for their account | No |
+| Anything else                                                             | Something went wrong                                           | Yes                                       |
 
 **Try again** starts a new run for the message that went unanswered. It adds nothing to the transcript. The button only shows on the last row of the conversation, and only when running the same conversation again can work: a rejected API key gets one because someone can fix the key, a conversation that is too long doesn't. Sending a new message works too. The assistant then answers both.
 
@@ -1769,11 +1770,11 @@ class Avo::Ai::ChatPolicy < ApplicationPolicy
 end
 ```
 
-Its record is always the `Avo::Ai::Chat` class, so key it off `user`. The chat bar asks it on every panel page, so keep it cheap: read a column or a memoized flag. It also runs in background jobs, so don't read `Avo::Current` or tenant state from it. If it raises, the chat reads as off for that user, and nothing is logged. A user it refuses:
+Its record is always the `Avo::Ai::Chat` class, so key it off `user`. The chat bar asks it on every panel page, so keep it cheap: read a column or a memoized flag. It also runs in background jobs, so don't read a tenant or other request state from it. If it raises, the chat reads as off for that user, and nothing is logged. A user it refuses:
 
 - sees no chat bar, and Cmd+J / Ctrl+J opens nothing;
 - is told they're not authorized on every chat page, and on every request behind them, sending a message included;
-- gets no reply to a message still queued when you turned the chat off. The queued reply posts a short notice instead of calling the model, and no title is generated for it. A reply already running finishes.
+- gets no reply to a message still queued when you turned the chat off. The queued reply doesn't call the model. It posts an [error row](#when-a-reply-fails), *The assistant is turned off for your account, so this message wasn't answered.*, with no **Try again**, and no title is generated for it. A reply already running finishes.
 
 `use?` only decides whether they can use the chat. Beyond the chat's own controls, including the composer and the open-in-bar button on a chat's resource page, it doesn't hide anything: the **Chats**, **Messages**, **Models**, **Skills**, **Feedback** and **Connectors** menu entries and pages keep following their own policy methods, so a super admin can still review conversations there. To take an entry away, refuse `index?` for the same users.
 
