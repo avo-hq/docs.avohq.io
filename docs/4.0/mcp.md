@@ -109,7 +109,7 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 end
 ```
 
-That turns the server on and nothing else. Under Pundit's generated `ApplicationPolicy`, **MCP connections** and **Connect a client** stay refused until the policy also has `index?`, `show?`, `act_on?` and a `Scope`, so copy those from [Decide who sees and revokes what](#decide-who-sees-and-revokes-what). See [Turn MCP on or off per admin](#turn-mcp-on-or-off-per-admin) for `use?` itself. With `avo-permissions` as the client, no policy is asked: a role needs a `use?` permission instead, added from a console as the [upgrade guide](./upgrade.html#upgrade-to-avo-mcp-server-4-3-0-beta-3) shows.
+That turns the server on and nothing else. Under Pundit's generated `ApplicationPolicy`, **MCP connections** and **Connect a client** stay refused until the policy also has `index?`, `show?`, `act_on?` and a `Scope`. The [Full example](#full-example) has a set you can copy as it is, and [Decide who sees and revokes what](#decide-who-sees-and-revokes-what) shows the other shapes. See [Turn MCP on or off per admin](#turn-mcp-on-or-off-per-admin) for `use?` itself. With `avo-permissions` as the client, no policy is asked: a role needs a `use?` permission instead, added from a console as the [upgrade guide](./upgrade.html#upgrade-to-avo-mcp-server-4-3-0-beta-3) shows.
 
 ## Connect a client
 
