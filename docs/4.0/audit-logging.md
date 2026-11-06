@@ -563,6 +563,68 @@ To switch logging off everywhere, for example in the test environment, set `conf
 Set [`config.active_support.isolation_level = :fiber`](https://guides.rubyonrails.org/configuring.html#config-active-support-isolation-level), as Rails asks for these servers, so each request keeps its own current user and origin. A fiber or thread you start yourself doesn't inherit them, so a change saved there has no author.
 :::
 
+## Read an activity in code
+
+<VersionReq package="avo-audit_logging" version="4.3.2" />
+
+Most activities are about one record. Read it, and the classes behind the activity, straight from the activity:
+
+```ruby
+activity = Avo::AuditLogging::Activity.latest.first
+
+activity.record               # => #<Product id: 123>
+activity.record_type          # => "Product"
+activity.record_id            # => 123
+activity.records              # => every linked record
+
+activity.resource_class       # => Avo::Resources::Product
+activity.model_class          # => Product
+activity.record_policy_class  # => ProductPolicy
+```
+
+`nil` means there's nothing to return: no linked record, a deleted record, or a class your app has since removed.
+
+`activity_class` and `record_type` answer different questions. `activity_class` is the Avo resource the change went through, such as `Avo::Resources::Product`, or the action class for an action run. `record_type` is the model of the record that changed, such as `Product`. For an action run, `resource_class` is `nil` and `model_class` comes from the linked records, so a record of an STI subclass gives its base class. `record_policy_class` is the resource's `authorization_policy` when it sets one, and otherwise the policy Pundit finds for the model. It isn't called `policy_class` because Pundit reads that method to authorize the activity itself.
+
+### When an activity has several records
+
+Select 5 products on the index and run `ChangePrice`. That's one activity linked to 5 records, so there's no single record for `activity.record` to return. The first one linked would be whichever row was ticked first, so the same action on the same 5 products could name a different product each time, and a notification built on `activity.record.name` would mention one product and leave out the other 4.
+
+That's why `record` and `record_id` only return a value when one record is linked, and return `:multiple` when there are several. `records` returns them all:
+
+```ruby
+# ChangePrice on 5 products
+activity.record       # => :multiple
+activity.record_id    # => :multiple
+activity.record_type  # => "Product"
+activity.records      # => all 5
+```
+
+`record_type` still answers when every linked record has the same type, and returns `:multiple` when they differ, as on an attach, which links two models. `model_class` and `record_policy_class` come from the resource when there is one, and follow the same rule on an action run.
+
+:::warning
+`:multiple` is truthy and has no record methods, so check for it before reading the record. `activity.record&.name` raises on a run over several records.
+:::
+
+### Always read the first record
+
+The first record may be enough for what you're building, as long as you're fine with it depending on the order the rows were ticked. For one read, `activity.records.first` gives you the first one that still exists. To make `record` and `record_id` always return the first one, override them in an initializer:
+
+```ruby
+# config/initializers/avo.rb
+Rails.configuration.to_prepare do
+  Avo::AuditLogging::Activity.class_eval do
+    def record = first_pivot&.reachable_record
+    def record_id = first_pivot&.record_id
+    def record_type = first_pivot&.record_type
+
+    private def first_pivot = activity_pivots.min_by(&:id)
+  end
+end
+```
+
+`record_type` is in the override so it stays the type of the record `record_id` names. Without it, an activity on two models pairs one id with `:multiple`. `to_prepare` applies the override again after each code reload in development. `records`, `model_class` and `record_policy_class` don't change.
+
 ## Disable specific actions logging
 
 By default, when audit logging is enabled for a resource or action, all actions, such as `index` visits, `show` visits, `edit`, `update`, etc. are logged.
