@@ -627,6 +627,8 @@ end
 
 ## Control who sees which activities
 
+<VersionReq package="avo-audit_logging" version="4.3.2" />
+
 Activities are ordinary Avo records, so your [authorization](./authorization) policies decide who sees them. Avo doesn't ship a policy for them, because it can't know how your app handles access. Without an authorization client, everyone who can open the panel sees every activity.
 
 The examples below use Pundit. With another client, answer the same questions in its policy classes.
@@ -682,13 +684,9 @@ class Scope < ApplicationPolicy::Scope
 end
 ```
 
-:::warning
-The [**History** card](#show-activities-on-a-specific-record) lists every activity on a record without asking these policies. Leave it out of the resources these users can open.
-:::
+The [**History** card](#show-activities-on-a-specific-record) on a record's page and the options in the activity list's filters follow the same policies. With the policies above, a user who opens a record someone else also changed sees only their own entries on its card.
 
 ### Show the history of the records a user can see
-
-<VersionReq package="avo-audit_logging" version="4.3.2" />
 
 To follow your other policies instead, ask them about the records an activity changed. Change `show?` and `resolve` in the activity policy, and add a line for each model you log:
 
@@ -705,7 +703,7 @@ class Scope < ApplicationPolicy::Scope
 end
 ```
 
-An activity on several records shows up when the user may see one of them, and its payload can hold data about the others. An activity whose records were all deleted is hidden.
+An activity on several records shows up when the user may see one of them, and its payload can hold data about the others. An activity whose records were all deleted is hidden. The **History** card shows every entry on a record the user may see.
 
 ## Disable specific actions logging
 
