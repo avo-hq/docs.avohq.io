@@ -525,7 +525,7 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 end
 ```
 
-Its record is always the `Avo::McpServer::Connection` class, so key it off `user`, not `Avo::Current` or tenant state, which aren't set on every path it runs on. If it raises, say because a flag store is down, the server answers `500` and leaves the client's tokens alone. An admin it refuses:
+Its record is always the `Avo::McpServer::Connection` class, so key it off `user`, not `Avo::Current` or tenant state, which aren't set on every path it runs on. If it raises, say because a flag store is down, the server answers `500` and leaves the client's tokens alone, and the connections list errors too until it's back, since its connect button asks. An admin it refuses:
 
 - can't open the consent screen, which tells them the server is turned off for their account, so no connection or code is created;
 - can't open the connect page, and the buttons that lead there are hidden;
