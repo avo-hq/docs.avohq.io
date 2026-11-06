@@ -31,7 +31,7 @@ Avo.configure do |config|
 end
 ```
 
-The server is **off by default**: adding the gem changes nothing until you mount it and enable it, and, with an authorization client running, until a `ConnectionPolicy` [answers `use?`](#_5-decide-who-can-use-it). With nothing else configured, its address is your panel's origin plus `/avo/mcp`, each connection may make 300 tool calls a minute, and every request a connection makes is kept in a log on its page.
+The server is **off by default**: adding the gem changes nothing until you mount it and enable it, and, with an authorization client under `explicit_authorization = true`, Avo's default, until you [answer `use?`](#_5-decide-who-can-use-it). With nothing else configured, its address is your panel's origin plus `/avo/mcp`, each connection may make 300 tool calls a minute, and every request a connection makes is kept in a log on its page.
 
 ## Requirements
 
@@ -100,7 +100,7 @@ Your server's address is the panel's origin plus the mount path — `https://app
 
 ### 5. Decide who can use it
 
-With an authorization client running, the server asks `use?` on `Avo::McpServer::ConnectionPolicy` before it serves an admin. Under `explicit_authorization = true`, Avo's default, it stays off until that policy exists, and the consent screen says so:
+With an authorization client running, the server asks `use?` before it serves an admin. With Pundit it asks `Avo::McpServer::ConnectionPolicy`, and under `explicit_authorization = true`, Avo's default, it stays off until that policy exists, and the consent screen says so:
 
 ```ruby
 # app/policies/avo/mcp_server/connection_policy.rb
@@ -109,7 +109,7 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 end
 ```
 
-The same policy decides who sees the **MCP connections** resource. See [Decide who sees and revokes what](#decide-who-sees-and-revokes-what) and [Turn MCP on or off per admin](#turn-mcp-on-or-off-per-admin).
+That turns the server on and nothing else. Under Pundit's generated `ApplicationPolicy`, **MCP connections** and **Connect a client** stay refused until the policy also has `index?`, `show?`, `act_on?` and a `Scope`, so copy those from [Decide who sees and revokes what](#decide-who-sees-and-revokes-what). See [Turn MCP on or off per admin](#turn-mcp-on-or-off-per-admin) for `use?` itself. With `avo-permissions` as the client, no policy is asked: a role needs a `use?` permission instead, added from a console as the [upgrade guide](./upgrade.html#upgrade-to-avo-mcp-server-4-3-0-beta-3) shows.
 
 ## Connect a client
 
@@ -534,7 +534,7 @@ Its record is always the `Avo::McpServer::Connection` class, so key it off `user
 `use?` only decides whether they can use the server. It doesn't hide anything else: the **MCP connections** menu entry and pages keep following `index?` and `show?`, so the admin can still see their connections and revoke them, and a client can still revoke its own token. To take the entry away too, refuse `index?` for the same admins.
 
 :::warning Every `ConnectionPolicy` needs `use?`
-The server asks `use?` the way Avo asks any policy method, so a `ConnectionPolicy` without it **turns MCP off for every admin**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ConnectionPolicy`, add `def use? = true` when you upgrade to keep MCP on for everyone. With no `ConnectionPolicy` at all, Avo's defaults apply: on under `explicit_authorization = false`, and off under `explicit_authorization = true`, which is Avo's default. So an app that never wrote one adds it with `use?` to keep MCP on. `use?` needs an authorization client: with `config.authorization_client = nil` no policy runs, so the server stays on and nobody is blocked. With `avo-permissions` as the client, a role needs a `use?` permission on `Avo::Resources::McpConnection` instead, and no policy is asked.
+The server asks `use?` the way Avo asks any policy method, so a `ConnectionPolicy` without it **turns MCP off for every admin**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ConnectionPolicy`, add `def use? = true` when you upgrade to keep MCP on for everyone. With no `ConnectionPolicy` at all, Avo's defaults apply: on under `explicit_authorization = false`, and off under `explicit_authorization = true`, which is Avo's default. So an app that never wrote one adds it with `use?` to keep MCP on. `use?` needs an authorization client: with `config.authorization_client = nil` no policy runs, so the server stays on and nobody is blocked. With `avo-permissions` as the client, no policy is asked: a role needs a `use?` permission on `Avo::Resources::McpConnection`. The permissions screen doesn't offer it yet, so add it from a console as the [upgrade guide](./upgrade.html#upgrade-to-avo-mcp-server-4-3-0-beta-3) shows. Under that client the server then answers, but a call that names a resource is refused and `list_resources` answers empty, because its policy checks don't pass the client the resource its rows match on.
 :::
 
 ## Run it in production
@@ -624,7 +624,7 @@ Refusals come back as JSON-RPC errors with a numeric `code`, a message, and a `d
 
 A token that was working and now answers `401 invalid_token`, with its refresh refused as `invalid_grant`, on a connection that still reads **Open**, usually means your `ConnectionPolicy#use?` refuses that admin, the policy has no `use?`, or, under `explicit_authorization = true`, you have no `ConnectionPolicy` at all. See [Turn MCP on or off per admin](#turn-mcp-on-or-off-per-admin).
 
-A tool of your own refused with a bare `requiredCapability` (`avo:read`, no resource) on a connection narrowed to named resources has no `resources` declaration. Declare them rather than widening the grant.
+A tool of your own refused with a bare `requiredCapability` (no resource) while the connection holds that capability narrowed, say `avo:read` with `avo:read:Post` granted, has no `resources` declaration and the call sent no `resource` argument. Declare them rather than widening the grant.
 
 A record outside the admin's policy scope reports as **not found** (`-32602`), identical to an id that never existed, so a read tool can't be used to probe for hidden records. A resource they may not list reports as **unauthorized** (`-32001`) and says so, because the caller already sees the sidebar.
 
@@ -657,8 +657,20 @@ end
 # app/policies/avo/mcp_server/connection_policy.rb
 class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
   def use? = true
+
+  def index? = true
+
+  def show? = record.user == user
+
+  def act_on? = record.is_a?(Class) || record.user == user
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = scope.where(user: user)
+  end
 end
 ```
+
+This is the Pundit setup: every admin can use the server, and sees and revokes their own connections. With `config.authorization_client = nil`, leave the policy out. With `avo-permissions`, add the `use?` row from [step 5](#_5-decide-who-can-use-it) instead.
 
 ## Options reference
 

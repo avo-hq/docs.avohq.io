@@ -43,7 +43,7 @@ A connection narrowed to named resources now refuses a call to a tool of your ow
 
 ### Action Required
 
-Only if you register tools through `config.mcp_server.extra_tools`. Declare the resources each one reads or changes. A tool that reaches no resource at all, say one that only calls an outside API, has nothing to declare, so it can't run on a narrowed connection. With `avo-permissions` as your authorization client, a tool that declares `resources` or takes a `resource` argument is refused on every connection, as the shipped tools already are, because the server's policy checks don't pass that client the resource its rows match on.
+Only if you register tools through `config.mcp_server.extra_tools`. Declare the resources each one reads or changes. A tool that reaches no resource at all, say one that only calls an outside API, has nothing to declare, so it can't run on a narrowed connection. With `avo-permissions` as your authorization client, a call that names a resource, through `resources` or a `resource` argument, is refused on every connection whatever rows the role holds, because the server's policy checks don't pass that client the resource its rows match on. The shipped tools already behave this way, and `list_resources` and `search_records` with no resource answer empty there. A tool with neither still runs on a connection that isn't narrowed.
 
 ```ruby
 # app/tools/ticket_summary_tool.rb
