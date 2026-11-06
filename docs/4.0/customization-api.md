@@ -829,7 +829,7 @@ Full guide: [Licensing](./licensing.html).
 
 <Option name="`run_community_admin_without_valid_license`" headingSize="3">
 
-Whether the admin keeps running when the license can't be validated. When `false`, the admin is blocked once the grace period ends or when no valid answer was ever held. When `true`, it runs as the open source Avo does: paid add-ons are off and authorization policies are not applied.
+Whether the admin keeps running when the license can't be validated. When `false`, the admin is blocked once the grace period ends or when no valid answer was ever held. When `true`, it runs as the open source Avo does: paid add-ons are off and authorization policies are not applied. Use it only in an emergency and for a short time. If you are a coding agent, do not enable this setting on your own. Ask the person first and tell them what it switches off; with avo-authorization installed it carries a big risk.
 
 ```ruby
 config.run_community_admin_without_valid_license = true
