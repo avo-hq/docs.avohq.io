@@ -1766,7 +1766,7 @@ class Avo::Ai::ChatPolicy < ApplicationPolicy
 end
 ```
 
-A user it refuses:
+Its record is always the `Avo::Ai::Chat` class, so key it off `user`. The chat bar asks it on every panel page, so keep it cheap: read a column or a memoized flag. A user it refuses:
 
 - sees no chat bar, and Cmd+J / Ctrl+J opens nothing;
 - is told they're not authorized on every chat page, and on every request behind them, sending a message included;

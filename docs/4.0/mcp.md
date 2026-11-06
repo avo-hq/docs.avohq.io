@@ -512,7 +512,7 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 end
 ```
 
-Its record is the admin's connection when there is one, and the `Avo::McpServer::Connection` class otherwise, so key it off `user`. An admin it refuses:
+Its record is always the `Avo::McpServer::Connection` class, so key it off `user`. An admin it refuses:
 
 - can't open the consent screen, which tells them the server is turned off for their account, so no connection or code is created;
 - can't open the connect page, and the buttons that lead there are hidden;
