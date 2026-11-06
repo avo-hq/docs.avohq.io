@@ -625,7 +625,7 @@ Rails.configuration.to_prepare do
 end
 ```
 
-`record_type` is in the override so it stays the type of the record `record_id` names. Without it, an activity on two models pairs one id with `:multiple`. `to_prepare` applies the override again after each code reload in development. `records`, `model_class` and `record_policy_class` don't change.
+`record_type` is in the override so it stays the type of the record `record_id` names. Without it, an activity on two models pairs one id with `:multiple`. `to_prepare` applies the override again after each code reload in development. `records`, `model_class` and `record_policy_class` don't change. The activity page follows the override: its **Record** field links to that record instead of showing how many.
 
 ## Disable specific actions logging
 
