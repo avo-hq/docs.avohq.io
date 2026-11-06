@@ -241,6 +241,8 @@ end
 
 Each entry shows a compact relative time — hover over an entry to reveal its full date and time. Clicking an entry opens a detailed page, with the payload when the entry has one.
 
+<VersionReq package="avo-audit_logging" version="4.3.2" /> The activity's page is titled after the record it changed, such as *Update on Product #123*, or *Update on Product #123 and 2 more* when it changed several, and its **Record** field links back to that record. With several records the field shows how many, such as *3 records*. An action run keeps the action's name, such as *Handle on ChangePrice*, and its **Impacted records** list every record it ran on. The activity list shows the same in its **Record** column. The payload is pretty-printed when it holds JSON, and shown as stored when it doesn't.
+
 <Image src="/assets/img/4_0/audit-logging/hover-activities.webp" dark-src="/assets/img/4_0/audit-logging/hover-activities-dark.webp" width="356" height="422" alt="The History activity timeline card showing compact relative timestamps" />
 
 ### Keep secrets out of the payload
@@ -623,7 +625,7 @@ Rails.configuration.to_prepare do
 end
 ```
 
-`record_type` is in the override so it stays the type of the record `record_id` names. Without it, an activity on two models pairs one id with `:multiple`. `to_prepare` applies the override again after each code reload in development. `records`, `model_class` and `record_policy_class` don't change.
+`record_type` is in the override so it stays the type of the record `record_id` names. Without it, an activity on two models pairs one id with `:multiple`. `to_prepare` applies the override again after each code reload in development. `records`, `model_class` and `record_policy_class` don't change. The activity page follows the override: its **Record** field links to that record instead of showing how many.
 
 ## Disable specific actions logging
 
