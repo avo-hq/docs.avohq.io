@@ -625,6 +625,88 @@ end
 
 `record_type` is in the override so it stays the type of the record `record_id` names. Without it, an activity on two models pairs one id with `:multiple`. `to_prepare` applies the override again after each code reload in development. `records`, `model_class` and `record_policy_class` don't change.
 
+## Control who sees which activities
+
+Activities are ordinary Avo records, so your [authorization](./authorization) policies decide who sees them. Avo doesn't ship a policy for them, because it can't know how your app handles access. Without an authorization client, everyone who can open the panel sees every activity.
+
+The examples below use Pundit. With another client, answer the same questions in its policy classes.
+
+### Show each user only their own activity
+
+These two policies let each user see the activities they made, and nobody change them. They assume the `ApplicationPolicy` from `rails generate pundit:install`, which answers `false` to anything a policy doesn't define.
+
+```ruby
+# app/policies/avo/audit_logging/activity_policy.rb
+class Avo::AuditLogging::ActivityPolicy < ApplicationPolicy
+  def index? = true
+  def show? = record.author == user
+
+  # Lets them run Undo, which also asks the audited record's policy for `update?`.
+  def act_on? = show?
+
+  # The Impacted records tab on an activity's page.
+  def view_activity_pivots? = show?
+
+  # With `explicit_authorization` off, Avo allows any association method a policy leaves out.
+  %i[attach detach create edit update destroy reorder].each do |action|
+    define_method("#{action}_activity_pivots?") { false }
+  end
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = scope.where(author_id: user.id, author_type: user.class.name)
+  end
+end
+```
+
+```ruby
+# app/policies/avo/audit_logging/activity_pivot_policy.rb
+class Avo::AuditLogging::ActivityPivotPolicy < ApplicationPolicy
+  def index? = true
+  def show? = Pundit.policy!(user, record.activity).show?
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = scope.where(activity: Pundit.policy_scope!(user, Avo::AuditLogging::Activity))
+  end
+end
+```
+
+The second policy covers the **Impacted records** list and follows the first, so that's the only one you edit. `user` is whoever your `config.current_user_method` returns, so this works whatever your app calls its people.
+
+To let admins see everything, change `show?` and `resolve`. `admin?` stands for whatever your app checks:
+
+```ruby
+def show? = user.admin? || record.author == user
+
+class Scope < ApplicationPolicy::Scope
+  def resolve = user.admin? ? scope.all : scope.where(author_id: user.id, author_type: user.class.name)
+end
+```
+
+:::warning
+The [**History** card](#show-activities-on-a-specific-record) lists every activity on a record without asking these policies. Leave it out of the resources these users can open.
+:::
+
+### Show the history of the records a user can see
+
+<VersionReq package="avo-audit_logging" version="4.3.2" />
+
+To follow your other policies instead, ask them about the records an activity changed. Change `show?` and `resolve` in the activity policy, and add a line for each model you log:
+
+```ruby
+def show? = record.records.any? { |audited| Pundit.policy!(user, audited).show? }
+
+class Scope < ApplicationPolicy::Scope
+  def resolve
+    products = Pundit.policy_scope!(user, Product).select(:id)
+    visible = Avo::AuditLogging::ActivityPivot.where(record_type: "Product", record_id: products)
+
+    scope.where(id: visible.select(:activity_id))
+  end
+end
+```
+
+An activity on several records shows up when the user may see one of them, and its payload can hold data about the others. An activity whose records were all deleted is hidden.
+
 ## Disable specific actions logging
 
 By default, when audit logging is enabled for a resource or action, all actions, such as `index` visits, `show` visits, `edit`, `update`, etc. are logged.
