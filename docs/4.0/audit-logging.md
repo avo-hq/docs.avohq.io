@@ -268,6 +268,41 @@ rescue JSON::ParserError
 end
 ```
 
+### Change what an entry stores
+
+<VersionReq package="avo-audit_logging" version="4.3.2" /> Set a proc to change what an entry's payload stores, such as adding your app's name to every entry or hiding a value from one resource's payloads. `config.payload_modifier` covers every entry, and `payload_modifier:` covers the entries logged under that resource or action:
+
+```ruby
+# config/initializers/avo.rb
+Avo::AuditLogging.configure do |config|
+  config.payload_modifier = -> { payload.merge("app" => "billing") }
+end
+```
+
+```ruby
+# app/avo/resources/product.rb
+class Avo::Resources::Product < Avo::BaseResource
+  self.audit_logging = {
+    activity: true,
+    payload_modifier: -> { ActiveSupport::ParameterFilter.new(["internal_note"]).filter(payload) }
+  }
+end
+```
+
+When both are set, the global proc runs first and the resource's receives its result, so a resource can fine-tune what the app set. Within a proc, you gain access to all attributes of [`Avo::ExecutionContext`](./execution-context) along with `payload`, `action`, `records` and `activity_class`. It runs however the entry was written: the panel, the API, the MCP server, the AI assistant, `outside_avo` and `Avo::AuditLogging.record`.
+
+- **Keys are strings.** `payload` is a copy with string keys, so `payload.except(:token)` removes nothing, and editing the copy doesn't change the record or the request. An entry with no payload, such as one from `outside_avo`, starts as `{}`.
+- **The shape depends on what wrote the entry.** The panel nests form fields under the model's key (`payload["product"]["name"]`), so `except` doesn't reach them, and an action run repeats a field in several places. `ActiveSupport::ParameterFilter` matches a key at any depth and stores its value as `[FILTERED]`. A proc also runs on page visits, where `payload["product"]` is `nil`.
+- **`records` is always an array** of the records themselves, holding the form's unsaved values on a panel update, so read them and don't change or reload them. It's empty on `index`, `new` and a create that failed to save. `current_user` and `request` can be `nil` outside a request.
+- **An action run is logged under the action,** so it runs the global proc and the action's own `payload_modifier`, not its resource's. Its payload holds the record's columns under `resource.record`, so a value only the resource's proc hides is stored there. Hide it in the global proc, the action's own or `filter_parameters` as well.
+- **The proc's last value is the whole payload,** so `payload.delete("note")` stores what it removed. End with `payload`, or use `except`. Return a hash, or the type of payload the proc received: `Avo::AuditLogging.record` can pass an array or a string, where `payload.merge` raises unless the proc checks `payload.is_a?(Hash)`.
+- **A failing proc costs only the payload.** An empty result stores no payload. If a proc raises or returns anything else, `nil` included, the entry and the change are kept without a payload, later procs don't run, and the error's class goes to the Rails log.
+- **Keep it small.** A proc shouldn't write audited records, and under `outside_avo` it runs inside the save's transaction, so a slow call holds that save's locks.
+
+:::warning
+A proc runs when the entry is written, so what it removes is gone from the payload for good. It changes the payload only: the [change log](#enable-change-logs-and-revert-changes) comes from PaperTrail and still shows the column, so also list it in `has_paper_trail skip: [:internal_note]`. A resource's proc can add back a key the global one removed, so use [`filter_parameters`](#keep-secrets-out-of-the-payload) for a value that must never be stored, because that masking runs after both procs.
+:::
+
 ### Enable change logs and revert changes
 
 By default, update activities do not display a change log, and there is no way to revert changes. This is because PaperTrail has not yet been enabled on the model. The change log and revert action are `paper_trail`-only — if you're using `audited`, activities are still tracked, but this section doesn't apply. To enable it, simply add `has_paper_trail` to the model:
@@ -485,7 +520,7 @@ class Product < ApplicationRecord
 end
 ```
 
-Each change gets its own entry, linked to its version, so its page shows the [change log and the revert action](#enable-change-logs-and-revert-changes) like a change made in the panel. A create's page shows what the record was created with, and no revert, since there's nothing to go back to. The entry is saved in the same transaction as the change, so a change that's rolled back leaves no entry. The payload is empty, because what changed is in the change log.
+Each change gets its own entry, linked to its version, so its page shows the [change log and the revert action](#enable-change-logs-and-revert-changes) like a change made in the panel. A create's page shows what the record was created with, and no revert, since there's nothing to go back to. The entry is saved in the same transaction as the change, so a change that's rolled back leaves no entry. The payload is empty unless a [payload modifier](#change-what-an-entry-stores) adds to it, because what changed is in the change log.
 
 The resource that sets `outside_avo` is the one whose settings are asked and whose timeline shows the entries, even when another resource uses the same model. In the panel or through the API, a change the panel logs links its version to the panel's own entry, as before. A version written while the panel logs the request, even a `show` visit, links to that entry. A change made where the panel logs nothing, such as an action that doesn't opt in, is logged by `outside_avo` under the signed-in user.
 
