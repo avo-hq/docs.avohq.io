@@ -582,7 +582,23 @@ activity.model_class          # => Product
 activity.record_policy_class  # => ProductPolicy
 ```
 
-`record`, `record_type`, `record_id` and `model_class` describe the first record linked to the activity; use `records` when an action ran on several. Each returns `nil` instead of raising when there's nothing to return: no linked record, a deleted record, or a class your app has since removed.
+When an action ran on several records, no single record answers, so `record` and `record_id` return `:multiple` instead of picking one. `records` returns them all:
+
+```ruby
+# ChangePrice on 5 products
+activity.record       # => :multiple
+activity.record_id    # => :multiple
+activity.record_type  # => "Product"
+activity.records      # => all 5
+```
+
+`record_type` still answers when every linked record has the same type, and returns `:multiple` when they differ, as on an attach, which links two models. `model_class` and `record_policy_class` come from the resource when there is one, and follow the same rule on an action run.
+
+:::warning
+`:multiple` is truthy and has no record methods, so check for it before reading the record. `activity.record&.name` raises on a run over several records.
+:::
+
+`nil` means there's nothing to return: no linked record, a deleted record, or a class your app has since removed.
 
 `activity_class` and `record_type` answer different questions. `activity_class` is the Avo resource the change went through, such as `Avo::Resources::Product`, or the action class for an action run. `record_type` is the model of the record that changed, such as `Product`. For an action run, `resource_class` is `nil` and `model_class` comes from the linked record, so a record of an STI subclass gives its base class. `record_policy_class` is the resource's `authorization_policy` when it sets one, and otherwise the policy Pundit finds for the model. It isn't called `policy_class` because Pundit reads that method to authorize the activity itself.
 
