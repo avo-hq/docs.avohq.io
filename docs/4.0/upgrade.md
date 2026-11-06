@@ -23,7 +23,9 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 end
 ```
 
-If it has none, Avo's defaults decide, as for any missing policy. Under `explicit_authorization = true`, which is Avo's default, the server is off for every admin until you add the policy above. Under `explicit_authorization = false` it stays on. With `raise_error_on_missing_policy = true`, the missing policy raises on the server's endpoints instead.
+If it has none, Avo's defaults decide, as for any missing policy. Under `explicit_authorization = true`, which is Avo's default, the server is off for every admin until you add the policy above. Under `explicit_authorization = false` it stays on. With `raise_error_on_missing_policy = true`, the missing policy raises on the server's endpoints instead. The policy also decides who sees the connections resource, so see [Decide who sees and revokes what](./mcp.html#decide-who-sees-and-revokes-what) for its other methods.
+
+With `config.authorization_client = nil` no policy runs: the server stays on, `use?` is never asked, and nobody is blocked.
 
 </Option>
 
@@ -31,7 +33,7 @@ If it has none, Avo's defaults decide, as for any missing policy. Under `explici
 
 ### Breaking Change
 
-A connection narrowed to named resources now refuses a tool of your own that takes no `resource` argument and declares no `resources`, because the server can't tell what it reads. Before, such a tool ran on those connections. On every connection, a tool of your own is now also refused when the connecting admin's `index?` refuses a resource it declares or names, and when its `resource` argument matches no resource. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+A connection narrowed to named resources now refuses a call to a tool of your own that declares no `resources` and sends no `resource` argument its schema declares, because the server can't tell what it reads. Before, such a call ran on those connections. On every connection, a tool of your own is now also refused when the connecting admin's `index?` refuses a resource it declares or names, and when its `resource` argument matches no resource. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
 
 ### Action Required
 
@@ -69,7 +71,13 @@ class Avo::Ai::ChatPolicy < ApplicationPolicy
 end
 ```
 
-With `avo-permissions` as your authorization client, a role needs a `use?` permission on `Avo::Resources::AvoAi::Chat` to keep the chat, and the permissions screen doesn't offer it yet. Add the row from a console for each role that should keep the chat.
+With `avo-permissions` as your authorization client, a role needs a `use?` permission on `Avo::Resources::AvoAi::Chat` to keep the chat, and the permissions screen doesn't offer it yet. Add the row from a console for each role that should keep the chat:
+
+```ruby
+Avo::Permissions::Permission.create!(role: role, resource_class: "Avo::Resources::AvoAi::Chat", method: "use?")
+```
+
+With `config.authorization_client = nil` no policy runs: the chat stays on, `use?` is never asked, and nobody is blocked.
 
 </Option>
 

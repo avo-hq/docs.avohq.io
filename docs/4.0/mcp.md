@@ -98,6 +98,19 @@ end
 
 Your server's address is the panel's origin plus the mount path — `https://app.example.com/avo/mcp` for a panel at `https://app.example.com`. That's the URL admins paste into their clients. If your panel answers at more than one origin, or a proxy hides the public one, [pin the address](#pin-the-server-address).
 
+### 5. Decide who can use it
+
+With an authorization client running, the server asks `use?` on `Avo::McpServer::ConnectionPolicy` before it serves an admin. Under `explicit_authorization = true`, Avo's default, it stays off until that policy exists, and the consent screen says so:
+
+```ruby
+# app/policies/avo/mcp_server/connection_policy.rb
+class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
+  def use? = true
+end
+```
+
+The same policy decides who sees the **MCP connections** resource. See [Decide who sees and revokes what](#decide-who-sees-and-revokes-what) and [Turn MCP on or off per admin](#turn-mcp-on-or-off-per-admin).
+
 ## Connect a client
 
 1. Copy the server URL. **Connect a client** on the MCP connections resource shows it with a recipe per client, and so does opening the URL in a browser.
@@ -254,9 +267,9 @@ end
 ```
 
 - **`capability`** is which of the [three capabilities](#choose-what-a-connection-can-do) unlocks the tool: `avo:read` for one that only reads, `avo:write` for one that changes records, `avo:actions` for one that runs a workflow. A connection without it is refused before `perform` runs, exactly as for the shipped tools.
-- **`resources`** names every resource the tool reads or changes, as `list_resources` names them. A connection [narrowed to named resources](#choose-what-a-connection-can-do) must grant each one, or the call is refused before `perform` runs and the error names the one that's missing. The connecting admin's own policy must also answer `index?` for each one, on any connection, so a tool can't read past a role that changed after the grant. List static names only: a tool that picks its resource at call time takes a `resource` argument instead.
+- **`resources`** names every resource the tool reads or changes, as `list_resources` names them. A connection [narrowed to named resources](#choose-what-a-connection-can-do) must grant each one, or the call is refused before `perform` runs and the error names the one that's missing. The connecting admin's own policy must also answer `index?` for each one, on any connection, so a tool can't read past a role that changed after the grant. List static names only: a tool that picks its resource at call time takes a `resource` argument instead. A resource not backed by Active Record can't be granted on a connection, so a tool declaring one can't run on a narrowed connection.
 - **`description`** is what the client's model reads to decide whether to call the tool. Its first sentence is also what the connection's **Tools** card shows.
-- **`input_schema`** is the JSON schema of the arguments. Everything in `required` is checked before your code runs. A `resource` argument declared here gets the same two checks, and a name that matches no resource is refused; a `resource` key the schema doesn't declare counts for nothing.
+- **`input_schema`** is the JSON schema of the arguments. Everything in `required` is checked before your code runs. A `resource` argument declared here gets the same two checks, and a name that matches no resource is refused; a `resource` key the schema doesn't declare is checked the same way, but doesn't count as the tool saying what it reads.
 - **`perform`** receives the identity — the connection, and the admin it acts as — plus the arguments. Reach records through `Avo::McpServer::ToolSupport`, which runs the admin's own policies and reports a record they can't reach as one that doesn't exist; raise one of `Avo::McpServer::ToolErrors` to refuse with a structured error. With [Audit Logging](./audit-logging.html) installed, `Avo::McpServer::Audit.record` puts a change the tool makes in the audit log, marked as made through the connection.
 
 Then register the class in your initializer:
@@ -268,8 +281,8 @@ config.mcp_server.extra_tools = ["IssueInvoiceTool"]
 
 Entries are class **names**, not constants — this initializer runs before your own classes are loadable — and each is resolved when a request arrives, so editing a tool in development is served on the next call. An entry that can't be served (a class that doesn't load, one that isn't a tool, one with no `capability`, one claiming a shipped tool's name) is dropped with a line in the log saying why, and the rest keep serving.
 
-:::warning A tool that names no resource is refused on a narrowed connection
-A tool with no `resources` declaration and no `resource` argument gives the server no way to tell what it reads, so a connection narrowed to named resources refuses it. Tools registered before `resources` existed were let through such connections; declare `resources` on each one when you upgrade, or connections narrowed per resource can no longer call it.
+:::warning A call that names no resource is refused on a narrowed connection
+When a tool has no `resources` declaration and the call sends no `resource` argument the schema declares, the server can't tell what it reads, so a connection narrowed to named resources refuses it. The connection's **Tools** card still lists such a tool. Tools registered before `resources` existed were let through such connections; declare `resources` on each one when you upgrade, or connections narrowed per resource can no longer call it.
 :::
 
 :::warning Custom tools share the consent capabilities
@@ -321,7 +334,7 @@ Every connection carries a **status** — a badge on the index, a chip on its pa
 
 | Status       | What it means                                                                                                                                                      |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Open         | The client holds credentials that still work and can call at any time. Whether it does is what **Last used** says.                                                 |
+| Open         | The client holds credentials that still work and can call at any time. Whether it does is what **Last used** says. A connection whose owner `use?` refuses also reads Open, and its calls are rejected.                                                 |
 | Disconnected | The client gave up its credentials. Claude Code does this on **Clear authentication** in `/mcp` and on `claude mcp logout`, through the token revocation endpoint.  |
 | Expired      | Nothing the client holds still works: it went 30 days without calling, or never finished connecting after you approved it.                                         |
 | Revoked      | You revoked it.                                                                                                                                                    |
@@ -426,7 +439,7 @@ A connection's page carries a **Log** card: every request the client made, newes
 | Tool error     | The tool ran and reported a failure.                                                              |
 | Refused        | A malformed request, refused before any tool ran.                                                 |
 | Rate limited   | Over `tool_calls_per_minute`.                                                                     |
-| Token rejected | An expired or revoked token, or a revoked connection. A client still retrying after you revoked it shows up here. |
+| Token rejected | An expired or revoked token, a revoked connection, or an owner `use?` refuses. A client still retrying after you revoked it shows up here. |
 
 A client that disconnects through the revocation endpoint leaves an `oauth/revoke` row, so the moment it left sits where its calls do.
 
@@ -512,7 +525,7 @@ class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
 end
 ```
 
-Its record is always the `Avo::McpServer::Connection` class, so key it off `user`. An admin it refuses:
+Its record is always the `Avo::McpServer::Connection` class, so key it off `user`, not `Avo::Current` or tenant state, which aren't set on every path it runs on. If it raises, say because a flag store is down, the server answers `500` and leaves the client's tokens alone. An admin it refuses:
 
 - can't open the consent screen, which tells them the server is turned off for their account, so no connection or code is created;
 - can't open the connect page, and the buttons that lead there are hidden;
@@ -521,7 +534,7 @@ Its record is always the `Avo::McpServer::Connection` class, so key it off `user
 `use?` only decides whether they can use the server. It doesn't hide anything else: the **MCP connections** menu entry and pages keep following `index?` and `show?`, so the admin can still see their connections and revoke them, and a client can still revoke its own token. To take the entry away too, refuse `index?` for the same admins.
 
 :::warning Every `ConnectionPolicy` needs `use?`
-The server asks `use?` the way Avo asks any policy method, so a `ConnectionPolicy` without it **turns MCP off for every admin**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ConnectionPolicy`, add `def use? = true` when you upgrade to keep MCP on for everyone. With no `ConnectionPolicy` at all, Avo's defaults apply: on under `explicit_authorization = false`, and off under `explicit_authorization = true`, which is Avo's default. So an app that never wrote one adds it with `use?` to keep MCP on.
+The server asks `use?` the way Avo asks any policy method, so a `ConnectionPolicy` without it **turns MCP off for every admin**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ConnectionPolicy`, add `def use? = true` when you upgrade to keep MCP on for everyone. With no `ConnectionPolicy` at all, Avo's defaults apply: on under `explicit_authorization = false`, and off under `explicit_authorization = true`, which is Avo's default. So an app that never wrote one adds it with `use?` to keep MCP on. `use?` needs an authorization client: with `config.authorization_client = nil` no policy runs, so the server stays on and nobody is blocked.
 :::
 
 ## Run it in production

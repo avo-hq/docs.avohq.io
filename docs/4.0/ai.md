@@ -745,12 +745,13 @@ Everything `execute` returns is sent to the provider on that turn and on every l
 
 ### Serve the same tool over MCP
 
-Running the [MCP Server](./mcp.html) too? The class you just wrote can answer connected MCP clients as well. Declare which consent capability unlocks it — `avo:read`, `avo:write` or `avo:actions` — and register it with that gem beside this one:
+Running the [MCP Server](./mcp.html) too? The class you just wrote can answer connected MCP clients as well. Declare which consent capability unlocks it — `avo:read`, `avo:write` or `avo:actions` — and the resources it touches, and register it with that gem beside this one:
 
 ```ruby
 # app/tools/crm_tool.rb
 class CrmTool < RubyLLM::Tool
   def self.capability = "avo:read" # [!code focus]
+  def self.resources = %w[Ticket Project] # [!code focus]
   # ...
 end
 ```
@@ -761,7 +762,7 @@ config.ai.extra_tools = ["CrmTool"]
 config.mcp_server.extra_tools = ["CrmTool"] # [!code focus]
 ```
 
-The chat ignores `capability`. Over MCP the server injects the connecting admin as `user:` the way the chat does, runs the capability gate first, and serves a Hash as structured content, a String as text, and an `{error: "..."}` Hash as a tool error. `chat` and `inspection_tracker` are never set there, so a tool that can run over MCP mustn't depend on either. See [Share a tool with Avo AI](./mcp.html#share-a-tool-with-avo-ai) for the details.
+The chat ignores both. A connection [narrowed to named resources](./mcp.html#add-tools-of-your-own) must grant everything `resources` lists, and refuses a call that names no resource. Over MCP the server injects the connecting admin as `user:` the way the chat does, runs the capability gate first, and serves a Hash as structured content, a String as text, and an `{error: "..."}` Hash as a tool error. `chat` and `inspection_tracker` are never set there, so a tool that can run over MCP mustn't depend on either. See [Share a tool with Avo AI](./mcp.html#share-a-tool-with-avo-ai) for the details.
 
 :::info This is MCP in the other direction
 Here your app is the MCP *server*, and outside clients connect to it. To have the assistant call somebody else's MCP server from a chat, see [Connect other tools with MCP](#connect-other-tools-with-mcp).
@@ -1455,6 +1456,8 @@ Give your `Avo::Ai::ChatPolicy` an `#available_models` method to curate a shortl
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
 class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.present?
+
   def available_models
     return nil if user.admin? # every model in the registry
 
@@ -1766,15 +1769,17 @@ class Avo::Ai::ChatPolicy < ApplicationPolicy
 end
 ```
 
-Its record is always the `Avo::Ai::Chat` class, so key it off `user`. The chat bar asks it on every panel page, so keep it cheap: read a column or a memoized flag. A user it refuses:
+Its record is always the `Avo::Ai::Chat` class, so key it off `user`. The chat bar asks it on every panel page, so keep it cheap: read a column or a memoized flag. It also runs in background jobs, so don't read `Avo::Current` or tenant state from it. If it raises, the chat reads as off for that user, and nothing is logged. A user it refuses:
 
 - sees no chat bar, and Cmd+J / Ctrl+J opens nothing;
 - is told they're not authorized on every chat page, and on every request behind them, sending a message included;
 - gets no reply to a message still queued when you turned the chat off. The queued reply posts a short notice instead of calling the model, and no title is generated for it. A reply already running finishes.
 
-`use?` only decides whether they can use the chat. It doesn't hide anything else: the **Chats**, **Messages**, **Models**, **Skills**, **Feedback** and **Connectors** menu entries and pages keep following their own policy methods, so a super admin can still review conversations there. To take an entry away, refuse `index?` for the same users.
+`use?` only decides whether they can use the chat. Beyond the chat's own controls, including the composer and the open-in-bar button on a chat's resource page, it doesn't hide anything: the **Chats**, **Messages**, **Models**, **Skills**, **Feedback** and **Connectors** menu entries and pages keep following their own policy methods, so a super admin can still review conversations there. To take an entry away, refuse `index?` for the same users.
 
 If your menu links to the chats, hide the link for the same users with `visible: -> { Avo::Ai::Chat.usable_by?(current_user) }`.
+
+`use?` needs an authorization client. With `config.authorization_client = nil` no policy runs, so nobody is blocked.
 
 :::warning Your own `ChatPolicy` needs `use?`
 The chat asks `use?` the way Avo asks any policy method, so a `ChatPolicy` of your own without it **turns the chat off for every user**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ChatPolicy`, add `def use? = user.present?` when you upgrade to keep the chat on for everyone. The policy avo-ai ships, used when you have none, answers `true` for every signed-in user.
@@ -1830,6 +1835,8 @@ Chats are owner-scoped already — nobody sees anyone else's — so by default a
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
 class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.present?
+
   def destroy?
     user.admin?
   end
@@ -1864,6 +1871,8 @@ The level is decided by your app's policy for `Avo::Ai::Chat`. It's never stored
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
 class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.present?
+
   def debug_level
     user.admin? ? :tools : :off
   end
