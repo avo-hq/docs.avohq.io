@@ -488,6 +488,10 @@ If your initializer has no `authorization_client` line (Avo then uses `:pundit`)
 If every resource is refused at once, check the license before the policies.
 :::
 
+### The emergency license switch skips your policies
+
+This fail-closed behavior is what [`run_community_admin_without_valid_license`](./customization-api.html#run_community_admin_without_valid_license) gives up. Set it, and an app whose license can't be validated serves the Community admin with your policies skipped rather than refusing every resource — so the users the policies exist to restrict reach everything. Read [Licensing → Keep the admin running when the license cannot be validated](./licensing.html#keep-the-admin-running-when-the-license-cannot-be-validated) before you reach for it. It changes nothing for a valid license that simply doesn't include the add-on: that case still fails closed, as above.
+
 ## Debug a denied action
 
 When a [developer user](./authentication.html#check-if-a-user-is-an-developer) triggers a denial, Avo logs it. In development, the entry includes the global ids of the user and the record:
