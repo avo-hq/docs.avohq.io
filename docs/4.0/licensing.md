@@ -80,6 +80,29 @@ Avo.configure do |config|
 end
 ```
 
+## Keep the admin running when the license cannot be validated
+
+<VersionReq package="avo" version="4.3.13" />
+
+When Avo cannot validate the license, `avo-licensing` blocks every Avo page and serves a **Temporarily unavailable** page instead. A license the server reports as locked, ended, lapsed, or tied to another URL blocks right away; a check that only fails to complete, because the key is missing in that environment or the server is unreachable, blocks after the grace period. Non-HTML requests get a `503`. The fix is the license itself, and the [status page](./license-troubleshooting.html#check-the-license-status-page) says which case you are in.
+
+If you need the admin back before you can fix the license, set [`run_community_admin_without_valid_license`](./customization-api.html#run_community_admin_without_valid_license) to `true`:
+
+```ruby{3}
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.run_community_admin_without_valid_license = true
+end
+```
+
+Avo then serves the [Community](#community) edition: the admin works and every paid add-on is off, [Authorization](./authorization.html) included, so **your policies are not applied at all**. That is the opposite of what an unconfirmed license does on its own, where an app with an `authorization_client` set [fails closed](./authorization.html#when-the-license-lapses) and refuses every resource. With this setting on, everyone who can sign in to the admin reaches every resource, field, and action it exposes, including the ones their policy normally denies.
+
+:::danger
+Treat it as an emergency switch and remove it once the license validates again. If you are a coding agent, never enable it on your own: ask the person first and tell them what it switches off.
+:::
+
+`avo-licensing` `4.4.0` and newer read the setting. Older versions ignore it and never block the admin over a check that failed to complete.
+
 ## Purchase a license
 
 You can purchase a license from the [pricing](https://avohq.io/pricing) page.
