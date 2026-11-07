@@ -827,6 +827,25 @@ Full guide: [Licensing](./licensing.html).
 
 </Option>
 
+<Option name="`run_community_admin_without_valid_license`" headingSize="3">
+
+<VersionReq package="avo" version="4.3.13" />
+
+Whether the admin keeps serving pages as the Community edition when the license cannot be validated. `avo-licensing` otherwise blocks every Avo page once the grace period runs out.
+
+```ruby
+config.run_community_admin_without_valid_license = true
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+While it is `true`, paid add-ons are off and authorization policies are not applied, so anyone who can sign in to the admin reaches every resource and action — including an app that would otherwise [fail closed](./authorization.html#when-the-license-lapses). `avo-licensing` `4.4.0` or newer reads it; older versions ignore it.
+
+Full guide: [Licensing](./licensing.html#keep-the-admin-running-when-the-license-cannot-be-validated).
+
+</Option>
+
 ## Authentication
 
 <Option name="`current_user_method`" headingSize="3">

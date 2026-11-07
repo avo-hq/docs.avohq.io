@@ -46,6 +46,10 @@ end
 
 This only applies when you explicitly disable outbound connections in the test environment. If your tests already permit real HTTP requests, no change is needed.
 
+:::warning
+From `avo-licensing` `4.4.0` a blocked check doesn't only raise on the request that makes it. Once the grace period is out, every Avo page serves the **Temporarily unavailable** notice, so request and system specs assert against that page instead of running on a silently invalid license. Allowing the two hosts is still the fix — see [License troubleshooting](./license-troubleshooting.html#every-admin-page-is-blocked-with-a-temporarily-unavailable-notice).
+:::
+
 ## Testing helpers
 
 We prepared a few testing helpers for you to use in your apps. They help with opening/closing datepickers, choosing the date, saving records, adding/removing tags, and selecting a lot of elements throughout the UI.
