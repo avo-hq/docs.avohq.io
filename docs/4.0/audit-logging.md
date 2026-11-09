@@ -56,7 +56,7 @@ Besides the migrations, resources and controllers, it adds the commented `config
 Avo.configure do |config|
   # ...
 
-  ## == Audit logging ==
+  ## == Audit logging add-on ==
   # config.audit_logging.enabled = false
   # config.audit_logging.author_model = "User"
   # config.audit_logging.payload_modifier = -> { payload.merge("app" => "billing") }
