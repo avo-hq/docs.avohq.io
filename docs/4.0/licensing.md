@@ -107,7 +107,7 @@ Avo.configure do |config|
 end
 ```
 
-The admin then runs as the open source Avo does. Paid add-ons stay off and your authorization policies are not applied, so anyone who can sign in to Avo can reach everything. The status page says so with an orange indicator: "Running without a valid license: paid add-ons are off and authorization policies are not applied". The status page shows that warning for as long as the setting is on. The setting defaults to `false`.
+The admin then runs as the open source Avo does. Paid add-ons stay off and your authorization policies are not applied, so anyone who can sign in to Avo can reach everything. The status page says so with an orange indicator: "Running without a valid license: paid add-ons are off and authorization policies are not applied". The status page shows that warning for as long as the setting is on. The setting defaults to `false`. <VersionReq package="avo" version="4.3.13" />
 
 A valid license that lacks `avo-authorization` still fails closed when your initializer sets an authorization client, with the setting on or off.
 
