@@ -2,7 +2,6 @@
 license: addon
 addon_link: https://avohq.io/addons/mcp
 addon: avo-mcp_server
-betaStatus: "Beta"
 outline: [2, 3]
 guide: ./mcp.html
 prev:
