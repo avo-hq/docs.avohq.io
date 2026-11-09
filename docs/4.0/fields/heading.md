@@ -3,6 +3,7 @@ license: community
 description: "Displays a heading separator to delimit sections of fields on a resource."
 fieldTags: [layout]
 outline: [2, 3]
+api_docs: ./heading-api.html
 ---
 
 # Heading
@@ -23,7 +24,7 @@ By default, the heading uses the humanized field ID (`:user_information` becomes
 
 ## Choose the heading text {#label}
 
-Set `label` to a string when the heading should differ from the humanized field ID. This keeps the heading visible on form views as well as the show view.
+Set [`label`](./heading-api.html#label) when the heading should differ from the humanized field ID. This keeps the heading visible on form views as well as the show view.
 
 ```ruby
 # app/avo/resources/user.rb
@@ -47,7 +48,9 @@ A heading declared with a block is not rendered on new or edit views, even if it
 
 ## Render formatted content {#as_html}
 
-Set `as_html: true` to render the heading as sanitized HTML instead of plain text. Use a label for formatted headings that also need to appear on forms.
+<span id="as-html"></span>
+
+Set [`as_html: true`](./heading-api.html#as_html) to format the heading with HTML. Use a label for formatted headings that also need to appear on forms.
 
 ```ruby
 # app/avo/resources/user.rb
@@ -64,9 +67,5 @@ field :dev_heading, as: :heading, as_html: true do
   '<div class="underline uppercase font-bold">DEV</div>'
 end
 ```
-
-:::info Sanitized HTML
-Avo sanitizes HTML headings before rendering them. `as_html` does not render arbitrary HTML unchanged.
-:::
 
 For shared visibility, styling, and other field settings, see [Common field options](../field-options.html).

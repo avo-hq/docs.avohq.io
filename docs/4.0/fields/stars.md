@@ -3,6 +3,7 @@ license: community
 description: "The stars field renders a star rating display on Index and Show views, and interactive clickable stars on Edit and New views."
 fieldTags: [number]
 outline: [2, 3]
+api_docs: ./stars-api.html
 ---
 
 # Stars
@@ -26,14 +27,14 @@ This field needs to be backed by a numeric column in your database (e.g., `integ
 
 ## Change the rating scale {#max}
 
-Set `max` to a positive integer to change the number of stars. For example, use ten stars for a rating out of ten:
+Set [`max`](./stars-api.html#max) to a positive integer to change the number of stars. For example, use ten stars for a rating out of ten:
 
 ```ruby
 # app/avo/resources/review.rb
 field :rating, as: :stars, max: 10
 ```
 
-The field displays whole stars, even when the database column supports decimals. Filled stars represent the current value, while unfilled stars show the remaining capacity up to the maximum.
+The field displays whole stars, even when the database column supports decimals. A rating of `3.7` fills three stars on Index and Show views; forms select whole-number ratings. Filled stars represent the current value, while unfilled stars show the remaining capacity up to the maximum.
 
 :::warning
 `max` controls the display, not model validation. Add model validations if stored ratings must stay within your chosen range.
@@ -43,6 +44,6 @@ The field displays whole stars, even when the database column supports decimals.
 
 On <Edit /> and <New /> forms, click a star to select a whole-number rating from `1` to `max`. Click the currently selected star again to clear the rating to `0`. The selected numeric value is saved when the form is submitted.
 
-## Configure shared field behavior {#options}
+## Options reference {#options}
 
-For options such as the field name, visibility, and help text, see [Field options](../field-options.html).
+See the [Stars API](./stars-api.html) for the field-specific option and its default. For options such as the field name, visibility, and help text, see [Field options](../field-options.html).

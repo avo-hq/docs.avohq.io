@@ -3,6 +3,7 @@ license: community
 description: "Renders a text input element."
 fieldTags: [text]
 outline: [2, 3]
+api_docs: ./text-api.html
 ---
 
 # Text
@@ -18,11 +19,11 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-By default, values are displayed as escaped text, without links or HTML rendering. `as_html` and `link_to_record` are off, and `protocol` is unset.
+By default, values are displayed as escaped text, without links or HTML rendering.
 
 ## Link to an email address or phone number {#protocol}
 
-Set `protocol` to turn the value into a link on the Index and Show views. For example, `:mailto` opens an email client and `:tel` creates a phone link. A string can supply another protocol; pass the name without the colon. The link destination is built as `protocol:value`.
+Set [`protocol`](./text-api.html#protocol) to turn the value into a link on the Index and Show views. For example, `:mailto` opens an email client and `:tel` creates a phone link.
 
 ```ruby
 # app/avo/resources/user.rb
@@ -35,7 +36,10 @@ field :email,
 
 ## Link to the record
 
-Set `link_to_record: true` to make the value link to the record on the Index view. It does not add a link on the Show view.
+<span id="link_to_record"></span>
+<span id="link-to-record"></span>
+
+Set [`link_to_record`](./text-api.html#link_to_record) to `true` to make the value link to the record on the Index view.
 
 ```ruby
 # app/avo/resources/post.rb
@@ -44,7 +48,9 @@ field :title, as: :text, link_to_record: true
 
 ## Render HTML in a value {#as_html}
 
-Set `as_html: true` to render the value as HTML on the Index and Show views. This is useful for custom markup, such as a link to another record or website.
+<span id="as-html"></span>
+
+Set [`as_html`](./text-api.html#as_html) to `true` to render the value as HTML on the Index and Show views. This is useful for custom markup, such as a link to another record or website.
 
 ```ruby
 # app/avo/resources/post.rb
@@ -57,7 +63,7 @@ end
 `as_html` renders the value without escaping or sanitizing it. Only render trusted HTML, or sanitize untrusted content before returning it.
 :::
 
-When options are combined, HTML rendering takes precedence over `protocol`, and `protocol` takes precedence over `link_to_record`. These options do not change the text input on forms.
+For combined options, see the [rendering precedence](./text-api.html#rendering-precedence). These options do not change the text input on forms.
 
 ## Customize the label and input
 

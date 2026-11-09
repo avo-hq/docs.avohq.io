@@ -3,6 +3,7 @@ license: community
 description: "The Area field is used to display a geographical area on a map."
 fieldTags: [maps]
 outline: [2, 3]
+api_docs: ./area-api.html
 ---
 
 # Area
@@ -45,12 +46,7 @@ On the <Edit /> view, edit the coordinates as JSON in the text input. A blank va
 
 ### Display multiple polygons {#geometry}
 
-Set `geometry` to match the [GeoJSON geometry](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1) stored in your column. It accepts a `Symbol` or `String` and defaults to `:polygon`.
-
-| Value | Coordinates |
-| --- | --- |
-| `:polygon` | An array of linear rings: the exterior ring followed by any holes. |
-| `:multi_polygon` | An array of polygon coordinate arrays. |
+If your column holds several polygons, set [`geometry`](./area-api.html#geometry) to `:multi_polygon` and store an array of polygon coordinate arrays. For a single polygon, store its exterior ring followed by any holes. See the [GeoJSON geometry specification](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1) for the coordinate structure.
 
 ```ruby
 # app/avo/resources/city.rb
@@ -65,9 +61,7 @@ Avo does not validate the geometry type or coordinates. The coordinates must mat
 
 <span id="mapkick-options"></span>
 
-Pass a `Hash` to `mapkick_options` to change the map's appearance or enable controls. It defaults to `{}`; Avo merges your options over `{style: Avo::MapStyles.light}`. With no global style override, the light style is `"https://tiles.openfreemap.org/styles/positron"`, or `"mapbox://styles/mapbox/light-v11"` when `MAPBOX_ACCESS_TOKEN` is set.
-
-Options are forwarded to Mapkick; see the [Mapkick options](https://github.com/ankane/mapkick#options) for supported keys and values.
+Use [`mapkick_options`](./area-api.html#mapkick_options) to change the map's appearance or enable controls. For example, choose a different style for this field and add navigation controls:
 
 ```ruby
 # app/avo/resources/city.rb
@@ -85,7 +79,9 @@ Avo follows the color scheme and swaps the map between its light and dark styles
 
 ### Label and color the area {#datapoint_options}
 
-Pass a `Hash` to `datapoint_options` to attach a label, tooltip, or color to the area. It defaults to `{}` and is merged into the generated geometry data. See the [Mapkick area map options](https://github.com/ankane/mapkick#area-map) for supported keys and values.
+<span id="datapoint-options"></span>
+
+Use [`datapoint_options`](./area-api.html#datapoint_options) to attach a label, tooltip, or color to the area:
 
 ```ruby
 # app/avo/resources/city.rb

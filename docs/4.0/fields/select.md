@@ -119,7 +119,7 @@ For an enum, it displays the mapped value (`small` in the enum example) instead 
 
 ## Let users clear a selection {#include-blank}
 
-Set [`include_blank`](./select-api.html#include_blank) to `true` to add an empty-valued choice labeled with the field's [`placeholder`](../field-options.html#placeholder). Without a custom placeholder or translation, the label is "Choose an option". Supply a string instead to give the blank choice its own label.
+Set [`include_blank`](./select-api.html#include_blank) to `true` to add an empty-valued choice labeled with the field's [`placeholder`](../field-options-api.html#placeholder). Without a custom placeholder or translation, the label is "Choose an option". Supply a string instead to give the blank choice its own label.
 
 ```ruby
 # app/avo/resources/project.rb

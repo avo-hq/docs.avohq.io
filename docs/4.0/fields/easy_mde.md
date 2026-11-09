@@ -3,6 +3,7 @@ license: community
 description: "Renders the EasyMDE Markdown editor, storing raw Markdown in the database."
 fieldTags: [rich text]
 outline: [2, 3]
+api_docs: ./easy_mde-api.html
 ---
 
 # EasyMDE
@@ -24,7 +25,9 @@ Before Avo 3.17 this field was called `markdown`. It was renamed to `easy_mde` t
 
 ## Enable spell checking {#spell_checker}
 
-If you want spelling suggestions while editing, set `spell_checker` to `true`.
+<span id="spell-checker"></span>
+
+If you want spelling suggestions while editing, set [`spell_checker`](./easy_mde-api.html#spell_checker) to `true`.
 
 ```ruby
 # app/avo/resources/post.rb
@@ -33,7 +36,10 @@ field :description, as: :easy_mde, spell_checker: true
 
 ## Display the full content on Show
 
-By default, the Show view collapses long content into a short, faded preview. Readers can expand it with More content and collapse it again with Less content. If you want the full content visible immediately, set `always_show` to `true`.
+<span id="always_show"></span>
+<span id="always-show"></span>
+
+Readers can expand long content with More content and collapse it again with Less content. If you want the full content visible immediately, set [`always_show`](./easy_mde-api.html#always_show) to `true`.
 
 ```ruby
 # app/avo/resources/post.rb
@@ -47,7 +53,7 @@ The Show view displays a read-only editor without the toolbar or status bar.
 Drag the resize handle on New and Edit forms to change the editor height.
 
 :::warning
-The `height` option is accepted by the field and defaults to `"auto"`, but the current editor integration does not apply it. Passing a pixel height does not set the editor's initial height.
+The [`height`](./easy_mde-api.html#height) option does not currently set the editor's initial height. Use the resize handle instead.
 :::
 
 ## Use common field options

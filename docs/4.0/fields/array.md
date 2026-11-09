@@ -4,6 +4,7 @@ demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1030"
 description: "The Array field allows you to display and manage structured array data."
 fieldTags: [structured]
 outline: [2, 3]
+api_docs: ./array-api.html
 ---
 
 # Array
@@ -48,11 +49,11 @@ class Avo::Resources::Attendee < Avo::Resources::ArrayResource
 end
 ```
 
-Avo looks up the resource by the field name. If it has a different name, pass `use_resource: Avo::Resources::Attendee` in the field declaration. See the [Array Resource documentation](../array-resource) for configuring the resource and enabling writes.
+Avo looks up the resource by the field name. If it has a different name, set [`use_resource`](./array-api.html#use_resource) to `Avo::Resources::Attendee` in the field declaration. See the [Array Resource documentation](../array-resource) for configuring the resource and enabling writes.
 
 ## Supply data in a block {#example-1-array-field-with-a-block}
 
-Return an array of hashes from the field's block, as in the opening example, to supply static or computed data. The block can read `record` to access the parent record. The Array Resource also accepts Active Record objects, an `ActiveRecord::Relation`, or `StoreModel` instances.
+Return an array of hashes from the [field's block](./array-api.html#block), as in the opening example, to supply static or computed data. The block can read `record` to access the parent record. The Array Resource also accepts Active Record objects, an `ActiveRecord::Relation`, or `StoreModel` instances.
 
 ## Allow access to the panel
 
@@ -137,4 +138,8 @@ Returning `nil` or `false` moves to the next source. Returning `[]` displays an 
 
 ## Customize shared field behavior
 
-See [shared field options](../field-options.html) for common configuration. The Array field has no options of its own; it uses the association panel renderer and inherits its panel behavior.
+To change the panel's initial page size, pass [`per_page`](./array-api.html#per_page). Set [`discreet_pagination`](./array-api.html#discreet_pagination) to hide the pagination controls when all entries fit on one page.
+
+To wait until someone requests the data, set [`loading`](./array-api.html#loading) to `:manual`. Add [`reloadable`](./array-api.html#reloadable) to let them refresh the panel without reloading the parent page.
+
+The field inherits its panel behavior from association fields. See the [Array field API](./array-api.html) for those options and [shared field options](../field-options.html) for common configuration.

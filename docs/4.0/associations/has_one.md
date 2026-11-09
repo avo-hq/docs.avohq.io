@@ -171,7 +171,7 @@ The values land on the join record (`TeamMembership` above), alongside anything 
 
 ## Show the panel while editing {#show-on-edit-screens}
 
-Use the shared [`show_on`](../field-options.html#show_on) option to display the Show panel on the parent's Edit page. This does not embed the child's edit form.
+Use the shared [`show_on`](../field-options-api.html#show_on) option to display the Show panel on the parent's Edit page. This does not embed the child's edit form.
 
 ```ruby
 # app/avo/resources/team.rb

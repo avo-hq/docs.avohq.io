@@ -169,7 +169,7 @@ options: [{id: 1, title: "Alex"}, {title: "Showing up to 50 users", hint: true}]
 
 </Option>
 
-## Inline search
+## Search within choices
 
 <Option name="`inline_search`">
 

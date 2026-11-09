@@ -1,6 +1,7 @@
 ---
 license: community
 outline: [2, 3]
+api_docs: ./textarea-api.html
 description: "The textarea field renders a textarea element."
 fieldTags: [text]
 ---
@@ -18,14 +19,12 @@ By default, the input has five rows on the New and Edit views, and the field is 
 
 ## Give longer text more room {#rows}
 
-Set `rows` to a positive integer to change the input's visible height on the New and Edit views.
+Set [`rows`](./textarea-api.html#rows) to give longer text more room on the New and Edit views.
 
 ```ruby
 # app/avo/resources/post.rb
 field :body, as: :textarea, rows: 10
 ```
-
-If `rows` is omitted or blank, Avo uses `5`. Nonblank values are converted to integers with `to_i`; Avo does not validate that the result is positive.
 
 ## Show the field on the index
 

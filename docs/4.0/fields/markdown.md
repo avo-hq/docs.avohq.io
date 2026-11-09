@@ -1,6 +1,7 @@
 ---
 license: community
 outline: [2, 3]
+api_docs: ./markdown-api.html
 betaStatus: Beta
 demoVideo: "https://youtu.be/wnWvzQyyo6A?t=2128"
 description: "A GitHub-inspired Markdown editor based on the Marksmith editor."
@@ -63,8 +64,9 @@ Use the editor toolbar to format text, or write Markdown directly and switch to 
 Users can drop files into the editor or select them through the upload control. Rails persists uploaded files using Active Storage. The [Media Library](./../media-library) lets users reuse existing uploads.
 
 <span id="file_uploads"></span>
+<span id="file-uploads"></span>
 
-To hide the **"Upload files"** option for a field, set `file_uploads` to `false`. When omitted, Marksmith enables uploads only if an upload URL is available, normally through Active Storage's direct-upload route. Setting it to `true` does not enable uploads without a URL.
+To hide the **"Upload files"** option for a field, set [`file_uploads`](./markdown-api.html#file_uploads) to `false`. Uploads otherwise depend on an available upload URL, normally through Active Storage.
 
 ```ruby
 # app/avo/resources/post.rb
@@ -72,8 +74,9 @@ field :body, as: :markdown, file_uploads: false
 ```
 
 <span id="media_library"></span>
+<span id="media-library"></span>
 
-To hide **"Attach from gallery"** for a field while keeping the Media Library available elsewhere, set `media_library` to `false`. It is enabled by default.
+To hide **"Attach from gallery"** for a field while keeping the Media Library available elsewhere, set [`media_library`](./markdown-api.html#media_library) to `false`.
 
 ```ruby
 # app/avo/resources/post.rb
@@ -82,7 +85,9 @@ field :body, as: :markdown, media_library: false
 
 ## Pass context to the preview renderer {#extra_preview_params}
 
-If the preview renderer needs additional context, pass a Hash of key-value pairs through `extra_preview_params`. Its default is an empty Hash (`{}`); Avo already sends `resource_class` and `field_id` with each preview request. Custom keys are merged after those identifiers, so matching keys override them.
+<span id="extra-preview-params"></span>
+
+If the preview renderer needs additional context, pass key-value pairs through [`extra_preview_params`](./markdown-api.html#extra_preview_params). See the reference for the identifiers Avo already sends and how custom keys take precedence.
 
 ```ruby
 # app/avo/resources/post.rb
@@ -145,7 +150,7 @@ end
 
 ## Show the full content on the Show view
 
-Set the shared `always_show` option to `true` to display the full content instead of a collapsed preview.
+Set [`always_show`](./markdown-api.html#always_show) to `true` to display the full content instead of a collapsed preview.
 
 ```ruby
 # app/avo/resources/post.rb

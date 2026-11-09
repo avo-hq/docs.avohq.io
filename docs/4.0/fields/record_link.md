@@ -3,6 +3,7 @@ license: community
 description: "Displays a link to another record."
 fieldTags: [display, associations]
 outline: [2, 3]
+api_docs: ./record_link-api.html
 ---
 
 # Record link
@@ -48,9 +49,11 @@ end
 
 A `has_one` association or a model method returning a record works too. The field displays the related resource's title, not the record's raw object representation.
 
+<span id="use-resource"></span>
+
 ## Choose which resource opens {#use_resource}
 
-If you have [multiple resources for the same model](./../resources.html#use-multiple-resources-for-the-same-model), set `use_resource` to choose the destination and the title used for the link. Without it, Avo uses its model-to-resource lookup.
+If you have [multiple resources for the same model](./../resources.html#use-multiple-resources-for-the-same-model), set [`use_resource`](./record_link-api.html#use_resource) to choose the destination and the title used for the link. Without it, Avo uses its model-to-resource lookup.
 
 Use the resource's CamelCase name or its fully qualified name, not a snake_case identifier:
 
@@ -65,11 +68,13 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
+<span id="add-via-params"></span>
+
 ## Leave navigation parameters out of the URL {#add_via_params}
 
 As with the [`belongs_to` field](./../associations/belongs_to.html), Avo adds `via_resource_class` and `via_record_id` parameters to support back-button navigation. The URL can be shared with teammates to keep the same navigation context.
 
-If you want a URL without those parameters, set `add_via_params: false`:
+If you want a URL without those parameters, set [`add_via_params`](./record_link-api.html#add_via_params) to `false`:
 
 ```ruby
 # app/avo/resources/comment.rb
@@ -102,14 +107,16 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-The first field links to a URL such as `https://example.com/avo/resources/posts/42`. For a user with ID `31`, the second links to `https://example.com/avo/resources/admin_users/31`. Omit `use_resource` to use the default user resource instead, such as `https://example.com/avo/resources/users/31`.
+The first field links to a URL such as `https://example.com/avo/resources/posts/42` with navigation parameters. For a user with ID `31`, the second links to `https://example.com/avo/resources/admin_users/31` without those parameters. Omit `use_resource` to use the default user resource instead, such as `https://example.com/avo/resources/users/31`.
 
 ## Open links in another tab {#target}
 
 :::warning
-In `avo-record_link_field` `0.0.2`, `target` is accepted by the field but is not passed to its link component. Setting `target: :blank` does not open a new tab. Links use the browser's default browsing context.
+In `avo-record_link_field` `0.0.2`, [`target`](./record_link-api.html#target) is accepted by the field but is not passed to its link component. Setting `target: :blank` does not open a new tab. Links use the browser's default browsing context.
 :::
 
 ## Common field options {#options}
+
+See the [Record link API](./record_link-api.html) for the three field-specific options and their defaults, verified against `avo-record_link_field` `0.0.2`.
 
 For shared configuration such as field names, visibility, and computed values, see [Common field options](../field-options.html).

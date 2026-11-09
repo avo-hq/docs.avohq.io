@@ -137,7 +137,7 @@ Each type must have an Avo resource. This option is used together with `polymorp
 
 <Option name="`polymorphic_help`">
 
-Help text for the polymorphic type dropdown. The shared [`help`](../field-options.html#help) option applies to the record dropdown.
+Help text for the polymorphic type dropdown. The shared [`help`](../field-options-api.html#help) option applies to the record dropdown.
 
 ```ruby
 field :commentable, as: :belongs_to,

@@ -308,4 +308,4 @@ field :admin, as: :has_one, nested: { on: :edit }
 
 </Option>
 
-For model setup, deletion, and nested authorization, see [Edit the child in the parent form](./has_one.html#nested-in-forms). To show the non-editable association panel on Edit instead, use shared [`show_on`](../field-options.html#show_on).
+For model setup, deletion, and nested authorization, see [Edit the child in the parent form](./has_one.html#nested-in-forms). To show the non-editable association panel on Edit instead, use shared [`show_on`](../field-options-api.html#show_on).

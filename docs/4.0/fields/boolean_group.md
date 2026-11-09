@@ -3,6 +3,7 @@ license: community
 description: "The BooleanGroup is used to update a Hash with string keys and boolean values in the database."
 fieldTags: [boolean, structured]
 outline: [2, 3]
+api_docs: ./boolean_group-api.html
 ---
 
 # Boolean Group
@@ -25,13 +26,13 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-Without `options`, the field uses an empty hash and renders no checkboxes. With options configured, checked states come from the record's stored values. On index and show pages, a View link opens a popover listing the options and their states.
+Without [`options`](./boolean_group-api.html#options), the field renders no checkboxes. With options configured, checked states come from the record's stored values. On index and show pages, a View link opens a popover listing the options and their states.
 
 <Image src="/assets/img/4_0/fields/boolean_group/index.webp" dark-src="/assets/img/4_0/fields/boolean_group/index-dark.webp" width="1776" height="570" alt="An Avo index table with ID, Name and User roles columns. A View popover lists Administrator, Manager and Writer with checked or unchecked boxes." prompt="use index page" />
 
 ## Choose the available checkboxes {#options}
 
-Set `options` to a hash whose keys match the stored keys and whose values are the visible labels. String and symbol keys both work for matching stored values.
+Set [`options`](./boolean_group-api.html#options) to choose the stored keys and their visible labels.
 
 For example, the roles field above can edit this JSON value in the database:
 
@@ -45,7 +46,7 @@ For example, the roles field above can edit this JSON value in the database:
 
 ### Compute checkboxes from the record
 
-If the choices depend on the record, pass a lambda to `options`. It must return the same key-to-label hash. The lambda runs in an [execution context](../execution-context.html) with access to `record`, `resource`, `view`, and `field`.
+If the choices depend on the record, pass a lambda to [`options`](./boolean_group-api.html#options). See the reference for its [execution context](../execution-context.html) and available values.
 
 For a project with a `features` association, use each feature's ID as its stored key:
 

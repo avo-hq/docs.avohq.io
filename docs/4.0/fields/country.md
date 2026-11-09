@@ -3,6 +3,7 @@ license: community
 description: "Country field generates a Select field on Edit view that includes all ISO 3166-1 countries."
 fieldTags: [choice]
 outline: [2, 3]
+api_docs: ./country-api.html
 ---
 
 # Country
@@ -18,7 +19,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-By default, country names appear in the dropdown and on **Index** and **Show** views. The dropdown is sorted by country name, and its default placeholder is "Choose a country" (`avo.choose_a_country`). Without an `include_blank` option or translation, `include_blank` resolves to `nil`.
+By default, country names appear in the dropdown and on **Index** and **Show** views. The dropdown is sorted by country name and prompts users to choose a country.
 
 ## Enable country selection
 
@@ -33,7 +34,9 @@ gem "countries"
 
 ## Display country codes instead of names {#display_code}
 
-If your users work with country codes, set `display_code: true`. This changes the labels in the dropdown as well as the values displayed on **Index** and **Show** views. It does not change the stored code. Leave it unset or use `false` to display names.
+<span id="display-code"></span>
+
+If your users work with country codes, set [`display_code`](./country-api.html#display_code) to `true`. This changes the labels in the dropdown as well as the values displayed on **Index** and **Show** views. It does not change the stored code.
 
 ```ruby
 # app/avo/resources/user.rb
@@ -46,7 +49,9 @@ end
 
 ## Offer an empty selection {#include_blank}
 
-Use `include_blank` to control the dropdown's first, empty option. For example, give it a label that explains what leaving the country empty means:
+<span id="include-blank"></span>
+
+Use [`include_blank`](./country-api.html#include_blank) to control the dropdown's first, empty option. For example, give it a label that explains what leaving the country empty means:
 
 ```ruby
 # app/avo/resources/user.rb
@@ -56,14 +61,6 @@ class Avo::Resources::User < Avo::BaseResource
   end
 end
 ```
-
-| Value | Behavior |
-| --- | --- |
-| Omitted | Uses the field's `include_blank` translation, or `nil` if none is present. |
-| `nil` | Leaves blank-option handling to Rails' select helper. |
-| `true` | Adds an empty option labeled with the field's placeholder. |
-| `false` | Does not explicitly add a blank option. |
-| A string | Adds an empty option with that string as its label. |
 
 See also the [Select field's `include_blank` documentation](./select.html#include_blank).
 

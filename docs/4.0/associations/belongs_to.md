@@ -75,7 +75,7 @@ end
 
 ### Explain the two dropdowns {#polymorphic-help}
 
-The first dropdown selects a type, and the second selects a record. Use [`polymorphic_help`](./belongs_to-api.html#polymorphic_help) for the first dropdown and the shared [`help`](../field-options.html#help) option for the second.
+The first dropdown selects a type, and the second selects a record. Use [`polymorphic_help`](./belongs_to-api.html#polymorphic_help) for the first dropdown and the shared [`help`](../field-options-api.html#help) option for the second.
 
 ```ruby
 # app/avo/resources/review.rb

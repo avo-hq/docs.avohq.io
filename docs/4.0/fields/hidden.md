@@ -3,6 +3,7 @@ license: community
 description: "Renders a hidden input on the New and Edit views."
 fieldTags: [utility]
 outline: [2, 3]
+api_docs: ./hidden-api.html
 ---
 
 # Hidden
@@ -14,7 +15,7 @@ The `hidden` field submits a value with a form without displaying an editable co
 field :user_id, as: :hidden, default: -> { current_user.id }
 ```
 
-Without a `default`, the input uses the record's existing attribute value. A default fills a `nil` value on New; it does not replace an existing value or fill a blank value on Edit. Hidden has no field-specific options. For shared settings such as `default`, `visible`, and HTML attributes, see [Common field options](../field-options.html).
+Without a [`default`](../field-options-api.html#default), the input uses the record's existing attribute value. A default fills a `nil` value on New; it does not replace an existing value or fill a blank value on Edit. See the [Hidden API](./hidden-api.html) for the declaration and submission behavior, and [Common field options](../field-options.html) for shared settings.
 
 :::warning Hidden is not access control
 Hidden inputs can be inspected and changed in the browser or in a crafted request. Enforce ownership and other sensitive values on the server rather than trusting the submitted value.
@@ -39,4 +40,4 @@ field :user, as: :belongs_to, visible: -> { current_user.admin? }
 field :user_id, as: :hidden, default: -> { current_user.id }, visible: -> { !current_user.admin? }
 ```
 
-The `default` block can access `current_user`. Visibility controls which input Avo renders; server-side authorization must still enforce who can assign the user.
+The `default` block can access `current_user`. The shared [`visible`](../field-options-api.html#visible) option controls which input Avo renders; server-side authorization must still enforce who can assign the user.

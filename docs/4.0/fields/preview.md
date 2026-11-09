@@ -3,6 +3,7 @@ license: community
 description: "The Preview field adds a tiny icon to each row on the Index view that, when hovered, it will display a preview popup with more information regarding that record."
 fieldTags: [display]
 outline: [2, 3]
+api_docs: ./preview-api.html
 ---
 
 # Preview
@@ -27,7 +28,7 @@ By default, the preview column has a blank header and no fields are selected for
 
 The fields shown in the preview popup are configured similarly to how you [configure the visibility in the different views](./../resources#views).
 
-Add [`show_on: :preview`](../field-options.html#show_on) to include a field in the popup without changing its visibility in other views. Combine it with `hide_on: :index` when the value should appear in the popup but not as a table column.
+Add [`show_on: :preview`](../field-options-api.html#show_on) to include a field in the popup without changing its visibility in other views. Combine it with [`hide_on: :index`](../field-options-api.html#hide_on) when the value should appear in the popup but not as a table column.
 
 ```ruby{4,8,12,15}
 # app/avo/resources/team.rb
@@ -53,7 +54,7 @@ end
 
 ## Label the preview column
 
-If you want a heading above the preview icons, set [`name`](../field-options.html#name) on the preview field:
+If you want a heading above the preview icons, set [`name`](../field-options-api.html#name) on the preview field:
 
 ```ruby
 # app/avo/resources/team.rb
@@ -64,4 +65,6 @@ field :preview, as: :preview, name: "Preview"
 
 The preview request authorization is controlled with the [`preview?` policy method](./../authorization-api.html#preview).
 
-For shared field settings, see [Common field options](../field-options.html).
+## Reference
+
+See the [Preview API](./preview-api.html) for the declaration, defaults, supported views, and value contract. Preview has no field-specific options. For shared field settings, see [Common field options](../field-options.html).

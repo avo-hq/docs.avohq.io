@@ -3,6 +3,7 @@ license: community
 description: "Renders the Rhino WYSIWYG editor, based on TipTap, with ActionText and Media Library support."
 fieldTags: [rich text, attachments]
 outline: [2, 3]
+api_docs: ./rhino-api.html
 ---
 
 # Rhino
@@ -46,15 +47,16 @@ See the [ActionText guide](https://guides.rubyonrails.org/action_text_overview.h
 
 ## Keep the full content visible
 
-Set `always_show: true` to display the full content on the show view without an expand/collapse control:
+<span id="always_show"></span>
+<span id="always-show"></span>
+
+Set [`always_show`](./rhino-api.html#always_show) to `true` to display the full content on the show view without an expand/collapse control:
 
 ```ruby
 # app/avo/resources/post.rb
 field :body, as: :rhino, always_show: true
 ```
 
-`always_show` is a Boolean and defaults to `false`.
-
 ## Common field options
 
-For labels, help text, placeholders, visibility, and other shared settings, see [Common field options](../field-options.html).
+See the [Rhino API](./rhino-api.html) for the field-specific option and its default. For labels, help text, placeholders, visibility, and other shared settings, see [Common field options](../field-options.html).

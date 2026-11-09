@@ -4,6 +4,7 @@ betaStatus: Beta
 description: "The Money field is used to display a monetary value."
 fieldTags: [number]
 outline: [2, 3]
+api_docs: ./money-api.html
 ---
 
 # Money
@@ -46,11 +47,13 @@ Without this step, the money field may not behave as expected, and the field mig
 
 ## Choose the available currencies {#currencies}
 
-Pass `currencies` as an array of ISO currency-code strings, as in the opening example. It defaults to `[]`, so provide the choices you want users to see in the dropdown. This controls the form's choices, not model-level validation.
+Pass [`currencies`](./money-api.html#currencies) to choose the ISO currency codes shown in the dropdown, as in the opening example. Validate allowed currencies on your model if you also need to restrict what can be saved.
 
 ## Edit the amount without changing the currency {#enable_currency}
 
-If the currency is managed elsewhere, set `enable_currency` to `false`. This hides the selector and leaves the record's currency column untouched when saving the amount. The option accepts `true` or `false` and defaults to `true`.
+<span id="enable-currency"></span>
+
+If the currency is managed elsewhere, set [`enable_currency`](./money-api.html#enable_currency) to `false`. This hides the selector and leaves the record's currency column untouched when saving the amount.
 
 ```ruby
 # app/avo/resources/product.rb
@@ -59,9 +62,9 @@ field :price, as: :money, enable_currency: false
 
 ## Use a different currency column suffix {#currency_suffix}
 
-If your monetized attribute uses a different currency column name, set `currency_suffix` to the suffix appended to the field's ID. For example, `price` with `"_currency"` targets `price_currency`; `"_currency_code"` targets `price_currency_code`.
+<span id="currency-suffix"></span>
 
-The option accepts a string or symbol. It defaults to the `money-rails` currency column postfix (normally `"_currency"`), or `:_currency` when `MoneyRails` is not defined. It must match the currency attribute configured on your model.
+If your monetized attribute uses a different currency column name, set [`currency_suffix`](./money-api.html#currency_suffix) to match the currency attribute configured on your model. For example, `price` with `"_currency"` targets `price_currency`; `"_currency_code"` targets `price_currency_code`.
 
 ```ruby
 # app/avo/resources/product.rb

@@ -86,7 +86,7 @@ Both dynamic options use an [ExecutionContext](../execution-context.html), with 
 
 <VersionReq package="avo" version="4.3.1" />
 
-Add [`show_on: :forms`](../field-options.html#show_on) and the badge renders a select of the values listed in `options` on <New /> and <Edit />:
+Add [`show_on: :forms`](../field-options-api.html#show_on) and the badge renders a select of the values listed in `options` on <New /> and <Edit />:
 
 ```ruby
 # app/avo/resources/project.rb
@@ -101,7 +101,7 @@ field :stage, as: :badge,
 
 Badges stay off forms unless you opt in. Any visibility option does it, so `only_on: [:show, :edit]` and `except_on: :index` put the select on forms too.
 
-- The select starts with a blank option, so a record with no value doesn't silently take the first one on its next save. A blank selection saves `""`. Add [`nullable: true`](../field-options.html#nullable) to save `nil` instead.
+- The select starts with a blank option, so a record with no value doesn't silently take the first one on its next save. A blank selection saves `""`. Add [`nullable: true`](../field-options-api.html#nullable) to save `nil` instead.
 - A value that `options` doesn't map to a color still shows in the list for the record that holds it, so saving the form never erases it.
 - A computed badge, one declared with a block, stays off forms.
 - In an [action](./../actions.html) modal, a badge with `show_on: :forms` renders as the same select. Without it, the badge renders read-only.
@@ -149,7 +149,7 @@ field :stage,
 
 ## Show when a status changed {#showing-the-moment-behind-a-status}
 
-A badge says *what* the state is. The [`tooltip`](../field-options.html#tooltip) option can say *when*, on hover, without spending a column on it:
+A badge says *what* the state is. The [`tooltip`](../field-options-api.html#tooltip) option can say *when*, on hover, without spending a column on it:
 
 ```ruby
 # app/avo/resources/project.rb

@@ -3,6 +3,7 @@ license: community
 description: "The id field is used to show the record's id."
 fieldTags: [display]
 outline: [2, 3]
+api_docs: ./id-api.html
 ---
 
 # ID
@@ -22,7 +23,7 @@ By default, the field is labeled "ID", is sortable, and is hidden on forms. It i
 
 ## Open records from the ID column
 
-Set `link_to_record: true` to make the ID in each index row link to the record's Show page. This option is `false` by default and does not turn the ID on the Show view into a link.
+Set [`link_to_record`](./id-api.html#link_to_record) to `true` to make the ID in each index row link to the record's Show page. It does not turn the ID on the Show view into a link.
 
 ```ruby
 # app/avo/resources/user.rb
@@ -37,7 +38,7 @@ To link every ID column without configuring each field, enable [`config.id_links
 
 ## Disable sorting by ID
 
-If readers should not sort the table by this column, set `sortable: false`:
+If readers should not sort the table by this column, set [`sortable`](../field-options-api.html#sortable) to `false`:
 
 ```ruby
 # app/avo/resources/user.rb
@@ -48,4 +49,6 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-For shared configuration such as labels and visibility, see [Common field options](../field-options.html).
+## Options reference
+
+See the [ID API](./id-api.html) for the field's declaration, defaults, value behavior, and linking option. For shared configuration such as labels and visibility, see [Common field options](../field-options.html).

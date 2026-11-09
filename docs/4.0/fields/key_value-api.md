@@ -163,7 +163,7 @@ field :meta, as: :key_value, disable_deleting_rows: true
 
 </Option>
 
-## Suggestions
+## Suggested entries
 
 <Option name="`suggestions`">
 

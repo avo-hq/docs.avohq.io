@@ -3,6 +3,7 @@ license: community
 description: "The Avatar field is a field that displays a user's avatar or initials."
 fieldTags: [assets]
 outline: [2, 3]
+api_docs: ./avatar-api.html
 ---
 
 # Avatar
@@ -22,19 +23,17 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-Without an avatar source, the field falls back to initials derived from the record's title. The field is index-only by default, and its column header is blank unless you supply `name`.
+Without an avatar source, the field falls back to initials derived from the record's title. The field is index-only by default.
 
 <Image src="/assets/img/4_0/fields/avatar/index.webp" dark-src="/assets/img/4_0/fields/avatar/index-dark.webp" width="1776" height="758" alt="An Avo index table with three columns — ID, an Avatar column showing each user's square avatar thumbnail, and Name — illustrating the avatar field rendered on the Index view." prompt="index page" />
 
 ## Choose the avatar image
 
-Configure the image with the resource's [`self.avatar`](../cover-and-avatar.html#add-an-avatar) setting. In the example above, `source: :avatar` reads the image from `record.avatar`, such as an Active Storage attachment. The field displays that resource avatar; its field identifier does not select the image source.
-
-If the image source is blank, Avo displays the record's initials instead. If no initials are available either, it renders an empty avatar placeholder.
+Configure the image with the resource's [`self.avatar`](../resources-api.html#self.avatar) setting. In the example above, `source: :avatar` reads the image from `record.avatar`, such as an Active Storage attachment. For computed sources and resource-level avatar placement, see [Cover and avatar](../cover-and-avatar.html#add-an-avatar).
 
 ## Label the avatar column
 
-If you want a heading above the avatars, supply the shared [`name`](../field-options.html#name) option:
+If you want a heading above the avatars instead of a blank header, supply the shared [`name`](../field-options-api.html#name) option:
 
 ```ruby
 # app/avo/resources/user.rb
@@ -43,4 +42,4 @@ field :avatar, as: :avatar, name: "Avatar"
 
 ## Configure shared field behavior
 
-The avatar field has no field-specific options. See [Shared field options](../field-options.html) for options common to fields. Image size and shape are fixed by the avatar field and are not configurable field options.
+See [Shared field options](../field-options.html) for options common to fields. The [Avatar API](./avatar-api.html) documents the field's defaults, image source, and fallback behavior.
