@@ -56,7 +56,7 @@ Each type opens on its most common condition, and the menu holds the rest:
 | Text    | Contains      | A text box.                                                                    |
 | Boolean | (no menu)     | Any / Yes / No as one row of buttons. Picking one applies it straight away. Rename them with `options:`, and add Empty with `nullable: true`, see below. |
 | Number  | =             | One number. Is within takes a min and a max (fill either or both).            |
-| Date    | Is within     | Today, 7 days, 30 days and This month as one row of buttons. Custom after them shows a from and to date. Change the buttons with [`presets`](#presets). Other conditions take one date. |
+| Date    | Is within     | Today, 7 days, 30 days, This month and Last month as one row of buttons. Custom after them shows a from and to date. Change the buttons with [`presets`](#presets). Other conditions take one date. |
 | Date time | Is within   | The same as Date, and the from and to boxes pick a time as well as a day.    |
 | Time    | Is within     | A from and to time. No presets.                                               |
 | Tags    | Overlap       | A checklist of every suggestion. Contain matches records with all the ticked tags. Without static `suggestions`, from `fetch_values_from` or typed freely, a tag box instead. |
@@ -486,7 +486,7 @@ field :due_on, as: :date, filterable: {
 ```
 
 - **Type:** Array of built-in names, or a Hash of label to range
-- **Default:** `[:today, :last_7_days, :last_30_days, :this_month]`
+- **Default:** `[:today, :last_7_days, :last_30_days, :this_month, :last_month]`
 
 Each range is a proc returning a `Range` of dates, run on every render so "today" stays current. A symbol label is translated under `avo.dynamic_filters.simple`, a string is shown as written. A symbol with `nil` for its range has to be a built-in name; anything else raises `KeyError`. `presets: []` hides the buttons.
 
