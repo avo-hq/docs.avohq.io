@@ -21,7 +21,7 @@ Every view type is a ViewComponent that inherits from `Avo::ViewTypes::BaseViewT
 | `resource`        | The Avo resource class                                        |
 | `pagy`            | Pagination object                                             |
 | `query`           | The current query                                             |
-| `turbo_frame`     | The Turbo Frame ID                                            |
+| `turbo_frame`     | The surrounding Turbo Frame ID, passed on to the paginator    |
 | `index_params`    | Current index parameters                                      |
 | `reflection`      | Association reflection (if nested)                            |
 | `parent_record`   | Parent record (if nested)                                     |
@@ -93,6 +93,28 @@ The core resource shell already owns cards, header, title, controls, and toolbar
 
 For empty index pages, `ResourceListingComponent` renders the shared empty state instead of instantiating your view-type component. Core supplies collection and records hooks around that empty state, without pagination hooks. Your component's empty branch is useful if it is rendered directly, but does not replace core's empty-index behavior. See [Slots: coverage and caveats](./slots.html#keep-slots-when-customizing-the-index) for refresh boundaries and add-on differences.
 
+### Name the listing with `list_frame_id` and `resource_name_for`
+
+Use `list_frame_id` for the listing's own Turbo Frame, not the surrounding `turbo_frame` prop. Use `resource_name_for(@resource)`, one of Avo's helpers, for the selection data attributes. Don't hardcode `@resource.model_key` in either place. <VersionReq package="avo" version="4.3.4" />
+
+```erb
+<%# app/components/my_plugin/view_types/timeline_view_type_component.html.erb %>
+<turbo-frame id="<%= list_frame_id %>" target="_top"> <%# [!code highlight] %>
+  <div
+    data-controller="item-select-all"
+    data-resource-name="<%= resource_name_for(@resource) %>" <%# [!code highlight] %>
+    data-selected-resources-name="<%= resource_name_for(@resource) %>" <%# [!code highlight] %>
+    data-selected-resources="[]"
+  >
+    <%# rows %>
+  </div>
+</turbo-frame>
+```
+
+Inside an association panel both use the association field's id, and on a top-level index they fall back to the model key, so top-level listings keep the names they had. The model key alone is the same for every panel that lists the resource, so two panels on one page would collide: a search in one replaces the other's listing, and rows selected in one feed the other's actions. Two `has_many` fields pointing at the same resource, or [`for_attribute`](./field-options-api.html#for_attribute) fields on the same association, are the cases that hit it.
+
+Avo's own table and grid view types switched in `avo` 4.3.4, and the `avo-notifications` and `avo-calendar_view` view types in their own 4.3.1 releases.
+
 ## 2. Register the view type
 
 In your engine's initializer, register the view type with `Avo.plugin_manager.register_view_type`. This must happen inside the `ActiveSupport.on_load(:avo_boot)` hook so Avo core is loaded first.
@@ -119,12 +141,12 @@ end
 
 | Option        | Required | Description                                           |
 | ------------- | -------- | ----------------------------------------------------- |
-| `component`   | Yes      | Component class or string (auto-constantized)         |
+| `component`   | Yes      | Component class name as a String, constantized at render time. The class itself is also accepted |
 | `icon`        | Yes      | Icon path for the inactive state in the view switcher |
 | `active_icon` | Yes      | Icon path for the active state in the view switcher   |
 
 :::info
-The `component` can be passed as a string (`"MyPlugin::ViewTypes::TimelineViewTypeComponent"`) or as the class itself. Strings are constantized at render time, which avoids load-order issues during boot.
+Pass the `component` as a String (`"MyPlugin::ViewTypes::TimelineViewTypeComponent"`) rather than the class. The `avo_boot` hook runs while the app is still initializing, and naming the class there loads the component, and Action View with it. A String is constantized at render time, so registering loads nothing. Avo registers its own view types by name for the same reason. <VersionReq package="avo" version="4.2.7" />
 :::
 
 ## 3. Configure a resource to use it

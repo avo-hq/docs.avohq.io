@@ -121,6 +121,22 @@ class Avo::Resources::Store < Avo::BaseResource
 end
 ```
 
+<VersionReq package="avo" version="4.3.5" />
+
+The fields describe the **join record**, so an association the join model declares belongs there too. With the join model declaring `belongs_to :referrer, class_name: "User", optional: true`, a `belongs_to` among the fields renders its usual picker in the attach modal and writes the join record's own foreign key:
+
+```ruby{6}
+field :patrons,
+  as: :has_many,
+  through: :patronships,
+  attach_fields: -> {
+    field :review, as: :text
+    field :referrer, as: :belongs_to
+  }
+```
+
+The picker offers what the target resource's [policy scope](./../authorization.html#limit-which-records-a-user-sees) holds, narrowed by that field's own [`attach_scope`](./belongs_to-api.html#attach_scope). A value matching no record there fails the whole attach, naming the field (`Referrer is invalid`), and writes nothing: no join record is created.
+
 :::warning
 If the through model uses polymorphism, include the required type as a hidden field inside `attach_fields`, for example `field :patronship_type, as: :hidden, default: "TheType"`. Extra attach fields persist only for a through association.
 :::

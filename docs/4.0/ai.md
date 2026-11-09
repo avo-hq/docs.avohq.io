@@ -21,7 +21,7 @@ The feature and docs are both work in progress.
 
 - Avo 4
 - An API key for an LLM provider supported by [RubyLLM](https://rubyllm.com) (OpenAI, Anthropic, Gemini, and others)
-- RubyLLM 2, installed for you as a dependency.
+- RubyLLM 2.1 or newer within the 2.x line, installed for you as a dependency.
 - PostgreSQL
 
 ## Installation
@@ -47,7 +47,7 @@ bin/rails generate avo:ai install
 bin/rails db:migrate
 ```
 
-This creates the `avo_ai_*` tables — plus RubyLLM 2.0's internal `ruby_llm_*` tables (model registry, tool calls, usage ledger, batches, MCP credentials), unless the app already has them — and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
+This creates the `avo_ai_*` tables — plus RubyLLM's internal `ruby_llm_*` tables (model registry, tool calls, usage ledger, batches, MCP credentials), unless the app already has them — and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
 
 ### 3. Set your provider API key
 
@@ -55,7 +55,7 @@ The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by defaul
 
 ```ruby
 RubyLLM.configure do |config|
-  config.openai_api_key = ENV.fetch("OPENAI_API_KEY", nil) # [!code focus]
+  config.openai_api_key = ENV.fetch("OPENAI_API_KEY", nil) # [!code highlight]
   # config.anthropic_api_key = ENV.fetch("ANTHROPIC_API_KEY", nil)
   # config.gemini_api_key = ENV.fetch("GEMINI_API_KEY", nil)
 end
@@ -259,7 +259,7 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **Writes go through your fields.** A create or update is saved the way the edit form saves it, so each field's save rules run: [`update_using`](./field-options-api.html#update_using), a `belongs_to` found through its resource's own finder and attach scope (a slug resolves), a key-value field's locks. The assistant writes the names the form takes — a field's id, or the param the form submits (`user_id`, a polymorphic field's `commentable_type` and `commentable_id` together). A column a field writes under another name (`tag_list`, `price_cents`) is refused, never silently dropped. Undo is the exception: it puts back the stored copy of the row.
 
-**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "commit", "apply it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions). A typed confirmation reaches the latest card while nothing else has happened since: if an earlier "go ahead" of yours reached the assistant and it only reminded you to confirm, the next "do it" still confirms the card. Once you ask about something else, or the assistant looks something up or asks you a question, click the card's button instead. When one reply shows several cards, typing confirms none of them, because it can't know which one you mean; click each card you want. Typing never approves a call to a connected MCP server: that card takes a click, because what the server sends back is text an outside system wrote. See [Approve a call](#approve-a-call).
+**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "commit", "apply it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. The two read differently in the transcript: a click settles the card where it sits, while what you typed is saved as your message, the card above it settles reading **Confirmed**, and the outcome arrives as a new card under your words. Either way, the card reads **Working…** while the write runs and its buttons come off, so a slow action can't look like nothing happened and get confirmed a second time. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions). A typed confirmation reaches the latest card while nothing else has happened since: if an earlier "go ahead" of yours reached the assistant and it only reminded you to confirm, the next "do it" still confirms the card. Once you ask about something else, or the assistant looks something up or asks you a question, click the card's button instead. When one reply shows several cards, typing confirms none of them, because it can't know which one you mean; click each card you want. Typing never approves a call to a connected MCP server: that card takes a click, because what the server sends back is text an outside system wrote. See [Approve a call](#approve-a-call).
 
 **Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
 
@@ -344,6 +344,8 @@ close_chat_window(remove_from_bar: true)
 It composes with the other response methods: `reload` together with `close_chat_window` reloads the page and minimizes the window. Run from the Actions dropdown instead of the chat, the action ignores it.
 
 [Actions that run without records](./actions.html#run-an-action-without-records) work too — the assistant runs them with no record at all.
+
+**It runs on the view it would have been started from.** [`view`](./actions.html#control-visibility-and-authorization) is `show` when the run targets one record and `index` for a bulk run or one that takes no records — the page you would have clicked the action from, never `new`. The action's `visible` and `authorize` blocks, its `fields`, and `handle` all read that value, so an action that branches on `view.show?` or `view.index?` behaves in the chat as it does on a click. A display-only field the action declares, such as a badge or a key-value, shows read-only on the card beside the inputs, the way Avo's own modal renders it.
 
 ### Finding an action without naming its resource
 
@@ -750,8 +752,8 @@ Running the [MCP Server](./mcp.html) too? The class you just wrote can answer co
 ```ruby
 # app/tools/crm_tool.rb
 class CrmTool < RubyLLM::Tool
-  def self.capability = "avo:read" # [!code focus]
-  def self.resources = %w[Ticket Project] # [!code focus]
+  def self.capability = "avo:read" # [!code highlight]
+  def self.resources = %w[Ticket Project] # [!code highlight]
   # ...
 end
 ```
@@ -759,7 +761,7 @@ end
 ```ruby
 # config/initializers/avo.rb
 config.ai.extra_tools = ["CrmTool"]
-config.mcp_server.extra_tools = ["CrmTool"] # [!code focus]
+config.mcp_server.extra_tools = ["CrmTool"] # [!code highlight]
 ```
 
 The chat ignores both. A connection [narrowed to named resources](./mcp.html#add-tools-of-your-own) must grant everything `resources` lists, and refuses a call that names no resource. A tool that takes a `resource:` argument, like the `execute` above, is checked on the resource each call names, so list in `resources` only what it reads on every call. Over MCP the server injects the connecting admin as `user:` the way the chat does, runs the capability gate first, and serves a Hash as structured content, a String as text, and an `{error: "..."}` Hash as a tool error. `chat` and `inspection_tracker` are never set there, so a tool that can run over MCP mustn't depend on either. See [Share a tool with Avo AI](./mcp.html#share-a-tool-with-avo-ai) for the details.
@@ -805,7 +807,19 @@ Open a chat in the **Chats** resource and read its **Agent tools** field: it's c
 
 ## Replace the assistant's icon
 
-The avocado is a single partial, rendered everywhere the assistant appears: the **Agent** button, the collapsed bar, the empty state on new and full-page chats, and the *Open in assistant bar* button on a chat's record page. Create the same path in your application and all of them change at once:
+The assistant's mark is two partials:
+
+| Partial                       | Rendered on                                                                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `avo/ai/_pit_core_icon`       | The **Agent** button, the round button the dock collapses to when you hide the toolbar, and the full-page new-chat page   |
+| `avo/ai/_avocado_icon`        | The greeting above a chat with no messages yet, the empty chat list, and the *Open in assistant bar* button on a chat's record page |
+
+Create the same paths in your application and every place that renders them changes at once. Override both to rebrand the assistant everywhere:
+
+```erb
+<%# app/views/avo/ai/_pit_core_icon.html.erb %>
+<%= svg "tabler/outline/robot", class: local_assigns[:classes] %>
+```
 
 ```erb
 <%# app/views/avo/ai/_avocado_icon.html.erb %>
@@ -819,7 +833,7 @@ An image file works the same way:
 <%= image_tag "assistant-mark.svg", class: local_assigns.fetch(:classes, "size-4") %>
 ```
 
-Each place that renders the icon passes a `classes` local, because the sizes differ — `size-4` in the bar, `size-6` on the empty states. Pass it through to whatever you render, as both examples do, or the icon comes out the wrong size in half of them.
+Each place that renders an icon passes a `classes` local, because the sizes differ: `size-5` on the **Agent** button and `size-7` on the new-chat page for `_pit_core_icon`, `size-6` on the empty states and `size-4` on the record page for `_avocado_icon`. Pass it through to whatever you render, as the examples do, or the icon comes out the wrong size in half of them. Don't add a size utility of your own to `_pit_core_icon`: on the collapsed dock's button the stylesheet sizes the mark as a share of the button so it grows with it, and a size class in your markup outranks that rule.
 
 The icon on the chat pages' breadcrumb isn't part of the partial and stays an avocado.
 
@@ -917,6 +931,8 @@ The chat bar sits at the bottom of every Avo page. **Cmd+J** on macOS (**Ctrl+J*
 Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. Drag a pill to reorder them. The chat window lines its end edge up with the pill it was opened from and slides across when you switch, so it's always clear which conversation you're looking at. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. The open chats, their order, and the collapsed state are all remembered per device.
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way. The **×** in the title bar does the same thing: it closes the window, not the conversation. To take a chat out of the dock, use the × on its own pill; the conversation itself is kept either way, and it's still on your [chat list](#full-page-chats).
+
+**The window sizes itself to the screen, and remembers what you drag it to.** Its default size is a share of the viewport rather than a fixed box: floored so a laptop still gets a usable panel, capped so a large monitor doesn't hand the chat half the page. Drag its top edge, its start edge, or the corner between them to resize it. The size you land on is kept per device and restored on your next page load, shrunk to fit if you come back on a smaller screen. The window never reaches under Avo's top navbar, however far you drag.
 
 To clear the dock in one go, open the history menu (the clock button next to **Agent**) and pick **Clear open chats** at the bottom. It does what every pill's × does, all at once, and closes the chat window: the pills go, and every conversation stays in the history list right above the button, one click from reopening. The entry only shows when there's at least one pill to close.
 
@@ -1210,7 +1226,7 @@ Only the owner can reconnect. **Reconnect** in the `/mcp` panel signs in again, 
 
 The microphone in every composer — the bar, the new-chat page, and open conversations — transcribes speech into the message box: click to start, click to stop. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
 
-Minimizing the chat window ends an open session, so the mic never keeps listening behind a closed window.
+An open session ends the moment you stop needing it: sending the message stops the mic, and so does minimizing the window or switching to another chat in the dock, so nothing keeps listening behind a window you've left.
 
 It dictates in your admin's language: the recognizer follows the page's `lang` attribute, falling back to the browser's own language setting.
 
@@ -1232,7 +1248,11 @@ In Chrome and Edge, dictating means uploading admin-panel audio to Google. If th
 
 ## While the assistant is replying
 
-Your message lands on the transcript the moment you send it, with a **Thinking** indicator underneath — it's saved as part of the send, not by the background job, so it never blinks out for the second or two the queue takes. Starting a fresh conversation keeps the composer you typed into on screen until the conversation is ready, then trades one for the other, so there's no empty panel in between. A second **Enter** while that's happening doesn't start a second chat.
+Your message lands on the transcript the moment you send it, with a **Thinking** indicator underneath. The browser puts it there as the request leaves, and the saved message replaces that copy when it arrives, so the turn is on screen for the whole round trip and never blinks out for the second or two the queue takes.
+
+Starting a fresh conversation does the same with the whole opening turn: your prompt and the **Thinking** indicator take the place of the greeting and its suggestions, and the real conversation replaces them once it's ready, so there's no empty panel in between. A second **Enter** while that's happening doesn't start a second chat.
+
+If the send fails, the prompt comes back out of the transcript, the greeting returns, and what you typed is back in the composer to retry.
 
 When answering takes real work — a lookup, an inspection, a write — the assistant leaves short progress hints while it works: *Inspecting the schema*, *Checking today's signups*. They render small and muted, alongside the reasoning trace, so they read as status rather than replies — and they name the goal in your terms, never the tool it reaches for. It's what you read while the work happens instead of watching an empty panel.
 
@@ -1279,7 +1299,7 @@ A failed run is handled inside the job, so it does **not** raise. Your queue won
 # config/initializers/error_subscriber.rb
 class AiFailureSubscriber
   def report(error, handled:, severity:, context:, source: nil)
-    return unless context[:chat_id] # [!code focus]
+    return unless context[:chat_id] # [!code highlight]
 
     Rails.logger.error("AI chat #{context[:chat_id]} failed: #{error.class}")
   end
@@ -1341,7 +1361,7 @@ section "AI", icon: "heroicons/outline/sparkles" do
   resource "avo_ai/messages"
   resource "avo_ai/models"
   resource "avo_ai/skills"
-  resource "avo_ai/feedbacks" # [!code focus]
+  resource "avo_ai/feedbacks" # [!code highlight]
 end
 ```
 
@@ -1507,7 +1527,7 @@ Leave it off and the id still resolves, just not to a provider you chose: RubyLL
 def available_models
   [
     "gpt-4o-mini", # whichever provider RubyLLM prefers for this id
-    {model: "gemini-2.5-flash", provider: :vertexai} # [!code focus] VertexAI's, not Gemini's
+    {model: "gemini-2.5-flash", provider: :vertexai} # VertexAI's, not Gemini's [!code highlight]
   ]
 end
 ```
@@ -1544,7 +1564,7 @@ section "AI", icon: "heroicons/outline/sparkles" do
   resource "avo_ai/chats"
   resource "avo_ai/messages"
   resource "avo_ai/models"
-  resource "avo_ai/skills" # [!code focus]
+  resource "avo_ai/skills" # [!code highlight]
 end
 ```
 
@@ -1764,7 +1784,7 @@ Weigh these before you grant `create?` and `share?`:
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
 class Avo::Ai::ChatPolicy < ApplicationPolicy
-  def use? = user.admin? || user.support? # [!code focus]
+  def use? = user.admin? || user.support? # [!code highlight]
 
   # ...the rest of the policy
 end

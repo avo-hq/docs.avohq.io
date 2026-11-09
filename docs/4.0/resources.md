@@ -400,6 +400,23 @@ end
 
 If you use `devise` and update users without passing a password, stop the validation error with [`self.devise_password_optional`](./resources-api.html#self.devise_password_optional).
 
+## Change how records are saved or destroyed
+
+Avo saves a record with `save!` and removes it with `destroy!`. To use something else, such as a service object, a soft delete or extra bookkeeping, define [`save_record`](./resources-api.html#save_record) or [`destroy_record`](./resources-api.html#destroy_record) on the resource. <VersionReq package="avo" version="4.3.0" />
+
+```ruby
+# app/avo/resources/course.rb
+class Avo::Resources::Course < Avo::BaseResource
+  def destroy_record(record)
+    record.archive!
+  end
+end
+```
+
+Both report success through their return value, so return something truthy, or raise to fail: the exception is caught and added to the record's errors, which surfaces in the fail flash.
+
+Every surface that writes the record goes through them, the admin panel, the [REST API](./rest-api.html) and your own controllers, so one definition covers them all. It is also what makes an [array resource](./array-resource.html#create-edit-and-delete) writable or changes the requests an [HTTP resource](./http-resource.html#customize-create-update-and-destroy) sends. For a change that belongs to a single controller, override [`save_record_action`](./controllers-api.html#save_record_action) or [`destroy_record_action`](./controllers-api.html#destroy_record_action) there instead.
+
 ## Warn before deleting dependent records
 
 <VersionReq package="avo" version="4.3.8" />

@@ -413,6 +413,23 @@ None, unless users should read rows through the chat that their `show?` refuses.
 
 </Option>
 
+<Option headingSize="3" name="The **Agent** button and the new-chat page render `_pit_core_icon`">
+
+#### Breaking Change
+
+The **Agent** button and the full-page new-chat page now render `avo/ai/_pit_core_icon` instead of `avo/ai/_avocado_icon`. An app that replaced the assistant's icon with its own `_avocado_icon` partial still changes the empty states and the *Open in assistant bar* button, but these two go back to Avo's own mark. See [Replace the assistant's icon](./ai.html#replace-the-assistant-s-icon).
+
+#### Action Required
+
+None, unless you override `_avocado_icon`. If you do, override `_pit_core_icon` as well, passing `classes` through:
+
+```erb
+<%# app/views/avo/ai/_pit_core_icon.html.erb %>
+<%= svg "tabler/outline/robot", class: local_assigns[:classes] %>
+```
+
+</Option>
+
 ## `avo-api` 4.3.1 <span class="tl-date">Oct 28, 2026</span> {#avo-api-4-3-1 data-gems="avo-api" data-date="2026-10-28" data-version="4.3.1"}
 
 <a id="upgrade-to-avo-api-4-3-1"></a>
@@ -692,6 +709,81 @@ None. A user who can see the index sees the same counts.
 
 </Option>
 
+## `avo` 4.3.8 <span class="tl-date">Oct 28, 2026</span> {#avo-4-3-8 data-gems="avo" data-date="2026-10-28" data-version="4.3.8"}
+
+This release closes places where a signed-in user could reach a record past the policy the resource's own pages ask ([GHSA-5qcq-2vq9-62hj](https://github.com/avo-hq/avo/security/advisories/GHSA-5qcq-2vq9-62hj)). Each entry below is a policy that now runs where none ran before, so read them against the policies you have.
+
+<Option headingSize="3" name="`update?` is asked of the record as stored and again with the submitted values">
+
+#### Breaking Change
+
+Saving an edit now asks [`update?`](./authorization-api.html#update) twice: once with the record as it is stored, then again once the submitted values are assigned. Both have to pass. Before, only the filled record was authorized, so a value the user submitted could make a record pass a policy it fails as stored, such as a new owner under an owner-only `update?`. A [`react_on`](./field-options-api.html#react_on) re-render of an open edit form asks [`edit?`](./authorization-api.html#edit) the same way.
+
+#### Action Required
+
+None for a policy that answers from the user and the record's stored values. A policy that passes only once the user submits a value is now refused by the first check, and a policy that does work of its own does it twice.
+
+```ruby
+# app/policies/project_policy.rb
+class ProjectPolicy < ApplicationPolicy
+  # Asked before and after the form's values land on the record, so submitting
+  # your own id as the new owner no longer makes this pass.
+  def update?
+    record.user_id == user.id
+  end
+end
+```
+
+</Option>
+
+<Option headingSize="3" name="Listing a parent's association by URL asks `view_{association}?`">
+
+#### Breaking Change
+
+Every request that lists a parent's association now asks the parent policy's [`view_{association}?`](./authorization-api.html#view_association), as the panel itself does: the panel's rows, its search, the chart of a [`summarizable`](./field-options-api.html#summarizable) column in it, and [scope](./scopes.html) counts under it. The request also has to name the resource the association field lists with, and answers `404` otherwise. Before, these requests listed a parent's association under any resource, whatever the parent's policy said.
+
+#### Action Required
+
+None in most apps: a panel is only shown when `view_{association}?` allows it, so the same method now answers the requests behind it. Two cases to check:
+
+- A link or bookmark you build by hand to an association list has to name the field's resource, which is its [`use_resource`](./associations/has_many.html#use_resource) when the field sets one.
+- Under [`explicit_authorization`](./authorization-api.html#explicit_authorization) (the default), a parent policy with no `view_{association}?` refuses these requests, as it already hid the panel.
+
+```ruby
+# app/policies/post_policy.rb
+class PostPolicy < ApplicationPolicy
+  def view_comments? = true # [!code ++]
+end
+```
+
+</Option>
+
+<Option headingSize="3" name="A `summarizable` column's chart asks `index?`">
+
+#### Breaking Change
+
+The distribution chart behind a [`summarizable`](./field-options-api.html#summarizable) column ran no policy check. It now asks [`index?`](./authorization-api.html#index), or, for a column on an association panel, the parent's `view_{association}?`. Its rows were already narrowed by the policy [`Scope`](./authorization-api.html#Scope); what changes is that a user whose `index?` refuses the list no longer gets its distribution either.
+
+It asks `index?` and not a chart method of its own: `distribution_chart?` and `distribution_chart_full?` are not policy methods Avo asks for, `explicit_authorization` included.
+
+#### Action Required
+
+None. A user who can open the index sees the same chart.
+
+</Option>
+
+<Option headingSize="3" name="A `has_one` panel reads its record through the related policy scope, and detach clears only the attached record">
+
+#### Breaking Change
+
+The request that renders a `has_one` panel now finds its record through the related resource's [`Scope`](./authorization-api.html#Scope), and answers `404` for a record outside it. Detaching a `has_one` clears the association only when the URL names the record currently attached, and answers `404` otherwise, so a detach request can no longer clear the association by naming some other record.
+
+#### Action Required
+
+None, unless a related resource's `Scope` hides records your users open from a `has_one` panel. Widen that `Scope` for them.
+
+</Option>
+
 ## `avo` 4.3.6 <span class="tl-date">Oct 27, 2026</span> {#avo-4-3-6 data-gems="avo" data-date="2026-10-27" data-version="4.3.6"}
 
 <a id="upgrade-to-avo-4-3-6"></a>
@@ -797,6 +889,18 @@ None, unless an API client reads a `404` from a create or update as "the related
 
 </Option>
 
+<Option headingSize="3" name="A form with an unresolved `belongs_to` keeps the user's other edits and saves no uploads">
+
+#### What changed
+
+The form that comes back with an unresolved `belongs_to` keeps every other edit the user made, and puts "is invalid" on **every** `belongs_to` the submit couldn't resolve, not only the first one. A files field's uploads are now saved with the record rather than while the form is filled, so a form that answers `422` stores no files.
+
+#### Action Required
+
+None.
+
+</Option>
+
 <a id="avo-unversioned-2026-10-22-4"></a>
 
 <a id="avo-a-field-declared-once-per-view-saves-through-the-form-s-declaration"></a>
@@ -849,6 +953,85 @@ Undo in the chat still restores the stored row exactly as it was.
 
 </Option>
 
+<Option headingSize="3" name="`avo-ai` requires `ruby_llm` `~> 2.1`">
+
+#### Breaking Change
+
+`avo-ai` 4.3.0.beta.4 allowed RubyLLM's 2.0 line (`>= 2.0.0.rc4, < 2.1`). 4.3.0.beta.5 requires `~> 2.1`, the release line whose MCP client [MCP connections](./ai.html#turn-on-mcp-connections) are built on.
+
+#### Action Required
+
+None, unless your own `Gemfile` pins `ruby_llm` to the 2.0 line: `bundle update avo-ai` pulls RubyLLM 2.1 along with it, and refuses to resolve while that pin stays. Raise it, or drop it:
+
+```ruby
+# Gemfile
+gem "ruby_llm", "~> 2.0.0" # [!code --]
+gem "ruby_llm", "~> 2.1" # [!code ++]
+```
+
+</Option>
+
+## `avo` 4.3.4 <span class="tl-date">Oct 22, 2026</span> {#avo-4-3-4 data-gems="avo" data-date="2026-10-22" data-version="4.3.4"}
+
+<Option headingSize="3" name="The association show route checks `view_{association}?` and the related record's `show?`">
+
+#### Breaking Change
+
+`GET /resources/:resource/:id/:related_name/:related_id` renders a related record's show page. A `has_one` panel loads its frame from it, and for every other association it is reachable by URL. It asked no policy at all: anyone who could see the parent record could open any record associated with it, whatever the related resource's `show?` or policy scope said. This closes [GHSA-x65r-p6hf-94hv](https://github.com/avo-hq/avo/security/advisories/GHSA-x65r-p6hf-94hv).
+
+The route now runs the checks the rest of Avo already ran:
+
+- **The parent's [`view_{association}?`](./authorization-api.html#view_association)**, as the association's index already did.
+- **The related record's own [`show?`](./authorization-api.html#show)**, as the resource's show page does.
+- **A `has_many` row is looked up inside the related resource's [policy scope](./authorization.html#limit-which-records-a-user-sees)**, so a record the scope doesn't hold is not found.
+
+A denied policy method is refused the way any unauthorized page is; a row outside the policy scope behaves like an unknown id.
+
+#### Action Required
+
+None if your policies already describe what your admins should reach. Three cases change what a user sees:
+
+- **A related resource whose `show?` is stricter than the parent's.** URLs that opened before are now refused. Moving the rule to `show_{association}?` only hides the row's button; it does not grant access to the page.
+- **A `has_one` field pointing at a record its resource's `show?` denies.** The panel's frame is refused instead of rendering the record. Allow `show?` for it, or hide the field with [`visible`](./field-options-api.html#visible).
+- **A policy scope that excludes records still listed in a panel.** Opening such a row now behaves like an unknown id.
+
+</Option>
+
+## `avo` 4.3.3 <span class="tl-date">Oct 21, 2026</span> {#avo-4-3-3 data-gems="avo" data-date="2026-10-21" data-version="4.3.3"}
+
+<Option headingSize="3" name="Non-standalone actions on an association panel need a selected row">
+
+#### Breaking Change
+
+In a `has_many` panel, an action that isn't [standalone](./actions.html#run-an-action-without-records) is disabled until you check a row, the same as on the resource's <Index /> view. Before, the panel built its actions with the parent record, the record whose <Show /> page holds the panel, so Avo treated every action as already having a target and let you open and run it with nothing selected ([#4904](https://github.com/avo-hq/avo/pull/4904)). See [Run actions from an association panel](./actions.html#run-actions-from-an-association-panel).
+
+#### Action Required
+
+An action that shows on an association panel and reads `record` in its [`name`](./actions-api.html#name) or [`arguments`](./actions-api.html#arguments) block now gets `nil` there, as it already did on the main <Index /> view. Guard the block:
+
+```ruby
+# app/avo/actions/release_fish.rb
+class Avo::Actions::ReleaseFish < Avo::BaseAction
+  self.name = -> { "Release #{record.name}" } # [!code --]
+  self.name = -> { record.present? ? "Release #{record.name}" : "Release fish" } # [!code ++]
+end
+```
+
+Then check your system specs: one that opens an association panel's **Actions** dropdown and runs a non-standalone action without checking a row now finds that action disabled.
+
+#### Maintaining Previous Behavior
+
+An action meant to run from the panel with nothing selected is a standalone action. Set [`standalone`](./actions-api.html#standalone) to `true`. It stays enabled, and `handle` receives an empty `query`.
+
+```ruby
+# app/avo/actions/export_team_members.rb
+class Avo::Actions::ExportTeamMembers < Avo::BaseAction
+  self.standalone = true
+end
+```
+
+</Option>
+
 ## `avo` 4.3.2 <span class="tl-date">Oct 14, 2026</span> {#avo-4-3-2 data-gems="avo" data-date="2026-10-14" data-version="4.3.2"}
 
 <a id="upgrade-to-avo-4-3-2"></a>
@@ -872,6 +1055,25 @@ Keep one label as it was with `name:` or `translation_key:` on the field, or tur
 ```ruby
 # config/initializers/avo.rb
 config.model_attribute_translations = false
+```
+
+</Option>
+
+## `avo-ai` 4.3.0.beta.3 <span class="tl-date">Oct 14, 2026</span> {#avo-ai-4-3-0-beta-3 data-gems="avo-ai" data-date="2026-10-14" data-version="4.3.0.beta.3"}
+
+<Option headingSize="3" name="The retracted chat button renders `_pit_core_icon`">
+
+#### Breaking Change
+
+Hiding the toolbar collapses the chat dock to a single round button, and that button now renders `avo/ai/_pit_core_icon` instead of `avo/ai/_avocado_icon`. An app that replaced the assistant's icon with its own `_avocado_icon` partial keeps its icon everywhere else, but this button goes back to Avo's own mark. See [Replace the assistant's icon](./ai.html#replace-the-assistant-s-icon).
+
+#### Action Required
+
+None, unless you override `_avocado_icon`. If you do, add a `_pit_core_icon` partial next to it. Pass `classes` through and add no size utility of your own: the stylesheet sizes this mark as a share of the button, and a size class in your markup outranks that rule.
+
+```erb
+<%# app/views/avo/ai/_pit_core_icon.html.erb %>
+<%= svg "tabler/outline/robot", class: local_assigns[:classes] %>
 ```
 
 </Option>
@@ -1210,6 +1412,21 @@ Nothing, unless a client sorts by a column with no field. Declare a field for it
 
 </Option>
 
+<Option headingSize="3" name="An action a client runs sees `view` as `show` or `index`, never `new`">
+
+#### Breaking Change
+
+An action run through `run_action` used to be built on `view: :new`. It is now built on the view the panel would have started it from: `show` when the run targets one record, `index` for a bulk run or one that takes no records. That is the `view` its `authorize` block, its `fields` and `handle` read. A bulk run also hands the action no current record, as the panel does. Nothing raises: an action that reads `view` simply answers differently. See [An action runs on the view it would have been started from](./mcp.html#an-action-runs-on-the-view-it-would-have-been-started-from).
+
+#### Action Required
+
+None for an action that ignores `view`. Re-read the ones that read it:
+
+- **`authorize` reading `view`.** `-> { view.index? }` refused every client run before and now allows a bulk or standalone one. `-> { view.new? }` allowed every client run and now allows none.
+- **`fields` or `handle` branching on `view.new?`** took that branch on every client run and now takes it on none. Branch on `record`, on `query.size`, or on `view.index?` instead.
+
+</Option>
+
 ## `avo-ai` 4.2.0.beta.5 <span class="tl-date">Sep 27, 2026</span> {#avo-ai-4-2-0-beta-5 data-gems="avo-ai" data-date="2026-09-27" data-version="4.2.0.beta.5"}
 
 <a id="avo-ai-unversioned-2026-09-26"></a>
@@ -1269,6 +1486,66 @@ Nothing, unless you replaced part of the assistant with your own copy. Check eac
 - **An ejected `attached_context.txt.erb`.** Name records by `attached_record[:record_param]` and each selected record's `record_param`, not `record_id`, or your prompt keeps the primary key. See [Change how it reads](./ai.html#change-how-it-reads).
 - **An ejected write tool** (`update_record`, `delete_record`, `update_records`, `run_action`, `active_storage_attachment`). The model now passes a slug. Look it up with `find_authorized_record_by_param`, and declare the `id` parameter as a string. Diff your copy against the gem's.
 - **A tool of your own that returns a `reference`.** Build it from `record.to_param`. A reference built from `record.id` on a slugged resource no longer renders as a chip. See [Bring your own tool](./ai.html#bring-your-own-tool).
+
+</Option>
+
+<Option headingSize="3" name="An action the assistant runs sees `view` as `show` or `index`, never `new`">
+
+#### Breaking Change
+
+An action the assistant runs used to be built on `view: :new`. It is now built on the view the panel would have started it from: `show` when the run targets one record, `index` for a bulk run or one that takes no records. That is the `view` its `authorize` block, its `fields` and `handle` read. Nothing raises: an action that reads `view` simply answers differently. See [Your actions, from the chat](./ai.html#your-actions-from-the-chat).
+
+#### Action Required
+
+None for an action that ignores `view`. Re-read the ones that read it:
+
+- **`authorize` reading `view`.** `-> { view.index? }` refused every chat run before and now allows a bulk or standalone one. `-> { view.new? }` allowed every chat run and now allows none.
+- **`fields` or `handle` branching on `view.new?`** took that branch on every chat run and now takes it on none. Branch on `record`, on `query.size`, or on `view.index?` instead.
+
+</Option>
+
+## `avo` 4.2.8 <span class="tl-date">Sep 26, 2026</span> {#avo-4-2-8 data-gems="avo" data-date="2026-09-26" data-version="4.2.8"}
+
+<Option headingSize="3" name="`view` inside an action is the page it was started from, never `new`">
+
+#### Breaking Change
+
+Every block of an action (`visible`, `authorize`, the modal's texts, `fields`, and `handle`) used to see `view` as `new` while the modal rendered and while the action ran. It is now the view the action was started from: `index`, `show`, or `edit`. It is never `new`, and it stays the same from the modal through `handle` ([#4825](https://github.com/avo-hq/avo/pull/4825)). See [Control visibility and authorization](./actions.html#control-visibility-and-authorization).
+
+#### Action Required
+
+Search your actions for `view` and drop any branch that expects `new`:
+
+```ruby
+# app/avo/actions/toggle_inactive.rb
+def handle(query:, fields:, **)
+  reload_records if view.new? # never true now # [!code --]
+  reload_records if view.index? # the action was started from the Index page # [!code ++]
+end
+```
+
+None if your actions don't read `view`.
+
+</Option>
+
+<Option headingSize="3" name="Every field an action declares renders in its modal">
+
+#### Breaking Change
+
+An action's fields used to be filtered by their `show_on` / `hide_on` marks against the `new` view, so a field those marks kept off forms never reached the modal. Those marks describe resource views, so all of an action's fields render now ([#4825](https://github.com/avo-hq/avo/pull/4825)). A field with no form component, such as `badge`, renders read-only, as it does on the <Show /> view. See [Collect input with fields](./actions.html#collect-input-with-fields).
+
+#### Action Required
+
+Look at the actions whose fields carry those marks: the ones that were dropped now show up in the modal. Take a field you don't want there out of the action's `fields`, or hide it with a `visible` block.
+
+```ruby
+# app/avo/actions/toggle_inactive.rb
+def fields
+  field :status, as: :badge, hide_on: :forms # renders read-only in the modal now # [!code --]
+  field :notify_user, as: :boolean
+  field :message, as: :textarea
+end
+```
 
 </Option>
 

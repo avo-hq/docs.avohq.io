@@ -46,7 +46,7 @@ Skills are organized by **vertical** — a whole feature area, not a single task
 
 They are always current. The skills come from the gem your app has locked, so there is nothing to copy and nothing that can fall behind.
 
-Update your Avo gems with `bin/rails avo:update` and the skills come with them. Use that task rather than `bundle update avo`, which moves core alone and leaves each add-on's skills on the version they were already pinned to.
+Update your Avo gems with `bin/rails avo:update` and the skills come with them. Use that task rather than `bundle update avo`, which moves core alone and leaves each add-on's skills on the version they were already pinned to. Run it as `AVO_UPDATE_PUSH=1 bin/rails avo:update` and it [commits and pushes the updated lockfile](./installation.html#commit-and-push-the-update) as well, which is what an agent or a scheduled job wants.
 
 ### Core
 

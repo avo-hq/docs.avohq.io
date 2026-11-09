@@ -40,6 +40,21 @@ This option is not strictly validated or coerced to a Boolean. A nonblank value 
 
 </Option>
 
+<Option name="`default`">
+
+<VersionReq package="avo" version="4.3.1" />
+
+The [`default`](../field-options-api.html#default) value is the country **code**, the same value the database stores, not the country's name.
+
+```ruby
+field :country, as: :country, default: "SE" # opens the form on Sweden
+```
+
+- **Type:** `String` (an [ISO 3166-1](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) alpha-2 code), or a block returning one
+- **Default:** `nil`
+
+</Option>
+
 <Option name="`include_blank`">
 
 Controls the first, empty option passed to Rails' select helper. An omitted option uses the field's `include_blank` translation, falling back to `nil` when no translation is present. An explicit `nil` bypasses that translation lookup.

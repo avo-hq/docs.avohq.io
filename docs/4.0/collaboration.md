@@ -137,6 +137,8 @@ self.collaboration = {
 }
 ```
 
+Only the emoji on this list can be added. <VersionReq package="avo-collaboration" version="4.3.3" /> If you later drop an emoji from the list, a user who already reacted with it can still take that reaction back.
+
 ## Place the timeline
 
 Call [`collaboration_timeline`](./collaboration-api.html#collaboration_timeline) inside `fields` to render the timeline where you want it. It shows comments, reactions, and automatic property-change entries.

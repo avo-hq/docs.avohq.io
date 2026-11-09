@@ -311,6 +311,8 @@ A token's status is derived from two timestamps, never stored, so there is no li
 
 Expiry is optional — leave it blank and the token never expires. Revocation is permanent: the **Revoke** action on the token resource marks the token and keeps the record, and nothing can un-revoke it. A token that is both revoked and past its expiry reports **Revoked**.
 
+Hover the **Status** badge on the index, or the chip on a token's page, for the moment that ended it: when it expired, or when it was revoked. There is no column for either, since both are blank on every live token.
+
 Each authenticated request stamps the token's **Last used** column, a refused one included, which is the fastest way to tell a token that was never wired up from one that stopped working.
 
 Deleting a token's owner also stops the token: a token whose owner can no longer be resolved is rejected, so a request never proceeds with nobody attached to it.
@@ -1071,10 +1073,11 @@ The `api` origin needs a current user to attribute to. A hand-rolled `setup_auth
 
 ## Works better with
 
-Nothing on this page needs another add-on. Two of them change what the feature can do.
+Nothing on this page needs another add-on. Two of them change what the feature can do, and one gives you a terminal onto it.
 
 - **[`avo-authorization`](./authorization.html)** — the layer every question here defers to: which tokens a user sees, who may revoke or re-entitle one, and the policies that [entitlements subtract from](#entitlements-sit-in-front-of-your-policies-never-instead-of-them). Without it every such question answers yes — [Authorization](#authorization) and [Who may manage tokens](#who-may-manage-tokens) have the exact failure modes.
 - **[`avo-custom_controls`](./custom-controls.html)** — promotes **Revoke** out of the Actions dropdown. On a token's page it becomes a button beside Edit; on the index it becomes an icon at the end of every row, so working down a list of tokens costs one click each instead of a round trip. It appears only where the Actions menu would have offered it anyway — the control is filtered by the same `revoke?` policy and the same active-token check, so an expired or already-revoked token shows nothing.
+- **[`avo-cli`](./cli.html)** — the command line client for this API. It reads the [discovery endpoints](#discovery) above, so `avo list users` and `avo create users --data '{"name": "Ada"}'` work against any app running `avo-api` with nothing installed in it. What it may do is this token's entitlements and your policies, exactly as for any other client.
 
 ## Localization
 
