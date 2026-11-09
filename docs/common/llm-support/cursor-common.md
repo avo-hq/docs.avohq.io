@@ -34,7 +34,7 @@ Or save the docs in your repo and reference the file from `AGENTS.md`:
 
 ## MCP server
 
-MCP is an API to communicate with AI models. You can add MCP servers and Cursor will communicate with them to get more accurate results.
+MCP (Model Context Protocol) connects coding agents to external tools and context. Cursor can use MCP servers to look up documentation while working.
 
 I suggest using [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) which provides many libraries including Avo's docs.
 

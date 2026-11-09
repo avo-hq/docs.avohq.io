@@ -6,7 +6,7 @@ import path from 'path'
 
 export default {
   paths() {
-    const editors = ["vscode", "cursor", "zed", "windsurf", "claude", "codex", "opencode", "amp", "jetbrains", "chatgpt", "gemini", "grok"]
+    const editors = ["vscode", "cursor", "zed", "windsurf", "claude", "codex", "opencode", "amp", "jetbrains", "chatgpt", "gemini", "grok", "devin", "cline"]
     const versions = ["2.0", "3.0", "4.0"]
 
     // Get the path to the common directory
@@ -31,6 +31,8 @@ export default {
 
       // Add entries for all versions for this editor
       versions.forEach(version => {
+        if ((editor === 'devin' || editor === 'cline') && version !== '4.0') return
+        if (editor === 'windsurf' && version === '4.0') return
         paths.push({
           params: { version, editor },
           content

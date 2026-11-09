@@ -1,3 +1,16 @@
+# Windsurf became Devin Desktop; keep existing Avo 4 setup links working.
+[[redirects]]
+from = "/4.0/llm-support/windsurf.html"
+to = "/4.0/llm-support/devin.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/llm-support/windsurf"
+to = "/4.0/llm-support/devin.html"
+status = 301
+force = false
+
 # the avo-intelligence add-on was renamed to avo-ai
 [[redirects]]
 from = "/4.0/intelligence.html"

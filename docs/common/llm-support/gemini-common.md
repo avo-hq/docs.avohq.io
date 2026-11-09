@@ -5,19 +5,15 @@ prev:
 next: false
 ---
 
-# <img src="/assets/img/llm-support/gemini.webp" alt="Gemini" class="no-border h-8 -mt-2 inline-block"> Gemini
+# <img src="/assets/img/llm-support/gemini.webp" alt="Gemini CLI" class="no-border h-8 -mt-2 inline-block"> Gemini CLI
 
-Setup Gemini to correctly generate Avo code based on your prompt.
+Set up Gemini CLI to use Avo's documentation.
 
 ## Quick use
 
-Paste the docs link before your prompt in a normal chat and Gemini will read the page (no Deep Research needed — that's a long-running research agent that outputs a report, not code):
+Ask Gemini CLI to read the docs map and fetch the pages relevant to your task:
 
-<CustomCode :content="$frontmatter.llmLink" />
-
-For example:
-
-<CustomCode :content="`${$frontmatter.llmLink} create an Avo resource for a product model`" />
+<CustomCode :content="`Read ${$frontmatter.llmLink} and use it as a reference for Avo code.`" />
 
 ## Gemini CLI
 
@@ -32,6 +28,7 @@ I suggest using [Context7](https://context7.com/) [MCP server](https://github.co
 Add this to `.gemini/settings.json` in your project (or `~/.gemini/settings.json` to enable it globally):
 
 ```json
+// .gemini/settings.json
 {
   "mcpServers": {
     "context7": {
@@ -43,3 +40,9 @@ Add this to `.gemini/settings.json` in your project (or `~/.gemini/settings.json
 ```
 
 Now you can ask Gemini CLI anything about Avo, and write `use context7` at the end of your prompt.
+
+## Gemini web app
+
+For the web app, paste the docs map into your prompt and ask Gemini to read it before generating Avo code. If it cannot fetch the pages, attach the relevant Markdown files instead. The CLI configuration above does not configure the web app.
+
+<CustomCode :content="`Read ${$frontmatter.llmLink} and use it as a reference for Avo code.`" />
