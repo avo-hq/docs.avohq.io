@@ -19,6 +19,133 @@ To open this page at your release, add `?since=` with a date or a gem version: `
 
 <UpgradeFilter />
 
+## `avo-audit_logging` 4.3.3 <span class="tl-date">Unreleased</span> {#avo-audit-logging-4-3-3 data-gems="avo-audit_logging" data-version="4.3.3"}
+
+<a id="upgrade-to-avo-audit-logging-4-3-3"></a>
+
+<Option headingSize="3" name="Audit logging is configured inside `Avo.configure`">
+
+#### Deprecation
+
+The audit logging options moved under `config.audit_logging` in `Avo.configure`. The standalone `Avo::AuditLogging.configure` block still applies its options, but logs a deprecation warning on boot. It will be removed in Avo 5.
+
+#### Action Required
+
+Only if `config/initializers/avo.rb` (or another initializer) calls `Avo::AuditLogging.configure`. Move each option into `Avo.configure` under `config.audit_logging` and delete the old block. The options and their values are unchanged: `enabled`, `author_model`, `author_models` and `payload_modifier`.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+  config.audit_logging.enabled = true # [!code ++]
+  config.audit_logging.author_models = ["User", "Account"] # [!code ++]
+end
+
+Avo::AuditLogging.configure do |config| # [!code --]
+  config.enabled = true # [!code --]
+  config.author_models = ["User", "Account"] # [!code --]
+end # [!code --]
+```
+
+Code that reads `Avo::AuditLogging.configuration` keeps working and returns the same object as `Avo.configuration.audit_logging`.
+
+</Option>
+
+## `avo-notifications` 4.3.2 <span class="tl-date">Unreleased</span> {#avo-notifications-4-3-2 data-gems="avo-notifications" data-version="4.3.2"}
+
+<a id="upgrade-to-avo-notifications-4-3-2"></a>
+
+<Option headingSize="3" name="Notifications are configured inside `Avo.configure`">
+
+#### Deprecation
+
+The notifications options moved under `config.notifications` in `Avo.configure`. The standalone `Avo::Notifications.configure` block still applies its options, but logs a deprecation warning on boot. It will be removed in Avo 5. The installer no longer writes `config/initializers/avo_notifications.rb`; it adds the options to `config/initializers/avo.rb` instead.
+
+#### Action Required
+
+Only if `config/initializers/avo_notifications.rb` (or another initializer) calls `Avo::Notifications.configure`. Move each option into `Avo.configure` under `config.notifications` and delete the old block, or the whole file if nothing else is in it. The options and their values are unchanged: `ttl`, `realtime`, `dropdown_limit`, `user_class` and `user_display_name_method`.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+  config.notifications.ttl = 7.days # [!code ++]
+  config.notifications.realtime = false # [!code ++]
+end
+
+# config/initializers/avo_notifications.rb
+Avo::Notifications.configure do |config| # [!code --]
+  config.ttl = 7.days # [!code --]
+  config.realtime = false # [!code --]
+end # [!code --]
+```
+
+Code that reads `Avo::Notifications.configuration` keeps working and returns the same object as `Avo.configuration.notifications`.
+
+</Option>
+
+## `avo-meta` 0.1.3 <span class="tl-date">Unreleased</span> {#avo-meta-0-1-3 data-gems="avo-meta" data-version="0.1.3"}
+
+<a id="upgrade-to-avo-meta-0-1-3"></a>
+
+<Option headingSize="3" name="Meta is configured inside `Avo.configure`">
+
+#### Deprecation
+
+The `fields_position` option moved under `config.meta` in `Avo.configure`. The standalone `Avo::Meta.configure` block still applies it, but logs a deprecation warning on boot. It will be removed in Avo 5.
+
+#### Action Required
+
+Only if an initializer calls `Avo::Meta.configure`. Move the option into `Avo.configure` and delete the old block.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+  config.meta.fields_position = :top # [!code ++]
+end
+
+Avo::Meta.configure do |config| # [!code --]
+  config.fields_position = :top # [!code --]
+end # [!code --]
+```
+
+</Option>
+
+## `avo-dynamic_filters` 4.3.3 <span class="tl-date">Unreleased</span> {#avo-dynamic-filters-4-3-3 data-gems="avo-dynamic_filters" data-version="4.3.3"}
+
+<a id="upgrade-to-avo-dynamic-filters-4-3-3"></a>
+
+<Option headingSize="3" name="Dynamic filters are configured inside `Avo.configure`">
+
+#### Deprecation
+
+The dynamic filters options moved under `config.dynamic_filters` in `Avo.configure`, the same way `config.ai` and `config.mcp_server` work. The standalone `Avo::DynamicFilters.configure` block still applies its options, but logs a deprecation warning on boot. It will be removed in Avo 5.
+
+#### Action Required
+
+Only if `config/initializers/avo.rb` calls `Avo::DynamicFilters.configure`. Move each option into `Avo.configure` under `config.dynamic_filters`, and delete the old block with its `if defined?(Avo::DynamicFilters)` guard. The options and their values are unchanged: `button_label`, `always_expanded` and `param_key`.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+  config.dynamic_filters.button_label = -> { I18n.t("my.filters") } # [!code ++]
+  config.dynamic_filters.always_expanded = false # [!code ++]
+end
+
+if defined?(Avo::DynamicFilters) # [!code --]
+  Avo::DynamicFilters.configure do |config| # [!code --]
+    config.button_label = -> { I18n.t("my.filters") } # [!code --]
+    config.always_expanded = false # [!code --]
+  end # [!code --]
+end # [!code --]
+```
+
+Code that reads `Avo::DynamicFilters.configuration` keeps working and returns the same object as `Avo.configuration.dynamic_filters`.
+
+</Option>
+
 ## `avo-mcp_server` 4.3.0.beta.3 <span class="tl-date">Unreleased</span> {#avo-mcp-server-4-3-0-beta-3 data-gems="avo-mcp_server" data-version="4.3.0.beta.3"}
 
 <a id="upgrade-to-avo-mcp-server-4-3-0-beta-3"></a>
