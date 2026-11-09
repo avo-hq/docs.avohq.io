@@ -25,7 +25,7 @@ Avo.configure do |config|
 end
 ```
 
-When `config.appearance` is omitted entirely, Avo ships with sensible defaults — the Avo logo, the built-in neutral and accent palettes, and an auto color scheme that follows the user's system preference.
+When `config.appearance` is omitted entirely, Avo ships with sensible defaults — the Avo logo, the built-in neutral and accent palettes, and an auto color scheme that follows the user's system preference. Named themes are disabled unless [`themes_enabled`](./appearance-api.html#themes_enabled) is `true`. Density inherits `config.density`, roundness is `:normal`, and both optional user pickers are disabled.
 
 ## Customize the logo
 
@@ -219,16 +219,18 @@ config.appearance = {
 
 Only the listed entries appear in the picker. The default value (`neutral:` / `accent:`) should usually be one of them.
 
+The theme list works the same way: pass [`themes:`](./themes-api.html#themes) with the ids to offer, in order. See [Set a default and trim the list](./themes.html#set-a-default-and-trim-the-list) in the Themes guide.
+
 ## Locking choices
 
-By default, users can change the scheme, neutral, and accent themselves. To force one or more values and hide their switchers, list them in [`lock:`](./appearance-api.html#lock).
+Users can change scheme, neutral, and accent by default. Theme selection requires `themes_enabled: true`; density and roundness require their optional pickers. To force one or more values and hide their switchers, list them in [`lock:`](./appearance-api.html#lock).
 
 ```ruby
 config.appearance = {
   scheme: :light,
   neutral: :slate,
   accent: :blue,
-  lock: [:scheme, :neutral, :accent] # any subset of these three
+  lock: [:scheme, :neutral, :accent] # also accepts :theme, :density, :roundness
 }
 ```
 
@@ -237,8 +239,35 @@ config.appearance = {
 | `:scheme`      | Hides the light/dark/auto switcher                    |
 | `:neutral`     | Hides the neutral picker; forces the configured value |
 | `:accent`      | Hides the accent picker; forces the configured value  |
+| `:theme`       | Hides the theme picker; forces the configured [`theme:`](./themes-api.html#theme) — see [Themes](./themes.html#set-a-default-and-trim-the-list) |
+| `:density`     | Hides the density picker; forces the configured density |
+| `:roundness`   | Hides the roundness picker; forces the configured roundness |
 
-A value not listed in `lock:` is treated as a **default** — users can override it.
+A [theme](./themes.html) can hide the same three pickers on its own: every built-in except Paper owns its neutral, accent, and scheme, so those pickers disappear while it is active and come back on Paper. `lock:` here removes a picker for every theme.
+
+A value not listed in `lock:` is treated as a **default** — users can override it when its picker is enabled.
+
+## Adjust spacing and corners
+
+<VersionReq version="4.3.11" />
+
+Set [`density`](./appearance-api.html#density) to `:tight`, `:normal`, or `:relaxed` for compact, standard, or spacious layouts. It covers table and grid rows, sidebar spacing, headers, titles, actions, buttons, and description fields. Tight is moderately compact: the description-field ID row is 37px tall. If omitted, density inherits legacy [`config.density`](./customization-api.html#density).
+
+Set [`roundness`](./appearance-api.html#roundness) independently to `:square`, `:tight`, `:normal`, or `:relaxed`. Normal preserves standard radii; Square removes them, Tight halves the standard scale, and Relaxed uses 1.5× (18px outer cards and 14px inner cards). Buttons, cards, fields, dropdowns, and navbar notches follow the preset; explicit circles and full pills keep their shape.
+
+```ruby
+# config/initializers/avo.rb
+config.appearance = {
+  density: :tight,
+  roundness: :normal,
+  density_picker: true,
+  roundness_picker: true
+}
+```
+
+Enable [`density_picker`](./appearance-api.html#density_picker) and/or [`roundness_picker`](./appearance-api.html#roundness_picker) if users should choose for themselves. Both are off by default and work without enabling themes. In the inline navbar layout, each is a dropdown containing an icon-and-label button group; the unified appearance panel includes both groups. Hover to preview, then click to save. Leaving the group, pressing Escape, or closing the picker reverts an uncommitted preview.
+
+To enforce a value for everyone, add `:density` or `:roundness` to `lock:`. Disabled or locked pickers ignore saved values; invalid saved values are ignored too.
 
 ## Persist picks across devices
 
@@ -278,8 +307,10 @@ config.appearance = {
 
 #### How the blocks receive data
 
-- `load_settings` should return a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`. Missing keys fall back to the configured defaults.
+- `load_settings` should return a Hash with any subset of `:color_scheme`, `:neutral`, `:accent`, `:theme`, `:density`, `:roundness`. Missing keys fall back to the configured defaults. The three optional picks are honored only when their feature or picker is enabled and unlocked.
 - `save_settings` receives a `settings` local — a **partial** Hash containing only the keys the user just changed. Always merge into existing preferences rather than overwriting them.
+
+Under cookie persistence, density and roundness use `avo.density` and `avo.roundness`. Under database persistence they use the `:density` and `:roundness` settings keys. Hover previews never persist.
 
 #### Required schema
 
@@ -482,11 +513,18 @@ end
 | `scheme`         | `:auto` `:light` `:dark` | `:auto`                  | Default color scheme                                        |
 | `neutral`        | Symbol                   | `nil`                    | Default neutral preset                                      |
 | `accent`         | Symbol                   | `nil`                    | Default accent preset                                       |
+| `theme`          | Symbol                   | `nil`                    | Default [theme](./themes.html) id; first offered theme when unset |
+| `themes_enabled` | Boolean                  | `false`                  | Opt in to named themes |
+| `density`        | Symbol                   | Inherits `config.density` | Interface spacing preset |
+| `density_picker` | Boolean                  | `false`                  | Allow users to choose density |
+| `roundness`      | Symbol                   | `:normal`                | Corner-radius preset |
+| `roundness_picker` | Boolean                | `false`                  | Allow users to choose roundness |
 | `neutral_colors` | Hash of 12 shades        | `nil`                    | Full 12-shade brand neutral override                        |
 | `accent_colors`  | Hash of 3 tokens         | `nil`                    | Three-token brand accent override                           |
 | `neutrals`       | Array of Strings         | All built-in presets     | Subset of neutrals exposed to the picker                    |
 | `accents`        | Array of Strings         | All built-in presets     | Subset of accents exposed to the picker                     |
-| `lock`           | Array of Symbols         | `[]`                     | Any of `:scheme`, `:neutral`, `:accent`                     |
+| `themes`         | Array of Symbols         | All installed themes     | [Themes](./themes.html) offered by the picker, in order     |
+| `lock`           | Array of Symbols         | `[]`                     | Any of `:scheme`, `:neutral`, `:accent`, `:theme`, `:density`, `:roundness` |
 | `persistence`    | `:cookie` `:database`    | `:cookie`                | Where unlocked user picks are stored                        |
 | `load_settings`  | Proc                     | `nil`                    | Block returning a Hash of saved settings (database mode)    |
 | `save_settings`  | Proc                     | `nil`                    | Block called with a partial `settings` Hash (database mode) |

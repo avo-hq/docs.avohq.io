@@ -225,6 +225,8 @@ config.first_sorting_option = :asc
 
 How much vertical space rows take up in <Index /> tables and in dashboard table and list cards.
 
+This legacy setting remains the fallback when [`config.appearance[:density]`](./appearance-api.html#density) is omitted. The appearance setting controls interface-wide density and optionally lets users choose a preset; explicit per-card overrides remain separate.
+
 ```ruby
 config.density = :normal
 ```
