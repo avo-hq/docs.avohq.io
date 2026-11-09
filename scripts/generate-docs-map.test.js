@@ -16,12 +16,12 @@ function pageBody(slug) {
 }
 
 test('lists option names under their sections and parents without boilerplate', () => {
-  const area = pageBody('fields/area');
+  const area = pageBody('fields/area-api');
   for (const name of ['geometry', 'mapkick_options', 'datapoint_options']) {
     assert.ok(area.includes(`\`${name}\``));
   }
   assert.doesNotMatch(area, /Default value|Possible values/);
-  assert.match(area, /Full example/);
+  assert.match(pageBody('fields/area'), /Full example/);
 
   const layout = pageBody('fields-layout-api');
   assert.match(layout, /\* Panels\n  \* `panel`\n    \* `title`, `description`, `visible`\n  \* `card`/);
