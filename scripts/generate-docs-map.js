@@ -179,8 +179,10 @@ function buildDocsMap(version, sections) {
     lines.push(`### [${page.text}](${absoluteUrl(page.link)})`);
     lines.push('');
 
-    if (page.link === '/4.0/upgrade.html') {
-      lines.push('Breaking changes and required actions by gem/version; fetch this page when upgrading.');
+    if (page.link === '/4.0/upgrade.html' || page.link === '/4.0/avo-3-avo-4-upgrade.html') {
+      lines.push(page.link === '/4.0/upgrade.html'
+        ? 'Breaking changes and required actions by gem/version; fetch this page when upgrading.'
+        : 'Avo 3 to Avo 4 migration steps and breaking changes; fetch this page when upgrading from Avo 3.');
       lines.push('');
       return;
     }
