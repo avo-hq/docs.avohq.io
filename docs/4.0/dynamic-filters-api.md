@@ -54,7 +54,7 @@ Each type opens on its most common condition, and the menu holds the rest:
 | ------- | ------------- | ----------------------------------------------------------------------------- |
 | Select  | Is            | A checklist of every option. Ticked options match any of them; under Is not, none of them. On a `badge` field, each option shows its badge colour. |
 | Text    | Contains      | A text box.                                                                    |
-| Boolean | (no menu)     | Any / Yes / No as one row of buttons. Picking one applies it straight away. Rename them with `options:`, and add Empty with `nullable: true`, see below. |
+| Boolean | (no menu)     | Yes / No as one row of buttons, with nothing picked until the filter is applied. Picking one applies it straight away, and the x clears it. Rename them with `options:`, and add Empty with `nullable: true`, see below. |
 | Number  | =             | One number. Is within takes a min and a max (fill either or both).            |
 | Date    | Is within     | Today, 7 days, 30 days, This month and Last month as one row of buttons. Custom after them shows a from and to date. Change the buttons with [`presets`](#presets). Other conditions take one date. |
 | Date time | Is within   | The same as Date, and the from and to boxes pick a time as well as a day.    |
@@ -462,7 +462,7 @@ An inline filter shows the same condition menu as the pill's dropdown, right aft
 
 Ticks and buttons filter straight away. Boxes apply on Enter or when they lose focus.
 
-<Image src="/assets/img/4_0/dynamic-filters/inline.webp" dark-src="/assets/img/4_0/dynamic-filters/inline-dark.webp" width="2438" height="638" alt="Inline filters in the Tickets filter bar: Due on with its condition menu, date preset buttons and from and to boxes; Status as a row of coloured chips with Open picked; Urgent as Any, Urgent and Not urgent buttons with Urgent picked. The table lists urgent open tickets." />
+<Image src="/assets/img/4_0/dynamic-filters/inline.webp" dark-src="/assets/img/4_0/dynamic-filters/inline-dark.webp" width="2420" height="620" alt="Inline filters in the Tickets filter bar: Due on with its condition menu and date preset buttons; Status as a row of coloured chips with Open picked; Urgent as Urgent and Not urgent buttons with Urgent picked. The table lists urgent open tickets." />
 
 </Option>
 

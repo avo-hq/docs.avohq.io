@@ -230,7 +230,7 @@ With it on, [`inline`](./dynamic-filters-api.html#inline) lays a pinned filter's
 field :urgent, as: :boolean, filterable: {pinned: true, inline: true}
 ```
 
-<Image src="/assets/img/4_0/dynamic-filters/inline.webp" dark-src="/assets/img/4_0/dynamic-filters/inline-dark.webp" width="2438" height="638" alt="Inline filters in the Tickets filter bar: Due on with its condition menu, date preset buttons and from and to boxes; Status as a row of coloured chips with Open picked; Urgent as Any, Urgent and Not urgent buttons with Urgent picked. The table lists urgent open tickets." />
+<Image src="/assets/img/4_0/dynamic-filters/inline.webp" dark-src="/assets/img/4_0/dynamic-filters/inline-dark.webp" width="2420" height="620" alt="Inline filters in the Tickets filter bar: Due on with its condition menu and date preset buttons; Status as a row of coloured chips with Open picked; Urgent as Urgent and Not urgent buttons with Urgent picked. The table lists urgent open tickets." />
 
 ## Configure the filters bar
 
