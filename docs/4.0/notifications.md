@@ -19,7 +19,7 @@ Notifications appear in a bell icon dropdown in the navbar and can also be brows
 ## Installation
 
 :::info
-Follow these steps in order. The installer generates a migration, an initializer, and an Avo resource for you.
+Follow these steps in order. The installer generates a migration and an Avo resource, and adds the configuration options to `config/initializers/avo.rb`.
 :::
 
 ### 1. Install the gem

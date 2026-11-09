@@ -49,6 +49,20 @@ bundle install
 bin/rails generate avo:audit_logging install
 ```
 
+Besides the migrations, resources and controllers, it adds the commented `config.audit_logging` options inside the `Avo.configure` block of `config/initializers/avo.rb`:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+
+  ## == Audit logging ==
+  # config.audit_logging.enabled = false
+  # config.audit_logging.author_model = "User"
+  # config.audit_logging.payload_modifier = -> { payload.merge("app" => "billing") }
+end
+```
+
 ### 3. Migrate
 
 At this stage, all migrations, resources, and controllers required for the audit logging feature are set up and ready, it's time to migrate:
