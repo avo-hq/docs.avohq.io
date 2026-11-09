@@ -1,5 +1,7 @@
 ---
 license: community
+outline: [2, 3]
+api_docs: ./markdown-api.html
 betaStatus: Beta
 demoVideo: "https://youtu.be/wnWvzQyyo6A?t=2128"
 description: "A GitHub-inspired Markdown editor based on the Marksmith editor."
@@ -8,27 +10,30 @@ fieldTags: [rich text]
 
 # Markdown
 
-<Image src="/assets/img/4_0/fields/markdown/markdown-field.webm" dark-src="/assets/img/4_0/fields/markdown/markdown-field-dark.webm" width="760" height="385" alt="Typing Markdown in the Marksmith editor, then toggling the Preview tab to see the rendered HTML" />
-
-:::info
-In Avo 3.17 we renamed the `markdown` field `easy_mde` and introduced this custom one based on the [Marksmith editor](https://github.com/avo-hq/marksmith).
-
-Please read the docs on the repo for more information on how it works.
-:::
-
-This field is inspired by the wonderful GitHub editor we all love and use.
-
-It supports applying styles to the markup, dropping files in the editor, and using the [Media Library](./../media-library).
-The uploaded files will be taken over by Rails and persisted using Active Storage.
+The Markdown field provides a GitHub-inspired editor based on [Marksmith](https://github.com/avo-hq/marksmith), with text formatting, file attachments, and a preview of the rendered content.
 
 ```ruby
+# app/avo/resources/post.rb
 field :body, as: :markdown
 ```
 
+By default, the field is hidden on Index. The editor offers uploads when an upload URL is available and a gallery picker when the [Media Library](./../media-library) is enabled. Preview requests include Avo's resource and field identifiers, with no additional custom parameters.
+
+<Image src="/assets/img/4_0/fields/markdown/markdown-field.webm" dark-src="/assets/img/4_0/fields/markdown/markdown-field-dark.webm" width="760" height="385" alt="Typing Markdown in the Marksmith editor, then toggling the Preview tab to see the rendered HTML" />
+
+:::info
+In Avo 3.17 we renamed the previous `markdown` field [`easy_mde`](./easy_mde.html) and introduced this one based on the [Marksmith editor](https://github.com/avo-hq/marksmith).
+
+See the Marksmith repository for its editor configuration and renderer documentation.
+:::
+
+## Install the editor dependencies
+
 :::warning
-Please ensure you have these gems in your `Gemfile`.
+Ensure these gems are in your `Gemfile`.
 
 ```ruby
+# Gemfile
 gem "marksmith"
 gem "commonmarker"
 ```
@@ -38,7 +43,9 @@ gem "commonmarker"
   <iframe width="100%" height="100%" src="https://www.youtube.com/embed/wnWvzQyyo6A?start=2128" title="Avo 3.17 - Media Library, new Markdown field &amp; the Array Adapter" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </div>
 
-## Supported features
+## Write and preview Markdown
+
+Use the editor toolbar to format text, or write Markdown directly and switch to the preview panel to see the result. The editor supports:
 
 - [x] ActiveStorage file attachments
 - [x] [Media Library](./../media-library) integration
@@ -52,14 +59,44 @@ gem "commonmarker"
 - [x] Code blocks
 - [x] Headings
 
+## Control file attachments
+
+Users can drop files into the editor or select them through the upload control. Rails persists uploaded files using Active Storage. The [Media Library](./../media-library) lets users reuse existing uploads.
+
+<span id="file_uploads"></span>
+<span id="file-uploads"></span>
+
+To hide the **"Upload files"** option for a field, set [`file_uploads`](./markdown-api.html#file_uploads) to `false`. Uploads otherwise depend on an available upload URL, normally through Active Storage.
+
+```ruby
+# app/avo/resources/post.rb
+field :body, as: :markdown, file_uploads: false
+```
+
+<span id="media_library"></span>
+<span id="media-library"></span>
+
+To hide **"Attach from gallery"** for a field while keeping the Media Library available elsewhere, set [`media_library`](./markdown-api.html#media_library) to `false`.
+
+```ruby
+# app/avo/resources/post.rb
+field :body, as: :markdown, media_library: false
+```
+
+## Pass context to the preview renderer {#extra_preview_params}
+
+<span id="extra-preview-params"></span>
+
+If the preview renderer needs additional context, pass key-value pairs through [`extra_preview_params`](./markdown-api.html#extra_preview_params). See the reference for the identifiers Avo already sends and how custom keys take precedence.
+
+```ruby
+# app/avo/resources/post.rb
+field :body, as: :markdown, extra_preview_params: { foo: :bar }
+```
+
 ## Customize the renderer
 
-There are two places where we parse the markdown into the HTML you see.
-
-1. In the controller
-2. In the <Show /> field component
-
-You may customize the renderer by overriding the model.
+To change how Markdown becomes HTML in the preview and on the Show view, override `Marksmith::Renderer`. The following example supports Commonmarker, Kramdown, and Redcarpet; install the parser gems you use.
 
 ```ruby
 # app/models/marksmith/renderer.rb
@@ -111,65 +148,17 @@ module Marksmith
 end
 ```
 
-## Options
+## Show the full content on the Show view
 
-<Option name="`media_library`">
-
-Controls the visibility of the **"Attach from gallery"** option in the markdown editor.
-
-#### Default value
-
-`true`
-
-#### Possible values
-
-- `true`
-- `false`
+Set [`always_show`](./markdown-api.html#always_show) to `true` to display the full content instead of a collapsed preview.
 
 ```ruby
-field :body, as: :markdown, media_library: false
+# app/avo/resources/post.rb
+field :body, as: :markdown, always_show: true
 ```
-</Option>
-
-
-<Option name="`file_uploads`">
-
-Controls the visibility of the **"Upload files"** option in the markdown editor.
-
-#### Default value
-
-`true`
-
-#### Possible values
-
-- `true`
-- `false`
-
-```ruby
-field :body, as: :markdown, file_uploads: false
-```
-</Option>
-
-<Option name="`extra_preview_params`">
-
-Sends additional parameters to the **preview renderer** of the markdown field.
-Useful for injecting context-specific data during preview rendering.
-
-#### Default value
-
-`{}`
-
-#### Possible values
-
-- Any `Hash` of key-value pairs.
-
-```ruby
-field :body, as: :markdown, extra_preview_params: { foo: :bar }
-```
-</Option>
-
-<!-- @include: ./../common/field_options/always_show.md-->
 
 :::info
-The collapsed preview is rendered by the Marksmith editor itself, so it needs `marksmith` **0.6.0 or newer**. On older versions the field always shows its full content and `always_show` has nothing to do.
+The collapsed preview requires `marksmith` **0.6.0 or newer**. On older versions the field always shows its full content and `always_show` has no effect.
 :::
+
+See [Field options](../field-options.html) for configuration shared with other field types.

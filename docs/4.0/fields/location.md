@@ -3,157 +3,112 @@ license: community
 betaStatus: "Open beta"
 description: "The Location field is used to display a point on a map."
 fieldTags: [maps]
+outline: [2, 3]
+api_docs: ./location-api.html
 ---
 
 # Location
 
-The `Location` field is used to display a point on a map.
+The `Location` field displays a point on a map and lets users edit its latitude and longitude.
 
 ```ruby
-field :coordinates, as: :location
-```
-
-<Image src="/assets/img/4_0/fields/location/show-map.webp" dark-src="/assets/img/4_0/fields/location/show-map-dark.webp" width="1192" height="1060" alt="An Avo Map card on the Dashy dashboard showing an embedded Google Maps view of Manhattan with an Open in Maps link and map navigation controls." prompt="page with navigation map" />
-
-:::info
-You need to add the `mapkick-rb` (not `mapkick`) gem to your `Gemfile`. That's it — no map account required.
-
-Avo renders maps with [OpenFreeMap](https://openfreemap.org) by default: no registration, no API key, no request limit, and attribution is handled for you.
-
-If you'd rather use Mapbox, set the `MAPBOX_ACCESS_TOKEN` environment variable to a valid [Mapbox](https://account.mapbox.com/auth/signup/) key and Avo will default to Mapbox styles instead. Pin either one — or your own light/dark pair — with [`config.map_view`](../customization-api.html#styles), and override a single map with `mapkick_options: {style: "..."}`.
-:::
-
-## Description
-
-By default, the location field is attached to one database column that has the coordinates in plain text with a comma `,` joining them (`latitude,longitude`).
-Ex: `44.427946,26.102451`
-
-Avo will take that value, split it by the comma and use the first element as the `latitude` and the second one as the `longitude`.
-
-On the <Show /> view you'll get in interactive map and on the edit you'll get one field where you can edit the coordinates.
-
-## Options
-
-<Option name="`stored_as`">
-
-It's customary to have the coordinates in two distinct database columns, one named `latitude` and another `longitude`.
-
-You can instruct Avo to use those two with the `stored_as` option
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-`nil`, or `[:latitude, :longitude]`.
-
-```ruby
+# app/avo/resources/city.rb
 field :coordinates, as: :location, stored_as: [:latitude, :longitude]
 ```
 
-By using this notation, Avo will grab the `latitude` and `longitude` from those particular columns to compose the map.
+By default, the field is hidden on the index view and displays an interactive map on the show view. Without `stored_as`, it uses the field's own attribute and renders one text input for editing coordinates.
 
-This will also render the <Edit /> view with two separate fields to edit the coordinates.
+<Image src="/assets/img/4_0/fields/location/show-map.webp" dark-src="/assets/img/4_0/fields/location/show-map-dark.webp" width="1192" height="1060" alt="An Avo Map card on the Dashy dashboard showing an embedded Google Maps view of Manhattan with an Open in Maps link and map navigation controls." prompt="page with navigation map" />
+
+## Display an interactive map
+
+Add `mapkick-rb` (not `mapkick`) to your application:
+
+```ruby
+# Gemfile
+gem "mapkick-rb"
+```
+
+Avo renders maps with [OpenFreeMap](https://openfreemap.org) by default: no registration, no API key, no request limit, and attribution is handled for you.
+
+If you'd rather use Mapbox, set the `MAPBOX_ACCESS_TOKEN` environment variable to a valid [Mapbox](https://account.mapbox.com/auth/signup/) key. Avo then defaults to Mapbox styles. Pin either provider, or your own light/dark pair, with [`config.map_view`](../customization-api.html#styles).
+
+## Edit coordinates in separate columns {#stored_as}
+
+If your model stores coordinates in two columns, use [`stored_as`](./location-api.html#stored_as) as in the opening example. List latitude first and longitude second; the column names can be different from `latitude` and `longitude`.
+
+This displays two separate text inputs on the edit form and uses those attributes to position the map.
 
 <Image src="/assets/img/4_0/fields/location/stored-as.webp" dark-src="/assets/img/4_0/fields/location/stored-as-dark.webp" width="1520" height="236" alt="An Avo edit-form card showing a location field with stored_as configured: separate Latitude and Longitude text inputs side by side, prefilled with Paris coordinates." prompt="todo" />
-</Option>
 
-<Option name="`mapkick_options`">
+### Use a single coordinate attribute
 
-The `mapkick_options` option allows you to customize the appearance and behavior of the map.
-
-Using this option, you can provide a hash of configuration settings supported by the Mapkick gem, such as specifying the map style, enabling or disabling controls, or adding additional customizations.
-
-#### Default value
-
-- When `static` is `true`:
+Omit `stored_as` if your model already exposes a coordinate pair through one attribute:
 
 ```ruby
-{
-  width: 300,
-  height: 300
-}
+# app/avo/resources/city.rb
+field :coordinates, as: :location
 ```
 
-- When `static` is `false`:
+The edit input accepts comma-separated coordinates such as `44.427946,26.102451`, in latitude/longitude order. On submission, Avo splits that text into an array before assigning it to the model. The attribute must return an indexable coordinate pair for map rendering, such as `[44.427946, 26.102451]`.
+
+:::warning Coordinate storage
+A plain text column containing `"44.427946,26.102451"` is not split when the map is displayed. Use an array-compatible attribute, a model getter/setter that converts the stored value, or two columns with `stored_as`.
+:::
+
+## Customize the map's appearance
+
+<span id="zoom"></span>
+
+Set [`zoom`](./location-api.html#zoom) to change the initial zoom level of the interactive map:
 
 ```ruby
-{
-  id: "location-map",
-  zoom: 15,
-  controls: true,
-  style: "https://tiles.openfreemap.org/styles/positron" # "mapbox://styles/mapbox/light-v11" when MAPBOX_ACCESS_TOKEN is set
-}
+# app/avo/resources/city.rb
+field :coordinates, as: :location, stored_as: [:latitude, :longitude], zoom: 12
 ```
 
-#### Possible values
+<span id="mapkick_options"></span>
 
-Accepts the options as [specified in the Mapkick-gem](https://github.com/ankane/mapkick#options).
+For other map settings, pass [`mapkick_options`](./location-api.html#mapkick_options). For example, choose a style for this field:
 
-For example:
-
-```ruby{4-7}
+```ruby
+# app/avo/resources/city.rb
 field :coordinates,
   as: :location,
   stored_as: [:latitude, :longitude],
   mapkick_options: {
-    style: 'https://tiles.openfreemap.org/styles/liberty',
+    style: "https://tiles.openfreemap.org/styles/liberty",
     controls: true
   }
 ```
 
-By using `mapkick_options`, you can tailor the map's look and functionality to suit your application's requirements.
+See the [Mapkick options](https://github.com/ankane/mapkick#options) for other settings.
 
-:::info
-Avo follows the color scheme and swaps the map between its light and dark styles automatically. Pass your own `style` and Avo leaves the map exactly as you set it, dark mode included.
+:::info Dark mode
+Avo follows the color scheme and swaps between the configured light and dark styles automatically. An explicit `mapkick_options[:style]` disables that automatic switching for this map.
 :::
 
-</Option>
+## Display a static map {#static}
 
-<Option name="`zoom`">
-
-Sets the initial zoom level of the interactive map. It has no effect on static maps.
-
-#### Default value
-
-`15`
-
-#### Possible values
-
-Any integer zoom level supported by the map style.
+If you want an image instead of an interactive map, enable [`static`](./location-api.html#static):
 
 ```ruby
-field :coordinates, as: :location, zoom: 12
-```
-</Option>
-
-<Option name="`static`">
-
-The `static` option enables the rendering of a static map leveraging the power of the [mapkick-static](https://github.com/ankane/mapkick-static) gem.
-
-:::warning
-Static maps are Mapbox-only — they're rendered by Mapbox's Static Images API, which OpenFreeMap has no equivalent for. You need to add the [mapkick-static](https://github.com/ankane/mapkick-static) gem to your `Gemfile` and have the `MAPBOX_ACCESS_TOKEN` environment variable with a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
-
-The same applies to the <Preview /> view, which always renders a static map.
-:::
-
-
-#### Default value
-
-`false`
-
-#### Possible values
-
-`true` or `false`
-
-```ruby{4}
+# app/avo/resources/city.rb
 field :coordinates,
   as: :location,
   stored_as: [:latitude, :longitude],
   static: true,
   mapkick_options: {
-    style: 'mapbox://styles/mapbox/satellite-v9'
+    style: "mapbox://styles/mapbox/satellite-v9"
   }
 ```
-</Option>
+
+:::warning Mapbox required
+Static maps use Mapbox's Static Images API, which OpenFreeMap has no equivalent for. Add the [mapkick-static](https://github.com/ankane/mapkick-static) gem to your `Gemfile` and set `MAPBOX_ACCESS_TOKEN` to a valid [Mapbox](https://account.mapbox.com/auth/signup/) key.
+
+The <Preview /> view always renders a static map, even when `static` is not enabled.
+:::
+
+## Options reference
+
+See the [Location API](./location-api.html) for field-specific options and the [common field options](../field-options.html) for shared settings.
