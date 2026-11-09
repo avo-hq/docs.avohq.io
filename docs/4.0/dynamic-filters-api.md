@@ -56,7 +56,7 @@ Each type opens on its most common condition, and the menu holds the rest:
 | Text    | Contains      | A text box.                                                                    |
 | Boolean | (no menu)     | Any / Yes / No as one row of buttons. Picking one applies it straight away. Rename them with `options:`, and add Empty with `nullable: true`, see below. |
 | Number  | =             | One number. Is within takes a min and a max (fill either or both).            |
-| Date    | Is within     | Today, Last 7 days, Last 30 days and This month as one row of buttons, plus a from and to date. Change the buttons with [`presets`](#presets). Other conditions take one date. |
+| Date    | Is within     | Today, 7 days, 30 days and This month as one row of buttons. Custom after them shows a from and to date. Change the buttons with [`presets`](#presets). Other conditions take one date. |
 | Date time | Is within   | The same as Date, and the from and to boxes pick a time as well as a day.    |
 | Time    | Is within     | A from and to time. No presets.                                               |
 | Tags    | Overlap       | A checklist of every suggestion. Contain matches records with all the ticked tags. Without static `suggestions`, from `fetch_values_from` or typed freely, a tag box instead. |
