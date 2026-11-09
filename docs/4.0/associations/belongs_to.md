@@ -3,67 +3,85 @@ license: community
 field_type: belongs_to
 description: "Lets the user select an associated record from a belongs_to association."
 fieldTags: [associations]
+outline: [2, 3]
+api_docs: ./belongs_to-api.html
 ---
 
 # Belongs to
 
+The `belongs_to` field lets users select an associated record on a form and follow a link to that record on index and show pages.
+
 ```ruby
-field :user, as: :belongs_to
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  def fields
+    field :user, as: :belongs_to
+  end
+end
 ```
 
-## Overview
+By default, Avo infers the target resource from the Rails association, labels records with the target resource's title, and renders a dropdown on new and edit forms. Creation links are available when the target resource's policy permits them.
 
-On the `Index` and `Show` views, Avo will generate a link to the associated record containing the [`self.title`](./../resources-api.html#self.title) value of the target resource.
+## View and change the associated record {#overview}
+
+On index and show pages, the link displays the target resource's [`self.title`](../resources-api.html#self.title).
 
 <Image src="/assets/img/4_0/associations/belongs-to-index.webp" dark-src="/assets/img/4_0/associations/belongs-to-index-dark.webp" width="1834" height="558" alt="Comments index table with ID and User columns, the User cell showing a belongs_to link to the associated record." />
 
 <Image src="/assets/img/4_0/associations/belongs-to-show.webp" dark-src="/assets/img/4_0/associations/belongs-to-show-dark.webp" width="1440" height="212" alt="Post show view with a User belongs_to field linking to the associated user record inside a complete card." />
 
-On the `Edit` and `New` views, Avo will generate a dropdown element with the available records where the user can change the associated model.
+On new and edit forms, users choose a record from a dropdown.
 
 <Image src="/assets/img/4_0/associations/belongs-to-edit.webp" dark-src="/assets/img/4_0/associations/belongs-to-edit-dark.webp" width="1440" height="284" alt="Post edit form with the User belongs_to dropdown showing available records inside a complete card." />
 
-## Polymorphic `belongs_to`
+To hide the creation link, set [`can_create: false`](./belongs_to-api.html#can_create). To send index cell clicks to the current record instead of the associated record, set [`link_to_record: true`](./belongs_to-api.html#link_to_record); show links still open the association.
 
-To use a polymorphic relation, you must add the `polymorphic_as` and `types` properties.
+## Search a large set of records {#searchable}
 
-```ruby{13}
-class Avo::Resources::Comment < Avo::BaseResource
-  self.title = :id
+Enable [`searchable`](./belongs_to-api.html#searchable) to replace the dropdown with a search-as-you-type picker. This requires the [Searchable associations add-on and search configuration](./searchable.html).
 
+```ruby
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
   def fields
-    field :id, as: :id
-    field :body, as: :textarea
-    field :excerpt, as: :text, show_on: :index do
-      ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
-    rescue
-      ""
-    end
-
-    field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
+    field :user, as: :belongs_to, searchable: true
   end
 end
 ```
 
-## Polymorphic help
+The standard dropdown is capped by [`config.associations[:lookup_list_limit]`](../associations.html) (1,000 by default). The current selection remains available even when it falls outside that list.
 
-When displaying a polymorphic association, you will see two dropdowns. One selects the polymorphic type (`Post` or `Project`), and one for choosing the actual record. You may want to give the user explicit information about those dropdowns using the `polymorphic_help` option for the first dropdown and `help` for the second.
+## Choose among different model types {#polymorphic-belongs-to}
 
-```ruby{17-18}
+For a Rails polymorphic association, provide both [`polymorphic_as`](./belongs_to-api.html#polymorphic_as) and [`types`](./belongs_to-api.html#types). Each model type needs an Avo resource.
+
+```ruby
+# app/models/comment.rb
+class Comment < ApplicationRecord
+  belongs_to :commentable, polymorphic: true
+end
+
+# app/avo/resources/comment.rb
 class Avo::Resources::Comment < Avo::BaseResource
-  self.title = :id
-
   def fields
-    field :id, as: :id
     field :body, as: :textarea
-    field :excerpt, as: :text, show_on: :index do
-      ActionView::Base.full_sanitizer.sanitize(record.body).truncate 60
-    rescue
-      ""
-    end
+    field :commentable, as: :belongs_to,
+      polymorphic_as: :commentable, types: [::Post, ::Project]
+  end
+end
+```
 
-    field :reviewable,
-      as: :belongs_to,
+<span id="polymorphic_help"></span>
+
+### Explain the two dropdowns {#polymorphic-help}
+
+The first dropdown selects a type, and the second selects a record. Use [`polymorphic_help`](./belongs_to-api.html#polymorphic_help) for the first dropdown and the shared [`help`](../field-options.html#help) option for the second.
+
+```ruby
+# app/avo/resources/review.rb
+class Avo::Resources::Review < Avo::BaseResource
+  def fields
+    field :reviewable, as: :belongs_to,
       polymorphic_as: :reviewable,
       types: [::Post, ::Project, ::Team],
       polymorphic_help: "Choose the type of record to review",
@@ -74,17 +92,11 @@ end
 
 <Image src="/assets/img/4_0/associations/polymorphic-help.webp" dark-src="/assets/img/4_0/associations/polymorphic-help-dark.webp" width="1440" height="1422" alt="New review form with a polymorphic Reviewable belongs_to field showing the type dropdown, record dropdown, polymorphic_help and help text inside a complete card." />
 
-## Belongs to attach scope
+## Limit which records users can select {#belongs-to-attach-scope}
 
 <DemoVideo demo-video="https://youtu.be/Eex8CiinQZ8?t=6" />
 
-When you edit a record that has a `belongs_to` association, on the edit screen, you will have a list of records from which you can choose a record to associate with.
-
-For example, a `Post` belongs to a `User`. So on the post edit screen, you will have a dropdown (or a search field if it's [searchable](#searchable)) with all the available users. But that's not ideal. For example, maybe you don't want to show all the users in your app but only those who are not admins.
-
-You can use the `attach_scope` option to keep only the users you need in the `belongs_to` dropdown field.
-
-You have access to the `query` that you can alter and return it and the `parent` object, which is the actual record where you want to assign the association (the true `Post` in the below example).
+Use [`attach_scope`](./belongs_to-api.html#attach_scope) to narrow the dropdown or searchable picker. For example, exclude admins from a post's user selection:
 
 ```ruby
 # app/models/user.rb
@@ -100,24 +112,21 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-For scenarios where you need to add a record associated with that resource (you create a `Post` through a `Category`), the `parent` is unavailable (the `Post` is not persisted in the database). Therefore, Avo makes the `parent` an instantiated object with its parent populated (a `Post` with the `category_id` populated with the parent `Category` from which you started the creation process) so you can better scope out the data (you know from which `Category` it was initiated).
+The callback exposes `query` and `parent`, the record being edited. On a new form, `parent` is an unsaved record. When creation starts through another association, Avo pre-fills that association, so a new post created through a category can use `parent.category_id` in its scope.
 
-## Allow detaching via the association
+:::warning
+Build on `query` to retain the resource's policy scope. Returning a fresh relation can widen access. Saving also checks the submitted record against the returned scope; records outside it are refused.
+:::
 
-When you visit a record through an association, that `belongs_to` field is disabled. There might be cases where you'd like that field not to be disabled and allow your users to change that association.
+## Change the association when arriving through a parent {#allow-detaching-via-the-association}
 
-You can instruct Avo to keep that field enabled in this scenario using `allow_via_detaching`.
+When a form is opened through its parent association, Avo normally disables the field pointing back to that parent. Set [`allow_via_detaching`](./belongs_to-api.html#allow_via_detaching) to let users change it. Shared `readonly` and `disabled` settings still take precedence.
 
-```ruby{12}
+```ruby
+# app/avo/resources/comment.rb
 class Avo::Resources::Comment < Avo::BaseResource
-  self.title = :id
-
   def fields
-    field :id, as: :id
-    field :body, as: :textarea
-
-    field :commentable,
-      as: :belongs_to,
+    field :commentable, as: :belongs_to,
       polymorphic_as: :commentable,
       types: [::Post, ::Project],
       allow_via_detaching: true
@@ -125,115 +134,23 @@ class Avo::Resources::Comment < Avo::BaseResource
 end
 ```
 
-## Options
+## Choose a different resource
 
-<!-- @include: ./../common/associations_searchable_option_common.md-->
+Use [`use_resource`](./belongs_to-api.html#use_resource) when the same model has multiple Avo resources. For STI associations, [`link_to_child_resource`](./belongs_to-api.html#link_to_child_resource) selects the resource for the associated record's concrete class. See the [association STI guide](../associations.html#link-to-child-resource-when-using-sti).
 
-<Option name="`allow_via_detaching`">
+## Options reference {#options}
 
-Keeps the field enabled when visiting from the parent record.
+See the [Belongs to API](./belongs_to-api.html) for every field-specific option, [shared field options](../field-options.html) for labels, help, placeholders, visibility and form state, and the [associations guide](../associations.html) for shared association behavior.
 
-<!-- @include: ./../common/default_boolean_false.md-->
-</Option>
-
-<!-- @include: ./../common/associations_attach_scope_option_common.md-->
-
-<Option name="`polymorphic_as`">
-
-Sets the field as polymorphic with the key set on the model.
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-A symbol, used on the `belongs_to` association with `polymorphic: true`.
-
-:::warning
-You must use this option with the `types` option.
-:::
-
-#### Example
-
-```ruby
-field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
-```
-</Option>
-
-<Option name="`types`">
-
-Sets the types the field can morph to.
-
-#### Default value
-
-`[]`
-
-#### Possible values
-
-`[Post, Project, Team]`. Any array of model names.
-
-:::warning
-You must use this option with the `polymorphic_as` option.
-:::
-
-#### Example
-
-```ruby
-field :commentable, as: :belongs_to, polymorphic_as: :commentable, types: [::Post, ::Project]
-```
-</Option>
-
-<Option name="`polymorphic_help`">
-
-Sets the help text for the polymorphic type dropdown. Useful when you need to specify to the user why and what they need to choose as polymorphic.
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-Any string.
-</Option>
-
-<!-- @include: ./../common/associations_use_resource_option_common.md-->
-
-<Option name="`can_create`">
-
-Controls the creation link visibility on forms.
-
-#### Default value
-
-`true`
-
-#### Possible values
-
-`true`, `false`
-:::warning
-The target resource policy takes precedence over this option.
-
-`field :user, as: :belongs_to, can_create: true`
-
-In this example, even if the `can_create` option is set to `true`, if the `UserPolicy` responds with `false` to the `create?` method, the creation link will **NOT** be visible.
-:::
-</Option>
-
-<Option name="`link_to_record`">
-
-By default, the <Index /> cell links to the associated record. Set `link_to_record: true` to make the cell link to the current record instead — every cell on the row then leads to the same place.
-
-```ruby
-field :user, as: :belongs_to, link_to_record: true
-```
-
-#### Default value
-
-`false`
-
-#### Possible values
-
-`true`, `false`
-</Option>
-
-<!-- @include: ./../common/associations_link_to_child_resource_common.md-->
+| Option | Purpose |
+| ------ | ------- |
+| <span id="allow_via_detaching"></span><span id="allow-via-detaching"></span>[`allow_via_detaching`](./belongs_to-api.html#allow_via_detaching) | Change an association opened through a parent. |
+| <span id="attach_scope"></span><span id="attach-scope"></span>[`attach_scope`](./belongs_to-api.html#attach_scope) | Limit eligible records. |
+| <span id="polymorphic_as"></span><span id="polymorphic-as"></span>[`polymorphic_as`](./belongs_to-api.html#polymorphic_as) | Identify a polymorphic association. |
+| <span id="types"></span>[`types`](./belongs_to-api.html#types) | List its model types. |
+| [`polymorphic_help`](./belongs_to-api.html#polymorphic_help) | Explain the type dropdown. |
+| <span id="use_resource"></span><span id="use-resource"></span>[`use_resource`](./belongs_to-api.html#use_resource) | Override resource inference. |
+| <span id="can_create"></span><span id="can-create"></span>[`can_create`](./belongs_to-api.html#can_create) | Control creation links. |
+| <span id="link_to_record"></span><span id="link-to-record"></span>[`link_to_record`](./belongs_to-api.html#link_to_record) | Link index cells to the current record. |
+| <span id="link_to_child_resource"></span><span id="link-to-child-resource"></span>[`link_to_child_resource`](./belongs_to-api.html#link_to_child_resource) | Resolve STI child resources. |
+| [`target`](./belongs_to-api.html#target) | Set the show link's Turbo Frame. |

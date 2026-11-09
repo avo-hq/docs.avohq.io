@@ -2,34 +2,36 @@
 license: community
 description: "Renders a password input element."
 fieldTags: [text]
+outline: [2, 3]
 ---
 
 # Password
 
-The `Password` field renders a `input[type="password"]` element for that field. By default, it's visible only on the `Edit` and `New` views.
+The `Password` field renders an `input[type="password"]` element for entering a password on forms.
 
 ```ruby
-field :password, as: :password
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :password, as: :password
+  end
+end
 ```
 
-## Options
+By default, the field appears only on the New and Edit views, and the input masks its contents without a reveal button.
 
-<Option name="`revealable`">
+## Let users check their password {#revealable}
 
-Show an "eye" icon next to the input that toggles the password between hidden and visible.
-
-#### Default value
-
-`false`
-
-#### Possible values
-
-`true` or `false`
+Set `revealable: true` to add an eye button that toggles the input between masked and visible text. Leave it unset or use `false` to keep the input masked. Disabled inputs cannot be revealed with the button.
 
 ```ruby
+# app/avo/resources/user.rb
 field :password, as: :password, revealable: true
 ```
-</Option>
+
+## Configure shared field behavior {#options}
+
+For options such as the field name, placeholder, visibility, and help text, see [Field options](../field-options.html).
 
 ## Related
 

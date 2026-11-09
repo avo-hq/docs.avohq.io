@@ -2,162 +2,114 @@
 license: community
 description: "Displays a link to another record."
 fieldTags: [display, associations]
+outline: [2, 3]
 ---
 
 # Record link
 
-Sometimes you just need to link to a field. That's it!
+The `record_link` field displays a link to another record on index and show views. The record can come from an association, a model method, or a computed field block.
 
-This is what this field does. You give it a record and it will link to it.
-That record can come off an association a method or any kind of property on the record instance.
-
-:::info Add this field to the `Gemfile`
 ```ruby
-# Gemfile
-gem "avo-record_link_field"
-```
-:::
-
-:::warning
-That record you're pointing to should have [a resource configured](./../resources.html#overview).
-:::
-
-```ruby{14,19}
-class Comment < ApplicationRecord
-  # Your model must return an instance of a record
-  has_one :post
-  # or
-  belongs_to :post
-  # or
-  def post
-    # trivially find a post
-    Post.find 42
-  end
-end
-
-# Calling the method like so will give us an instance of a Post
-Comment.first.post => #<post:0x00000001685bb558 ...>
-
+# app/avo/resources/comment.rb
 class Avo::Resources::Comment < Avo::BaseResource
   def fields
-    # This will run `record.post` and try to display whatever is returned.
     field :post, as: :record_link
   end
 end
 ```
 
+By default, Avo reads `comment.post`, finds a resource for that record's model, and uses that resource's record title as the link text. Links include navigation parameters, and the field is hidden on new and edit forms.
+
+## Install the field
+
+Add the field's gem to your application, then run `bundle install`:
+
+```ruby
+# Gemfile
+gem "avo-record_link_field"
+```
+
+:::warning
+The value must be a record with [a resource configured](./../resources.html#overview). A missing record or resource is not rendered as an empty link and can cause a rendering error.
+:::
+
 <Image src="/assets/img/4_0/fields/record_link/show.webp" dark-src="/assets/img/4_0/fields/record_link/show-dark.webp" width="1520" height="212" alt="An Avo show-view card containing a record_link field that displays a clickable link to the related Post record." prompt="record link field pointing to a related record" />
 
-## Options
+## Link to an associated record
 
-Besides some of the [default options](./../field-options.html), there are a few custom ones.
-
-<Option name="`target`">
-
-In case you want to set the target to `_blank`.
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-`:self`, `:blank`
-
-#### Example
+Name the field after an association or method that returns a record. For example, a comment that belongs to a post works with the field declaration above:
 
 ```ruby
-field :post, as: :record_link, target: :blank
+# app/models/comment.rb
+class Comment < ApplicationRecord
+  belongs_to :post
+end
 ```
-</Option>
 
-<Option name="`use_resource`">
+A `has_one` association or a model method returning a record works too. The field displays the related resource's title, not the record's raw object representation.
 
-Because you only give it an instance of a record, Avo will try to guess which resource it should use to display the title of the record and how to compute it's link.
-With more advanced configurations (when you have [multiple resources for the same model](./../resources.html#use-multiple-resources-for-the-same-model)) that resource might not be the one that you wish for.
+## Choose which resource opens {#use_resource}
 
-Using the `use_resource` configuration value you can tell Avo which resource it should use.
+If you have [multiple resources for the same model](./../resources.html#use-multiple-resources-for-the-same-model), set `use_resource` to choose the destination and the title used for the link. Without it, Avo uses its model-to-resource lookup.
 
-#### Default value
-
-`nil`
-
-#### Possible values
-
-`big_post`, `AdminUser`, `Avo::Resources::TinyPhoto`
-
-#### Example
+Use the resource's CamelCase name or its fully qualified name, not a snake_case identifier:
 
 ```ruby
-field :post, as: :record_link, use_resource: "big_post"
-
-field :admin, as: :record_link, use_resource: "AdminUser"
-
-field :thumbnail, as: :record_link, use_resource: "Avo::Resources::TinyPhoto"
+# app/avo/resources/comment.rb
+class Avo::Resources::Comment < Avo::BaseResource
+  def fields
+    field :post, as: :record_link, use_resource: "BigPost"
+    field :admin, as: :record_link, use_resource: "AdminUser"
+    field :thumbnail, as: :record_link, use_resource: "Avo::Resources::TinyPhoto"
+  end
+end
 ```
-</Option>
 
-<Option name="`add_via_params`">
+## Leave navigation parameters out of the URL {#add_via_params}
 
-In other places where Avo generates a link to a record like in the [`belongs_to` field](./../associations/belongs_to.html), Avo adds `via` params to the URL so it knows how to generate the back button link.
-That URL can also be passed on to other team mates and everyone can have the same navigation experience.
+As with the [`belongs_to` field](./../associations/belongs_to.html), Avo adds `via_resource_class` and `via_record_id` parameters to support back-button navigation. The URL can be shared with teammates to keep the same navigation context.
 
-In the `record_link` field Avo adds these params automatically, but that might not be what you want. You can remove those `via` params by setting the `add_via_params` option to `false`.
-
-#### Default value
-
-`true`
-
-#### Possible values
-
-`true`, `false`
-
-#### Example
+If you want a URL without those parameters, set `add_via_params: false`:
 
 ```ruby
-# This will generate a link similar to this
-# https://example.com/avo/resources/projects/40?via_record_id=40&via_resource_class=Avo%3A%3AResources%3A%3AProject
-field :post, as: :record_link, add_via_params: true
-
-# This will generate a link similar to this
-# https://example.com/avo/resources/projects/40
-field :post, as: :record_link, add_via_params: false
+# app/avo/resources/comment.rb
+class Avo::Resources::Comment < Avo::BaseResource
+  def fields
+    field :post, as: :record_link, add_via_params: false
+  end
+end
 ```
-</Option>
+
+For a linked project with ID `40`, the default URL is similar to `https://example.com/avo/resources/projects/40?via_record_id=40&via_resource_class=Avo%3A%3AResources%3A%3AProject`. Disabling the parameters produces `https://example.com/avo/resources/projects/40`.
 
 ## Using computed values
 
-Of course you can take full control of this field and use your computed values too.
-
-In order to do that, open a block and run some ruby query to return an instance of a record.
-
-#### Example
+If the destination isn't available as an association or method, return a record from a field block. The block can use `record` to access the current record:
 
 ```ruby
-field :post, as: :record_link do
-  # This will generate a link similar to this
-  # https://example.com/avo/resources/posts/42
-  Post.find 42
-end
+# app/avo/resources/comment.rb
+class Avo::Resources::Comment < Avo::BaseResource
+  def fields
+    field :post, as: :record_link do
+      Post.find(42)
+    end
 
-# or
-
-field :creator, as: :record_link, add_via_params: false do
-  user_id = SomeService.new(comment: record).fetch_user_id # returns 31
-
-  # This will generate a link similar to this
-  # https://example.com/avo/resources/users/31
-  User.find user_id
-end
-
-# or
-
-field :creator, as: :record_link, use_resource: "AdminUser", add_via_params: false do
-  user_id = SomeService.new(comment: record).fetch_user_id # returns 31
-
-  # This will generate a link similar to this
-  # https://example.com/avo/resources/admin_users/31
-  User.find user_id
+    field :creator, as: :record_link, use_resource: "AdminUser", add_via_params: false do
+      user_id = SomeService.new(comment: record).fetch_user_id
+      User.find(user_id)
+    end
+  end
 end
 ```
-</post:0x00000001685bb558>
+
+The first field links to a URL such as `https://example.com/avo/resources/posts/42`. For a user with ID `31`, the second links to `https://example.com/avo/resources/admin_users/31`. Omit `use_resource` to use the default user resource instead, such as `https://example.com/avo/resources/users/31`.
+
+## Open links in another tab {#target}
+
+:::warning
+In `avo-record_link_field` `0.0.2`, `target` is accepted by the field but is not passed to its link component. Setting `target: :blank` does not open a new tab. Links use the browser's default browsing context.
+:::
+
+## Common field options {#options}
+
+For shared configuration such as field names, visibility, and computed values, see [Common field options](../field-options.html).

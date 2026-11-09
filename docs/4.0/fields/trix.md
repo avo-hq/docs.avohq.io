@@ -3,82 +3,59 @@ license: community
 demo: https://trix.avodemo.com/
 description: "Renders the Trix WYSIWYG editor, storing its HTML content in a string or text column."
 fieldTags: [rich text, attachments]
+outline: [2, 3]
+api_docs: ./trix-api.html
 ---
 
 # Trix
 
+The `Trix` field renders a [WYSIWYG editor](https://trix-editor.org/) and stores the resulting HTML in a `string` or `text` database column. It also supports [ActiveStorage](https://guides.rubyonrails.org/active_storage_overview.html) file attachments, [ActionText](https://guides.rubyonrails.org/action_text_overview.html), and the [Media Library](./../media-library).
+
 ```ruby
+# app/avo/resources/post.rb
 field :body, as: :trix
 ```
 
-The `Trix` field renders a [WYSIWYG Editor](https://trix-editor.org/) and can be associated with a `string` or `text` column in the database. The value stored in the database will be the editor's resulting `HTML` content.
-
-It supports [ActiveStorage](https://guides.rubyonrails.org/active_storage_overview.html) file attachments, [ActionText](https://guides.rubyonrails.org/action_text_overview.html), and seamlessly integrates with the [Media Library](./../media-library).
+By default, the field is hidden on Index and shows a collapsed preview on Show. Attachments are enabled for Action Text attributes, but disabled for plain columns unless configured otherwise.
 
 <Image src="/assets/img/4_0/fields/trix/form.webp" dark-src="/assets/img/4_0/fields/trix/form-dark.webp" width="1520" height="588" alt="An Avo edit-form card with a Trix WYSIWYG editor showing the formatting toolbar above a text area with sample body content." prompt="trix editor on the edit form with toolbar and sample body content" />
 
-Trix field is hidden from the `Index` view.
+For shared settings such as visibility, placeholder text, and read-only behavior, see [Common field options](../field-options.html).
 
-## Options
+## Show the full content
 
-<!-- @include: ./../common/field_options/always_show.md-->
-
-<Option name="`attachments_disabled`">
-
-Hides the attachments button from the Trix toolbar.
-
-#### Default value
-
-`false` on Action Text attributes and on fields with an `attachment_key`, `true` on other plain columns.
-</Option>
-
-<Option name="`hide_attachment_filename`">
-
-Hides the attachment's name from the upload output in the field value.
-
-<!-- @include: ./../common/default_boolean_false.md-->
-</Option>
-
-<Option name="`hide_attachment_filesize`">
-
-Hides the attachment size from the upload output in the field value.
-
-<!-- @include: ./../common/default_boolean_false.md-->
-</Option>
-
-<Option name="`hide_attachment_url`">
-
-Hides the attachment URL from the upload output in the field value.
-
-<!-- @include: ./../common/default_boolean_false.md-->
-</Option>
-
-<Option name="`attachment_key`">
-
-Enables file attachments.
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-`nil`, or a symbol representing the `has_many_attachments` key on the model.
-</Option>
-
-## File attachments
-
-<!-- @include: ./../common/files_gem_common.md-->
-
-Trix supports drag-and-drop file attachments. To enable **Active Storage** integration, you must add the `attachment_key` option to your Trix field.
+If you want the full content visible on Show without an expand link, set [`always_show`](./trix-api.html#always_show) to `true`.
 
 ```ruby
+# app/avo/resources/post.rb
+field :body, as: :trix, always_show: true
+```
+
+## Attach files to a saved record {#file-attachments}
+
+:::warning
+You must manually require the `activestorage` and `image_processing` gems in your `Gemfile`.
+
+```ruby
+# Gemfile
+gem "activestorage"
+gem "image_processing"
+```
+:::
+
+<span id="attachment_key"></span>
+
+Trix supports drag-and-drop file attachments. If you store HTML in a plain column and want uploads attached to the record through Active Storage, set [`attachment_key`](./trix-api.html#attachment_key) to the name of the model's attachment association.
+
+```ruby
+# app/avo/resources/post.rb
 field :body, as: :trix, attachment_key: :trix_attachments
 ```
 
-That `attachment_key` has to have the same name as the model.
+Declare the matching association on the model:
 
-```ruby{2}
+```ruby
+# app/models/post.rb
 class Post < ApplicationRecord
   has_many_attached :trix_attachments
 end
@@ -91,6 +68,7 @@ Now, when you upload a file in the Trix field, Avo will create an Active Record 
 On a plain column you can also enable attachments without an association. Avo uploads the file to Active Storage and stores its URL in the HTML, without attaching it to the record. This works on the `New` form too.
 
 ```ruby
+# app/avo/resources/post.rb
 field :body, as: :trix, attachments_disabled: false
 ```
 
@@ -100,23 +78,46 @@ These blobs aren't attached to any record, so a job that purges unattached blobs
 
 ## Disable attachments
 
-You may want to use Trix only as a text editor and disable the attachments feature. Adding the `attachments_disabled` option will hide the attachments button (paperclip icon).
+<span id="attachments_disabled"></span>
+
+If you want a text-only editor, set [`attachments_disabled`](./trix-api.html#attachments_disabled) to `true`. This hides the attachments button (paperclip icon) and rejects file drops.
 
 ```ruby
+# app/avo/resources/post.rb
 field :body, as: :trix, attachments_disabled: true
 ```
 
 ## Remove attachment attributes
 
-By default, Trix will add some meta-data in the editor (filename, filesize, and URL) when adding an attachment. You might not need those to be present in the document. You can hide them using `hide_attachment_filename`, `hide_attachment_filesize`, and `hide_attachment_url`.
+<span id="hide_attachment_filename"></span>
+<span id="hide_attachment_filesize"></span>
+<span id="hide_attachment_url"></span>
+
+If you do not want attachment metadata in the document, use [`hide_attachment_filename`](./trix-api.html#hide_attachment_filename), [`hide_attachment_filesize`](./trix-api.html#hide_attachment_filesize), and [`hide_attachment_url`](./trix-api.html#hide_attachment_url).
+
+```ruby
+# app/avo/resources/post.rb
+field :body, as: :trix,
+  attachment_key: :trix_attachments,
+  hide_attachment_filename: true,
+  hide_attachment_filesize: true,
+  hide_attachment_url: true
+```
 
 ## Active Storage
 
-Trix integrates seamlessly with Active Storage. When you use it with a plain database column on a record table (not with Action Text), set the `attachment_key` option to attach uploads to the record, or `attachments_disabled: false` to upload them [without an association](#attachments-without-an-attachment-key).
+For plain database columns, use Active Storage either [with a record association](#file-attachments) or [without an association](#attachments-without-an-attachment-key).
 
-## Action Text
+## Use Action Text {#action-text}
 
-Trix integrates seamlessly with Action Text. It will automatically work with Action Text as well and it won't require you to add an `attachment_key`.
+If your model uses Action Text, declare its rich text attribute and use the same name for the Trix field. No `attachment_key` is required.
+
+```ruby
+# app/models/post.rb
+class Post < ApplicationRecord
+  has_rich_text :body
+end
+```
 
 Uploads work on the `New` form, before the record is saved, and any file type is stored as an Action Text attachment. Avo renders those attachments with your app's `active_storage/blobs/_blob.html.erb` partial, just like your app does.
 
@@ -124,14 +125,16 @@ Uploads work on the `New` form, before the record is saved, and any file type is
 
 We prepared a [demo](https://trix.avodemo.com/) to showcase Trix's abilities to work with Action Text and Active Storage.
 
-## Javascript Alert Messages
+## Translate upload alerts {#javascript-alert-messages}
 
 You can customize the javascript alert messages for various actions in the Trix editor. Below are the default messages that can be translated or modified:
 
 ```yml
-avo:
-  this_field_has_attachments_disabled: This field has attachments disabled.
-  you_cant_upload_new_resource: You can't upload files into the Trix editor until you save the resource.
+# config/locales/avo.en.yml
+en:
+  avo:
+    this_field_has_attachments_disabled: This field has attachments disabled.
+    you_cant_upload_new_resource: You can't upload files into the Trix editor until you save the resource.
 ```
 
 Refer to the [default](https://github.com/avo-hq/avo/blob/main/lib/generators/avo/templates/locales/avo.en.yml) for more details.

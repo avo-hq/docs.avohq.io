@@ -1,16 +1,17 @@
 ---
 license: community
-description: "The Status field renders a colored indicator on index and show views — loading, failed, success, or neutral."
+description: "The Status field renders a colored indicator on index and show views: loading, failed, success, or neutral."
 fieldTags: [display]
+outline: [2, 3]
+api_docs: ./status-api.html
 ---
 
 # Status
 
-The `Status` field renders a colored indicator on index and show views — `loading`, `failed`, `success`, or `neutral`.
-
-Map your values with [`failed_when`](#failed_when), [`loading_when`](#loading_when), and [`success_when`](#success_when). Anything not listed in those arrays falls back to `neutral`.
+The `Status` field displays a record's value beside a colored indicator on index and show views. It can show a loading spinner, failure icon, success icon, or neutral icon.
 
 ```ruby
+# app/avo/resources/project.rb
 field :status,
   as: :status,
   failed_when: [:failed],
@@ -18,60 +19,48 @@ field :status,
   success_when: [:done, :success]
 ```
 
+Without any mappings, every value uses the neutral indicator. Unmapped values also remain neutral; the displayed label is still the record's value.
+
 Each row in the table uses one of these values. `archived` is not listed in any array, so it falls back to `neutral`.
 
 <Image src="/assets/img/4_0/fields/status/index.webp" dark-src="/assets/img/4_0/fields/status/index-dark.webp" width="1776" height="782" alt="An Avo index table with ID, Name, Status and Stage columns where Status rows show loading, pending, failed, success and neutral indicators and Stage rows show colored badges." prompt="index table with ID, Name and Status columns showing loading, failed, success and neutral status states" />
 
-## Options
+## Map your workflow to indicators
 
-<Option name="`failed_when`">
+<span id="failed_when"></span>
+<span id="loading_when"></span>
+<span id="success_when"></span>
 
-Set the values for when the status is `failed`.
+Use [`failed_when`](./status-api.html#failed_when) for values such as `:closed`, `:rejected`, or `:failed`, [`loading_when`](./status-api.html#loading_when) for work in progress, and [`success_when`](./status-api.html#success_when) for completed work. Strings and symbols can be mixed, so a value such as `"in progress"` works too.
 
-#### Default value
+```ruby
+# app/avo/resources/deployment.rb
+field :status,
+  as: :status,
+  failed_when: [:rejected, :failed],
+  loading_when: [:running, :waiting, "in progress"],
+  success_when: [:done, :deployed, "ok"]
+```
 
-`[]`
+:::warning Overlapping mappings
+Keep the groups distinct. If a value appears in multiple groups, success takes precedence over loading, and loading takes precedence over failure.
+:::
 
-#### Possible values
+## Include neutral values in filters
 
-`[:closed, :rejected, :failed]` or an array with strings or symbols that indicate the `failed` state.
-</Option>
+<span id="neutral_when"></span>
 
-<Option name="`loading_when`">
+If a filter uses the field's available options, list neutral workflow values in [`neutral_when`](./status-api.html#neutral_when) so they are included too.
 
-Set the values for when the status is `loading`.
+```ruby
+# app/avo/resources/project.rb
+field :status, as: :status, neutral_when: [:holding, "waiting"]
+```
 
-#### Default value
+You do not need this option just to display a neutral indicator. It does not override a failure, loading, or success mapping.
 
-`[]`
+## Edit the status value
 
-#### Possible values
+On forms, the status field is a text input, not a dropdown. The mappings control display only; they do not restrict which values a user can enter. Use model validations if your workflow accepts only specific values.
 
-`[:loading, :running, :waiting, "in progress"]` or an array with strings or symbols that indicate the `loading` state.
-</Option>
-
-<Option name="`success_when`">
-
-Set the values for when the status is `success`.
-
-#### Default value
-
-`[]`
-
-#### Possible values
-
-`[:done, :success, :deployed, "ok"]` or an array with strings or symbols that indicate the `success` state.
-</Option>
-
-<Option name="`neutral_when`">
-
-Set the values for when the status is `neutral`.
-
-#### Default value
-
-`[]`
-
-#### Possible values
-
-`[:holding, "waiting"]` or an array with strings or symbols that indicate a `neutral` state.
-</Option>
+For options shared with other fields, see [Common field options](../field-options.html).

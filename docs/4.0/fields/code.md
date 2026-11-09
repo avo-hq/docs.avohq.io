@@ -2,115 +2,69 @@
 license: community
 description: "The Code field generates a code editor using codemirror package."
 fieldTags: [structured]
+outline: [2, 3]
+api_docs: ./code-api.html
 ---
 
 # Code
 
-The `Code` field generates a code editor using [codemirror](https://codemirror.net/) package. This field is hidden on **Index** view.
+The `Code` field provides a [CodeMirror](https://codemirror.net/) editor for source code and structured text, with syntax highlighting and line numbers. It is hidden on the **Index** view and read-only on **Show**.
 
 ```ruby
-field :custom_css, as: :code, theme: 'dracula', language: 'css'
+# app/avo/resources/user.rb
+field :custom_css, as: :code, language: "css"
 ```
+
+Without extra configuration, the editor highlights JavaScript, uses the default theme in light mode and Monokai in dark mode, and displays a collapsed preview on **Show**.
 
 <Image src="/assets/img/4_0/fields/code/index.webp" dark-src="/assets/img/4_0/fields/code/index-dark.webp" width="1520" height="614" alt="An Avo edit-form card containing a code field: a CodeMirror editor in the dracula dark theme with line-number gutter, showing syntax-highlighted CSS (a .user-card rule with display, padding, border-radius and background properties)." prompt="todo" />
 
-## Options
+## Highlight the right language {#language}
 
-<!-- @include: ./../common/field_options/always_show.md-->
+Set [`language`](./code-api.html#language) to match the stored code. The example above highlights CSS; the [reference](./code-api.html#language) lists all bundled language modes.
 
-<Option name="`theme`">
+## Choose the editor colors {#theme}
 
-Customize the color theme used in light mode. In dark mode Avo always uses the `monokai` theme, regardless of this setting.
-
-#### Default value
-
-`default`
-
-#### Possible values
-
-`default` or `monokai`. These are the only two [CodeMirror](https://codemirror.net/) themes bundled with Avo, so other theme names won't have any styling to apply.
-</Option>
-
-<Option name="`language`">
-
-Customize the syntax highlighting using the language method.
-
-#### Default value
-
-`javascript`
-
-#### Possible values
-
-`css`, `dockerfile`, `htmlmixed`, `javascript`, `markdown`, `nginx`, `php`, `ruby`, `sass`, `shell`, `sql`, `vue`, `xml`, or `yaml`.
-</Option>
-
-<Option name="`height`">
-
-Customize the height of the editor on the <Show /> view.
-
-On <Edit /> and <New /> the editor renders in a [resizable viewport](./../fields.html#resizable-editors) instead, so this option doesn't apply there — the height comes from the viewport's default (or whatever height the user last dragged it to).
-
-#### Default value
-
-`auto`
-
-#### Possible values
-
-`auto`, or any value in pixels (eg `height: 250px`).
-</Option>
-
-<Option name="`tab_size`">
-
-Customize the tab_size of the editor.
-
-#### Default value
-
-`2`
-
-#### Possible values
-
-Any integer value.
-</Option>
-
-<Option name="`indent_with_tabs`">
-
-Customize the type of indentation.
-
-#### Default value
-
-`false`
-
-#### Possible values
-
-`true` or `false`
-</Option>
-
-<Option name="`line_wrapping`">
-
-Customize whether the editor should apply line wrapping.
-
-#### Default value
-
-`true`
-
-#### Possible values
-
-`true` or `false`
-</Option>
-
-<Option name="`pretty_generated`">
-
-Convenience option for JSON columns. When enabled, Avo pretty-prints the stored value when displaying and editing it (via `JSON.pretty_generate`) and parses the editor content back to JSON on save (via `JSON.parse`). It sets sensible defaults for `format_using` and `update_using`, which you can still override yourself.
-
-#### Default value
-
-`false`
-
-#### Possible values
-
-`true` or `false`
+Use [`theme`](./code-api.html#theme) to select the light-mode colors. Avo bundles `default` and `monokai`; other theme names need their own styles. Dark mode always uses `monokai`.
 
 ```ruby
-field :metadata, as: :code, language: 'javascript', pretty_generated: true
+# app/avo/resources/user.rb
+field :custom_css, as: :code, language: "css", theme: "monokai"
 ```
-</Option>
+
+## Display more code on Show {#always_show}
+
+Set [`always_show`](./code-api.html#always_show) to keep the content expanded rather than showing a short, faded preview with a **More content** link. <span id="height"></span>Use [`height`](./code-api.html#height) to set the editor height on **Show**.
+
+```ruby
+# app/avo/resources/user.rb
+field :custom_css, as: :code, language: "css", always_show: true, height: "250px"
+```
+
+On **Edit** and **New**, the editor uses a [resizable viewport](../fields.html#resizable-editors) instead. Its height comes from the viewport default or the user's last resized height, not `height`.
+
+## Control indentation {#indent_with_tabs}
+
+For tab-indented code, enable [`indent_with_tabs`](./code-api.html#indent_with_tabs) and <span id="tab_size"></span>set [`tab_size`](./code-api.html#tab_size) to the desired tab width.
+
+```ruby
+# app/avo/resources/user.rb
+field :custom_css, as: :code, language: "css", indent_with_tabs: true, tab_size: 4
+```
+
+<span id="line_wrapping"></span>
+
+:::warning Line wrapping
+Lines wrap by default. Although the field accepts [`line_wrapping`](./code-api.html#line_wrapping), passing `false` currently still enables wrapping.
+:::
+
+## Edit a JSON column {#pretty_generated}
+
+Enable [`pretty_generated`](./code-api.html#pretty_generated) for a JSON column to display indented JSON and parse the edited text back to a JSON value on save.
+
+```ruby
+# app/avo/resources/user.rb
+field :metadata, as: :code, language: "javascript", pretty_generated: true
+```
+
+Custom `format_using` and `update_using` callbacks take precedence over these JSON defaults. See [shared field options](../field-options.html) for formatting, saving, visibility, and other common behavior.

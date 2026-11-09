@@ -3,25 +3,34 @@ license: community
 demoVideo: https://youtu.be/DKKSjNUvuBA
 description: "Displays and manages a list of tags on a record."
 fieldTags: [choice]
+outline: [2, 3]
+api_docs: ./tags-api.html
 ---
 
 # Tags field
 
-Adding a list of things to a record is something we need to do pretty frequently; that's why having the `tags` field is helpful.
+The `tags` field displays a list of values as tags and lets users add or remove them on forms. Use it for skills, categories, or other attributes backed by an array.
 
 ```ruby
-field :skills, as: :tags
+# app/avo/resources/course.rb
+class Avo::Resources::Course < Avo::BaseResource
+  def fields
+    field :skills, as: :tags
+  end
+end
 ```
+
+Without additional configuration, users can enter their own tags, commas separate tags, and no suggestions are supplied. The field normally writes an array; single-value selection is also available.
 
 <Image src="/assets/img/4_0/fields/tags/create-save.webm" dark-src="/assets/img/4_0/fields/tags/create-save-dark.webm" width="760" height="493" alt="An Avo create form with a tags field: the animation opens the suggestions dropdown, picks one and two, saves the record, and shows the tags on the Show view." prompt="gif on the create form adding tags from suggestions and saving to see them on show" />
 
-## Options
+## Suggest tags to users
 
-<Option name="`suggestions`">
+<span id="suggestions"></span>
 
-You can give suggestions to your users to pick from which will be displayed to the user as a dropdown under the field.
+Provide [`suggestions`](./tags-api.html#suggestions) to show a dropdown of choices. If the choices depend on the record, use a lambda:
 
-```ruby{4,10-12}
+```ruby
 # app/avo/resources/course.rb
 class Avo::Resources::Course < Avo::BaseResource
   def fields
@@ -32,220 +41,136 @@ end
 # app/models/course.rb
 class Course < ApplicationRecord
   def skill_suggestions
-    ['example suggestion', 'example tag', self.name]
+    ['example suggestion', 'example tag', name].compact
   end
 end
 ```
 
-#### Default value
+The lambda runs in an [ExecutionContext](../execution-context.html), with `record` available. For labels that differ from stored values, return hashes with `value` and `label`. Add `avatar` to show an image in the dropdown:
 
-`[]`
-
-#### Possible values
-
-The `suggestions` option can be an array of strings, an object with the keys `value`, `label`, and (optionally) `avatar`, or a lambda that returns an array of that type of object.
-
-The lambda is run inside a [`ExecutionContext`](./../execution-context.html), so it has access to the `record`, `resource`, `request`, `params`, `view`, and `view_context` along with other things.
-
-```ruby{5-21}
+```ruby
 # app/models/post.rb
 class Post < ApplicationRecord
   def self.tags_suggestions
-    # Example of an array of more advanced objects
     [
       {
         value: 1,
         label: 'one',
-        avatar: 'https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
+        avatar: 'https://images.unsplash.com/photo-1560363199-a1264d4ea5fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop'
       },
       {
         value: 2,
         label: 'two',
-        avatar: 'https://images.unsplash.com/photo-1567254790685-6b6d6abe4689?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
+        avatar: 'https://images.unsplash.com/photo-1567254790685-6b6d6abe4689?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop'
       },
       {
         value: 3,
         label: 'three',
-        avatar: 'https://images.unsplash.com/photo-1560765447-da05a55e72f8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop',
-      },
+        avatar: 'https://images.unsplash.com/photo-1560765447-da05a55e72f8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&w=256&h=256&fit=crop'
+      }
     ]
+  end
+end
+
+# app/avo/resources/post.rb
+class Avo::Resources::Post < Avo::BaseResource
+  def fields
+    field :items, as: :tags, suggestions: -> { Post.tags_suggestions }
   end
 end
 ```
 
-</Option>
+### Restrict the choices
 
-<Option name="`disallowed`">
+<span id="enforce_suggestions"></span>
+<span id="enforce-suggestions"></span>
+<span id="disallowed"></span>
 
-The `disallowed` param works similarly to `suggestions`. Use it to prevent the user from adding specific values.
+If users must choose from the list, enable [`enforce_suggestions`](./tags-api.html#enforce_suggestions). To reject particular values while still allowing other new tags, use [`disallowed`](./tags-api.html#disallowed).
 
-```ruby{3}
-field :skills,
-  as: :tags,
-  disallowed: ["not", "that"]
+```ruby
+# app/avo/resources/course.rb
+field :skills, as: :tags, suggestions: %w(one two three), enforce_suggestions: true
+field :topics, as: :tags, disallowed: %w(not that)
 ```
 
-#### Default value
+:::warning Validate on the server
+These restrictions apply to the browser input. Add model validations when the same restrictions must apply to direct requests or other writers.
+:::
 
-`[]`
+### Adjust the dropdown
 
-#### Possible values
+<span id="suggestions_max_items"></span>
+<span id="suggestions-max-items"></span>
+<span id="close_on_select"></span>
+<span id="close-on-select"></span>
 
-An array of strings representing the value that can't be stored in the database.
+If the list is long, reduce [`suggestions_max_items`](./tags-api.html#suggestions_max_items); users can narrow the query to see other matches. Enable [`close_on_select`](./tags-api.html#close_on_select) to dismiss the dropdown after picking a tag.
 
-</Option>
-
-<Option name="`enforce_suggestions`">
-
-Set whether the field should accept other values outside the suggested ones. If set to `true` the user won't be able to add anything else than what you posted in the `suggestions` option.
-
-```ruby{4}
-field :skills,
-  as: :tags,
+```ruby
+# app/avo/resources/course.rb
+field :skills, as: :tags,
   suggestions: %w(one two three),
-  enforce_suggestions: true
-```
-
-<!-- @include: ./../common/default_boolean_false.md-->
-
-</Option>
-
-<Option name="`suggestions_max_items`">
-
-Set of suggestions that can be displayed at once. The excessive items will be hidden and the user will have to narrow down the query to see them.
-
-```ruby{4}
-field :skills,
-  as: :tags,
-  suggestions: %w(one two three),
-  suggestions_max_items: 2
-```
-
-#### Default value
-
-`20`
-
-#### Possible values
-
-Integers
-</Option>
-
-<Option name="`close_on_select`">
-
-Set whether the `suggestions` dropdown should close after the user makes a selection.
-
-```ruby{4}
-field :items,
-  as: :tags,
-  suggestions: -> { Post.tags_suggestions },
+  suggestions_max_items: 2,
   close_on_select: true
 ```
 
-<!-- @include: ./../common/default_boolean_false.md-->
-</Option>
+## Separate tags while typing
 
-<Option name="`acts_as_taggable_on`">
+<span id="delimiters"></span>
 
-Set the field the `acts_as_taggable_on` is set.
+If users enter space-separated tags, include a space in [`delimiters`](./tags-api.html#delimiters):
 
-#### Default value
-
-`nil`
-
-#### Possible values
-
-Any string or symbol you have configured on your corresponding model.
-</Option>
-
-<Option name="`delimiters`">
-
-Set the characters that will cut off the content into tags when the user inputs the tags.
-
-```ruby{3}
-field :skills,
-  as: :tags,
-  delimiters: [",", " "]
+```ruby
+# app/avo/resources/course.rb
+field :skills, as: :tags, delimiters: [",", " "]
 ```
 
-#### Default value
+## Select a single value
 
-`[","]`
+<span id="mode"></span>
 
-#### Possible values
+If an attribute stores one value rather than an array, set [`mode`](./tags-api.html#mode) to `:select`. This also works with remote suggestions.
 
-`[",", " "]`
-
-Valid values are comma `,` and space ` `.
-
-</Option>
-
-
-<Option name="`mode`">
-
-By default, the tags field produces an array of items (ex: categories for posts), but in some scenarios you might want it to produce a single value (ex: dynamically search for users and select just one). Use `mode: :select` to make the field produce a single value as opposed to an array of values.
-
-```ruby{3}
-field :skills,
-  as: :tags,
+```ruby
+# app/avo/resources/course.rb
+field :primary_skill, as: :tags,
+  suggestions: %w(Ruby Rails JavaScript),
+  enforce_suggestions: true,
   mode: :select
 ```
 
-#### Default value
+## Search for suggestions remotely
 
-`nil`
+<span id="fetch_values_from"></span>
+<span id="fetch-values-from"></span>
 
-#### Possible values
+Use [`fetch_values_from`](./tags-api.html#fetch_values_from) when choices come from an endpoint rather than a preloaded list. This is also useful in [Actions](../actions.html).
 
-Valid values are `nil` for array values and `select` for a single value.
-
-</Option>
-
-<Option name="`fetch_values_from`">
-
-There might be cases where you want to dynamically fetch the values from an API. The `fetch_values_from` option enables you to pass a URL from where the field should suggest values.
-
-This options works wonderful when used in [Actions](./../actions.html).
-
-```ruby{3}
-field :skills,
-  as: :tags,
-  fetch_values_from: "/avo/resources/skills/skills_for_user"
+```ruby
+# app/avo/resources/course.rb
+field :skills, as: :tags, fetch_values_from: "/avo/resources/skills/skills_for_user"
 ```
 
-When the user searches for a record, the field will perform a request to the server to fetch the records that match that query.
+The endpoint receives the search text in `params["q"]` and returns JSON objects with `value` and `label`:
 
-<br>
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-Valid values are `nil`, a string, or a block that evaluates to a string. The string should resolve to an endpoint that returns an array of objects with the keys `value` and `label`.
-
-The endpoint will receive the user input as `q` in the params. It is accessible by using `params["q"]`.
 ::: code-group
 
-```ruby{2-10} [app/controllers/avo/skills_controller.rb]
+```ruby [app/controllers/avo/skills_controller.rb]
+# app/controllers/avo/skills_controller.rb
 class Avo::SkillsController < Avo::ResourcesController
   def skills_for_user
-    # You can access the user input by using params["q"]
-    skills = Skill.all.map do |skill|
-      {
-        value: skill.id,
-        label: skill.name
-      }
-    end
+    skills = Skill.where("name ILIKE ?", "%#{Skill.sanitize_sql_like(params[:q].to_s)}%")
+      .limit(20)
+      .map { |skill| {value: skill.id, label: skill.name} }
     render json: skills
   end
 end
 ```
 
-```ruby{13} [config/routes.rb]
+```ruby [config/routes.rb]
+# config/routes.rb
 Rails.application.routes.draw do
-  # your routes
-
   authenticate :user, ->(user) { user.is_admin? } do
     mount_avo
   end
@@ -254,7 +179,6 @@ end
 if defined? ::Avo
   Avo::Engine.routes.draw do
     scope :resources do
-      # Add route for the skills_for_user action
       get "skills/skills_for_user", to: "skills#skills_for_user"
     end
   end
@@ -262,85 +186,66 @@ end
 ```
 :::
 
-:::info
-When using the `fetch_values_from` pattern, on the <Show /> and <Index /> views you will see the `id` of those options instead of the label.
-That is expected, because you are storing the `id`s in the database and the field can't know what labels those `id`s have.
+Apply your application's authorization and record scoping to the endpoint before returning suggestions. The query above uses PostgreSQL's `ILIKE` operator.
 
-To mitigate that use the [`format_using`](tags#format_using) option.
-:::
+### Display labels instead of stored IDs
 
-</Option>
+Remote suggestions do not automatically resolve labels on <Show /> and <Index /> views. To display names for stored IDs, use the shared `format_display_using` option described in [Common field options](../field-options.html). Return hashes with symbol keys `value` and `label`:
 
-<Option name="`format_using`">
-
-The `format_using` option allows you to pass an array of custom strings or hashes to be displayed on the tags field. This option is useful when Avo is displaying a bunch of IDs and you want to show some custom label from that ID's record.
-
-```ruby{4-11}
-field :skills,
-  as: :tags,
+```ruby
+# app/avo/resources/course.rb
+field :skills, as: :tags,
   fetch_values_from: "/avo/resources/skills/skills_for_user",
-  format_using: -> {
-    Skill.find(value).map do |skill|
-      {
-        value: skill.id,
-        label: skill.name
-      }
+  format_display_using: -> {
+    Skill.where(id: Array.wrap(value)).map do |skill|
+      {value: skill.id, label: skill.name}
     end
   }
 ```
 
-In the above example, `format_using` is a lambda that retrieves the names and the ids of the skills stored in the record's `skills` property.
+<span id="format_using"></span>
+<span id="format-using"></span>
 
-When you use `format_using`, Avo passes the `value`, current `resource` and `record` as arguments to the lambda function. This gives you access to the hydrated resource and the current record.
+If labels are also needed in the edit input, use `format_using` instead. It applies to all views and has `value`, `resource`, and `record` available in its execution context. Returning strings replaces the values used in the input; returning hashes keeps the stored `value` separate from the visible `label`.
 
-#### Default value
+## Store tags in a PostgreSQL array
 
-Avo's default behavior on tags
+Back the attribute with an array column:
 
-#### Possible values
-
-- Array of strings, notice that this will replace the DB values
-- Array of hashes with `value` and `label` keys. WIll show the `label` and store the `value`
-</Option>
-
-## PostgreSQL array fields
-
-You can use the tags field with the PostgreSQL array field.
-
-```ruby{11}
-# app/avo/resources/course.rb
-class Avo::Resources::Course < Avo::BaseResource
-  def fields
-    field :skills, as: :tags
-  end
-end
-
-# db/migrate/add_skills_to_courses.rb
-class AddSkillsToCourses < ActiveRecord::Migration[6.0]
+```ruby
+# db/migrate/20260101000000_add_skills_to_courses.rb
+class AddSkillsToCourses < ActiveRecord::Migration[7.0]
   def change
     add_column :courses, :skills, :text, array: true, default: []
   end
 end
 ```
 
-## Acts as taggable on
+Then declare `field :skills, as: :tags` in `app/avo/resources/course.rb`, as in the opening example. Other array-backed attributes can work too, provided the model reads an array and accepts the submitted values through its writer.
 
-One popular gem used for tagging is [`acts-as-taggable-on`](https://github.com/mbleigh/acts-as-taggable-on). The tags field integrates very well with it.
+## Integrate with acts-as-taggable-on
 
-You need to add `gem 'acts-as-taggable-on', '~> 9.0'` in your `Gemfile`, add it to your model `acts_as_taggable_on :tags`, and use `acts_as_taggable_on` on the field.
+<span id="acts_as_taggable_on"></span>
+<span id="acts-as-taggable-on"></span>
 
-```ruby{6}
+The field integrates with [`acts-as-taggable-on`](https://github.com/mbleigh/acts-as-taggable-on). Install the gem and follow its setup instructions, then configure the model's tagging context with [`acts_as_taggable_on`](./tags-api.html#acts_as_taggable_on):
+
+```ruby
+# Gemfile
+gem 'acts-as-taggable-on', '~> 9.0'
+```
+
+```ruby
 # app/avo/resources/post.rb
 class Avo::Resources::Post < Avo::BaseResource
   def fields
     field :tags,
       as: :tags,
       acts_as_taggable_on: :tags,
-      close_on_select: false,
       placeholder: 'add some tags',
-      suggestions: -> { Post.tags_suggestions },
+      suggestions: %w(one two three),
       enforce_suggestions: true,
-      help: 'The only allowed values here are `one`, `two`, and `three`'
+      help: 'The only allowed values here are one, two, and three'
   end
 end
 
@@ -350,32 +255,12 @@ class Post < ApplicationRecord
 end
 ```
 
-That will let Avo know which attribute should be used to fill with the user's tags.
+Use a field name matching the tagging association, such as `:tags` for the `tag_list=` writer.
 
 :::info Related
-You can set up the tags as a resource using [this guide](./../guides/act-as-taggable-on-integration).
+You can set up the tags as a resource using [this guide](../guides/act-as-taggable-on-integration).
 :::
 
-## Array fields
+## Common field options
 
-We haven't tested all the scenarios, but the tags field should play nicely with any array fields provided by Rails.
-
-```ruby{10-12,14-16}
-# app/avo/resources/post.rb
-class Avo::Resources::Post < Avo::BaseResource
-  def fields
-    field :items, as: :tags
-  end
-end
-
-# app/models/post.rb
-class Post < ApplicationRecord
-  def items=(items)
-    puts ["items->", items].inspect
-  end
-
-  def items
-    %w(1 2 3 4)
-  end
-end
-```
+For placeholders, help text, formatting, and other shared settings, see [Common field options](../field-options.html).

@@ -2,15 +2,16 @@
 license: community
 description: "The badge field is used to display an easily recognizable status of a record."
 fieldTags: [display]
+outline: [2, 3]
+api_docs: ./badge-api.html
 ---
 
 # Badge
 
-The `badge` field is used to display an easily recognizable status of a record.
-
-<Image src="/assets/img/4_0/fields/badge/types.webp" dark-src="/assets/img/4_0/fields/badge/types-dark.webp" width="1280" height="668" alt="Two Avo panels showing every badge color the field can render at its native size, grouped by category: a “Base colors” panel with red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink and rose badge pills, and a “Semantic colors” panel with neutral, info, success, warning and danger badge pills — each pill labelled with its color name." prompt="all posible badges types split nice per categories no outside labels, the label should be inside the badge" />
+The `badge` field displays a record's status as a colored label on the <Index /> and <Show /> views. Map stored values to colors to make statuses easy to recognize.
 
 ```ruby
+# app/avo/resources/project.rb
 field :status, as: :badge,
   options: {
     success: "Done",
@@ -21,109 +22,71 @@ field :status, as: :badge,
   }
 ```
 
-## Description
+<span id="description"></span>
 
-The Badge field displays a colored indicator with optional icons. You can customize the color through the `options` mapping, and the `style` and `icon` for each value dynamically using procs.
+Without configuration, badges use a subtle appearance with no icon, render values in neutral colors, and stay off forms. To allow editing, see [Editing the value](#editing-the-value).
 
-The `Badge` field shows on the <Index /> and <Show /> views. Add `show_on: :forms` to edit its value on <New /> and <Edit /> as well. See [Editing the value](#editing-the-value).
+<Image src="/assets/img/4_0/fields/badge/types.webp" dark-src="/assets/img/4_0/fields/badge/types-dark.webp" width="1280" height="668" alt="Two Avo panels showing every badge color the field can render at its native size, grouped by category: a Base colors panel with red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink and rose badge pills, and a Semantic colors panel with neutral, info, success, warning and danger badge pills, each labelled with its color name." prompt="all posible badges types split nice per categories no outside labels, the label should be inside the badge" />
 
-## Options
+## Color-code statuses {#options}
 
-<Option name="`options`">
+Use [`options`](./badge-api.html#options) to group stored values by color. A single color can cover several statuses, and values not included in the mapping remain neutral. See the [available colors](./badge-api.html#options) for the complete palette.
 
-Maps field values to badge colors. Keys are color names (semantic or base colors), and values can be a single value (string/symbol) or an array of values that should display with that color.
-
-#### Default value
-
-`{}`
-
-#### Possible values
-
-Keys are color names, values are the field values that should display in that color.
-
-**Base colors:** `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
-
-**Semantic colors:** `neutral`, `success`, `danger`, `warning`, `info`
-
-:::info Default behavior
-If a value doesn't match any of the configured options, it will default to `neutral`.
-:::
+<span id="examples"></span>
+<span id="using-semantic-colors"></span>
 
 ```ruby
-# Map values to colors
+# app/avo/resources/project.rb
 field :status, as: :badge,
   options: {
-    success: ["Done", :completed],      # Arrays with mixed types
-    danger: "Cancelled",                # Single string
-    warning: :pending,                  # Single symbol
-    violet: "Idea"                      # Base color
+    success: ["active", "completed"],
+    info: ["pending", "review"],
+    danger: ["failed", "cancelled"],
+    neutral: "unknown"
   }
 ```
 
-</Option>
+<span id="using-base-colors"></span>
 
-<Option name="`style`">
-
-Controls the badge appearance style. Can be a lambda, which is evaluated inside an [`ExecutionContext`](./../execution-context.html).
-
-#### Default value
-
-`subtle`
-
-#### Possible values
-
-- `subtle` - Light background with colored text
-- `solid` - Solid colored background with white text
-
-:::info Default behavior
-If an invalid style is provided, it will default to `subtle`.
-:::
+For priorities, use base colors to show increasing urgency:
 
 ```ruby
-field :status, as: :badge,
-  options: { success: :done },
-  style: "solid"
-
-# Or dynamically
-field :status, as: :badge,
-  options: { success: :done },
-  style: -> { record.completed? ? "solid" : "subtle" }
+# app/avo/resources/project.rb
+field :priority, as: :badge,
+  options: { green: :low, amber: :medium, orange: :high, red: :urgent }
 ```
 
-</Option>
+## Emphasize a status {#style}
 
-<Option name="`icon`">
-
-Adds an icon to the badge. Can be a lambda, which is evaluated inside an [`ExecutionContext`](./../execution-context.html).
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-An icon name string (e.g. `"heroicons/outline/check-circle"`), or a lambda returning one.
+Set [`style`](./badge-api.html#style) to `"solid"` for a stronger background, or use a lambda to emphasize only particular records:
 
 ```ruby
+# app/avo/resources/project.rb
 field :status, as: :badge,
-  options: { success: :done },
-  icon: "heroicons/outline/check-circle"
+  options: { success: "Done", warning: "On hold" },
+  style: -> { record.status == "Done" ? "solid" : "subtle" }
+```
 
-# Or dynamically
+## Add a status icon {#icon}
+
+Provide [`icon`](./badge-api.html#icon) with an icon name such as `"heroicons/outline/check-circle"`. For a different icon per status, return the name from a lambda:
+
+```ruby
+# app/avo/resources/project.rb
 field :status, as: :badge,
-  options: { success: :done },
+  options: { success: "Done" },
   icon: -> {
-    record.approved? ? "heroicons/outline/check-circle" : "heroicons/outline/x-circle"
+    record.status == "Done" ? "heroicons/outline/check-circle" : "heroicons/outline/x-circle"
   }
 ```
 
-</Option>
+Both dynamic options use an [ExecutionContext](../execution-context.html), with access to `record`, `resource`, `view`, and `field`.
 
 ## Editing the value
 
 <VersionReq package="avo" version="4.3.1" />
 
-Add [`show_on: :forms`](./../field-options-api.html#show_on) and the badge renders a select of the values listed in `options` on <New /> and <Edit />:
+Add [`show_on: :forms`](../field-options.html#show_on) and the badge renders a select of the values listed in `options` on <New /> and <Edit />:
 
 ```ruby
 # app/avo/resources/project.rb
@@ -138,7 +101,7 @@ field :stage, as: :badge,
 
 Badges stay off forms unless you opt in. Any visibility option does it, so `only_on: [:show, :edit]` and `except_on: :index` put the select on forms too.
 
-- The select starts with a blank option, so a record with no value doesn't silently take the first one on its next save. A blank selection saves `""`. Add [`nullable: true`](./../field-options-api.html#nullable) to save `nil` instead.
+- The select starts with a blank option, so a record with no value doesn't silently take the first one on its next save. A blank selection saves `""`. Add [`nullable: true`](../field-options.html#nullable) to save `nil` instead.
 - A value that `options` doesn't map to a color still shows in the list for the record that holds it, so saving the form never erases it.
 - A computed badge, one declared with a block, stays off forms.
 - In an [action](./../actions.html) modal, a badge with `show_on: :forms` renders as the same select. Without it, the badge renders read-only.
@@ -165,56 +128,31 @@ field :stage,
 field :stage,
   as: :badge,
   options: {
-    info: ["Discovery", "Idea"],
-    success: :Done,
-    warning: "On hold",
-    danger: "Cancelled",
-    neutral: :Drafting
+    info: [:discovery, :idea],
+    success: :done,
+    warning: "on hold",
+    danger: :cancelled,
+    neutral: :drafting
   },
-  style: -> { ["Done", "Cancelled"].include?(record.stage) ? "solid" : "subtle" },
+  style: -> { ["done", "cancelled"].include?(record.stage) ? "solid" : "subtle" },
   icon: -> {
     {
-      "Discovery" => "tabler/outline/zoom",
-      "Idea" => "tabler/outline/bulb",
-      "Drafting" => "tabler/outline/file-text",
-      "Done" => "tabler/outline/circle-check",
-      "On hold" => "tabler/outline/player-pause",
-      "Cancelled" => "tabler/outline/xbox-x"
+      "discovery" => "tabler/outline/zoom",
+      "idea" => "tabler/outline/bulb",
+      "drafting" => "tabler/outline/file-text",
+      "done" => "tabler/outline/circle-check",
+      "on hold" => "tabler/outline/player-pause",
+      "cancelled" => "tabler/outline/xbox-x"
     }[record.stage]
   }
 ```
 
-## Examples
+## Show when a status changed {#showing-the-moment-behind-a-status}
 
-### Using semantic colors
-
-```ruby
-field :status, as: :badge,
-  options: {
-    success: ["active", "completed"],
-    info: ["pending", "review"],
-    danger: ["failed", "cancelled"],
-    neutral: ["unknown"]
-  }
-```
-
-### Using base colors
+A badge says *what* the state is. The [`tooltip`](../field-options.html#tooltip) option can say *when*, on hover, without spending a column on it:
 
 ```ruby
-field :priority, as: :badge,
-  options: {
-    green: :low,
-    amber: :medium,
-    orange: :high,
-    red: :urgent
-  }
-```
-
-### Showing the moment behind a status
-
-A badge says *what* the state is. The [`tooltip`](../field-options-api.html#tooltip) option can say *when*, on hover, without spending a column on it:
-
-```ruby
+# app/avo/resources/project.rb
 field :status,
   as: :badge,
   options: {success: :active, warning: :expired, danger: :revoked},
