@@ -537,6 +537,30 @@ Define `view_<association>?` for every association MCP clients should read.
 
 </Option>
 
+<a id="avo-mcp-server-unversioned-2026-10-22"></a>
+
+<a id="avo-mcp-server-records-are-named-by-to-param"></a>
+
+_records are named by `to_param`_
+
+
+<Option headingSize="3" name="Record ids are strings, resolved through the resource's own finder">
+
+#### What changed
+
+The MCP tools name every record by its `to_param`, the id in the panel's URL, and find it through the resource's [`find_record_method`](./resources-api.html#self.find_record_method), within the admin's policy scope. They used to use the primary key.
+
+- **Ids are strings.** `list_records`, `search_records`, `show_record` and the write tools return a record's id as `"12"`, not `12`, and so do a `belongs_to`'s id, a `has_many`'s ids, and `run_action`'s `recordIds`. The `id` and `record_ids` arguments take strings; an integer is refused with `value at /id is not a string`.
+- **Hidden keys stay hidden.** Where a model hides its primary key (friendly_id, hashids, a prefixed id, a custom `to_param`), tools return the slug or hashid instead of the primary key, and take whatever the resource's finder takes. A record with no title attribute is titled `Post #<to_param>`.
+- **A `belongs_to` takes back the id `show_record` gives**, also on a resource found by slug alone.
+
+#### Action Required
+
+- **A client, prompt or skill that sends or compares ids as numbers:** treat ids as strings and send back what the tools return.
+- **A tool of your own:** declare its id arguments `type: "string"`, pass them to `ToolSupport.find_authorized_record!` as received, and name records by `record.to_param` in what it returns. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+
+</Option>
+
 ## `avo-menu` 4.3.1 <span class="tl-date">Oct 28, 2026</span> {#avo-menu-4-3-1 data-gems="avo-menu" data-date="2026-10-28" data-version="4.3.1"}
 
 <a id="upgrade-to-avo-menu-4-3-1"></a>
@@ -674,7 +698,9 @@ None, unless your `create?` policy is looser than `update?` and you want to keep
 
 </Option>
 
-## `avo-ai` + `avo-mcp_server` + `avo-menu`  <span class="tl-date">Unreleased yet?</span> {#avo-ai-avo-mcp-server-avo-menu-unversioned-2026-10-27 data-gems="avo-ai avo-mcp_server avo-menu" data-date="2026-10-27"}
+## `avo-ai` 4.3.0.beta.6 · `avo-mcp_server` 4.3.0.beta.2 · `avo-menu` 4.3.1 <span class="tl-date">Oct 27, 2026</span> {#avo-ai-4-3-0-beta-6 data-gems="avo-ai avo-mcp_server avo-menu" data-date="2026-10-27" data-releases="avo-ai@4.3.0.beta.6 avo-mcp_server@4.3.0.beta.2 avo-menu@4.3.1"}
+
+<a id="avo-ai-avo-mcp-server-avo-menu-unversioned-2026-10-27"></a>
 
 <a id="avo-ai-avo-mcp-server-avo-menu-an-action-s-visible-block-applies-everywhere"></a>
 
@@ -696,7 +722,9 @@ None, unless an action hides itself with `self.visible` but is still meant to ru
 
 </Option>
 
-## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-10-22 data-gems="avo" data-date="2026-10-22"}
+## `avo` 4.3.5 <span class="tl-date">Oct 24, 2026</span> {#avo-4-3-5 data-gems="avo" data-date="2026-10-24" data-version="4.3.5"}
+
+<a id="avo-unversioned-2026-10-22"></a>
 
 <a id="avo-bulk-actions-find-the-selected-records-through-find-records"></a>
 
@@ -719,31 +747,7 @@ None, unless a bulk action calls a relation method such as `update_all`, `where`
 
 </Option>
 
-## `avo-mcp_server`  <span class="tl-date">Unreleased yet?</span> {#avo-mcp-server-unversioned-2026-10-22 data-gems="avo-mcp_server" data-date="2026-10-22"}
-
-<a id="avo-mcp-server-records-are-named-by-to-param"></a>
-
-_records are named by `to_param`_
-
-
-<Option headingSize="3" name="Record ids are strings, resolved through the resource's own finder">
-
-#### What changed
-
-The MCP tools name every record by its `to_param`, the id in the panel's URL, and find it through the resource's [`find_record_method`](./resources-api.html#self.find_record_method), within the admin's policy scope. They used to use the primary key.
-
-- **Ids are strings.** `list_records`, `search_records`, `show_record` and the write tools return a record's id as `"12"`, not `12`, and so do a `belongs_to`'s id, a `has_many`'s ids, and `run_action`'s `recordIds`. The `id` and `record_ids` arguments take strings; an integer is refused with `value at /id is not a string`.
-- **Hidden keys stay hidden.** Where a model hides its primary key (friendly_id, hashids, a prefixed id, a custom `to_param`), tools return the slug or hashid instead of the primary key, and take whatever the resource's finder takes. A record with no title attribute is titled `Post #<to_param>`.
-- **A `belongs_to` takes back the id `show_record` gives**, also on a resource found by slug alone.
-
-#### Action Required
-
-- **A client, prompt or skill that sends or compares ids as numbers:** treat ids as strings and send back what the tools return.
-- **A tool of your own:** declare its id arguments `type: "string"`, pass them to `ToolSupport.find_authorized_record!` as received, and name records by `record.to_param` in what it returns. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
-
-</Option>
-
-## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-10-22-2 data-gems="avo" data-date="2026-10-22"}
+<a id="avo-unversioned-2026-10-22-2"></a>
 
 <a id="avo-attaching-a-has-many-has-one-or-habtm-record-follows-attach-scope"></a>
 
@@ -762,7 +766,7 @@ None for the modal's own list, which offers only records inside the `attach_scop
 
 </Option>
 
-## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-10-22-3 data-gems="avo" data-date="2026-10-22"}
+<a id="avo-unversioned-2026-10-22-3"></a>
 
 <a id="avo-a-belongs-to-value-that-matches-no-record-is-a-form-error"></a>
 
@@ -781,7 +785,7 @@ None, unless an API client reads a `404` from a create or update as "the related
 
 </Option>
 
-## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-10-22-4 data-gems="avo" data-date="2026-10-22"}
+<a id="avo-unversioned-2026-10-22-4"></a>
 
 <a id="avo-a-field-declared-once-per-view-saves-through-the-form-s-declaration"></a>
 
@@ -804,7 +808,9 @@ Search your resources for a field declared more than once. Where the declaration
 
 </Option>
 
-## `avo-ai` + `avo-mcp_server`  <span class="tl-date">Unreleased yet?</span> {#avo-ai-avo-mcp-server-unversioned-2026-10-22 data-gems="avo-ai avo-mcp_server" data-date="2026-10-22"}
+## `avo-ai` 4.3.0.beta.5 · `avo-mcp_server` 4.3.0.beta.2 <span class="tl-date">Oct 24, 2026</span> {#avo-ai-4-3-0-beta-5 data-gems="avo-ai avo-mcp_server" data-date="2026-10-24" data-releases="avo-ai@4.3.0.beta.5 avo-mcp_server@4.3.0.beta.2"}
+
+<a id="avo-ai-avo-mcp-server-unversioned-2026-10-22"></a>
 
 <a id="avo-ai-and-avo-mcp-server-writes-go-through-the-resource-s-fields"></a>
 
@@ -1011,7 +1017,9 @@ Nothing grants or revokes anything on its own: the migration renames a column an
 
 </Option>
 
-## `avo-mcp_server`  <span class="tl-date">Unreleased yet?</span> {#avo-mcp-server-unversioned-2026-09-30 data-gems="avo-mcp_server" data-date="2026-09-30"}
+## `avo-mcp_server` 4.3.0.beta.1 <span class="tl-date">Oct 6, 2026</span> {#avo-mcp-server-4-3-0-beta-1 data-gems="avo-mcp_server" data-date="2026-10-06" data-version="4.3.0.beta.1"}
+
+<a id="avo-mcp-server-unversioned-2026-09-30"></a>
 
 <a id="avo-mcp-server-a-shipped-count-records-tool"></a>
 
@@ -1030,7 +1038,9 @@ Nothing, unless the app registers its own tool named `count_records` through [`e
 
 </Option>
 
-## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-09-29 data-gems="avo" data-date="2026-09-29"}
+## `avo` 4.2.11 <span class="tl-date">Sep 29, 2026</span> {#avo-4-2-11 data-gems="avo" data-date="2026-09-29" data-version="4.2.11"}
+
+<a id="avo-unversioned-2026-09-29"></a>
 
 <a id="avo-forms-ask-before-you-leave-with-unsaved-changes"></a>
 
@@ -1075,7 +1085,9 @@ end
 
 </Option>
 
-## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-09-29-2 data-gems="avo" data-date="2026-09-29"}
+## `avo` 4.2.10 <span class="tl-date">Sep 28, 2026</span> {#avo-4-2-10 data-gems="avo" data-date="2026-09-28" data-version="4.2.10"}
+
+<a id="avo-unversioned-2026-09-29-2"></a>
 
 <a id="built-in-neutral-themes-now-share-one-lightness-curve"></a>
 
@@ -1186,7 +1198,9 @@ Nothing, unless a client sorts by a column with no field. Declare a field for it
 
 </Option>
 
-## `avo-ai`  <span class="tl-date">Unreleased yet?</span> {#avo-ai-unversioned-2026-09-26 data-gems="avo-ai" data-date="2026-09-26"}
+## `avo-ai` 4.2.0.beta.5 <span class="tl-date">Sep 27, 2026</span> {#avo-ai-4-2-0-beta-5 data-gems="avo-ai" data-date="2026-09-27" data-version="4.2.0.beta.5"}
+
+<a id="avo-ai-unversioned-2026-09-26"></a>
 
 <a id="avo-ai-the-composer-limits-what-it-uploads"></a>
 
@@ -1221,7 +1235,7 @@ Add your app's authentication and a size check to that endpoint: [Protect the di
 
 </Option>
 
-## `avo-ai`  <span class="tl-date">Unreleased yet?</span> {#avo-ai-unversioned-2026-09-26-2 data-gems="avo-ai" data-date="2026-09-26"}
+<a id="avo-ai-unversioned-2026-09-26-2"></a>
 
 <a id="avo-ai-records-are-named-by-to-param"></a>
 
@@ -1826,4 +1840,3 @@ end
 See [Localizing actions](./i18n.html#localizing-actions) for the full picture.
 
 </Option>
-
