@@ -2,7 +2,7 @@
 const props = defineProps({
   version: String,
 })
-const editors = ["vscode", "cursor", "zed", "windsurf", "claude", "codex", "opencode", "jetbrains", "chatgpt", "gemini", "grok"]
+const editors = ["vscode", "cursor", "zed", "windsurf", "claude", "codex", "opencode", "amp", "jetbrains", "chatgpt", "gemini", "grok"]
 const names = {
   vscode: "VSCode",
   cursor: "Cursor",
@@ -11,6 +11,7 @@ const names = {
   claude: "Claude",
   codex: "Codex",
   opencode: "OpenCode",
+  amp: "Amp",
   jetbrains: "JetBrains IDEs",
   chatgpt: "ChatGPT",
   gemini: "Gemini",
