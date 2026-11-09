@@ -30,7 +30,7 @@ Both default to `true`, so you only need to set the keys you want to change.
 
 ## Change or disable a shortcut
 
-<VersionReq version="4.3.6" />
+<VersionReq package="avo" version="4.3.6" />
 
 Every shortcut in the tables below has a stable ID. Rebind it, or turn it off with `false`, through [`bindings`](./keyboard-shortcuts-api.html#bindings):
 

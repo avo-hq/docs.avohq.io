@@ -81,7 +81,7 @@ field :name, as: :text, visible: -> { resource.record&.enabled? }
 
 ## Hide fields that have no value
 
-<VersionReq version="4.2.11" />
+<VersionReq package="avo" version="4.2.11" />
 
 Some fields only matter when they're set. A customer might have a Stripe id or a Paddle id, never both. Pass [`hide_if_blank`](./field-options-api.html#hide_if_blank) the views where a blank field should disappear, instead of writing a `visible` block for each one.
 
@@ -328,7 +328,7 @@ field :name, as: :text, placeholder: 'John Doe'
 
 ## Focus a field when the form opens
 
-<VersionReq version="4.3.1" />
+<VersionReq package="avo" version="4.3.1" />
 
 Set [`autofocus`](./field-options-api.html#autofocus) on the field users fill in first, and the cursor starts there when the <New /> or <Edit /> form opens. It works in action modals too, where it replaces the default of focusing the first input.
 

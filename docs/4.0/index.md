@@ -114,6 +114,10 @@ bin/rails avo:update
 
 That resolves every Avo gem you have — core plus any add-ons — and updates them together, conservatively.
 
+<VersionReq package="avo" version="4.3.11" />
+
+The status page (`/status` under your Avo mount path) marks each gem that has a newer release. In development, its **Update all** button runs the same task, shows the output and offers to restart the app. **What's new** is a changelog of Avo and the gems you run, newest first, with what you have installed marked.
+
 ## Start here
 
 1. [Install Avo in your app](./installation.html)

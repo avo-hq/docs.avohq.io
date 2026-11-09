@@ -382,7 +382,6 @@ The policy removes fields first, then any `visible:` block narrows what's left. 
 - **A column no field declares can't be governed.** To govern a column, declare a field for it.
 - **"May see but may not write"** isn't expressible in one list. See [Let a user see a field but not change it](#let-a-user-see-a-field-but-not-change-it).
 - **Kanban's read side.** The column a card sits in discloses the value of the board's grouping property. A drag that would write a withheld field is refused, but the board still renders.
-- **avo-query doesn't participate.** It generates SQL from the schema and can't resolve a policy's lists.
 
 ## Let a user see a field but not change it
 

@@ -7,6 +7,8 @@ outline: [2, 3]
 
 Some resources are best displayed in a grid view. We can do that with Avo using a `cover_url`, a `title`, and a `body`.
 
+To add content around the grid or wrap, replace, or hide its records and pagination regions, use [slots](./slots.html). The `:cards` slot region means resource dashboard cards, not individual grid items.
+
 <Image src="/assets/img/4_0/grid-view/grid-view.webp" dark-src="/assets/img/4_0/grid-view/grid-view-dark.webp" width="2808" height="2030" alt="Avo grid view" />
 
 ## Enable grid view

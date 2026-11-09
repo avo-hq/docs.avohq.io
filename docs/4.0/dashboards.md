@@ -179,6 +179,103 @@ It's off by default, as the [per-card control](cards-api#self.refresh_button) is
 
 Setting it here does not turn on the per-card controls; the two are independent, and a dashboard button reloads every card whether or not the cards carry one.
 
+## Add header controls
+
+<VersionReq package="avo-dashboards" version="4.3.4" />
+
+Install `avo-custom_controls` alongside `avo-dashboards`, with a license that enables custom controls. Assign [`self.controls`](./dashboards-api.html#self.controls) to declare links, dropdowns, and partials in the native header:
+
+```ruby
+# app/avo/dashboards/operations.rb
+class Avo::Dashboards::Operations < Avo::Dashboards::BaseDashboard
+  self.id = "operations"
+  self.name = "Operations"
+  self.controls = -> {
+    link_to "Home", main_app.root_path
+    list label: "More" do
+      link_to "Admin home", avo.root_path
+      divider
+      link_to "Application home", main_app.root_path
+    end
+    partial "avo/dashboards/operations_controls", locals: {dashboard: dashboard}
+    refresh_button
+  }
+end
+```
+
+Controls are absent by default. The block uses the existing custom-controls collector, not an HTML return value. `list` takes keyword options such as `label:`, not a positional label. See [custom controls](./custom-controls-api.html#link_to) for link and list options.
+
+The block replaces the whole header, so [`self.refresh_button`](./dashboards-api.html#self.refresh_button) is ignored once it runs. Call [`refresh_button`](./custom-controls-api.html#refresh_button) to place the button, or `default_controls` to follow `self.refresh_button`. Without the gem or the license the block never runs and `self.refresh_button` works as usual.
+
+Use a [`partial`](./custom-controls-api.html#partial) for normal Rails forms. The header is meant for small controls, so keep them compact. For example, let users reload the dashboard for a period:
+
+```erb
+<%# app/views/avo/dashboards/_operations_controls.html.erb %>
+<%= form_with url: avo_dashboards.dashboard_path(dashboard), method: :get, class: "flex items-center gap-2" do |form| %>
+  <%= form.select :period, [["Today", "today"], ["This week", "week"]], {selected: params[:period]}, "aria-label": "Period", class: input_classes("w-auto mb-0", size: :sm) %>
+  <%= render(Avo::ButtonComponent.new(type: :submit, size: :sm)) { "Apply" } %>
+<% end %>
+```
+
+Cards must read and validate these parameters themselves. The refresh button reloads cards without submitting the form.
+
+:::warning
+Dashboard authorization runs before controls evaluation. Default resource buttons are unavailable on dashboards. For writes, use Rails forms with CSRF protection and application-owned endpoints that perform their own authorization. Hiding a control does not authorize its endpoint.
+:::
+
+## Run actions from the header
+
+<VersionReq package="avo-dashboards" version="4.3.4" />
+
+A dashboard can run [actions](./actions.html) of its own, with no resource behind it. Declare them in `actions`:
+
+```ruby{5-8}
+# app/avo/dashboards/operations.rb
+class Avo::Dashboards::Operations < Avo::Dashboards::BaseDashboard
+  self.id = "operations"
+  self.name = "Operations"
+
+  def actions
+    action Avo::Actions::ClearQueue
+    divider
+    action Avo::Actions::Reindex, arguments: {full: true}
+  end
+end
+```
+
+They appear in an Actions dropdown in the header and open in the usual modal. With `avo-custom_controls` you choose the placement instead: `actions_list` renders that dropdown, and [`action`](./custom-controls-api.html#action) renders one as its own button, whether or not `actions` lists it. `default_controls` adds the dropdown and follows `self.refresh_button`.
+
+```ruby
+self.controls = -> {
+  action Avo::Actions::ClearQueue, label: "Clear", icon: "tabler/outline/trash"
+  actions_list
+  refresh_button
+}
+```
+
+An action belongs to the dashboard that declares it, so there's nothing to select and it's always enabled. Its `handle` receives `dashboard:`, and no records:
+
+```ruby
+class Avo::Actions::ClearQueue < Avo::BaseAction
+  self.name = "Clear queue"
+
+  def fields
+    field :reason, as: :text
+  end
+
+  def handle(fields:, dashboard:, **)
+    ClearQueueJob.perform_later(dashboard: dashboard.id, reason: fields[:reason])
+    succeed "Queue cleared"
+  end
+end
+```
+
+Running one requires the dashboard's [`self.authorize`](./dashboards-api.html#self.authorize) and the action's own `authorize` to pass.
+
+:::warning
+`belongs_to` and `trix` fields need a resource, so they don't work in a dashboard action's modal yet. Use a `select` instead of `belongs_to`, and a `textarea` instead of `trix`.
+:::
+
 ## Cards
 
 Dashboards host cards — metrics, charts, tables, lists, and custom content. You declare them in the `cards` method, as shown in the [generated dashboard](#generate-a-dashboard) above.

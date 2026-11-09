@@ -166,13 +166,14 @@ Partial and HTML cards build their content at render time instead of running a `
 
 ## Load cards only when they're needed
 
-<VersionReq version="4.3.4" />
+<VersionReq package="avo-dashboards" version="4.3.4" />
 
 Every card loads in its own request after the page renders, so a slow card never holds up the page. A card also waits until it scrolls into view: a card further down a long dashboard runs its `query` only when the viewer reaches it.
 
 If a card is too expensive to run on every visit, even when it's visible, set [`loading`](./cards-api.html#self.loading) to `:manual`, the same value tabs and association fields take. The card renders its title, description, and a load button instead of its content, and runs its `query` only when someone clicks it.
 
-```ruby{3}
+```ruby{4}
+# app/avo/cards/revenue_breakdown.rb
 class Avo::Cards::RevenueBreakdown < Avo::Cards::ChartkickCard
   self.id = 'revenue_breakdown'
   self.loading = :manual
@@ -605,7 +606,7 @@ end
 
 ## HTML card
 
-<VersionReq version="4.1" />
+<VersionReq package="avo-dashboards" version="4.1" />
 
 When the content is simple enough that a dedicated partial file feels like overhead, use an HTML card and build the body straight from Ruby. Implement a `body` method — every view helper (`tag`, `safe_join`, `link_to`, `number_to_currency`, `render`, `main_app`, …) is available directly on the card, and the return value can take three shapes.
 
@@ -681,7 +682,7 @@ Inline templates go through ActionView, so interpolated values (`<%= user.name %
 
 ## Table card
 
-<VersionReq version="4.1" />
+<VersionReq package="avo-dashboards" version="4.1" />
 
 Use a table card to show a list of things — latest sign-ups, top products, failed jobs — styled like Avo's index table but fed by any query. Declare the columns as `fields` — the same DSL you use on resources — and return records from `query`.
 
@@ -775,7 +776,7 @@ The card's `rows` setting caps the table's height rather than fixing it. A short
 
 ## List card
 
-<VersionReq version="4.1" />
+<VersionReq package="avo-dashboards" version="4.1" />
 
 Use a list card whenever you want to show a list of things without table semantics — it renders a real `<ul>`, not a `<table>`, and there are no column headers. The first field is each row's primary content and every other field trails at the end edge — great for badges, booleans, or timestamps.
 
@@ -986,7 +987,7 @@ end
 
 ## Show a card in a custom tool
 
-<VersionReq version="4.3.2" />
+<VersionReq package="avo-dashboards" version="4.3.2" />
 
 Card classes need a dashboard or a resource to render on. When a [custom tool](./custom-tools.html) wants the same look with its own data, render [`Avo::Cards::StandaloneCardComponent`](./cards-api.html#standalone-card-component) and pass it plain values. Its block is the card's body. Put [`Avo::Cards::MetricComponent`](./cards-api.html#metric-component) inside it to show a number the way a metric card does.
 

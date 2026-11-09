@@ -121,7 +121,7 @@ field :status, as: :badge,
 
 ## Editing the value
 
-<VersionReq version="4.3.1" />
+<VersionReq package="avo" version="4.3.1" />
 
 Add [`show_on: :forms`](./../field-options-api.html#show_on) and the badge renders a select of the values listed in `options` on <New /> and <Edit />:
 

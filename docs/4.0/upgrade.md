@@ -18,6 +18,236 @@ Cards used to load as soon as the page rendered, all at once. Now a card waits u
 
 </Option>
 
+## Upgrade to `avo-mcp_server` `4.3.0.beta.3`
+
+<Option name="`ConnectionPolicy#use?` turns the server on or off per admin">
+
+### Breaking Change
+
+The server now asks `use?` on `Avo::McpServer::ConnectionPolicy` before it serves an admin: on every call, on code exchange and refresh, on the consent screen and on the connect page. A `ConnectionPolicy` without `use?` turns the server off for every admin. See [Turn MCP on or off per admin](./mcp.html#turn-mcp-on-or-off-per-admin).
+
+### Action Required
+
+If your app has an `Avo::McpServer::ConnectionPolicy`, add `use?` to it:
+
+```ruby
+# app/policies/avo/mcp_server/connection_policy.rb
+class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
+  def use? = true # [!code ++]
+end
+```
+
+If it has none, Avo's defaults decide, as for any missing policy. Under `explicit_authorization = true`, which is Avo's default, the server is off for every admin until you add the policy above. Under `explicit_authorization = false` it stays on. With `raise_error_on_missing_policy = true`, the missing policy raises on the server's endpoints instead. The policy also decides who sees the connections resource, so see [Decide who sees and revokes what](./mcp.html#decide-who-sees-and-revokes-what) for its other methods.
+
+With `config.authorization_client = nil` no policy runs: the server stays on, `use?` is never asked, and nobody is blocked.
+
+With `avo-permissions` as your authorization client, no `ConnectionPolicy` is asked and `explicit_authorization` doesn't apply: a role needs a `use?` permission on `Avo::Resources::McpConnection`, or the server is off for it. The permissions screen doesn't offer it yet, so add the row from a console for each role that should keep MCP:
+
+```ruby
+Avo::Permissions::Permission.create!(role: role, resource_class: "Avo::Resources::McpConnection", method: "use?")
+```
+
+</Option>
+
+<Option name="A tool of your own declares the resources it touches">
+
+### Breaking Change
+
+A connection narrowed to named resources now refuses a call to a tool of your own that declares no `resources` and sends no `resource` argument its schema declares, because the server can't tell what it reads. Before, such a call ran on those connections. On every connection, a tool of your own is now also refused when the connecting admin's `index?` refuses a resource it declares or names, and when its `resource` argument matches no resource. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+
+### Action Required
+
+Only if you register tools through `config.mcp_server.extra_tools`. Declare the resources each one reads or changes. A tool that reaches no resource at all, say one that only calls an outside API, has nothing to declare, so it can't run on a narrowed connection. With `avo-permissions` as your authorization client, a call that names a resource, through `resources` or a `resource` argument, is refused on every connection whatever rows the role holds, because the server's policy checks don't pass that client the resource its rows match on. The shipped tools already behave this way, and `list_resources` and `search_records` with no resource answer empty there. A tool with neither still runs on a connection that isn't narrowed.
+
+```ruby
+# app/tools/ticket_summary_tool.rb
+class TicketSummaryTool < Avo::McpServer::Tool
+  capability "avo:read"
+  resources "Ticket", "Project" # [!code ++]
+end
+
+# Or, on a RubyLLM::Tool shared with Avo AI:
+def self.resources = %w[Ticket Project] # [!code ++]
+```
+
+</Option>
+
+## Upgrade to `avo-ai` `4.3.0.beta.10`
+
+<Option name="`ChatPolicy#use?` turns the chat on or off per user">
+
+### Breaking Change
+
+The chat now asks `use?` on `Avo::Ai::ChatPolicy` before it serves a user: on the chat bar, on every chat page and request, and in a reply or title already queued. The policy avo-ai ships answers it for every signed-in user, but a `ChatPolicy` of your own without `use?` turns the chat off for everyone. See [Turn the chat on or off per user](./ai.html#turn-the-chat-on-or-off-per-user).
+
+### Action Required
+
+If your app has its own `Avo::Ai::ChatPolicy`, add `use?` to it:
+
+```ruby
+# app/policies/avo/ai/chat_policy.rb
+class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.present? # [!code ++]
+end
+```
+
+With `avo-permissions` as your authorization client, a role needs a `use?` permission on `Avo::Resources::AvoAi::Chat` to keep the chat, and the permissions screen doesn't offer it yet. Add the row from a console for each role that should keep the chat:
+
+```ruby
+Avo::Permissions::Permission.create!(role: role, resource_class: "Avo::Resources::AvoAi::Chat", method: "use?")
+```
+
+With `config.authorization_client = nil` no policy runs: the chat stays on, `use?` is never asked, and nobody is blocked.
+
+</Option>
+
+## Upgrade to `avo-audit_logging` `4.3.3`
+
+<Option name="Audit logging is configured inside `Avo.configure`">
+
+### Deprecation
+
+The audit logging options moved under `config.audit_logging` in `Avo.configure`. The standalone `Avo::AuditLogging.configure` block still applies its options, but logs a deprecation warning on boot. It will be removed in Avo 5.
+
+### Action Required
+
+Only if `config/initializers/avo.rb` (or another initializer) calls `Avo::AuditLogging.configure`. Move each option into `Avo.configure` under `config.audit_logging` and delete the old block. The options and their values are unchanged: `enabled`, `author_model`, `author_models` and `payload_modifier`.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+  config.audit_logging.enabled = true # [!code ++]
+  config.audit_logging.author_models = ["User", "Account"] # [!code ++]
+end
+
+Avo::AuditLogging.configure do |config| # [!code --]
+  config.enabled = true # [!code --]
+  config.author_models = ["User", "Account"] # [!code --]
+end # [!code --]
+```
+
+Code that reads `Avo::AuditLogging.configuration` keeps working and returns the same object as `Avo.configuration.audit_logging`.
+
+</Option>
+
+## Upgrade to `avo-notifications` `4.3.2`
+
+<Option name="Notifications are configured inside `Avo.configure`">
+
+### Deprecation
+
+The notifications options moved under `config.notifications` in `Avo.configure`. The standalone `Avo::Notifications.configure` block still applies its options, but logs a deprecation warning on boot. It will be removed in Avo 5. The installer no longer writes `config/initializers/avo_notifications.rb`; it adds the options to `config/initializers/avo.rb` instead.
+
+### Action Required
+
+Only if `config/initializers/avo_notifications.rb` (or another initializer) calls `Avo::Notifications.configure`. Move each option into `Avo.configure` under `config.notifications` and delete the old block, or the whole file if nothing else is in it. The options and their values are unchanged: `ttl`, `realtime`, `dropdown_limit`, `user_class` and `user_display_name_method`.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+  config.notifications.ttl = 7.days # [!code ++]
+  config.notifications.realtime = false # [!code ++]
+end
+
+# config/initializers/avo_notifications.rb
+Avo::Notifications.configure do |config| # [!code --]
+  config.ttl = 7.days # [!code --]
+  config.realtime = false # [!code --]
+end # [!code --]
+```
+
+Code that reads `Avo::Notifications.configuration` keeps working and returns the same object as `Avo.configuration.notifications`.
+
+</Option>
+
+## Upgrade to `avo-meta` `0.1.3`
+
+<Option name="Meta is configured inside `Avo.configure`">
+
+### Deprecation
+
+The `fields_position` option moved under `config.meta` in `Avo.configure`. The standalone `Avo::Meta.configure` block still applies it, but logs a deprecation warning on boot. It will be removed in Avo 5.
+
+### Action Required
+
+Only if an initializer calls `Avo::Meta.configure`. Move the option into `Avo.configure` and delete the old block.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+  config.meta.fields_position = :top # [!code ++]
+end
+
+Avo::Meta.configure do |config| # [!code --]
+  config.fields_position = :top # [!code --]
+end # [!code --]
+```
+
+</Option>
+
+## Upgrade to `avo-dynamic_filters` `4.3.3`
+
+<Option name="Dynamic filters are configured inside `Avo.configure`">
+
+### Deprecation
+
+The dynamic filters options moved under `config.dynamic_filters` in `Avo.configure`, the same way `config.ai` and `config.mcp_server` work. The standalone `Avo::DynamicFilters.configure` block still applies its options, but logs a deprecation warning on boot. It will be removed in Avo 5.
+
+### Action Required
+
+Only if `config/initializers/avo.rb` calls `Avo::DynamicFilters.configure`. Move each option into `Avo.configure` under `config.dynamic_filters`, and delete the old block with its `if defined?(Avo::DynamicFilters)` guard. The options and their values are unchanged: `button_label`, `always_expanded` and `param_key`.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+  config.dynamic_filters.button_label = -> { I18n.t("my.filters") } # [!code ++]
+  config.dynamic_filters.always_expanded = false # [!code ++]
+end
+
+if defined?(Avo::DynamicFilters) # [!code --]
+  Avo::DynamicFilters.configure do |config| # [!code --]
+    config.button_label = -> { I18n.t("my.filters") } # [!code --]
+    config.always_expanded = false # [!code --]
+  end # [!code --]
+end # [!code --]
+```
+
+Code that reads `Avo::DynamicFilters.configuration` keeps working and returns the same object as `Avo.configuration.dynamic_filters`.
+
+</Option>
+
+## Upgrade to `avo-dashboards` `4.3.4`
+
+<Option name="A dashboard's `actions` method now fills an Actions dropdown in its header">
+
+### Breaking Change
+
+Dashboards can now [run actions](./dashboards.html#run-actions-from-the-header). Avo calls a dashboard's `actions` method on every render and shows what it declares in an Actions dropdown. A dashboard that already defines `actions` for its own purposes now has that method called, and `action` or `divider` inside it mean something new.
+
+To run those actions, a dashboard now also answers to `action`, `get_actions`, `visible_actions`, `find_action`, `view`, `view_type`, `records_path`, `record`, `user`, `params`, `model_key`, `route_key`, `authorization`, `hydrate`, `resource_name_for`, `translation_key` and `get_stimulus_controllers`. A method of yours with one of these names replaces Avo's, and an action started from that dashboard uses yours.
+
+### Action Required
+
+**Action required:** Only if a class in `app/avo/dashboards` defines one of these methods. Otherwise, none.
+
+### Steps to Update
+
+Rename your method.
+
+```ruby
+# app/avo/dashboards/operations.rb
+def actions # [!code --]
+def queue_actions # [!code ++]
+  # ...
+end
+```
+
+</Option>
+
 ## Upgrade to `avo-advanced_search` `4.3.3`
 
 <Option name="Global search shortcuts target the navbar and results-page inputs separately">

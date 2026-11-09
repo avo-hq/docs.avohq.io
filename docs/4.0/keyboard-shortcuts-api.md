@@ -63,7 +63,7 @@ config.hotkeys = {
 
 <Option name="`bindings`">
 
-<VersionReq version="4.3.6" />
+<VersionReq package="avo" version="4.3.6" />
 
 Rebinds or disables shortcuts by ID. Each value is a key in the [hotkey syntax](#hotkey-syntax), or `false` to disable the shortcut. IDs you leave out keep their default.
 
