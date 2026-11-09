@@ -15,6 +15,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const markdown = require('markdown-it')({ html: true });
 
 const { parseVitePressConfig } = require('../lib/vitepress-parser.js');
 
@@ -58,9 +59,18 @@ function absoluteUrl(link) {
   return `${SITE}${link}`;
 }
 
+function headingText(text, preserveCode = false) {
+  const label = text.replace(/\s+\{#[^}]+\}\s*$/, '');
+  return markdown.parseInline(label, {})[0].children
+    .filter((token) => token.type !== 'html_inline')
+    .map((token) => preserveCode && token.type === 'code_inline' ? `\`${token.content}\`` : token.content)
+    .join('')
+    .trim();
+}
+
 /**
- * Pull h2–h4 headings out of a markdown file, skipping frontmatter and fenced
- * code blocks. Returns [{ level, text }].
+ * Pull Markdown and Option headings out of a page, skipping frontmatter and
+ * code blocks. Option names are grouped under their section or parent option.
  */
 function extractHeadings(file) {
   let content;
@@ -72,26 +82,31 @@ function extractHeadings(file) {
 
   const body = content.replace(/^---\n[\s\S]*?\n---\n/, '');
   const headings = [];
-  let inFence = false;
+  const options = [];
+  let sectionLevel = 1;
+  const tokens = markdown.parse(body, {});
 
-  for (const line of body.split('\n')) {
-    if (/^\s*(```|~~~)/.test(line)) {
-      inFence = !inFence;
-      continue;
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (token.type === 'html_block') {
+      for (const match of token.content.matchAll(/<\/?Option\b[^>]*>/g)) {
+        if (match[0].startsWith('</')) {
+          options.pop();
+          continue;
+        }
+        const name = match[0].match(/\bname=(['"])(.*?)\1/);
+        const size = match[0].match(/\bheadingSize=['"]([2-4])['"]/);
+        const level = Math.max(Number(size?.[1] || 2), (options.at(-1) || sectionLevel) + 1);
+        options.push(level);
+        if (name) headings.push({ level, text: headingText(name[2], true), option: true });
+      }
+    } else if (token.type === 'heading_open' && /^h[2-4]$/.test(token.tag)) {
+      const text = headingText(tokens[i + 1].content);
+      if (options.length && /^(Default value|Possible values)$/i.test(text)) continue;
+      const level = Math.max(Number(token.tag[1]), (options.at(-1) || 1) + 1);
+      if (!options.length) sectionLevel = level;
+      if (text) headings.push({ level, text });
     }
-    if (inFence) continue;
-
-    const m = line.match(/^(#{2,4})\s+(.+?)\s*#*\s*$/);
-    if (!m) continue;
-
-    const text = m[2]
-      .replace(/`/g, '')
-      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1') // [text](url) -> text
-      .replace(/<[^>]+>/g, '') // strip inline HTML tags
-      .replace(/[*_]/g, '')
-      .trim();
-
-    if (text) headings.push({ level: m[1].length, text });
   }
 
   return headings;
@@ -172,11 +187,22 @@ function buildDocsMap(version, sections) {
   lines.push("* **##** marks documentation groups (e.g. 'Resources')");
   lines.push('* **###** marks individual documentation pages');
   lines.push('* **Nested bullets** show the headings within each page');
+  lines.push('* Option names are grouped under their section; repeated pages link back without repeating their outline');
   lines.push('* Each page title links to the full documentation');
   lines.push('');
 
+  const outlined = new Set();
+
   function pushPage(page) {
-    lines.push(`### [${page.text}](${absoluteUrl(page.link)})`);
+    const title = headingText(page.text);
+    const pageLink = page.link.split('#')[0];
+    if (outlined.has(pageLink)) {
+      lines.push(`[${title}](${absoluteUrl(page.link)}) — outlined above.`);
+      lines.push('');
+      return;
+    }
+    outlined.add(pageLink);
+    lines.push(`### [${title}](${absoluteUrl(pageLink)})`);
     lines.push('');
 
     if (page.link === '/4.0/upgrade.html' || page.link === '/4.0/avo-3-avo-4-upgrade.html') {
@@ -190,11 +216,15 @@ function buildDocsMap(version, sections) {
     const headings = extractHeadings(linkToFile(page.link));
     if (headings === null) {
       lines.push('* (Page source not found)');
-    } else if (headings.length === 0) {
-      lines.push('* (No headings found)');
     } else {
+      let previous;
       for (const h of headings) {
-        lines.push(`${'  '.repeat(h.level - 2)}* ${h.text}`);
+        if (h.option && previous?.option && previous.level === h.level) {
+          lines[lines.length - 1] += `, ${h.text}`;
+        } else {
+          lines.push(`${'  '.repeat(h.level - 2)}* ${h.text}`);
+        }
+        previous = h;
       }
     }
     lines.push('');
