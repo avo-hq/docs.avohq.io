@@ -72,17 +72,19 @@ Today that is the [activity origin](#where-an-activity-came-from) columns. `inst
 
 ### Enable it globally
 
-After installation, audit logging is disabled by default. To enable it, navigate to your `avo.rb` initializer file and update the configuration for the `Avo::AuditLogging` module.
-
-Set `config.enabled` to `true` within this configuration.
+After installation, audit logging is disabled by default. To enable it, set `config.audit_logging.enabled` to `true` inside the `Avo.configure` block of your `avo.rb` initializer.
 
 ```ruby
 # config/initializers/avo.rb
-Avo::AuditLogging.configure do |config|
-  # config.enabled = false
-  config.enabled = true # [!code ++]
+Avo.configure do |config|
+  # config.audit_logging.enabled = false
+  config.audit_logging.enabled = true # [!code ++]
 end
 ```
+
+:::warning
+The separate `Avo::AuditLogging.configure do |config| ... end` block still works but is deprecated and will be removed in Avo 5. Move its options into `Avo.configure` under `config.audit_logging`. See the [upgrade guide](./upgrade.html#upgrade-to-avo-audit-logging-4-3-3).
+:::
 
 :::info
 Setting this configuration to `false` will disable the audit logging feature entirely, overriding any other specific settings. We'll cover those specific settings in the next steps.
@@ -115,18 +117,18 @@ end
 If `User` is your only author model, you can skip this step as it will be automatically set by default.
 :::
 
-Avo must determine the potential author models to correctly establish associations in the background. This setup enables the retrieval of all activities associated with a specific author via the `avo_authored` association. To designate a single model as an author, use `config.author_model`; for multiple models, use `config.author_models`.
+Avo must determine the potential author models to correctly establish associations in the background. This setup enables the retrieval of all activities associated with a specific author via the `avo_authored` association. To designate a single model as an author, use `config.audit_logging.author_model`; for multiple models, use `config.audit_logging.author_models`.
 
 ```ruby
 # config/initializers/avo.rb
-Avo::AuditLogging.configure do |config|
-  config.enabled = true
+Avo.configure do |config|
+  config.audit_logging.enabled = true
 
   # A single author model:
-  config.author_model = "Account" # [!code highlight]
+  config.audit_logging.author_model = "Account" # [!code highlight]
 
   # …or, for multiple author models:
-  # config.author_models = ["User", "Account"]
+  # config.audit_logging.author_models = ["User", "Account"]
 end
 ```
 
@@ -270,12 +272,12 @@ end
 
 ### Change what an entry stores
 
-<VersionReq package="avo-audit_logging" version="4.3.2" /> Set a proc to change what an entry's payload stores, such as adding your app's name to every entry or hiding a value from one resource's payloads. `config.payload_modifier` covers every entry, and `payload_modifier:` covers the entries logged under that resource or action:
+<VersionReq package="avo-audit_logging" version="4.3.2" /> Set a proc to change what an entry's payload stores, such as adding your app's name to every entry or hiding a value from one resource's payloads. `config.audit_logging.payload_modifier` covers every entry, and `payload_modifier:` covers the entries logged under that resource or action:
 
 ```ruby
 # config/initializers/avo.rb
-Avo::AuditLogging.configure do |config|
-  config.payload_modifier = -> { payload.merge("app" => "billing") }
+Avo.configure do |config|
+  config.audit_logging.payload_modifier = -> { payload.merge("app" => "billing") }
 end
 ```
 
@@ -592,7 +594,7 @@ Nothing is recorded inside the block from any source: the panel, `Avo::AuditLogg
 
 A background job enqueued inside the block runs later, outside it, so its changes are logged. Wrap the job's own work in `Avo::AuditLogging.disabled` if they shouldn't be.
 
-To switch logging off everywhere, for example in the test environment, set `config.enabled = false`.
+To switch logging off everywhere, for example in the test environment, set `config.audit_logging.enabled = false`.
 
 :::info Falcon and other fiber-based servers
 Set [`config.active_support.isolation_level = :fiber`](https://guides.rubyonrails.org/configuring.html#config-active-support-isolation-level), as Rails asks for these servers, so each request keeps its own current user and origin. A fiber or thread you start yourself doesn't inherit them, so a change saved there has no author.

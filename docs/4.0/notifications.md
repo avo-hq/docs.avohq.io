@@ -46,7 +46,7 @@ bin/rails generate avo:notifications install
 This creates:
 
 - A migration for the `avo_notifications_notifications` table
-- An initializer at `config/initializers/avo_notifications.rb`
+- Commented `config.notifications` options inside the `Avo.configure` block of `config/initializers/avo.rb`
 - An Avo resource at `app/avo/resources/avo_notification.rb`
 - A controller at `app/controllers/avo/avo_notifications_controller.rb`
 
@@ -69,18 +69,22 @@ This adds an `avo_notifications` association and helper methods for reading noti
 
 ## Configuration
 
-After installation, tune the gem in `config/initializers/avo_notifications.rb`. Every option has a sensible default, so an empty block works out of the box.
+Tune the gem under `config.notifications` in Avo's initializer. Every option has a sensible default, so you only set the ones you want to change.
 
 ```ruby
-# config/initializers/avo_notifications.rb
-Avo::Notifications.configure do |config|
-  config.ttl = 30.days      # how long notifications are kept before cleanup
-  config.realtime = true    # real-time delivery via ActionCable
-  config.dropdown_limit = 10 # notifications shown in the bell dropdown
-  config.user_class = "User" # model used for recipients and `to: :all`
-  config.user_display_name_method = :name # sender attribution name
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.notifications.ttl = 30.days                    # how long notifications are kept before cleanup
+  config.notifications.realtime = true                  # real-time delivery via ActionCable
+  config.notifications.dropdown_limit = 10              # notifications shown in the bell dropdown
+  config.notifications.user_class = "User"              # model used for recipients and `to: :all`
+  config.notifications.user_display_name_method = :name # sender attribution name
 end
 ```
+
+:::warning `Avo::Notifications.configure` is deprecated
+<VersionReq package="avo-notifications" version="4.3.2" /> The standalone `Avo::Notifications.configure` block still works, but it logs a deprecation warning and will be removed in Avo 5. Move its options into `Avo.configure` as shown above. See the [upgrade guide](./upgrade.html#upgrade-to-avo-notifications-4-3-2).
+:::
 
 See the [API reference](./notifications-api.html#configuration) for each option's type, default, and behavior.
 
@@ -286,7 +290,7 @@ Each row reveals quick actions on hover — **mark as read/unread**, **save for 
 
 ## Real-time delivery
 
-When [`config.realtime = true`](./notifications-api.html#realtime) (the default), each new notification is pushed to its recipient over ActionCable as a Turbo Stream, so the bell updates without a page refresh.
+When [`config.notifications.realtime = true`](./notifications-api.html#realtime) (the default), each new notification is pushed to its recipient over ActionCable as a Turbo Stream, so the bell updates without a page refresh.
 
 ### How it works
 
