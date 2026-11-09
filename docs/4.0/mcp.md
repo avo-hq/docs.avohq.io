@@ -212,6 +212,10 @@ Every tool call passes two gates, in this order:
 
 So a connection can never do anything its admin couldn't do by hand. Granting a capability is permission to *try*; the policy decides. And because the admin is re-resolved every time, a permission change takes effect on the next call — demote an admin to read-only and their connected client stops writing, with nothing to revoke.
 
+### An action runs on the view it would have been started from
+
+[`view`](./actions.html#control-visibility-and-authorization) is `show` when `run_action` targets one record and `index` for a bulk run or [one that takes no records](./actions.html#run-an-action-without-records): the page an admin would have clicked it from, never `new`. The action's `visible` and `authorize` blocks, its `fields`, and `handle` all read that value, so an action that branches on `view.show?` or `view.index?` answers a client as it does on a click. A bulk run also hands the action no current record, the way the panel does when several rows are checked.
+
 ### Keep a field out of a client's reach
 
 The [`visible:`](./field-options-api.html#visible) blocks on your fields apply to reads *and* writes. A field the panel hides from this admin isn't returned by any read tool, isn't listed by `list_resources`, and can't be written even on a record they may otherwise edit. Read-only fields are refused the same way, and so are `id`, `created_at`, `updated_at`, and any column whose name looks like a credential (`password`, `token`, `secret`, `digest`). A refused attribute fails the call rather than being silently dropped.
@@ -240,8 +244,8 @@ That writes `app/tools/issue_invoice_tool.rb`, defining `IssueInvoiceTool` — a
 # app/tools/issue_invoice_tool.rb
 class IssueInvoiceTool < Avo::McpServer::Tool
   tool_name "issue_invoice"
-  capability "avo:actions" # [!code focus]
-  resources "Order", "Invoice" # [!code focus]
+  capability "avo:actions" # [!code highlight]
+  resources "Order", "Invoice" # [!code highlight]
 
   description <<~DESC
     Issues the invoice for an order and emails it to the customer.
@@ -278,7 +282,7 @@ Then register the class in your initializer:
 config.mcp_server.extra_tools = ["IssueInvoiceTool"]
 ```
 
-Entries are class **names**, not constants — this initializer runs before your own classes are loadable — and each is resolved when a request arrives, so editing a tool in development is served on the next call. An entry that can't be served (a class that doesn't load, one that isn't a tool, one with no `capability`, one claiming a shipped tool's name) is dropped with a line in the log saying why, and the rest keep serving.
+Entries are class **names**, not constants — this initializer runs before your own classes are loadable — and each is resolved when a request arrives, so editing a tool in development is served on the next call. An entry that can't be served (a class that doesn't load, one that isn't a tool, one with no `capability`, one claiming a shipped tool's name) is dropped with a line in the log saying why, and the rest keep serving. [`extra_tools`](./mcp-api.html#extra_tools) lists every reason an entry is dropped.
 
 :::warning A call that names no resource is refused on a narrowed connection
 When a tool has no `resources` declaration and the call sends no `resource` argument the schema declares, the server can't tell what it reads, so a connection narrowed to named resources refuses it. The connection's **Tools** card still lists such a tool. Tools registered before `resources` existed were let through such connections; declare `resources` on each one when you upgrade, or connections narrowed per resource can no longer call it. A tool that reaches no resource at all, say one that only calls an outside API, has nothing to declare, so it can't run on a narrowed connection.
@@ -297,8 +301,8 @@ Running [Avo AI](./ai.html) too? Write the tool once, for the chat, and serve it
 class IssueInvoiceTool < RubyLLM::Tool
   include Avo::Ai::ToolAuthorization
 
-  def self.capability = "avo:actions" # [!code focus]
-  def self.resources = %w[Order Invoice] # [!code focus]
+  def self.capability = "avo:actions" # [!code highlight]
+  def self.resources = %w[Order Invoice] # [!code highlight]
 
   description "Issues the invoice for an order and emails it to the customer."
   parameter :order_id, type: :integer, description: "The order to invoice."
@@ -338,7 +342,7 @@ Every connection carries a **status** — a badge on the index, a chip on its pa
 | Expired      | Nothing the client holds still works: it went 30 days without calling, or never finished connecting after you approved it.                                         |
 | Revoked      | You revoked it.                                                                                                                                                    |
 
-A disconnected or expired client comes back by authorizing again — which creates a **new** connection. The old row stays, so you can still see what it was allowed to do and when it last ran. Hover the status chip for the moment the state was entered.
+A disconnected or expired client comes back by authorizing again — which creates a **new** connection. The old row stays, so you can still see what it was allowed to do and when it last ran. Hover the status, the badge on the index or the chip on the connection's page, for the moment the state was entered.
 
 :::info Only clients that revoke their tokens show as disconnected
 Token revocation ([RFC 7009](https://www.rfc-editor.org/rfc/rfc7009)) is the one signal a client can send on its way out, and only clients that implement it do. Claude Code does. A client that simply deletes its stored tokens reads as open until they expire, 30 days after its last call.
@@ -518,7 +522,7 @@ Refusing one leaves the rest of the page intact.
 ```ruby
 # app/policies/avo/mcp_server/connection_policy.rb
 class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
-  def use? = Flipper.enabled?(:mcp, user) # [!code focus]
+  def use? = Flipper.enabled?(:mcp, user) # [!code highlight]
 
   # ...the rest of the policy
 end

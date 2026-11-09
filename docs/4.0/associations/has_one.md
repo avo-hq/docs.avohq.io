@@ -68,6 +68,21 @@ field :admin,
 
 The values land on the join record (`TeamMembership` above), alongside anything the association's scope writes. When you attach over an existing record, the fields are written to the same join row that gets replaced.
 
+<VersionReq package="avo" version="4.3.5" />
+
+Because the fields describe the join record, an association the join model declares works here too. With `TeamMembership` declaring `belongs_to :invited_by, class_name: "User", optional: true`, a `belongs_to` among the fields renders its usual picker and writes the join record's own foreign key:
+
+```ruby{5}
+field :admin,
+  as: :has_one,
+  attach_fields: -> {
+    field :notes, as: :text
+    field :invited_by, as: :belongs_to
+  }
+```
+
+The picker offers what the target resource's [policy scope](./../authorization.html#limit-which-records-a-user-sees) holds, narrowed by that field's own [`attach_scope`](./belongs_to.html#attach_scope). A value matching no record there fails the whole attach, naming the field, and writes nothing.
+
 :::warning
 `attach_fields` only persists on a `has_one :through` association. On a plain `has_one` there's no join record to write to, so the fields have nowhere to land.
 :::

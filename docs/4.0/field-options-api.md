@@ -464,6 +464,7 @@ field :status, as: :select, summarizable: true
 
 - **Type:** Boolean
 - **Default:** `false`
+- **Authorization:** the chart asks the resource's [`index?`](./authorization-api.html#index), or on an association panel the parent's [`view_{association}?`](./authorization-api.html#view_association). <VersionReq package="avo" version="4.3.8" /> It never asks a `distribution_chart?` method
 
 </Option>
 

@@ -183,3 +183,5 @@ class CourseLinkPolicy < ApplicationPolicy
   # other policy methods
 end
 ```
+
+`reorder?` is asked on the record being moved, for every move. <VersionReq package="avo-record_reordering" version="4.3.1" /> Before that it only hid the controls, so the endpoint behind them moved a record whatever the policy answered.

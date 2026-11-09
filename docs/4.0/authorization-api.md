@@ -135,7 +135,7 @@ Called with the current `user` and the `record` (or the model class when there i
 
 <Option name="`index?`" headingSize="3">
 
-Controls the resource's sidebar entry in the auto-generated menu and access to the <Index /> view.
+Controls the resource's sidebar entry in the auto-generated menu and access to the <Index /> view. A [`summarizable`](./field-options-api.html#summarizable) column's distribution chart asks it too, or the parent's [`view_{association}?`](#view_association) for a column on an association panel. <VersionReq package="avo" version="4.3.8" />
 
 - **Type:** `Boolean`
 
@@ -187,9 +187,10 @@ Controls the edit button on the resource row and access to the <Edit /> view.
 
 <Option name="`update?`" headingSize="3">
 
-Controls whether changes to a record can be saved. `record` holds the submitted form values.
+Controls whether changes to a record can be saved. Asked twice on a save <VersionReq package="avo" version="4.3.8" />: once on the record as loaded from the database, then again once the submitted form values are filled in. Both have to allow the write.
 
 - **Type:** `Boolean`
+- **`record`:** the stored record on the first check, the record carrying the submitted values on the second
 
 <Image src="/assets/img/4_0/authorization/policy-update.webp" dark-src="/assets/img/4_0/authorization/policy-update-dark.webp" width="1960" height="722" alt="The Avo resource edit form with the Save button highlighted, illustrating the Pundit update? policy that controls whether a user can save changes." prompt="Save button highlighted on the resource edit form" />
 
@@ -262,10 +263,14 @@ Defined on the **parent** resource's policy. `{association}` is the association 
 
 <Option name="`view_{association}?`" headingSize="3">
 
-Controls whether the association panel is displayed on the parent record.
+Controls whether the association panel is displayed on the parent record. It also answers the requests behind the panel:
+
+- **The association's show route** (`/resources/:resource/:id/:related_name/:related_id`), where a `has_one` panel loads its frame from. That route also asks the related record's own [`show?`](#show), and looks a `has_many` row up inside the related resource's [policy scope](#policy-scope). <VersionReq package="avo" version="4.3.4" />
+- **The requests that list the association:** the panel's rows, its search, a [`summarizable`](./field-options-api.html#summarizable) column's chart, and [scope](./scopes.html) counts. Each has to name the resource the field lists with, its [`use_resource`](./associations/has_many.html#use_resource) when the field sets one. <VersionReq package="avo" version="4.3.8" />
 
 - **Type:** `Boolean`
 - **`record`:** the parent record
+- **Refusal:** `Avo::NotAuthorizedError`. A list requested under a resource the association field does not list with answers `ActiveRecord::RecordNotFound` (`404`)
 
 </Option>
 
