@@ -2,47 +2,113 @@
 license: community
 description: "The Files field is similar to File and enables you to upload multiple files at once using the same easy-to-use Active Storage implementation."
 fieldTags: [attachments]
+outline: [2, 3]
+api_docs: ./files-api.html
 ---
 
 # Files
 
-<!-- @include: ./../common/files_gem_common.md-->
-
 The `Files` field is similar to [`File`](./file) and enables you to upload multiple files at once using the same easy-to-use [Active Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html) implementation.
 
 ```ruby
-field :documents, as: :files
+# app/avo/resources/project.rb
+class Avo::Resources::Project < Avo::BaseResource
+  def fields
+    field :documents, as: :files
+  end
+end
 ```
 
-## Options
-<!-- @include: ./../common/file_options_common.md-->
+By default, Avo shows a file count on the index and a grid of attachments on the show and edit pages, with a grid/list switcher and filenames. Images open in a lightbox on the show page; direct uploads are off and the file picker has no file-type restriction.
 
-<!-- @include: ./../common/file_other_common.md-->
+## Set up multiple attachments
 
-<Option name="`view_type`">
+Back the field with an Active Storage association:
+
+```ruby
+# app/models/project.rb
+class Project < ApplicationRecord
+  has_many_attached :documents
+end
+```
+
+Uploads are added to the existing attachments when the record saves. A failed validation does not attach the newly selected files.
+
+:::warning
+Require `activestorage` and `image_processing` in your `Gemfile`.
+
+```ruby
+# Gemfile
+gem "activestorage"
+gem "image_processing"
+```
+:::
+
+## Control which files users upload
+
+Use [`accept`](./files-api.html#accept) to filter the file picker. It is a browser hint, not server-side validation; validate attachments in your model if the restriction must be enforced.
+
+```ruby
+# app/avo/resources/project.rb
+field :documents, as: :files, accept: "image/*,application/pdf"
+```
+
+For large files, enable [`direct_upload`](./files-api.html#direct_upload) to upload directly to your storage service rather than sending the file through your application server. Configure [Active Storage direct uploads](https://edgeguides.rubyonrails.org/active_storage_overview.html#direct-uploads) for your service first.
+
+```ruby
+# app/avo/resources/project.rb
+field :documents, as: :files, direct_upload: true
+```
+
+## Choose how attachments appear
+
+<span id="view_type"></span>
+
+Set [`view_type`](./files-api.html#view_type) to start with a list instead of a grid.
+
+<span id="hide_view_type_switcher"></span>
+
+To remove the switcher, add [`hide_view_type_switcher`](./files-api.html#hide_view_type_switcher).
+
+```ruby
+# app/avo/resources/project.rb
+field :documents, as: :files, view_type: :list, hide_view_type_switcher: true
+```
 
 <Image src="/assets/img/4_0/fields/files/view-type.webm" dark-src="/assets/img/4_0/fields/files/view-type-dark.webm" width="1200" height="301" alt="An Avo show-view card for a files field: an animation toggling between grid view (thumbnail tiles) and list view (file rows) using the view-type switcher." prompt="gif to see the difference between grid and list view types" />
 
-Set the default `view_type`.
+For a cleaner image grid, hide captions with [`display_filename`](./files-api.html#display_filename). List rows still show their filenames.
 
-#### Default value
+```ruby
+# app/avo/resources/project.rb
+field :documents, as: :files, display_filename: false
+```
 
-`grid`
+### Preview images in place
 
-#### Possible values
+On the show page, clicking an image opens an in-page lightbox. Use the arrow buttons or arrow keys to cycle through the field's images, and press <kbd>Esc</kbd> or click outside the image to close it. The lightbox links to the original file in a new tab when downloads are authorized. Non-image files retain their players and download controls.
 
-`grid`, `list`
-</Option>
+Set [`lightbox`](./files-api.html#lightbox) to `false` to leave image thumbnails non-interactive. Form thumbnails never open the lightbox.
 
-<Option name="`hide_view_type_switcher`">
+```ruby
+# app/avo/resources/project.rb
+field :documents, as: :files, lightbox: false
+```
 
-Option to hide the view type switcher component.
+### Display images from phones and design tools
 
-#### Default value
+Avo serves browser-friendly images such as PNG, JPEG, GIF, WebP, and AVIF directly from storage. For variable attachments with content types `image/heic`, `image/heif`, `image/tiff`, or `image/vnd.adobe.photoshop`, it uses an Active Storage variant rendered as PNG. This lets browsers without native support display them too.
 
-`false`
+:::warning
+Conversion needs an image processor installed: [libvips](https://github.com/libvips/libvips) built with `libheif`, or ImageMagick with the HEIC delegate for HEIC images. Without a suitable processor the variant cannot be processed. See [Active Storage's requirements](https://guides.rubyonrails.org/active_storage_overview.html#requirements).
+:::
 
-#### Possible values
+## Authorize uploads, downloads, and deletion
 
-`true`, `false`
-</Option>
+Ensure your model's Pundit policy permits `upload_documents?`, `download_documents?`, and `delete_documents?` for the corresponding controls to appear. Replace `documents` with your field's ID.
+
+See [Attachment pundit policies](./../authorization.html#authorize-file-attachments) for policy examples.
+
+## Configure shared field behavior
+
+For labels, visibility, read-only behavior, and other options shared by all fields, see [Common field options](../field-options.html). For the attachment-specific contracts, see the [Files API reference](./files-api.html).

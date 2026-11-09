@@ -41,7 +41,7 @@ const fieldsFor = (version) => {
   const associations = ["belongs_to", "has_one", "has_many", "has_and_belongs_to_many"]
 
   return [
-    ...entriesFor(version, "fields"),
+    ...entriesFor(version, "fields", (file) => !file.endsWith("-api.md")),
     ...entriesFor(version, "associations", (file) => associations.includes(file.replace(".md", ""))),
   ].sort((a, b) => a.text.localeCompare(b.text))
 }

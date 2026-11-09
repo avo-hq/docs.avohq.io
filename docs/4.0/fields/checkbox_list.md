@@ -2,15 +2,16 @@
 license: community
 description: "The CheckboxList field renders a list of checkboxes for selecting multiple values from a finite set of options."
 fieldTags: [choice]
+outline: [2, 3]
+api_docs: ./checkbox_list-api.html
 ---
 
 # Checkbox List
 
-The `CheckboxList` field renders a list of checkboxes for selecting multiple values from a finite set of options.
-
-Use it when the available options are already known and users should see the choices directly instead of opening a select.
+The `CheckboxList` field renders a list of checkboxes for selecting multiple values from a finite set of options. Use it when users should see the choices directly instead of opening a select.
 
 ```ruby
+# app/avo/resources/team.rb
 field :team_member_ids,
   as: :checkbox_list,
   options: -> {
@@ -27,28 +28,16 @@ field :team_member_ids,
   inline_search: true
 ```
 
+You must supply [`options`](./checkbox_list-api.html#options); there is no default list. Without [`inline_search`](./checkbox_list-api.html#inline_search), the field displays the choices without a search input. Images are circular unless you choose another shape.
+
 <Image src="/assets/img/4_0/fields/checkbox_list/select.webm" dark-src="/assets/img/4_0/fields/checkbox_list/select-dark.webm" width="760" height="478" alt="An Avo edit-form card containing a checkbox_list field: an animation that checks three team members one after another from an initially empty selection." prompt="a gif where we select multiple options" />
 
-The field submits an array of selected option ids. This works well with Rails collection writers like `team_member_ids=`.
+## Define a fixed set of choices {#options}
 
-## Options
-
-<Option name="`options`">
-
-The `options` attribute is required and accepts an array or a proc that returns an array.
-
-Each option should be a hash with these keys:
-
-| Key                         | Description                                                                          |
-| --------------------------- | ------------------------------------------------------------------------------------ |
-| `id`                        | The submitted value for the checkbox                                                 |
-| `title`                     | The visible title                                                                    |
-| `description`               | Optional supporting text shown below the title                                       |
-| `avatar_url` or `image_url` | Optional image shown before the title                                                |
-| `avatar_alt` or `image_alt` | Optional alt text for the image                                                      |
-| `image_format`              | Optional image shape. Use `:circle`, `:rounded`, or `:square`. Defaults to `:circle` |
+For choices that do not depend on the record or request, pass an array of hashes. Give each choice an [`id`](./checkbox_list-api.html#id) to submit and a [`title`](./checkbox_list-api.html#title) to display. Add a [`description`](./checkbox_list-api.html#description) when users need help distinguishing similar choices.
 
 ```ruby
+# app/avo/resources/user.rb
 field :role_ids,
   as: :checkbox_list,
   options: [
@@ -58,9 +47,12 @@ field :role_ids,
   ]
 ```
 
-Computed options run inside [`Avo::ExecutionContext`](../execution-context), so they have access to `record`, `resource`, `view`, `field`, `params`, `request`, `view_context`, and the other execution context helpers.
+## Load choices from records
 
-```ruby{4-13}
+Use a lambda when the choices come from a query. Computed options run inside [`Avo::ExecutionContext`](../execution-context), with access to `record`, `resource`, `view`, `field`, `params`, `request`, `view_context`, and the other execution context helpers.
+
+```ruby
+# app/avo/resources/team.rb
 field :user_ids,
   as: :checkbox_list,
   options: -> {
@@ -77,22 +69,40 @@ field :user_ids,
   }
 ```
 
-</Option>
+## Add images to choices
 
-<Option name="`inline_search`">
+Provide [`avatar_url`](./checkbox_list-api.html#avatar_url) or [`image_url`](./checkbox_list-api.html#image_url) to show an image before the title. Set [`image_format`](./checkbox_list-api.html#image_format) to `:rounded` or `:square` for non-circular images. Use [`image_alt`](./checkbox_list-api.html#image_alt) or [`avatar_alt`](./checkbox_list-api.html#avatar_alt) to customize the alt text; otherwise the title is used.
 
-Set `inline_search: true` to add a client-side search input above the checkbox list.
+## Help users find a choice {#inline_search}
 
-The search filters the options that were already rendered on the page. It does not make server requests, so use it for small and medium option sets.
+Enable inline search to filter the options already rendered on the page by title and description. Search is case-insensitive and does not make server requests, so use it for small and medium option sets. Checked choices stay selected and are still submitted when hidden by search.
 
-You can also pass a lambda that returns a boolean. It runs inside an [`Avo::ExecutionContext`](./../execution-context.html).
-
-```ruby{4}
+```ruby
+# app/avo/resources/team.rb
 field :team_member_ids,
   as: :checkbox_list,
   options: -> { User.active.order(:name).map { |user| {id: user.id, title: user.name} } },
   inline_search: true
 ```
 
-<!-- @include: ./../common/default_boolean_false.md-->
-</Option>
+You can also use a lambda to decide whether to show the search input in the field's [execution context](./../execution-context.html). It must return `true` to enable search.
+
+## Explain a limited set of results
+
+If your query intentionally limits the available choices, add a [`hint`](./checkbox_list-api.html#hint) entry to explain that limit. Its title appears below the list, without a checkbox. The hint does not load more records.
+
+```ruby
+# app/avo/resources/team.rb
+field :user_ids,
+  as: :checkbox_list,
+  options: -> {
+    User.order(:name).limit(50).map { |user| {id: user.id, title: user.name} } +
+      [{title: "Showing up to 50 users", hint: true}]
+  }
+```
+
+## Save multiple selections
+
+The field submits an array of selected option ids as strings. This works well with Rails collection writers like `team_member_ids=`. Integer and string ids match the same stored selection, and blank submitted values are removed before assignment. Clearing all checkboxes assigns an empty array.
+
+For configuration shared with other fields, see [Shared field options](../field-options.html).
