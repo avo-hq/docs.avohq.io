@@ -45,9 +45,9 @@ const paths = [
       </p>
       <div class="grove-home__actions">
         <a class="grove-home__button" href="/4.0/">Start with Avo 4</a>
-        <a class="grove-home__link" href="https://github.com/avo-hq/avo">Star it on GitHub</a>
+        <a class="grove-home__button grove-home__button--secondary" href="/4.0/upgrade.html">Upgrade guide</a>
       </div>
-      <p class="grove-home__proof">Already on Avo 4? <a href="/4.0/upgrade.html">Read the upgrade guide</a> before moving to a newer version. Still on Avo 3? <a href="/3.0/">Its docs are here</a>.</p>
+      <p class="grove-home__proof">Still on Avo 3? <a href="/3.0/">Its docs are here</a>. Like Avo? <a href="https://github.com/avo-hq/avo">Star it on GitHub</a>.</p>
     </div>
   </section>
 
@@ -180,15 +180,13 @@ const paths = [
 .grove-home__button:hover {
   background: #0672bd;
 }
-.grove-home__link {
+.grove-home__button--secondary {
+  background: transparent;
   color: var(--ink);
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: rgba(22, 24, 27, 0.3);
-  text-underline-offset: 0.2em;
+  box-shadow: inset 0 0 0 1px rgba(22, 24, 27, 0.25);
 }
-.grove-home__link:hover {
-  text-decoration-color: currentColor;
+.grove-home__button--secondary:hover {
+  background: rgba(22, 24, 27, 0.05);
 }
 .grove-home__proof {
   margin-top: 1rem;
@@ -254,8 +252,13 @@ const paths = [
 .dark .grove-home__button:hover {
   background: #e6eef4;
 }
-.dark .grove-home__link {
-  text-decoration-color: rgba(244, 246, 248, 0.35);
+.dark .grove-home__button--secondary {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(244, 246, 248, 0.35);
+}
+.dark .grove-home__button--secondary:hover {
+  background: rgba(244, 246, 248, 0.08);
 }
 
 .grove-paths {

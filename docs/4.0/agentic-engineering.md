@@ -5,7 +5,7 @@ prompt: Use this page (${link}) to set up my AI coding agent to work with Avo â€
 
 # Agentic engineering
 
-You can hand most Avo work to a coding agent: a new resource, a filter, an action, a dashboard card. What it needs is the same thing you need, the right docs for the version you run. This page sets up Claude Code, Cursor, Windsurf, and the rest with that context, the skills that ship inside the gem, and the MCP server, so the code they write is code you'd have written.
+You can hand most Avo work to a coding agent: a new resource, a filter, an action, a dashboard card. What it needs is the same thing you need, the right docs for the version you run. This page sets up Claude Code, Cursor, Windsurf, Amp, and the rest with that context, the skills that ship inside the gem, and the MCP server, so the code they write is code you'd have written.
 
 Looking for AI your team uses inside the Avo app, the chat or the MCP server, rather than agents in your editor? That's [AI in your Avo app](./ai-overview.html).
 

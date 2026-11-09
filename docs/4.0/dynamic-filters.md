@@ -216,14 +216,15 @@ If you want dropdowns that fit each filter type and filter as you click, with no
 
 ```ruby
 # config/initializers/avo.rb
-Avo::DynamicFilters.configure do |config|
-  config.simple_filters = true
+Avo.configure do |config|
+  # ...
+  config.dynamic_filters.simple_filters = true
 end
 ```
 
 <Image src="/assets/img/4_0/dynamic-filters/dropdown.webp" dark-src="/assets/img/4_0/dynamic-filters/dropdown-dark.webp" width="2438" height="604" alt="The Status pill's dropdown open on the Tickets index: an is condition menu next to the name, and a checklist of every status with a coloured dot. Open and In progress are ticked, the pill reads Open, In progress, and the table already shows only those tickets, with no Apply button." />
 
-With it on, [`inline`](./dynamic-filters-api.html#inline) lays a pinned filter's control out in the bar ([`config.inline_filters = true`](./dynamic-filters-api.html#inline_filters) does it for every pinned filter), and [`presets`](./dynamic-filters-api.html#presets) sets the range buttons on a date filter. [The filter dropdown](./dynamic-filters-api.html#the-filter-dropdown) lists what each type shows.
+With it on, [`inline`](./dynamic-filters-api.html#inline) lays a pinned filter's control out in the bar ([`config.dynamic_filters.inline_filters = true`](./dynamic-filters-api.html#inline_filters) does it for every pinned filter), and [`presets`](./dynamic-filters-api.html#presets) sets the range buttons on a date filter. [The filter dropdown](./dynamic-filters-api.html#the-filter-dropdown) lists what each type shows.
 
 ```ruby
 # app/avo/resources/ticket.rb
@@ -234,23 +235,21 @@ field :urgent, as: :boolean, filterable: {pinned: true, inline: true}
 
 ## Configure the filters bar
 
-The bar itself is configured globally in the initializer — the toggle button's label, whether the bar starts expanded, and the URL param it reads from:
+The bar itself is configured globally under `config.dynamic_filters` in the initializer — the toggle button's label, whether the bar starts expanded, and the URL param it reads from:
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  # Other Avo configurations
-end
-
-if defined?(Avo::DynamicFilters)
-  Avo::DynamicFilters.configure do |config|
-    config.button_label = -> { I18n.t("my.filters") } # [!code focus]
-    config.always_expanded = false
-  end
+  config.dynamic_filters.button_label = -> { I18n.t("my.filters") } # [!code focus]
+  config.dynamic_filters.always_expanded = false
 end
 ```
 
 Pass `button_label` a proc rather than a string. The initializer runs once at boot, so a string is pinned for every request afterwards — see [`button_label`](./dynamic-filters-api#button_label). Also [`always_expanded`](./dynamic-filters-api#always_expanded) and [`param_key`](./dynamic-filters-api#param_key) in the API reference.
+
+:::warning `Avo::DynamicFilters.configure` is deprecated
+<VersionReq package="avo-dynamic_filters" version="4.3.3" /> The standalone `Avo::DynamicFilters.configure` block still works, but it logs a deprecation warning and will be removed in Avo 5. Move its options into `Avo.configure` as shown above. See the [upgrade guide](./upgrade.html#upgrade-to-avo-dynamic-filters-4-3-3).
+:::
 
 ## Localization
 

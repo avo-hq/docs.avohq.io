@@ -1782,7 +1782,7 @@ If your menu links to the chats, hide the link for the same users with `visible:
 
 `use?` needs an authorization client. With `config.authorization_client = nil` no policy runs, so nobody is blocked.
 
-With `avo-permissions` as the client, no policy is asked, the shipped one included: a role needs a `use?` permission on `Avo::Resources::AvoAi::Chat`, or the chat is off for it. The permissions screen doesn't offer it yet, so add it from a console as the [upgrade guide](./upgrade.html#upgrade-to-avo-ai-4-3-0-beta-10) shows.
+With `avo-permissions` as the client, no policy is asked, the shipped one included: a role needs a `use?` permission on `Avo::Resources::AvoAi::Chat`, or the chat is off for it. The permissions screen doesn't offer it yet, so add it from a console as the [upgrade guide](./upgrade.html#avo-ai-4-3-0-beta-10) shows.
 
 :::warning Your own `ChatPolicy` needs `use?`
 The chat asks `use?` the way Avo asks any policy method, so a `ChatPolicy` of your own without it **turns the chat off for every user**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ChatPolicy`, add `def use? = user.present?` when you upgrade to keep the chat on for everyone. The policy avo-ai ships, used when you have none, answers `true` for every signed-in user.

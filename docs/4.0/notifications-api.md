@@ -15,20 +15,24 @@ Per-option reference for the Avo Notifications add-on — configuration, the `Av
 
 ## Configuration
 
-Set in `config/initializers/avo_notifications.rb`:
+Set under `config.notifications` in `config/initializers/avo.rb`:
 
 ```ruby
-Avo::Notifications.configure do |config|
-  # options listed below
+Avo.configure do |config|
+  # config.notifications.<option> = ..., options listed below
 end
 ```
+
+:::warning `Avo::Notifications.configure` is deprecated
+<VersionReq package="avo-notifications" version="4.3.2" /> The standalone `Avo::Notifications.configure` block still works, but it logs a deprecation warning and will be removed in Avo 5. Move its options into `Avo.configure` as shown above. See the [upgrade guide](./upgrade.html#upgrade-to-avo-notifications-4-3-2).
+:::
 
 <Option name="`ttl`" headingSize="3">
 
 How long a notification is kept before cleanup can delete it. Each notification's `expires_at` is set to `Time.current + ttl` at creation; the [cleanup](#cleanup_expired) task deletes rows past that time.
 
 ```ruby
-config.ttl = 30.days
+config.notifications.ttl = 30.days
 ```
 
 - **Type:** `ActiveSupport::Duration`
@@ -41,7 +45,7 @@ config.ttl = 30.days
 Enables real-time delivery of new notifications over ActionCable as a Turbo Stream. When `false`, notifications still work but only appear on the next page load.
 
 ```ruby
-config.realtime = true
+config.notifications.realtime = true
 ```
 
 - **Type:** Boolean
@@ -58,7 +62,7 @@ Even when `true`, broadcasting is skipped if ActionCable is not defined or has n
 Maximum number of notifications shown in the bell dropdown panel.
 
 ```ruby
-config.dropdown_limit = 10
+config.notifications.dropdown_limit = 10
 ```
 
 - **Type:** Integer
@@ -71,7 +75,7 @@ config.dropdown_limit = 10
 The model class used to resolve recipients when sending to `:all`. Passed to `constantize`, then `.all` is fanned out into one notification per record.
 
 ```ruby
-config.user_class = "User"
+config.notifications.user_class = "User"
 ```
 
 - **Type:** String
@@ -84,7 +88,7 @@ config.user_class = "User"
 The method called on a notification's `sender` to render its attribution name.
 
 ```ruby
-config.user_display_name_method = :name
+config.notifications.user_display_name_method = :name
 ```
 
 - **Type:** Symbol

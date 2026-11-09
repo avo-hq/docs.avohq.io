@@ -191,6 +191,30 @@ Same name and same default as the dashboard's [`refresh_button`](./dashboards-ap
 
 </Option>
 
+<Option name="`self.loading`" headingSize="3">
+
+<VersionReq package="avo-dashboards" version="4.3.4" />
+
+When the card runs its `query`. Takes the `:lazy` and `:manual` values of the `loading` option on tabs and association fields, without its Hash form or `auto_load_for`.
+
+```ruby
+self.loading = :manual
+```
+
+| Value | Behavior |
+| --- | --- |
+| `:lazy` | Loads when the card scrolls into view. |
+| `:manual` | Renders the card's title, description, and a Load button in place of its content. The `query` runs only when the button is clicked. |
+
+- **Type:** Symbol or String
+- **Default:** `:lazy`
+- **Validation:** raises `ArgumentError` for any other value
+- **i18n key:** `avo.load_item` ("Load %{item}"), or `avo.cards.load` ("Load card") when the card has no label
+
+See [Load cards only when they're needed](./cards.html#load-cards-only-when-they-re-needed).
+
+</Option>
+
 <Option name="`self.cache_for`" headingSize="3">
 
 Caches the result of the card's `query` for that duration. Within the window the query is skipped entirely and the stored result is replayed — useful for cards whose `query` is expensive.
