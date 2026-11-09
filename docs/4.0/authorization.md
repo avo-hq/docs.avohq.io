@@ -496,6 +496,12 @@ That covers a lapsed or downgraded license, and a development, test or CI enviro
 
 If your initializer has no `authorization_client` line (Avo then uses `:pundit`), or sets it to `nil`, an unlicensed app skips your policies instead, and anyone who can sign in to Avo can reach everything.
 
+### When the license can't be validated
+
+A license Avo can't confirm is a different case from one without the add-on. Once the [grace period](./licensing.html#when-the-license-can-t-be-validated) ends, or when no valid answer was ever held, Avo pauses the whole admin with a "Temporarily unavailable" page. No policy is skipped, because no page is served. <VersionReq package="avo-licensing" version="4.4.0" />
+
+If you set [`run_community_admin_without_valid_license`](./customization-api.html#run_community_admin_without_valid_license) to `true`, the admin keeps running instead, and your policies are not applied. Anyone who can sign in to Avo can reach everything, so turn it on only if that is acceptable for your app. A valid license that lacks `avo-authorization` still fails closed when your initializer sets a client, with the setting on or off.
+
 :::tip
 If every resource is refused at once, check the license before the policies.
 :::

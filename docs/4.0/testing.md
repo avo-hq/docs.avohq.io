@@ -26,6 +26,10 @@ WebMock::NetConnectNotAllowedError:
 Avo 3 validated licenses through the legacy HQ endpoint and didn't trip this. Avo 4 validates through `clerk-*.avohq.io`, so an app that never had this problem on Avo 3 can start failing tests right after upgrading.
 :::
 
+:::warning
+Since `avo-licensing` 4.4.0 a blocked license check no longer passes silently. With no valid answer held, every Avo admin page in your suite renders "Temporarily unavailable" (and non-HTML requests get a `503`), so request, system and feature specs fail until the two hosts below are allowed. This applies in every Rails environment, `test` included.
+:::
+
 The fix is to add Avo's license check hosts to your allow list. Add them to your **existing** `disable_net_connect!` call so you keep whatever options you already have:
 
 ```ruby
@@ -44,7 +48,7 @@ VCR.configure do |config|
 end
 ```
 
-This only applies when you explicitly disable outbound connections in the test environment. If your tests already permit real HTTP requests, no change is needed.
+Your suite also needs a real `config.license_key`, for example from `ENV["AVO_LICENSE_KEY"]` in CI. An invalid key pauses access the same way. This only applies when you explicitly disable outbound connections in the test environment. If your tests already permit real HTTP requests, no change is needed.
 
 ## Testing helpers
 
