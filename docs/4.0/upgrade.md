@@ -6,6 +6,14 @@ If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedica
 
 ## Upgrade to `avo-dynamic_filters` `4.3.3`
 
+This release adds three things to the filter bar. None of them change your app until you turn them on.
+
+- **[Pinned filters](./dynamic-filters.html#keep-a-filter-in-the-bar).** `filterable: {pinned: true}` keeps a filter's pill in the bar, so people can use it without opening "Add filter" first.
+- **[The new filter dropdown](./dynamic-filters.html#try-the-new-filter-dropdown).** `config.simple_filters = true` gives each filter type its own dropdown: a condition menu, then a checklist, a row of buttons, date presets or a box. It filters as you click, with no Apply button. It is off by default and becomes the default in a future release.
+- **[Inline filters](./dynamic-filters-api.html#inline).** With the new dropdown on, `filterable: {pinned: true, inline: true}` puts a filter's control straight in the bar, like Yes / No buttons for a boolean. Date filters also take [`presets`](./dynamic-filters-api.html#presets), and `nullable: true` adds an Empty choice.
+
+Two changes reach every app, with or without these options:
+
 <Option name="Filter pills show the name, condition and value as separate segments">
 
 ### What changed

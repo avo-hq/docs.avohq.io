@@ -197,6 +197,8 @@ field :is_capital,
 
 ## Keep a filter in the bar
 
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
 If people reach for a filter all the time, set [`pinned`](./dynamic-filters-api.html#pinned) on it. Its pill sits next to "Add filter" before anyone picks a value, and stays out of the URL until it is applied.
 
 ```ruby
@@ -205,6 +207,8 @@ field :status, as: :select, filterable: {pinned: true}
 ```
 
 ## Try the new filter dropdown
+
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
 
 If you want dropdowns that fit each filter type and filter as you click, with no Apply button, turn on [`simple_filters`](./dynamic-filters-api.html#simple_filters). It is off by default and becomes the default in a future release.
 

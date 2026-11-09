@@ -38,6 +38,8 @@ end
 
 ## The filter dropdown
 
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
 With [`simple_filters`](#simple_filters) on, every filter's dropdown puts its conditions in a menu next to the filter's name, and below it a value control that fits the condition picked. Without it, filters keep the older dropdown, with the condition and value as two fields.
 
 :::info Opt-in
@@ -410,6 +412,8 @@ dynamic_filter :category,
 
 <Option name="`pinned`" headingSize="3">
 
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
 Keeps the filter's pill in the filter bar next to "Add filter", so users can filter by it without picking it from the dropdown first. The pill does nothing until someone picks a value and applies it. Removing an applied pinned filter puts the empty pill back.
 
 ```ruby{4,9}
@@ -434,6 +438,8 @@ A pinned filter is not listed in the "Add filter" dropdown. When a resource has 
 
 <Option name="`inline`" headingSize="3">
 
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
 Lays a pinned filter's control out in the filter bar, so using it takes no click to open the pill.
 
 ```ruby{2}
@@ -455,6 +461,8 @@ Ticks and buttons filter straight away. Boxes apply on Enter or when they lose f
 </Option>
 
 <Option name="`presets`" headingSize="3">
+
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
 
 The date range buttons a date or date time filter shows.
 
@@ -596,6 +604,8 @@ With the default key, a filtered URL looks like `/avo/resources/users?filters[fi
 </Option>
 
 <Option name="`simple_filters`" headingSize="3">
+
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
 
 Turns on the [new filter dropdown](#the-filter-dropdown) for every filter.
 
