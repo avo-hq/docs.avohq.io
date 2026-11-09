@@ -109,11 +109,11 @@ end
 
 Errors raised inside these methods are caught and surfaced on the record, so the regular fail actions and messages kick in.
 
-Both methods go through the resource by default, calling its `save_record(record)` and `destroy_record(record)`. Define those on the resource when the change belongs to it under every controller, as a [writable array resource](./array-resource.html#create-edit-and-delete) does. <VersionReq version="4.2.12" />
+Both methods go through the resource by default, calling its `save_record(record)` and `destroy_record(record)`. Define those on the resource when the change belongs to it under every controller, as a [writable array resource](./array-resource.html#create-edit-and-delete) does. <VersionReq package="avo" version="4.2.12" />
 
 ## Use the parent record
 
-<VersionReq version="4.2.11" />
+<VersionReq package="avo" version="4.2.11" />
 
 When a record is created, shown, or edited through another one, like a comment created from a post's comments panel, Avo loads that parent from the `via_*` params. After calling `super`, it's in `@via_record` and its resource is in `@via_resource`:
 

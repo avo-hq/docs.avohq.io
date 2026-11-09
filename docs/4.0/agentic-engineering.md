@@ -21,7 +21,7 @@ AI agents generate better code when they have up-to-date Avo documentation in th
 
 ## Skills
 
-<VersionReq version="4.1.1" />
+<VersionReq package="avo" version="4.1.1" />
 
 Skills are pre-built instruction sets that teach your agent how to perform specific Avo workflows. Instead of prompting from scratch each time, you install a skill and the agent follows a proven, repeatable process.
 

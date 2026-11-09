@@ -4,7 +4,7 @@ We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
-## Upgrade to `avo-dynamic_filters` `4.3.2`
+## Upgrade to `avo-dynamic_filters` `4.3.3`
 
 <Option name="Filter pills show the name, condition and value as separate segments">
 
@@ -30,7 +30,89 @@ None, unless you link to a filtered URL with several negative values. It now ret
 
 </Option>
 
-||||||| 1c358b69
+## Upgrade to `avo-mcp_server` `4.3.0.beta.3`
+
+<Option name="`ConnectionPolicy#use?` turns the server on or off per admin">
+
+### Breaking Change
+
+The server now asks `use?` on `Avo::McpServer::ConnectionPolicy` before it serves an admin: on every call, on code exchange and refresh, on the consent screen and on the connect page. A `ConnectionPolicy` without `use?` turns the server off for every admin. See [Turn MCP on or off per admin](./mcp.html#turn-mcp-on-or-off-per-admin).
+
+### Action Required
+
+If your app has an `Avo::McpServer::ConnectionPolicy`, add `use?` to it:
+
+```ruby
+# app/policies/avo/mcp_server/connection_policy.rb
+class Avo::McpServer::ConnectionPolicy < ApplicationPolicy
+  def use? = true # [!code ++]
+end
+```
+
+If it has none, Avo's defaults decide, as for any missing policy. Under `explicit_authorization = true`, which is Avo's default, the server is off for every admin until you add the policy above. Under `explicit_authorization = false` it stays on. With `raise_error_on_missing_policy = true`, the missing policy raises on the server's endpoints instead. The policy also decides who sees the connections resource, so see [Decide who sees and revokes what](./mcp.html#decide-who-sees-and-revokes-what) for its other methods.
+
+With `config.authorization_client = nil` no policy runs: the server stays on, `use?` is never asked, and nobody is blocked.
+
+With `avo-permissions` as your authorization client, no `ConnectionPolicy` is asked and `explicit_authorization` doesn't apply: a role needs a `use?` permission on `Avo::Resources::McpConnection`, or the server is off for it. The permissions screen doesn't offer it yet, so add the row from a console for each role that should keep MCP:
+
+```ruby
+Avo::Permissions::Permission.create!(role: role, resource_class: "Avo::Resources::McpConnection", method: "use?")
+```
+
+</Option>
+
+<Option name="A tool of your own declares the resources it touches">
+
+### Breaking Change
+
+A connection narrowed to named resources now refuses a call to a tool of your own that declares no `resources` and sends no `resource` argument its schema declares, because the server can't tell what it reads. Before, such a call ran on those connections. On every connection, a tool of your own is now also refused when the connecting admin's `index?` refuses a resource it declares or names, and when its `resource` argument matches no resource. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+
+### Action Required
+
+Only if you register tools through `config.mcp_server.extra_tools`. Declare the resources each one reads or changes. A tool that reaches no resource at all, say one that only calls an outside API, has nothing to declare, so it can't run on a narrowed connection. With `avo-permissions` as your authorization client, a call that names a resource, through `resources` or a `resource` argument, is refused on every connection whatever rows the role holds, because the server's policy checks don't pass that client the resource its rows match on. The shipped tools already behave this way, and `list_resources` and `search_records` with no resource answer empty there. A tool with neither still runs on a connection that isn't narrowed.
+
+```ruby
+# app/tools/ticket_summary_tool.rb
+class TicketSummaryTool < Avo::McpServer::Tool
+  capability "avo:read"
+  resources "Ticket", "Project" # [!code ++]
+end
+
+# Or, on a RubyLLM::Tool shared with Avo AI:
+def self.resources = %w[Ticket Project] # [!code ++]
+```
+
+</Option>
+
+## Upgrade to `avo-ai` `4.3.0.beta.10`
+
+<Option name="`ChatPolicy#use?` turns the chat on or off per user">
+
+### Breaking Change
+
+The chat now asks `use?` on `Avo::Ai::ChatPolicy` before it serves a user: on the chat bar, on every chat page and request, and in a reply or title already queued. The policy avo-ai ships answers it for every signed-in user, but a `ChatPolicy` of your own without `use?` turns the chat off for everyone. See [Turn the chat on or off per user](./ai.html#turn-the-chat-on-or-off-per-user).
+
+### Action Required
+
+If your app has its own `Avo::Ai::ChatPolicy`, add `use?` to it:
+
+```ruby
+# app/policies/avo/ai/chat_policy.rb
+class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.present? # [!code ++]
+end
+```
+
+With `avo-permissions` as your authorization client, a role needs a `use?` permission on `Avo::Resources::AvoAi::Chat` to keep the chat, and the permissions screen doesn't offer it yet. Add the row from a console for each role that should keep the chat:
+
+```ruby
+Avo::Permissions::Permission.create!(role: role, resource_class: "Avo::Resources::AvoAi::Chat", method: "use?")
+```
+
+With `config.authorization_client = nil` no policy runs: the chat stays on, `use?` is never asked, and nobody is blocked.
+
+</Option>
+
 ## Upgrade to `avo-dashboards` `4.3.4`
 
 <Option name="A dashboard's `actions` method now fills an Actions dropdown in its header">

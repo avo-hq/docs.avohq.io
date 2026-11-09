@@ -35,7 +35,7 @@ The generic [`view_slot`](./resources-api.html#view_slot) takes `:index`, `:show
 
 ## Add content to the index
 
-<VersionReq version="4.3.6" />
+<VersionReq package="avo" version="4.3.6" />
 
 Use `index_slot` to add a summary, notice, or badge around the existing listing. Index has eight regions and sixteen additive positions; it does not gain the single-record views' `body` or `form` regions.
 

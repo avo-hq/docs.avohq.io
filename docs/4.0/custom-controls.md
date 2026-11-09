@@ -31,7 +31,7 @@ Inside a block you can mix the built-in controls (like [`back_button`](./custom-
 
 ## Add controls to dashboard headers
 
-<VersionReq version="4.3.3" />
+<VersionReq package="avo-custom_controls" version="4.3.3" />
 
 With `avo-dashboards` installed, assign a dashboard's [`self.controls`](./dashboards-api.html#self.controls) block to add native [`link_to`](./custom-controls-api.html#link_to), [`list`](./custom-controls-api.html#list), [`divider`](./custom-controls-api.html#divider), [`partial`](./custom-controls-api.html#partial), [`action`](./custom-controls-api.html#action), [`actions_list`](./custom-controls-api.html#actions_list), and [`refresh_button`](./custom-controls-api.html#refresh_button) controls. Use `list label: "More" do`, not a positional label. Declare controls rather than returning raw HTML.
 

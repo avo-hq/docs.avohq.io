@@ -125,7 +125,7 @@ self.discreet_information = {
 }
 ```
 
-You may return HTML, but don't forget to sanitize the output:
+The title renders as text unless it is a safe string. To show HTML, return the result of `sanitize` or `tag`:
 
 ```ruby
 self.discreet_information = {
