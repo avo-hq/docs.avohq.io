@@ -51,21 +51,23 @@ onMounted(() => {
 })
 
 // ?since=2026-10-14 or ?since=avo@4.3.2 — the release you're on. Draws a "you are here" line
-// above the first entry at or before it and scrolls there; everything above the line is newer.
+// above that release (a version) or the first entry at or before it (a date) and scrolls there;
+// everything above the line is newer.
 function markSince(param) {
-  if (!param) return
-  let date = /^\d{4}-\d{2}-\d{2}$/.test(param) ? param : null
-  if (!date && param.includes('@')) {
+  if (!param || !entries.length) return
+  let mine
+  if (param.includes('@')) {
     const [gem, version] = param.split('@')
-    date = entries.find((e) => e.gems.includes(gem) && e.h2.dataset.version === version)?.h2.dataset.date
-  }
-  if (!date) return
-  const mine = entries.find((e) => e.h2.dataset.date && e.h2.dataset.date <= date)
+    mine = entries.find((e) => e.gems.includes(gem) && e.h2.dataset.version === version)
+    if (!mine) return
+  } else if (/^\d{4}-\d{2}-\d{2}$/.test(param)) {
+    mine = entries.find((e) => e.h2.dataset.date && e.h2.dataset.date <= param)
+  } else return
   const marker = document.createElement('div')
   marker.className = 'since-marker'
-  since = { at: mine ? entries.indexOf(mine) : entries.length, marker, label: param.includes('@') ? param.replace('@', ' ') : 'releases up to ' + date }
-  const anchor = mine ? mine.h2 : entries.at(-1).nodes.at(-1)?.nextSibling
-  anchor ? anchor.before(marker) : document.querySelector('.vp-doc > div').append(marker)
+  since = { at: mine ? entries.indexOf(mine) : entries.length, marker, label: param.includes('@') ? param.replace('@', ' ') : 'releases up to ' + param }
+  if (mine) mine.h2.before(marker)
+  else { const last = entries.at(-1); (last.nodes.at(-1) ?? last.h2).after(marker) }
   requestAnimationFrame(() => window.scrollTo({ top: marker.getBoundingClientRect().top + window.scrollY - 96 }))
 }
 
