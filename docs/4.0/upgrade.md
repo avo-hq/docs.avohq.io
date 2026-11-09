@@ -87,6 +87,38 @@ With `config.authorization_client = nil` no policy runs: the chat stays on, `use
 
 </Option>
 
+## Upgrade to `avo-dynamic_filters` `4.3.3`
+
+<Option name="Dynamic filters are configured inside `Avo.configure`">
+
+### Deprecation
+
+The dynamic filters options moved under `config.dynamic_filters` in `Avo.configure`, the same way `config.ai` and `config.mcp_server` work. The standalone `Avo::DynamicFilters.configure` block still applies its options, but logs a deprecation warning on boot. It will be removed in Avo 5.
+
+### Action Required
+
+Only if `config/initializers/avo.rb` calls `Avo::DynamicFilters.configure`. Move each option into `Avo.configure` under `config.dynamic_filters`, and delete the old block with its `if defined?(Avo::DynamicFilters)` guard. The options and their values are unchanged: `button_label`, `always_expanded` and `param_key`.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+  config.dynamic_filters.button_label = -> { I18n.t("my.filters") } # [!code ++]
+  config.dynamic_filters.always_expanded = false # [!code ++]
+end
+
+if defined?(Avo::DynamicFilters) # [!code --]
+  Avo::DynamicFilters.configure do |config| # [!code --]
+    config.button_label = -> { I18n.t("my.filters") } # [!code --]
+    config.always_expanded = false # [!code --]
+  end # [!code --]
+end # [!code --]
+```
+
+Code that reads `Avo::DynamicFilters.configuration` keeps working and returns the same object as `Avo.configuration.dynamic_filters`.
+
+</Option>
+
 ## Upgrade to `avo-dashboards` `4.3.4`
 
 <Option name="A dashboard's `actions` method now fills an Actions dropdown in its header">

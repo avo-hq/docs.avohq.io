@@ -26,13 +26,11 @@ def filters
 end
 ```
 
-Global behavior is configured through `Avo::DynamicFilters.configure` in `config/initializers/avo.rb`:
+Global behavior is configured under `config.dynamic_filters` in `config/initializers/avo.rb`:
 
 ```ruby
-if defined?(Avo::DynamicFilters)
-  Avo::DynamicFilters.configure do |config|
-    config.always_expanded = false
-  end
+Avo.configure do |config|
+  config.dynamic_filters.always_expanded = false
 end
 ```
 
@@ -430,14 +428,14 @@ Inside the block you have access to `condition`, the `filter` object, `parent_re
 
 ## Global configuration
 
-Set these through `Avo::DynamicFilters.configure` in `config/initializers/avo.rb`.
+Set these under `config.dynamic_filters` inside `Avo.configure` in `config/initializers/avo.rb`. The older `Avo::DynamicFilters.configure` block is deprecated; see the [upgrade guide](./upgrade.html#upgrade-to-avo-dynamic-filters-4-3-3).
 
 <Option name="`button_label`" headingSize="3">
 
 The label on the button that expands the filters bar.
 
 ```ruby
-config.button_label = -> { I18n.t("my.filters") }
+config.dynamic_filters.button_label = -> { I18n.t("my.filters") }
 ```
 
 - **Type:** Proc or String
@@ -447,7 +445,7 @@ config.button_label = -> { I18n.t("my.filters") }
 The button only renders when [`always_expanded`](#always_expanded) is `false`.
 
 :::warning A plain string is fixed for the life of the process
-The initializer runs once at boot and the configuration object lives for the whole process, so a string is pinned for every request afterwards. `config.button_label = I18n.t("my.filters")` has the same problem — it looks translated, but it is evaluated at boot like any other expression.
+The initializer runs once at boot and the configuration object lives for the whole process, so a string is pinned for every request afterwards. `config.dynamic_filters.button_label = I18n.t("my.filters")` has the same problem — it looks translated, but it is evaluated at boot like any other expression.
 
 Pass a proc and it is re-evaluated on every render, so it follows the request locale. Left unset, the default is already a proc, so a localized app usually needs nothing here.
 :::
@@ -459,7 +457,7 @@ Pass a proc and it is re-evaluated on every render, so it follows the request lo
 Whether the dynamic filters bar is always shown expanded.
 
 ```ruby
-config.always_expanded = false
+config.dynamic_filters.always_expanded = false
 ```
 
 - **Type:** Boolean
@@ -474,7 +472,7 @@ When `false`, the bar starts collapsed behind a toggle button and expands automa
 The URL query param dynamic filters read from and write to.
 
 ```ruby
-config.param_key = :df
+config.dynamic_filters.param_key = :df
 ```
 
 - **Type:** Symbol
