@@ -58,7 +58,7 @@ function markSince(param) {
   let mine
   if (param.includes('@')) {
     const [gem, version] = param.split('@')
-    mine = entries.find((e) => e.gems.includes(gem) && e.h2.dataset.version === version)
+    mine = entries.find((e) => (e.gems.includes(gem) && e.h2.dataset.version === version) || e.h2.dataset.releases?.split(' ').includes(param))
     if (!mine) return
   } else if (/^\d{4}-\d{2}-\d{2}$/.test(param)) {
     mine = entries.find((e) => e.h2.dataset.date && e.h2.dataset.date <= param)
