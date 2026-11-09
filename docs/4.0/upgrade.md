@@ -42,7 +42,7 @@ Two changes reach every app, with or without these options:
 
 ### What changed
 
-A pill reads `Name | is | Oradea` rather than `Name is "Oradea"`, without the quotes. "Add filter" and "Reset filters" sit after the pills.
+A pill reads `Name | is | Austin` rather than `Name is "Austin"`, without the quotes. "Add filter" and "Reset filters" sit after the pills.
 
 ### Action Required
 

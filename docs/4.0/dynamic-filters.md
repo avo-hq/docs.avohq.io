@@ -327,7 +327,7 @@ sv:
 
 **Condition labels** — the entries in the condition dropdown — resolve per filter type first, then fall back to `defaults`. That is why a number filter shows `=` where a text filter shows `Is`, without you having to repeat every shared label under all six types. Override a type only where it differs.
 
-**Pill conditions** are the phrase inside a filter pill: the `is` in `Name | is | Oradea`. They resolve `pill_conditions.<type>` → `pill_conditions.defaults` → the dropdown label, so translating only `conditions` still gets you a localized pill — you just get the dropdown's capitalization inside the sentence. A menu item and a mid-sentence fragment often inflect differently, which is why the two are separate.
+**Pill conditions** are the phrase inside a filter pill: the `is` in `Name | is | Austin`. They resolve `pill_conditions.<type>` → `pill_conditions.defaults` → the dropdown label, so translating only `conditions` still gets you a localized pill — you just get the dropdown's capitalization inside the sentence. A menu item and a mid-sentence fragment often inflect differently, which is why the two are separate.
 
 :::warning Condition labels must be unique within a filter type
 The condition dropdown is built from a `label => condition_key` hash, so two conditions that translate to the same string would collapse into one and quietly disappear from the dropdown. Avo raises `Avo::DynamicFilters::DuplicateConditionLabelError` instead, naming the filter type and the duplicated label.
