@@ -55,7 +55,7 @@ function titleHtml(element: HTMLElement) {
   // line breaks, component markup) is unwrapped so it can't hijack the click
   // or break the single-line row.
   for (const el of [...clone.querySelectorAll('*')].reverse()) {
-    if (el.tagName === 'CODE' || el.classList.contains('hidden')) continue
+    if (el.tagName === 'CODE' || el.classList.contains('hidden') || el.classList.contains('tl-date')) continue
     el.replaceWith(...(el.tagName === 'BR' ? [' '] : el.childNodes))
   }
   for (const el of clone.querySelectorAll('*')) {

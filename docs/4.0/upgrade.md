@@ -1,18 +1,35 @@
+---
+outline: 2
+pageClass: upgrade-timeline
+---
+
 # Upgrade guide
 
 We'll update this page when we release new Avo 4 versions.
 
 If you're looking for the Avo 3 to Avo 4 upgrade guide, please visit [the dedicated page](./avo-3-avo-4-upgrade).
 
-## Upgrade to `avo-mcp_server` `4.3.0.beta.3`
+:::tip How to read this page
+Entries are in release order, newest first. Find the release you're on, then work up the page to the one you're installing, doing each entry for the gems you use.
 
-<Option name="`ConnectionPolicy#use?` turns the server on or off per admin">
+To see which versions you run, open your app's [status page](./license-troubleshooting.html#check-the-license-status-page) at `/avo/status` (or `/<your mount path>/status`). It lists every Avo gem you have installed and marks the ones with a newer release.
 
-### Breaking Change
+To open this page at your release, add `?since=` with a date or a gem version: `upgrade.html?since=2026-10-14` or `upgrade.html?since=avo@4.3.2`.
+:::
+
+<UpgradeFilter />
+
+## `avo-mcp_server` 4.3.0.beta.3 <span class="tl-date">Unreleased</span> {#avo-mcp-server-4-3-0-beta-3 data-gems="avo-mcp_server" data-version="4.3.0.beta.3"}
+
+<a id="upgrade-to-avo-mcp-server-4-3-0-beta-3"></a>
+
+<Option headingSize="3" name="`ConnectionPolicy#use?` turns the server on or off per admin">
+
+#### Breaking Change
 
 The server now asks `use?` on `Avo::McpServer::ConnectionPolicy` before it serves an admin: on every call, on code exchange and refresh, on the consent screen and on the connect page. A `ConnectionPolicy` without `use?` turns the server off for every admin. See [Turn MCP on or off per admin](./mcp.html#turn-mcp-on-or-off-per-admin).
 
-### Action Required
+#### Action Required
 
 If your app has an `Avo::McpServer::ConnectionPolicy`, add `use?` to it:
 
@@ -35,13 +52,13 @@ Avo::Permissions::Permission.create!(role: role, resource_class: "Avo::Resources
 
 </Option>
 
-<Option name="A tool of your own declares the resources it touches">
+<Option headingSize="3" name="A tool of your own declares the resources it touches">
 
-### Breaking Change
+#### Breaking Change
 
 A connection narrowed to named resources now refuses a call to a tool of your own that declares no `resources` and sends no `resource` argument its schema declares, because the server can't tell what it reads. Before, such a call ran on those connections. On every connection, a tool of your own is now also refused when the connecting admin's `index?` refuses a resource it declares or names, and when its `resource` argument matches no resource. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
 
-### Action Required
+#### Action Required
 
 Only if you register tools through `config.mcp_server.extra_tools`. Declare the resources each one reads or changes. A tool that reaches no resource at all, say one that only calls an outside API, has nothing to declare, so it can't run on a narrowed connection. With `avo-permissions` as your authorization client, a call that names a resource, through `resources` or a `resource` argument, is refused on every connection whatever rows the role holds, because the server's policy checks don't pass that client the resource its rows match on. The shipped tools already behave this way, and `list_resources` and `search_records` with no resource answer empty there. A tool with neither still runs on a connection that isn't narrowed.
 
@@ -58,15 +75,51 @@ def self.resources = %w[Ticket Project] # [!code ++]
 
 </Option>
 
-## Upgrade to `avo-ai` `4.3.0.beta.10`
+## `avo-advanced_search` 4.3.3 <span class="tl-date">Unreleased</span> {#avo-advanced-search-4-3-3 data-gems="avo-advanced_search" data-version="4.3.3"}
 
-<Option name="`ChatPolicy#use?` turns the chat on or off per user">
+<a id="upgrade-to-avo-advanced-search-4-3-3"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Global search shortcuts target the navbar and results-page inputs separately">
+
+#### Breaking Change
+
+On the dedicated results page, `Mod+k` now focuses the navbar search, just as it does elsewhere. It no longer focuses the page input on the first press and the navbar on a double-tap. Use `Mod+Shift+K` to focus the page input instead. See [Global search](./search.html#global-search).
+
+#### Action Required
+
+**Action required:** None. To customize either shortcut, use `advanced_search.open` for the navbar and `advanced_search.focus_results` for the page input in [`config.hotkeys[:bindings]`](./keyboard-shortcuts-api.html#bindings).
+
+</Option>
+
+## `avo-api` 4.4.0 <span class="tl-date">Unreleased</span> {#avo-api-4-4-0 data-gems="avo-api" data-version="4.4.0"}
+
+<a id="upgrade-to-avo-api-4-4-0"></a>
+
+<Option headingSize="3" name="`belongs_to` and `has_one` ids are the related record's `to_param`">
+
+#### Breaking Change
+
+A `belongs_to` or `has_one` field now reads back with the related record's `to_param`, the id in its panel URL, instead of its primary key. It's always a string: `{ "id": "5", "label": "John Doe" }`, not `{ "id": 5, "label": "John Doe" }`. Where a model hides its primary key (friendly_id, a prefixed id, a custom `to_param`), the response carries the slug or prefixed id instead of the key. The OpenAPI document types both ids as strings. See [Field serialization](./rest-api.html#field-serialization).
+
+A `belongs_to` write takes that value back, also on a resource found by slug alone. A record's own `id` field doesn't change.
+
+#### Action Required
+
+Update API clients that read these ids as numbers or compare them with numbers. Send back the value a read returns.
+
+</Option>
+
+## `avo-ai` 4.3.0.beta.10 <span class="tl-date">Nov 9, 2026</span> {#avo-ai-4-3-0-beta-10 data-gems="avo-ai" data-date="2026-11-09" data-version="4.3.0.beta.10"}
+
+<a id="upgrade-to-avo-ai-4-3-0-beta-10"></a>
+
+<Option headingSize="3" name="`ChatPolicy#use?` turns the chat on or off per user">
+
+#### Breaking Change
 
 The chat now asks `use?` on `Avo::Ai::ChatPolicy` before it serves a user: on the chat bar, on every chat page and request, and in a reply or title already queued. The policy avo-ai ships answers it for every signed-in user, but a `ChatPolicy` of your own without `use?` turns the chat off for everyone. See [Turn the chat on or off per user](./ai.html#turn-the-chat-on-or-off-per-user).
 
-### Action Required
+#### Action Required
 
 If your app has its own `Avo::Ai::ChatPolicy`, add `use?` to it:
 
@@ -87,21 +140,23 @@ With `config.authorization_client = nil` no policy runs: the chat stays on, `use
 
 </Option>
 
-## Upgrade to `avo-dashboards` `4.3.4`
+## `avo-dashboards` 4.3.4 <span class="tl-date">Nov 9, 2026</span> {#avo-dashboards-4-3-4 data-gems="avo-dashboards" data-date="2026-11-09" data-version="4.3.4"}
 
-<Option name="A dashboard's `actions` method now fills an Actions dropdown in its header">
+<a id="upgrade-to-avo-dashboards-4-3-4"></a>
 
-### Breaking Change
+<Option headingSize="3" name="A dashboard's `actions` method now fills an Actions dropdown in its header">
+
+#### Breaking Change
 
 Dashboards can now [run actions](./dashboards.html#run-actions-from-the-header). Avo calls a dashboard's `actions` method on every render and shows what it declares in an Actions dropdown. A dashboard that already defines `actions` for its own purposes now has that method called, and `action` or `divider` inside it mean something new.
 
 To run those actions, a dashboard now also answers to `action`, `get_actions`, `visible_actions`, `find_action`, `view`, `view_type`, `records_path`, `record`, `user`, `params`, `model_key`, `route_key`, `authorization`, `hydrate`, `resource_name_for`, `translation_key` and `get_stimulus_controllers`. A method of yours with one of these names replaces Avo's, and an action started from that dashboard uses yours.
 
-### Action Required
+#### Action Required
 
 **Action required:** Only if a class in `app/avo/dashboards` defines one of these methods. Otherwise, none.
 
-### Steps to Update
+#### Steps to Update
 
 Rename your method.
 
@@ -115,33 +170,21 @@ end
 
 </Option>
 
-## Upgrade to `avo-advanced_search` `4.3.3`
+## `avo` 4.3.11 <span class="tl-date">Nov 4, 2026</span> {#avo-4-3-11 data-gems="avo" data-date="2026-11-04" data-version="4.3.11"}
 
-<Option name="Global search shortcuts target the navbar and results-page inputs separately">
+<a id="upgrade-to-avo-4-3-11"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Session persistence also keeps the sort, the resource table page, and the selected rows">
 
-On the dedicated results page, `Mod+k` now focuses the navbar search, just as it does elsewhere. It no longer focuses the page input on the first press and the navbar on a double-tap. Use `Mod+Shift+K` to focus the page input instead. See [Global search](./search.html#global-search).
-
-### Action Required
-
-**Action required:** None. To customize either shortcut, use `advanced_search.open` for the navbar and `advanced_search.focus_results` for the page input in [`config.hotkeys[:bindings]`](./keyboard-shortcuts-api.html#bindings).
-
-</Option>
-
-## Upgrade to `avo` `4.3.11`
-
-<Option name="Session persistence also keeps the sort, the resource table page, and the selected rows">
-
-### Breaking Change
+#### Breaking Change
 
 With `config.persistence = { driver: :session }`, the session used to keep only association pagination and static filter selections. It now also keeps the `page` and `per_page` of resource tables (the `per_page` cookie is no longer read), the sort picked from a table header, and the rows checked on a table, which stay in the browser tab. Dynamic filter selections are kept too, with `avo-dynamic_filters` `4.3.2` or newer. A plain visit, such as the sidebar link, lands on the remembered page, sorted and filtered as the user left it, with the rows still checked. Nothing changes without the driver. See [Persist UI state](./customization.html#persist-ui-state).
 
-### Action Required
+#### Action Required
 
 None, if you want the new state to stick. Check your system specs: one that sorts, pages, or selects rows with the driver on and then expects a plain visit to start fresh now finds that state still there.
 
-### Maintaining Previous Behavior
+#### Maintaining Previous Behavior
 
 Turn the new kinds off next to the driver. `pagination` covers resource and association tables together, so association pagination alone can't be kept.
 
@@ -158,33 +201,19 @@ end
 
 </Option>
 
-## Upgrade to `avo-api` `4.4.0`
+## `avo` 4.3.9 <span class="tl-date">Oct 28, 2026</span> {#avo-4-3-9 data-gems="avo" data-date="2026-10-28" data-version="4.3.9"}
 
-<Option name="`belongs_to` and `has_one` ids are the related record's `to_param`">
+<a id="upgrade-to-avo-4-3-9"></a>
 
-### Breaking Change
+<Option headingSize="3" name="`act_on?` authorizes running an action, not only the Actions button">
 
-A `belongs_to` or `has_one` field now reads back with the related record's `to_param`, the id in its panel URL, instead of its primary key. It's always a string: `{ "id": "5", "label": "John Doe" }`, not `{ "id": 5, "label": "John Doe" }`. Where a model hides its primary key (friendly_id, a prefixed id, a custom `to_param`), the response carries the slug or prefixed id instead of the key. The OpenAPI document types both ids as strings. See [Field serialization](./rest-api.html#field-serialization).
-
-A `belongs_to` write takes that value back, also on a resource found by slug alone. A record's own `id` field doesn't change.
-
-### Action Required
-
-Update API clients that read these ids as numbers or compare them with numbers. Send back the value a read returns.
-
-</Option>
-
-## Upgrade to `avo` `4.3.9`
-
-<Option name="`act_on?` authorizes running an action, not only the Actions button">
-
-### Breaking Change
+#### Breaking Change
 
 Running an action now asks the resource policy's [`act_on?`](./authorization-api.html#act_on) of the record on the page and of each selected record (the model class when there are none, and for **Select all**). If any is denied, the whole run is refused. Before, `act_on?` only hid the Actions button, so a hand-built request could run an action on records the policy denies.
 
 An action run from an association panel is still shown or hidden by the parent's `act_on_{association}?`, and now also needs `act_on?` on each selected child.
 
-### Action Required
+#### Action Required
 
 None, unless a resource's actions run only from association panels and its policy has no `act_on?`. Under [`explicit_authorization`](./authorization-api.html#explicit_authorization) (the default), those runs are now refused. Define it on the child's policy:
 
@@ -199,57 +228,63 @@ end
 
 </Option>
 
-<Option name="A refusal with no page to go back to renders a 403 page">
+<Option headingSize="3" name="A refusal with no page to go back to renders a 403 page">
 
-### Breaking Change
+#### Breaking Change
 
 A refused request with no page to go back to (an address typed in, a bookmark, a reload) now gets a `403` page in the Avo layout with the "not authorized" message, instead of a redirect to Avo's home page. JSON and Turbo Stream requests get a bare `403`. A request with a page to go back to is still redirected there with the flash.
 
 Before, a refused home page redirected to itself until the browser gave up, and a refusal inside an add-on's own pages raised a `500`.
 
-### Action Required
+#### Action Required
 
 None, unless a test or client expects the redirect to the home page.
 
 </Option>
 
-## Upgrade to `avo-authorization` `4.3.3`
+## `avo-authorization` 4.3.3 <span class="tl-date">Oct 28, 2026</span> {#avo-authorization-4-3-3 data-gems="avo-authorization" data-date="2026-10-28" data-version="4.3.3"}
 
-<Option name="An app with an authorization client and no `avo-authorization` license refuses every resource">
+<a id="upgrade-to-avo-authorization-4-3-3"></a>
 
-### Breaking Change
+<Option headingSize="3" name="An app with an authorization client and no `avo-authorization` license refuses every resource">
+
+#### Breaking Change
 
 When your initializer sets [`authorization_client`](./authorization-api.html#authorization_client) and your license doesn't include the `avo-authorization` add-on, Avo now refuses every resource: lists come back empty, show and edit answer `404`, and a banner explains why. Before, every policy was skipped and every admin reached every record. See [When the license lapses](./authorization.html#when-the-license-lapses).
 
-### Action Required
+#### Action Required
 
 Check that every environment where your initializer sets a client runs with your license key, test and CI included. Apps with no `authorization_client` line, or with it set to `nil`, are unaffected.
 
 </Option>
 
-## Upgrade to `avo-ai` `4.3.0.beta.8`
+## `avo-ai` 4.3.0.beta.8 <span class="tl-date">Oct 28, 2026</span> {#avo-ai-4-3-0-beta-8 data-gems="avo-ai" data-date="2026-10-28" data-version="4.3.0.beta.8"}
 
-<Option name="The assistant reads a record's fields and files only when `show?` allows it">
+<a id="upgrade-to-avo-ai-4-3-0-beta-8"></a>
 
-### Breaking Change
+<Option headingSize="3" name="The assistant reads a record's fields and files only when `show?` allows it">
+
+#### Breaking Change
 
 The assistant now asks [`show?`](./authorization-api.html#show) before it reads a record's field values, its files, or its chip fields. A row the user may list but not open comes back with only its id and reference. Before, `index?` and the policy scope were enough.
 
-### Action Required
+#### Action Required
 
 None, unless users should read rows through the chat that their `show?` refuses. Widen `show?` for them.
 
 </Option>
 
-## Upgrade to `avo-api` `4.3.1`
+## `avo-api` 4.3.1 <span class="tl-date">Oct 28, 2026</span> {#avo-api-4-3-1 data-gems="avo-api" data-date="2026-10-28" data-version="4.3.1"}
 
-<Option name="Association fields follow `view_{association}?` and the related policy scope">
+<a id="upgrade-to-avo-api-4-3-1"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Association fields follow `view_{association}?` and the related policy scope">
+
+#### Breaking Change
 
 An association field is now left out of a response when the record's policy refuses `view_<field>?`, or, under [`explicit_authorization`](./authorization-api.html#explicit_authorization) (the default), doesn't define it. Counts and `has_one` ids go through the related resource's `Scope`, so a `has_one` outside it is `null`. A `has_and_belongs_to_many` field is now `{ "count": 12 }`, like a `has_many`, instead of the related rows. See [Field serialization](./rest-api.html#field-serialization).
 
-### Action Required
+#### Action Required
 
 Define `view_<field>?` for every association field your API clients read, and update clients that read a `has_and_belongs_to_many` field as a list.
 
@@ -262,140 +297,158 @@ end
 
 </Option>
 
-## Upgrade to `avo-audit_logging` `4.3.1`
+## `avo-audit_logging` 4.3.1 <span class="tl-date">Oct 28, 2026</span> {#avo-audit-logging-4-3-1 data-gems="avo-audit_logging" data-date="2026-10-28" data-version="4.3.1"}
 
-<Option name="Undo needs `update?` on the record">
+<a id="upgrade-to-avo-audit-logging-4-3-1"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Undo needs `update?` on the record">
+
+#### Breaking Change
 
 The **Undo change** action now asks the record's policy: [`update?`](./authorization-api.html#update), with the record found through its policy scope, or [`create?`](./authorization-api.html#create) to bring back a destroyed record. Users the policy refuses no longer see the action. The activity's payload also leaves out fields the user's field policy withholds, as the changeset diff already did.
 
-### Action Required
+#### Action Required
 
 None, unless an STI model records its versions under a base class that has no Avo resource. Undo is hidden for those until you map the base class with [`model_resource_mapping`](./customization-api.html#model_resource_mapping).
 
 </Option>
 
-## Upgrade to `avo-collaboration` `4.3.2`
+## `avo-collaboration` 4.3.2 <span class="tl-date">Oct 28, 2026</span> {#avo-collaboration-4-3-2 data-gems="avo-collaboration" data-date="2026-10-28" data-version="4.3.2"}
 
-<Option name="Timeline requests need access to the record and its timeline">
+<a id="upgrade-to-avo-collaboration-4-3-2"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Timeline requests need access to the record and its timeline">
+
+#### Breaking Change
 
 Every collaboration request now finds the record through the resource's policy scope and asks `show?` and `collaboration_view_timeline?`. Posting also asks `collaboration_create_entry?`, and deleting asks `collaboration_destroy_entry?`. Before, these methods only hid buttons. A refused request gets a `403`, and a record outside the scope a `404`. See [Authorization](./collaboration.html#authorization).
 
-### Action Required
+#### Action Required
 
 None. The timeline's buttons already followed these methods.
 
 </Option>
 
-## Upgrade to `avo-dashboards` `4.3.2`
+## `avo-dashboards` 4.3.2 <span class="tl-date">Oct 28, 2026</span> {#avo-dashboards-4-3-2 data-gems="avo-dashboards" data-date="2026-10-28" data-version="4.3.2"}
 
-<Option name="A card's URL refuses what its page refuses">
+<a id="upgrade-to-avo-dashboards-4-3-2"></a>
 
-### Breaking Change
+<Option headingSize="3" name="A card's URL refuses what its page refuses">
+
+#### Breaking Change
 
 A card's own URL now refuses a card of a dashboard whose `authorize` fails, a card hidden by `visible`, and a resource card whose policy refuses `index?` (or `show?` on the record). Before, it served any card by its position. See [Cards visibility](./cards.html#cards-visibility).
 
-### Action Required
+#### Action Required
 
 None. Cards render on their pages as before.
 
 </Option>
 
-## Upgrade to `avo-dynamic_filters` `4.3.1`
+## `avo-dynamic_filters` 4.3.1 <span class="tl-date">Oct 28, 2026</span> {#avo-dynamic-filters-4-3-1 data-gems="avo-dynamic_filters" data-date="2026-10-28" data-version="4.3.1"}
 
-<Option name="A filter applies only the conditions it offers">
+<a id="upgrade-to-avo-dynamic-filters-4-3-1"></a>
 
-### Breaking Change
+<Option headingSize="3" name="A filter applies only the conditions it offers">
+
+#### Breaking Change
 
 A condition in the URL that the filter doesn't offer is now ignored, and no pill shows for it. Before, Avo passed any condition to Ransack. That includes `is_present` and `is_blank` on number and select filters, which only text filters offer. See [`conditions`](./dynamic-filters-api.html#conditions).
 
-### Action Required
+#### Action Required
 
 None, unless a link or bookmark uses a Ransack predicate the filter doesn't list. Add it to the filter's `conditions`, together with the default conditions you want to keep.
 
 </Option>
 
-## Upgrade to `avo-http_resource` `4.3.1`
+## `avo-http_resource` 4.3.1 <span class="tl-date">Oct 28, 2026</span> {#avo-http-resource-4-3-1 data-gems="avo-http_resource" data-date="2026-10-28" data-version="4.3.1"}
 
-<Option name="The debug console runs a probe only when the policy allows that action">
+<a id="upgrade-to-avo-http-resource-4-3-1"></a>
 
-### Breaking Change
+<Option headingSize="3" name="The debug console runs a probe only when the policy allows that action">
+
+#### Breaking Change
 
 Each [debug console](./http-resource.html#debug-console) probe now asks the policy method the resource's own page would: `index?` for `index` and `count`, then `show?`, `create?`, `update?`, and `destroy?` for `delete`. A refused probe is reported as not authorized and never sent. Before, `index?` was enough to run every probe, writes to the remote API included.
 
-### Action Required
+#### Action Required
 
 None, unless the console's users should run write probes. Allow `create?`, `update?`, or `destroy?` for them. These are asked of the model class, so a method that reads the record refuses.
 
 </Option>
 
-## Upgrade to `avo-kanban` `4.3.2`
+## `avo-kanban` 4.3.2 <span class="tl-date">Oct 28, 2026</span> {#avo-kanban-4-3-2 data-gems="avo-kanban" data-date="2026-10-28" data-version="4.3.2"}
 
-<Option name="Board routes follow the board policy, and cards their record's policy">
+<a id="upgrade-to-avo-kanban-4-3-2"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Board routes follow the board policy, and cards their record's policy">
+
+#### Breaking Change
 
 Every board route now asks the `Avo::Kanban::BoardPolicy` method behind its button and finds the board through the policy's `Scope`. Removing a card asks `manage_column?`, and resetting a column is now a `POST`. Moving or adding a card updates its record, so it needs the record inside its resource's policy scope, `update?` on it, and a field on that resource that writes the board's property. Cards whose record the scope hides are no longer shown. See [Authorization](./kanban-boards.html#authorization).
 
-### Action Required
+#### Action Required
 
 - Allow `update?` on the records your users move on a board.
 - If a board's property is a virtual attribute with no field, add one to the resource. See [Items without that property](./kanban-boards.html#items-without-that-property).
 
 </Option>
 
-## Upgrade to `avo-mcp_server` `4.3.0.beta.2`
+## `avo-mcp_server` 4.3.0.beta.2 <span class="tl-date">Oct 28, 2026</span> {#avo-mcp-server-4-3-0-beta-2 data-gems="avo-mcp_server" data-date="2026-10-28" data-version="4.3.0.beta.2"}
 
-<Option name="Association values follow `view_{association}?` and the related policy scope">
+<a id="upgrade-to-avo-mcp-server-4-3-0-beta-2"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Association values follow `view_{association}?` and the related policy scope">
+
+#### Breaking Change
 
 The tools now leave out an association the record's policy refuses with `view_<association>?`, or, under [`explicit_authorization`](./authorization-api.html#explicit_authorization) (the default), doesn't define. A `has_one` is read through the associated resource's policy scope and is `null` outside it, and `has_many` ids go through that resource's scope. See [Arguments](./mcp-api.html#arguments).
 
-### Action Required
+#### Action Required
 
 Define `view_<association>?` for every association MCP clients should read.
 
 </Option>
 
-## Upgrade to `avo-menu` `4.3.1`
+## `avo-menu` 4.3.1 <span class="tl-date">Oct 28, 2026</span> {#avo-menu-4-3-1 data-gems="avo-menu" data-date="2026-10-28" data-version="4.3.1"}
 
-<Option name="A menu `action` item shows only when the resource's policy allows `act_on?`">
+<a id="upgrade-to-avo-menu-4-3-1"></a>
 
-### Breaking Change
+<Option headingSize="3" name="A menu `action` item shows only when the resource's policy allows `act_on?`">
+
+#### Breaking Change
 
 A menu [`action`](./menu-editor-api.html#action) item now shows only when the resource's policy allows [`act_on?`](./authorization-api.html#act_on), as the resource's own Actions dropdown does. Under `explicit_authorization` (the default), a policy without `act_on?` hides it.
 
-### Action Required
+#### Action Required
 
 None, unless the resource's policy lacks `act_on?`. Define it.
 
 </Option>
 
-<Option name="`all_boards` lists only the boards the board policy's `Scope` returns">
+<Option headingSize="3" name="`all_boards` lists only the boards the board policy's `Scope` returns">
 
-### Breaking Change
+#### Breaking Change
 
 [`all_boards`](./menu-editor-api.html#all_boards) now lists only the boards `Avo::Kanban::BoardPolicy::Scope` returns. Before, it listed every board.
 
-### Action Required
+#### Action Required
 
 None.
 
 </Option>
 
-## Upgrade to `avo-nested` `4.3.2`
+## `avo-nested` 4.3.2 <span class="tl-date">Oct 28, 2026</span> {#avo-nested-4-3-2 data-gems="avo-nested" data-date="2026-10-28" data-version="4.3.2"}
 
-<Option name="A nested form writes only the children the user may update or create">
+<a id="upgrade-to-avo-nested-4-3-2"></a>
 
-### Breaking Change
+<Option headingSize="3" name="A nested form writes only the children the user may update or create">
+
+#### Breaking Change
 
 Saving a parent with a nested form now asks the child's policies. An existing child is written only when it's inside the child resource's policy scope and `update?` allows it; other rows are skipped. A new child needs the child's `create?` and the parent's `create_<association>?`, and the "Add" button is hidden when `create_<association>?` refuses. Under `explicit_authorization` (the default), a parent policy without `create_<association>?` refuses new rows. See [Nested in Forms](./associations/has_many.html#nested-in-forms).
 
-### Action Required
+#### Action Required
 
 Define `create_<association>?` on the parent's policy for every nested association users add records to:
 
@@ -408,15 +461,17 @@ end
 
 </Option>
 
-## Upgrade to `avo-notifications` `4.3.1`
+## `avo-notifications` 4.3.1 <span class="tl-date">Oct 28, 2026</span> {#avo-notifications-4-3-1 data-gems="avo-notifications" data-date="2026-10-28" data-version="4.3.1"}
 
-<Option name="The notification resource finds records through the current user">
+<a id="upgrade-to-avo-notifications-4-3-1"></a>
 
-### Breaking Change
+<Option headingSize="3" name="The notification resource finds records through the current user">
+
+#### Breaking Change
 
 The generated notification resource scoped the list to the current user, but not the record lookup. A signed-in user could open, delete or run actions on another user's notification by id. New installs generate a resource that scopes both. See [Notification resource](./notifications.html#notification-resource).
 
-### Steps to Update
+#### Steps to Update
 
 If you generated `app/avo/resources/avo_notification.rb` with avo-notifications 4.3.0 or earlier, add the lookup below `index_query`:
 
@@ -435,15 +490,17 @@ end
 
 </Option>
 
-## Upgrade to `avo-record_reordering` `4.3.1`
+## `avo-record_reordering` 4.3.1 <span class="tl-date">Oct 28, 2026</span> {#avo-record-reordering-4-3-1 data-gems="avo-record_reordering" data-date="2026-10-28" data-version="4.3.1"}
 
-<Option name="Moving a record needs `reorder?` on its policy">
+<a id="upgrade-to-avo-record-reordering-4-3-1"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Moving a record needs `reorder?` on its policy">
+
+#### Breaking Change
 
 Moving a record now asks [`reorder?`](./authorization-api.html#reorder) on its own policy, from any panel. Association panels still show the controls by `reorder_<association>?`, but the move also needs the record's `reorder?`. After a move, Avo redirects back only to an address inside the app.
 
-### Action Required
+#### Action Required
 
 Define `reorder?` on the policy of every resource users reorder from an association panel:
 
@@ -456,58 +513,72 @@ end
 
 </Option>
 
-## Upgrade to `avo-scopes` `4.3.1`
+## `avo-scopes` 4.3.1 <span class="tl-date">Oct 28, 2026</span> {#avo-scopes-4-3-1 data-gems="avo-scopes" data-date="2026-10-28" data-version="4.3.1"}
 
-<Option name="A scope count asks the same policy as the index it counts">
+<a id="upgrade-to-avo-scopes-4-3-1"></a>
 
-### Breaking Change
+<Option headingSize="3" name="A scope count asks the same policy as the index it counts">
+
+#### Breaking Change
 
 A scope's count now asks [`index?`](./authorization-api.html#index), or on an association panel the parent's `view_<association>?`. A refused count renders an empty pill. Before, a user could read the counts of a resource whose index their policy denies.
 
-### Action Required
+#### Action Required
 
 None. A user who can see the index sees the same counts.
 
 </Option>
 
-## Upgrade to `avo` `4.3.6`
+## `avo` 4.3.6 <span class="tl-date">Oct 27, 2026</span> {#avo-4-3-6 data-gems="avo" data-date="2026-10-27" data-version="4.3.6"}
 
-<Option name="Trix uploads on the New form are authorized with `create?`">
+<a id="upgrade-to-avo-4-3-6"></a>
 
-### What changed
+<Option headingSize="3" name="Trix uploads on the New form are authorized with `create?`">
+
+#### What changed
 
 A [Trix](./fields/trix) field on an Action Text attribute, or on a plain column with `attachments_disabled: false`, now accepts uploads on the `New` form. Those uploads are authorized with the resource policy's `create?`. Uploads on a saved record are still authorized with `update?`, and `attachment_key` uploads with `upload_{FIELD_ID}?`.
 
 Action Text attachments, images and other files, now keep their `sgid` and render on the `Show` view through your app's `active_storage/blobs/_blob.html.erb` partial. Before, non-image files rendered as missing ([#2715](https://github.com/avo-hq/avo/issues/2715)).
 
-### Action Required
+#### Action Required
 
 None, unless your `create?` policy is looser than `update?` and you want to keep users who can create a record from uploading files before it's saved. Set `attachments_disabled: true` on that field.
 
 </Option>
 
-## `avo-ai`, `avo-mcp_server`, `avo-menu`: an action's `visible` block applies everywhere
+## `avo-ai` + `avo-mcp_server` + `avo-menu`  <span class="tl-date">Unreleased yet?</span> {#avo-ai-avo-mcp-server-avo-menu-unversioned-2026-10-27 data-gems="avo-ai avo-mcp_server avo-menu" data-date="2026-10-27"}
 
-<Option name="An action hidden by `self.visible` is hidden from the assistant, MCP clients and the menu">
+<a id="avo-ai-avo-mcp-server-avo-menu-an-action-s-visible-block-applies-everywhere"></a>
 
-### What changed
+_an action's `visible` block applies everywhere_
+
+
+<Option headingSize="3" name="An action hidden by `self.visible` is hidden from the assistant, MCP clients and the menu">
+
+#### What changed
 
 The assistant, the MCP tools and a menu `action` item now check an action's [`self.visible`](./actions-api.html#visible) block as well as its `self.authorize`, the way the panel's Actions dropdown does.
 
 - **The assistant and `list_actions`** leave out an action that is hidden on both the index and a record's page, and refuse to run one that is hidden on the page the run starts from: a record's page for one record, the index otherwise.
 - **A menu `action` item** is left out when its action is hidden on the resource's index.
 
-### Action Required
+#### Action Required
 
 None, unless an action hides itself with `self.visible` but is still meant to run from the assistant, an MCP client or the menu. Move that rule into `self.authorize`, or widen `self.visible`.
 
 </Option>
 
-## `avo`: bulk actions find the selected records through `find_records`
+## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-10-22 data-gems="avo" data-date="2026-10-22"}
 
-<Option name="`query` is an Array, in the order the records were selected">
+<a id="avo-bulk-actions-find-the-selected-records-through-find-records"></a>
 
-### What changed
+_bulk actions find the selected records through `find_records`_
+
+
+<Option headingSize="3" name="`query` is an Array, in the order the records were selected">
+
+#### What changed
 
 A bulk action now looks up the records the user selected through the resource's new [`find_records`](./resources-api.html#self.find_record_method), the same lookup the assistant and the MCP tools use.
 
@@ -515,17 +586,22 @@ A bulk action now looks up the records the user selected through the resource's 
 - **A `find_record_method` that ignores `query` stays inside the user's policy scope.** The records it returns that the scope doesn't hold drop out of `query`.
 - **A `find_record_method` that takes one id at a time works for bulk actions.** Avo asks it once per id when it fails on the whole list.
 
-### Action Required
+#### Action Required
 
 None, unless a bulk action calls a relation method such as `update_all`, `where` or `find_each` on `query`. Iterate over it instead, or build a relation with `Model.where(id: query.map(&:id))`.
 
 </Option>
 
-## `avo-mcp_server`: records are named by `to_param`
+## `avo-mcp_server`  <span class="tl-date">Unreleased yet?</span> {#avo-mcp-server-unversioned-2026-10-22 data-gems="avo-mcp_server" data-date="2026-10-22"}
 
-<Option name="Record ids are strings, resolved through the resource's own finder">
+<a id="avo-mcp-server-records-are-named-by-to-param"></a>
 
-### What changed
+_records are named by `to_param`_
+
+
+<Option headingSize="3" name="Record ids are strings, resolved through the resource's own finder">
+
+#### What changed
 
 The MCP tools name every record by its `to_param`, the id in the panel's URL, and find it through the resource's [`find_record_method`](./resources-api.html#self.find_record_method), within the admin's policy scope. They used to use the primary key.
 
@@ -533,46 +609,61 @@ The MCP tools name every record by its `to_param`, the id in the panel's URL, an
 - **Hidden keys stay hidden.** Where a model hides its primary key (friendly_id, hashids, a prefixed id, a custom `to_param`), tools return the slug or hashid instead of the primary key, and take whatever the resource's finder takes. A record with no title attribute is titled `Post #<to_param>`.
 - **A `belongs_to` takes back the id `show_record` gives**, also on a resource found by slug alone.
 
-### Action Required
+#### Action Required
 
 - **A client, prompt or skill that sends or compares ids as numbers:** treat ids as strings and send back what the tools return.
 - **A tool of your own:** declare its id arguments `type: "string"`, pass them to `ToolSupport.find_authorized_record!` as received, and name records by `record.to_param` in what it returns. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
 
 </Option>
 
-## `avo`: attaching a `has_many`, `has_one` or HABTM record follows `attach_scope`
+## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-10-22-2 data-gems="avo" data-date="2026-10-22"}
 
-<Option name="The attach modal saves only the records its list offers">
+<a id="avo-attaching-a-has-many-has-one-or-habtm-record-follows-attach-scope"></a>
 
-### What changed
+_attaching a `has_many`, `has_one` or HABTM record follows `attach_scope`_
+
+
+<Option headingSize="3" name="The attach modal saves only the records its list offers">
+
+#### What changed
 
 The attach modal of a `has_many`, `has_one` or `has_and_belongs_to_many` field listed the records its [`attach_scope`](./associations/has_many.html#attach_scope) returned, but saving looked the chosen record up through the policy scope alone. A record outside a narrowing `attach_scope` could still be attached by sending its id, and one a widening `attach_scope` listed was refused. Saving now goes through the same `attach_scope` as the list, the way a `belongs_to` already did. A record outside it is refused like an id that doesn't exist.
 
-### Action Required
+#### Action Required
 
 None for the modal's own list, which offers only records inside the `attach_scope`. A [searchable](./associations/searchable) picker backed by a [custom search provider](./search-api.html#custom-search-providers) returns hashes, which the `attach_scope` can't filter, so make that search return only records inside it. Anything that posts ids to the attach endpoint directly gets the same check.
 
 </Option>
 
-## `avo`: a `belongs_to` value that matches no record is a form error
+## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-10-22-3 data-gems="avo" data-date="2026-10-22"}
 
-<Option name="The form comes back with the error on the field, and the REST API answers `422`">
+<a id="avo-a-belongs-to-value-that-matches-no-record-is-a-form-error"></a>
 
-### What changed
+_a `belongs_to` value that matches no record is a form error_
+
+
+<Option headingSize="3" name="The form comes back with the error on the field, and the REST API answers `422`">
+
+#### What changed
 
 A `belongs_to` value that matches no record the field may attach, because the record is gone or outside the field's [`attach_scope`](./associations/belongs_to.html#attach_scope), used to answer with a 404 page, and `avo-api` with a `404`. The form now comes back with "is invalid" on that field, and the API answers `422` with the field named in `errors`, the way a validation error does. Nothing is saved.
 
-### Action Required
+#### Action Required
 
 None, unless an API client reads a `404` from a create or update as "the related record doesn't exist". It gets a `422` now; read its `errors`.
 
 </Option>
 
-## `avo`: a field declared once per view saves through the form's declaration
+## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-10-22-4 data-gems="avo" data-date="2026-10-22"}
 
-<Option name="Save rules come from the declaration the form shows">
+<a id="avo-a-field-declared-once-per-view-saves-through-the-form-s-declaration"></a>
 
-### What changed
+_a field declared once per view saves through the form's declaration_
+
+
+<Option headingSize="3" name="Save rules come from the declaration the form shows">
+
+#### What changed
 
 When a resource declares the same field more than once for different views, saving the form now goes through the declaration the form shows. Before, the last declaration wrote the value, whichever view it was for, so the form's `attach_scope`, `update_using` and other save rules could be skipped. See [Show and hide fields on different views](./field-options.html#show-and-hide-fields-on-different-views).
 
@@ -580,17 +671,22 @@ A money field that receives only one of its params now keeps the record's curren
 
 `Avo::BaseResource#fields_by_database_id` is replaced by `fields_by_param`, which maps every form param to the field that writes it.
 
-### Action Required
+#### Action Required
 
 Search your resources for a field declared more than once. Where the declarations have different save rules, the one on the form now applies. Replace any call to `fields_by_database_id` with `fields_by_param`.
 
 </Option>
 
-## `avo-ai` and `avo-mcp_server`: writes go through the resource's fields
+## `avo-ai` + `avo-mcp_server`  <span class="tl-date">Unreleased yet?</span> {#avo-ai-avo-mcp-server-unversioned-2026-10-22 data-gems="avo-ai avo-mcp_server" data-date="2026-10-22"}
 
-<Option name="Creates and updates run each field's save rules and take the form's names">
+<a id="avo-ai-and-avo-mcp-server-writes-go-through-the-resource-s-fields"></a>
 
-### What changed
+_writes go through the resource's fields_
+
+
+<Option headingSize="3" name="Creates and updates run each field's save rules and take the form's names">
+
+#### What changed
 
 The assistant and connected MCP clients used to write the values they were given straight onto the model. They now save the way the panel's edit form does, through your fields:
 
@@ -600,7 +696,7 @@ The assistant and connected MCP clients used to write the values they were given
 
 Undo in the chat still restores the stored row exactly as it was.
 
-### Action Required
+#### Action Required
 
 - **A client, prompt or skill that writes raw columns:** switch to the names the refusal lists, which are the ones `list_resources` and the edit form use.
 - **A tool of your own that writes records:** write through the fields — `Avo::Ai::FieldScope#fill` for the assistant, `FieldSupport.write_record!` for the MCP server. See [Bring your own tool](./ai.html#bring-your-own-tool).
@@ -608,21 +704,23 @@ Undo in the chat still restores the stored row exactly as it was.
 
 </Option>
 
-## Upgrade to `avo` `4.3.2`
+## `avo` 4.3.2 <span class="tl-date">Oct 14, 2026</span> {#avo-4-3-2 data-gems="avo" data-date="2026-10-14" data-version="4.3.2"}
 
-<Option name="Fields pick up `activerecord.attributes` and `attributes` keys">
+<a id="upgrade-to-avo-4-3-2"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Fields pick up `activerecord.attributes` and `attributes` keys">
+
+#### Breaking Change
 
 A field with no `name:` and no `translation_key:` now reads the model's attribute translation — `activerecord.attributes.<model>.<attribute>` (parent classes included), then `attributes.<attribute>` — after Avo's own `avo.resource_translations.<resource>.fields.<attribute>` and `avo.field_translations.<attribute>` keys, and before humanizing its id. These are the keys Rails already uses for form labels and error messages, so a localized app gets translated admin labels with no change to its Ruby. See [Localizing fields](./i18n.html#localizing-fields).
 
 Avo's own keys still win, and so do `name:` and `translation_key:`. A `translation_key:` that points at a missing key still falls back to the humanized id, not to the model's translation.
 
-### Action Required
+#### Action Required
 
 **Grep your locale files** for `activerecord:` and a top-level `attributes:` key. If you have neither, nothing changes. If you do, every field that was showing a humanized id and matches one of those keys now shows the translation instead. Association fields look up the association name (`user`), not the foreign key (`user_id`).
 
-### Maintaining Previous Behavior
+#### Maintaining Previous Behavior
 
 Keep one label as it was with `name:` or `translation_key:` on the field, or turn the lookup off for the whole admin:
 
@@ -633,31 +731,33 @@ config.model_attribute_translations = false
 
 </Option>
 
-## Upgrade to `avo` `4.3.1`
+## `avo` 4.3.1 <span class="tl-date">Oct 14, 2026</span> {#avo-4-3-1 data-gems="avo" data-date="2026-10-14" data-version="4.3.1"}
 
-<Option name="Selected rows come back when you go back to an index">
+<a id="upgrade-to-avo-4-3-1"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Selected rows come back when you go back to an index">
+
+#### Breaking Change
 
 Going back to an index page now puts back the rows you had selected and where you had scrolled. That happens with the browser's Back button and with the **Go back** link on a record page. Reaching the index any other way, or reloading it, starts with nothing selected, and running an action forgets the selection. Before, **Go back** opened the index at the top with nothing selected. See [Coming back to the index](./select-all.html#coming-back-to-the-index).
 
-### Action Required
+#### Action Required
 
 None in production. Check your system specs: one that selects rows, opens a record, clicks **Go back** and expects nothing to be selected now finds those rows still checked.
 
 </Option>
 
-<Option name="Badges follow `except_on` and `show_on: :all` on forms">
+<Option headingSize="3" name="Badges follow `except_on` and `show_on: :all` on forms">
 
-### Breaking Change
+#### Breaking Change
 
 A badge can now render a select on <New /> and <Edit />. It still stays off forms by default. Before, a badge was forced off forms after its visibility options ran, so `except_on: :index` or `show_on: :all` left it display-only there. Now a badge follows those options like every other field, and both put the select on forms. See [Editing the value](./fields/badge.html#editing-the-value).
 
-### Action Required
+#### Action Required
 
 Search your resources for badges declared with `except_on` or `show_on: :all`. Each one now shows a select on <New /> and <Edit />. The select keeps the record's current value, so saving a form doesn't change it.
 
-### Maintaining Previous Behavior
+#### Maintaining Previous Behavior
 
 Add `:forms` to `except_on` to keep the badge display-only.
 
@@ -669,13 +769,13 @@ field :status, as: :badge, except_on: [:index, :forms], options: {success: "done
 
 </Option>
 
-<Option name="`?set_locale=` is stored only for an authenticated request">
+<Option headingSize="3" name="`?set_locale=` is stored only for an authenticated request">
 
-### Breaking Change
+#### Breaking Change
 
 Avo writes `?set_locale=` into `Avo.configuration.locale` only after your [`authenticate_with`](./authentication.html#authenticate-with-method) block lets the request through. Before, the write happened in an `around_action` that ran first, so a request the block rejected still switched the language for **every user** until the server restarted. A controller that skips Avo's authentication altogether can no longer store it either ([#4893](https://github.com/avo-hq/avo/pull/4893)).
 
-### Action Required
+#### Action Required
 
 None in production. If a link or script outside the admin reached an Avo URL with `?set_locale=` while signed out to set the language, it no longer has any effect — set [`config.locale`](./customization-api.html#locale) for everyone, or let each user pick their own with the [locale selector](./i18n.html#locale-selector).
 
@@ -685,17 +785,17 @@ On earlier versions anyone who could reach an Avo URL could change the admin's l
 
 </Option>
 
-<Option name="`?set_locale=` deprecated, and unknown locales in both locale params are ignored">
+<Option headingSize="3" name="`?set_locale=` deprecated, and unknown locales in both locale params are ignored">
 
-### Breaking Change
+#### Breaking Change
 
 `?set_locale=` logs a deprecation warning and will be removed in a future version — it has always changed `Avo.configuration.locale` for the whole process, so it switches the language for every user until the server restarts. Both `?set_locale=` and `?force_locale=` now ignore a value missing from `I18n.available_locales` and move on to the next source. Before, an unknown `set_locale` was stored globally and made `I18n.with_locale` raise `I18n::InvalidLocale` on every later request. See [Setting the locale](./i18n.html#setting-the-locale).
 
-### Action Required
+#### Action Required
 
 A request carrying a locale your app doesn't list now keeps the configured locale instead of switching, so a spec that asserted a bogus `?force_locale=` renders in that locale needs updating. Everything else keeps working; the warning in the logs is the only new signal.
 
-### Steps to Update
+#### Steps to Update
 
 Grep your links, bookmarks and specs for `set_locale`. To change the language for everyone, set it in the initializer; to let each user choose, use the [locale selector](./i18n.html#locale-selector), which stores the choice per browser.
 
@@ -706,29 +806,117 @@ config.locale = :"pt-BR"
 
 </Option>
 
-## `avo-mcp_server`: a shipped `count_records` tool
+## `avo-audit_logging` 4.3.0 <span class="tl-date">Oct 6, 2026</span> {#avo-audit-logging-4-3-0 data-gems="avo-audit_logging" data-date="2026-10-06" data-version="4.3.0"}
 
-<Option name="An app's own `count_records` tool is no longer served">
+<a id="upgrade-to-avo-audit-logging-4-3-0"></a>
 
-### What changed
+<Option headingSize="3" name="Activities record where they came from — run the installer again">
+
+#### What changed
+
+An activity now carries an **origin**: `origin`, a short name for whatever acted, and the optional `origin_record` pointing at the thing itself. A change made in the panel has none. A change made through an [MCP connection](./mcp.html#trace-changes-back-to-a-connection), an [API token](./rest-api.html#see-what-a-token-changed) or an [Avo AI chat](./ai.html#tracing-what-it-changed) is marked `mcp_connection`, `api_token` (or `api`) and `ai_chat`, and links back to it — a record's timeline reads *Ada Lovelace through MCP connection*. Until this version an MCP client's changes were deliberately indistinguishable from the admin's own.
+
+The two columns are a new migration. A **first** install writes one migration with them included; an app that installed an earlier version has the table without them.
+
+#### Action Required
+
+```bash
+bin/rails generate avo:audit_logging upgrade
+bin/rails db:migrate
+```
+
+`upgrade` reads your `db/migrate` and writes only what is missing — it never touches a migration you have already run. Running `install` again does the same thing.
+
+Until you migrate, nothing breaks: activities keep being recorded, just without an origin, and the **Audit trail** table on a connection's, token's or chat's page is not offered rather than shown empty.
+
+If you have written `Avo::AuditLogging::Activity` yourself — an importer, a job — you can mark those too; see [Mark your own origins](./audit-logging.html#mark-your-own-origins).
+
+</Option>
+
+<Option headingSize="3" name="The audit log is off limits to MCP clients, API tokens and the assistant">
+
+#### What changed
+
+`Avo::AuditLogging::Activity` is no longer offered as a resource through `avo-mcp_server`'s tools, `avo-api`'s routes and entitlements grid, or the Avo AI assistant, whatever your policies say. An agent or a credential that could delete the record of what it just did would make the log worthless.
+
+#### Action Required
+
+Nothing, unless a client of yours was reading `/api/resources/avo_activities` or asking the assistant about activities — those now answer as if the resource did not exist. Read the audit log in the panel instead.
+
+</Option>
+
+## `avo` 4.3.0 <span class="tl-date">Oct 6, 2026</span> {#avo-4-3-0 data-gems="avo" data-date="2026-10-06" data-version="4.3.0"}
+
+<a id="upgrade-to-4-3-0"></a>
+
+<Option headingSize="3" name="`avo-api` token scopes are now called entitlements">
+
+#### Breaking Change
+
+"Scope" already means a policy scope in Avo and an ActiveRecord scope in every app running it, so what an API token is allowed to reach is called an **entitlement** from 4.3.0 on. 4.2.0 is the only version that shipped it under the old name.
+
+The rename reaches the database column, the panel, the `403` body, and the token policy method:
+
+| 4.2.0 | 4.3.0 |
+| ---------------------------------- | ------------------------------------------------------------------------ |
+| `avo_api_tokens.scopes` column | `avo_api_tokens.entitlements` |
+| `token.scopes` | `token.entitlements` |
+| `edit_scopes?` on your token policy | [`edit_entitlements?`](./rest-api.html#who-may-change-entitlements) |
+| `"reason": "token_scope"` in a `403` | `"reason": "token_entitlement"` |
+| `scopes_grid` in a form post | `entitlements_grid` |
+| The **Scopes** panel | The [**Entitlements**](./rest-api.html#entitle-a-token) panel |
+
+#### Action Required
+
+Re-run the tokens generator and migrate. It writes `RenameAvoApiTokenScopes` and skips the create migration you already have:
+
+```bash
+rails generate avo_api:tokens
+rails db:migrate
+```
+
+Then grep your app for the left-hand column above. Two are worth checking before the others:
+
+- **`edit_scopes?` on your token policy.** Nothing asks that method any more, so the question falls back to the [permissive default](./rest-api.html#who-may-change-entitlements) and every panel user may edit entitlements. Rename it.
+- **A client branching on `"reason": "token_scope"`.** It now reads `"token_entitlement"` and a branch matching the old string falls through.
+
+Nothing grants or revokes anything on its own: the migration renames a column and every stored grant is carried over untouched.
+
+</Option>
+
+## `avo-mcp_server`  <span class="tl-date">Unreleased yet?</span> {#avo-mcp-server-unversioned-2026-09-30 data-gems="avo-mcp_server" data-date="2026-09-30"}
+
+<a id="avo-mcp-server-a-shipped-count-records-tool"></a>
+
+_a shipped `count_records` tool_
+
+
+<Option headingSize="3" name="An app's own `count_records` tool is no longer served">
+
+#### What changed
 
 The server ships a tenth tool, `count_records`, which answers "how many" with a number and no records. See [Tools](./mcp-api.html#tools).
 
-### Action Required
+#### Action Required
 
 Nothing, unless the app registers its own tool named `count_records` through [`extra_tools`](./mcp-api.html#extra_tools), including a subclass of Avo AI's count tool. The shipped tool now takes that name and the app's is dropped with a log line. Give the app's tool another name to keep serving it.
 
 </Option>
 
-## `avo`: forms ask before you leave with unsaved changes
+## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-09-29 data-gems="avo" data-date="2026-09-29"}
 
-<Option name="`warn_on_unsaved_changes` is on by default">
+<a id="avo-forms-ask-before-you-leave-with-unsaved-changes"></a>
 
-### What changed
+_forms ask before you leave with unsaved changes_
+
+
+<Option headingSize="3" name="`warn_on_unsaved_changes` is on by default">
+
+#### What changed
 
 Avo now asks for confirmation before a user leaves a `New` or `Edit` form with unsaved changes. Saving never asks, and a change that was undone does not count. See [`config.warn_on_unsaved_changes`](./resources-api.html#config.warn_on_unsaved_changes).
 
-### Action Required
+#### Action Required
 
 None in production. Check your system specs: one that changes a form and then navigates away without saving now meets the confirmation dialog. There are two ways to handle it:
 
@@ -747,7 +935,7 @@ end
 With the warning off in tests, your specs no longer go through what your users see when they leave a form.
 :::
 
-### Maintaining Previous Behavior
+#### Maintaining Previous Behavior
 
 Turn it off in every environment.
 
@@ -760,31 +948,41 @@ end
 
 </Option>
 
-## Built-in neutral themes now share one lightness curve
+## `avo`  <span class="tl-date">Unreleased yet?</span> {#avo-unversioned-2026-09-29-2 data-gems="avo" data-date="2026-09-29"}
 
-<Option name="Built-in neutral presets keep their tint but use a consistent surface hierarchy">
+<a id="built-in-neutral-themes-now-share-one-lightness-curve"></a>
 
-### What Changed
+_Built-in neutral themes now share one lightness curve_
+
+
+<Option headingSize="3" name="Built-in neutral presets keep their tint but use a consistent surface hierarchy">
+
+#### What Changed
 
 Slate, Stone, Gray, Zinc, Neutral, Taupe, Mauve, Mist, and Olive now use Brand's lightness at every shade while preserving their original hue and chroma. Dark primary surfaces are also slightly softer. Navbar text continues to use each named preset's original 300 shade for contrast.
 
 Custom palettes supplied through [`neutral_colors`](./appearance-api.html#neutral_colors) are unchanged.
 
-### Action Required
+#### Action Required
 
 None, unless custom CSS depends on the previous built-in shade values. Review overrides that use `--color-avo-neutral-*` while a named preset is active, and use the [public appearance variables](./appearance-api.html#css-variables) when a surface needs a fixed color.
 
 </Option>
 
-## Field authorization: `avo-authorization` 4.2.1
+## `avo-authorization` 4.2.1 <span class="tl-date">Sep 27, 2026</span> {#avo-authorization-4-2-1 data-gems="avo-authorization" data-date="2026-09-27" data-version="4.2.1"}
 
-<Option name="Nothing to add to your policies">
+<a id="field-authorization-avo-authorization-4-2-1"></a>
 
-### What changed
+_Field authorization_
+
+
+<Option headingSize="3" name="Nothing to add to your policies">
+
+#### What changed
 
 A Pundit policy can now name which of a resource's fields a user may reach, with `whitelisted_fields` and `blacklisted_fields`, and every Avo surface honors the answer for reads and writes. See [Field authorization](./authorization.html#hide-fields-from-a-user).
 
-### Action Required
+#### Action Required
 
 None. Field lists are opt-in: a policy that declares neither restricts nothing, whether `explicit_authorization` is on or off. Behavior changes only once a policy declares a list.
 
@@ -792,27 +990,37 @@ Release `avo-authorization` 4.2.1 together with, or before, `avo-ai` 4.2.0.beta.
 
 </Option>
 
-## `avo-api` 4.2.7: `visible:` hides a field from the API too
+## `avo-api` 4.2.7 <span class="tl-date">Sep 27, 2026</span> {#avo-api-4-2-7 data-gems="avo-api" data-date="2026-09-27" data-version="4.2.7"}
 
-<Option name="A field whose visible: proc answers false is no longer serialized">
+<a id="avo-api-4-2-7-visible-hides-a-field-from-the-api-too"></a>
 
-### What changed
+_visible:` hides a field from the API too_
+
+
+<Option headingSize="3" name="A field whose visible: proc answers false is no longer serialized">
+
+#### What changed
 
 The API used to check only a field's `show_on` / `hide_on` options, so a field a `visible:` proc hid from a user in the panel was still in that user's API payload. It is now left out, the same as in the panel.
 
 A failed create, update or delete no longer names a field a policy withholds from the token's owner in `errors`. The failure is reported on `base` instead.
 
-### Action Required
+#### Action Required
 
 Nothing, unless an API client reads a field that a `visible:` proc hides from the token's owner. Make the proc answer `true` for that user, or the field stays out of the payload.
 
 </Option>
 
-## `avo-ai` 4.2.0.beta.6: the chat reads through the resource's fields
+## `avo-ai` 4.2.0.beta.6 <span class="tl-date">Sep 27, 2026</span> {#avo-ai-4-2-0-beta-6 data-gems="avo-ai" data-date="2026-09-27" data-version="4.2.0.beta.6"}
 
-<Option name="A column no field declares is no longer reachable from the chat">
+<a id="avo-ai-4-2-0-beta-6-the-chat-reads-through-the-resource-s-fields"></a>
 
-### What changed
+_the chat reads through the resource's fields_
+
+
+<Option headingSize="3" name="A column no field declares is no longer reachable from the chat">
+
+#### What changed
 
 The assistant used to read, filter, sort, group and search any column on the model, except password- and token-shaped ones. It now goes through the resource the way the panel does. A column is reachable only when a field the user may reach claims it, and associations are traversed only through an association field. A column no field declares is not returned, filtered, sorted, grouped, searched, written, imported, or named in a schema or an inspector report.
 
@@ -824,37 +1032,47 @@ Three things the panel exposes without a field still count:
 
 A model with no Avo resource is never queried or described, and an association check through one is refused.
 
-### Action Required
+#### Action Required
 
 Declare a field for every column the chat should work with. A field only one role should see still takes a `visible:` proc or, with `avo-authorization`, a policy field list. See [How the assistant works](./ai.html#how-the-assistant-works).
 
 </Option>
 
-## `avo-mcp_server` 4.2.0.beta.9: sorting and errors follow the resource's fields
+## `avo-mcp_server` 4.2.0.beta.9 <span class="tl-date">Sep 27, 2026</span> {#avo-mcp-server-4-2-0-beta-9 data-gems="avo-mcp_server" data-date="2026-09-27" data-version="4.2.0.beta.9"}
 
-<Option name="Clients sort by field columns, and errors name only what the admin may see">
+<a id="avo-mcp-server-4-2-0-beta-9-sorting-and-errors-follow-the-resource-s-fields"></a>
 
-### What changed
+_sorting and errors follow the resource's fields_
+
+
+<Option headingSize="3" name="Clients sort by field columns, and errors name only what the admin may see">
+
+#### What changed
 
 - **Sorting:** `list_records` sorts only by a column behind a field the admin may reach, or by `created_at`. Any other `sort_by` is refused, with the sortable columns listed.
 - **Validation errors:** failed writes name only attributes within the admin's reach. This covers the messages, `requiredAttributes`, `optionalAttributes` and `missingRequiredAttributes`. The server log records which attributes were dropped.
 - **`update_record`:** its `changed` list names only readable columns.
 
-### Action Required
+#### Action Required
 
 Nothing, unless a client sorts by a column with no field. Declare a field for it. See [The MCP server](./mcp.html).
 
 </Option>
 
-## `avo-ai`: the composer limits what it uploads
+## `avo-ai`  <span class="tl-date">Unreleased yet?</span> {#avo-ai-unversioned-2026-09-26 data-gems="avo-ai" data-date="2026-09-26"}
 
-<Option name="Files over 25 MB, and types the assistant can't use, are refused">
+<a id="avo-ai-the-composer-limits-what-it-uploads"></a>
 
-### What changed
+_the composer limits what it uploads_
+
+
+<Option headingSize="3" name="Files over 25 MB, and types the assistant can't use, are refused">
+
+#### What changed
 
 The chat composer used to upload any file. It now takes images (PNG, JPEG, GIF, WebP), PDFs and text files — markdown, plain text, CSV, TSV, JSON — up to 25 MB, and refuses anything else as it is added, before it uploads, with a line under the draft saying why. A message sent without the composer is held to the same rule: a file it would have refused is left off the message.
 
-### Action Required
+#### Action Required
 
 Nothing, unless people upload other files — say, Word documents or videos to attach to records. Allow them under `config.ai.uploads`; see [What the composer accepts](./ai.html#what-the-composer-accepts).
 
@@ -864,29 +1082,34 @@ config.ai.uploads = {accept: ["*/*"], max_size: 100.megabytes} # [!code highligh
 
 </Option>
 
-<Option name="Protect Rails' direct-upload endpoint">
+<Option headingSize="3" name="Protect Rails' direct-upload endpoint">
 
-### What changed
+#### What changed
 
 Nothing in Avo — this was always true. The composer uploads through `POST /rails/active_storage/direct_uploads`, which Rails ships without authentication, and the new limits don't cover a request that goes straight to it.
 
-### Action Required
+#### Action Required
 
 Add your app's authentication and a size check to that endpoint: [Protect the direct-upload endpoint](./ai.html#protect-the-direct-upload-endpoint).
 
 </Option>
 
-## `avo-ai`: records are named by `to_param`
+## `avo-ai`  <span class="tl-date">Unreleased yet?</span> {#avo-ai-unversioned-2026-09-26-2 data-gems="avo-ai" data-date="2026-09-26"}
 
-<Option name="Records are named by to_param, not their primary key">
+<a id="avo-ai-records-are-named-by-to-param"></a>
 
-### What changed
+_records are named by `to_param`_
+
+
+<Option headingSize="3" name="Records are named by to_param, not their primary key">
+
+#### What changed
 
 The assistant names every record the way Avo's own URLs do: by `to_param`. On a resource that hides its primary keys behind friendly_id, a hashid gem, or its own `to_param`, the slug now appears in the system prompt, in record labels (`Hello world (#hello-world)`), in chip and card links, and in the `reference` the tools hand the model. The tools look an id up through the resource's `find_record_method`, and still accept a primary key. Their `id` parameters are strings.
 
 Resources that keep Rails' default `to_param` see no difference.
 
-### Action Required
+#### Action Required
 
 Nothing, unless you replaced part of the assistant with your own copy. Check each of these:
 
@@ -896,15 +1119,17 @@ Nothing, unless you replaced part of the assistant with your own copy. Check eac
 
 </Option>
 
-## Upgrade to `avo-ai` 4.2.0.beta.4
+## `avo-ai` 4.2.0.beta.4 <span class="tl-date">Sep 26, 2026</span> {#avo-ai-4-2-0-beta-4 data-gems="avo-ai" data-date="2026-09-26" data-version="4.2.0.beta.4"}
 
-<Option name="Batch updates are undone as one change: run the installer again">
+<a id="upgrade-to-avo-ai-4-2-0-beta-4"></a>
 
-### What changed
+<Option headingSize="3" name="Batch updates are undone as one change: run the installer again">
+
+#### What changed
 
 The assistant can now [change many records in one confirmation](./ai-what-you-can-ask.html) with the new `update_records` tool, and undo the whole batch from one card. Undo knows which records belong to a batch through a new column, `avo_ai_write_logs.pending_write_id`. A **first** install gets it in the create migration; an app that installed an earlier version does not have it.
 
-### Action Required
+#### Action Required
 
 ```bash
 bin/rails generate avo:ai install
@@ -917,13 +1142,13 @@ Until you migrate nothing breaks: batch updates still work, but the history list
 
 </Option>
 
-<Option name="A new write tool arrives switched on: update_records">
+<Option headingSize="3" name="A new write tool arrives switched on: update_records">
 
-### What changed
+#### What changed
 
 `update_records` is a new shipped tool, and `config.ai.excluded_tools` is a list of what to remove, so every app gets it unless it names it. It writes nothing without the user's click on a confirmation card, under the same policies and field rules as `update_record`.
 
-### Action Required
+#### Action Required
 
 Nothing, unless your initializer excludes `update_record` to keep the assistant from editing records. Exclude the new tool too, or it can still update them in batches:
 
@@ -935,103 +1160,31 @@ A batch is capped at 50 records. To change that, set `config.ai.max_update_recor
 
 </Option>
 
-<Option name="Typing a confirmation with several cards on screen confirms nothing">
+<Option headingSize="3" name="Typing a confirmation with several cards on screen confirms nothing">
 
-### What changed
+#### What changed
 
 A typed "do it" used to confirm the last card when one reply had put several on screen. It now confirms none of them and goes to the assistant as an ordinary message, since it cannot tell which card you meant. With one card waiting, a typed confirmation now also still reaches it after the assistant has only reminded you to click.
 
-### Action Required
+#### Action Required
 
 Nothing. Click **Confirm** on the card you want.
 
 </Option>
 
-## Upgrade to `avo-audit_logging` 4.3.0
+## `avo` 4.2.0 <span class="tl-date">Sep 1, 2026</span> {#avo-4-2-0 data-gems="avo" data-date="2026-09-01" data-version="4.2.0"}
 
-<Option name="Activities record where they came from — run the installer again">
+<a id="upgrade-to-4-2-0"></a>
 
-### What changed
+<Option headingSize="3" name="`super` in a `setup_authentication` override now accepts a valid API token">
 
-An activity now carries an **origin**: `origin`, a short name for whatever acted, and the optional `origin_record` pointing at the thing itself. A change made in the panel has none. A change made through an [MCP connection](./mcp.html#trace-changes-back-to-a-connection), an [API token](./rest-api.html#see-what-a-token-changed) or an [Avo AI chat](./ai.html#tracing-what-it-changed) is marked `mcp_connection`, `api_token` (or `api`) and `ai_chat`, and links back to it — a record's timeline reads *Ada Lovelace through MCP connection*. Until this version an MCP client's changes were deliberately indistinguishable from the admin's own.
-
-The two columns are a new migration. A **first** install writes one migration with them included; an app that installed an earlier version has the table without them.
-
-### Action Required
-
-```bash
-bin/rails generate avo:audit_logging upgrade
-bin/rails db:migrate
-```
-
-`upgrade` reads your `db/migrate` and writes only what is missing — it never touches a migration you have already run. Running `install` again does the same thing.
-
-Until you migrate, nothing breaks: activities keep being recorded, just without an origin, and the **Audit trail** table on a connection's, token's or chat's page is not offered rather than shown empty.
-
-If you have written `Avo::AuditLogging::Activity` yourself — an importer, a job — you can mark those too; see [Mark your own origins](./audit-logging.html#mark-your-own-origins).
-
-</Option>
-
-<Option name="The audit log is off limits to MCP clients, API tokens and the assistant">
-
-### What changed
-
-`Avo::AuditLogging::Activity` is no longer offered as a resource through `avo-mcp_server`'s tools, `avo-api`'s routes and entitlements grid, or the Avo AI assistant, whatever your policies say. An agent or a credential that could delete the record of what it just did would make the log worthless.
-
-### Action Required
-
-Nothing, unless a client of yours was reading `/api/resources/avo_activities` or asking the assistant about activities — those now answer as if the resource did not exist. Read the audit log in the panel instead.
-
-</Option>
-
-## Upgrade to 4.3.0
-
-<Option name="`avo-api` token scopes are now called entitlements">
-
-### Breaking Change
-
-"Scope" already means a policy scope in Avo and an ActiveRecord scope in every app running it, so what an API token is allowed to reach is called an **entitlement** from 4.3.0 on. 4.2.0 is the only version that shipped it under the old name.
-
-The rename reaches the database column, the panel, the `403` body, and the token policy method:
-
-| 4.2.0 | 4.3.0 |
-| ---------------------------------- | ------------------------------------------------------------------------ |
-| `avo_api_tokens.scopes` column | `avo_api_tokens.entitlements` |
-| `token.scopes` | `token.entitlements` |
-| `edit_scopes?` on your token policy | [`edit_entitlements?`](./rest-api.html#who-may-change-entitlements) |
-| `"reason": "token_scope"` in a `403` | `"reason": "token_entitlement"` |
-| `scopes_grid` in a form post | `entitlements_grid` |
-| The **Scopes** panel | The [**Entitlements**](./rest-api.html#entitle-a-token) panel |
-
-### Action Required
-
-Re-run the tokens generator and migrate. It writes `RenameAvoApiTokenScopes` and skips the create migration you already have:
-
-```bash
-rails generate avo_api:tokens
-rails db:migrate
-```
-
-Then grep your app for the left-hand column above. Two are worth checking before the others:
-
-- **`edit_scopes?` on your token policy.** Nothing asks that method any more, so the question falls back to the [permissive default](./rest-api.html#who-may-change-entitlements) and every panel user may edit entitlements. Rename it.
-- **A client branching on `"reason": "token_scope"`.** It now reads `"token_entitlement"` and a branch matching the old string falls through.
-
-Nothing grants or revokes anything on its own: the migration renames a column and every stored grant is carried over untouched.
-
-</Option>
-
-## Upgrade to 4.2.0
-
-<Option name="`super` in a `setup_authentication` override now accepts a valid API token">
-
-### Breaking Change
+#### Breaking Change
 
 `avo-api` ships [API tokens](./rest-api.html#authentication). The default `setup_authentication` on `BaseResourcesController` used to raise, closing the API until you replaced it. It now **accepts a request carrying a valid API token**, authenticated as that token's owner, and rejects everything else.
 
 That changes what `super` means inside an existing override.
 
-### Action Required
+#### Action Required
 
 Grep `app/controllers/avo/api/` for `setup_authentication` and check every override that calls `super`. An override that never calls it is unaffected.
 
@@ -1049,13 +1202,13 @@ Keep it to accept tokens alongside your scheme — but note a token then reaches
 
 </Option>
 
-<Option name="`avo-api` now ships a migration">
+<Option headingSize="3" name="`avo-api` now ships a migration">
 
-### Breaking Change
+#### Breaking Change
 
 The tokens table is new, and the token resource appears in the Avo sidebar by default as soon as the gem is upgraded — before the table exists.
 
-### Action Required
+#### Action Required
 
 You are already running the API, so your app has the controllers and needs only the table:
 
@@ -1072,9 +1225,9 @@ If you don't want tokens at all, [replace the authentication hook](./rest-api.ht
 
 </Option>
 
-<Option name="A denied policy method answers `403` JSON instead of a `302` redirect">
+<Option headingSize="3" name="A denied policy method answers `403` JSON instead of a `302` redirect">
 
-### Breaking Change
+#### Breaking Change
 
 Policy *methods* (`index?`, `update?`, …) returning `false` raise `Avo::NotAuthorizedError`, which Avo handled with a flash message and a redirect to your root URL — right for the HTML panel, unreadable for a JSON client. The API now renders JSON instead:
 
@@ -1091,9 +1244,9 @@ A [token scope refusal](./rest-api.html#tell-the-three-refusals-apart) is also a
 
 </Option>
 
-<Option name="Tokens can now be scoped, and are unrestricted until they are">
+<Option headingSize="3" name="Tokens can now be scoped, and are unrestricted until they are">
 
-### Breaking Change
+#### Breaking Change
 
 None — this is additive. Existing tokens carry no grants, and a token with no grants [reaches everything its owner can](./rest-api.html#entitle-a-token), exactly as before.
 
@@ -1107,11 +1260,13 @@ This shipped as **Scopes**, with an `edit_scopes?` policy method. Both are calle
 
 </Option>
 
-## Upgrade to 4.1.15
+## `avo` 4.1.15 <span class="tl-date">Aug 20, 2026</span> {#avo-4-1-15 data-gems="avo" data-date="2026-08-20" data-version="4.1.15"}
 
-<Option name="`container_width` values renamed to Tailwind's scale">
+<a id="upgrade-to-4-1-15"></a>
 
-### Deprecation
+<Option headingSize="3" name="`container_width` values renamed to Tailwind's scale">
+
+#### Deprecation
 
 `config.container_width` (and `self.container_width` on Avo Forms pages and forms) used the
 words `:large` and `:small`, while every other size option in Avo uses Tailwind's scale —
@@ -1128,7 +1283,7 @@ the width it already had, and frees the narrower names. A new `:sm` (720px, clam
 768px) ships in the same release for single-column screens — nothing gets it
 automatically, it is opt-in.
 
-### Action Required
+#### Action Required
 
 **None immediately.** The old names are still accepted and mapped for you — they log a
 deprecation warning through `Avo.logger` and will be removed in Avo 5. Update them when
@@ -1160,15 +1315,17 @@ class names changed and your overrides need renaming:
 
 </Option>
 
-## Upgrade to 4.1.11
+## `avo` 4.1.11 <span class="tl-date">Aug 17, 2026</span> {#avo-4-1-11 data-gems="avo" data-date="2026-08-17" data-version="4.1.11"}
 
-<Option name="`stacked: false` now opts a field out of sidebar and width stacking">
+<a id="upgrade-to-4-1-11"></a>
 
-### Breaking Change
+<Option headingSize="3" name="`stacked: false` now opts a field out of sidebar and width stacking">
+
+#### Breaking Change
 
 A field declared `stacked: false` used to be ignored in the places Avo stacks on its own — inside a `sidebar`, in the record preview, and on any field with a `width` below `100`. The field's own declaration now wins over those defaults, so such a field renders inline. See [`stacked`](./field-options-api.html#stacked).
 
-### Action Required
+#### Action Required
 
 **If you never pass `stacked: false`**, nothing changes — the defaults are untouched.
 
@@ -1182,9 +1339,11 @@ field :name, as: :text # [!code ++]
 
 </Option>
 
-## Upgrade to `avo-calendar` `4.0.3`
+## `avo-calendar` 4.0.3 <span class="tl-date">Aug 16, 2026</span> {#avo-calendar-4-0-3 data-gems="avo-calendar" data-date="2026-08-16" data-version="4.0.3"}
 
-<Option name="`+N more` no longer opens the week view">
+<a id="upgrade-to-avo-calendar-4-0-3"></a>
+
+<Option headingSize="3" name="`+N more` no longer opens the week view">
 
 In the month view, the **+N more** toggle under a crowded day now expands that week row in place to reveal every event, with a **Show less** control to fit it back. It previously navigated to that day's week view. See [Read a crowded day](./calendar-view.html#read-a-crowded-day).
 
@@ -1192,7 +1351,7 @@ In the month view, the **+N more** toggle under a crowded day now expands that w
 
 </Option>
 
-<Option name="Week view becomes a scrollable time grid">
+<Option headingSize="3" name="Week view becomes a scrollable time grid">
 
 Hour-based events now stretch to their duration — overlapping events share the day column side by side — instead of rendering as fixed chips on their start hour, and the grid scrolls inside the viewport, opening at 07:00 under a pinned day-header row. See [Month and week views](./calendar-view.html#month-and-week-views).
 
@@ -1200,9 +1359,11 @@ Hour-based events now stretch to their duration — overlapping events share the
 
 </Option>
 
-## Upgrade to 4.1.10
+## `avo` 4.1.10 <span class="tl-date">Aug 15, 2026</span> {#avo-4-1-10 data-gems="avo" data-date="2026-08-15" data-version="4.1.10"}
 
-<Option name="`code` and `easy_mde` collapse their content on `Show`">
+<a id="upgrade-to-4-1-10"></a>
+
+<Option headingSize="3" name="`code` and `easy_mde` collapse their content on `Show`">
 
 The `code` and `easy_mde` fields now render on the <Show /> view through the same collapsible wrapper the rich text fields use: the value is clipped to a short, faded preview with a **More content** link that expands it and a **Less content** link that collapses it back. They previously rendered the full value.
 
@@ -1217,7 +1378,7 @@ See [WYSIWYG & Markdown editors](./fields.html#wysiwyg-markdown-editors) for the
 
 </Option>
 
-<Option name="Editors render in a bounded, resizable viewport on forms">
+<Option headingSize="3" name="Editors render in a bounded, resizable viewport on forms">
 
 On <Edit /> and <New />, every editor field (`trix`, `rhino`, `lexxy`, `markdown`, `easy_mde`, `tip_tap` and `code`) now renders inside a viewport that opens 20rem tall, scrolls its overflow, and can be dragged taller or shorter by its bottom-end handle. Editors previously grew with their content. Each height is stored in the browser's local storage and restored the next time that form renders.
 
@@ -1235,17 +1396,19 @@ Note that the `code` field's [`height`](./fields/code.html#height) option now on
 
 </Option>
 
-## Upgrade to 4.1.7
+## `avo` 4.1.7 <span class="tl-date">Aug 13, 2026</span> {#avo-4-1-7 data-gems="avo" data-date="2026-08-13" data-version="4.1.7"}
 
-<Option name="`config.visible` now controls Media Library access, not just the menu item">
+<a id="upgrade-to-4-1-7"></a>
 
-### Breaking Change
+<Option headingSize="3" name="`config.visible` now controls Media Library access, not just the menu item">
+
+#### Breaking Change
 
 `Avo::MediaLibrary.configuration.visible` used to hide the sidebar item and the rich text editor button while leaving every Media Library route reachable by URL. It is now enforced on the routes as well: a user the block returns `false` for gets a 404 from `/media-library` and `/attach-media`.
 
 This closes [GHSA-cff8-4h3c-9r4q](https://github.com/avo-hq/avo/security/advisories/GHSA-cff8-4h3c-9r4q), where any authenticated Avo user could browse, rename and permanently delete every Active Storage blob in the application.
 
-### Action Required
+#### Action Required
 
 **If you set `config.visible`**, check that it returns `true` for everyone who is meant to use the Media Library, including through the rich text editors. Anyone it rejects now loses access entirely rather than only losing the menu item.
 
@@ -1265,11 +1428,13 @@ end
 
 Migrating to TailwindCSS 4? See the [TailwindCSS 4 Migration Guide](./tailwind-4-migration).
 
-## Upgrade to `avo-dashboards` and `avo-scopes` `4.1.2`
+## `avo-dashboards` + `avo-scopes` 4.1.2 <span class="tl-date">Aug 11, 2026</span> {#avo-dashboards-avo-scopes-4-1-2 data-gems="avo-dashboards avo-scopes" data-date="2026-08-11" data-version="4.1.2"}
 
-<Option name="Cards, dashboards, and scopes resolve their labels from locale keys first">
+<a id="upgrade-to-avo-dashboards-and-avo-scopes-4-1-2"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Cards, dashboards, and scopes resolve their labels from locale keys first">
+
+#### Breaking Change
 
 Cards, dashboards, and scopes now derive an i18n key from their class path and look it up **before** falling back to the class attribute, the same way [resources and actions](./i18n.html#how-avo-resolves-a-label) already did:
 
@@ -1294,13 +1459,13 @@ self.description = -> {
 Avo finds `avo.card_translations.upcoming_metric.description`, renders it verbatim, and the ` (#{timeframe})` suffix disappears.
 :::
 
-### Action Required
+#### Action Required
 
 **Grep your locale files** for `card_translations`, `dashboard_translations`, and `scope_translations`. Avo ships nothing under those roots, so if you weren't using them there's nothing to do — a missing key still falls through to your class attribute exactly as before.
 
 If you were using them for your own `I18n.t` lookups, pick one of the three ways out below.
 
-### Steps to Update
+#### Steps to Update
 
 **1. Move your own key out of the derived namespace.** The cleanest fix when the class attribute has to keep computing something:
 
@@ -1344,17 +1509,19 @@ See [the key map](./i18n.html#key-map) for every key Avo derives.
 
 </Option>
 
-## Upgrade to 4.1.4
+## `avo` 4.1.4 <span class="tl-date">Aug 10, 2026</span> {#avo-4-1-4 data-gems="avo" data-date="2026-08-10" data-version="4.1.4"}
 
-<Option name="The back to top pill is enabled by default">
+<a id="upgrade-to-4-1-4"></a>
 
-### Breaking Change
+<Option headingSize="3" name="The back to top pill is enabled by default">
+
+#### Breaking Change
 
 The ["Back to top" pill](./customization.html#send-the-user-back-to-the-top) used to be off by default and only revealed itself when the user scrolled back up. It's now **on by default** and its visibility depends only on how far down the page is scrolled, not on the scroll direction. The [`threshold`](./customization-api.html#back_to_top) default moved from `64` to `400` pixels so the pill stays out of the way on short scrolls.
 
 **Action required:** None, unless you don't want the pill in your app. Every app that doesn't configure `back_to_top` gets it after this upgrade ([#4705](https://github.com/avo-hq/avo/pull/4705)).
 
-### Maintaining Previous Behavior
+#### Maintaining Previous Behavior
 
 Turn it off from the initializer. Keys you leave out fall back to the defaults, so `enabled` is enough:
 
@@ -1369,9 +1536,9 @@ The direction-aware reveal is gone for good — `threshold` is now the only thin
 
 </Option>
 
-<Option name="`use_browser_timezone` now defaults to `true`">
+<Option headingSize="3" name="`use_browser_timezone` now defaults to `true`">
 
-### Breaking Change
+#### Breaking Change
 
 Server-side dates and times now render in [each visitor's own time zone](./customization.html#time-and-currency) by default instead of the app's `Time.zone`. Avo detects the browser's zone via a cookie; the first page a browser loads soft-reloads once through Turbo and shows a one-time alert that times are now displayed in the visitor's zone.
 
@@ -1379,7 +1546,7 @@ Server-side dates and times now render in [each visitor's own time zone](./custo
 
 Since `4.1.8` the option defaults to `false` in the test environment, so browser/system tests are unaffected — the first-load soft reload would otherwise race them. On `4.1.4` through `4.1.7` it is on in test as well; set `config.use_browser_timezone = !Rails.env.test?` if you stay on one of those and your system specs started flaking.
 
-### Maintaining Previous Behavior
+#### Maintaining Previous Behavior
 
 Pin every visitor to the app's configured zone:
 
@@ -1392,17 +1559,19 @@ end
 
 </Option>
 
-## Upgrade to `avo-dashboards` `4.0.9`
+## `avo-dashboards` 4.0.9 <span class="tl-date">Jul 28, 2026</span> {#avo-dashboards-4-0-9 data-gems="avo-dashboards" data-date="2026-07-28" data-version="4.0.9"}
 
-<Option name="The per-card refresh control is opt-in">
+<a id="upgrade-to-avo-dashboards-4-0-9"></a>
 
-### Breaking Change
+<Option headingSize="3" name="The per-card refresh control is opt-in">
+
+#### Breaking Change
 
 `avo-dashboards` `4.0.8` rendered a [refresh control](./cards.html#refresh-a-card-on-demand) on every card, with no way to remove it — including on `html` and static `partial` cards, where refreshing re-renders identical content. The control is now off by default and turns on per card with [`refresh_button`](./cards-api.html#self.refresh_button), the same name and the same default as the [dashboard-wide control](./dashboards-api.html#self.refresh_button) that shipped alongside it.
 
 **Action required:** None unless you were on `4.0.8` and want the control kept on a card.
 
-### Maintaining Previous Behavior
+#### Maintaining Previous Behavior
 
 Turn it back on for each card that should keep it:
 
@@ -1418,11 +1587,13 @@ Setting it on a dashboard does not turn it on for that dashboard's cards — the
 
 </Option>
 
-## Upgrade to 4.0.20
+## `avo` 4.0.20 <span class="tl-date">Jul 28, 2026</span> {#avo-4-0-20 data-gems="avo" data-date="2026-07-28" data-version="4.0.20"}
 
-<Option name="Sidebar labels truncate instead of wrapping">
+<a id="upgrade-to-4-0-20"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Sidebar labels truncate instead of wrapping">
+
+#### Breaking Change
 
 The sidebar is now [resizable](./customization.html#resizable-sidebar), and as part of that change sidebar link, section, and group labels render on a single line with an ellipsis when they overflow, instead of wrapping onto multiple lines. The full label shows in a tooltip on hover.
 
@@ -1432,9 +1603,9 @@ Hosts with an accessibility conformance obligation can disable the drag handle. 
 
 </Option>
 
-<Option name="`.container-small` is now `max-width`-based">
+<Option headingSize="3" name="`.container-small` is now `max-width`-based">
 
-### Breaking Change
+#### Breaking Change
 
 `.container-small` (the wrapper around show and edit pages) used a fixed width; it now fills its container up to a `max-width` so content adapts when the sidebar is wide. If you override `.container-small`'s `width` from your own stylesheets, the new Avo-owned `max-width` now clamps it — override `max-width` instead.
 
@@ -1442,11 +1613,13 @@ Hosts with an accessibility conformance obligation can disable the drag handle. 
 
 </Option>
 
-## Upgrade to 4.0.18
+## `avo` 4.0.18 <span class="tl-date">Jul 23, 2026</span> {#avo-4-0-18 data-gems="avo" data-date="2026-07-23" data-version="4.0.18"}
 
-<Option name="Resource and field translations are used verbatim">
+<a id="upgrade-to-4-0-18"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Resource and field translations are used verbatim">
+
+#### Breaking Change
 
 Avo used to humanize every resource and field label it resolved from your locale files. That silently overrode the casing you wrote: `'Payment Intent ID'` rendered as `Payment intent id`, and `'API Products'` rendered as `Api products`.
 
@@ -1456,13 +1629,13 @@ Avo now renders a resolved translation exactly as written and humanizes only the
 If your locale entries are lowercase, they used to appear capitalized. They will now appear as written.
 :::
 
-### Action Required
+#### Action Required
 
 **Review your locale files.** If every `resource_translations` and `field_translations` entry is already written the way you want it on screen, there's nothing to do.
 
 Avo's own interface strings are unaffected — the "New", "Edit", and "View" labels still render as before.
 
-### Steps to Update
+#### Steps to Update
 
 Grep your locale files for `resource_translations` and `field_translations`, and capitalize any entry you want capitalized on screen:
 
@@ -1494,21 +1667,23 @@ See [Localization (i18n)](./i18n) for the full picture.
 
 </Option>
 
-## Upgrade to 4.0.17
+## `avo` 4.0.17 <span class="tl-date">Jul 23, 2026</span> {#avo-4-0-17 data-gems="avo" data-date="2026-07-23" data-version="4.0.17"}
 
-<Option name="Action labels resolve from `avo.action_translations` first">
+<a id="upgrade-to-4-0-17"></a>
 
-### Breaking Change
+<Option headingSize="3" name="Action labels resolve from `avo.action_translations` first">
+
+#### Breaking Change
 
 Actions now look up `avo.action_translations.<class_path>.{name,message,confirm_button_label,cancel_button_label,description}` **before** falling back to `self.name`, `self.message`, `self.confirm_button_label`, `self.cancel_button_label`, and `self.description`, mirroring how resources already resolved their names.
 
 If your locale files already define one of those keys, it now wins over the class attribute — **including when the attribute is a lambda**, which is then never called, so anything it computed is dropped with nothing in the logs.
 
-### Action Required
+#### Action Required
 
 **Grep your locale files for `action_translations`.** Avo ships nothing under that root, so if you weren't using it nothing changes: an action with no key still renders its class attribute, and an action with neither still renders its humanized class name.
 
-### Steps to Update
+#### Steps to Update
 
 If a key you own collides with an action's derived key, either rename your key, or point Avo's lookup elsewhere with `self.translation_key`:
 
@@ -1524,3 +1699,4 @@ end
 See [Localizing actions](./i18n.html#localizing-actions) for the full picture.
 
 </Option>
+
