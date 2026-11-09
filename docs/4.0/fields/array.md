@@ -86,7 +86,7 @@ end
 
 ## Paginate at the source
 
-<VersionReq version="4.3.6" />
+<VersionReq package="avo" version="4.3.6" />
 
 The block can read `page` and `per_page`, the page the panel is showing and its size. Return that page's records with the total to fetch one page at a time, as an [Array Resource's `records`](./../array-resource.html#paginate-at-the-source) does:
 

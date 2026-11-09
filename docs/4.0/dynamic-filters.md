@@ -195,23 +195,21 @@ field :is_capital,
 
 ## Configure the filters bar
 
-The bar itself is configured globally in the initializer — the toggle button's label, whether the bar starts expanded, and the URL param it reads from:
+The bar itself is configured globally under `config.dynamic_filters` in the initializer — the toggle button's label, whether the bar starts expanded, and the URL param it reads from:
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  # Other Avo configurations
-end
-
-if defined?(Avo::DynamicFilters)
-  Avo::DynamicFilters.configure do |config|
-    config.button_label = -> { I18n.t("my.filters") } # [!code focus]
-    config.always_expanded = false
-  end
+  config.dynamic_filters.button_label = -> { I18n.t("my.filters") } # [!code focus]
+  config.dynamic_filters.always_expanded = false
 end
 ```
 
 Pass `button_label` a proc rather than a string. The initializer runs once at boot, so a string is pinned for every request afterwards — see [`button_label`](./dynamic-filters-api#button_label). Also [`always_expanded`](./dynamic-filters-api#always_expanded) and [`param_key`](./dynamic-filters-api#param_key) in the API reference.
+
+:::warning `Avo::DynamicFilters.configure` is deprecated
+<VersionReq package="avo-dynamic_filters" version="4.3.3" /> The standalone `Avo::DynamicFilters.configure` block still works, but it logs a deprecation warning and will be removed in Avo 5. Move its options into `Avo.configure` as shown above. See the [upgrade guide](./upgrade.html#upgrade-to-avo-dynamic-filters-4-3-3).
+:::
 
 ## Localization
 

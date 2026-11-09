@@ -19,6 +19,7 @@ field :admin, as: :has_one
 
 <!-- @include: ./../common/associations_searchable_option_common.md-->
 <!-- @include: ./../common/associations_attach_scope_option_common.md-->
+<!-- @include: ./../common/associations_attach_detach_hooks_option_common.md-->
 <!-- @include: ./../common/associations_description_option_common.md-->
 <!-- @include: ./../common/associations_loading_option_common.md-->
 <!-- @include: ./../common/associations_use_resource_option_common.md-->
@@ -53,7 +54,7 @@ Because a singular association owns exactly one join record, detaching is checke
 
 <Option name="`attach_fields`">
 
-<VersionReq version="4.0.25" />
+<VersionReq package="avo" version="4.0.25" />
 
 If the join model has extra columns you want to fill in while attaching, declare them with `attach_fields` and they'll show up in the attach modal.
 

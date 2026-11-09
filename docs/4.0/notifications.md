@@ -19,7 +19,7 @@ Notifications appear in a bell icon dropdown in the navbar and can also be brows
 ## Installation
 
 :::info
-Follow these steps in order. The installer generates a migration, an initializer, and an Avo resource for you.
+Follow these steps in order. The installer generates a migration and an Avo resource, and adds the configuration options to `config/initializers/avo.rb`.
 :::
 
 ### 1. Install the gem
@@ -46,7 +46,7 @@ bin/rails generate avo:notifications install
 This creates:
 
 - A migration for the `avo_notifications_notifications` table
-- An initializer at `config/initializers/avo_notifications.rb`
+- Commented `config.notifications` options inside the `Avo.configure` block of `config/initializers/avo.rb`
 - An Avo resource at `app/avo/resources/avo_notification.rb`
 - A controller at `app/controllers/avo/avo_notifications_controller.rb`
 
@@ -69,18 +69,22 @@ This adds an `avo_notifications` association and helper methods for reading noti
 
 ## Configuration
 
-After installation, tune the gem in `config/initializers/avo_notifications.rb`. Every option has a sensible default, so an empty block works out of the box.
+Tune the gem under `config.notifications` in Avo's initializer. Every option has a sensible default, so you only set the ones you want to change.
 
 ```ruby
-# config/initializers/avo_notifications.rb
-Avo::Notifications.configure do |config|
-  config.ttl = 30.days      # how long notifications are kept before cleanup
-  config.realtime = true    # real-time delivery via ActionCable
-  config.dropdown_limit = 10 # notifications shown in the bell dropdown
-  config.user_class = "User" # model used for recipients and `to: :all`
-  config.user_display_name_method = :name # sender attribution name
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.notifications.ttl = 30.days                    # how long notifications are kept before cleanup
+  config.notifications.realtime = true                  # real-time delivery via ActionCable
+  config.notifications.dropdown_limit = 10              # notifications shown in the bell dropdown
+  config.notifications.user_class = "User"              # model used for recipients and `to: :all`
+  config.notifications.user_display_name_method = :name # sender attribution name
 end
 ```
+
+:::warning `Avo::Notifications.configure` is deprecated
+<VersionReq package="avo-notifications" version="4.3.2" /> The standalone `Avo::Notifications.configure` block still works, but it logs a deprecation warning and will be removed in Avo 5. Move its options into `Avo.configure` as shown above. See the [upgrade guide](./upgrade.html#upgrade-to-avo-notifications-4-3-2).
+:::
 
 See the [API reference](./notifications-api.html#configuration) for each option's type, default, and behavior.
 
@@ -286,7 +290,7 @@ Each row reveals quick actions on hover — **mark as read/unread**, **save for 
 
 ## Real-time delivery
 
-When [`config.realtime = true`](./notifications-api.html#realtime) (the default), each new notification is pushed to its recipient over ActionCable as a Turbo Stream, so the bell updates without a page refresh.
+When [`config.notifications.realtime = true`](./notifications-api.html#realtime) (the default), each new notification is pushed to its recipient over ActionCable as a Turbo Stream, so the bell updates without a page refresh.
 
 ### How it works
 
@@ -344,6 +348,33 @@ Done notifications are archived out of every scope except **Done**.
 :::info
 The generated resource sets `visible_on_sidebar = false`, so notifications are reached through the bell dropdown's "View all" link rather than the sidebar. It's a plain Avo resource — add fields, filters, or a `DeleteNotifications` action, or flip it onto the sidebar, by editing the generated file.
 :::
+
+## Customize the notification index
+
+See the [Slots guide](./slots.html) for shared registrations, wrapping defaults, and all refresh and replacement caveats. The boundaries below are specific to Notifications.
+
+The updated add-on supports Avo's [`index_slot`](./resources-api.html#index_slot) API on the notification resource. Use collection slots around the whole notification card, records slots around the grouped list, and pagination slots inside the footer. The notification header and selection controls remain outside the records region.
+
+```ruby
+# app/avo/resources/avo_notification.rb
+class Avo::Resources::AvoNotification < Avo::BaseResource
+  index_slot :before_records do
+    tag.p("Notifications on this page: #{resources.size}", class: "p-4")
+  end
+
+  index_slot :pagination, replace: true do
+    tag.div(default_content.call, class: "w-full notification-pagination")
+  end
+end
+```
+
+The example adds declarations to your existing resource; keep its fields, scopes, and user-scoping configuration. The inherited resource-shell slots are available too. The notification card's own heading does not fire resource title/header hooks a second time.
+
+Slots add no wrapper or styles. When wrapping the records or pagination, use `w-full` to retain the available width inside the card's flex layout.
+
+Collection, records, and pagination slots refresh with index pagination and live search. Returning `nil` from a replacement hides that region. Replacing the collection without its default removes the card's selection and navigation controls, while retaining the outer Turbo Frame. With no index results, collection and records slots surround core's empty state and pagination hooks do not run.
+
+Real-time updates to the bell or a single notification do not re-render index slots. Use the index's normal refresh when a slot's summary must reflect those changes.
 
 ## Cleanup
 

@@ -21,6 +21,7 @@ import New from "../theme/components/New.vue"
 import Preview from "../theme/components/Preview.vue"
 import View from "../theme/components/View.vue"
 import Option from "../theme/components/Option.vue"
+import UpgradeFilter from "../theme/components/UpgradeFilter.vue"
 import AllContent from "../theme/components/AllContent.vue"
 import Image from "../theme/components/Image.vue"
 import RelatedList from "../theme/components/RelatedList.vue"
@@ -93,6 +94,7 @@ export default {
 
     app.component("AllContent", AllContent)
     app.component("Option", Option)
+    app.component("UpgradeFilter", UpgradeFilter)
     app.component("Image", Image)
     app.component("RelatedList", RelatedList)
     app.component("RelatedItem", RelatedItem)

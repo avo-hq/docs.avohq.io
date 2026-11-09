@@ -6,7 +6,7 @@ There might be times when the configurations isn't up to date and you'd like to 
 
 Every Avo app has the license status page where you can see a few things about your license and the response from the license checking server.
 
-Go to `https://yourapp.com/avo/avo_private/status`. If you mounted Avo under a different path (like `admin`) it will be `https://yourapp.com/admin/avo_private/status`.
+Go to `https://yourapp.com/avo/status`. If you mounted Avo under a different path (like `admin`) it will be `https://yourapp.com/admin/status`.
 
 In order to see that page your user has to be an an admin in Avo. Follow [this guide](./authentication#user-roles) to mark your user as an admin.
 

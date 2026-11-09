@@ -82,13 +82,13 @@ field :custom_css, as: :code, label_help: "This enables you to edit the user's c
 
 <Option name="`tooltip`" headingSize="3">
 
-Text shown in a bubble when the user hovers the field's value — the rendered value on <Index /> and <Show />, the input on <New /> and <Edit />. Accepts HTML. A block receives `record`, `resource`, `view`, and `field`; return `nil` to render no tooltip.
+Text shown in a bubble when the user hovers the field's value — the rendered value on <Index /> and <Show />, the input on <New /> and <Edit />. Renders as text unless the value is a safe string, such as `tag.strong(record.name)` or the result of `sanitize`. A block receives `record`, `resource`, `view`, and `field`; return `nil` to render no tooltip.
 
 ```ruby
 field :status, as: :badge, tooltip: -> { "Revoked at #{record.revoked_at}" if record.revoked_at? }
 ```
 
-- **Type:** String (HTML allowed) or Proc
+- **Type:** String or Proc
 - **Default:** `nil`
 - **i18n key:** `avo.field_translations.<field_id>.tooltip` — used when defined
 
@@ -96,13 +96,13 @@ field :status, as: :badge, tooltip: -> { "Revoked at #{record.revoked_at}" if re
 
 <Option name="`label_tooltip`" headingSize="3">
 
-Text shown in a bubble when the user hovers the field's label, on every view and on the <Index /> table header. An info icon next to the label marks it as hoverable. Accepts HTML. A block receives `resource`, `view`, and `field`; `record` is `nil` on the <Index /> header.
+Text shown in a bubble when the user hovers the field's label, on every view and on the <Index /> table header. An info icon next to the label marks it as hoverable. Renders as text unless the value is a safe string, such as `tag.strong(record.name)` or the result of `sanitize`. A block receives `resource`, `view`, and `field`; `record` is `nil` on the <Index /> header.
 
 ```ruby
 field :mrr, as: :number, label_tooltip: "Monthly recurring revenue, net of refunds"
 ```
 
-- **Type:** String (HTML allowed) or Proc
+- **Type:** String or Proc
 - **Default:** `nil`
 - **i18n key:** `avo.field_translations.<field_id>.label_tooltip` — used when defined
 
@@ -214,7 +214,7 @@ On form submissions, the `visible` block is evaluated in the `create` and `updat
 
 <Option name="`hide_if_blank`" headingSize="3">
 
-<VersionReq version="4.2.11" />
+<VersionReq package="avo" version="4.2.11" />
 
 Hides the field on the given views when its value is blank. It applies on top of the other visibility options: the field shows only when it passes all of them.
 
@@ -407,7 +407,7 @@ field :one_time_password, as: :text, autocomplete: "one-time-code"
 
 <Option name="`autofocus`" headingSize="3">
 
-<VersionReq version="4.3.1" />
+<VersionReq package="avo" version="4.3.1" />
 
 Adds the HTML `autofocus` attribute to the field's input on the <New /> and <Edit /> views and in [action](./actions.html) modals, so the cursor starts there when the form opens. The block is executed in [`Avo::ExecutionContext`](./execution-context.html) with access to `record`, `resource`, and `view`, plus the usual defaults (`context`, `params`, `view_context`, `current_user`). A falsy result leaves the input alone.
 

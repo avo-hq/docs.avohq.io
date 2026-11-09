@@ -12,13 +12,13 @@ This is being done through serializing the query to be unserialized back in the 
 
 ## Coming back to the index
 
-<VersionReq version="4.3.1" />
+<VersionReq package="avo" version="4.3.1" />
 
 When you go back to an index page, with the browser's Back button or the **Go back** link on a record page, the rows you had selected are checked again and the page scrolls to where you were. Reaching the index any other way, or reloading it, starts with nothing selected. Running an action forgets the selection.
 
 The selection is kept per browser tab and per URL, so each combination of filters, sorting and page keeps its own. A **Select all matching** choice isn't kept: select it again.
 
-With [session persistence](./customization.html#persist-ui-state) on, the selection comes back however you reach the index, and is kept per page rather than per URL. <VersionReq version="4.3.11" />
+With [session persistence](./customization.html#persist-ui-state) on, the selection comes back however you reach the index, and is kept per page rather than per URL. <VersionReq package="avo" version="4.3.11" />
 
 ## Serializing the query
 

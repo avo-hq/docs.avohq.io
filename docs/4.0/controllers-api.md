@@ -320,7 +320,7 @@ end
 - **Default behavior:** calls `@record.save!`. Exceptions raised here are caught, logged, and added to the record's errors, which triggers the fail action and message.
 
 :::info
-The call goes through the resource's `save_record(record)`, which a resource can define to own its writes under every controller. <VersionReq version="4.2.12" />
+The call goes through the resource's `save_record(record)`, which a resource can define to own its writes under every controller. <VersionReq package="avo" version="4.2.12" />
 :::
 
 </Option>
@@ -338,7 +338,7 @@ end
 - **Default behavior:** calls `@record.destroy!`. Exceptions raised here (a foreign key constraint, for example) are caught, logged, and added to the record's errors, which triggers the fail action and message. Override it to soft-delete or archive instead.
 
 :::info
-The call goes through the resource's `destroy_record(record)`, which a resource can define to own its deletes under every controller. <VersionReq version="4.2.12" />
+The call goes through the resource's `destroy_record(record)`, which a resource can define to own its deletes under every controller. <VersionReq package="avo" version="4.2.12" />
 :::
 
 </Option>
@@ -347,7 +347,7 @@ The call goes through the resource's `destroy_record(record)`, which a resource 
 
 <Option name="`via_record`" headingSize="3">
 
-<VersionReq version="4.2.11" />
+<VersionReq package="avo" version="4.2.11" />
 
 The parent record the current one is created, shown, or edited through, like the post a comment is created from.
 
