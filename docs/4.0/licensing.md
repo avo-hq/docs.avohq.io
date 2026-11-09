@@ -86,11 +86,11 @@ Avo keeps the last valid answer from the license server and checks again once it
 
 While the grace runs, the sidebar indicator turns amber and the [status page](./license-troubleshooting.html#check-the-license-status-page) shows **Action needed before** with the date access stops.
 
-After the grace, the admin is blocked. The same happens when Avo has never held a valid answer, for example on the first boot while the license server is unreachable, after a deploy that lost the cached answer, or with an invalid key. Every admin page then shows **Temporarily unavailable**, and requests that aren't HTML (JSON, API, MCP) get a `503`. Admin and developer users also see a link to the status page. It says why access stopped, when the last successful check was, and that the app retries every 5 minutes. Press **Refresh license** there to retry at once. The first successful check unblocks the admin right away.
+After the grace, access to the admin is paused. The same happens when Avo has never held a valid answer, for example on the first boot while the license server is unreachable, after a deploy that lost the cached answer, or with an invalid key. Every admin page then shows **Temporarily unavailable**, and requests that aren't HTML (JSON, API, MCP) get a `503`. Admin and developer users also see a link to the status page. It says why access stopped, when the last successful check was, and that the app retries every 5 minutes. Press **Refresh license** there to retry at once. The first successful check unblocks the admin right away.
 
-The license server can also answer with a specific error: the license is locked, its trial ended, its subscription lapsed, or the app's URL is blocked. Those block the admin immediately, with no grace. Admin and developer users see the reference code on the page; everyone else sees only that access has been paused.
+The license server can also answer with a specific error: the license is locked, its trial ended, its subscription lapsed, or the app's URL is blocked. Those pause access immediately, with no grace. Admin and developer users see the reference code on the page; everyone else sees only that access has been paused.
 
-A valid license that doesn't include an add-on doesn't block anything. That add-on switches off, and [authorization](./authorization.html#when-the-license-lapses) fails closed if your initializer sets a client.
+A valid license that doesn't include an add-on doesn't pause anything. That add-on switches off, and [authorization](./authorization.html#when-the-license-lapses) fails closed if your initializer sets a client.
 
 ### Keep the last answer across deploys
 
@@ -98,7 +98,7 @@ Avo keeps the license answer in your Rails cache. Use a persistent cache store s
 
 ### Run the admin without a valid license
 
-If you must keep the admin available while the license can't be validated, opt out of the block. This is meant for an emergency and for a short time, not for hours or days. Leave it off otherwise:
+If you must keep the admin available while the license can't be validated, opt out of the pause. This is meant for an emergency and for a short time, not for hours or days. Leave it off otherwise:
 
 ```ruby
 # config/initializers/avo.rb

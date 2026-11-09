@@ -48,7 +48,7 @@ VCR.configure do |config|
 end
 ```
 
-Your suite also needs a real `config.license_key`, for example from `ENV["AVO_LICENSE_KEY"]` in CI. An invalid key blocks the admin the same way. This only applies when you explicitly disable outbound connections in the test environment. If your tests already permit real HTTP requests, no change is needed.
+Your suite also needs a real `config.license_key`, for example from `ENV["AVO_LICENSE_KEY"]` in CI. An invalid key pauses access the same way. This only applies when you explicitly disable outbound connections in the test environment. If your tests already permit real HTTP requests, no change is needed.
 
 ## Testing helpers
 

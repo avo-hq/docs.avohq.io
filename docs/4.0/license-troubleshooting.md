@@ -16,8 +16,8 @@ This should tell you if the license authenticated correctly and what was the res
 
 Besides the license name and the server's response, the status page tells you how the app is holding up. <VersionReq package="avo-licensing" version="4.4.0" />
 
-- **Amber, with "Action needed before" and a date.** The last license check failed and the app is running on the last valid answer. Fix the cause before that date, or the admin is blocked. The page says what went wrong, for example that the license server has been unreachable since a given time.
-- **Blocked.** The admin shows "Temporarily unavailable" to everyone, with one sentence: access has been paused and the team that maintains the app can restore it. Admin and developer users also see the reference code, when the server sent one, and a link to the status page. The status page says why: unreachable since when, or the message the server sent. It also shows when the last successful check was, and that the app retries every 5 minutes.
+- **Amber, with "Action needed before" and a date.** The last license check failed and the app is running on the last valid answer. Fix the cause before that date, or access is paused. The page says what went wrong, for example that the license server has been unreachable since a given time.
+- **Paused.** The admin shows "Temporarily unavailable" to everyone, with one sentence: access has been paused and the team that maintains the app can restore it. Admin and developer users also see the reference code, when the server sent one, and a link to the status page. The status page says why: unreachable since when, or the message the server sent. It also shows when the last successful check was, and that the app retries every 5 minutes.
 - **Orange, "Running without a valid license".** [`run_community_admin_without_valid_license`](./customization-api.html#run_community_admin_without_valid_license) is on and the license can't be validated. Paid add-ons are off and authorization policies are not applied.
 - **"Off" next to a plugin.** In the Plugins card, a paid add-on your license doesn't include carries an amber "Off" marker next to its name. Hover or focus it for the reason: the license doesn't include the add-on, or the license can't be validated yet. Free plugins never show it.
 
@@ -26,7 +26,7 @@ Two buttons help you recover:
 - **Refresh license** retries the check at once instead of waiting for the next one.
 - **Clear cached response** drops the stored answer.
 
-In development and test, the blocked page also prints the reason, so you don't need to find the status page to see it. Production shows the generic message only.
+In development and test, the paused page also prints the reason, so you don't need to find the status page to see it. Production shows the generic message only.
 
 See [Licensing → When the license can't be validated](./licensing.html#when-the-license-can-t-be-validated) for the timings.
 
