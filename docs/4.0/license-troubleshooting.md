@@ -19,6 +19,7 @@ Besides the license name and the server's response, the status page tells you ho
 - **Amber, with "Action needed before" and a date.** The last license check failed and the app is running on the last valid answer. Fix the cause before that date, or the admin is blocked. The page says what went wrong, for example that the license server has been unreachable since a given time.
 - **Blocked.** The admin shows "Temporarily unavailable" to everyone. The status page stays reachable for admin and developer users, and says why: unreachable since when, or the message the server sent. It also shows when the last successful check was, and that the app retries every 5 minutes.
 - **Orange, "Running without a valid license".** [`run_community_admin_without_valid_license`](./customization-api.html#run_community_admin_without_valid_license) is on and the license can't be validated. Paid add-ons are off and authorization policies are not applied.
+- **"Off" next to a plugin.** In the Plugins card, a paid add-on your license doesn't include carries an amber "Off" marker next to its name. Hover or focus it for the reason: the license doesn't include the add-on, or the license can't be validated yet. Free plugins never show it.
 
 Two buttons help you recover:
 
