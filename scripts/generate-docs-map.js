@@ -179,6 +179,12 @@ function buildDocsMap(version, sections) {
     lines.push(`### [${page.text}](${absoluteUrl(page.link)})`);
     lines.push('');
 
+    if (page.link === '/4.0/upgrade.html') {
+      lines.push('Breaking changes and required actions by gem/version; fetch this page when upgrading.');
+      lines.push('');
+      return;
+    }
+
     const headings = extractHeadings(linkToFile(page.link));
     if (headings === null) {
       lines.push('* (Page source not found)');
