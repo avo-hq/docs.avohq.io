@@ -219,7 +219,7 @@ Avo::DynamicFilters.configure do |config|
 end
 ```
 
-With it on, [`inline`](./dynamic-filters-api.html#inline) lays a pinned filter's control out in the bar, and [`presets`](./dynamic-filters-api.html#presets) sets the range buttons on a date filter. [The filter dropdown](./dynamic-filters-api.html#the-filter-dropdown) lists what each type shows.
+With it on, [`inline`](./dynamic-filters-api.html#inline) lays a pinned filter's control out in the bar ([`config.inline_filters = true`](./dynamic-filters-api.html#inline_filters) does it for every pinned filter), and [`presets`](./dynamic-filters-api.html#presets) sets the range buttons on a date filter. [The filter dropdown](./dynamic-filters-api.html#the-filter-dropdown) lists what each type shows.
 
 ```ruby
 # app/avo/resources/ticket.rb

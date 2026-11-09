@@ -452,7 +452,7 @@ field :urgent, as: :boolean, filterable: {
 - **Type:** Boolean
 - **Default:** `false`
 
-It needs [`simple_filters`](#simple_filters) on, and works on a [pinned](#pinned) filter of these types: boolean, text, number, date, date time, time, and a select of up to 6 options, whose checklist becomes a row of chips. Other filters ignore it and keep their pill.
+To lay out every pinned filter this way, set [`inline_filters`](#inline_filters) instead. It needs [`simple_filters`](#simple_filters) on, and works on a [pinned](#pinned) filter of these types: boolean, text, number, date, date time, time, and a select of up to 6 options, whose checklist becomes a row of chips. Other filters ignore it and keep their pill.
 
 An inline filter shows the same condition menu as the pill's dropdown, right after its name, and changing it filters in place. On phones every inline filter shows as its pill, since a row of controls doesn't fit.
 
@@ -611,6 +611,22 @@ Turns on the [new filter dropdown](#the-filter-dropdown) for every filter.
 
 ```ruby
 config.simple_filters = true
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+</Option>
+
+<Option name="`inline_filters`" headingSize="3">
+
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
+Lays every [pinned](#pinned) filter out in the bar, as if each had [`inline: true`](#inline). Filters of a type `inline` doesn't cover keep their pill, and a filter's own `inline: false` keeps its pill too. It needs [`simple_filters`](#simple_filters) on.
+
+```ruby
+config.simple_filters = true
+config.inline_filters = true
 ```
 
 - **Type:** Boolean

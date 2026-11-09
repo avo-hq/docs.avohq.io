@@ -10,24 +10,27 @@ This release adds three things to the filter bar. None of them change your app u
 
 - **[Pinned filters](./dynamic-filters.html#keep-a-filter-in-the-bar).** `filterable: {pinned: true}` keeps a filter's pill in the bar, so people can use it without opening "Add filter" first.
 - **[The new filter dropdown](./dynamic-filters.html#try-the-new-filter-dropdown).** `config.simple_filters = true` gives each filter type its own dropdown: a condition menu, then a checklist, a row of buttons, date presets or a box. It filters as you click, with no Apply button. It is off by default and becomes the default in a future release.
-- **[Inline filters](./dynamic-filters-api.html#inline).** With the new dropdown on, `filterable: {pinned: true, inline: true}` puts a filter's control straight in the bar, like Yes / No buttons for a boolean. Date filters also take [`presets`](./dynamic-filters-api.html#presets), and `nullable: true` adds an Empty choice.
+- **[Inline filters](./dynamic-filters-api.html#inline).** With the new dropdown on, `filterable: {pinned: true, inline: true}`, or `config.inline_filters = true` for every pinned filter, puts a filter's control straight in the bar, like Yes / No buttons for a boolean. Date filters also take [`presets`](./dynamic-filters-api.html#presets), and `nullable: true` adds an Empty choice.
 
-<Option name="Turn on the new filter dropdown (recommended)">
+<Option name="Turn on the new filter dropdown and inline filters (recommended)">
 
 ### What changed
 
-The new dropdown ships off, so an app keeps the older one until it opts in. It becomes the default in a future release, and pinned filters work best with it.
+The new dropdown and inline filters ship off, so an app keeps the older dropdown until it opts in. The new dropdown becomes the default in a future release.
 
 ### Action Required
 
-Turn it on:
+Turn both on:
 
 ```ruby
 # config/initializers/avo.rb
 Avo::DynamicFilters.configure do |config|
   config.simple_filters = true # [!code ++]
+  config.inline_filters = true # [!code ++]
 end
 ```
+
+`inline_filters` only changes [pinned](./dynamic-filters.html#keep-a-filter-in-the-bar) filters. If the app pins none, pin the two or three filters its users reach for most, with `filterable: {pinned: true}` on those fields.
 
 Then run your system tests. A test that picks a condition from a select, types a value and clicks Apply drives the older dropdown: update it to pick from the condition menu and the value control, as [The filter dropdown](./dynamic-filters-api.html#the-filter-dropdown) describes. If you can't update them yet, keep it on everywhere but the test environment with `config.simple_filters = !Rails.env.test?`.
 
