@@ -206,6 +206,8 @@ If people reach for a filter all the time, set [`pinned`](./dynamic-filters-api.
 field :status, as: :select, filterable: {pinned: true}
 ```
 
+<Image src="/assets/img/4_0/dynamic-filters/pinned.webp" dark-src="/assets/img/4_0/dynamic-filters/pinned-dark.webp" width="2438" height="570" alt="Avo Tickets index with three pinned filters, Due on, Status and Urgent, as pills next to Add filter. Status is applied and reads Status, is, Open in separate segments; the table lists open tickets." />
+
 ## Try the new filter dropdown
 
 <VersionReq package="avo-dynamic_filters" version="4.3.3" />
@@ -219,12 +221,16 @@ Avo::DynamicFilters.configure do |config|
 end
 ```
 
+<Image src="/assets/img/4_0/dynamic-filters/dropdown.webp" dark-src="/assets/img/4_0/dynamic-filters/dropdown-dark.webp" width="2438" height="604" alt="The Status pill's dropdown open on the Tickets index: an is condition menu next to the name, and a checklist of every status with a coloured dot. Open and In progress are ticked, the pill reads Open, In progress, and the table already shows only those tickets, with no Apply button." />
+
 With it on, [`inline`](./dynamic-filters-api.html#inline) lays a pinned filter's control out in the bar ([`config.inline_filters = true`](./dynamic-filters-api.html#inline_filters) does it for every pinned filter), and [`presets`](./dynamic-filters-api.html#presets) sets the range buttons on a date filter. [The filter dropdown](./dynamic-filters-api.html#the-filter-dropdown) lists what each type shows.
 
 ```ruby
 # app/avo/resources/ticket.rb
 field :urgent, as: :boolean, filterable: {pinned: true, inline: true}
 ```
+
+<Image src="/assets/img/4_0/dynamic-filters/inline.webp" dark-src="/assets/img/4_0/dynamic-filters/inline-dark.webp" width="2438" height="638" alt="Inline filters in the Tickets filter bar: Due on with its condition menu, date preset buttons and from and to boxes; Status as a row of coloured chips with Open picked; Urgent as Any, Urgent and Not urgent buttons with Urgent picked. The table lists urgent open tickets." />
 
 ## Configure the filters bar
 

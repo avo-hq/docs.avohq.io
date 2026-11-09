@@ -42,6 +42,8 @@ end
 
 With [`simple_filters`](#simple_filters) on, every filter's dropdown puts its conditions in a menu next to the filter's name, and below it a value control that fits the condition picked. Without it, filters keep the older dropdown, with the condition and value as two fields.
 
+<Image src="/assets/img/4_0/dynamic-filters/dropdown.webp" dark-src="/assets/img/4_0/dynamic-filters/dropdown-dark.webp" width="2438" height="604" alt="The Status pill's dropdown open on the Tickets index: an is condition menu next to the name, and a checklist of every status with a coloured dot. Open and In progress are ticked, the pill reads Open, In progress, and the table already shows only those tickets, with no Apply button." />
+
 :::info Opt-in
 The new dropdown is off by default and becomes the default in a future release. [`inline`](#inline), [`presets`](#presets) and `nullable` need it.
 :::
@@ -434,6 +436,8 @@ dynamic_filter :status,
 
 A pinned filter is not listed in the "Add filter" dropdown. When a resource has a pinned filter, the filter bar shows even with [`always_expanded`](#always_expanded) set to `false`.
 
+<Image src="/assets/img/4_0/dynamic-filters/pinned.webp" dark-src="/assets/img/4_0/dynamic-filters/pinned-dark.webp" width="2438" height="570" alt="Avo Tickets index with three pinned filters, Due on, Status and Urgent, as pills next to Add filter. Status is applied and reads Status, is, Open in separate segments; the table lists open tickets." />
+
 </Option>
 
 <Option name="`inline`" headingSize="3">
@@ -457,6 +461,8 @@ To lay out every pinned filter this way, set [`inline_filters`](#inline_filters)
 An inline filter shows the same condition menu as the pill's dropdown, right after its name, and changing it filters in place. On phones every inline filter shows as its pill, since a row of controls doesn't fit.
 
 Ticks and buttons filter straight away. Boxes apply on Enter or when they lose focus.
+
+<Image src="/assets/img/4_0/dynamic-filters/inline.webp" dark-src="/assets/img/4_0/dynamic-filters/inline-dark.webp" width="2438" height="638" alt="Inline filters in the Tickets filter bar: Due on with its condition menu, date preset buttons and from and to boxes; Status as a row of coloured chips with Open picked; Urgent as Any, Urgent and Not urgent buttons with Urgent picked. The table lists urgent open tickets." />
 
 </Option>
 
