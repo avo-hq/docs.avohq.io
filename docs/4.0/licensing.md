@@ -88,7 +88,7 @@ While the grace runs, the sidebar indicator turns amber and the [status page](./
 
 After the grace, the admin is blocked. The same happens when Avo has never held a valid answer, for example on the first boot while the license server is unreachable, after a deploy that lost the cached answer, or with an invalid key. Every admin page then shows **Temporarily unavailable**, and requests that aren't HTML (JSON, API, MCP) get a `503`. Admin and developer users also see a link to the status page. It says why access stopped, when the last successful check was, and that the app retries every 5 minutes. Press **Refresh license** there to retry at once. The first successful check unblocks the admin right away.
 
-The license server can also answer with a specific error: the license is locked, its trial ended, its subscription lapsed, or the app's URL is blocked. Those block the admin immediately, with no grace, and show a reference code on the page.
+The license server can also answer with a specific error: the license is locked, its trial ended, its subscription lapsed, or the app's URL is blocked. Those block the admin immediately, with no grace. Admin and developer users see the reference code on the page; everyone else sees only that access has been paused.
 
 A valid license that doesn't include an add-on doesn't block anything. That add-on switches off, and [authorization](./authorization.html#when-the-license-lapses) fails closed if your initializer sets a client.
 
