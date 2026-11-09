@@ -271,6 +271,18 @@ With `config.authorization_client = nil` no policy runs: the chat stays on, `use
 
 <a id="upgrade-to-avo-dashboards-4-3-4"></a>
 
+<Option headingSize="3" name="Cards load when they scroll into view">
+
+#### Breaking Change
+
+Cards used to load as soon as the page rendered, all at once. Now a card waits until it scrolls into view, so a card further down a long dashboard or resource page runs its `query` only when the viewer reaches it. See [Load cards only when they're needed](./cards.html#load-cards-only-when-they-re-needed).
+
+#### Action Required
+
+**Action required:** None. If your system tests assert on a card below the fold, scroll to it first.
+
+</Option>
+
 <Option headingSize="3" name="A dashboard's `actions` method now fills an Actions dropdown in its header">
 
 #### Breaking Change
@@ -1826,4 +1838,3 @@ end
 See [Localizing actions](./i18n.html#localizing-actions) for the full picture.
 
 </Option>
-
