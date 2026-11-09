@@ -109,7 +109,7 @@ Plain text previews show the first 1 MB of the file. **Download** always gives y
 
 The details next to the preview list every record the file is **Attached to**. Each one links to the record's <Show /> page when the record still exists and its model has an Avo resource. Anything else is listed as plain text, the model name and the id, such as `Post #12`. That covers a record deleted with `delete` or `delete_all`, which skip Active Storage's purge callbacks and leave the attachment behind, and a model with no resource, such as the `ActionText::RichText` an image embedded in a rich text field is attached to. <VersionReq package="avo" version="4.2.8" />
 
-**Delete** removes the file from your storage service along with its record in the database. A file that is attached to anything can't be deleted, so the button is disabled and its tooltip says why. Remove the file from the record first, then delete it. <VersionReq package="avo" version="4.3.14" />
+**Delete** removes the file from your storage service along with its record in the database. When the file is attached to records, the confirmation names them, and deleting the file removes it from those records too. Each record is checked the same way as the delete button on its own file field: its `delete_<field>?` policy method has to allow it, and the record has to stay valid without the file. If any record refuses, nothing is deleted and Avo tells you which record and why. <VersionReq package="avo" version="4.3.14" />
 
 :::info
 Text previews are read from your storage service by the server, so they work the same on local disk, S3, and the other Active Storage services. No extra configuration is needed.
