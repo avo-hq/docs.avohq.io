@@ -165,6 +165,8 @@ Avo pings the [HQ](https://avohq.io) (the license validation service) with some 
 }
 ```
 
+`avo_metadata` is anonymous information about the installation, among it structural counts (how many resources, fields, actions, and filters the app defines), which Avo plugins booted and at which versions, the cache store's class, and whether a main or profile menu is configured. Under `addons` it also carries how each add-on is configured — every add-on reports its own settings through [`collect_telemetry`](./plugins.html#report-your-settings-to-telemetry), as counts, booleans, and values from a fixed set. None of it includes your records, your users, or your credentials. <VersionReq package="avo" version="4.4.0" />
+
 That information helps us to identify your license and return a license valid/invalid response to Avo.
 The first request is made when the app first needs the license. After a successful check Avo reuses the answer for 24 hours, on any license type.
 

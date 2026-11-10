@@ -291,6 +291,40 @@ Only Avo's own options count as collisions. Gems that mix helpers into every obj
 
 Instances are memoized per configuration object, which means replacing `Avo.configuration` resets your plugin's config along with everything else — useful when you need a clean slate in tests.
 
+## Report your settings to telemetry
+
+Avo sends anonymous installation metadata to HQ with the [license check](./licensing.html#phone-home-mechanism). `collect_telemetry` adds your plugin's own entry to that payload, so you learn which of your options apps actually reach for. Call it on the object `register` returns, from the same `avo_boot` hook:
+
+```ruby
+# lib/avo/feed_view/engine.rb
+Avo.plugin_manager.register(:feed_view).collect_telemetry do
+  config = Avo.configuration.feed_view
+
+  {
+    items_per_page: config.items_per_page,
+    api_key_present: config.api_key.present?
+  }
+end
+```
+
+The block runs when the report is built, after the app's initializers, so it reads the configuration the app ended up with rather than your defaults. What it returns lands under `avo_metadata[:addons]`, keyed by the gem your plugin ships in:
+
+```ruby
+avo_metadata: {
+  addons: {
+    "avo-feed_view" => {items_per_page: 50, api_key_present: true}
+  }
+}
+```
+
+Core calls the block and forwards the hash without reading it, so what you return is what leaves the app.
+
+:::warning
+Return counts, booleans, and values from a fixed set you define — never record data, user input, API keys, hostnames, file paths, or anything else that identifies the app or its users.
+:::
+
+A block that raises is dropped from the payload instead of taking the rest of the report with it, and one that returns `nil` or an empty hash adds no entry. <VersionReq package="avo" version="4.4.0" />
+
 ## Add asset files
 
 Plugins load their own JavaScript and CSS through Avo's [`AssetManager`](./asset-manager.html), which injects them into the `<head>` of Avo's layout. It exposes `add_javascript`, `add_stylesheet`, and `register_stimulus_controller` — see the [Asset manager](./asset-manager.html) guide for details.
