@@ -89,6 +89,18 @@ The fields take all the [field options](./field-options) you are used to like, `
 <%= avo_edit_field :name, as: :text, form: form, help: "The user's name", readonly: -> { !current_user.is_admin? }, placeholder: "John Doe", nullable: true %>
 ```
 
+## Field types
+
+`as:` takes the same field types the resource DSL takes, resolved through the same registry. <VersionReq package="avo" version="4.2.9" /> That covers Avo's own fields, your [custom fields](./custom-fields), and any type a [plugin](./plugins.html#register-field-method-name-klass) registered with `register_field`, such as the money field's `:money`, whose class doesn't follow the `Avo::Fields::NameField` convention.
+
+```erb
+<%= avo_edit_field :price, as: :money, form: form %>
+```
+
+:::warning
+Pass the type as a Symbol, not as the field class. Before `avo` <Version version="4.2.9" /> the helpers only tried the `Avo::Fields::NameField` constant, so a registered type named anything else raised `NoMethodError` on `nil`.
+:::
+
 ## Component options
 
 The field taks a new `component_options` argument that will be passed to the view component for that field. Please check out the [field wrapper documentation](./field-wrappers) for more details on that.

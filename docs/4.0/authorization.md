@@ -141,7 +141,9 @@ class PostPolicy < ApplicationPolicy
 end
 ```
 
-`create?` and `update?` run when the form is saved, so `record` already holds the submitted values. Use that if the answer depends on what the user typed.
+`create?` runs when the form is saved, so `record` already holds the submitted values. Use that if the answer depends on what the user typed.
+
+`update?` runs twice on a save. <VersionReq package="avo" version="4.3.8" /> Avo asks it on the record as loaded from the database, then again with the submitted values filled in, and both have to allow the write. A rule like `record.user_id == user.id` has to hold for the record as it exists, so submitting a new `user_id` can't make a record pass its own check. A [`react_on`](./field-options-api.html#react_on) re-render of an open edit form asks `edit?` the same way.
 
 If you use the [menu editor](./menu-editor.html), `index?` doesn't hide its items. Add the check to the item's [`visible`](./menu-editor.html#item-visibility) block instead.
 
@@ -198,7 +200,12 @@ Methods for panel-level controls (`view_`, `create_`, `attach_`, `act_on_`) get 
 
 If you want to hide the whole comments panel, use `view_comments?`. If you want to hide only the view button on each row, use `show_comments?`.
 
-These methods only control buttons. Access to the comment's own pages is still decided by `CommentPolicy`, so if `CommentPolicy#edit?` allows it, a user can reach the edit page by URL even when `edit_comments?` hides the button. Likewise, running an action from the comments panel also needs `CommentPolicy#act_on?` for each selected comment, whatever `act_on_comments?` allows.
+Most of these methods only control buttons. Access to the comment's own pages is still decided by `CommentPolicy`, so if `CommentPolicy#edit?` allows it, a user can reach the edit page by URL even when `edit_comments?` hides the button. Likewise, running an action from the comments panel also needs `CommentPolicy#act_on?` for each selected comment, whatever `act_on_comments?` allows.
+
+`view_comments?` is the exception: it also answers the requests behind the panel.
+
+- **The association's show route.** <VersionReq package="avo" version="4.3.4" /> `/resources/posts/:id/comments/:comment_id` renders one comment's show page. A `has_one` panel loads its frame from it, and for a `has_many` it is reachable by URL. It asks `view_comments?`, then `CommentPolicy#show?` for the comment, and looks a `has_many` row up inside `CommentPolicy::Scope`, so a comment the scope doesn't hold is not found. Before that, anyone who could see the post could open any of its comments ([GHSA-x65r-p6hf-94hv](https://github.com/avo-hq/avo/security/advisories/GHSA-x65r-p6hf-94hv)).
+- **The requests that list the association.** <VersionReq package="avo" version="4.3.8" /> The panel's rows, its search, a [`summarizable`](./field-options-api.html#summarizable) column's chart, and [scope](./scopes.html) counts all ask `view_comments?`. Each has to name the resource the association field lists with, its [`use_resource`](./associations/has_many.html#use_resource) when the field sets one, and answers `404` otherwise ([GHSA-5qcq-2vq9-62hj](https://github.com/avo-hq/avo/security/advisories/GHSA-5qcq-2vq9-62hj)).
 
 ### Reuse another policy for an association
 
@@ -342,6 +349,12 @@ If a list can't be resolved, Avo raises instead of showing everything. See the [
 
 A policy that declares neither list restricts nothing, whatever `explicit_authorization` says.
 
+:::info A policy that refuses a nil user
+Some policies raise in their constructor when there is no current user (`raise Pundit::NotAuthorizedError, "must be logged in" if user.nil?`), and a resource built in a job, a mailer, a rake task or a model spec has no user. When the policy declares neither list there is nothing to read from it, so `avo-authorization` swallows that error and the answer is "no restriction". <VersionReq package="avo-authorization" version="4.2.2" />
+
+Declare a list and the error propagates, because resolution never falls open. Hand those call sites a user, or let the constructor accept a nil user and have the list answer restrictively for it. The list's own body never runs when the constructor raises first.
+:::
+
 ### What a withheld field is withheld from
 
 Denied means invisible and unsettable, from one list. A withheld field is:
@@ -382,7 +395,6 @@ The policy removes fields first, then any `visible:` block narrows what's left. 
 - **A column no field declares can't be governed.** To govern a column, declare a field for it.
 - **"May see but may not write"** isn't expressible in one list. See [Let a user see a field but not change it](#let-a-user-see-a-field-but-not-change-it).
 - **Kanban's read side.** The column a card sits in discloses the value of the board's grouping property. A drag that would write a withheld field is refused, but the board still renders.
-- **avo-query doesn't participate.** It generates SQL from the schema and can't resolve a policy's lists.
 
 ## Let a user see a field but not change it
 
@@ -483,6 +495,12 @@ Your policies run only while your license includes the `avo-authorization` add-o
 That covers a lapsed or downgraded license, and a development, test or CI environment that runs without your license key. The [license status page](./license-troubleshooting.html#check-the-license-status-page) stays reachable, so you can check the license from the panel.
 
 If your initializer has no `authorization_client` line (Avo then uses `:pundit`), or sets it to `nil`, an unlicensed app skips your policies instead, and anyone who can sign in to Avo can reach everything.
+
+### When the license can't be validated
+
+A license Avo can't confirm is a different case from one without the add-on. Once the [grace period](./licensing.html#when-the-license-can-t-be-validated) ends, or when no valid answer was ever held, Avo pauses the whole admin with a "Temporarily unavailable" page. No policy is skipped, because no page is served. <VersionReq package="avo-licensing" version="4.4.0" />
+
+If you set [`run_community_admin_without_valid_license`](./customization-api.html#run_community_admin_without_valid_license) to `true`, the admin keeps running instead, and your policies are not applied. Anyone who can sign in to Avo can reach everything, so turn it on only if that is acceptable for your app. A valid license that lacks `avo-authorization` still fails closed when your initializer sets a client, with the setting on or off.
 
 :::tip
 If every resource is refused at once, check the license before the policies.

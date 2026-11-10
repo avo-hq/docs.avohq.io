@@ -22,7 +22,7 @@
     "generate-docs-map": "node scripts/generate-docs-map.js",
     "generate-docs-map-all": "node scripts/generate-docs-map.js all",
     "check-addon-links": "node scripts/check-addon-links.js",
-    "test": "echo \"Tests not implemented yet\" && exit 0"
+    "test": "node --test scripts/generate-docs-map.test.js"
   },
   "bin": {
     "generate-llms-txt": "./scripts/generate-llms-txt.js"

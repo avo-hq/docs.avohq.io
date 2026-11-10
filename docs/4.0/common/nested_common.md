@@ -50,6 +50,9 @@ accepts_nested_attributes_for :{{ $frontmatter.field_type === 'has_one' ? 'autho
 
 Clicking it asks for confirmation, then marks the record for deletion. It stays in the form, dimmed, with an "Undo" link, and nothing happens until the parent form is saved. {{ $frontmatter.field_type === 'has_and_belongs_to_many' ? 'Saving removes the join row only; the record itself is kept.' : 'Saving destroys the record.' }} See [Authorization](#authorization) for the policy check that applies.
 
+The confirmation and the pending notice read from `avo.nested.mark_for_deletion_confirmation` and
+`avo.nested.pending_deletion`, so you can [translate or reword them](./../i18n.html) like any other Avo string.
+
 #### Example
 
 ```ruby-vue{4,5,7,8,10,11,13-14,16-19}

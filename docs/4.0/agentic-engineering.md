@@ -5,7 +5,7 @@ prompt: Use this page (${link}) to set up my AI coding agent to work with Avo â€
 
 # Agentic engineering
 
-You can hand most Avo work to a coding agent: a new resource, a filter, an action, a dashboard card. What it needs is the same thing you need, the right docs for the version you run. This page sets up Claude Code, Cursor, Windsurf, and the rest with that context, the skills that ship inside the gem, and the MCP server, so the code they write is code you'd have written.
+You can hand most Avo work to a coding agent: a new resource, a filter, an action, a dashboard card. What it needs is the same thing you need, the right docs for the version you run. This page sets up Claude Code, Cursor, Codex, Amp, and other coding agents with that context, the skills that ship inside the gem, and the MCP server, so the code they write is code you'd have written.
 
 Looking for AI your team uses inside the Avo app, the chat or the MCP server, rather than agents in your editor? That's [AI in your Avo app](./ai-overview.html).
 
@@ -18,6 +18,16 @@ AI agents generate better code when they have up-to-date Avo documentation in th
 ### Pick your tool
 
 <EditorList version="4.0" />
+
+Each setup page covers persistent project instructions and Context7 MCP configuration. Where the Avo skills loader is supported, the page also shows which installer directory to choose.
+
+Windsurf is now [Devin Desktop](./llm-support/devin.html). For terminal-based Copilot, see [GitHub Copilot CLI](./llm-support/vscode.html#github-copilot-cli).
+
+### Other chat apps
+
+For ChatGPT, Gemini's web app, or Grok, paste the docs map into your prompt and ask the app to read it before writing Avo code. If it cannot fetch the pages, attach the relevant Markdown files instead. This supplies documentation context, not the repository instructions or skills used by coding agents.
+
+<CustomCode content="Read https://docs.avohq.io/4.0/docs-map.md and fetch the relevant pages before writing Avo code." />
 
 ## Skills
 
@@ -46,7 +56,7 @@ Skills are organized by **vertical** â€” a whole feature area, not a single task
 
 They are always current. The skills come from the gem your app has locked, so there is nothing to copy and nothing that can fall behind.
 
-Update your Avo gems with `bin/rails avo:update` and the skills come with them. Use that task rather than `bundle update avo`, which moves core alone and leaves each add-on's skills on the version they were already pinned to.
+Update your Avo gems with `bin/rails avo:update` and the skills come with them. Use that task rather than `bundle update avo`, which moves core alone and leaves each add-on's skills on the version they were already pinned to. Run it as `AVO_UPDATE_PUSH=1 bin/rails avo:update` and it [commits and pushes the updated lockfile](./installation.html#commit-and-push-the-update) as well, which is what an agent or a scheduled job wants.
 
 ### Core
 

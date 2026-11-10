@@ -31,7 +31,7 @@ To add the [Context7](https://context7.com/) MCP server to Claude Code, run:
 
 ## MCP server in the Claude app
 
-MCP is an API to communicate with AI models. You can add MCP servers and Claude will communicate with them to get more accurate results.
+MCP (Model Context Protocol) connects AI applications to external tools and context. Claude can use MCP servers to look up documentation while working.
 
 I suggest using [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) which provides many libraries including Avo's docs.
 

@@ -94,7 +94,7 @@ class Avo::Resources::Post < Avo::BaseResource
 end
 ```
 
-You may return HTML for that tooltip but don't forget to sanitize the output.
+The tooltip renders as text unless it is a safe string. To show HTML, return the result of `sanitize` or `tag`.
 
 ```ruby
 # app/avo/resources/post.rb

@@ -49,6 +49,20 @@ bundle install
 bin/rails generate avo:audit_logging install
 ```
 
+Besides the migrations, resources and controllers, it adds the commented `config.audit_logging` options inside the `Avo.configure` block of `config/initializers/avo.rb`:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  # ...
+
+  ## == Audit logging add-on ==
+  # config.audit_logging.enabled = false
+  # config.audit_logging.author_model = "User"
+  # config.audit_logging.payload_modifier = -> { payload.merge("app" => "billing") }
+end
+```
+
 ### 3. Migrate
 
 At this stage, all migrations, resources, and controllers required for the audit logging feature are set up and ready, it's time to migrate:
@@ -72,17 +86,19 @@ Today that is the [activity origin](#where-an-activity-came-from) columns. `inst
 
 ### Enable it globally
 
-After installation, audit logging is disabled by default. To enable it, navigate to your `avo.rb` initializer file and update the configuration for the `Avo::AuditLogging` module.
-
-Set `config.enabled` to `true` within this configuration.
+After installation, audit logging is disabled by default. To enable it, set `config.audit_logging.enabled` to `true` inside the `Avo.configure` block of your `avo.rb` initializer.
 
 ```ruby
 # config/initializers/avo.rb
-Avo::AuditLogging.configure do |config|
-  # config.enabled = false
-  config.enabled = true # [!code ++]
+Avo.configure do |config|
+  # config.audit_logging.enabled = false
+  config.audit_logging.enabled = true # [!code ++]
 end
 ```
+
+:::warning
+The separate `Avo::AuditLogging.configure do |config| ... end` block still works but is deprecated and will be removed in Avo 5. Move its options into `Avo.configure` under `config.audit_logging`. See the [upgrade guide](./upgrade.html#upgrade-to-avo-audit-logging-4-3-3).
+:::
 
 :::info
 Setting this configuration to `false` will disable the audit logging feature entirely, overriding any other specific settings. We'll cover those specific settings in the next steps.
@@ -115,18 +131,18 @@ end
 If `User` is your only author model, you can skip this step as it will be automatically set by default.
 :::
 
-Avo must determine the potential author models to correctly establish associations in the background. This setup enables the retrieval of all activities associated with a specific author via the `avo_authored` association. To designate a single model as an author, use `config.author_model`; for multiple models, use `config.author_models`.
+Avo must determine the potential author models to correctly establish associations in the background. This setup enables the retrieval of all activities associated with a specific author via the `avo_authored` association. To designate a single model as an author, use `config.audit_logging.author_model`; for multiple models, use `config.audit_logging.author_models`.
 
 ```ruby
 # config/initializers/avo.rb
-Avo::AuditLogging.configure do |config|
-  config.enabled = true
+Avo.configure do |config|
+  config.audit_logging.enabled = true
 
   # A single author model:
-  config.author_model = "Account" # [!code highlight]
+  config.audit_logging.author_model = "Account" # [!code highlight]
 
   # …or, for multiple author models:
-  # config.author_models = ["User", "Account"]
+  # config.audit_logging.author_models = ["User", "Account"]
 end
 ```
 
@@ -269,6 +285,41 @@ rescue JSON::ParserError
   next # A row written by hand may not hold JSON.
 end
 ```
+
+### Change what an entry stores
+
+<VersionReq package="avo-audit_logging" version="4.3.2" /> Set a proc to change what an entry's payload stores, such as adding your app's name to every entry or hiding a value from one resource's payloads. `config.audit_logging.payload_modifier` covers every entry, and `payload_modifier:` covers the entries logged under that resource or action:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.audit_logging.payload_modifier = -> { payload.merge("app" => "billing") }
+end
+```
+
+```ruby
+# app/avo/resources/product.rb
+class Avo::Resources::Product < Avo::BaseResource
+  self.audit_logging = {
+    activity: true,
+    payload_modifier: -> { ActiveSupport::ParameterFilter.new(["internal_note"]).filter(payload) }
+  }
+end
+```
+
+When both are set, the global proc runs first and the resource's receives its result, so a resource can fine-tune what the app set. Within a proc, you gain access to all attributes of [`Avo::ExecutionContext`](./execution-context) along with `payload`, `action`, `records` and `activity_class`. It runs however the entry was written: the panel, the API, the MCP server, the AI assistant, `outside_avo` and `Avo::AuditLogging.record`.
+
+- **Keys are strings.** `payload` is a copy with string keys, so `payload.except(:token)` removes nothing, and editing the copy doesn't change the record or the request. An entry with no payload, such as one from `outside_avo`, starts as `{}`.
+- **The shape depends on what wrote the entry.** The panel nests form fields under the model's key (`payload["product"]["name"]`), so `except` doesn't reach them, and an action run repeats a field in several places. `ActiveSupport::ParameterFilter` matches a key at any depth and stores its value as `[FILTERED]`. A proc also runs on page visits, where `payload["product"]` is `nil`.
+- **`records` is always an array** of the records themselves, holding the form's unsaved values on a panel update, so read them and don't change or reload them. It's empty on `index`, `new` and a create that failed to save. `current_user` and `request` can be `nil` outside a request.
+- **An action run is logged under the action,** so it runs the global proc and the action's own `payload_modifier`, not its resource's. Its payload holds the record's columns under `resource.record`, so a value only the resource's proc hides is stored there. Hide it in the global proc, the action's own or `filter_parameters` as well.
+- **The proc's last value is the whole payload,** so `payload.delete("note")` stores what it removed. End with `payload`, or use `except`. Return a hash, or the type of payload the proc received: `Avo::AuditLogging.record` can pass an array or a string, where `payload.merge` raises unless the proc checks `payload.is_a?(Hash)`.
+- **A failing proc costs only the payload.** An empty result stores no payload. If a proc raises or returns anything else, `nil` included, the entry and the change are kept without a payload, later procs don't run, and the error's class goes to the Rails log.
+- **Keep it small.** A proc shouldn't write audited records, and under `outside_avo` it runs inside the save's transaction, so a slow call holds that save's locks.
+
+:::warning
+A proc runs when the entry is written, so what it removes is gone from the payload for good. It changes the payload only: the [change log](#enable-change-logs-and-revert-changes) comes from PaperTrail and still shows the column, so also list it in `has_paper_trail skip: [:internal_note]`. A resource's proc can add back a key the global one removed, so use [`filter_parameters`](#keep-secrets-out-of-the-payload) for a value that must never be stored, because that masking runs after both procs.
+:::
 
 ### Enable change logs and revert changes
 
@@ -487,7 +538,7 @@ class Product < ApplicationRecord
 end
 ```
 
-Each change gets its own entry, linked to its version, so its page shows the [change log and the revert action](#enable-change-logs-and-revert-changes) like a change made in the panel. A create's page shows what the record was created with, and no revert, since there's nothing to go back to. The entry is saved in the same transaction as the change, so a change that's rolled back leaves no entry. The payload is empty, because what changed is in the change log.
+Each change gets its own entry, linked to its version, so its page shows the [change log and the revert action](#enable-change-logs-and-revert-changes) like a change made in the panel. A create's page shows what the record was created with, and no revert, since there's nothing to go back to. The entry is saved in the same transaction as the change, so a change that's rolled back leaves no entry. The payload is empty unless a [payload modifier](#change-what-an-entry-stores) adds to it, because what changed is in the change log.
 
 The resource that sets `outside_avo` is the one whose settings are asked and whose timeline shows the entries, even when another resource uses the same model. In the panel or through the API, a change the panel logs links its version to the panel's own entry, as before. A version written while the panel logs the request, even a `show` visit, links to that entry. A change made where the panel logs nothing, such as an action that doesn't opt in, is logged by `outside_avo` under the signed-in user.
 
@@ -559,7 +610,7 @@ Nothing is recorded inside the block from any source: the panel, `Avo::AuditLogg
 
 A background job enqueued inside the block runs later, outside it, so its changes are logged. Wrap the job's own work in `Avo::AuditLogging.disabled` if they shouldn't be.
 
-To switch logging off everywhere, for example in the test environment, set `config.enabled = false`.
+To switch logging off everywhere, for example in the test environment, set `config.audit_logging.enabled = false`.
 
 :::info Falcon and other fiber-based servers
 Set [`config.active_support.isolation_level = :fiber`](https://guides.rubyonrails.org/configuring.html#config-active-support-isolation-level), as Rails asks for these servers, so each request keeps its own current user and origin. A fiber or thread you start yourself doesn't inherit them, so a change saved there has no author.
@@ -626,6 +677,86 @@ end
 ```
 
 `record_type` is in the override so it stays the type of the record `record_id` names. Without it, an activity on two models pairs one id with `:multiple`. `to_prepare` applies the override again after each code reload in development. `records`, `model_class` and `record_policy_class` don't change. The activity page follows the override: its **Record** field links to that record instead of showing how many.
+
+## Control who sees which activities
+
+<VersionReq package="avo-audit_logging" version="4.3.2" />
+
+Activities are ordinary Avo records, so your [authorization](./authorization) policies decide who sees them. Avo doesn't ship a policy for them, because it can't know how your app handles access. Without an authorization client, everyone who can open the panel sees every activity.
+
+The examples below use Pundit. With another client, answer the same questions in its policy classes.
+
+### Show each user only their own activity
+
+These two policies let each user see the activities they made, and nobody change them. They assume the `ApplicationPolicy` from `rails generate pundit:install`, which answers `false` to anything a policy doesn't define.
+
+```ruby
+# app/policies/avo/audit_logging/activity_policy.rb
+class Avo::AuditLogging::ActivityPolicy < ApplicationPolicy
+  def index? = true
+  def show? = record.author == user
+
+  # Lets them run Undo, which also asks the audited record's policy for `update?`.
+  def act_on? = show?
+
+  # The Impacted records tab on an activity's page.
+  def view_activity_pivots? = show?
+
+  # With `explicit_authorization` off, Avo allows any association method a policy leaves out.
+  %i[attach detach create edit update destroy reorder].each do |action|
+    define_method("#{action}_activity_pivots?") { false }
+  end
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = scope.where(author_id: user.id, author_type: user.class.name)
+  end
+end
+```
+
+```ruby
+# app/policies/avo/audit_logging/activity_pivot_policy.rb
+class Avo::AuditLogging::ActivityPivotPolicy < ApplicationPolicy
+  def index? = true
+  def show? = Pundit.policy!(user, record.activity).show?
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve = scope.where(activity: Pundit.policy_scope!(user, Avo::AuditLogging::Activity))
+  end
+end
+```
+
+The second policy covers the **Impacted records** list and follows the first, so that's the only one you edit. `user` is whoever your `config.current_user_method` returns, so this works whatever your app calls its people.
+
+To let admins see everything, change `show?` and `resolve`. `admin?` stands for whatever your app checks:
+
+```ruby
+def show? = user.admin? || record.author == user
+
+class Scope < ApplicationPolicy::Scope
+  def resolve = user.admin? ? scope.all : scope.where(author_id: user.id, author_type: user.class.name)
+end
+```
+
+The [**History** card](#show-activities-on-a-specific-record) on a record's page and the options in the activity list's filters follow the same policies. With the policies above, a user who opens a record someone else also changed sees only their own entries on its card.
+
+### Show the history of the records a user can see
+
+To follow your other policies instead, ask them about the records an activity changed. Change `show?` and `resolve` in the activity policy, and add a line for each model you log:
+
+```ruby
+def show? = record.records.any? { |audited| Pundit.policy!(user, audited).show? }
+
+class Scope < ApplicationPolicy::Scope
+  def resolve
+    products = Pundit.policy_scope!(user, Product).select(:id)
+    visible = Avo::AuditLogging::ActivityPivot.where(record_type: "Product", record_id: products)
+
+    scope.where(id: visible.select(:activity_id))
+  end
+end
+```
+
+An activity on several records shows up when the user may see one of them, and its payload can hold data about the others. An activity whose records were all deleted is hidden. The **History** card shows every entry on a record the user may see.
 
 ## Disable specific actions logging
 

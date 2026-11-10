@@ -162,6 +162,8 @@ On a terminal the table is framed and fits the width: a long cell wraps inside i
 avo list users --sort name --dir desc --fields id,name,email --per-page 10
 ```
 
+Ask for a page past the last one and the app answers with the first page instead. The CLI says so on stderr, `Page 9 does not exist; showing page 1 of 3.`, so the footer is not read as confirming the page you asked for.
+
 :::warning Filters are not supported yet
 `list` cannot select records by value, because the REST API does not support filters yet. Page through the records with `--format json` and filter them locally, for example with `jq`.
 :::

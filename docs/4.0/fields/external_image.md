@@ -2,98 +2,58 @@
 license: community
 description: "Displays an image from a URL stored in the database."
 fieldTags: [assets]
+outline: [2, 3]
+api_docs: ./external_image-api.html
 ---
 
 # External image
 
-You may have a field in the database that has the URL to an image, and you want to display that in Avo. That is where the `ExternalImage` field comes in to help.
-
-It will take that value, insert it into an `image_tag`, and display it on the `Index` and `Show` views.
+The `external_image` field displays an image from a URL stored in the database or returned by a computed field. It renders the image on the Index and Show views, and provides a text input for the URL on forms.
 
 ```ruby
+# app/avo/resources/company.rb
 field :logo, as: :external_image
 ```
 
-## Options
+By default, the image has a height of 40 pixels, square corners, and no link to the record. Blank values render no image. On Show, images also have a maximum width of 340 pixels.
 
-All options can be static values or procs that are executed within Avo's execution context. When using procs, you have access to all the defaults that [`Avo::ExecutionContext`](../execution-context.html) provides plus:
+## Adjust the image for each view
 
-- `record`
-- `resource`
-- `view`
-- `field`
+<span id="height"></span>
+<span id="radius"></span>
 
-<Option name="`width`">
-
-#### Default value
-
-`40`
-
-#### Possible values
-
-Use any number to size the image, or a proc that returns a number.
-
-#### Example with proc
+Set [`height`](./external_image-api.html#height) and [`radius`](./external_image-api.html#radius) to change the image size and rounded corners. Use procs when the Index and Show views need different styling:
 
 ```ruby
-field :logo, as: :external_image, width: -> { view.index? ? 30 : 120 }
-```
-</Option>
-
-<Option name="`height`">
-
-#### Default value
-
-`40`
-
-#### Possible values
-
-Use any number to size the image, or a proc that returns a number.
-
-#### Example with proc
-
-```ruby
-field :logo, as: :external_image, height: -> { view.index? ? 30 : 120 }
-```
-</Option>
-
-<Option name="`radius`">
-
-#### Default value
-
-`0`
-
-#### Possible values
-
-Use any number to set the radius value, or a proc that returns a number.
-
-#### Example with proc
-
-```ruby
-field :logo, as: :external_image, radius: -> { view.index? ? 4 : 8 }
-```
-</Option>
-
-<!-- @include: ./../common/link_to_record_common.md-->
-
-## Conditional sizing based on view
-
-You can use procs to set different image dimensions and styling based on the current view:
-
-```ruby
+# app/avo/resources/company.rb
 field :logo, as: :external_image,
-  width: -> { view.index? ? 40 : 150 },
   height: -> { view.index? ? 40 : 150 },
   radius: -> { view.index? ? 4 : 12 }
 ```
 
-This example will display smaller, slightly rounded images on the index view (40x40px with 4px radius) and larger, more rounded images on the show view (150x150px with 12px radius).
+These procs run in [Avo's execution context](../execution-context.html), with access to `record`, `resource`, `view`, and `field`.
+
+<span id="width"></span>
+
+:::info Width behavior
+The field accepts [`width`](./external_image-api.html#width), but the standard Index and Show image templates do not apply it. Set the height to resize the image; do not rely on `width` to produce a square thumbnail.
+:::
+
+## Open the record from an image
+
+Enable [`link_to_record`](./external_image-api.html#link_to_record) to make the Index image a link to the record. It does not add a link on Show.
+
+```ruby
+# app/avo/resources/company.rb
+field :logo, as: :external_image, link_to_record: true
+```
 
 ## Use computed values
 
 Another common scenario is to use a value from your database and create a new URL using a computed value.
 
 ```ruby
+# app/avo/resources/company.rb
 field :logo, as: :external_image do
   "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
 rescue
@@ -101,14 +61,24 @@ rescue
 end
 ```
 
-## Use in the Grid `cover` position
+## Show the image on grid cards
 
-Another common place you could use it is in the grid `:cover` position.
+For a [grid view](../grid-view.html), set the card's `cover_url` to the image URL. Grid covers are configured separately from the field's sizing options.
 
 ```ruby
-cover :logo, as: :external_image, link_to_record: true do
-  "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180"
-rescue
-  nil
-end
+# app/avo/resources/company.rb
+self.grid_view = {
+  card: -> do
+    {
+      cover_url: "//logo.clearbit.com/#{URI.parse(record.url).host}?size=180",
+      title: record.name
+    }
+  rescue
+    { cover_url: nil, title: record.name }
+  end
+}
 ```
+
+## Reference and shared options
+
+See the [External image API](./external_image-api.html) for field-specific contracts and [common field options](../field-options.html) for settings shared with other fields.

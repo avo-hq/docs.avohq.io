@@ -2,7 +2,6 @@
 license: addon
 addon_link: https://avohq.io/addons/mcp
 addon: avo-mcp_server
-betaStatus: "Beta"
 outline: [2, 3]
 guide: ./mcp.html
 prev:
@@ -103,15 +102,33 @@ config.mcp_server.connection_log_size = 2_000
 
 <Option name="`extra_tools`" headingSize="3">
 
-Tools of the app's own, served beside the ten. Each entry is a class name — never a constant, since the initializer runs before the app's classes are loadable — or a Hash whose `tool:` key names the class and whose other keys are passed to the tool's initializer. The class is either an `Avo::McpServer::Tool`, which the `avo:mcp_server:tool` generator scaffolds, or a `RubyLLM::Tool` written for [Avo AI](./ai.html#bring-your-own-tool) that declares `def self.capability`; the second is served through an adapter. Names are resolved on every request, and an entry that can't be served is dropped with a log line naming the reason. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+Tools of the app's own, served beside the ten. Each entry is a class name — never a constant, since the initializer runs before the app's classes are loadable — or a Hash whose `tool:` key names the class. The class is either an `Avo::McpServer::Tool`, which the `avo:mcp_server:tool` generator scaffolds, or a `RubyLLM::Tool` written for [Avo AI](./ai.html#bring-your-own-tool) that declares `def self.capability`; the second is served through an adapter. Either shape names the resources it touches (`resources "Ticket", "Project"`, or `def self.resources` on a `RubyLLM::Tool`), which a connection narrowed to named resources must all grant; a call that names none is refused on such a connection. Names are resolved on every request, and an entry that can't be served is dropped with a log line naming the reason while the rest keep serving. See [Add tools of your own](./mcp.html#add-tools-of-your-own).
+
+A Hash entry's remaining keys are passed to the tool's initializer, so the Hash form is for a `RubyLLM::Tool`. An `Avo::McpServer::Tool` runs as class methods and is never instantiated; an entry naming one and carrying settings is dropped rather than served without them.
 
 ```ruby
-config.mcp_server.extra_tools = ["IssueInvoiceTool", {tool: "CrmTool", api_key: ENV["CRM_API_KEY"]}]
+config.mcp_server.extra_tools = [
+  "IssueInvoiceTool",                            # an Avo::McpServer::Tool takes no settings
+  {tool: "CrmTool", api_key: ENV["CRM_API_KEY"]} # a RubyLLM::Tool receives them in its initializer
+]
 ```
 
-- **Type:** `Array` of `String` or `Hash`
+`user:` is reserved: the key is dropped from an entry, and the admin the connection was authorized by is passed instead to a tool whose initializer accepts one.
+
+| Entry dropped because                                                                                   | Applies to             |
+| ------------------------------------------------------------------------------------------------------- | ---------------------- |
+| The class name doesn't resolve                                                                          | both                   |
+| The class is neither an `Avo::McpServer::Tool` nor a `RubyLLM::Tool`                                    | both                   |
+| It declares no `capability`, or one that isn't `avo:read`, `avo:write` or `avo:actions`                 | both                   |
+| Its tool name is already taken by a shipped tool or by an earlier entry                                 | both                   |
+| The entry carries keys besides `tool:`                                                                  | `Avo::McpServer::Tool` |
+| It overrides `call`, where the capability gate runs                                                     | `Avo::McpServer::Tool` |
+| Reading its capability, name, description, resources or argument schema raised                          | `RubyLLM::Tool`        |
+| Its argument schema doesn't resolve to an object                                                        | `RubyLLM::Tool`        |
+
+- **Type:** `Array` of `String` or `Hash` with a String `tool:` key
 - **Default:** `[]`
-- **Validation:** raises `ArgumentError` at boot for an entry that is neither a String nor a Hash with a String `tool:` key
+- **Validation:** raises `ArgumentError` at boot for an entry that is neither a String nor a Hash with a String `tool:` key. Everything else is checked per request, and a failure drops that entry alone.
 
 </Option>
 
@@ -180,7 +197,7 @@ Writes `app/tools/issue_invoice_tool.rb`, defining `IssueInvoiceTool`, called `i
 
 ## Tools
 
-The ten tools a connection can call, each gated by the capability it declares. Tools the app registers through [`extra_tools`](#extra_tools) are served beside them, gated the same way by the capability each declares. Tool names are what a client prints in its transcript and are never translated.
+The ten tools a connection can call, each gated by the capability it declares. Tools the app registers through [`extra_tools`](#extra_tools) are served beside them, gated the same way by the capability each declares, and by the [`resources`](./mcp.html#add-tools-of-your-own) each declares. Tool names are what a client prints in its transcript and are never translated.
 
 | Tool             | Capability    | Does                                              |
 | ---------------- | ------------- | ------------------------------------------------- |
@@ -318,6 +335,7 @@ A tool call's arguments are stored after the app's `filter_parameters` and cappe
 
 | Method           | Decides                                                                                                   |
 | ---------------- | --------------------------------------------------------------------------------------------------------- |
+| `use?`           | **Required.** Whether the admin gets the server at all: every call, code exchange and refresh, the consent screen, the connect page and its buttons. Never revocation or the list. A policy without it refuses every admin. See [Turn MCP on or off per admin](./mcp.html#turn-mcp-on-or-off-per-admin) |
 | `Scope#resolve`  | Which connections are listed and findable                                                                 |
 | `index?`         | Whether the resource appears at all under `explicit_authorization`                                        |
 | `show?`          | A connection's page — and every card on it that the three methods below do not claim                      |

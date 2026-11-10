@@ -380,3 +380,25 @@ end
 ```
 
 </Option>
+
+## Reading the selected scope
+
+<Option name="`active_scope`">
+
+The scope the resource's <Index /> view is showing, as a scope instance. The resource's own options read it to follow the selected tab — see [Describe the selected scope in the header](./scopes.html#describe-the-selected-scope-in-the-header).
+
+<VersionReq version="4.3.2" />
+
+```ruby
+# app/avo/resources/license.rb
+class Avo::Resources::License < Avo::BaseResource
+  self.description = -> { resource.active_scope&.description }
+end
+```
+
+- **Type:** `Avo::Scopes::BaseScope` instance or `nil`
+- **Default:** `nil`
+- **Set on:** the <Index /> view only, including an association panel's index. It is `nil` on <Show />, <Edit /> and <New />.
+- **`nil` when:** the `All` tab is selected, no scope is [`default`](#default) and none is picked, or `?scope=` names a scope the resource doesn't have or one that isn't [`visible`](#visible) to the current user.
+
+</Option>
