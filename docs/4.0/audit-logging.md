@@ -405,9 +405,11 @@ end
 
 With [Dynamic Filters](./dynamic-filters.html) installed, the bar keeps **Created at**, **Action**, **Author** and **Origin** in place, in the order of the columns. **Author** lists everyone with an entry, deleted users included, and **Origin** offers one choice per kind: *Background job* covers every job, and *UI* covers changes made in the panel. **Section** and **Record** are under *Add filter*. With the [new filter dropdown](./dynamic-filters.html#try-the-new-filter-dropdown) and `inline_filters` on, **Created at** sits in the bar with *Today*, *7 days*, *30 days* and *This month*.
 
-To call the page something else, set its name in your locale file. `one` names a single entry and `other` names the page. The gem ships these in English, so add them for any other language your app uses.
+To call the page something else, set its name in your locale file. `one` names a single entry and `other` names the page.
 
-The rest of the audit log's own words, such as *Happened*, *Changeset* and *Undo change*, are under `avo.audit_logging` in the gem's `config/locales/en.yml`. A language you haven't added them for reads them in English.
+<VersionReq package="avo-audit_logging" version="4.4.1" /> The audit log reads in the nineteen languages Avo itself ships: its columns, action names, the activity's page, the History card and Undo. The words are under `avo.audit_logging` in the gem's `config/locales`, one file per language, and your own locale file wins over them. Any other language reads them in English until you add them.
+
+Dates and distances such as *4 days ago* use Rails' own words for the language. Rails ships those in English only, so add the [`rails-i18n`](https://github.com/svenfuchs/rails-i18n) gem to read them in your language too. The names of your own resources, actions and model fields are yours to translate.
 
 ```yaml
 # config/locales/en.yml
