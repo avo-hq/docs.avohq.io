@@ -19,6 +19,16 @@ To open this page at your release, add `?since=` with a date or a gem version: `
 
 <UpgradeFilter />
 
+## `avo-ai` 4.4.1 <span class="tl-date">Unreleased</span> {#avo-ai-4-4-1 data-gems="avo-ai" data-version="4.4.1"}
+
+<Option headingSize="3" name="The chat bar yields to mobile navigation">
+
+Opening the sidebar on smaller screens temporarily hides the floating chat bar so it cannot cover the profile menu. Closing the sidebar restores the bar, including the current conversation and draft. Desktop navigation is unchanged. See [Open the chat](./ai.html#open-the-chat).
+
+**Action required:** None.
+
+</Option>
+
 ## `avo-audit_logging` 4.3.3 <span class="tl-date">Unreleased</span> {#avo-audit-logging-4-3-3 data-gems="avo-audit_logging" data-version="4.3.3"}
 
 <a id="upgrade-to-avo-audit-logging-4-3-3"></a>

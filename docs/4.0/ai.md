@@ -927,6 +927,8 @@ repeats from it. The tools accept either.
 
 The chat bar sits at the bottom of every Avo page. **Cmd+J** on macOS (**Ctrl+J** elsewhere) opens it from anywhere, including from inside a field you're typing in — that's the point, so you can pull the assistant up mid-edit without losing your place. Clicking **Agent** does the same.
 
+On smaller screens, opening the sidebar temporarily hides the chat bar so the profile menu stays reachable. Closing the sidebar restores the bar without clearing your conversation or draft.
+
 Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. Drag a pill to reorder them. The chat window lines its end edge up with the pill it was opened from and slides across when you switch, so it's always clear which conversation you're looking at. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. The open chats, their order, and the collapsed state are all remembered per device.
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way. The **×** in the title bar does the same thing: it closes the window, not the conversation. To take a chat out of the dock, use the × on its own pill; the conversation itself is kept either way, and it's still on your [chat list](#full-page-chats).
