@@ -20,7 +20,7 @@ Activity tracking works with either `paper_trail` or `audited`, but you must hav
 - An [Avo Enterprise](https://savvycal.com/avo-hq/discovery-call-ent) license — audit logging is an Enterprise feature
 - [Custom controls](./custom-controls) — the generated activity resources use `show_controls` and `index_controls`
 - [Authorization](./authorization) — the generated activity models use the authorization helpers (`authorizable_ransackable_attributes` / `authorizable_ransackable_associations`)
-- [`paper_trail`](https://github.com/paper-trail-gem/paper_trail) and `avo-diff_field` are installed automatically if not already present
+- [`paper_trail`](https://github.com/paper-trail-gem/paper_trail) is installed automatically if not already present
 
 ## Installation
 
@@ -79,7 +79,16 @@ bin/rails generate avo:audit_logging upgrade
 bin/rails db:migrate
 ```
 
-Today that is the [activity origin](#where-an-activity-came-from) columns. `install` does the same thing — it looks at your `db/migrate` and writes only what is missing, never touching a migration you have already run — so re-running it is safe too; `upgrade` is the same code path under a name that says so.
+Today that is the [activity origin](#where-an-activity-came-from) columns and the `targeted` column, which marks the record an activity was about. `install` does the same thing — it looks at your `db/migrate` and writes only what is missing, never touching a migration you have already run — so re-running it is safe too; `upgrade` is the same code path under a name that says so.
+:::
+
+:::warning Using `as: :diff` in your own resources?
+<VersionReq package="avo-audit_logging" version="4.4.1" /> The gem draws changesets itself and no longer installs `avo-diff_field`. If your own resources have fields with `as: :diff`, add the gem to your Gemfile to keep them:
+
+```ruby
+# Gemfile
+gem "avo-diff_field"
+```
 :::
 
 ## Enable and configure audit logging
@@ -257,7 +266,9 @@ end
 
 Each entry shows a compact relative time — hover over an entry to reveal its full date and time. Clicking an entry opens a detailed page, with the payload when the entry has one.
 
-<VersionReq package="avo-audit_logging" version="4.3.2" /> The activity's page is titled after the record it changed, such as *Update on Product #123*, or *Update on Product #123 and 2 more* when it changed several, and its **Record** field links back to that record. With several records the field shows how many, such as *3 records*. An action run keeps the action's name, such as *Handle on ChangePrice*, and its **Impacted records** list every record it ran on. The activity list shows the same in its **Record** column. The payload is pretty-printed when it holds JSON, and shown as stored when it doesn't.
+<VersionReq package="avo-audit_logging" version="4.4.1" /> The activity's page is headed by what happened, with the History card's icon and label, such as *Update* or an action's own name like *Change Price*. Under it is the record it changed, linked, or *3 records* when it changed several, and when, such as *Happened about 3 hours ago*, with the exact time on hover.
+
+A change to one record fills the **Changeset** panel: a row for each field it touched, with **Before** and **After** side by side, and its **Undo change** button next to **Delete**. A deleted record shows the values it had, and a created one the values it was created with. IDs and timestamps sit last, in smaller rows. When a later save changed one of these fields again, a **Now** column shows the values the record has today, the changed ones highlighted. **Undo change** puts the whole record back as it was before the change, so its confirmation names every field changed since, including ones this change never touched (*Price has changed since*). Tags under the title say who made the change (*By Ada Lovelace*, linked), what it came through when it wasn't the panel (*Through MCP connection*), and which section it belongs to (*In Products*). Below, **Payload** holds what Avo received with the request, pretty-printed when it's JSON, for a developer tracing exactly what was sent. When an edit's save also changed other records, such as through a callback, the page still leads with the record you edited, a *Changed 4 records* note under the title takes you down to the others, and **Impacted records** lists them with "Saving Desk lamp also changed these 3 records." An action run on several records lists them all under **Impacted records**, each with its own changeset and Undo. Entries recorded before the `targeted` column existed don't know which record was edited, so a change to several records shows them all under **Impacted records**. The browser tab and the breadcrumbs read *Update on Desk lamp*, or *Update on Desk lamp and 2 more*.
 
 <Image src="/assets/img/4_0/audit-logging/hover-activities.webp" dark-src="/assets/img/4_0/audit-logging/hover-activities-dark.webp" width="356" height="422" alt="The History activity timeline card showing compact relative timestamps" />
 
@@ -338,9 +349,11 @@ end
 
 Once enabled, the changelog will be visible, along with an action to revert changes.
 
+<VersionReq package="avo-audit_logging" version="4.4.1" /> When the save you undo also changed other records, such as through a callback, the confirmation lists them under **Also put back**. Tick the ones to restore along with it. Each takes the same permission as undoing it on its own, and they all go back together or not at all. One that changed again since is marked *changed again since*.
+
 With [authorization](./authorization.html) enabled, reverting asks the record's policy: [`update?`](./authorization-api.html#update) on the record, found through its policy scope, or [`create?`](./authorization-api.html#create) to bring back a destroyed record. Users the policy refuses don't see the revert action. The changeset diff and the payload leave out fields the user's [field policy](./authorization.html#hide-fields-from-a-user) withholds.
 
-<Image src="/assets/img/4_0/audit-logging/activity-details.webp" dark-src="/assets/img/4_0/audit-logging/activity-details-dark.webp" width="2848" height="2114" alt="An update activity detail page showing the changeset diff and payload, with breadcrumbs and title" />
+<Image src="/assets/img/4_0/audit-logging/activity-details.webp" dark-src="/assets/img/4_0/audit-logging/activity-details-dark.webp" width="2848" height="2114" alt="An update activity page: the action and the record it changed, tags for when, who and where, the Changeset with Before and After, the Impacted records its save changed, and the Payload" />
 
 :::warning Missing `changeset` field
 If the `changeset` field in the versions table consistently appears as `nil`, ensure you add the following configuration in your `application.rb` file:
@@ -388,9 +401,38 @@ Avo.configure do |config|
 end
 ```
 
+<VersionReq package="avo-audit_logging" version="4.4.1" /> The page is called **Audit log**. It opens on the **Changes** tab, which leaves out page visits (*Index page*, *Show page* and the like), and **All** lists every entry. The tab needs [avo-scopes](./scopes.html); without it the list shows everything. Activity tables on other pages, such as [a user's own activity](#show-all-activity-by-an-author), open on **All**. Its columns read when, what and who from the left: **Created at**, **Action** and **Author**. The **Action** column shows the same label and icon as the History card, such as *Update*, or the action's own name for an action run. The **Section** column names the resource or action as your menu does, such as *Products* or *Change Price*. Long names are cut to one line, with the whole name on hover, and an entry on several records lists them when you hover the icon next to *3 records*. A row that changed one record has a preview icon that shows the change. A page visit, or a change to several records, has none: open the activity to see each change.
+
+With [Dynamic Filters](./dynamic-filters.html) installed, the bar keeps **Created at**, **Action**, **Author** and **Origin** in place, in the order of the columns. **Author** lists everyone with an entry, deleted users included, and **Origin** offers one choice per kind: *Background job* covers every job, and *UI* covers changes made in the panel. **Section** and **Record** are under *Add filter*. With the [new filter dropdown](./dynamic-filters.html#try-the-new-filter-dropdown) and `inline_filters` on, **Created at** sits in the bar with *Today*, *7 days*, *30 days* and *This month*.
+
+To call the page something else, set its name in your locale file. `one` names a single entry and `other` names the page. The gem ships these in English, so add them for any other language your app uses.
+
+The rest of the audit log's own words, such as *Happened*, *Changeset* and *Undo change*, are under `avo.audit_logging` in the gem's `config/locales/en.yml`. A language you haven't added them for reads them in English.
+
+```yaml
+# config/locales/en.yml
+en:
+  avo:
+    resource_translations:
+      avo_activity:
+        one: "Activity"
+        other: "Activity log"
+```
+
+### Change the date format
+
+<VersionReq package="avo-audit_logging" version="4.4.1" /> The list shows the date like *September 10, 2024, 11:24:17*. To change it, set `created_at_format`, which takes the same [Luxon tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) as the `format` option of the [`date_time` field](./fields/date_time.html).
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.audit_logging.activity_resource = {created_at_format: "yyyy-LL-dd TT"} # [!code ++]
+end
+```
+
 ## Where an activity came from
 
-Most activities come from somebody clicking in the panel, and those carry no origin — a marker on every row would say nothing. Anything else names itself, so you can tell a change your team made from a change something else made on their behalf.
+Most activities come from somebody clicking in the panel, and those carry no origin — a marker on every row would say nothing — so the **Origin** field reads *UI* for them, and the record's timeline says nothing. Anything else names itself, so you can tell a change your team made from a change something else made on their behalf.
 
 Three of Avo's own add-ons name themselves, each after the record the entry points back to:
 
@@ -409,7 +451,7 @@ Two columns hold it:
 | `origin`        | A short name for what acted — `"mcp_connection"`, `"api_token"`, `"ai_chat"`, or a name of your own. `nil` for the panel. |
 | `origin_record` | Optional, polymorphic: the thing that acted. Linked from the activity's page where it still exists. |
 
-Filter the activity index by **Origin** to see everything one kind of actor did, or scope a query directly:
+Filter the activity index by **Origin** to see everything one kind of actor did, *UI* included, or scope a query directly:
 
 ```ruby
 Avo::AuditLogging::Activity.from_origin("mcp_connection")   # everything MCP clients did
@@ -447,6 +489,36 @@ en:
 Activities recorded before you upgraded have no origin, and neither do activities recorded by an app that hasn't run the new migration yet. Both keep working — they just read as the panel's own.
 :::
 
+### Rename the origin labels
+
+<VersionReq package="avo-audit_logging" version="4.4.1" /> To change what an origin reads as, set `config.audit_logging.origin_labels`. It takes any origin in the table below, or a name of your own, and every label you leave out stays as it is.
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.audit_logging.origin_labels = { # [!code ++]
+    ui: "Admin panel", # [!code ++]
+    job: "Scheduled task", # [!code ++]
+    nightly_importer: "Nightly import" # [!code ++]
+  } # [!code ++]
+end
+```
+
+| Key              | Default label     | What acted                                         |
+| ---------------- | ----------------- | -------------------------------------------------- |
+| `ui`             | UI                | A person in the panel                              |
+| `mcp_connection` | MCP connection    | An AI client through the MCP server                |
+| `api_token`      | API token         | A request through the REST API with a token        |
+| `api`            | API               | A request through the REST API without a token     |
+| `ai_chat`        | AI chat           | Avo AI                                             |
+| `job`            | Background job    | A job, for a change made outside Avo               |
+| `request`        | App               | Your app's own pages, for a change made outside Avo |
+| `console`        | Developer console | The Rails console, for a change made outside Avo   |
+| `rake`           | Script            | A rake task, for a change made outside Avo         |
+| `model`          | System            | Anything else, for a change made outside Avo       |
+
+These labels win over your locale file and are the same in every language. If your app uses several languages, set them under `avo.audit_logging.origins` in each locale file instead.
+
 ### Record activity from your own code
 
 <VersionReq package="avo-audit_logging" version="4.3.2" />
@@ -470,6 +542,8 @@ end
 ```
 
 Avo finds the record's resource and links the activity to the record, so it shows up on the record's timeline like a change made in the panel. `payload` can be any hash; Avo stores it as JSON, [with secrets masked](#keep-secrets-out-of-the-payload).
+
+Without an `origin:`, the entry reads *UI* in the **Origin** field, as if a person made the change in the panel. Pass one to say what acted, such as `origin: "price_updater"`.
 
 Like the panel, it only records for resources that opted in with [`self.audit_logging`](#enable-specific-resources-and-actions), and it asks your `activity` block and `actions` the same way. It returns the activity, or `nil` when audit logging is switched off or the opt-in says no. It raises `ArgumentError` when the record's model has no Avo resource, or when the record hasn't been saved yet. The activity and its link to the record are saved together, or not at all.
 
