@@ -58,6 +58,26 @@ Enable [`direct_upload`](./file-api.html#direct_upload) to send files directly t
 field :avatar, as: :file, direct_upload: true
 ```
 
+## Choose where uploads are stored
+
+Active Storage stores every upload under a random key. Set [`key`](./file-api.html#key) to choose the key yourself, so the files in your bucket can be found by name. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+# app/avo/resources/post.rb
+field :cover,
+  as: :file,
+  key: -> { "posts/#{SecureRandom.base36(8)}/#{ActiveStorage::Filename.new(file.original_filename).sanitized}" }
+```
+
+The block gets the `record`, the `resource`, the `field` and the uploaded `file`. If it returns `nil` or an empty string, the file keeps a random key.
+
+:::warning
+- **Keys are unique.** A key that is already taken fails the save. Replacing a file with one of the same name counts, because the old file still exists at that moment. Put something that changes per upload in the key, like the random segment above.
+- **New records have no id yet.** On the New page `record.id` and `record.to_param` are `nil`, so don't build the key from them.
+- **`file.original_filename` comes from the browser.** Sanitize it before it goes into a key, as above.
+- **Only files uploaded through the form get the key.** With [`direct_upload`](./file-api.html#direct_upload), or a file picked from the Media Library, the file is already stored when the form is sent, so it keeps its key.
+:::
+
 <!-- @include: ./../common/file_other_common.md-->
 
 ## Customize the attachment preview
