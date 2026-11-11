@@ -349,7 +349,7 @@ end
 
 Once enabled, the changelog will be visible, along with an action to revert changes.
 
-<VersionReq package="avo-audit_logging" version="4.4.1" /> When the save you undo also changed other records, such as through a callback, the confirmation lists them under **Also put back**. Tick the ones to restore along with it. Each takes the same permission as undoing it on its own, and they all go back together or not at all. One that changed again since is marked *changed again since*.
+<VersionReq package="avo-audit_logging" version="4.4.1" /> When the save you undo also changed other records, such as through a callback, the confirmation lists them under **Also put back**. Tick the ones to restore along with it. Each takes the same permission as undoing it on its own, and they all go back together or not at all.
 
 With [authorization](./authorization.html) enabled, reverting asks the record's policy: [`update?`](./authorization-api.html#update) on the record, found through its policy scope, or [`create?`](./authorization-api.html#create) to bring back a destroyed record. Users the policy refuses don't see the revert action. The changeset diff and the payload leave out fields the user's [field policy](./authorization.html#hide-fields-from-a-user) withholds.
 
