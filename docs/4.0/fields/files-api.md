@@ -61,7 +61,7 @@ The Active Storage key a file uploaded through the form is stored under, instead
 field :documents, as: :files, key: -> { "projects/#{SecureRandom.base36(8)}/#{file.original_filename}" }
 ```
 
-Keys are unique, so a key that is already taken fails the save. Files sent with [`direct_upload`](#direct_upload) or picked from the Media Library keep their key. See [Choose where uploads are stored](./files.html#choose-where-uploads-are-stored).
+Keys are unique. When a key is already taken, the form shows "has already been taken" on the field and nothing is saved. Files sent with [`direct_upload`](#direct_upload) or picked from the Media Library keep their key. See [Choose where uploads are stored](./files.html#choose-where-uploads-are-stored).
 
 - **Type:** `String` or `Proc`
 - **Default:** `nil` (a random key)
