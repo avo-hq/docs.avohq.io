@@ -31,7 +31,7 @@ field :starting_at, as: :time, format: "HH:mm"
 ```
 
 - **Type:** `String`
-- **Default:** `"TT"`
+- **Default:** `"TT"`, or [`config.time_format`](../customization-api.html#time_format) when it's set
 - **Values:** [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens).
 
 </Option>

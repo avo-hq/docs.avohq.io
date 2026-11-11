@@ -63,6 +63,29 @@ Avo.configure do |config|
 end
 ```
 
+## Date and time formats
+
+`date`, `date_time` and `time` fields format their values on the Index and Show pages with [Luxon tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens). To use one format across the whole app, set it once in the initializer instead of passing `format:` to every field. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.date_format = "dd.LL.yyyy"
+  config.date_time_format = "dd.LL.yyyy HH:mm"
+  config.time_format = "HH:mm"
+end
+```
+
+Each field type reads its own option, so a `time` field uses [`time_format`](./customization-api.html#time_format) and never [`date_time_format`](./customization-api.html#date_time_format). A field that sets its own `format:` keeps it.
+
+```ruby
+# app/avo/resources/post.rb
+field :created_at, as: :date_time # shows 10.02.2026 16:22
+field :published_at, as: :date_time, format: "LLL d, yyyy" # shows Feb 10, 2026
+```
+
+The options change Index and Show only. The picker on New and Edit uses [flatpickr tokens](https://flatpickr.js.org/formatting) instead, so set its [`picker_format`](./fields/date-api.html#picker_format) on each field.
+
 ## Resource Index view
 
 There are a few customization options to change how resources are displayed in the **Index** view.

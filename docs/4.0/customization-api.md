@@ -89,6 +89,48 @@ config.currency = "USD"
 
 </Option>
 
+<Option name="`date_format`" headingSize="3">
+
+The display format for every [`date`](./fields/date.html) field that doesn't set its own [`format`](./fields/date-api.html#format), on the Index and Show pages. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+config.date_format = "dd.LL.yyyy"
+```
+
+- **Type:** String
+- **Default:** `"yyyy-LL-dd"`
+- **Values:** [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens)
+
+</Option>
+
+<Option name="`date_time_format`" headingSize="3">
+
+The display format for every [`date_time`](./fields/date_time.html) field that doesn't set its own [`format`](./fields/date_time-api.html#format), on the Index and Show pages. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+config.date_time_format = "dd.LL.yyyy HH:mm"
+```
+
+- **Type:** String
+- **Default:** `"yyyy-LL-dd TT"`
+- **Values:** [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens)
+
+</Option>
+
+<Option name="`time_format`" headingSize="3">
+
+The display format for every [`time`](./fields/time.html) field that doesn't set its own [`format`](./fields/time-api.html#format), on the Index and Show pages. A `time` field reads this option, not `date_time_format`. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+config.time_format = "HH:mm"
+```
+
+- **Type:** String
+- **Default:** `"TT"`
+- **Values:** [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens)
+
+</Option>
+
 <Option name="`home_path`" headingSize="3">
 
 Where users are redirected when they click the logo or visit Avo's root path. Also accepts a block, which has access to route helpers.

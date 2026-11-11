@@ -26,7 +26,7 @@ Without extra configuration, dates and times use the browser's timezone, the dis
 
 ## Change how dates and times look
 
-Set [`format`](./date_time-api.html#format) to change Index and Show output with [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens). Set [`picker_format`](./date_time-api.html#picker_format) separately for New and Edit using [flatpickr tokens](https://flatpickr.js.org/formatting).
+Set [`format`](./date_time-api.html#format) to change Index and Show output with [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens). Set [`picker_format`](./date_time-api.html#picker_format) separately for New and Edit using [flatpickr tokens](https://flatpickr.js.org/formatting). To change it for every field at once, set [`config.date_time_format`](../customization.html#date-and-time-formats) in the initializer.
 
 ```ruby
 # app/avo/resources/user.rb
