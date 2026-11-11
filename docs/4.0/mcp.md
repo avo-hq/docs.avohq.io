@@ -508,7 +508,7 @@ Each card below the fields has an optional method of its own, and the four `view
 | Method               | Card                                          | What it discloses                                                                                                     |
 | -------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `view_log?`          | **Log**, *and* the endpoint the page polls    | Data about your own records — tool arguments, record ids, search terms.                                                 |
-| `view_audit_trail?`  | **Audit trail** (with Audit Logging installed) | What the client changed, and the titles of the records it changed. Asked again by the table's own endpoint, so one method covers both. |
+| `view_audit_trail?`  | **Audit log** (with Audit Logging installed) | What the client changed, and the titles of the records it changed. Asked again by the table's own endpoint, so one method covers both. |
 | `view_entitlements?` | **Entitlements**                              | The connection **owner's** reach. On another admin's connection it names resources the reader's own policies may hide. |
 | `view_tools?`        | **Tools**                                     | Tool names, derived from the registry and the grant. Nothing beyond them.                                               |
 | `edit_entitlements?` | **Entitlements** — the controls, *and* the request Apply sends | Changing the connection **owner's** reach. Optional, but a host with a policy must define it to enable editing: denied or undefined, the card renders read-only and says so. Editing implies `view_entitlements?` — nobody may change what they may not see. |
@@ -602,7 +602,7 @@ That shows up in three places:
 
 - **The record's own timeline** continues the author's name with it: *Ada Lovelace through MCP connection*.
 - **The activity's page** has an **Origin** field — *MCP connection — Claude* — the whole of which links to the connection.
-- **The connection's page** has an **Audit trail** table — Audit Logging's own activity table, the same one its docs put on a user's resource — listing what this client changed, each row linking to its entry.
+- **The connection's page** has an **Audit log** table — Audit Logging's own activity table, the same one its docs put on a user's resource — listing what this client changed, each row linking to its entry.
 
 The table is there only when Audit Logging is installed and switched on. Upgrading from a version before this? Run `bin/rails generate avo:audit_logging upgrade`, then `bin/rails db:migrate` — until then changes are still recorded, just unmarked, and the table is not offered.
 

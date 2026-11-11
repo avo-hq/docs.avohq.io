@@ -940,7 +940,7 @@ Each one gates both whether the control renders and whether it can be run, so a 
 | `act_on?` | The Actions menu as a whole |
 | `revoke?` | The **Revoke** action. Offered only on an *active* token whatever this returns — an expired or revoked one has nothing left to withdraw |
 | `edit_entitlements?` | The [Entitlements](#entitle-a-token) grid. Denying it renders the grid **read-only** rather than hiding it, and the form's write path strips what it refuses, so what is shown and what is accepted can't drift apart |
-| `view_audit_trail?` | The [Audit trail](#see-what-a-token-changed) table on a token's page, *and* the request that fills it. Avo's own `view_<field>?` for a `has_many`: under `explicit_authorization` (the default) the table is hidden until the policy answers it |
+| `view_audit_trail?` | The [Audit log](#see-what-a-token-changed) table on a token's page, *and* the request that fills it. Avo's own `view_<field>?` for a `has_many`: under `explicit_authorization` (the default) the table is hidden until the policy answers it |
 
 The last four aren't Avo's standard CRUD set, but they're asked exactly the same way — through the resource's authorization service, so a client other than Pundit answers them in its own idiom, and names you remapped through [`config.authorization_methods`](./authorization-api.html#authorization_methods) are honored.
 
@@ -1056,7 +1056,7 @@ That shows up in three places:
 
 - **The record's own timeline** continues the author's name with it: *Ada Lovelace through API token*.
 - **The activity's page** has an **Origin** field — *API token — CI deploy key* — the whole of which links to the token.
-- **The token's page** has an **Audit trail** table: Audit Logging's own activity table, listing what this token changed.
+- **The token's page** has an **Audit log** table: Audit Logging's own activity table, listing what this token changed.
 
 The table is gated by `view_audit_trail?` on your token policy — Avo's own convention for a `has_many`, asked once for the table and again by the endpoint that fills it. Under `explicit_authorization` (Avo's default) the table stays hidden until the policy defines it, exactly as any other association would:
 
