@@ -617,7 +617,7 @@ field :status, as: :custom_status, meta: {foo: :bar}
 
 <Option name="`react_on`" headingSize="3">
 
-Re-evaluates the field when other fields change in the form, refreshing `@record` with the latest form values. Requires the **`avo-reactive_fields`** add-on gem (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#gems) for the `packager.dev` source).
+Re-evaluates the field when other fields change in the form, refreshing `@record` with the latest form values. Requires the **`avo-reactive_fields`** add-on gem (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#upgrade-your-gems) for the `packager.dev` source).
 
 ```ruby
 field :city,

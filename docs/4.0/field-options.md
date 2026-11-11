@@ -561,7 +561,7 @@ Within your field template you can now access the `@field.meta` attribute:
 
 The [`react_on`](./field-options-api.html#react_on) option re-evaluates a field when other fields change in the form, refreshing `@record` with the latest form values. Updates run when the watched field's value is committed — on selection for selects and checkboxes, and when the input loses focus for text fields.
 
-This feature is provided by the **`avo-reactive_fields`** add-on. Add the gem to your app before using `react_on` (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#gems) for the `packager.dev` source).
+This feature is provided by the **`avo-reactive_fields`** add-on. Add the gem to your app before using `react_on` (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#upgrade-your-gems) for the `packager.dev` source).
 
 ### Dependent select
 
