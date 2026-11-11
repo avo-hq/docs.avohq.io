@@ -139,7 +139,7 @@ end
 
 - **Default:** none — checkbox and select filters render empty (showing the [`empty_message`](#self.empty_message)) without it
 
-On `Avo::Filters::SelectFilter` and `Avo::Filters::MultipleSelectFilter`, a `Hash` in place of a label is a group: its key labels an `<optgroup>`, and the `Hash` holds the group's own option id to label pairs. `apply` receives the option ids, never the group labels. <VersionReq package="avo" version="4.4.4" />
+On `Avo::Filters::SelectFilter` and `Avo::Filters::MultipleSelectFilter`, a `Hash` in place of a label is a group: its key labels an `<optgroup>`, and the `Hash` holds the group's own option id to label pairs. `apply` receives the option ids, never the group labels. This is not the format of a select field's `grouped_options`, see [Reuse a select field's list](./basic-filters.html#reuse-a-select-field-s-list). <VersionReq package="avo" version="4.4.4" />
 
 ```ruby
 def options
