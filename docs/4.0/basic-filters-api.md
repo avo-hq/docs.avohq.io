@@ -343,6 +343,8 @@ decode_filter_params(params[:encoded_filters])
 # => {"Avo::Filters::Name" => "Apple"}
 ```
 
+A value that doesn't decode to a filters hash — a truncated or hand-edited param, a repeated one, JSON that isn't an object — returns `{}` instead of raising, so the index renders without those filters. <VersionReq package="avo" version="4.4.0" />
+
 </Option>
 
 <Option name="`Avo::Filters::BaseFilter.encode_filters`" headingSize="3">
@@ -365,5 +367,7 @@ Standalone class method with the same behavior as `decode_filter_params`, usable
 Avo::Filters::BaseFilter.decode_filters(params[:encoded_filters])
 # => {"Avo::Filters::Name" => "Apple"}
 ```
+
+It discards an undecodable value the same way, returning `{}`. <VersionReq package="avo" version="4.4.0" />
 
 </Option>
