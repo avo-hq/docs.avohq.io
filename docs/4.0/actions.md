@@ -441,6 +441,30 @@ class Avo::Actions::ToggleInactive < Avo::BaseAction
 end
 ```
 
+### Use the panel's parent record
+
+An action started from a panel also knows the panel's parent once it runs. `parent_record` and `parent_resource` are available in `fields`, `handle`, and every block of the action, so an action in a team's **Team members** panel can work on that team. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+# app/avo/actions/remove_from_team.rb
+class Avo::Actions::RemoveFromTeam < Avo::BaseAction
+  self.name = "Remove from team"
+  # Only offer it inside a team's panel.
+  self.visible = -> { parent_record.is_a?(Team) }
+  self.message = -> { "Remove the selected members from #{parent_record.name}?" }
+
+  def handle(query:, **)
+    parent_record.team_members.delete(query)
+
+    succeed "Removed #{query.size} members from #{parent_record.name}"
+  end
+end
+```
+
+Both are `nil` when the action wasn't started from an association, such as on the main <Index /> view, so guard for that in an action that also runs there.
+
+The parent comes from the panel's link, so Avo checks it again when the action runs. The parent's field has to list the action's resource, and the user has to pass the same `view_{association}?` and `act_on_{association}?` [association policy methods](./authorization.html#authorize-association-controls) that show the panel and its **Actions** button. If they don't, the action doesn't run.
+
 ## Control visibility and authorization
 
 By default actions show on every view except <New />. Use [`visible`](./actions-api.html#visible) to change where an action appears — for example, only on the <Index /> view:

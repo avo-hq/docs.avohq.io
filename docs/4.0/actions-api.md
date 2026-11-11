@@ -342,6 +342,7 @@ Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults:
 - `view` — the view the action was started from (`index`, `show`, or `edit`); `authorize`, the modal blocks, `fields`, and `handle` read the same value
 - `resource` — the current resource instance
 - `parent_resource` — the parent resource, if any (access the parent record via `parent_resource.record`)
+- `parent_record` — the parent record, if any <VersionReq package="avo" version="4.4.4" />
 - `params`
 
 </Option>
@@ -359,7 +360,7 @@ end
 - **Type:** Boolean or Proc
 - **Default:** `true`
 
-Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults: `action`, `resource`, `view`.
+Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults: `action`, `resource`, `view`, plus `parent_record` and `parent_resource` <VersionReq package="avo" version="4.4.4" />.
 
 `view` is the view the action was started from, checked against the request's route (`show` and `edit` need a record in the URL). It is never `new`. Do not make it the only condition: gate who may run the action on `current_user`, and single-versus-bulk on `query.size` or `record`.
 
@@ -394,6 +395,8 @@ The method every action implements. Receives keyword arguments:
 | `request` | The current `ActionDispatch::Request` object. |
 
 Besides these, the action can read `index_query`, the <Index /> query with filters, scopes, search, and sort applied, before pagination. It can be `nil`; see [Work with every record on the Index](./actions.html#work-with-every-record-on-the-index).
+
+When the action was started from an association panel, it can also read `parent_record` and `parent_resource`, the record that holds the panel and its resource. Both are `nil` when the action wasn't started from an association; see [Use the panel's parent record](./actions.html#use-the-panel-s-parent-record). <VersionReq package="avo" version="4.4.4" />
 
 ```ruby
 def handle(query:, fields:, current_user:, resource:, request:, **args)
