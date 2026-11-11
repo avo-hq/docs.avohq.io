@@ -52,7 +52,7 @@ Once the configuration is in place, a search input appears on the resource's <In
 
 ## Run a different query per surface
 
-The same `query` proc runs from every search surface. If you want, say, a wider search in the global palette than in association pickers, branch on the [`search_type`](./search-api.html#search-type) local:
+The same `query` proc runs from every search surface. If you want, say, a wider search in the global palette than in association pickers, branch on the [`search_type`](./search-api.html#search_type) local:
 
 ```ruby
 class Avo::Resources::User < Avo::BaseResource

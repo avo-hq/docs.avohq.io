@@ -45,7 +45,7 @@ self.search = {
 
 - **Type:** Proc
 - **Default:** `nil` — search disabled for the resource
-- **Locals:** `q` (stripped search string), `query` (base scope with [authorization scopes](./authorization.html#limit-which-records-a-user-sees) applied), `params`, [`search_type`](#search-type), plus all `Avo::ExecutionContext` attributes
+- **Locals:** `q` (stripped search string), `query` (base scope with [authorization scopes](./authorization.html#limit-which-records-a-user-sees) applied), `params`, [`search_type`](#search_type), plus all `Avo::ExecutionContext` attributes
 - **Return:** an `ActiveRecord::Relation`, or an Array of hashes for [custom search providers](#custom-search-providers)
 
 </Option>
@@ -219,7 +219,7 @@ Only [global search](#global-search-configuration) and [searchable associations]
 Returning an Array to the resource index raises `NoMethodError: undefined method 'order' for an instance of Array`. Typing in the index search box hides that error — the request fails and the list silently keeps showing the previous, unfiltered rows.
 :::
 
-Branch on [`search_type`](#search-type) so the Array is only returned where it is rendered, and every other surface gets a relation:
+Branch on [`search_type`](#search_type) so the Array is only returned where it is rendered, and every other surface gets a relation:
 
 ```ruby
 # app/avo/resources/comment.rb
