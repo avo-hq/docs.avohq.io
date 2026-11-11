@@ -64,7 +64,7 @@ For exact defaults, callback locals, and validation rules, consult the API refer
 | `description` | – | [✓](./associations/has_one#description) | [✓](./associations/has_many#description) | [✓](./associations/has_and_belongs_to_many#description) |
 | `loading` | – | [✓](./associations/has_one#loading) | [✓](./associations/has_many#loading) | [✓](./associations/has_and_belongs_to_many#loading) |
 | `linkable` | – | [✓](./associations/has_one#linkable) | [✓](./associations/has_many#linkable) | [✓](./associations/has_and_belongs_to_many#linkable) |
-| `reloadable` | – | [✓](./associations/has_one#reloadable) | [✓](./associations/has_many#reloadable) | [✓](./associations/has_and_belongs_to_many#reloadable) |
+| `reloadable` | – | [✓](./associations/has_one#reloadable) | [✓](./associations/has_many#Reloadable) | [✓](./associations/has_and_belongs_to_many#Reloadable) |
 | `nested` | – | [✓](./associations/has_one#nested) | [✓](./associations/has_many#nested) | [✓](./associations/has_and_belongs_to_many#nested) |
 | `attach_using` | – | – | [✓](./associations/has_many#attach_using) | [✓](./associations/has_and_belongs_to_many#attach_using) |
 | `attach_fields` | – | [✓](./associations/has_one#attach_fields) | [✓](./associations/has_many#attach_fields) | – |
