@@ -60,6 +60,26 @@ For large files, enable [`direct_upload`](./files-api.html#direct_upload) to upl
 field :documents, as: :files, direct_upload: true
 ```
 
+## Choose where uploads are stored
+
+Active Storage stores every upload under a random key. Set [`key`](./files-api.html#key) to choose the key yourself, so the files in your bucket can be found by name. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+# app/avo/resources/project.rb
+field :documents,
+  as: :files,
+  key: -> { "projects/#{SecureRandom.base36(8)}/#{ActiveStorage::Filename.new(file.original_filename).sanitized}" }
+```
+
+The block gets the `record`, the `resource`, the `field` and the uploaded `file`. The block runs once per file, so each file needs its own key. Two files of one upload with the same key are refused. If it returns `nil` or an empty string, the file keeps a random key.
+
+:::warning
+- **Keys are unique.** When a key is already taken, the form shows "has already been taken" on the field and nothing is saved. Replacing a file with one of the same name counts, because the old file still exists at that moment. Put something that changes per upload in the key, like the random segment above.
+- **New records have no id yet.** On the New page `record.id` and `record.to_param` are `nil`, so don't build the key from them.
+- **`file.original_filename` comes from the browser.** Sanitize it before it goes into a key, as above.
+- **Only files uploaded through the form get the key.** With [`direct_upload`](./files-api.html#direct_upload), or a file picked from the Media Library, the file is already stored when the form is sent, so it keeps its key.
+:::
+
 ## Choose how attachments appear
 
 <span id="view_type"></span>

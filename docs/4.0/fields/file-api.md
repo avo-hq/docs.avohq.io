@@ -50,6 +50,21 @@ field :avatar, as: :file, direct_upload: true
 
 </Option>
 
+<Option name="`key`">
+
+The Active Storage key a file uploaded through the form is stored under, instead of a random one. Takes a string or a block. The block gets the `record`, the `resource`, the `field` and the uploaded `file`. A blank result keeps the random key. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+field :cover, as: :file, key: -> { "posts/#{SecureRandom.base36(8)}/#{file.original_filename}" }
+```
+
+Keys are unique. When a key is already taken, the form shows "has already been taken" on the field and nothing is saved. Files sent with [`direct_upload`](#direct_upload) or picked from the Media Library keep their key. See [Choose where uploads are stored](./file.html#choose-where-uploads-are-stored).
+
+- **Type:** `String` or `Proc`
+- **Default:** `nil` (a random key)
+
+</Option>
+
 ## Attachment display
 
 <Option name="`display_filename`">
