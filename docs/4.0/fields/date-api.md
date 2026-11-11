@@ -31,7 +31,7 @@ field :birthday, as: :date, format: "dd LLL yyyy"
 ```
 
 - **Type:** `String`
-- **Default:** `"yyyy-LL-dd"`
+- **Default:** `"yyyy-LL-dd"`, or [`config.date_format`](../customization-api.html#date_format) when it's set
 
 </Option>
 

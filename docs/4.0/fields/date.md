@@ -26,7 +26,7 @@ Without additional options, dates display as `yyyy-LL-dd`, the picker displays `
 
 ## Change how dates appear
 
-Use [`format`](./date-api.html#format) for dates on index and show pages and [`picker_format`](./date-api.html#picker_format) for the visible input on new and edit forms. They use different token systems: [Luxon](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) for display and [flatpickr](https://flatpickr.js.org/formatting) for the picker.
+Use [`format`](./date-api.html#format) for dates on index and show pages and [`picker_format`](./date-api.html#picker_format) for the visible input on new and edit forms. They use different token systems: [Luxon](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) for display and [flatpickr](https://flatpickr.js.org/formatting) for the picker. To change it for every field at once, set [`config.date_format`](../customization.html#date-and-time-formats) in the initializer.
 
 ```ruby
 # app/avo/resources/user.rb

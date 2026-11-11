@@ -28,7 +28,7 @@ Without extra configuration, times use the browser's timezone, the display forma
 
 ## Change how times look
 
-Set [`format`](./time-api.html#format) for Index and Show using [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens). Set [`picker_format`](./time-api.html#picker_format) separately for New and Edit using [flatpickr tokens](https://flatpickr.js.org/formatting), as in the example above.
+Set [`format`](./time-api.html#format) for Index and Show using [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens). Set [`picker_format`](./time-api.html#picker_format) separately for New and Edit using [flatpickr tokens](https://flatpickr.js.org/formatting), as in the example above. To change it for every field at once, set [`config.time_format`](../customization.html#date-and-time-formats) in the initializer.
 
 Enable [`time_24hr`](./time-api.html#time_24hr) for 24-hour picker controls. This does not change the Index or Show format.
 
