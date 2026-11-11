@@ -559,7 +559,7 @@ Within your field template you can now access the `@field.meta` attribute:
 
 ## React to changes in other fields
 
-The [`react_on`](./field-options-api.html#react_on) option re-evaluates a field when other fields change in the form, refreshing `@record` with the latest form values. Updates run when the watched field's value is committed — on selection for selects and checkboxes, and when the input loses focus for text fields.
+The [`react_on`](./field-options-api.html#react_on) option re-evaluates a field when other fields change in the form, refreshing `@record` with the latest form values. Updates run when the watched field changes: on selection for selects, checkboxes and radios, and 300 ms after typing pauses (or on blur) for text inputs and textareas.
 
 This feature is provided by the **`avo-reactive_fields`** add-on. Add the gem to your app before using `react_on` (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#upgrade-your-gems) for the `packager.dev` source).
 
@@ -586,7 +586,7 @@ end
 
 ### Derived value (slug from name)
 
-Pair `react_on` with [`format_using`](./field-options-api.html#format_using) to re-compute a derived value whenever another field changes. When the user fills in **name** (for example `Hello World`) and the input loses focus, **slug** updates to `hello_world` — on each reactive request, `@record` is hydrated from the submitted form params, so `format_using` always sees the latest **name**, even before save:
+Pair `react_on` with [`format_using`](./field-options-api.html#format_using) to re-compute a derived value whenever another field changes. When the user types `Hello World` into **name** and pauses, **slug** updates to `hello_world` — on each reactive request, `@record` is hydrated from the submitted form params, so `format_using` always sees the latest **name**, even before save:
 
 ```ruby
 # app/avo/resources/course.rb
