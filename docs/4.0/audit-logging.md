@@ -127,7 +127,7 @@ class Avo::Resources::User < Avo::BaseResource
     field :email, as: :text, link_to_record: true
     field :products, as: :has_many
     if Avo::AuditLogging.configuration.enabled? # [!code highlight]
-      field :avo_authored, as: :has_many, name: "Activity" # [!code highlight]
+      field :avo_authored, as: :has_many, name: "Audit log" # [!code highlight]
     end # [!code highlight]
   end
 end
@@ -381,7 +381,7 @@ class Avo::Resources::User < Avo::BaseResource
     field :id, as: :id, link_to_record: true
     field :email, as: :text, link_to_record: true
     field :products, as: :has_many
-    field :avo_authored, as: :has_many, name: "Activity" # [!code ++]
+    field :avo_authored, as: :has_many, name: "Audit log" # [!code ++]
   end
 end
 ```
@@ -403,9 +403,9 @@ end
 
 <VersionReq package="avo-audit_logging" version="4.4.1" /> The page is called **Audit log**. It opens on the **Changes** tab, which leaves out page visits (*Index page*, *Show page* and the like), and **All** lists every entry. The tab needs [avo-scopes](./scopes.html); without it the list shows everything. Activity tables on other pages, such as [a user's own activity](#show-all-activity-by-an-author), open on **All**. Its columns read when, what and who from the left: **Created at**, **Action** and **Author**. The **Action** column shows the same label and icon as the History card, such as *Update*, or the action's own name for an action run. The **Section** column names the resource or action as your menu does, such as *Products* or *Change Price*. Long names are cut to one line, with the whole name on hover, and an entry on several records lists them when you hover the icon next to *3 records*. A row that changed one record has a preview icon that shows the change. A page visit, or a change to several records, has none: open the activity to see each change.
 
-With [Dynamic Filters](./dynamic-filters.html) installed, the bar keeps **Created at**, **Action**, **Author** and **Origin** in place, in the order of the columns. **Author** lists everyone with an entry, deleted users included, and **Origin** offers one choice per kind: *Background job* covers every job, and *UI* covers changes made in the panel. **Section** and **Record** are under *Add filter*. With the [new filter dropdown](./dynamic-filters.html#try-the-new-filter-dropdown) and `inline_filters` on, **Created at** sits in the bar with *Today*, *7 days*, *30 days* and *This month*.
+With [Dynamic Filters](./dynamic-filters.html) installed, the bar keeps **Created at**, **Action**, **Author** and **Origin** in place, in the order of the columns. **Author** lists everyone with an entry, deleted users included, and **Origin** offers one choice per kind: *Background job* covers every job, and *UI* covers changes made in the panel. **Section** and **Record** are under *Add filter*. On an author's own table, such as the one on a user's page, there is no **Author** filter: every row there is theirs. With the [new filter dropdown](./dynamic-filters.html#try-the-new-filter-dropdown) and `inline_filters` on, **Created at** sits in the bar with *Today*, *7 days*, *30 days* and *This month*.
 
-To call the page something else, set its name in your locale file. `one` names a single entry and `other` names the page.
+To call the page something else, set its name in your locale file. `one` names a single entry and `other` names the page. The table on a connection's, a token's or a chat's page takes the same name.
 
 <VersionReq package="avo-audit_logging" version="4.4.1" /> The audit log reads in the nineteen languages Avo itself ships: its columns, action names, the activity's page, the History card and Undo. The words are under `avo.audit_logging` in the gem's `config/locales`, one file per language, and your own locale file wins over them. Any other language reads them in English until you add them.
 

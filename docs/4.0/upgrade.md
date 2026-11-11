@@ -1239,7 +1239,7 @@ bin/rails db:migrate
 
 `upgrade` reads your `db/migrate` and writes only what is missing — it never touches a migration you have already run. Running `install` again does the same thing.
 
-Until you migrate, nothing breaks: activities keep being recorded, just without an origin, and the **Audit trail** table on a connection's, token's or chat's page is not offered rather than shown empty.
+Until you migrate, nothing breaks: activities keep being recorded, just without an origin, and the **Audit log** table on a connection's, token's or chat's page is not offered rather than shown empty.
 
 If you have written `Avo::AuditLogging::Activity` yourself — an importer, a job — you can mark those too; see [Mark your own origins](./audit-logging.html#mark-your-own-origins).
 
