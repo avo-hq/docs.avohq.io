@@ -246,6 +246,26 @@ end
 
 Each group renders as an `<optgroup>` in the dropdown, and `apply` still receives the option ids (`"development"`), never the group label. Options that aren't in a group can sit between the groups and keep their place.
 
+### Reuse a select field's list
+
+A select field's [`grouped_options`](./fields/select.html#grouped_options) put the label first and a filter puts the id first, so a field's list doesn't work in a filter as it is. Flip each pair:
+
+```ruby{9-12}
+# app/models/volunteer.rb
+SKILLS = {
+  "Technical" => [["Programming", "programming"], ["Database Management", "database"]],
+  "Communication" => [["Writing", "writing"], ["Translation", "translation"]]
+}
+
+# app/avo/filters/skills.rb
+def options
+  Volunteer::SKILLS.transform_values do |group|
+    # `id = label` covers an entry written as a bare string, like "Canada".
+    group.to_h { |label, id = label| [id, label] }
+  end
+end
+```
+
 ## Set a default value
 
 To pre-apply a filter on load, return the desired state from the `default` method. The shape matches what `apply` receives: a hash for boolean filters, a string or symbol for select filters, an array for multiple select filters.
