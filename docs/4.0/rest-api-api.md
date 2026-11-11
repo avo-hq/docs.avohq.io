@@ -174,7 +174,7 @@ The guide has a [worked example](./rest-api.html#custom-controllers).
 
 <Option name="`Avo::Api.token_request?`">
 
-`true` while a valid API token is authenticating the request in flight, `false` otherwise. This is the supported guard for a [`config.authenticate_with`](./rest-api.html#your-apps-own-authentication-still-runs) block that can't be satisfied for token traffic — guard on it rather than on anything inside the gem's controllers.
+`true` while a valid API token is authenticating the request in flight, `false` otherwise. This is the supported guard for a [`config.authenticate_with`](./rest-api.html#your-app-s-own-authentication-still-runs) block that can't be satisfied for token traffic — guard on it rather than on anything inside the gem's controllers.
 
 ```ruby
 # config/initializers/avo.rb

@@ -52,7 +52,7 @@ bin/rails generate avo:eject --component avo/index/table_row_component
       create  app/components/avo/index/table_row_component.html.erb
 ```
 
-Both the `.rb` and `.html.erb` files are copied. Components are ejected into the directory set by [`config.view_component_path`](./customization.html#custom-view_component-path) (`app/components` by default).
+Both the `.rb` and `.html.erb` files are copied. Components are ejected into the directory set by [`config.view_component_path`](./customization.html#custom-view-component-path) (`app/components` by default).
 
 ## Eject field components
 
