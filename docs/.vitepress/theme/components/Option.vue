@@ -10,9 +10,9 @@ export default {
       html: name.replace(/`([^`]+)`/g, '<code>$1</code>'),
       anchor,
       anchorName: `#${anchor}`,
-      // VitePress slugifies the hash of markdown links, so `#self.icon` arrives as `#self-icon`.
+      // VitePress slugifies the hash of markdown links: `#self.icon` arrives as `#self-icon`, `#1-x` as `#_1-x`.
       // The heading keeps its original id for URLs already shared.
-      slug: anchor.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      slug: anchor.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').replace(/^(\d)/, '_$1'),
       headingSize: props.headingSize || 2,
     }
   },
