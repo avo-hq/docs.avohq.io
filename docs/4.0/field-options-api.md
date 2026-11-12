@@ -630,6 +630,6 @@ field :city,
 - **Default:** `nil`
 - **Values:** a single field (`:field_one`), multiple fields (`[:field_one, :field_two]`), or `:all` (react to every field in the form)
 
-Updates run when a watched field's value is committed — the `change` event. For selects, checkboxes, and radios that's on selection; for text inputs and textareas it's when the input loses focus. To read a field's original value inside a block, use the [`*_was`](https://api.rubyonrails.org/classes/ActiveModel/Dirty.html#method-i-2A_was) methods.
+Updates run when a watched field changes. Selects, checkboxes and radios react on selection (the `change` event). Text inputs and textareas react 300 ms after typing pauses (a debounced `input` event), and again on blur if the value changed. To read a field's original value inside a block, use the [`*_was`](https://api.rubyonrails.org/classes/ActiveModel/Dirty.html#method-i-2A_was) methods.
 
 </Option>
