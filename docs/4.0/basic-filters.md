@@ -220,6 +220,52 @@ The selected value is sent exactly as picked, with no timezone adjustment. If yo
 
 To fine-tune the picker (formats, minute increments, …), override [`picker_format`](./basic-filters-api#picker_format) or [`picker_options`](./basic-filters-api#picker_options) — see the [API reference](./basic-filters-api.html#date-time-filter-options).
 
+## Group the options
+
+<VersionReq package="avo" version="4.4.4" />
+
+If a select or multiple select filter offers a long list, split it into labeled groups. Put a Hash in place of a label: its key becomes the group's label, and the Hash holds that group's options in the usual id-to-label shape.
+
+```ruby{9-14}
+# app/avo/filters/department.rb
+class Avo::Filters::Department < Avo::Filters::SelectFilter
+  self.name = "Department"
+
+  def apply(request, query, value)
+    query.where(department: value)
+  end
+
+  def options
+    {
+      "Administration" => {hr: "HR", finance: "Finance", legal: "Legal"},
+      "Technology" => {development: "Development", support: "Support"}
+    }
+  end
+end
+```
+
+Each group renders as an `<optgroup>` in the dropdown, and `apply` still receives the option ids (`"development"`), never the group label. Options that aren't in a group can sit between the groups and keep their place.
+
+### Reuse a select field's list
+
+A select field's [`grouped_options`](./fields/select.html#grouped_options) put the label first and a filter puts the id first, so a field's list doesn't work in a filter as it is. Flip each pair:
+
+```ruby{9-12}
+# app/models/volunteer.rb
+SKILLS = {
+  "Technical" => [["Programming", "programming"], ["Database Management", "database"]],
+  "Communication" => [["Writing", "writing"], ["Translation", "translation"]]
+}
+
+# app/avo/filters/skills.rb
+def options
+  Volunteer::SKILLS.transform_values do |group|
+    # `id = label` covers an entry written as a bare string, like "Canada".
+    group.to_h { |label, id = label| [id, label] }
+  end
+end
+```
+
 ## Set a default value
 
 To pre-apply a filter on load, return the desired state from the `default` method. The shape matches what `apply` receives: a hash for boolean filters, a string or symbol for select filters, an array for multiple select filters.

@@ -122,6 +122,58 @@ Off by default because refreshing a dashboard runs every card's query at once. T
 
 </Option>
 
+## Header controls
+
+<Option name="`self.controls`" headingSize="3">
+
+<VersionReq package="avo-dashboards" version="4.3.4" />
+
+Declares native header controls using `avo-custom_controls`. The block collects controls in declaration order; its HTML return value is not rendered.
+
+```ruby
+self.controls = -> {
+  link_to "Home", main_app.root_path
+  partial "avo/dashboards/controls", locals: {dashboard: dashboard}
+  action Avo::Actions::ClearQueue
+  actions_list
+  refresh_button
+}
+```
+
+- **Type:** Proc or `nil`
+- **Default:** `nil`
+- **Requires:** `avo-custom_controls` installed and `enabled_feature?("avo-custom_controls")` enabled on the license.
+- **Context:** `dashboard`, `current_user`, `params`, `request`, `view_context`, `helpers`, `main_app`, and `avo` are available, including inside lists.
+- **Inheritance:** inherited; assigning `nil` removes inherited controls.
+- **Controls:** `link_to`, `list`, `divider`, `partial`, `action`, `actions_list`, `refresh_button`, and `default_controls`, which adds the actions dropdown and follows `self.refresh_button`. Lists cannot contain partials, nested lists, the actions dropdown, or the refresh button. Default resource buttons are unavailable.
+
+The block replaces the whole header: `self.refresh_button` is ignored once it runs, unless the block calls `default_controls`. Without the gem or the license the block never runs and `self.refresh_button` works as usual. Dashboard authorization runs before evaluation. See the [header controls guide](./dashboards.html#add-header-controls) for forms and endpoint authorization.
+
+</Option>
+
+<Option name="`actions`" headingSize="3">
+
+<VersionReq package="avo-dashboards" version="4.3.4" />
+
+Declares the actions a dashboard can run. They render in an Actions dropdown in the header, unless `self.controls` takes the header over.
+
+```ruby
+def actions
+  action Avo::Actions::ClearQueue, arguments: {queue: "mailers"}
+  divider
+  action Avo::Actions::Reindex, icon: "tabler/outline/refresh"
+end
+```
+
+- **Signature:** `action(klass, arguments: {}, icon: nil)` and `divider(label: nil)`
+- **Handle:** `handle` receives `dashboard:`, and no records.
+- **Authorization:** the dashboard's `self.authorize` and the action's `authorize` both have to pass.
+- **Fields:** every field type except `belongs_to` and `trix`, which need a resource.
+
+See the [actions guide](./dashboards.html#run-actions-from-the-header).
+
+</Option>
+
 ## Visibility and authorization
 
 <Option name="`self.visible`" headingSize="3">

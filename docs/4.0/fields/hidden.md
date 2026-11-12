@@ -2,26 +2,42 @@
 license: community
 description: "Renders a hidden input on the New and Edit views."
 fieldTags: [utility]
+outline: [2, 3]
+api_docs: ./hidden-api.html
 ---
 
 # Hidden
 
-There are scenarios where in order to be able to submit a form, an input should be present but inaccessible to the user. An example of this might be where you want to set a field by default without the option to change, or see it. `Hidden` will render a `<input type="hidden" />` element on the `Edit` and `New` page.
+The `hidden` field submits a value with a form without displaying an editable control. It renders an `<input type="hidden">` on the New and Edit views and does not appear on Index or Show.
 
-> Hidden will only render on the `Edit` and `New` views.
-
-### Example usage:
 ```ruby
-# Basic
-field :group_id, as: :hidden
-
-# With default
+# app/avo/resources/post.rb
 field :user_id, as: :hidden, default: -> { current_user.id }
-
-# If the current_user is a admin
-# 1. Allow them to see and select a user.
-# 2. Remove the user_id field to prevent user_id it from overriding the user selection.
-# Otherwise set the user_id to the current user and hide the field.
-field :user, as: :belongs_to, visible: -> { context[:current_user].admin? }
-field :user_id, as: :hidden, default: -> { current_user.id }, visible: -> { !context[:current_user].admin? }
 ```
+
+Without a [`default`](../field-options-api.html#default), the input uses the record's existing attribute value. A default fills a `nil` value on New; it does not replace an existing value or fill a blank value on Edit. See the [Hidden API](./hidden-api.html) for the declaration and submission behavior, and [Common field options](../field-options.html) for shared settings.
+
+:::warning Hidden is not access control
+Hidden inputs can be inspected and changed in the browser or in a crafted request. Enforce ownership and other sensitive values on the server rather than trusting the submitted value.
+:::
+
+## Submit an existing attribute
+
+If the record already has a value to submit, declare the field without a default:
+
+```ruby
+# app/avo/resources/user.rb
+field :group_id, as: :hidden
+```
+
+## Let administrators choose the user
+
+If administrators can choose a user while other users get their own ID as the initial value, make the association selector and the hidden field mutually exclusive. This prevents the hidden input from overriding an administrator's selection.
+
+```ruby
+# app/avo/resources/post.rb
+field :user, as: :belongs_to, visible: -> { current_user.admin? }
+field :user_id, as: :hidden, default: -> { current_user.id }, visible: -> { !current_user.admin? }
+```
+
+The `default` block can access `current_user`. The shared [`visible`](../field-options-api.html#visible) option controls which input Avo renders; server-side authorization must still enforce who can assign the user.

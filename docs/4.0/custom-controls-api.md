@@ -261,6 +261,40 @@ Renders a divider line between the items of a [`list`](#list) dropdown.
 
 </Option>
 
+<Option name="`partial`">
+
+<VersionReq package="avo-custom_controls" version="4.3.3" />
+
+Renders a Rails partial as a top-level control. Available on resource bars and dashboard headers, but not inside a `list`.
+
+```ruby
+partial "avo/dashboards/controls", locals: {dashboard: dashboard}
+```
+
+- **Signature:** `partial(path, locals: {})`
+- **Type:** path is a String; `locals` is a Hash.
+- **Default:** `locals: {}`
+- **Validation:** raises `ArgumentError` inside a list.
+
+Forms use normal Rails helpers and CSRF protection. Write endpoints belong to the application and must authorize requests separately from dashboard access.
+
+</Option>
+
+<Option name="`refresh_button`">
+
+<VersionReq package="avo-custom_controls" version="4.3.3" />
+
+Renders the button that reloads every card, in the position you declare it. Available only in a dashboard's [`self.controls`](./dashboards-api.html#self.controls) block, not inside a `list`.
+
+```ruby
+refresh_button
+```
+
+- **Signature:** `refresh_button`, with no options.
+- **Validation:** raises `ArgumentError` on a resource.
+
+</Option>
+
 <Option name="`default_controls`">
 
 Re-adds the current area's default controls, so you can add controls before or after them without re-declaring them all.
@@ -339,6 +373,8 @@ Sets the `size` attribute for the [`Avo::ButtonComponent`](https://github.com/av
 <Option name="`confirmation_message`">
 
 The message shown in the confirmation dialog before running `delete_button` or `detach_button`.
+
+On `delete_button`, when the record has `dependent:` associations, Avo adds a line below this message naming the records the delete also removes. See [Warn before deleting dependent records](./resources.html#warn-before-deleting-dependent-records).
 
 - **Type:** String
 - **Default:** `nil` ("Are you sure?" for the default row controls)

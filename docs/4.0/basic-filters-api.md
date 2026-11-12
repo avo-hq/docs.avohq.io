@@ -139,6 +139,17 @@ end
 
 - **Default:** none — checkbox and select filters render empty (showing the [`empty_message`](#self.empty_message)) without it
 
+On `Avo::Filters::SelectFilter` and `Avo::Filters::MultipleSelectFilter`, a `Hash` in place of a label is a group: its key labels an `<optgroup>`, and the `Hash` holds the group's own option id to label pairs. `apply` receives the option ids, never the group labels. This is not the format of a select field's `grouped_options`, see [Reuse a select field's list](./basic-filters.html#reuse-a-select-field-s-list). <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+def options
+  {
+    "Europe" => {fr: "France", de: "Germany"},
+    "Asia" => {jp: "Japan"}
+  }
+end
+```
+
 The method body can run any Ruby — database queries, API calls. Inside it you have access to the [runtime objects](#runtime-objects) below, including [`applied_filters`](#applied_filters) for building filters that depend on each other.
 
 </Option>
@@ -283,6 +294,14 @@ The full option hash handed to [flatpickr](https://flatpickr.js.org/options/). O
 ```ruby
 def picker_options(value)
   super.merge({minuteIncrement: 3})
+end
+```
+
+Avo fills `locale.weekdays` and `locale.months` from the app locale and merges a `locale` you pass here over them, so starting the week on Monday keeps the localized names:
+
+```ruby
+def picker_options(value)
+  super.merge(locale: { firstDayOfWeek: 1 })
 end
 ```
 

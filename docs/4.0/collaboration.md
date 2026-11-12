@@ -137,6 +137,8 @@ self.collaboration = {
 }
 ```
 
+Only the emoji on this list can be added. <VersionReq package="avo-collaboration" version="4.3.3" /> If you later drop an emoji from the list, a user who already reacted with it can still take that reaction back.
+
 ## Place the timeline
 
 Call [`collaboration_timeline`](./collaboration-api.html#collaboration_timeline) inside `fields` to render the timeline where you want it. It shows comments, reactions, and automatic property-change entries.
@@ -168,6 +170,8 @@ Control who can view, create, and remove timeline entries through your resource 
 - [`collaboration_view_timeline?`](./collaboration-api.html#collaboration_view_timeline) — who can see the timeline.
 - [`collaboration_create_entry?`](./collaboration-api.html#collaboration_create_entry) — who can post comments and messages.
 - [`collaboration_destroy_entry?`](./collaboration-api.html#collaboration_destroy_entry) — who can remove entries.
+
+Every collaboration request finds the record through the resource's policy scope and needs `show?` and `collaboration_view_timeline?`. Posting also needs `collaboration_create_entry?`, and deleting needs `collaboration_destroy_entry?`. Reactions have no method of their own. A refused request gets a 403.
 
 A common setup: anyone who can view the record sees the timeline, team members can post, and users can only delete their own comments (while admins can delete anything):
 

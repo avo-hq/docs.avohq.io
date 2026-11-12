@@ -62,6 +62,8 @@ Available presets: `:brand`, `:slate`, `:stone`, `:gray`, `:zinc`, `:neutral`, `
 
 `:brand` selects the palette defined by `neutral_colors:` (see below).
 
+Every preset except `:brand` is normalized onto a shared lightness curve, keeping the source palette's chroma and hue at each shade, so the presets differ in tint, not in contrast. <VersionReq package="avo" version="4.2.10" /> The curve's `L` values are listed in the [guide](./appearance.html#custom-neutral-palette).
+
 - **Type:** Symbol
 - **Default:** `nil` (Avo's built-in neutral)
 - **Lockable:** yes — list `:neutral` in `lock:` to hide the picker
@@ -126,6 +128,8 @@ config.appearance = {
 - **Default:** `nil`
 - **Values:** any string a CSS custom property accepts — `oklch(...)`, `#hex`, `rgb(...)`, `hsl(...)`, `var(...)`
 - **Validation:** raises `ArgumentError` if any shade is missing or `nil`
+
+Shades are emitted verbatim. Unlike the built-in presets, a brand palette is not normalized onto Avo's lightness curve.
 
 Setting `neutral_colors:` only defines the palette — pair it with `neutral: :brand` (or list `"brand"` in `neutrals:`) to make it selectable.
 
@@ -500,7 +504,7 @@ The top navbar exposes a scoped palette contract on `.top-navbar`. Override thes
 | Variable                                           | Default                          | Description                                                                                           |
 | -------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `--top-navbar-background`                          | `var(--color-navbar-background)` | Background color of the top navbar.                                                                   |
-| `--top-navbar-content`                             | `var(--color-avo-neutral-300)`   | Text and icon color for navbar links and icon buttons.                                                |
+| `--top-navbar-content`                             | Named preset 300; otherwise `var(--color-avo-neutral-300)` | Text and icon color for navbar links and icon buttons. Named presets keep their original navbar contrast; Brand and custom palettes use neutral-300. |
 | `--top-navbar-content-hover`                       | `var(--color-avo-neutral-50)`    | Text and icon color for hovered navbar links and icon buttons.                                        |
 | `--top-navbar-control-background`                  | `var(--color-avo-neutral-800)`   | Background for navbar controls such as search, picker trigger, and hovered sidebar toggle.            |
 | `--top-navbar-control-background-hover`            | `var(--color-avo-neutral-700)`   | Hover background for navbar controls.                                                                 |

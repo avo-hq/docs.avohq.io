@@ -51,8 +51,8 @@ end
 
 ### 3. Set the tenant for each request
 
-:::code-group
-```ruby [config/initializers/avo.rb]{6}
+```ruby{7}
+# config/initializers/avo.rb
 Avo.configure do |config|
   # configuration values
 end
@@ -61,7 +61,9 @@ Rails.configuration.to_prepare do
   Avo::ApplicationController.include Multitenancy
 end
 ```
-```ruby [app/controllers/concerns/multitenancy.rb]
+
+```ruby
+# app/controllers/concerns/multitenancy.rb
 module Multitenancy
   extend ActiveSupport::Concern
 
@@ -75,7 +77,6 @@ module Multitenancy
   end
 end
 ```
-:::
 
 Now, whenever you navigate to `https://example.com/foo` the `tenant_id` will be set to `foo`.
 
@@ -90,8 +91,9 @@ The code below shows how it's possible to do session-based multitenancy but your
 We need to do a few things:
 
 ### 1. Set the tenant for each request
-:::code-group
-```ruby [config/initializers/avo.rb]{6}
+
+```ruby{7}
+# config/initializers/avo.rb
 Avo.configure do |config|
   # configuration values
 end
@@ -100,7 +102,9 @@ Rails.configuration.to_prepare do
   Avo::ApplicationController.include Multitenancy
 end
 ```
-```ruby [app/controllers/concerns/multitenancy.rb]
+
+```ruby
+# app/controllers/concerns/multitenancy.rb
 module Multitenancy
   extend ActiveSupport::Concern
 
@@ -113,20 +117,20 @@ module Multitenancy
   end
 end
 ```
-:::
 
 ### 2. Add an account switcher
 
 Add a route for the switcher, a controller to update the session, and a view to render the links.
 
-:::code-group
-```ruby [config/routes.rb]
+```ruby
+# config/routes.rb
 Rails.application.routes.draw do
   put "switch_account/:id", to: "avo/switch_accounts#update", as: :switch_account
 end
 ```
 
-```ruby [app/controllers/avo/switch_accounts_controller.rb]
+```ruby
+# app/controllers/avo/switch_accounts_controller.rb
 class Avo::SwitchAccountsController < Avo::ApplicationController
   def update
     # set the new tenant in session
@@ -137,12 +141,12 @@ class Avo::SwitchAccountsController < Avo::ApplicationController
 end
 ```
 
-```erb [app/views/avo/_session_switcher.html.erb]
+```erb
+<%# app/views/avo/_session_switcher.html.erb %>
 <% current_user.accounts.each do |account| %>
   <%= link_to account.name, switch_account_path(account.id), class: class_names({"underline": session[:tenant_id].to_s == account.id.to_s}), data: {turbo_method: :put} %>
 <% end %>
 ```
-:::
 
 ## See also
 

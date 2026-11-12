@@ -27,7 +27,7 @@ Use [`flatpickr`](https://flatpickr.js.org/formatting) formatting tokens.
 
 <Option name="`picker_options`">
 
-Passes the options here to [flatpickr](https://flatpickr.js.org/).
+Passes the options here to [flatpickr](https://flatpickr.js.org/). Avo fills `locale.weekdays` and `locale.months` from the app locale and merges a `locale` you pass here over them.
 
 #### Default value
 
@@ -45,3 +45,5 @@ By default, flatpickr is [disabled on mobile](https://flatpickr.js.org/mobile-su
 <!-- @include: ./../common/default_boolean_false.md -->
 
 </Option>
+
+<!-- @include: ./../common/link_to_record_common.md-->

@@ -79,12 +79,12 @@ All in all **we're confident you'll have the necessary instruments** you need to
 
 For **STI** you can check out the models and resources in the [demo app](https://main.avodemo.com/).
 
- - [person.rb](https://github.com/avo-hq/avodemo/blob/main/app/models/person.rb)
- - [spouse.rb](https://github.com/avo-hq/avodemo/blob/main/app/models/spouse.rb)
- - [person_resource.rb](https://github.com/avo-hq/avodemo/blob/main/app/avo/resources/person_resource.rb)
- - [spouse_resource.rb](https://github.com/avo-hq/avodemo/blob/main/app/avo/resources/spouse_resource.rb)
+ - [app/models/person.rb](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/person.rb)
+ - [app/models/spouse.rb](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/spouse.rb)
+ - [app/avo/resources/person.rb](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/person.rb)
+ - [app/avo/resources/spouse.rb](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/spouse.rb)
 
-One thing you should do is for the derived model (`Spouse` in this case) add the `model_class` to [the Avo resource](https://github.com/avo-hq/avodemo/blob/main/app/avo/resources/spouse_resource.rb#L5).
+One thing you should do is for the derived model (`Spouse` in this case) add the `model_class` to [the Avo resource](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/spouse.rb).
 
 ## Try a pre-release version
 

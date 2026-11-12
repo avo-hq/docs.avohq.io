@@ -26,15 +26,58 @@ def filters
 end
 ```
 
-Global behavior is configured through `Avo::DynamicFilters.configure` in `config/initializers/avo.rb`:
+Global behavior is configured under `config.dynamic_filters` in `config/initializers/avo.rb`:
 
 ```ruby
-if defined?(Avo::DynamicFilters)
-  Avo::DynamicFilters.configure do |config|
-    config.always_expanded = false
-  end
+Avo.configure do |config|
+  config.dynamic_filters.always_expanded = false
 end
 ```
+
+## The filter dropdown
+
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
+With [`simple_filters`](#simple_filters) on, every filter's dropdown puts its conditions in a menu next to the filter's name, and below it a value control that fits the condition picked. Without it, filters keep the older dropdown, with the condition and value as two fields.
+
+<Image src="/assets/img/4_0/dynamic-filters/dropdown.webp" dark-src="/assets/img/4_0/dynamic-filters/dropdown-dark.webp" width="2438" height="604" alt="The Status pill's dropdown open on the Tickets index: an is condition menu next to the name, and a checklist of every status with a coloured dot. Open and In progress are ticked, the pill reads Open, In progress, and the table already shows only those tickets, with no Apply button." />
+
+:::info Opt-in
+The new dropdown is off by default and becomes the default in a future release. [`inline`](#inline), [`presets`](#presets) and `nullable` need it.
+:::
+
+Each type opens on its most common condition, and the menu holds the rest:
+
+| Type    | Opens on      | Value control                                                                 |
+| ------- | ------------- | ----------------------------------------------------------------------------- |
+| Select  | Is            | A checklist of every option. Ticked options match any of them; under Is not, none of them. On a `badge` field, each option shows its badge colour. |
+| Text    | Contains      | A text box.                                                                    |
+| Boolean | (no menu)     | Yes / No as one row of buttons, with nothing picked until the filter is applied. Picking one applies it straight away, and the x clears it. Rename them with `options:`, and add Empty with `nullable: true`, see below. |
+| Number  | =             | One number. Is within takes a min and a max (fill either or both).            |
+| Date    | Is within     | Today, 7 days, 30 days, This month and Last month as one row of buttons. Custom after them shows a from and to date. Change the buttons with [`presets`](#presets). Other conditions take one date. |
+| Date time | Is within   | The same as Date, and the from and to boxes pick a time as well as a day.    |
+| Time    | Is within     | A from and to time. No presets.                                               |
+| Tags    | Overlap       | A checklist of every suggestion. Contain matches records with all the ticked tags. Without static `suggestions`, from `fetch_values_from` or typed freely, a tag box instead. |
+
+Conditions that need no value, like Is blank, show no value control. The pill reads like a sentence, with the name, condition and value in separate segments: `Status | is not | Open, Done`.
+
+The boolean's choices and its pill read "Yes" and "No", from the `avo.dynamic_filters.simple.yes` and `.no` locale keys. Give a filter its own words with `options:`, and use a lambda to translate them:
+
+```ruby
+field :urgent, as: :boolean, filterable: {
+  options: -> { {true: I18n.t("tickets.urgent"), false: I18n.t("tickets.not_urgent")} }
+}
+```
+
+On a column that can be empty, `nullable: true` adds an Empty choice that finds the records with no value. It reads from `avo.dynamic_filters.simple.empty`, and `options: {nil: "Not set"}` renames it.
+
+```ruby
+field :billable, as: :boolean, filterable: {nullable: true}
+```
+
+The dropdown has no Apply button: each option you tick, and each condition you pick, filters the list straight away while the dropdown stays open, and the scroll position is kept. Text, number and date boxes apply on Enter or when the dropdown closes. Set `render_apply_button: true` to bring the button back.
+
+Custom `conditions:` fill the menu. Every other option still applies: `options`, `suggestions`, `query` and the rest.
 
 ## Filter options
 
@@ -107,6 +150,8 @@ dynamic_filter :first_name,
 - **Default:** the [filter type's conditions](#filter-types-and-their-conditions)
 
 Custom condition keys that aren't Ransack predicates need a custom [`query`](#query) to handle them.
+
+A request applies only the conditions the filter offers (these, or the type's defaults); any other condition in the URL is ignored.
 
 An empty hash (`{}`) hides the conditions dropdown entirely and applies the filter type's first default condition — "Is" for a select filter, "Contains" for a text filter, and so on. Useful when only one condition makes sense:
 
@@ -343,7 +388,7 @@ dynamic_filter :status,
 ```
 
 - **Type:** Boolean
-- **Default:** `true`
+- **Default:** `true`, or `false` with [`simple_filters`](#simple_filters) on
 
 Usually paired with [`apply_on_select: true`](#apply_on_select) for an immediate filtering experience.
 
@@ -362,6 +407,86 @@ dynamic_filter :category,
 
 - **Type:** Boolean
 - **Default:** `false`
+
+</Option>
+
+<Option name="`pinned`" headingSize="3">
+
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
+Keeps the filter's pill in the filter bar next to "Add filter", so users can filter by it without picking it from the dropdown first. The pill does nothing until someone picks a value and applies it. Removing an applied pinned filter puts the empty pill back.
+
+```ruby{4,9}
+# On a field
+field :owner, as: :belongs_to, filterable: {
+  label: "Owner",
+  pinned: true
+}
+
+# On a custom filter
+dynamic_filter :status,
+  type: :select,
+  pinned: true
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+A pinned filter is not listed in the "Add filter" dropdown. When a resource has a pinned filter, the filter bar shows even with [`always_expanded`](#always_expanded) set to `false`.
+
+<Image src="/assets/img/4_0/dynamic-filters/pinned.webp" dark-src="/assets/img/4_0/dynamic-filters/pinned-dark.webp" width="2438" height="570" alt="Avo Tickets index with three pinned filters, Due on, Status and Urgent, as pills next to Add filter. Status is applied and reads Status, is, Open in separate segments; the table lists open tickets." />
+
+</Option>
+
+<Option name="`inline`" headingSize="3">
+
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
+Lays a pinned filter's control out in the filter bar, so using it takes no click to open the pill.
+
+```ruby{2}
+field :urgent, as: :boolean, filterable: {
+  pinned: true,
+  inline: true
+}
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+To lay out every pinned filter this way, set [`inline_filters`](#inline_filters) instead. It needs [`simple_filters`](#simple_filters) on, and works on a [pinned](#pinned) filter of these types: boolean, text, number, date, date time, time, and a select of up to 6 options, whose checklist becomes a row of chips. Other filters ignore it and keep their pill.
+
+An inline filter shows the same condition menu as the pill's dropdown, right after its name, and changing it filters in place. On phones every inline filter shows as its pill, since a row of controls doesn't fit.
+
+Ticks and buttons filter straight away. Boxes apply on Enter or when they lose focus.
+
+<Image src="/assets/img/4_0/dynamic-filters/inline.webp" dark-src="/assets/img/4_0/dynamic-filters/inline-dark.webp" width="2420" height="620" alt="Inline filters in the Tickets filter bar: Due on with its condition menu and date preset buttons; Status as a row of coloured chips with Open picked; Urgent as Urgent and Not urgent buttons with Urgent picked. The table lists urgent open tickets." />
+
+</Option>
+
+<Option name="`presets`" headingSize="3">
+
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
+The date range buttons a date or date time filter shows.
+
+```ruby
+# Pick from the built-ins
+field :due_on, as: :date, filterable: {presets: [:today, :this_month]}
+
+# Add your own; a built-in name with no range keeps its own
+field :due_on, as: :date, filterable: {
+  presets: {
+    today: nil,
+    "Next 30 days" => -> { Date.current..(Date.current + 29) }
+  }
+}
+```
+
+- **Type:** Array of built-in names, or a Hash of label to range
+- **Default:** `[:today, :last_7_days, :last_30_days, :this_month, :last_month]`
+
+Each range is a proc returning a `Range` of dates, run on every render so "today" stays current. A symbol label is translated under `avo.dynamic_filters.simple`, a string is shown as written. A symbol with `nil` for its range has to be a built-in name; anything else raises `KeyError`. `presets: []` hides the buttons.
 
 </Option>
 
@@ -428,14 +553,14 @@ Inside the block you have access to `condition`, the `filter` object, `parent_re
 
 ## Global configuration
 
-Set these through `Avo::DynamicFilters.configure` in `config/initializers/avo.rb`.
+Set these under `config.dynamic_filters` inside `Avo.configure` in `config/initializers/avo.rb`. The older `Avo::DynamicFilters.configure` block is deprecated; see the [upgrade guide](./upgrade.html#upgrade-to-avo-dynamic-filters-4-3-3).
 
 <Option name="`button_label`" headingSize="3">
 
 The label on the button that expands the filters bar.
 
 ```ruby
-config.button_label = -> { I18n.t("my.filters") }
+config.dynamic_filters.button_label = -> { I18n.t("my.filters") }
 ```
 
 - **Type:** Proc or String
@@ -445,7 +570,7 @@ config.button_label = -> { I18n.t("my.filters") }
 The button only renders when [`always_expanded`](#always_expanded) is `false`.
 
 :::warning A plain string is fixed for the life of the process
-The initializer runs once at boot and the configuration object lives for the whole process, so a string is pinned for every request afterwards. `config.button_label = I18n.t("my.filters")` has the same problem — it looks translated, but it is evaluated at boot like any other expression.
+The initializer runs once at boot and the configuration object lives for the whole process, so a string is pinned for every request afterwards. `config.dynamic_filters.button_label = I18n.t("my.filters")` has the same problem — it looks translated, but it is evaluated at boot like any other expression.
 
 Pass a proc and it is re-evaluated on every render, so it follows the request locale. Left unset, the default is already a proc, so a localized app usually needs nothing here.
 :::
@@ -457,7 +582,7 @@ Pass a proc and it is re-evaluated on every render, so it follows the request lo
 Whether the dynamic filters bar is always shown expanded.
 
 ```ruby
-config.always_expanded = false
+config.dynamic_filters.always_expanded = false
 ```
 
 - **Type:** Boolean
@@ -472,13 +597,44 @@ When `false`, the bar starts collapsed behind a toggle button and expands automa
 The URL query param dynamic filters read from and write to.
 
 ```ruby
-config.param_key = :df
+config.dynamic_filters.param_key = :df
 ```
 
 - **Type:** Symbol
 - **Default:** `:filters`
 
 With the default key, a filtered URL looks like `/avo/resources/users?filters[first_name][contains][]=Avo`. Change it if `filters` collides with another param in your app.
+
+</Option>
+
+<Option name="`simple_filters`" headingSize="3">
+
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
+Turns on the [new filter dropdown](#the-filter-dropdown) for every filter.
+
+```ruby
+config.dynamic_filters.simple_filters = true
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+</Option>
+
+<Option name="`inline_filters`" headingSize="3">
+
+<VersionReq package="avo-dynamic_filters" version="4.3.3" />
+
+Lays every [pinned](#pinned) filter out in the bar, as if each had [`inline: true`](#inline). Filters of a type `inline` doesn't cover keep their pill, and a filter's own `inline: false` keeps its pill too. It needs [`simple_filters`](#simple_filters) on.
+
+```ruby
+config.dynamic_filters.simple_filters = true
+config.dynamic_filters.inline_filters = true
+```
+
+- **Type:** Boolean
+- **Default:** `false`
 
 </Option>
 
@@ -500,6 +656,8 @@ The `Is null` / `Is not null` conditions (and `Is present` / `Is blank` on text 
 | `is_false` | Is false | `defaults.is_false` |
 | `is_null` | Is null | `defaults.is_null` |
 | `is_not_null` | Is not null | `defaults.is_not_null` |
+
+A boolean filter never renders a value input: the condition is the whole query. That holds for a custom [`conditions`](#conditions) hash too, and a [`query`](#query) lambda reads the user's pick from `filter_param.condition`. <VersionReq package="avo-dynamic_filters" version="4.2.1" />
 
 <Image src="/assets/img/4_0/dynamic-filters/boolean.webp" dark-src="/assets/img/4_0/dynamic-filters/boolean-dark.webp" width="3268" height="1082" alt="Avo Users index: the Is active dynamic filter pill and open card showing the Is true condition and Apply button, zoomed in over a short three-row table with pagination." />
 

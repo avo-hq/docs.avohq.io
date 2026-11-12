@@ -38,7 +38,7 @@ class Avo::Resources::User < Avo::BaseResource
 end
 ```
 
-The block exposes the `q` local, which contains the stripped search string, and the `query` local, the base scope to run the search on — using it ensures [authorization scopes](./authorization.html#scopes) are applied. If you need the unstripped search string, use `params[:q]`.
+The block exposes the `q` local, which contains the stripped search string, and the `query` local, the base scope to run the search on — using it ensures [authorization scopes](./authorization.html#limit-which-records-a-user-sees) are applied. If you need the unstripped search string, use `params[:q]`.
 
 Make the search as strict or as loose as you need — [ransack's search matchers](https://github.com/activerecord-hackery/ransack#search-matchers) help you compose the query.
 
@@ -106,7 +106,7 @@ This is about searching _through_ associations from an index or the palette. For
 
 ## Authorize search
 
-Search is authorized in policy files using the [`search?`](./authorization#search) method.
+Search is authorized in policy files using the [`search?`](./authorization-api.html#search) method.
 
 ```ruby
 class UserPolicy < ApplicationPolicy
@@ -118,7 +118,7 @@ end
 
 If `search?` returns false, the resource is excluded from the global search and the search bar on <Index /> is not displayed.
 
-If you're already using `search?` in your policy file for something else, alias it to another method in your initializer using [`config.authorization_methods`](./authorization.html#using-different-policy-methods).
+If you're already using `search?` in your policy file for something else, alias it to another method in your initializer using [`config.authorization_methods`](./authorization-api.html#authorization_methods).
 
 ```ruby
 # config/initializers/avo.rb
@@ -156,7 +156,8 @@ end
 
 The global search palette searches every resource that has `self.search` configured, all at once. Open it by clicking the trigger on the navbar or with the <kbd>Cmd</kbd> + <kbd>K</kbd> keyboard shortcut (<kbd>Ctrl</kbd> + <kbd>K</kbd> on Windows).
 
-- <kbd>Cmd</kbd> + <kbd>K</kbd> / <kbd>Ctrl</kbd> + <kbd>K</kbd> - Open the global search
+- <kbd>Cmd</kbd> + <kbd>K</kbd> / <kbd>Ctrl</kbd> + <kbd>K</kbd> - Open the navbar search, including on the dedicated results page. Its ID is `advanced_search.open`, so you can [rebind or disable it](./keyboard-shortcuts.html#change-or-disable-a-shortcut) through `config.hotkeys[:bindings]`.
+- <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> - Focus and select the search input on the dedicated results page. Its ID is `advanced_search.focus_results`.
 - <kbd>Up</kbd> and <kbd>Down</kbd> arrow keys - Navigate through search results
 - <kbd>Enter</kbd> - Visit the selected record
 - <kbd>Esc</kbd> - Close the search modal

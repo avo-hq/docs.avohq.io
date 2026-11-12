@@ -13,7 +13,7 @@ The `avo-api` add-on exposes a JSON REST API for every Avo resource. It reuses y
 This page covers installation, mounting, API tokens and authentication, reading and writing data, token entitlements, authorization, how the current user is established, and managing tokens in the panel. Every generator, hook, and option is in the [API reference](./rest-api-api.html).
 
 :::info Add-on
-The REST API ships as the separate `avo-api` gem. [See the add-on page →](https://avohq.io/addons/api)
+The REST API ships as the separate `avo-api` gem. On [avohq.io/pricing](https://avohq.io/pricing) the add-on is called **API**; earlier pages and invoices may call it "JSON API" or "REST API". It's the same add-on, and it includes the [CLI](./cli.html). [See the add-on page →](https://avohq.io/addons/api)
 :::
 
 ## Installation
@@ -135,11 +135,12 @@ The token resource is skipped when routes are drawn, so no version namespace get
 
 ## Discovery
 
-Two `GET` endpoints describe what the API version exposes, so a client doesn't have to be told which resources exist, what key a write nests under, or what fields a request takes. Neither writes anything.
+Three read-only `GET` endpoints tell a client which resources exist, which key a write nests under, and which fields each request takes, so none of that has to be hardcoded.
 
 ```
 GET    /api/resources/v1/_schema                    # every resource the caller may reach
 GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on one view
+GET    /api/resources/v1/_openapi                   # the same, as one OpenAPI document
 ```
 
 ### The resource listing
@@ -182,51 +183,28 @@ GET    /api/resources/v1/teams/_schema?view=create  # one resource's fields on o
 ```json
 {
   "param_key": "team",
+  "view": "create",
   "fields": [
     { "field_id": "name", "field_type": "text", "field_options": { "required": true } },
-    { "field_id": "admin_id", "field_type": "belongs_to", "field_options": { "required": false } },
-    { "field_id": "plan", "field_type": "select", "field_options": { "required": false, "options": ["free", "pro"] } },
-    { "field_id": "tags", "field_type": "select", "field_options": { "required": false, "options": ["ops", "eu", "us"], "multiple": true } },
-    { "field_id": "coordinates", "field_type": "location", "field_options": { "required": false } }
+    { "field_id": "admin_id", "field_type": "belongs_to", "field_options": {} },
+    { "field_id": "plan", "field_type": "select", "field_options": { "options": ["free", "pro"] } },
+    { "field_id": "tags", "field_type": "select", "field_options": { "options": ["ops", "eu", "us"], "multiple": true } },
+    { "field_id": "coordinates", "field_type": "location", "field_options": {} }
   ]
 }
 ```
 
 | Key | Meaning |
 |-----|---------|
+| `view` | The view the fields belong to: the one the request named, or `create` when it named none. |
 | `field_id` | The key the field reads back under, or, on `create` and `update`, the key the body sets it through (`admin_id`). |
 | `field_type` | The Avo field type. |
 | `field_options` | Form views only: one object holding what a write needs to know about the field, the keys below. Read views carry none. |
-| `field_options.required` | Whether a blank value is refused. |
+| `field_options.required` | `true` when a blank value is refused. Absent otherwise, so a missing key means not required. |
 | `field_options.options` | On choice fields: the values the field accepts, never the labels. |
 | `field_options.multiple` | `true` on a field that takes a list (`select` with `multiple`, `checkbox_list`, `boolean_group`); absent otherwise. |
 
-Each field's `field_type` says what to put under its `field_id` in a `POST` or `PATCH` body.
-
-| Field types | What you send |
-|-------------|---------------|
-| `text`, `number`, `boolean`, `select`, `belongs_to`, and every other single-value field | one value: `"name": "Acme"`, `"plan": "pro"` |
-| `select` with `multiple`, `checkbox_list`, `boolean_group` | a list of values: `"tags": ["ops", "eu"]` |
-| `location` on two columns (`stored_as: [:latitude, :longitude]`) | an object keyed by those columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
-| `location` on one column, `tags`, `key_value` | one string the field parses: `"home": "44.43,26.10"`, `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"` |
-| `code` | one string, stored as it is. Only a field declared with `pretty_generated: true` parses it as JSON |
-
-`null` clears any field, a list and a `location` on two columns included. The one exception is a `location` on one column, which splits the string it is given: clear it with `""`, since `null` is answered with a `500`. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
-
-Put together, the schema above is written as:
-
-```json
-{
-  "team": {
-    "name": "Acme",
-    "plan": "pro",
-    "tags": ["ops", "eu"],
-    "coordinates": { "latitude": 44.43, "longitude": 26.10 }
-  }
-}
-```
-
-Read views carry `field_id` and `field_type` only; form views add `field_options` and list only the fields a body may write.
+Each field's `field_type` says what to put under its `field_id` in a `POST` or `PATCH` body: see [Field value formats](#field-value-formats).
 
 :::info Refusals
 - `403` with `reason: "token_entitlement"` when the token lacks the action the view is named after.
@@ -234,6 +212,53 @@ Read views carry `field_id` and `field_type` only; form views add `field_options
 - `400` with `{ "error": "Unknown view", "views": ["index", "show", "create", "update"] }` for a view it doesn't know.
 - `404` when this version has no controller for the resource. No route exists then, so this one is Rails' own page, not the JSON body above.
 :::
+
+### OpenAPI document
+
+`GET /api/resources/v1/_openapi` returns the whole API as one [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0) file: every resource, every request, every field. Use it to plug the API into a tool that speaks OpenAPI. For your own requests, `_schema` above is smaller and enough.
+
+Nothing is stored on the server. The document is built from your resources and the token's entitlements on every request, so there is no file to find in the app and nothing to regenerate after a deploy: request it again and it is current.
+
+#### 1. Download the document
+
+You need two things: your app's URL and an API token [you created in the panel](#create-a-token). The token travels in a header, so send it with `curl` and save the response:
+
+```bash
+curl https://YOUR-APP.com/api/resources/v1/_openapi \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -o openapi.json
+```
+
+To save it somewhere else, give the full path:
+
+```bash
+curl https://YOUR-APP.com/api/resources/v1/_openapi \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -o ~/Downloads/openapi.json
+```
+
+Open `openapi.json` before importing it. It should start with `{"openapi":"3.1.0"`; if it holds `{"error":"Unauthorized"}` the token is wrong, and if it holds HTML the host or the mount path is.
+
+#### 2. Import it into your tool
+
+Import `openapi.json` into any tool that reads OpenAPI 3.1, such as Swagger UI, Postman, or an API client generator.
+
+:::warning Each token gets its own document
+The file describes what the requesting token may do, nothing more. A read-only token gets no create, update or delete operations; a token granted two resources gets only those two. So export with the token the tool will use, and export again after you change its [entitlements](#entitle-a-token).
+:::
+
+#### What is inside
+
+| Part             | Contents                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `servers[0].url` | The version's base URL, so every path in the file is the path you request                                                 |
+| Security         | Bearer token, applied to every operation. Left out when no API token authenticated the request, as in an app that authenticates the API its own way, since the file cannot name your scheme |
+| Paths            | `/_schema`, `/{resource}/_schema`, and one operation per action the token may call (`get`, `post`, `patch`/`put`, `delete`) |
+| Record schemas   | `<Name>Index` and `<Name>Show` for what you read back; `<Name>Create` and `<Name>Update` for what you send, nested under `param_key` |
+| Shared schemas   | `Error`, `ValidationErrors`, `Pagination`                                                                                 |
+| Error responses  | `400`, `401`, `403`, `404`, `422`                                                                                         |
+
+Every field property also carries `x-avo-field-type` (for example `"belongs_to"`), so a generator that cannot tell what a JSON type stands for can still see the Avo field behind it.
 
 ## Authentication
 
@@ -249,7 +274,7 @@ Raise [`Avo::Api::AuthenticationError`](./rest-api-api.html#Avo::Api::Authentica
 
 Once the [tokens table is installed](#install-the-api-tokens-table), an **API tokens** entry appears in the Avo sidebar. Create a token there with a name and, optionally, an expiry date.
 
-The token belongs to whoever created it. The form has no owner field, and a token cannot be moved to another owner afterwards, so a crafted request cannot mint a credential belonging to somebody else.
+The token belongs to whoever created it, the user [`config.current_user_method`](./authentication.html) returns; without one, creating a token fails with "Owner must exist". The form has no owner field, and a token cannot be moved to another owner afterwards, so a crafted request cannot mint a credential belonging to somebody else.
 
 **The secret is shown once**, on the new token's page immediately after creation, with a copy button. Only a digest of it is stored, so nothing can show it again — not a console, not a support tool, not a database dump. Miss it and there is no recovery beyond minting a replacement and revoking the one you lost.
 
@@ -285,6 +310,8 @@ A token's status is derived from two timestamps, never stored, so there is no li
 | **Revoked** | The Revoke action was run on it | No |
 
 Expiry is optional — leave it blank and the token never expires. Revocation is permanent: the **Revoke** action on the token resource marks the token and keeps the record, and nothing can un-revoke it. A token that is both revoked and past its expiry reports **Revoked**.
+
+Hover the **Status** badge on the index, or the chip on a token's page, for the moment that ended it: when it expired, or when it was revoked. There is no column for either, since both are blank on every live token.
 
 Each authenticated request stamps the token's **Last used** column, a refused one included, which is the fastest way to tell a token that was never wired up from one that stopped working.
 
@@ -337,7 +364,6 @@ A few consequences worth knowing:
 
 - **A leaked database yields no usable tokens.** Reversing SHA-256 is not feasible, and neither is guessing: a secret is 43 random alphanumeric characters, about 256 bits of entropy, so there is no dictionary or rainbow table to try. Rotation after a leak is prudent, not urgent.
 - **No pepper or key to manage.** Peppering defends short, low-entropy secrets like passwords. These are neither, so the digest is unkeyed — nothing to configure, nothing to rotate, nothing that breaks every token if it is lost.
-- **Nothing can show a secret again.** Not the panel, not a console, not support. If it was not copied at creation, mint a replacement and revoke the old one.
 - **The digest column is uniquely indexed**, so the lookup is a single indexed read and two tokens cannot collide.
 
 Who may mint and revoke tokens is your app's authorization decision, and the default is permissive — see [Who may manage tokens](#who-may-manage-tokens).
@@ -377,8 +403,16 @@ Who may mint and revoke tokens is your app's authorization decision, and the def
 GET /api/resources/v1/teams?page=2&per_page=10&sort_by=name&sort_direction=asc
 ```
 
+:::warning Filters are not supported yet
+The index endpoint does not apply the resource's filters, and a `filters` parameter is ignored. To select records by value, page through the index and filter on the client.
+:::
+
 :::info `per_page` is remembered in a cookie
 Avo stores `per_page` in a cookie so the admin panel remembers the reader's choice. A client that keeps cookies between requests (a browser, or a scripted session with a cookie jar) will keep the last `per_page` it sent even when it omits the parameter. Send `per_page` explicitly on every request if you need a fixed page size.
+:::
+
+:::warning Filtering is not supported
+The index has no supported way to select records by value. To find records matching a condition, page through the index and filter on the client.
 :::
 
 ### Show
@@ -391,7 +425,7 @@ Avo stores `per_page` in a cookie so the admin panel remembers the reader's choi
     "id": 1,
     "name": "Development Team",
     "url": "https://dev.company.com",
-    "admin": { "id": 5, "label": "John Doe" },
+    "admin": { "id": "5", "label": "John Doe" },
     "team_members": { "count": 12 }
   }
 }
@@ -404,8 +438,9 @@ Fields are respected according to their view visibility, and typed values are se
 | Field type | Shape |
 | --- | --- |
 | Text, number, boolean, date/datetime | The raw value |
-| `belongs_to` | `{ "id": 5, "label": "John Doe" }` |
-| `has_many`, `has_one` | `{ "count": 12 }` (or `{ "id": 5 }` for a single loaded record) |
+| `belongs_to` | `{ "id": "5", "label": "John Doe" }`. The `id` is the related record's `to_param`, always a string: the slug or prefixed id where the model has one |
+| `has_many`, `has_and_belongs_to_many` | `{ "count": 12 }`, counted through the related resource's `Scope` |
+| `has_one` | `{ "id": "5" }`, the related record's `to_param`, or `null` when the related resource's `Scope` hides it |
 | `file` | `{ "filename": "…", "content_type": "…", "byte_size": 1234, "url": "…" }` |
 | `files` | a list of those objects, one per attachment |
 
@@ -425,7 +460,7 @@ class Avo::Resources::Team < Avo::BaseResource
 end
 ```
 
-A policy can also withhold a field from a user outright, with `whitelisted_fields` / `blacklisted_fields` on the resource's policy. A withheld field is absent from every response and refused on write, so a client cannot set it by naming it in a payload. `Avo::Current.interface` is `:api` for every request this add-on serves, so a policy can withhold more from a token than from the panel. See [Field authorization](./authorization.html#field-authorization).
+A policy can also withhold a field from a user outright, with `whitelisted_fields` / `blacklisted_fields` on the resource's policy. A withheld field is absent from every response and refused on write, so a client cannot set it by naming it in a payload. `Avo::Current.interface` is `:api` for every request this add-on serves, so a policy can withhold more from a token than from the panel. See [Field authorization](./authorization.html#hide-fields-from-a-user).
 
 :::info File URLs are permanent
 `file` and `files` fields serialize the standard attachment URL. These are not signed or expiring — anyone who obtains the URL can fetch the file. Keep that in mind before exposing attachments to clients you don't control.
@@ -433,7 +468,7 @@ A policy can also withhold a field from a user outright, with `whitelisted_field
 
 ## Writing data
 
-Send field data under the resource's singular key. Requests use JSON.
+Send field data as JSON, nested under the resource's `param_key`. It is usually the singular name (`team`), but not always: an [HTTP resource](#http-resources) uses `avo/http_resource/planet`. Read it from the [schema](#discovery) rather than guess it.
 
 ### Create
 
@@ -441,14 +476,14 @@ Send field data under the resource's singular key. Requests use JSON.
 curl -X POST https://example.com/api/resources/v1/teams \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
-  -d '{ "team": { "name": "Mobile Team", "url": "https://mobile.company.com", "admin_id": 5 } }'
+  -d '{ "team": { "name": "Mobile Team", "url": "https://mobile.company.com", "admin_id": "5" } }'
 ```
 
 On success the response is `201 Created` with the record serialized on its `:show` view:
 
 ```json
 {
-  "record": { "id": 3, "name": "Mobile Team", "url": "https://mobile.company.com", "admin": { "id": 5, "label": "John Doe" } }
+  "record": { "id": 3, "name": "Mobile Team", "url": "https://mobile.company.com", "admin": { "id": "5", "label": "John Doe" } }
 }
 ```
 
@@ -504,10 +539,12 @@ Different field types accept the formats you'd expect:
 | Number | `42`, `19.99` |
 | Boolean | `true`, `false` |
 | Date / datetime | `"2024-01-15"`, `"2024-01-15T10:30:00Z"` |
-| `belongs_to` | the foreign key: `"admin_id": 5` |
+| `belongs_to` | the foreign key, as the `id` a read returns: `"admin_id": "5"` |
+| Polymorphic `belongs_to` | both parts: `"reactable_type": "Post"`, `"reactable_id": "7"` |
 | `select` with `multiple`, `checkbox_list`, `boolean_group` | a list: `"tags": ["ops", "eu"]` |
 | `location` on two columns | an object keyed by its `stored_as` columns: `"coordinates": { "latitude": 44.43, "longitude": 26.10 }` |
-| `tags`, `key_value`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"settings": "{\"theme\":\"dark\"}"`, `"home": "44.43,26.10"` |
+| `tags`, `location` on one column | one string the field parses: `"skills": "ruby,rails"`, `"home": "44.43,26.10"` |
+| `key_value` | an object, or the same JSON as a string: `"settings": { "theme": "dark" }`, `"settings": "{\"theme\":\"dark\"}"`. Older Avo versions wrote `{}` for an object, so send the string to stay compatible |
 | `code` | one string, stored as it is unless the field is declared with `pretty_generated: true`, which parses it as JSON |
 
 `null` clears any field, a list and a `location` on two columns included. The one exception is a `location` on one column, which splits the string it is given: clear it with `""`, since `null` is answered with a `500`. A `has_many` or `has_one` key is not a field a body can set; the API ignores it, `null` included.
@@ -641,7 +678,7 @@ Avo.configure do |config|
 end
 ```
 
-So with the default setting, **the API controller's `current_user` method is what the policies see**. Make that method return the authenticated user:
+So with that setting, **the API controller's `current_user` method is what the policies see**. Make that method return the authenticated user:
 
 ```ruby
 # app/controllers/avo/api/resources/v1/base_resources_controller.rb
@@ -731,6 +768,7 @@ Your existing Pundit policies apply to the API automatically — the same `Scope
 
 - **Index** resolves through the resource's `Scope`, so `GET /api/resources/v1/comments` returns only the records that user may see.
 - **Show, update, and destroy** look the record up through the same scope, so a record outside it is **`404 Not Found`**, not a `403` — the API doesn't confirm that an out-of-scope record exists.
+- **Association fields** appear only when the record's policy allows [`view_<field>?`](./authorization-api.html#view_association). Under [`explicit_authorization`](./authorization-api.html#explicit_authorization) they are also hidden when the policy doesn't define the method, as on the panel.
 
 ```ruby
 # app/policies/comment_policy.rb
@@ -752,6 +790,8 @@ Policy scoping requires all three of the following. If any is missing, the query
 | The `avo-authorization` add-on installed | `Gemfile` |
 | The `avo-authorization` feature enabled on your license | Your Avo plan |
 | An authorization client configured | `config.authorization_client = :pundit` |
+
+One exception: when your initializer sets a client and your license lacks the add-on, the API returns no records at all, and every policy method answers `403` with `reason: "policy"`. See [When the license lapses](./authorization.html#when-the-license-lapses).
 
 :::info A `nil` user fails differently
 Those three are configuration — miss one and the query is silently unscoped. A missing **user** is the opposite failure: with Pundit configured, scoping still runs, so `nil` reaches your `Scope#resolve` and the usual `user.admin?` raises `NoMethodError`. You get a 500, not a leak — the same trap described under [Authentication examples](#authentication-examples).
@@ -788,6 +828,54 @@ module Avo::Api::Resources::V1
   end
 end
 ```
+
+:::warning A guard on one controller does not cover the OpenAPI document
+`BaseResourcesController` serves the [OpenAPI document](#openapi-document), so a `before_action` you add to one resource's controller never runs for it, and that resource's fields are still listed. To keep a resource out of the document, use the token's [entitlements](#entitle-a-token) or the resource's `index?` policy.
+:::
+
+### Your admin panel controllers are not inherited
+
+Each resource has two controllers, one for the admin panel and one for the API. The API controller does not inherit from the admin panel one:
+
+| Serves      | File                                                       |
+| ----------- | ---------------------------------------------------------- |
+| Admin panel | `app/controllers/avo/users_controller.rb`                  |
+| API         | `app/controllers/avo/api/resources/v1/users_controller.rb` |
+
+A method you override in the admin panel controller has no effect on the API. To change how the API behaves, override the method in the API controller.
+
+## Array resources
+
+An [array resource](./array-resource.html) is served like any other resource. Generate its controller, and `index`, `show` and `_schema` work with no code in it.
+
+### Accept writes
+
+An array record is saved by the two methods the [array resource page](./array-resource.html#create-edit-and-delete) describes, `save_record` and `destroy_record`. They live on the resource, so the API uses the same ones as the panel and its controller needs no code.
+
+Without them, a create, update or delete answers `422` and names the method the record lacks:
+
+```json
+{
+  "errors": { "base": ["undefined method 'save!' for an instance of Avo::Movie"] },
+  "message": "Failed to create Movie"
+}
+```
+
+### What decides access
+
+- **`self.writable` is for the panel only.** It shows or hides the Create, Edit and Delete controls. Over the API, the token's [entitlements](#entitle-a-token) and the resource's policy decide who may write.
+- **Name the policy on the resource.** Avo builds the record's class at runtime, so set `self.authorization_policy = BookmarkPolicy` rather than rely on a lookup by class name.
+- **A policy scope does not narrow the list.** The rows are what `records` returns. The scope's `resolve` is handed the record's class, not a relation, so return it untouched.
+
+### Sorting
+
+An array resource [is not sorted](./array-resource.html#render-it-inside-another-resource). `sort_by` is ignored and the request still answers `200`, with the rows in the order `records` returns them.
+
+## HTTP resources
+
+An [HTTP resource](./http-resource.html) needs no code in its API controller. Sorting and paging reach the remote API [as they do in the panel](./http-resource.html#map-sorting-and-filtering-to-query-params). What differs is how a failing remote API answers.
+
+A failed read answers `502` with `{ "error": "Bad Gateway", "message": "<the error>" }`, and so does an update or delete, since both read the record first. A failed write answers `422`: a timeout or other exception lands in `errors.base`, and a non-success status from the remote API leaves `errors` empty.
 
 ## Manage tokens in the panel
 
@@ -833,10 +921,10 @@ resource :"avo_api/token", visible: -> {
 The model is `Avo::Api::Token`, so the policy is `Avo::Api::TokenPolicy` at `app/policies/avo/api/token_policy.rb` — the ordinary derivation, with nothing registered on the resource to redirect it.
 
 :::danger Without an authorization client, every panel user can mint a token
-And a token carries its owner's full privileges over every record. If `avo-authorization` isn't installed, isn't enabled on your license, or no `config.authorization_client` is set, nothing stands between a user who can sign in to Avo and a credential that reaches your whole API. That's your app's configuration rather than anything this feature decides, but decide it deliberately.
+And a token carries its owner's full privileges over every record. If `avo-authorization` isn't installed, `config.authorization_client` is `nil`, or the add-on isn't on your license and your initializer sets no client, nothing stands between a user who can sign in to Avo and a credential that reaches your whole API. That's your app's configuration rather than anything this feature decides, but decide it deliberately.
 :::
 
-The opposite is just as true. With [`config.explicit_authorization`](./authorization.html#explicit_authorization) at its default of `true`, a resource whose policy class is missing is **denied**, so the token resource is unreachable until you write one — the same rule that applies to every other resource in that app.
+The opposite is just as true. With [`config.explicit_authorization`](./authorization-api.html#explicit_authorization) at its default of `true`, a resource whose policy class is missing is **denied**, so the token resource is unreachable until you write one — the same rule that applies to every other resource in that app.
 
 ### What each policy method controls
 
@@ -852,9 +940,9 @@ Each one gates both whether the control renders and whether it can be run, so a 
 | `act_on?` | The Actions menu as a whole |
 | `revoke?` | The **Revoke** action. Offered only on an *active* token whatever this returns — an expired or revoked one has nothing left to withdraw |
 | `edit_entitlements?` | The [Entitlements](#entitle-a-token) grid. Denying it renders the grid **read-only** rather than hiding it, and the form's write path strips what it refuses, so what is shown and what is accepted can't drift apart |
-| `view_audit_trail?` | The [Audit trail](#see-what-a-token-changed) table on a token's page, *and* the request that fills it. Avo's own `view_<field>?` for a `has_many`: under `explicit_authorization` (the default) the table is hidden until the policy answers it |
+| `view_audit_trail?` | The [Audit log](#see-what-a-token-changed) table on a token's page, *and* the request that fills it. Avo's own `view_<field>?` for a `has_many`: under `explicit_authorization` (the default) the table is hidden until the policy answers it |
 
-The last four aren't Avo's standard CRUD set, but they're asked exactly the same way — through the resource's authorization service, so a client other than Pundit answers them in its own idiom, and names you remapped through [`config.authorization_methods`](./authorization.html#using-different-policy-methods) are honored.
+The last four aren't Avo's standard CRUD set, but they're asked exactly the same way — through the resource's authorization service, so a client other than Pundit answers them in its own idiom, and names you remapped through [`config.authorization_methods`](./authorization-api.html#authorization_methods) are honored.
 
 ### Everyone manages their own tokens
 
@@ -968,7 +1056,7 @@ That shows up in three places:
 
 - **The record's own timeline** continues the author's name with it: *Ada Lovelace through API token*.
 - **The activity's page** has an **Origin** field — *API token — CI deploy key* — the whole of which links to the token.
-- **The token's page** has an **Audit trail** table: Audit Logging's own activity table, listing what this token changed.
+- **The token's page** has an **Audit log** table: Audit Logging's own activity table, listing what this token changed.
 
 The table is gated by `view_audit_trail?` on your token policy — Avo's own convention for a `has_many`, asked once for the table and again by the endpoint that fills it. Under `explicit_authorization` (Avo's default) the table stays hidden until the policy defines it, exactly as any other association would:
 
@@ -985,10 +1073,11 @@ The `api` origin needs a current user to attribute to. A hand-rolled `setup_auth
 
 ## Works better with
 
-Nothing on this page needs another add-on. Two of them change what the feature can do.
+Nothing on this page needs another add-on. Two of them change what the feature can do, and one gives you a terminal onto it.
 
 - **[`avo-authorization`](./authorization.html)** — the layer every question here defers to: which tokens a user sees, who may revoke or re-entitle one, and the policies that [entitlements subtract from](#entitlements-sit-in-front-of-your-policies-never-instead-of-them). Without it every such question answers yes — [Authorization](#authorization) and [Who may manage tokens](#who-may-manage-tokens) have the exact failure modes.
 - **[`avo-custom_controls`](./custom-controls.html)** — promotes **Revoke** out of the Actions dropdown. On a token's page it becomes a button beside Edit; on the index it becomes an icon at the end of every row, so working down a list of tokens costs one click each instead of a round trip. It appears only where the Actions menu would have offered it anyway — the control is filtered by the same `revoke?` policy and the same active-token check, so an expired or already-revoked token shows nothing.
+- **[`avo-cli`](./cli.html)** — the command line client for this API. It reads the [discovery endpoints](#discovery) above, so `avo list users` and `avo create users --data '{"name": "Ada"}'` work against any app running `avo-api` with nothing installed in it. What it may do is this token's entitlements and your policies, exactly as for any other client.
 
 ## Localization
 
@@ -1024,4 +1113,10 @@ The lifecycle chips say "3 minutes ago" through Rails' own `datetime.distance_in
 
 ```bash
 gem install avo-cli
+```
+
+To get the [OpenAPI document](#openapi-document) for the token the CLI is logged in with:
+
+```bash
+avo schema --format openapi > openapi.json
 ```

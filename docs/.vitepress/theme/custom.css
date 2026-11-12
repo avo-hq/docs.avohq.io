@@ -108,7 +108,7 @@ pre code span.line:not(:last-child) {
 /* VitePress' scroll-margin only clears the nav (+ the version bar). PageHeader's
   sticky api/guide callout also covers the top of the page, so add its height —
   measured there, 0 when no callout is on the page. */
-.vp-doc :is(h1, h2, h3, h4, h5, h6) {
+.vp-doc :is(h1, h2, h3, h4, h5, h6, .option-anchor) {
   scroll-margin-top: calc(
     var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px +
       var(--api-callout-height, 0px)
@@ -132,4 +132,79 @@ pre code span.line:not(:last-child) {
 .skills-catalog .vp-doc td:first-child code,
 .cli-reference .vp-doc td:first-child code {
   white-space: nowrap;
+}
+
+/* The outline links are 26px tall (DocOutlineItem.vue) instead of VitePress's
+   32px; VitePress positions the active marker for 32px rows. */
+.VPDocAsideOutline .outline-marker {
+  margin-top: -3px;
+}
+
+/* Upgrade guide timeline (pageClass: upgrade-timeline) */
+.upgrade-timeline .tl-date {
+  margin-left: 0.5rem;
+  font-size: 0.8em;
+  font-weight: 400;
+  color: var(--vp-c-text-3);
+}
+.upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root {
+  margin-left: 4px;
+}
+.upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root > li {
+  padding-left: 14px;
+  border-left: 2px solid var(--vp-c-divider);
+  transition: border-color 0.25s ease;
+}
+.upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root > li::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 9px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--vp-c-bg);
+  border: 2px solid var(--vp-c-divider);
+  transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+/* The entry you're reading gets a slightly bigger dot. */
+.upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root > li:has(> .outline-link.active)::before {
+  transform: scale(1.25);
+}
+@media (prefers-reduced-motion: reduce) {
+  .upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root > li,
+  .upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root > li::before {
+    transition: none;
+  }
+}
+/* The entry you're reading and every older one below it: the releases you still have to go through. */
+.upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root > li:has(> .outline-link.active),
+.upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root > li:has(> .outline-link.active) ~ li {
+  border-left-color: var(--vp-c-brand-1);
+}
+.upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root > li:has(> .outline-link.active)::before,
+.upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root > li:has(> .outline-link.active) ~ li::before {
+  border-color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-1);
+}
+.upgrade-timeline .VPDocAsideOutline .VPDocOutlineItem.root > li:has(> .outline-link.active) ~ li > .outline-link {
+  color: var(--vp-c-text-1);
+}
+.upgrade-timeline .VPDocAsideOutline .outline-marker {
+  display: none;
+}
+.upgrade-timeline .VPDocAsideOutline .outline-link .tl-date {
+  display: block;
+  margin: -4px 0 6px;
+  line-height: 14px;
+  font-size: 12px;
+}
+.upgrade-timeline .since-marker {
+  margin: 32px 0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border-left: 4px solid var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+  font-size: 14px;
+  font-weight: 500;
 }

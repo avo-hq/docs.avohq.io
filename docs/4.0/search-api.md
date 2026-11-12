@@ -45,7 +45,7 @@ self.search = {
 
 - **Type:** Proc
 - **Default:** `nil` — search disabled for the resource
-- **Locals:** `q` (stripped search string), `query` (base scope with [authorization scopes](./authorization.html#scopes) applied), `params`, [`search_type`](#search_type), plus all `Avo::ExecutionContext` attributes
+- **Locals:** `q` (stripped search string), `query` (base scope with [authorization scopes](./authorization.html#limit-which-records-a-user-sees) applied), `params`, [`search_type`](#search_type), plus all `Avo::ExecutionContext` attributes
 - **Return:** an `ActiveRecord::Relation`, or an Array of hashes for [custom search providers](#custom-search-providers)
 
 </Option>
@@ -169,6 +169,8 @@ config.global_search = {
 <Option name="`search_on_type`" headingSize="3">
 
 Whether typing in the palette triggers the search automatically. When `false`, the dropdown still opens on focus or <kbd>Cmd</kbd> + <kbd>K</kbd>, but the user must press <kbd>Enter</kbd> to run the search and navigate to the dedicated results page.
+
+For a non-empty query, "Show all results for..." is highlighted by default. Arrow keys select a matching resource in the "Go to" section; <kbd>Enter</kbd> then opens that resource instead.
 
 ```ruby
 config.global_search = {

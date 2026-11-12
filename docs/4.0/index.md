@@ -78,7 +78,7 @@ The core covers managing records. Add-ons extend it toward whatever job your app
 
 **Connect other systems**
 
-- [JSON API](./rest-api.html): expose your resources as a JSON API for integrations and mobile apps.
+- [API](./rest-api.html): expose your resources as a JSON API for integrations and mobile apps.
 - [HTTP Resource](./http-resource.html): manage data from an external API as if it were local.
 
 ## Your code
@@ -112,7 +112,11 @@ Avo ships as a [gem](https://rubygems.org/gems/avo), so none of its internals li
 bin/rails avo:update
 ```
 
-That resolves every Avo gem you have — core plus any add-ons — and updates them together, conservatively.
+That resolves every Avo gem you have — core plus any add-ons — and updates them together, conservatively. It can [commit and push the updated lockfile](./installation.html#commit-and-push-the-update) too.
+
+<VersionReq package="avo" version="4.3.11" />
+
+The status page (`/status` under your Avo mount path) marks each gem that has a newer release. In development, its **Update all** button runs the same task, shows the output and offers to restart the app. **What's new** is a changelog of Avo and the gems you run, newest first, with what you have installed marked.
 
 ## Start here
 

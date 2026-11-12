@@ -28,15 +28,15 @@ Options that only certain field types respond to (like `options` on the [select 
 
 <Option name="`name`" headingSize="3">
 
-The label displayed for the field. When omitted, Avo humanizes the field's id (`is_available` becomes "Is available"), first checking for an [i18n translation](./i18n.html) under `avo.field_translations.<id>`.
+The label displayed for the field. When omitted, Avo checks for an [i18n translation](./i18n.html) under `avo.field_translations.<id>`, then the model's attribute translation (`activerecord.attributes.<model>.<id>`), and otherwise humanizes the field's id (`is_available` becomes "Is available").
 
 ```ruby
 field :is_available, as: :boolean, name: "Availability"
 ```
 
 - **Type:** String or Proc
-- **Default:** the humanized field id
-- **i18n key:** `avo.field_translations.<field_id>` — used when defined, otherwise the id is humanized
+- **Default:** the model's attribute translation, else the humanized field id
+- **i18n key:** `avo.field_translations.<field_id>`, then `activerecord.attributes.<model>.<field_id>` — the first one defined; otherwise the id is humanized
 
 </Option>
 
@@ -82,13 +82,13 @@ field :custom_css, as: :code, label_help: "This enables you to edit the user's c
 
 <Option name="`tooltip`" headingSize="3">
 
-Text shown in a bubble when the user hovers the field's value — the rendered value on <Index /> and <Show />, the input on <New /> and <Edit />. Accepts HTML. A block receives `record`, `resource`, `view`, and `field`; return `nil` to render no tooltip.
+Text shown in a bubble when the user hovers the field's value — the rendered value on <Index /> and <Show />, the input on <New /> and <Edit />. Renders as text unless the value is a safe string, such as `tag.strong(record.name)` or the result of `sanitize`. A block receives `record`, `resource`, `view`, and `field`; return `nil` to render no tooltip.
 
 ```ruby
 field :status, as: :badge, tooltip: -> { "Revoked at #{record.revoked_at}" if record.revoked_at? }
 ```
 
-- **Type:** String (HTML allowed) or Proc
+- **Type:** String or Proc
 - **Default:** `nil`
 - **i18n key:** `avo.field_translations.<field_id>.tooltip` — used when defined
 
@@ -96,13 +96,13 @@ field :status, as: :badge, tooltip: -> { "Revoked at #{record.revoked_at}" if re
 
 <Option name="`label_tooltip`" headingSize="3">
 
-Text shown in a bubble when the user hovers the field's label, on every view and on the <Index /> table header. An info icon next to the label marks it as hoverable. Accepts HTML. A block receives `resource`, `view`, and `field`; `record` is `nil` on the <Index /> header.
+Text shown in a bubble when the user hovers the field's label, on every view and on the <Index /> table header. An info icon next to the label marks it as hoverable. Renders as text unless the value is a safe string, such as `tag.strong(record.name)` or the result of `sanitize`. A block receives `resource`, `view`, and `field`; `record` is `nil` on the <Index /> header.
 
 ```ruby
 field :mrr, as: :number, label_tooltip: "Monthly recurring revenue, net of refunds"
 ```
 
-- **Type:** String (HTML allowed) or Proc
+- **Type:** String or Proc
 - **Default:** `nil`
 - **i18n key:** `avo.field_translations.<field_id>.label_tooltip` — used when defined
 
@@ -209,6 +209,31 @@ field :is_featured, as: :boolean, visible: -> { context[:user].is_admin? }
 :::warning
 On form submissions, the `visible` block is evaluated in the `create` and `update` controller actions, where `resource.record` can be `nil` (on creation). Use safe navigation: `resource.record&.enabled?`.
 :::
+
+</Option>
+
+<Option name="`hide_if_blank`" headingSize="3">
+
+<VersionReq package="avo" version="4.2.11" />
+
+Hides the field on the given views when its value is blank. It applies on top of the other visibility options: the field shows only when it passes all of them.
+
+```ruby
+field :stripe_id, as: :text, hide_if_blank: :all
+```
+
+| View     | When the value is blank                                                                                                |
+| -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `:index` | the column is hidden only when every row on the page is blank; otherwise it keeps its position and blank rows show `—` |
+| `:show`  | the field is hidden                                                                                                    |
+| `:edit`  | the field is hidden, so it can't be filled in from the form                                                            |
+| `:new`   | the field is hidden, unless a [`default`](#default) gives it a value                                                   |
+
+- **Type:** Symbol or Array of Symbols
+- **Default:** `nil`
+- **Values:** `:index`, `:show`, `:new`, `:edit`, `:forms`, `:display`, `:all`
+- **Blank:** Rails' `blank?` — `nil`, `""`, `[]`, `{}`, and `false`, so a boolean set to `false` is hidden
+- **Associations:** association fields (`has_many` and the like) are checked with an `EXISTS` query, without loading the records
 
 </Option>
 
@@ -380,6 +405,34 @@ field :one_time_password, as: :text, autocomplete: "one-time-code"
 
 </Option>
 
+<Option name="`autofocus`" headingSize="3">
+
+<VersionReq package="avo" version="4.3.1" />
+
+Adds the HTML `autofocus` attribute to the field's input on the <New /> and <Edit /> views and in [action](./actions.html) modals, so the cursor starts there when the form opens. The block is executed in [`Avo::ExecutionContext`](./execution-context.html) with access to `record`, `resource`, and `view`, plus the usual defaults (`context`, `params`, `view_context`, `current_user`). A falsy result leaves the input alone.
+
+```ruby
+field :title, as: :text, autofocus: true
+```
+
+```ruby
+field :title, as: :text, autofocus: -> { view.new? }
+```
+
+In an action modal, the field takes the place of the default target, the modal's first input, so only one input gets the attribute. When several fields on a <New /> or <Edit /> form set it, the browser focuses the first one on the page.
+
+- **Type:** Boolean or Proc
+- **Default:** `nil`
+- **Supported fields:** `text`, `textarea`, `number`, `password`, `select`, `status`, `boolean`, `code`, `easy_mde`, `area`, `external_image`, `file`, `files`, `progress_bar`, `country`, `belongs_to`, and custom fields generated with `bin/rails generate avo:field`. Every other field (`date`, `date_time`, `time`, `tags`, `trix`, `tiptap`, `key_value`, `radio`, and the rest) ignores it.
+- **`belongs_to`:** focuses the record select. A `searchable` field ignores the option, and a polymorphic one focuses the type select.
+- **Ignored in:** [nested association forms](./associations/has_many.html#nested-in-forms), [reactive](#react_on) re-renders, and the action card in an [Avo AI](./ai.html) chat. Each of those keeps focus where the surrounding form put it — the parent form, the field the user is typing in, the chat composer.
+
+:::warning
+The browser can't focus a field inside a [tab](./fields-layout-api.html#tab) that isn't open when the page loads, or a [`readonly`](#readonly) or [`disabled`](#disabled) field. In an action modal, setting the option on a field that ignores it leaves the modal with nothing focused.
+:::
+
+</Option>
+
 ## Index view
 
 <Option name="`sortable`" headingSize="3">
@@ -411,6 +464,7 @@ field :status, as: :select, summarizable: true
 
 - **Type:** Boolean
 - **Default:** `false`
+- **Authorization:** the chart asks the resource's [`index?`](./authorization-api.html#index), or on an association panel the parent's [`view_{association}?`](./authorization-api.html#view_association). <VersionReq package="avo" version="4.3.8" /> It never asks a `distribution_chart?` method
 
 </Option>
 
@@ -424,7 +478,7 @@ field :name, as: :text, link_to_record: true
 
 - **Type:** Boolean
 - **Default:** `false`
-- **Available on:** [`id`](./fields/id.html), [`text`](./fields/text.html), [`gravatar`](./fields/gravatar.html), and [`belongs_to`](./associations/belongs_to.html) fields
+- **Available on:** [`id`](./fields/id.html), [`text`](./fields/text.html), [`number`](./fields/number.html), [`date`](./fields/date.html), [`date_time`](./fields/date_time.html), [`time`](./fields/time.html), [`gravatar`](./fields/gravatar.html), [`file`](./fields/file.html), [`external_image`](./fields/external_image.html), and [`belongs_to`](./associations/belongs_to.html) fields
 
 Related: the global [`id_links_to_resource`](./customization.html#id-links-to-resource) configuration links every `id` field automatically.
 
@@ -563,7 +617,7 @@ field :status, as: :custom_status, meta: {foo: :bar}
 
 <Option name="`react_on`" headingSize="3">
 
-Re-evaluates the field when other fields change in the form, refreshing `@record` with the latest form values. Requires the **`avo-reactive_fields`** add-on gem (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#gems) for the `packager.dev` source).
+Re-evaluates the field when other fields change in the form, refreshing `@record` with the latest form values. Requires the **`avo-reactive_fields`** add-on gem (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#upgrade-your-gems) for the `packager.dev` source).
 
 ```ruby
 field :city,
@@ -576,6 +630,6 @@ field :city,
 - **Default:** `nil`
 - **Values:** a single field (`:field_one`), multiple fields (`[:field_one, :field_two]`), or `:all` (react to every field in the form)
 
-Updates run when a watched field's value is committed — the `change` event. For selects, checkboxes, and radios that's on selection; for text inputs and textareas it's when the input loses focus. To read a field's original value inside a block, use the [`*_was`](https://api.rubyonrails.org/classes/ActiveModel/Dirty.html#method-i-2A_was) methods.
+Updates run when a watched field changes. Selects, checkboxes and radios react on selection (the `change` event). Text inputs and textareas react 300 ms after typing pauses (a debounced `input` event), and again on blur if the value changed. To read a field's original value inside a block, use the [`*_was`](https://api.rubyonrails.org/classes/ActiveModel/Dirty.html#method-i-2A_was) methods.
 
 </Option>

@@ -118,7 +118,7 @@ end
 :::
 
 :::warning
-When using Pundit policies, access to actions is restricted with the `act_on?` method. If you think you should see an action and you don't, check the policy. More info [here](./authorization#act-on).
+When using Pundit policies, access to actions is restricted with the `act_on?` method. If you think you should see an action and you don't, check the policy. More info [here](./authorization-api.html#act_on).
 :::
 
 :::info
@@ -127,9 +127,9 @@ You may use the [custom controls](./custom-controls.html) feature to show action
 
 ## Collect input with fields
 
-An action can define fields, shown to the user in the action's modal. Most work the same way as fields on resources. When the action runs on a single record the fields are hydrated from that record; otherwise fields that do not depend on a record render as plain form inputs. Association fields are an exception, as described below. The submitted values arrive in `handle` as the `fields` argument.
+An action can define fields, shown to the user in the action's modal. Most work the same way as fields on resources. When the action runs on a single record the fields are hydrated from that record; otherwise they render empty. The submitted values arrive in `handle` as the `fields` argument.
 
-Every field you declare here renders in the modal. The `hide_on` and `show_on` marks belong to resource views and do not filter an action's fields. A field with no form component, such as `badge`, renders read-only, as it does on the <Show /> view, which lets you show context next to the inputs.
+Every field you declare here renders in the modal. The `hide_on` and `show_on` marks belong to resource views and do not filter an action's fields. A field with no form component, such as `badge`, renders read-only, as it does on the <Show /> view, which lets you show context next to the inputs. The one exception: a `badge` declared with `show_on: :forms` renders as a select of its `options`.
 
 ```ruby
 # app/avo/actions/toggle_inactive.rb
@@ -143,20 +143,15 @@ end
 
 Check out the [Fields page](./fields.md) for everything fields can do.
 
-### Choose an associated record in a collection action
+### Choose an associated record
 
-A [`belongs_to` field](./associations/belongs_to.html) needs one current record to resolve its association. It works when you run the action from a record's <Show /> view or select exactly one record on the <Index /> view because Avo hydrates the action with that record. It cannot render when you select multiple records or run a standalone action because there is no single current record.
-
-For a short list of choices, use a [`select` field](./fields/select.html) with options loaded when the form renders:
+A [`belongs_to` field](./associations/belongs_to.html) renders in the action's modal wherever the action was started from: a record's <Show /> view, one or several records selected on the <Index /> view, or a [standalone action](#run-an-action-without-records) with no record at all. <VersionReq package="avo" version="4.2.9" /> On a single record it opens with that record's association preselected; with several records or none it opens empty.
 
 ```ruby
 # app/avo/actions/assign_user.rb
 class Avo::Actions::AssignUser < Avo::BaseAction
   def fields
-    field :user_id,
-      as: :select,
-      options: -> { User.order(:name).pluck(:name, :id) },
-      include_blank: true
+    field :user, as: :belongs_to
   end
 
   def handle(query:, fields:, **)
@@ -169,7 +164,23 @@ class Avo::Actions::AssignUser < Avo::BaseAction
 end
 ```
 
-For a long list that needs search, use a [`tags` field with `fetch_values_from`](./fields/tags.html#fetch_values_from) in select mode:
+:::info
+Before `avo` <Version version="4.2.9" /> the field only rendered when the action had exactly one record, so older actions guard it with `visible: -> { resource.record.present? }` or use one of the alternatives below. Drop the guard to show the field everywhere.
+:::
+
+For a value that isn't an association, use a plain field. A [`select` field](./fields/select.html) covers a short list of choices:
+
+```ruby
+# app/avo/actions/assign_user.rb
+def fields
+  field :user_id,
+    as: :select,
+    options: -> { User.order(:name).pluck(:name, :id) },
+    include_blank: true
+end
+```
+
+A [`tags` field with `fetch_values_from`](./fields/tags.html#fetch_values_from) in select mode covers a long list that needs search:
 
 ```ruby
 # app/avo/actions/assign_user.rb
@@ -183,6 +194,36 @@ end
 ```
 
 The endpoint receives the search text in `params[:q]` and returns objects with `value` and `label` keys. Both alternatives submit the selected ID as `fields[:user_id]`.
+
+### Read a `belongs_to` field in `handle`
+
+A `belongs_to` field arrives in `fields` under its foreign key, not under the field's id: `field :user, as: :belongs_to` arrives as `fields[:user_id]`.
+
+A [polymorphic](./associations/belongs_to.html#polymorphic-belongs-to) one arrives as two keys, the type and the id. <VersionReq package="avo" version="4.2.7" />
+
+```ruby
+# app/avo/actions/move_review.rb
+class Avo::Actions::MoveReview < Avo::BaseAction
+  def fields
+    field :reviewable, as: :belongs_to, polymorphic_as: :reviewable, types: [Post, Team]
+  end
+
+  def handle(query:, fields:, **)
+    query.each do |review|
+      review.update!(
+        reviewable_type: fields[:reviewable_type],
+        reviewable_id: fields[:reviewable_id]
+      )
+    end
+
+    succeed "Moved the review."
+  end
+end
+```
+
+:::warning
+Both values reach `handle` as the strings the form submitted. Unlike a `belongs_to` field on a resource form, an action does not check the type against the field's `types` list, so check it yourself before you store it or turn it into a class.
+:::
 
 ## Write the `handle` method
 
@@ -310,7 +351,7 @@ You can try this flow on the [avodemo](https://main.avodemo.com/avo/resources/ci
 
 ## Customize the modal
 
-The modal's texts can each be a string or a block — blocks run in [`Avo::ExecutionContext`](./execution-context) with access to `resource`, `record`, `view`, `arguments`, and `query`:
+The modal's texts can each be a string or a block — blocks run in [`Avo::ExecutionContext`](./execution-context) with access to `resource`, `record`, `view`, `arguments`, `query`, and [`index_query`](#work-with-every-record-on-the-index) (`nil` while `name` renders in the dropdown):
 
 - [`name`](./actions-api.html#name) — the action's display name in the dropdown and modal
 - [`description`](./actions-api.html#description) — a short explanation under the name in the modal header
@@ -330,7 +371,7 @@ class Avo::Actions::ReleaseFish < Avo::BaseAction
 end
 ```
 
-If the action is safe to run without asking, set [`confirmation`](./actions-api.html#confirmation) to `false` and it executes immediately on trigger. To stop the modal from closing when the user clicks outside it, set [`close_modal_on_backdrop_click`](./actions-api.html#close_modal_on_backdrop_click) to `false`. To give a larger form more room, set [`modal_width`](./actions-api.html#modal_width).
+If the action is safe to run without asking, set [`confirmation`](./actions-api.html#confirmation) to `false` and it executes immediately on trigger. To stop the modal from closing when the user clicks outside it, set [`close_modal_on_backdrop_click`](./actions-api.html#close_modal_on_backdrop_click) to `false`. To give a larger form more room, set [`modal_width`](./actions-api.html#modal_width). To leave out the modal's buttons, set [`hide_confirm_button`](./actions-api.html#hide_confirm_button) or [`hide_cancel_button`](./actions-api.html#hide_cancel_button): hiding Run also disables <kbd>Mod</kbd>+<kbd>Enter</kbd>, while Escape and the header X keep closing the modal.
 
 ## Run an action without records
 
@@ -349,6 +390,80 @@ end
 :::tip
 Standalone actions pair well with [fields](#collect-input-with-fields) to collect the input the operation needs.
 :::
+
+## Work with every record on the Index
+
+`query` holds only the records the user selected. When the action needs the whole list the user is looking at, read `index_query`: the <Index /> query with the current filters, scopes, search, and sort applied, before pagination. It is the same whether the user selected one record, a page, all matching records, or nothing, so it suits standalone exports of "everything I filtered".
+
+It is available in `handle`, in `fields`, and in the modal's text blocks:
+
+```ruby
+# app/avo/actions/export_csv.rb
+class Avo::Actions::ExportCsv < Avo::BaseAction
+  self.standalone = true
+  self.visible = -> { view.index? }
+  self.message = -> { "Export #{index_query&.count.to_i} records?" }
+
+  def fields
+    field :only_selected, as: :boolean, help: "Out of #{index_query&.count.to_i} matching records"
+  end
+
+  def handle(query:, fields:, **)
+    records = fields[:only_selected] ? query : index_query
+    # ...
+  end
+end
+```
+
+`index_query` is `nil` when there is no list to read it from: on a <Show /> or <Edit /> page (an action started from a has-many table on that page gets that table's query), when the filters match no records, on a [map view](./map-view.html) with its table hidden, on an [array resource](./array-resource.html) that paginates at the source, and when the query can't be serialized (see [Select All](./select-all.html#serialization-known-issues)). A `name` block also sees `nil` while the dropdown renders. Guard with `index_query&.` wherever one of those can happen.
+
+## Run actions from an association panel
+
+An association panel that lists records, such as `has_many` or `has_and_belongs_to_many`, carries the actions declared on the **associated** resource. They run on the rows you check inside the panel, so it behaves like a small <Index /> view. An action that isn't [standalone](#run-an-action-without-records) stays disabled until you check at least one row. <VersionReq package="avo" version="4.3.3" /> To run one on a single row without checking it, use a [row control](./custom-controls.html#customize-the-row-controls), which hydrates the action with that row's record.
+
+```ruby
+# app/avo/resources/team.rb
+class Avo::Resources::Team < Avo::BaseResource
+  def fields
+    # The Team members panel offers the actions declared on Avo::Resources::User
+    field :team_members, as: :has_many
+  end
+end
+```
+
+While that dropdown renders, `record` is `nil`, as on the main <Index /> view, so a [`name`](./actions-api.html#name) or [`arguments`](./actions-api.html#arguments) block has to handle its absence. The panel's parent record reaches the [`visible`](./actions-api.html#visible) block as `parent_resource.record`, which lets you hide an action depending on the record holding the panel:
+
+```ruby
+# app/avo/actions/toggle_inactive.rb
+class Avo::Actions::ToggleInactive < Avo::BaseAction
+  # `parent_resource` is nil outside an association panel.
+  self.visible = -> { parent_resource.nil? || !parent_resource.record.archived? }
+end
+```
+
+### Use the panel's parent record
+
+An action started from a panel also knows the panel's parent once it runs. `parent_record` and `parent_resource` are available in `fields`, `handle`, and every block of the action, so an action in a team's **Team members** panel can work on that team. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+# app/avo/actions/remove_from_team.rb
+class Avo::Actions::RemoveFromTeam < Avo::BaseAction
+  self.name = "Remove from team"
+  # Only offer it inside a team's panel.
+  self.visible = -> { parent_record.is_a?(Team) }
+  self.message = -> { "Remove the selected members from #{parent_record.name}?" }
+
+  def handle(query:, **)
+    parent_record.team_members.delete(query)
+
+    succeed "Removed #{query.size} members from #{parent_record.name}"
+  end
+end
+```
+
+Both are `nil` when the action wasn't started from an association, such as on the main <Index /> view, so guard for that in an action that also runs there.
+
+The parent comes from the panel's link, so Avo checks it again when the action runs. The parent's field has to list the action's resource, and the user has to pass the same `view_{association}?` and `act_on_{association}?` [association policy methods](./authorization.html#authorize-association-controls) that show the panel and its **Actions** button. If they don't, the action doesn't run.
 
 ## Control visibility and authorization
 

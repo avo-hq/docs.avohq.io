@@ -66,7 +66,8 @@ The generated view components are basic text fields for now.
   <%= @form.text_field @field.id,
     class: classes("w-full"),
     placeholder: @field.placeholder,
-    disabled: disabled? %>
+    disabled: disabled?,
+    autofocus: @autofocus %>
 <% end %>
 
 <%# app/components/avo/fields/progress_bar_field/index_component.html.erb %>
@@ -289,7 +290,7 @@ Now let's do something about those views. Let's add a progress bar to the `Index
 
 <Image src="/assets/img/4_0/custom-fields/progress-index.webp" dark-src="/assets/img/4_0/custom-fields/progress-index-dark.webp" width="1520" height="570" alt="An Avo index table with ID, Name and Progress columns, where Progress renders a small progress bar with the value and a percent suffix." />
 
-For the `Edit` view, we're going to do something different. We'll implement a `range` input.
+For the `Edit` view, we're going to do something different. We'll implement a `range` input. Pass `autofocus: @autofocus` to it so the field honors the [`autofocus`](./field-options-api.html#autofocus) option.
 
 ```erb{1}
 <%# app/components/avo/fields/progress_bar_field/edit_component.html.erb %>
@@ -306,6 +307,7 @@ For the `Edit` view, we're going to do something different. We'll implement a `r
     class: 'w-full',
     placeholder: @field.placeholder,
     disabled: disabled?,
+    autofocus: @autofocus,
     min: 0,
     # add the field-specific options
     max: @field.max,

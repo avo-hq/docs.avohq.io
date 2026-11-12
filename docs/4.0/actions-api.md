@@ -30,7 +30,7 @@ class Avo::Actions::ToggleInactive < Avo::BaseAction
 end
 ```
 
-Options that accept a block are executed using [`Avo::ExecutionContext`](./execution-context), with access to `resource`, `record`, `view`, `arguments`, and `query` (plus the extras listed on each option).
+Options that accept a block are executed using [`Avo::ExecutionContext`](./execution-context), with access to `resource`, `record`, `view`, `arguments`, `query`, and `index_query` (plus the extras listed on each option).
 
 ## Registration
 
@@ -71,6 +71,8 @@ end
 
 - **Type:** Hash or Proc returning a Hash
 - **Default:** `{}`
+
+Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults: `resource` and `record`, with `record` `nil` on an <Index /> view or an [association panel](./actions.html#run-actions-from-an-association-panel).
 
 :::info
 Arguments are encrypted and Base64-encoded when embedded in action URLs, so sensitive values don't leak into the query string.
@@ -133,6 +135,8 @@ end
 
 - **Type:** String or Proc
 - **Default:** `nil` — the class name is humanized (`ToggleInactive` → "Toggle inactive")
+
+Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults: `resource`, `record`, `view`, `arguments`, `query`, `index_query`. `record` is `nil` while the dropdown renders on an <Index /> view or an [association panel](./actions.html#run-actions-from-an-association-panel); it holds a record only when the action was hydrated with one, from <Show /> or a row control.
 
 </Option>
 
@@ -269,6 +273,40 @@ end
 
 </Option>
 
+<Option name="`hide_confirm_button`" headingSize="3">
+
+Whether the modal leaves out its confirm (**Run**) button. Hiding it also disables the <kbd>Mod</kbd>+<kbd>Enter</kbd> hotkey, so the action runs only from a control you render yourself. A form with a single text-like field still submits on <kbd>Enter</kbd> (the browser's implicit submission), so hiding the button does not make a one-field modal read-only.
+
+```ruby
+class Avo::Actions::ExportReport < Avo::BaseAction
+  self.hide_confirm_button = -> { view.index? }
+end
+```
+
+- **Type:** Boolean or Proc
+- **Default:** `false`
+
+</Option>
+
+<Option name="`hide_cancel_button`" headingSize="3">
+
+Whether the modal leaves out its cancel button. Only the button goes: <kbd>Escape</kbd> still closes the modal unless [`close_modal_on_backdrop_click`](#close_modal_on_backdrop_click) is `false`, and the X in the header always closes it. When both buttons are hidden the modal renders without a footer.
+
+```ruby
+class Avo::Actions::ExportReport < Avo::BaseAction
+  self.hide_cancel_button = true
+end
+```
+
+- **Type:** Boolean or Proc
+- **Default:** `false`
+
+:::warning
+Hiding the cancel button while `close_modal_on_backdrop_click` is `false` leaves keyboard users with only the Run button, because the header X needs a mouse.
+:::
+
+</Option>
+
 ## Behavior
 
 <Option name="`standalone`" headingSize="3">
@@ -304,6 +342,7 @@ Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults:
 - `view` — the view the action was started from (`index`, `show`, or `edit`); `authorize`, the modal blocks, `fields`, and `handle` read the same value
 - `resource` — the current resource instance
 - `parent_resource` — the parent resource, if any (access the parent record via `parent_resource.record`)
+- `parent_record` — the parent record, if any <VersionReq package="avo" version="4.4.4" />
 - `params`
 
 </Option>
@@ -321,7 +360,7 @@ end
 - **Type:** Boolean or Proc
 - **Default:** `true`
 
-Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults: `action`, `resource`, `view`.
+Block extras beyond the [`Avo::ExecutionContext`](./execution-context) defaults: `action`, `resource`, `view`, plus `parent_record` and `parent_resource` <VersionReq package="avo" version="4.4.4" />.
 
 `view` is the view the action was started from, checked against the request's route (`show` and `edit` need a record in the URL). It is never `new`. Do not make it the only condition: gate who may run the action on `current_user`, and single-versus-bulk on `query.size` or `record`.
 
@@ -354,6 +393,10 @@ The method every action implements. Receives keyword arguments:
 | `current_user` | The currently authenticated user. |
 | `resource` | The Avo resource instance that triggered the action. |
 | `request` | The current `ActionDispatch::Request` object. |
+
+Besides these, the action can read `index_query`, the <Index /> query with filters, scopes, search, and sort applied, before pagination. It can be `nil`; see [Work with every record on the Index](./actions.html#work-with-every-record-on-the-index).
+
+When the action was started from an association panel, it can also read `parent_record` and `parent_resource`, the record that holds the panel and its resource. Both are `nil` when the action wasn't started from an association; see [Use the panel's parent record](./actions.html#use-the-panel-s-parent-record). <VersionReq package="avo" version="4.4.4" />
 
 ```ruby
 def handle(query:, fields:, current_user:, resource:, request:, **args)

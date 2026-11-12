@@ -3,6 +3,7 @@ import sidebar20 from "./sidebar-2.0.js"
 import sidebar30 from "./sidebar-3.0.js"
 import fs from "node:fs"
 import path from "node:path"
+import { fileURLToPath } from "node:url"
 
 const fieldsMenuItems4 = getFiles('fields', '4.0')
 
@@ -37,6 +38,9 @@ function transformRawMd(src, relativePath) {
 const config = {
   title: "Avo docs",
   description: "Avo Admin for Rails docs.",
+  sitemap: {
+    hostname: "https://docs.avohq.io",
+  },
   markdown: {
     image: {
       lazyLoading: true,
@@ -95,6 +99,14 @@ const config = {
     }
   },
   vite: {
+    resolve: {
+      alias: [
+        {
+          find: /^.*\/VPDocOutlineItem\.vue$/,
+          replacement: fileURLToPath(new URL('./theme/components/DocOutlineItem.vue', import.meta.url)),
+        },
+      ],
+    },
     plugins: [
       {
         // Dev parity with the published .md files: serve them transformed
@@ -234,12 +246,14 @@ const config = {
             { text: "Actions", link: "/4.0/actions.html" },
             { text: "Select All", link: "/4.0/select-all.html" },
             { text: "Cover and Avatar", link: "/4.0/cover-and-avatar.html" },
+            { text: "Record chips", link: "/4.0/record-chips.html" },
             {
               text: "Views",
               link: "/4.0/views.html",
               collapsed: false,
               items: [
                 { text: "Overview", link: "/4.0/views.html" },
+                { text: "Slots", link: "/4.0/slots.html" },
                 { text: "Table view", link: "/4.0/table-view.html" },
                 { text: "Grid view", link: "/4.0/grid-view.html" },
                 { text: "Map view", link: "/4.0/map-view.html" },

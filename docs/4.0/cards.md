@@ -164,6 +164,24 @@ Someone clicking the card's [refresh control](#refresh-a-card-on-demand) is aski
 Partial and HTML cards build their content at render time instead of running a `query`, so `cache_for` does nothing for them. Wrap the markup in Rails' own `cache` block instead.
 :::
 
+## Load cards only when they're needed
+
+<VersionReq package="avo-dashboards" version="4.3.4" />
+
+Every card loads in its own request after the page renders, so a slow card never holds up the page. A card also waits until it scrolls into view: a card further down a long dashboard runs its `query` only when the viewer reaches it.
+
+If a card is too expensive to run on every visit, even when it's visible, set [`loading`](./cards-api.html#self.loading) to `:manual`, the same value tabs and association fields take. The card renders its title, description, and a load button instead of its content, and runs its `query` only when someone clicks it.
+
+```ruby{4}
+# app/avo/cards/revenue_breakdown.rb
+class Avo::Cards::RevenueBreakdown < Avo::Cards::ChartkickCard
+  self.id = 'revenue_breakdown'
+  self.loading = :manual
+end
+```
+
+Once loaded, the card behaves like any other card: its range select, [refresh control](#refresh-a-card-on-demand), and `refresh_every` polling all work. Refreshing the whole dashboard skips cards that weren't loaded yet.
+
 ## Localization
 
 The shortest path is a locale key. Avo resolves `avo.card_translations.<class_path>.{label,description,discreet_description}` before falling back to the class attribute, the same way it does for [resources and actions](./i18n.html#localizing-scopes-cards-and-dashboards):
@@ -260,12 +278,13 @@ sv:
     cards:
       refresh: Refresh card
       refresh_labeled: Refresh %{label}
+      load: Load card
       dashboard:
         learn_more: Learn more
         refresh: Refresh all cards
 ```
 
-`refresh_labeled` names the card being refreshed and is used when the card has a label; `refresh` is the fallback for a card without one.
+`refresh_labeled` names the card being refreshed and is used when the card has a label; `refresh` is the fallback for a card without one. `load` is the Load button of a manual card without a label; with one, the button uses Avo's own `avo.load_item`, already translated in every locale Avo ships.
 
 **Keep the `%{label}` placeholder.** Dropping it is harmless — the sentence just renders without the card name. *Renaming* it (to `%{card}`, say) is what I18n treats as an error, and Avo catches that and falls back to `refresh` plus the label rather than letting one translation break the dashboard header.
 
@@ -587,7 +606,7 @@ end
 
 ## HTML card
 
-<VersionReq version="4.1" />
+<VersionReq package="avo-dashboards" version="4.1" />
 
 When the content is simple enough that a dedicated partial file feels like overhead, use an HTML card and build the body straight from Ruby. Implement a `body` method — every view helper (`tag`, `safe_join`, `link_to`, `number_to_currency`, `render`, `main_app`, …) is available directly on the card, and the return value can take three shapes.
 
@@ -663,7 +682,7 @@ Inline templates go through ActionView, so interpolated values (`<%= user.name %
 
 ## Table card
 
-<VersionReq version="4.1" />
+<VersionReq package="avo-dashboards" version="4.1" />
 
 Use a table card to show a list of things — latest sign-ups, top products, failed jobs — styled like Avo's index table but fed by any query. Declare the columns as `fields` — the same DSL you use on resources — and return records from `query`.
 
@@ -757,7 +776,7 @@ The card's `rows` setting caps the table's height rather than fixing it. A short
 
 ## List card
 
-<VersionReq version="4.1" />
+<VersionReq package="avo-dashboards" version="4.1" />
 
 Use a list card whenever you want to show a list of things without table semantics — it renders a real `<ul>`, not a `<table>`, and there are no column headers. The first field is each row's primary content and every other field trails at the end edge — great for badges, booleans, or timestamps.
 
@@ -830,6 +849,8 @@ end
 ```
 
 :::
+
+A card hidden by `visible` is not served by its URL either. Resource cards follow the resource's policy: [`index?`](./authorization-api.html#index) for cards rendered without a record, [`show?`](./authorization-api.html#show) on the record otherwise, with the record found through the [policy scope](./authorization-api.html#Scope).
 
 ## Dividers
 
@@ -963,3 +984,50 @@ class Avo::Cards::PostsCount < Avo::Cards::MetricCard
   end
 end
 ```
+
+## Show a card in a custom tool
+
+<VersionReq package="avo-dashboards" version="4.3.2" />
+
+Card classes need a dashboard or a resource to render on. When a [custom tool](./custom-tools.html) wants the same look with its own data, render [`Avo::Cards::StandaloneCardComponent`](./cards-api.html#standalone-card-component) and pass it plain values. Its block is the card's body. Put [`Avo::Cards::MetricComponent`](./cards-api.html#metric-component) inside it to show a number the way a metric card does.
+
+```ruby
+# app/controllers/avo/tools_controller.rb
+class Avo::ToolsController < Avo::ApplicationController
+  def traffic
+    @page_title = "Traffic"
+    @range = params[:visitors_range].presence || "7"
+    @visitors = Visit.where(created_at: @range.to_i.days.ago..).count
+  end
+end
+```
+
+```erb
+<%# app/views/avo/tools/traffic.html.erb %>
+<div class="dashboard-grid dashboard-grid--cols-3">
+  <%= render Avo::Cards::StandaloneCardComponent.new(
+    label: "Recent visitors",
+    description: "Unique visitors in the selected range",
+    ranges: {"7 days" => 7, "30 days" => 30},
+    range: @range,
+    range_param: :visitors_range,
+    cols: 2
+  ) do %>
+    <%= render Avo::Cards::MetricComponent.new(value: number_with_delimiter(@visitors)) %>
+  <% end %>
+
+  <%= render Avo::Cards::StandaloneCardComponent.new(label: "Notes") do %>
+    <div class="px-4 pb-4">Any markup your tool needs.</div>
+  <% end %>
+</div>
+```
+
+The component does not query anything. Your controller action computes the data, and the component only draws it.
+
+### Let the user pick a range
+
+Pass [`ranges`](./cards-api.html#standalone-card-component) and the header shows the same dropdown a dashboard card has. Picking a range reloads the page with the value in the URL, under the [`range_param`](./cards-api.html#standalone-card-component) you chose, so your action reads it from `params`. Give each card its own `range_param` when a page has several, or one dropdown changes all of them.
+
+### Size cards on a grid
+
+[`cols`](./cards-api.html#standalone-card-component) and [`rows`](./cards-api.html#standalone-card-component) work like a card class's [`self.cols`](./cards-api.html#self.cols) and [`self.rows`](./cards-api.html#self.rows). They only take effect inside the dashboard grid, so wrap your cards in `<div class="dashboard-grid dashboard-grid--cols-N">`, where `N` is between `3` and `6`. Leave both out and the card fills the width of whatever holds it.

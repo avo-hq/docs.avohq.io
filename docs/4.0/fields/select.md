@@ -2,202 +2,147 @@
 license: community
 description: "Renders a select dropdown with configurable options."
 fieldTags: [choice]
+outline: [2, 3]
+api_docs: ./select-api.html
 ---
 
 # Select
 
-The `Select` field renders a `select` field.
+The Select field renders a dropdown for choosing a value from a list. Choices can come from a label-to-value mapping, a model enum, or grouped options.
 
 ```ruby
-field :type, as: :select, options: { 'Large container': :large, 'Medium container': :medium, 'Tiny container': :tiny }, display_value: true, placeholder: 'Choose the type of the container.'
-```
-
-## Options
-
-<Option name="`options`">
-
-A `Hash` representing the options that should be displayed in the select. The keys represent the labels, and the values represent the value stored in the database.
-
-The options get cast as `ActiveSupport::HashWithIndifferentAccess` objects if they are a `Hash`.
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-- `{ 'Large container': :large, 'Medium container': :medium, 'Tiny container': :tiny }` or any other `Hash`.
-- A lambda function that returns a `Hash` (computed options)
-
-### Computed options
-
-You may want to compute the values on the fly for your `Select` field. You can use a lambda for that, which runs inside an [`ExecutionContext`](./../execution-context.html) where you have access to the `record`, `resource`, `view`, and `field` properties where you can pull data off.
-
-```ruby{5-7}
 # app/avo/resources/project.rb
-class Avo::Resources::Project < Avo::BaseResource
-  field :type,
-    as: :select,
-    options: -> do
-      record.get_types_from_the_database.map { |type| [type.name, type.id] }
-    end,
-    placeholder: 'Choose the type of the container.'
-end
-```
-
-The output value must be a supported [`options_for_select`](https://apidock.com/rails/ActionView/Helpers/FormOptionsHelper/options_for_select) value.
-</Option>
-
-<Option name="`grouped_options`">
-
-When you need to organize your select options into groups, you can use `grouped_options` instead of `options`. This creates optgroups in the select field, making it easier for users to navigate large sets of options.
-
-The `grouped_options` supports the same data structures as Rails' [`grouped_options_for_select`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html#method-i-grouped_options_for_select) helper.
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-You can use either **Array syntax** or **Hash syntax**:
-
-**Array syntax:**
-```ruby
-field :country,
+field :container_size,
   as: :select,
-  grouped_options: [
-    ['North America', [['United States', 'US'], 'Canada']],
-    ['Europe', ['Denmark', 'Germany', 'France']]
-  ]
+  options: { "Large container" => "large", "Medium container" => "medium", "Tiny container" => "tiny" }
 ```
 
-**Hash syntax:**
+Supply a choice source for each field; Avo does not infer one from the model. By default, the field allows a single selection and displays labels rather than stored values. It does not add a blank choice unless configured or supplied by a translation.
+
+## Define the available choices {#options}
+
+Use [`options`](./select-api.html#options) to map the labels people see to the values your model stores. An array of strings can also serve as a list where labels and values are identical. For Rails-compatible option structures, see [`options_for_select`](https://apidock.com/rails/ActionView/Helpers/FormOptionsHelper/options_for_select).
+
+### Compute choices for the current record {#computed-options}
+
+If the choices depend on the record or request, use a lambda. It runs in an [ExecutionContext](../execution-context.html) with `record`, `resource`, `view`, and `field` available. Account for new records as well as persisted ones.
+
 ```ruby
+# app/avo/resources/project.rb
+field :container_size,
+  as: :select,
+  options: -> do
+    { "Large container" => "large", "Medium container" => "medium", "Tiny container" => "tiny" }
+  end
+```
+
+The lambda can return an array of label/value pairs when choices come from database records, such as `ContainerType.order(:name).pluck(:name, :id)` if your application defines that model.
+
+<span id="grouped_options"></span>
+
+## Organize choices into groups {#grouped-options}
+
+Use [`grouped_options`](./select-api.html#grouped_options) to break a long list into labeled groups. Both Hash and Array structures accepted by Rails' [`grouped_options_for_select`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html#method-i-grouped_options_for_select) helper work in the dropdown.
+
+```ruby
+# app/avo/resources/project.rb
 field :country,
   as: :select,
   grouped_options: {
-    'North America' => [['United States', 'US'], 'Canada'],
-    'Europe' => ['Denmark', 'Germany', 'France']
+    "North America" => [["United States", "US"], ["Canada", "CA"]],
+    "Europe" => [["Denmark", "DK"], ["Germany", "DE"], ["France", "FR"]]
   }
 ```
 
-### Computed grouped options
-
-Just like with regular options, you can compute grouped options dynamically using a lambda, which runs inside an [`ExecutionContext`](./../execution-context.html):
+Prefer the Hash form when you want index and show views to resolve stored values to labels. With an outer Array, those views display the stored value instead.
 
 ```ruby
+# app/avo/resources/project.rb
+field :country,
+  as: :select,
+  grouped_options: [
+    ["North America", [["United States", "US"], "Canada"]],
+    ["Europe", ["Denmark", "Germany", "France"]]
+  ]
+```
+
+### Compute grouped choices {#computed-grouped-options}
+
+If groups change dynamically, provide a lambda returning the same grouped structure. It has the same execution context as computed choices.
+
+```ruby
+# app/avo/resources/project.rb
 field :country,
   as: :select,
   grouped_options: -> do
     {
-      'North America' => Country.north_american.map { |c| [c.name, c.code] },
-      'Europe' => Country.european.map { |c| [c.name, c.code] },
-      'Asia' => Country.asian.map { |c| [c.name, c.code] }
+      "North America" => [["United States", "US"], ["Canada", "CA"]],
+      "Europe" => [["Denmark", "DK"], ["Germany", "DE"], ["France", "FR"]]
     }
   end
 ```
 
-:::warning
-You should use either `options`, `grouped_options`, or `enum` - not multiple at the same time.
+:::warning Choose one source
+Use only one of `options`, `grouped_options`, or `enum` per field. Avo does not reject conflicting sources, and they can produce inconsistent dropdown and display values.
 :::
 
-</Option>
+## Use a model enum {#enum}
 
-<Option name="`enum`">
+Pass your Active Record [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html) mapping to [`enum`](./select-api.html#enum). Avo uses enum keys as submitted values so Rails can assign the attribute.
 
-Set the select options as an Active Record [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html). You may use `options` or `enum`, not both.
-
-```ruby{3,10}
+```ruby
 # app/models/project.rb
 class Project < ApplicationRecord
-  enum type: { 'Large container': 'large', 'Medium container': 'medium', 'Tiny container': 'small' }
-end
-
-# app/avo/resources/project.rb
-class Avo::Resources::Project < Avo::BaseResource
-  field :type,
-    as: :select,
-    enum: ::Project.types,
-    display_value: true,
-    placeholder: 'Choose the type of the container.'
+  enum :container_size, { large: "large", medium: "medium", tiny: "small" }
 end
 ```
 
-#### Default value
-
-`nil`
-
-#### Possible values
-
-`Post::statuses` or any other `enum` stored on a model.
-</Option>
-
-<Option name="`display_value`">
-
-You may want to display the values from the database and not the labels of the options. You may configure this behaviour by setting `display_value` to `true`. Note that this setting has no effect if an array of options is provided.
-
-```ruby{5}
+```ruby
 # app/avo/resources/project.rb
-class Avo::Resources::Project < Avo::BaseResource
-  field :type,
-    as: :select,
-    display_value: true
-end
+field :container_size,
+  as: :select,
+  enum: ::Project.container_sizes,
+  display_value: true,
+  placeholder: "Choose the type of the container.",
+  include_blank: true
 ```
 
-<!-- @include: ./../common/default_boolean_false.md-->
-</Option>
+<span id="display_value"></span>
 
-<Option name="`include_blank`">
+## Display stored values instead of labels {#display-value}
 
-The `Select` field also has the `include_blank` option. That can have three values.
+Set [`display_value`](./select-api.html#display_value) to show the values from a Hash instead of its labels. For example, the first example would display `large` rather than `Large container`, in both the dropdown and read-only views. This does not change which value the field stores.
 
-If it's set to `false` (default), it will not show any blank option but only the options you configured.
+For an enum, it displays the mapped value (`small` in the enum example) instead of the enum key (`tiny`). Array choices ignore this setting. See the reference for grouped-choice behavior.
 
-If it's set to `true` and you have a `placeholder` value assigned, it will use that placeholder string as the first option.
+<span id="include_blank"></span>
 
-If it's a string `include_blank: "No country"`, the `No country` string will appear as the first option in the `<select>` and will set the value empty or `nil` depending on your settings.
+## Let users clear a selection {#include-blank}
 
-```ruby{5}
+Set [`include_blank`](./select-api.html#include_blank) to `true` to add an empty-valued choice labeled with the field's [`placeholder`](../field-options-api.html#placeholder). Without a custom placeholder or translation, the label is "Choose an option". Supply a string instead to give the blank choice its own label.
+
+```ruby
 # app/avo/resources/project.rb
-class Avo::Resources::Project < Avo::BaseResource
-  field :type,
-    as: :select,
-    include_blank: 'No type'
-end
+field :container_size,
+  as: :select,
+  options: { "Large container" => "large", "Tiny container" => "tiny" },
+  include_blank: "No type"
 ```
 
-#### Default value
+Whether an empty value is persisted as an empty string or `nil` depends on your model's attribute type and application logic. A placeholder alone does not add a blank choice.
 
-`nil`
+## Allow more than one selection {#multiple}
 
-#### Possible values
+Enable [`multiple`](./select-api.html#multiple) when the model attribute accepts an array of values. Ensure your model can persist that array, for example with a PostgreSQL array column. Avo removes blank entries on submission.
 
-`nil`, `true`, `false`, or a string to be used as the first option.
-</Option>
-
-<Option name="`multiple`">
-
-If it's set to `false` (default), it will only allow selecting a single option from the list.
-
-If it's set to `true`, it will enable multiple selections, allowing users to choose more than one option at a time.
-
-```ruby{5}
+```ruby
 # app/avo/resources/project.rb
-class Avo::Resources::Project < Avo::BaseResource
-  field :categories,
-    as: :select,
-    multiple: true
-end
+field :categories,
+  as: :select,
+  options: { "News" => "news", "Tutorials" => "tutorials" },
+  multiple: true
 ```
 
-#### Default value
+## Common field options
 
-`false`
-
-#### Possible values
-
-`true` or `false`
-
-</Option>
+For labels, visibility, placeholders, and other shared settings, see [Common field options](../field-options.html).

@@ -51,10 +51,15 @@ def create_success_action
   if params[:via_belongs_to_resource_class].present?
     respond_to do |format|
       format.turbo_stream do
+        # The dialog's own frame: modal_frame, or modal_frame_nested and deeper when it was opened from another dialog.
+        modal_frame_id = helpers.current_modal_frame_id || Avo::MODAL_FRAME_ID.to_s
+
         render turbo_stream: [
-          turbo_stream.remove(Avo::MODAL_FRAME_ID),
+          turbo_stream.update(modal_frame_id, ""),
           turbo_stream.avo_update_belongs_to(
             relation_name: params[:via_relation],
+            target_name: params[:via_belongs_to_target_name],
+            frame_id: modal_frame_id,
             target_record_id: @record.to_param,
             target_resource_label: @resource.record_title,
             target_resource_class: @record.class.name
@@ -71,10 +76,14 @@ def create_success_action
 end
 ```
 
-- **Default behavior:** when the record was created through a `belongs_to` modal (`params[:via_belongs_to_resource_class]` is present), renders Turbo Streams that close the modal and select the new record in the field. Otherwise redirects to [`after_create_path`](#after_create_path) with the success flash.
+- **Default behavior:** when the record was created through a `belongs_to` modal (`params[:via_belongs_to_resource_class]` is present), renders Turbo Streams that close that dialog and select the new record in the field that opened it. Otherwise redirects to [`after_create_path`](#after_create_path) with the success flash.
 
 :::warning
 Keep the `super` guard for the `belongs_to`-modal branch — dropping it breaks the "Create new record" flow inside `belongs_to` fields.
+:::
+
+:::info
+A "Create new" dialog can open another one on top of it, so the stream clears only the current dialog's frame instead of removing `Avo::MODAL_FRAME_ID`. `target_name` and `frame_id` make sure the new record lands in the field that opened the dialog, not in a field with the same name in the dialog underneath. Both are optional; without them every field for `relation_name` is updated.
 :::
 
 </Option>
@@ -304,11 +313,15 @@ The method that persists the record on `create` and `update`.
 
 ```ruby
 def save_record_action
-  @record.save!
+  @resource.save_record(@record)
 end
 ```
 
-- **Default behavior:** calls `@record.save!`. Exceptions raised here are caught, logged, and added to the record's errors, which triggers the fail action and message.
+- **Default behavior:** calls the resource's [`save_record`](./resources-api.html#save_record), which runs `@record.save!`. Exceptions raised here are caught, logged, and added to the record's errors, which triggers the fail action and message.
+
+:::info
+Override this when the change belongs to one controller. When it belongs to the resource under every controller, such as the admin panel, the [REST API](./rest-api.html) and your own controllers, define [`save_record(record)`](./resources-api.html#save_record) on the resource instead. <VersionReq package="avo" version="4.3.0" />
+:::
 
 </Option>
 
@@ -318,10 +331,49 @@ The method that removes the record on `destroy`.
 
 ```ruby
 def destroy_record_action
-  @record.destroy!
+  @resource.destroy_record(@record)
 end
 ```
 
-- **Default behavior:** calls `@record.destroy!`. Exceptions raised here (a foreign key constraint, for example) are caught, logged, and added to the record's errors, which triggers the fail action and message. Override it to soft-delete or archive instead.
+- **Default behavior:** calls the resource's [`destroy_record`](./resources-api.html#destroy_record), which runs `@record.destroy!`. Exceptions raised here (a foreign key constraint, for example) are caught, logged, and added to the record's errors, which triggers the fail action and message. Override it to soft-delete or archive instead.
+
+:::info
+Override this when the delete belongs to one controller. When it belongs to the resource under every controller, define [`destroy_record(record)`](./resources-api.html#destroy_record) on the resource instead. <VersionReq package="avo" version="4.3.0" />
+:::
+
+</Option>
+
+## Parent record methods
+
+<Option name="`via_record`" headingSize="3">
+
+<VersionReq package="avo" version="4.2.11" />
+
+The parent record the current one is created, shown, or edited through, like the post a comment is created from.
+
+```ruby
+def via_record
+  set_via_resource_and_record
+  @via_record
+end
+```
+
+- **Default behavior:** finds the parent from `params[:via_record_id]` with the parent resource's [`find_record_method`](./resources-api.html#self.find_record_method) on first use, then keeps it in `@via_record`. Returns `nil` when the request has no parent.
+- **In actions:** `new`, `show`, and `edit` load it before they return, so `@via_record` is set after `super`. In other hooks, call `via_record`.
+
+</Option>
+
+<Option name="`via_resource`" headingSize="3">
+
+The parent record's resource, hydrated with [`via_record`](#via_record).
+
+```ruby
+def via_resource
+  set_via_resource_and_record
+  @via_resource
+end
+```
+
+- **Default behavior:** uses the resource named by `params[:via_resource_class]`. When only `params[:via_relation_class]` is present, uses the resource for that model. Kept in `@via_resource`. Returns `nil` when the request has no parent.
 
 </Option>

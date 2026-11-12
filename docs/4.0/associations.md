@@ -52,6 +52,8 @@ The [`array` field](./fields/array.html) is the exception. It renders a panel of
 
 Association fields share most of their options. Each ✓ links to that option's documentation on the field's page.
 
+For exact defaults, callback locals, and validation rules, consult the API reference for [Belongs to](./associations/belongs_to-api.html), [Has one](./associations/has_one-api.html), [Has many](./associations/has_many-api.html), or [Has and belongs to many](./associations/has_and_belongs_to_many-api.html).
+
 | Option | Belongs to | Has one | Has many | HABTM |
 | --- | :-: | :-: | :-: | :-: |
 | `searchable` | [✓](./associations/belongs_to#searchable) | [✓](./associations/has_one#searchable) | [✓](./associations/has_many#searchable) | [✓](./associations/has_and_belongs_to_many#searchable) |
@@ -76,7 +78,7 @@ A few options belong to a single field type: [`polymorphic_as` + `types`](./asso
 
 ## Show or hide the association buttons
 
-The attach, detach, create, destroy, and actions buttons on association panels are controlled through the target resource's policy methods. Find out more on the [authorization](./authorization#associations) page.
+The attach, detach, create, destroy, and actions buttons on association panels are controlled through the target resource's policy methods. Find out more on the [authorization](./authorization.html#authorize-association-controls) page.
 
 ## Single Table Inheritance (STI)
 

@@ -15,11 +15,13 @@ field :user,
 ```
 
 Pass in a block where you attach scopes to the `query` object and `parent` object, which is the actual record where you want to assign the association. The block is executed in the [`ExecutionContext`](./../execution-context).
+
+`query` already holds only the records the user's [policy scope](./../authorization.html#limit-which-records-a-user-sees) allows, so building on it keeps that limit. A fresh relation, like `-> { ::User.all }`, widens the list past it. On every association, saving accepts exactly the records the block returns: those a widening scope adds are accepted, and a record outside a narrowing one is refused as if it didn't exist.
 </Option>
 
 :::warning
 The `attach_scope` will not filter the records in the listing from `has_many` or `has_and_belongs_to_many` associations.
-Use [`scope`](#scope) or a [Pundit policy `Scope`](./../authorization#scopes) for that.
+Use [`scope`](#scope) or a [Pundit policy `Scope`](./../authorization.html#limit-which-records-a-user-sees) for that.
 :::
 
 ```ruby-vue{3}

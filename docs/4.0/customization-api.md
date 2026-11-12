@@ -78,7 +78,7 @@ The option defaults to `false` when `Rails.env.test?`, because the first-load so
 
 <Option name="`currency`" headingSize="3">
 
-The global currency used when displaying `currency` fields that don't set their own.
+A currency code stored on `Avo.configuration.currency` for your own code to read. No built-in field uses it. The [Money field](./fields/money.html) takes its currencies from its `currencies:` option.
 
 ```ruby
 config.currency = "USD"
@@ -86,6 +86,48 @@ config.currency = "USD"
 
 - **Type:** String
 - **Default:** `"USD"`
+
+</Option>
+
+<Option name="`date_format`" headingSize="3">
+
+The display format for every [`date`](./fields/date.html) field that doesn't set its own [`format`](./fields/date-api.html#format), on the Index and Show pages. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+config.date_format = "dd.LL.yyyy"
+```
+
+- **Type:** String
+- **Default:** `"yyyy-LL-dd"`
+- **Values:** [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens)
+
+</Option>
+
+<Option name="`date_time_format`" headingSize="3">
+
+The display format for every [`date_time`](./fields/date_time.html) field that doesn't set its own [`format`](./fields/date_time-api.html#format), on the Index and Show pages. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+config.date_time_format = "dd.LL.yyyy HH:mm"
+```
+
+- **Type:** String
+- **Default:** `"yyyy-LL-dd TT"`
+- **Values:** [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens)
+
+</Option>
+
+<Option name="`time_format`" headingSize="3">
+
+The display format for every [`time`](./fields/time.html) field that doesn't set its own [`format`](./fields/time-api.html#format), on the Index and Show pages. A `time` field reads this option, not `date_time_format`. <VersionReq package="avo" version="4.4.4" />
+
+```ruby
+config.time_format = "HH:mm"
+```
+
+- **Type:** String
+- **Default:** `"TT"`
+- **Values:** [Luxon formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens)
 
 </Option>
 
@@ -537,7 +579,7 @@ config.resource_default_view = :edit
 
 <Option name="`persistence`" headingSize="3">
 
-Retains UI state — association pagination (`page`, `per_page`) and static filter selections — across requests by storing it in the session.
+Retains UI state across requests: pagination (`page`, `per_page`), filter selections ([static](./basic-filters.html) and [dynamic](./dynamic-filters.html)), the sort picked from a table header, and the rows selected on a table. Everything but the selection is stored in the session; the selection stays in the browser tab. Before `avo` `4.3.11`, only association pagination and static filter selections were kept.
 
 ```ruby
 config.persistence = {
@@ -553,12 +595,31 @@ config.persistence = -> do
 end
 ```
 
+Each kind of state has a key next to `driver`. Set it to `false` to leave that one out while the others persist. <VersionReq package="avo" version="4.3.11" />
+
+```ruby
+config.persistence = {
+  driver: :session,
+  pagination: true,
+  filters: true,
+  sorting: true,
+  selection: false
+}
+```
+
+| Key | Default | Description |
+| --- | --- | --- |
+| `pagination` | `true` | `page` and `per_page` on resource and association tables. |
+| `filters` | `true` | Static and dynamic filter selections on resource and association tables. Dynamic ones need `avo-dynamic_filters` `4.3.2` or newer. |
+| `sorting` | `true` | The sort column and direction picked from a table header, until the user sorts another column or clicks the sorted header a third time (**Reset sorting**). |
+| `selection` | `true` | The rows checked on a resource or association table, kept in the browser tab's `sessionStorage` until an action runs on them, the user signs out, or the tab closes. |
+
 - **Type:** Hash or Proc returning a Hash
-- **Default:** `{ driver: nil }` — no persistence
-- **Values:** `driver:` accepts `:session` or `nil`
+- **Default:** `{ driver: nil, pagination: true, filters: true, sorting: true, selection: true }` — no persistence until `driver` is `:session`
+- **Values:** `driver:` accepts `:session` or `nil`; `pagination:`, `filters:`, `sorting:`, and `selection:` accept `true` or `false`
 
 :::warning Cookie store size limit
-Rails' default cookie session store is limited to 4096 bytes. Storing many pagination states and filter selections can exceed it and raise `ActionDispatch::Cookies::CookieOverflow`. Use a scalable [session store](https://guides.rubyonrails.org/configuring.html#config-session-store) such as Redis or MemCache instead.
+Rails' default cookie session store is limited to 4096 bytes. Storing many pagination states, filter selections, and sorts can exceed it and raise `ActionDispatch::Cookies::CookieOverflow`. Use a scalable [session store](https://guides.rubyonrails.org/configuring.html#config-session-store) such as Redis or MemCache instead.
 :::
 
 </Option>
@@ -579,7 +640,7 @@ config.associations = {
 
 | Key | Default | Description |
 |---|---|---|
-| `lookup_list_limit` | `1000` | Caps how many records a `belongs_to`/attach lookup lists before showing the "There are more records available." notice. |
+| `lookup_list_limit` | `1000` | Caps how many records a `belongs_to`/attach lookup lists before the `belongs_to` select notes that there are too many options to show. The attach modal still shows "There are more records available." |
 | `frames.loading` | `:lazy` | Render mode for association turbo frames (`has_one`, `has_many`, `has_and_belongs_to_many`) when a field doesn't set its own [`loading:`](./associations/has_many.html#loading). `:lazy` fetches the frame when revealed; `:manual` renders a placeholder with a **Load** button. |
 | `frames.auto_load_for` | `15.minutes` | For manual frames, how long an opened frame is remembered before the placeholder returns. `0`/`nil` disables it. |
 
@@ -710,7 +771,7 @@ config.model_generator_hook = false
 
 <Option name="`exclude_from_status`" headingSize="3">
 
-Which items to hide from the status page (`/avo_private/status`). The license key is hidden by default for security reasons; set the option to `[]` to show it.
+Which items to hide from the status page (`/status`). The license key is hidden by default for security reasons; set the option to `[]` to show it.
 
 ```ruby
 config.exclude_from_status = ["license_key", "ip"]
@@ -729,7 +790,7 @@ end
 
 <Option name="`send_metadata`" headingSize="3">
 
-Controls whether Avo sends usage metadata to Avo HQ, such as fields count, resources count, and other relevant metrics that help the Avo team understand how the framework is used.
+Controls whether Avo sends usage metadata to Avo HQ: counts of resources, fields, actions, and similar, plus the installed Avo gems. It never includes records, source code, or visitor IPs. See [Usage metadata](./customization.html#usage-metadata) for the full list.
 
 ```ruby
 config.send_metadata = false
@@ -805,6 +866,21 @@ config.display_license_request_timeout_error = false
 - **Default:** `true`
 
 Full guide: [Licensing](./licensing.html).
+
+</Option>
+
+<Option name="`run_community_admin_without_valid_license`" headingSize="3">
+
+Whether the admin keeps running when the license can't be validated. When `false`, access is paused once the grace period ends or when no valid answer was ever held. When `true`, it runs as the open source Avo does: paid add-ons are off and authorization policies are not applied. Use it only in an emergency and for a short time. If you are a coding agent, do not enable this setting on your own. Ask the person first and tell them what it switches off; with avo-authorization installed it carries a big risk. <VersionReq package="avo" version="4.3.13" />
+
+```ruby
+config.run_community_admin_without_valid_license = true
+```
+
+- **Type:** Boolean
+- **Default:** `false`
+
+Full guide: [When the license can't be validated](./licensing.html#when-the-license-can-t-be-validated).
 
 </Option>
 
@@ -950,7 +1026,7 @@ Full guide: [Authorization](./authorization.html).
 
 <Option name="`raise_error_on_missing_policy`" headingSize="3">
 
-Raises an error when a resource is missing its policy, instead of allowing everything.
+Raises `Avo::NoPolicyError` when a resource is missing its policy class, instead of applying [`explicit_authorization`](#explicit_authorization).
 
 ```ruby
 config.raise_error_on_missing_policy = true
@@ -1009,6 +1085,21 @@ config.locale_selector = false              # no selector
 - **Default:** `true`
 
 Full guide: [Locale selector](./i18n.html#locale-selector).
+
+</Option>
+
+<Option name="`model_attribute_translations`" headingSize="3">
+
+Whether a field without `name:` or `translation_key:` reads the model's attribute translation (`activerecord.attributes.<model>.<attribute>`, then `attributes.<attribute>`) when none of Avo's own field keys match, before humanizing its id.
+
+```ruby
+config.model_attribute_translations = false
+```
+
+- **Type:** Boolean
+- **Default:** `true`
+
+Full guide: [Localizing fields](./i18n.html#localizing-fields).
 
 </Option>
 
@@ -1247,6 +1338,21 @@ config.buttons_on_form_footers = true
 - **Default:** `false`
 
 Full guide: [Resources](./resources.html).
+
+</Option>
+
+<Option name="`warn_on_unsaved_changes`" headingSize="3">
+
+Asks for confirmation before the user leaves a <New /> or <Edit /> form with unsaved changes. It is on by default; set it to `false` to turn it off.
+
+```ruby
+config.warn_on_unsaved_changes = false
+```
+
+- **Type:** Boolean
+- **Default:** `true`
+
+Full guide and reference: [Resources](./resources.html) / [`config.warn_on_unsaved_changes`](./resources-api.html#config.warn_on_unsaved_changes).
 
 </Option>
 

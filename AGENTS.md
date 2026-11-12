@@ -120,7 +120,7 @@ config.feature = {
 </Option>
 ````
 
-The `name` prop is wrapped in backticks to render as code (`<Option name="`option_name`">`). Without backticks it renders as plain text — use that for non-code option names only.
+Wrap the option name in backticks to render it as code (`<Option name="`option_name`">`). Backticked segments render as inline code, the way they do in a markdown heading, so a name can mix an identifier with prose.
 
 **Nested sub-options.** When an option is a Hash whose keys deserve their own anchors (e.g. `ordering`'s `actions`), nest `<Option name="`key`" headingSize="3">` blocks inside the parent `<Option>`. Parent Options render as `h2`, so with `outline: [2, 3]` the nested ones indent under the parent in the "On this page" panel. Keep shared contract details (Type/Default, execution context) on the parent — don't repeat them per child. Precedent: `docs/4.0/fields-layout-api.md` and `docs/4.0/record-reordering-api.md`.
 
@@ -203,6 +203,15 @@ yarn check-addon-links
 
 CI runs it on PRs touching `docs/4.0/` and weekly on `main`, to catch slugs renamed on HQ after the page was written.
 
+## Name the package on every version
+
+Every gem has its own version numbers, so `4.3.2` of `avo-audit_logging` says nothing about `4.3.2` of Avo, and a bare "Since v4.3.2" reads as Avo's. A version always comes with the package it belongs to.
+
+- **A feature in a gem:** `<VersionReq package="avo-audit_logging" version="4.3.2" />` renders "Since `avo-audit_logging >= v4.3.2`" and links to that gem's release. Use the gem's own version, read from its source (see [Gems source code](#gems-source-code)), never Avo's.
+- **A feature in Avo core:** `<VersionReq package="avo" version="4.3.2" />` renders "Since `avo >= v4.3.2`".
+- **No `package`:** the badge keeps its old "Since v4.3.2" look. That's for the 2.0 and 3.0 pages, where a bare version can be Avo's or a paid package's such as `avo-pro`, so leave those as they are. On a 4.0 page, always pass `package`.
+- **In prose:** write the package next to the version, `` `avo-scopes` `4.3.2` ``. `<Version version="4.3.11" />` links to core's releases only, so use it for `avo` alone: `` `avo` <Version version="4.3.11" /> ``.
+
 ## House style
 
 - Code samples must be real and copy-pasteable — no `...` placeholders inside runnable Ruby unless clearly a comment.
@@ -220,6 +229,7 @@ CI runs it on PRs touching `docs/4.0/` and weekly on `main`, to catch slugs rena
 
 - `<Option name="`x`">…</Option>` — reference option block.
 - `<Demo link="https://avodemo.com" label="See the demo" />` — `label` optional.
+- `<VersionReq package="avo-kanban" version="4.1.0" />` — "Since" badge. See [Name the package on every version](#name-the-package-on-every-version).
 - `:::warning` / `:::info` / `:::tip` / `:::danger` — callouts.
 
 ## The Concepts sidebar section
@@ -256,22 +266,22 @@ Add an entry to `upgrade.md` when the reader must do — or at least check — s
 - a config keeps its name but changes shape (`config.controls_placement` → `config.resource_row_controls_config = { placement: ... }`);
 - an option that used to apply in one view now applies everywhere.
 
-Don't add an entry for a pure addition — document it on the feature page with `<VersionReq version="4.1.0" />` instead. Rule of thumb: if a reader could be surprised **in production**, it belongs in the upgrade guide.
+Don't add an entry for a pure addition — document it on the feature page with a [`<VersionReq>` badge](#name-the-package-on-every-version) instead. Rule of thumb: if a reader could be surprised **in production**, it belongs in the upgrade guide.
 
 ### Entry shape
 
-Newest first, directly under the page intro. One `##` per version, one `<Option>` per change inside it:
+The page is one release timeline, newest first, across every gem. One `##` per gem release, one `<Option>` per change inside it. The page's outline draws the `##` headings as a timeline, and the `<UpgradeFilter />` near the top filters entries by gem (`?gems=avo,avo-api`) and marks the reader's release (`?since=avo@4.3.2` or `?since=2026-10-14`). Both read the heading's `data-*` attributes, so every heading needs them.
 
 ````markdown
-## Upgrade to 4.3.0
+## `avo` 4.3.12 <span class="tl-date">Unreleased</span> {#avo-4-3-12 data-gems="avo" data-version="4.3.12"}
 
-<Option name="`decorate` deprecated in favor of `format_display_using`">
+<Option headingSize="3" name="`decorate` deprecated in favor of `format_display_using`">
 
-### Breaking Change
+#### Breaking Change
 
 One or two sentences: what changed, and why. Link the feature docs.
 
-### Steps to Update
+#### Steps to Update
 
 What to grep for and what to replace it with.
 
@@ -280,7 +290,7 @@ field :is_writer, as: :text, decorate: -> { ... } # [!code --]
 field :is_writer, as: :text, format_display_using: -> { ... } # [!code ++]
 ```
 
-### Maintaining Previous Behavior
+#### Maintaining Previous Behavior
 
 Only when the old behavior is still reachable — show the config that restores it.
 
@@ -289,16 +299,23 @@ Only when the old behavior is still reachable — show the config that restores 
 
 Rules:
 
-1. **Heading is the version you upgrade _to_**: `## Upgrade to 4.3.0`. For an add-on gem, name the gem: `` ## Upgrade to `avo-kanban` `0.1.18` ``. Don't use ranges (`Upgrade from X to Y`) — the 3.0 page has both because it drifted; new entries use the short form.
-2. **Unreleased changes** get a plain descriptive `##` heading at the top of the page (this is how `docs/4.0/upgrade.md` reads today). When the release ships, fold them under the `## Upgrade to X.Y.Z` heading.
-3. **One `<Option>` per change**, even when the version has only one. It gives each change a stable anchor (`upgrade.html#decorate-deprecated...`) to link from release notes and support replies. The `name` is a full statement of the change, not a topic — `"read_only and disabled options on has_one fields"`, not `"has_one"`. Backticks in the name render it as code; use them when the name is mostly an identifier.
-4. **`###` sub-headings inside the `<Option>`**, Title Case, only the ones that apply, in this order: `Breaking Change` → `Action Required` → `Steps to Update` → `Maintaining Previous Behavior`. These are below the outline cutoff, so the `<Option>` name has to carry the meaning on its own.
-5. **Always state the action, including when there is none** — `**Action required:** None, this is an internal fix.` Readers skim for that line to know they can skip.
-6. **Show the migration as a diff** with `[!code --]` / `[!code ++]` when it's a line-level rename, and as separate `# Before` / `# After` blocks when the shape changes enough that a diff is unreadable. Snippets that map to a real file carry the path comment (`# config/initializers/avo.rb`, `# app/avo/resources/user.rb`) — upgrade snippets are things the reader edits, so the "skip it on reference pages" exception doesn't apply here.
-7. **Reference versions with the components**, never bare text: `<Version version="3.10.6" />` links to the release page for "in version X"; `<VersionReq version="3.10.7" />` renders a "Since v3.10.7" badge. Both link to `avohq.io/releases/<version>`.
-8. **Link out to the docs that describe the new state** — the guide section or the `<Option>` anchor on the API page (`./field-options.html#format_view_using`). The upgrade entry documents the _transition_; the feature pages document the _result_. Don't restate the whole feature here.
-9. **Use callouts for the sharp edges**: `:::warning` for footguns (cookie overflow, a lowercase translation now rendering lowercase), `:::info` for context. Link the PR or issue when the change is subtle enough that someone will want the reasoning ([#3469](https://github.com/avo-hq/avo/pull/3469)).
-10. **Broken intermediate releases get their own `##` section** without an `<Option>` — see `## Skip versions 3.8.x and 3.9.0`. Say which version to jump straight to and why.
+1. **Heading: the gem, the version you upgrade _to_, the release date, and the attributes.** `` ## `avo-api` 4.4.0 <span class="tl-date">Nov 12, 2026</span> {#avo-api-4-4-0 data-gems="avo-api" data-date="2026-11-12" data-version="4.4.0"} ``.
+   - Always name the gem, `avo` included, so a reader knows which `bundle update` the entry is about. A change that ships in several gems at the same version names each: `` ## `avo-dashboards` + `avo-scopes` 4.1.2 `` with `data-gems="avo-dashboards avo-scopes"`. At different versions, give each gem its own version and swap `data-version` for `data-releases`: `` ## `avo-ai` 4.3.0.beta.5 · `avo-mcp_server` 4.3.0.beta.2 `` with `data-releases="avo-ai@4.3.0.beta.5 avo-mcp_server@4.3.0.beta.2"`, dated by the earliest of those releases.
+   - The id is the gem and version with dots, underscores and `+` turned into hyphens: `avo-mcp-server-4-3-0-beta-3`. Link to entries by that id.
+   - Don't use ranges (`Upgrade from X to Y`) — the 3.0 page has both because it drifted.
+2. **Unreleased changes get the next version: the next patch of the gem's current version.** Read it from the gem's source (see [Gems source code](#gems-source-code)): avo's `lib/avo/version.rb` at `4.3.0` means `` `avo` 4.3.1 ``. An add-on's `lib/avo/<namespace>/version.rb` at `4.2.7` means `` `avo-api` 4.2.8 ``. A prerelease takes the next prerelease, so `4.3.0.beta.2` means `4.3.0.beta.3`.
+   - The date span reads `Unreleased` and the heading has no `data-date`. Unreleased entries sit at the top of the page.
+   - If that gem's unreleased heading already exists, add your `<Option>` inside it. If the change ships in another version, such as a minor train cutting `4.4.0`, rename the heading and its id then.
+   - Never use a heading without a version. Nothing renames it after the release, so the entry stays unplaceable for every reader.
+3. **Date it on release.** When the gem is tagged, swap `Unreleased` for the tag date (`Nov 12, 2026`), add `data-date="2026-11-12"`, and move the entry below any entries still unreleased, keeping the page newest first. Read the date from the tag: `git tag -l 'v4*' --format='%(creatordate:short) %(refname:short)'` in `../avo`, `git tag -l 'avo-api-v*' --format=...` in `../workspace` for add-ons.
+4. **One `<Option>` per change**, even when the version has only one. It gives each change a stable anchor (`upgrade.html#decorate-deprecated...`) to link from release notes and support replies. The `name` is a full statement of the change, not a topic — `"read_only and disabled options on has_one fields"`, not `"has_one"`. Backticked segments in the name render as inline code, the way they do in a markdown heading; wrap the identifiers, not the prose around them.
+5. **`####` sub-headings inside the `<Option>`**, Title Case, only the ones that apply, in this order: `Breaking Change` → `Action Required` → `Steps to Update` → `Maintaining Previous Behavior`. The `<Option>` takes `headingSize="3"` so it sits under the release heading and stays out of the timeline outline; its name has to carry the meaning on its own.
+6. **Always state the action, including when there is none** — `**Action required:** None, this is an internal fix.` Readers skim for that line to know they can skip.
+7. **Show the migration as a diff** with `[!code --]` / `[!code ++]` when it's a line-level rename, and as separate `# Before` / `# After` blocks when the shape changes enough that a diff is unreadable. Snippets that map to a real file carry the path comment (`# config/initializers/avo.rb`, `# app/avo/resources/user.rb`) — upgrade snippets are things the reader edits, so the "skip it on reference pages" exception doesn't apply here.
+8. **Reference versions with the components**, never bare text, and [name the package](#name-the-package-on-every-version): `<Version version="3.10.6" />` links to Avo core's release page for "in version X"; `<VersionReq package="avo" version="4.3.2" />` renders a "Since `avo >= v4.3.2`" badge linking to that release.
+9. **Link out to the docs that describe the new state** — the guide section or the `<Option>` anchor on the API page (`./field-options.html#format_view_using`). The upgrade entry documents the _transition_; the feature pages document the _result_. Don't restate the whole feature here.
+10. **Use callouts for the sharp edges**: `:::warning` for footguns (cookie overflow, a lowercase translation now rendering lowercase), `:::info` for context. Link the PR or issue when the change is subtle enough that someone will want the reasoning ([#3469](https://github.com/avo-hq/avo/pull/3469)).
+11. **Broken intermediate releases get their own `##` section** without an `<Option>` — see `## Skip versions 3.8.x and 3.9.0`. Say which version to jump straight to and why.
 
 ### The rest of the change
 
@@ -315,7 +332,8 @@ Verify the change against the gem source before writing the note — what shippe
 
 ## Before you finish
 
-- [ ] Breaking change or behavior change? An upgrade note exists (see [Breaking changes and upgrade notes](#breaking-changes-and-upgrade-notes)) **and** the feature pages describe the new behavior.
+- [ ] Breaking change or behavior change? An upgrade note exists under its `` ## `<gem>` <version> `` release heading (see [Breaking changes and upgrade notes](#breaking-changes-and-upgrade-notes)) **and** the feature pages describe the new behavior.
+- [ ] Every version names its package: `<VersionReq>` on a 4.0 page passes `package`, `avo` included, with that package's own version.
 - [ ] Guide is task-organized, plain English, skimmable.
 - [ ] Reference has one `<Option>` per option with Type + Default (+ Values/Validation where relevant).
 - [ ] Frontmatter cross-links both pages (`api_docs` ↔ `guide`) and sets `license`.

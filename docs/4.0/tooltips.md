@@ -29,6 +29,16 @@ Anywhere you write your own markup — a [custom tool](./custom-tools.html), a [
 
 That's the whole setup. Avo's global initializer picks the element up on the next render; you don't register a Stimulus controller or call any JavaScript.
 
+A `title` always renders as text. To render HTML in your own markup, pass a safe string to `avo_tooltip_attributes`, which also escapes it correctly for the attribute:
+
+```erb
+<%= tag.span record.status, **avo_tooltip_attributes(tag.strong(record.name)) %>
+```
+
+:::warning
+Build the safe string with `tag`, `safe_join` or `sanitize`. Calling `.html_safe` on a string that holds record text lets that text run as script. Writing `data-tippy-allowHTML` by hand is unsafe too, because the browser decodes the attribute and turns escaped text back into markup.
+:::
+
 ## Use it with Avo's buttons and links
 
 Avo's [`a_button` and `a_link`](./native-components/avo-button-component.html) helpers take `title:` and `data:` like any tag helper, so the same pattern works:

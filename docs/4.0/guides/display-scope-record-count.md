@@ -1,7 +1,7 @@
 # Display scope record count
 
 :::tip Use the built-in `counter` option
-Avo has a built-in [`counter`](../scopes.html#counter) scope option that renders the count badge for you, with `:lazy` and `:hover` loading to avoid slowing down the page. Prefer it over the manual approach below.
+Avo has a built-in [`counter`](../scopes-api.html#counter) scope option that renders the count badge for you, with `:lazy` and `:hover` loading to avoid slowing down the page. Prefer it over the manual approach below.
 :::
 
 The manual approach documented here still works when you need full control over the markup.

@@ -29,7 +29,7 @@ For the AI Assistant chat, add the same line to a project rules file under `.aia
 
 ## MCP server
 
-MCP is an API to communicate with AI models. You can add MCP servers and the AI Assistant will communicate with them to get more accurate results.
+MCP (Model Context Protocol) connects AI applications to external tools and context. The AI Assistant can use MCP servers to look up documentation while working.
 
 I suggest using [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) which provides many libraries including Avo's docs.
 

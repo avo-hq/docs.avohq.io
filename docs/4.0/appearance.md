@@ -131,6 +131,8 @@ config.appearance = {
 | `:mist`    | Light, airy blue-gray              |
 | `:olive`   | Gray with green-yellow undertones  |
 
+Avo's built-in presets share one lightness progression while retaining each preset's hue and chroma. Switching presets therefore changes the tint without changing the visual hierarchy between surfaces, borders, and text.
+
 :::warning Symbols only
 `neutral:` must be a Symbol — passing a String or a Hash raises an `ArgumentError`. Use [`neutral_colors:`](./appearance-api.html#neutral_colors) for full-color overrides.
 :::
@@ -159,7 +161,18 @@ config.appearance = {
 }
 ```
 
-Values are passed through verbatim. Any string a CSS custom property accepts works — `oklch(...)`, `#hex`, `rgb(...)`, `hsl(...)`, `var(...)`.
+Values are passed through verbatim: unlike the built-in presets, a brand palette is not normalized onto Avo's lightness curve. Any string a CSS custom property accepts works — `oklch(...)`, `#hex`, `rgb(...)`, `hsl(...)`, `var(...)`.
+
+To put your palette on the same contrast ramp as the presets, keep these lightness values and vary only chroma and hue. <VersionReq package="avo" version="4.2.10" />
+
+| Shade | `L`      | Shade | `L`      |
+| ----- | -------- | ----- | -------- |
+| `25`  | `99.71%` | `500` | `53.48%` |
+| `50`  | `98.51%` | `600` | `47.84%` |
+| `100` | `97.31%` | `700` | `42.76%` |
+| `200` | `92.8%`  | `800` | `39.04%` |
+| `300` | `75.72%` | `900` | `27.68%` |
+| `400` | `62.68%` | `950` | `20.46%` |
 
 `neutral: :brand` then selects your custom palette by default. Users can still pick another preset unless you lock the choice.
 

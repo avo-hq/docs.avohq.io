@@ -7,6 +7,8 @@ outline: [2, 3]
 
 Some resources are best displayed in a grid view. We can do that with Avo using a `cover_url`, a `title`, and a `body`.
 
+To add content around the grid or wrap, replace, or hide its records and pagination regions, use [slots](./slots.html). The `:cards` slot region means resource dashboard cards, not individual grid items.
+
 <Image src="/assets/img/4_0/grid-view/grid-view.webp" dark-src="/assets/img/4_0/grid-view/grid-view-dark.webp" width="2808" height="2030" alt="Avo grid view" />
 
 ## Enable grid view
@@ -102,6 +104,10 @@ See [below](#grid-item-badge) a list of options you can configure for the badge.
 - **Default:** `nil` — no badge is rendered (the badge is also skipped when both `label` and `icon` are blank)
 
 </Option>
+
+## Select records
+
+Grid cards carry the same selection checkbox as table rows, so [actions](./actions.html) run on a selection here too. <VersionReq package="avo" version="4.3.10" /> A bar above the cards selects the whole page and, across pages, every record the current query matches. See [Select all](./select-all.html#on-the-grid-view).
 
 ## Make grid the default view
 

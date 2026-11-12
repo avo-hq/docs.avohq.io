@@ -191,6 +191,30 @@ Same name and same default as the dashboard's [`refresh_button`](./dashboards-ap
 
 </Option>
 
+<Option name="`self.loading`" headingSize="3">
+
+<VersionReq package="avo-dashboards" version="4.3.4" />
+
+When the card runs its `query`. Takes the `:lazy` and `:manual` values of the `loading` option on tabs and association fields, without its Hash form or `auto_load_for`.
+
+```ruby
+self.loading = :manual
+```
+
+| Value | Behavior |
+| --- | --- |
+| `:lazy` | Loads when the card scrolls into view. |
+| `:manual` | Renders the card's title, description, and a Load button in place of its content. The `query` runs only when the button is clicked. |
+
+- **Type:** Symbol or String
+- **Default:** `:lazy`
+- **Validation:** raises `ArgumentError` for any other value
+- **i18n key:** `avo.load_item` ("Load %{item}"), or `avo.cards.load` ("Load card") when the card has no label
+
+See [Load cards only when they're needed](./cards.html#load-cards-only-when-they-re-needed).
+
+</Option>
+
 <Option name="`self.cache_for`" headingSize="3">
 
 Caches the result of the card's `query` for that duration. Within the window the query is skipped entirely and the stored result is replayed — useful for cards whose `query` is expensive.
@@ -445,7 +469,7 @@ self.partial = "avo/cards/map_card"
 
 ## HTML card
 
-<VersionReq version="4.1" />
+<VersionReq package="avo-dashboards" version="4.1" />
 
 `Avo::Cards::HtmlCard` builds its body from Ruby instead of a partial file. It has no extra class attributes — you implement a `body` method.
 
@@ -478,7 +502,7 @@ Inline template strings go through ActionView, so interpolated ERB values are HT
 
 ## Data cards (table & list)
 
-<VersionReq version="4.1" />
+<VersionReq package="avo-dashboards" version="4.1" />
 
 `Avo::Cards::TableCard` and `Avo::Cards::ListCard` both inherit from `Avo::Cards::DataCard`: you declare columns with `fields` and return records from `query`. The table card renders a `<table>` with column headers; the list card renders a `<ul>` with no headers, the first field as each row's primary content and the rest trailing at the end edge.
 
@@ -628,5 +652,54 @@ end
 - **`label`:** String — text shown on the divider. Default `nil`.
 - **`invisible`:** Boolean — when `true`, renders no border or label. Default `false`.
 - **`visible`:** Boolean or Proc — conditionally show the divider. Default `true`. As a Proc it has access to `context`, `params`, `parent`, `dashboard`, and `resource`.
+
+</Option>
+
+## Standalone card components
+
+<VersionReq package="avo-dashboards" version="4.3.2" />
+
+View components that draw a card from plain values, for pages with no dashboard or resource behind them, such as a [custom tool](./custom-tools.html). See [Show a card in a custom tool](./cards.html#show-a-card-in-a-custom-tool).
+
+<Option name="`Avo::Cards::StandaloneCardComponent`" id="standalone-card-component" headingSize="3">
+
+The card's chrome: header, ranges dropdown, discreet description, and grid sizing. The block renders as the card's body.
+
+```erb
+<%= render Avo::Cards::StandaloneCardComponent.new(label: "Recent visitors", ranges: [7, 30], range: params[:range]) do %>
+  <%= render Avo::Cards::MetricComponent.new(value: @visitors) %>
+<% end %>
+```
+
+| Argument | Type | Default | Behavior |
+| --- | --- | --- | --- |
+| `label` | String | `nil` | The card's title. |
+| `description` | String | `nil` | Subtitle under the title. |
+| `discreet_description` | String | `nil` | Text for the info icon tooltip in the bottom-end corner. |
+| `ranges` | Array or Hash | `[]` | Options for the ranges dropdown, in the shape `options_for_select` takes. The dropdown is hidden when empty. |
+| `range` | String or Integer | `nil` | The selected range. |
+| `range_param` | Symbol or String | `:range` | The query param a picked range is written to. |
+| `display_header` | Boolean | `true` | Set to `false` to drop the header even when `label`, `description`, or `ranges` are set. |
+| `cols` | Integer, `1` to `6` | `nil` | Grid columns the card spans. Setting `cols` or `rows` makes the card a grid item; the other one defaults to `1`. |
+| `rows` | Integer, `1` to `12` | `nil` | Grid rows the card spans. |
+
+- **Slot:** `with_header_actions` renders content in the header, before the ranges dropdown.
+- **Header:** rendered only when `display_header` is `true` and at least one of `label`, `description`, or `ranges` is present.
+
+</Option>
+
+<Option name="`Avo::Cards::MetricComponent`" id="metric-component" headingSize="3">
+
+A metric card's value with its prefix and suffix. The value is printed as given, so format it before passing it in.
+
+```erb
+<%= render Avo::Cards::MetricComponent.new(value: number_to_social(@revenue), prefix: "$") %>
+```
+
+| Argument | Type | Default |
+| --- | --- | --- |
+| `value` | Any | required |
+| `prefix` | String | `nil` |
+| `suffix` | String | `nil` |
 
 </Option>

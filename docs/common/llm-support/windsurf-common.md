@@ -23,7 +23,7 @@ Windsurf reads the `AGENTS.md` file from your repository. Add a line pointing to
 
 ## MCP server
 
-MCP is an API to communicate with AI models. You can add MCP servers and Windsurf will communicate with them to get more accurate results.
+MCP (Model Context Protocol) connects coding agents to external tools and context. Windsurf can use MCP servers to look up documentation while working.
 
 I suggest using [Context7](https://context7.com/) [MCP server](https://github.com/upstash/context7-mcp) which provides many libraries including Avo's docs.
 

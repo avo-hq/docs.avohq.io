@@ -3,27 +3,13 @@ license: community
 demoVideo: "https://youtu.be/wnWvzQyyo6A?t=1030"
 description: "The Array field allows you to display and manage structured array data."
 fieldTags: [structured]
+outline: [2, 3]
+api_docs: ./array-api.html
 ---
 
 # Array
 
-The `Array` field allows you to display and manage structured array data. This field supports flexibility in fetching and rendering data, making it suitable for various use cases.
-
-:::tip Important
-To use the `Array` field, you must create a resource specifically for it. Refer to the [Array Resource documentation](../array-resource) for detailed instructions.
-
-For example, to use `field :attendees, as: :array`, you can generate an array resource by running the following command:
-
-```bash
-bin/rails generate avo:resource Attendee --array
-```
-
-This step ensures the proper setup of your array field within the Avo framework.
-:::
-
-## Example 1: Array field with a block
-
-You can define array data directly within a block. This is useful for static or pre-configured data:
+The `Array` field displays structured data in a paginated panel inside another resource. Use it for data supplied by a block or a model method, with an [Array Resource](../array-resource) defining the fields shown for each entry.
 
 ```ruby{4-9}
 # app/avo/resources/course.rb
@@ -39,10 +25,42 @@ class Avo::Resources::Course < Avo::BaseResource
 end
 ```
 
-:::warning Authorization
-The `array` field internally inherits many behaviors from `has_many`, including authorization. If you are using authorization and the array field is not rendering, it is most likely not authorized.
+Without a block, Avo calls the model method matching the field name, then falls back to the Array Resource's `records` method if no data is returned. The Array Resource returns an empty array by default and is read-only unless configured otherwise.
 
-To explicitly authorize it, define the following method in the resource's policy:
+## Set up the resource that renders each entry
+
+Generate an Array Resource for the field. For `field :attendees, as: :array`, use:
+
+```bash
+bin/rails generate avo:resource Attendee --array
+```
+
+Define the entry's fields in that resource:
+
+```ruby
+# app/avo/resources/attendee.rb
+class Avo::Resources::Attendee < Avo::Resources::ArrayResource
+  def fields
+    field :id, as: :id
+    field :name, as: :text
+    field :role, as: :text
+    field :organization, as: :text
+  end
+end
+```
+
+Avo looks up the resource by the field name. If it has a different name, set [`use_resource`](./array-api.html#use_resource) to `Avo::Resources::Attendee` in the field declaration. See the [Array Resource documentation](../array-resource) for configuring the resource and enabling writes.
+
+## Supply data in a block {#example-1-array-field-with-a-block}
+
+Return an array of hashes from the [field's block](./array-api.html#block), as in the opening example, to supply static or computed data. The block can read `record` to access the parent record. The Array Resource also accepts Active Record objects, an `ActiveRecord::Relation`, or `StoreModel` instances.
+
+## Allow access to the panel
+
+:::warning Authorization
+The Array field uses association-style authorization. If authorization is enabled and the panel is missing, check the parent resource's policy.
+
+To explicitly authorize the attendees panel, define:
 
 ```ruby{3}
 # app/policies/course_policy.rb
@@ -51,27 +69,27 @@ class CoursePolicy < ApplicationPolicy
 end
 ```
 
-For more details, refer to the [view\_{association}?](./../authorization.html#view_association) documentation.
+For more details, refer to the [view\_{association}?](./../authorization-api.html#view_association) documentation.
 :::
 
-## Example 2: Array field fetching data from the model's method
+## Read data from the model {#example-2-array-field-fetching-data-from-the-models-method}
 
-If no block is defined, Avo will attempt to fetch data by calling the corresponding method on the model:
+Declare `field :attendees, as: :array` without a block to read the data from `Course#attendees`:
 
 ```ruby
 # app/models/course.rb
 class Course < ApplicationRecord
   def attendees
-    User.all.first(6) # Example fetching first 6 users
+    User.first(6)
   end
 end
 ```
 
-Here, the `attendees` field will use the `attendees` method from the `Course` model to render its data dynamically.
+Use an Array Resource whose fields match the objects returned by the method. For this example, define fields for the `User` attributes you want to display.
 
-## Example 3: Fallback to the `records` method
+## Provide a fallback dataset {#example-3-fallback-to-the-records-method}
 
-If neither the block nor the model's method exists, Avo will fall back to the `records` method defined in the resource used to render the array field. This is useful for providing a default dataset:
+If the field's block and the model method do not supply data, return a fallback dataset from the Array Resource's `records` method. Add this method to the resource that defines the entry's fields:
 
 ```ruby
 # app/avo/resources/attendee.rb
@@ -84,7 +102,31 @@ class Avo::Resources::Attendee < Avo::Resources::ArrayResource
 end
 ```
 
-## Summary of Data Fetching Hierarchy
+## Paginate at the source
+
+<VersionReq package="avo" version="4.3.6" />
+
+The block can read `page` and `per_page`, the page the panel is showing and its size. Return that page's records with the total to fetch one page at a time, as an [Array Resource's `records`](./../array-resource.html#paginate-at-the-source) does:
+
+```ruby
+# app/avo/resources/user.rb
+class Avo::Resources::User < Avo::BaseResource
+  def fields
+    field :bookmarks, as: :array do
+      {
+        records: BookmarkStore.page(page, per: per_page, user_id: record.id),
+        count: BookmarkStore.count(user_id: record.id)
+      }
+    end
+  end
+end
+```
+
+Give the resource that renders the field a `find_record_method` too, so a record's show page finds it outside the page the panel fetched.
+
+`count` is the total number of matching records across all pages, not just the number returned for this page. `BookmarkStore` stands in for your data source; implement its `page` and `count` methods to match your storage.
+
+## Choose which data source wins {#summary-of-data-fetching-hierarchy}
 
 When using the `Array` field, Avo will fetch data in the following order:
 
@@ -92,4 +134,12 @@ When using the `Array` field, Avo will fetch data in the following order:
 2. Fetch data from the **associated model method** (e.g., `Course#attendees`).
 3. Fall back to the **`records` method** defined in the resource.
 
-This hierarchy provides maximum flexibility and ensures seamless integration with both dynamic and predefined datasets.
+Returning `nil` or `false` moves to the next source. Returning `[]` displays an empty panel instead of using the fallback.
+
+## Customize shared field behavior
+
+To change the panel's initial page size, pass [`per_page`](./array-api.html#per_page). Set [`discreet_pagination`](./array-api.html#discreet_pagination) to hide the pagination controls when all entries fit on one page.
+
+To wait until someone requests the data, set [`loading`](./array-api.html#loading) to `:manual`. Add [`reloadable`](./array-api.html#reloadable) to let them refresh the panel without reloading the parent page.
+
+The field inherits its panel behavior from association fields. See the [Array field API](./array-api.html) for those options and [shared field options](../field-options.html) for common configuration.

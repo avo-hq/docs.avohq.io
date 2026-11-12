@@ -1,7 +1,6 @@
 ---
 license: addon
 addon_link: https://avohq.io/addons/ai
-betaStatus: Beta
 outline: [2, 3]
 ---
 
@@ -12,6 +11,23 @@ A catalog of what the Avo AI assistant can do, with a prompt for each one. Every
 The resource and field names in the examples are placeholders. Substitute your own: the assistant reads your resources, your columns, and your scopes at the moment you ask, so the vocabulary that works is the vocabulary of your admin.
 
 For how a turn actually unfolds — schema, confirmation cards, authorization — see [How the assistant works](./ai.html#how-the-assistant-works). For the tool-by-tool reference, see [Agents and tools](./ai-agents-and-tools.html).
+
+## Add a reusable skill
+
+Paste a skill into the chat and ask **"Add this as a skill"**, or attach a `.md` or `.txt` file and ask **"Import the attached file as a skill"**. For example:
+
+```text
+Add this as a skill:
+
+---
+name: bro
+description: Restate the last message in plain human language. Use for /bro.
+---
+
+Restate your last message simply and concisely, without jargon.
+```
+
+The assistant shows the title, description, and full instructions on a card, and saves the skill when you click **Save skill**, if you have permission to create skills. It does not overwrite existing skills or apply the new skill automatically. Reload the page to refresh the skills menu, then select it to use it. Only `.md` and `.txt` files can be imported. See [Import a skill](./ai.html#import-a-skill).
 
 ## Find records
 
@@ -24,19 +40,24 @@ For how a turn actually unfolds — schema, confirmation cards, authorization �
 | "List projects whose name contains 'orbit'"      | A partial-match list                                                     |
 | "Show me every column for post 42"               | The full record, not just the common columns                             |
 | "Who signed up last?"                            | One record, named inline as a chip                                       |
+| "Show the latest done project and include its visibility" | A project chip with its current visibility added                 |
+| "Which cities have more than one million people?" | City chips with their current population added                          |
+
+<Image src="/assets/img/4_0/ai/find-records.webm" dark-src="/assets/img/4_0/ai/find-records-dark.webm" width="1600" height="1000" alt="The Avo chat open over a dashboard. The question Which cancelled projects were more than half done? gets a list of four projects, each row linking to its record. A click on the first opens that project's page with the chat still open." />
 
 Ranges, sets, and emptiness all work in the same sentence-shaped way: "orders over $500", "users older than 26", "posts with no author", "projects in draft or review".
 
-**Naming a record in words is enough.** "The user called John Deere", "the post about pricing", "find Acme" — the assistant looks the record up the way your admin does: a resource that [configures search](./search.html) gets that exact search, and one that doesn't is matched across every text column you're allowed to read. A multi-word name still finds the record when its words live in different columns, so a first and last name stored separately aren't a problem. And "no such record" is only ever reported after that search came back empty — never off a guessed column filter.
+**Naming a record in words is enough.** "The user called John Deere", "the post about pricing", "find Acme" — the assistant looks the record up the way your admin does: a resource that [configures search](./search.html) gets that exact search, and one that doesn't is matched across every text column you're allowed to read, where a column the Index doesn't show only matches records you may open. A multi-word name still finds the record when its words live in different columns, so a first and last name stored separately aren't a problem. And "no such record" is only ever reported after that search came back empty — never off a guessed column filter.
 
 **Your scopes are part of the vocabulary.** Domain words like "admins", "active", or "published" are usually named scopes on the model rather than columns, and the assistant prefers the scope over guessing at a filter — so "list the published posts" runs `Post.published`, whatever that scope actually does.
 
 **Associations, without SQL.** "Which teams have no members?" and "show me users who have at least one order" are answered by checking whether the association exists, scoped to the child records you're allowed to see.
 
 **Records are named inline.** Any record the assistant mentions is rendered as a chip in the
-sentence itself — its picture, its title, and whatever status its resource declares — and clicking
-it opens the record. So "who signed up last?" reads as one sentence with the person in it, not as a
-paragraph followed by a card.
+sentence itself — its picture, its title, and whatever its resource declares — and clicking it
+opens the record. So "who signed up last?" reads as one sentence with the person in it, not as a
+paragraph followed by a card. When the resource enables dynamic fields, ask about population and
+the city chip can carry population; ask about continent and it can carry continent instead.
 
 A chip appears because the assistant named that record in its answer, which is why a count never
 brings one along: "how many projects?" names no project, so it shows none.
@@ -44,8 +65,13 @@ brings one along: "how many projects?" names no project, so it shows none.
 Ask for several and they come back as a list of rows — "the last three users" is three rows you can
 scan and click, not a bulleted paragraph.
 
-What a chip carries beyond the title is up to the resource — see
-[Record chips](./ai.html#record-chips).
+The resource supplies the chip's stable parts and decides whether the assistant can append
+answer-specific fields — see [Record chips](./record-chips.html).
+
+You can also ask the onboarding assistant to make those chips distinctive: "Give paid purchases a
+green chip and refunded purchases a red one", "Use an indigo-to-fuchsia gradient on city chips",
+or "Use each event's cover as its chip background." It updates the resource's `def chip`
+declaration, where the result remains ordinary app code you can adjust.
 
 ## Count and break down
 
@@ -63,7 +89,7 @@ Counts come from the database, never from counting the rows on screen.
 
 **A "how many" question reads no records.** It goes to a counting tool that returns numbers and nothing else — no ids, no names, no column values — so answering it sends none of your data to the model provider. The same filters, scopes, and search apply as when listing records, and the answer says what was counted: "412 orders placed this month".
 
-Counting within a parent record goes through the same checks as opening that record's association in the admin: you have to be allowed to see the parent, to view it, and to view that association. A column hidden from you can't be counted by, grouped by, or filtered on either — a count over a column you can't see would still tell you what's in it.
+Counting within a parent record goes through the same checks as opening that record's association in the admin: you have to be allowed to see the parent, to view it, and to view that association. A column hidden from you can't be counted by, grouped by, or filtered on either — a count over a column you can't see would still tell you what's in it. For the same reason, a count by a column the Index doesn't show includes only the records you may open.
 
 A count that runs longer than 10 seconds on PostgreSQL is stopped and reported as an error. You get a request to narrow it, never an estimate.
 
@@ -196,6 +222,8 @@ Check rows on an index — or in a has-many panel on a record's page — and "th
 
 The ribbon's **"3 records selected"** chip says how many; hovering it names each row by resource and label. See [The rows you checked](./ai.html#the-rows-you-checked).
 
+<Image src="/assets/img/4_0/ai/bulk-update.webm" dark-src="/assets/img/4_0/ai/bulk-update-dark.webm" width="1600" height="1000" alt="An Avo Projects index with three rows checked. The chat opens with a ribbon reading 3 records selected, the message Move these to On hold is sent, and the assistant answers with a card titled Update 3 Project records that lists the new stage and the three projects above Update and Cancel buttons." />
+
 ## Ask about a file you sent
 
 Attach files to your message — paperclip, drag, or paste — and ask about them directly:
@@ -205,6 +233,25 @@ Attach files to your message — paperclip, drag, or paste — and ask about the
 - **"Create a project for each row in this CSV"** — an import card you confirm; see [Work with files](#work-with-files)
 
 The files stay on the message, so you can keep asking about them later in the conversation. Text files — markdown, plain text, CSV, TSV, JSON — are read on demand, in windows, rather than sent to the model whole. Reading an image or a PDF takes a vision-capable model. See [Send files with a message](./ai.html#send-files-with-a-message).
+
+## Reach your other systems
+
+If your app lets you connect MCP servers, type `/mcp` and a server's address to connect a tool like Linear, Notion, or Stripe. Its tools then work beside Avo's own, with the record you're on as context. See [Connect other tools with MCP](./ai.html#connect-other-tools-with-mcp).
+
+| Ask                                                                                                              | What you get                                                                                                                           |
+| ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| "Give this customer a $30 credit"                                                                                | The customer found in Stripe from what the record holds, then a card showing the exact call before anything is sent                    |
+| "How can I refund this customer?"                                                                                | Your own refund policy, read from the Notion pages you connected, rather than a guess                                                  |
+| "Create an issue about this project not being able to finish on time"                                            | A Linear issue written from the project record you're on, on a card you approve                                                        |
+| "Mark this project open in Linear, charge the customer in Stripe, and open a GitHub issue for each of its tasks" | Three systems in one turn, a card for each call you haven't always-allowed, and a plain report of anything you declined or that failed |
+
+**The record you're on is the identifier.** "This customer" resolves from what the record already holds, such as a Stripe id or an email. When the record holds nothing that names the remote entity, the assistant looks it up on the other side or asks you which one. It doesn't guess an id.
+
+**Say which system when it matters.** Two servers can offer tools with the same name, and so can your admin. Saying "in Linear" or "in Stripe" saves a round trip, and the assistant says which connection a result came from.
+
+**One card per call.** A request that touches several systems shows a card for each call, so you can approve the Linear issue and decline the charge. Declining stops that call only: the assistant carries on with the rest or explains what it couldn't finish.
+
+**A connection that's down doesn't break the chat.** Avo's own tools keep working, and the assistant names the connection that failed instead of going quiet.
 
 ## Manage the conversation
 
@@ -226,6 +273,9 @@ Knowing the edges saves a round trip:
 | Delete a file from storage                | It can detach, never purge                                               |
 | Touch anything your policies hide         | Every read and write is authorized for the signed-in user                |
 | Take on substantial work unrelated to this app | Writing your blog post, debugging a codebase, a long translation, or a research report is someone else's job — it says so and offers what it can do instead |
+| Connect, share, or disconnect an MCP server | Those are clicks in the `/mcp` panel, behind your app's permission. Ask it to connect something and it tells you where to do it |
+| Approve its own call to a connected server | The card is yours, and it takes a click: a typed "do it" never approves a remote call |
+| Change what a connection's tools may do    | **On**, **Always ask**, and **Off** belong to whoever manages the connection, on its page |
 
 Short of that it is good company: small talk, a joke, a quick factual aside, or a question about a file you dropped into the conversation all get a straight answer before it steers back to your data. Anything you put in front of it — an uploaded file, the Media Library file you started the chat from, text you pasted — counts as part of the conversation, so "what does this show?" is answered rather than declined.
 

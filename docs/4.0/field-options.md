@@ -32,7 +32,7 @@ field :is_available, as: :boolean, name: "Availability"
 
 <Image src="/assets/img/4_0/field-options/change-field-name.webp" dark-src="/assets/img/4_0/field-options/change-field-name-dark.webp" width="1776" height="570" alt="An Avo index table with three columns — ID, Name and a boolean column whose header reads “Availability”, the custom label set via the field's name option, highlighted." prompt="index with the column header Availability anotated" />
 
-If you localize your app, translate the label through the [i18n conventions](./i18n.html) instead of hardcoding it.
+If you localize your app, translate the label through the [i18n conventions](./i18n.html) instead of hardcoding it. Fields pick up the model's attribute translations (`activerecord.attributes.<model>.<attr>`) on their own, so a translated model usually needs no `name` at all.
 
 ## Show and hide fields on different views
 
@@ -45,6 +45,13 @@ field :body, as: :textarea, hide_on: [:index, :show]
 ```
 
 Be aware that a few fields override those options — for example, the [`id`](./fields/id.html) field hides itself on the <Edit /> and <New /> views.
+
+You can declare the same field more than once, each for its own views. Saving the form goes through the declaration the form shows, so its `attach_scope`, `update_using`, and other save rules apply:
+
+```ruby
+field :user, as: :belongs_to, only_on: :forms, attach_scope: -> { query.where(active: true) }
+field :user, as: :belongs_to, only_on: :display
+```
 
 Please read the detailed [views](./views.html) page for more info.
 
@@ -71,6 +78,33 @@ field :name, as: :text, visible: -> { resource.record.enabled? }
 # Do this instead
 field :name, as: :text, visible: -> { resource.record&.enabled? }
 ```
+
+## Hide fields that have no value
+
+<VersionReq package="avo" version="4.2.11" />
+
+Some fields only matter when they're set. A customer might have a Stripe id or a Paddle id, never both. Pass [`hide_if_blank`](./field-options-api.html#hide_if_blank) the views where a blank field should disappear, instead of writing a `visible` block for each one.
+
+```ruby
+field :stripe_id, as: :text, visible: -> { resource.record&.stripe_id.present? } # [!code --]
+field :paddle_id, as: :text, visible: -> { resource.record&.paddle_id.present? } # [!code --]
+field :stripe_id, as: :text, hide_if_blank: :all # [!code ++]
+field :paddle_id, as: :text, hide_if_blank: :all # [!code ++]
+```
+
+It takes `:index`, `:show`, `:new`, `:edit`, the shorthands `:forms` and `:display`, or `:all`, alone or in an array. Use `:display` to keep the field on the forms so users can still fill it in.
+
+```ruby
+field :notes, as: :textarea, hide_if_blank: :display
+```
+
+A few things to know:
+
+- "Blank" is Rails' `blank?`: `nil`, `""`, `[]`, `{}`, and `false`. **A boolean set to `false` is hidden too.**
+- On the <Index /> view, the column shows as long as one row on the page has a value. Rows where it's blank show the usual `—`.
+- On the <Edit /> view, a field that is blank in the database is hidden, so it can't be filled in from the form.
+- On the <New /> view, a [`default`](./field-options-api.html#default) counts as a value, so a field with a default still shows.
+- It works on top of `visible`, `show_on`, `hide_on`, and the other visibility options. A field has to pass all of them to show.
 
 ## Compute the value with a block
 
@@ -292,6 +326,26 @@ field :name, as: :text, placeholder: 'John Doe'
 
 <Image src="/assets/img/4_0/field-options/placeholder.webp" dark-src="/assets/img/4_0/field-options/placeholder-dark.webp" width="1256" height="254" alt="An Avo New form text field whose empty input shows the grey placeholder text “John Doe”." prompt="New form empty text input showing the placeholder text John Doe" />
 
+## Focus a field when the form opens
+
+<VersionReq package="avo" version="4.3.1" />
+
+Set [`autofocus`](./field-options-api.html#autofocus) on the field users fill in first, and the cursor starts there when the <New /> or <Edit /> form opens. It works in action modals too, where it replaces the default of focusing the first input.
+
+```ruby
+field :title, as: :text, autofocus: true
+```
+
+Pass a block to decide per form. This one focuses the field on the <New /> view only, so opening an existing record for editing doesn't put the cursor in the title.
+
+```ruby
+field :title, as: :text, autofocus: -> { view.new? }
+```
+
+Most inputs and selects support it, `belongs_to` included. Date pickers, tag inputs, and rich text editors don't. A field inside a closed tab, or one that is `readonly` or `disabled`, can't take focus. The [API reference](./field-options-api.html#autofocus) lists every supported field.
+
+Some forms own focus themselves and ignore the option. A field of a [nested association form](./associations/has_many.html#nested-in-forms) leaves the cursor on the parent form, a [reactive](#react-to-changes-in-other-fields) re-render doesn't pull the cursor back to the field it replaces, and an action card in an [Avo AI](./ai.html) chat keeps focus in the chat composer.
+
 ## Place fields on the same row
 
 The [`width`](./field-options-api.html#width) option controls how much horizontal space a field takes inside its parent panel or card. Adjacent fields with a `width` below `100` (a percentage) sit side by side.
@@ -366,7 +420,7 @@ field :body, as: :textarea, nullable: true, null_values: ['0', '', 'null', 'nil'
 
 ## Link the table cell to the record
 
-Sometimes, on the <Index /> view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click the <Show /> icon. Use [`link_to_record`](./field-options-api.html#link_to_record) to change a table cell into a link to that record. It's available on the [`id`](./fields/id.html), [`text`](./fields/text.html), [`gravatar`](./fields/gravatar.html), and [`belongs_to`](./associations/belongs_to.html) fields.
+Sometimes, on the <Index /> view, you may want a field in the table to be a link to that resource so that you don't have to scroll to the right to click the <Show /> icon. Use [`link_to_record`](./field-options-api.html#link_to_record) to change a table cell into a link to that record. It's available on the [`id`](./fields/id.html), [`text`](./fields/text.html), [`number`](./fields/number.html), [`date`](./fields/date.html), [`date_time`](./fields/date_time.html), [`time`](./fields/time.html), [`gravatar`](./fields/gravatar.html), [`file`](./fields/file.html), [`external_image`](./fields/external_image.html), and [`belongs_to`](./associations/belongs_to.html) fields.
 
 ```ruby
 field :id, as: :id, link_to_record: true
@@ -386,6 +440,8 @@ field :status, as: :select, summarizable: true
 ```
 
 <Image src="/assets/img/4_0/field-options/summarizable.webm" dark-src="/assets/img/4_0/field-options/summarizable-dark.webm" width="900" height="397" alt="An animated Avo Projects index table (ID, Name, Status, Country columns) with the summarizable summary popover open over it, cycling a hover across each segment of the Status distribution pie chart to reveal each value's label and count." prompt="Index table header showing the summarizable chart icon and summary popover for a column" />
+
+The chart reads the same query the list does, so it follows the policy [`Scope`](./authorization-api.html#Scope) and asks [`index?`](./authorization-api.html#index), or the parent's [`view_{association}?`](./authorization-api.html#view_association) for a column on an association panel.
 
 ## Let users copy the value
 
@@ -503,9 +559,9 @@ Within your field template you can now access the `@field.meta` attribute:
 
 ## React to changes in other fields
 
-The [`react_on`](./field-options-api.html#react_on) option re-evaluates a field when other fields change in the form, refreshing `@record` with the latest form values. Updates run when the watched field's value is committed — on selection for selects and checkboxes, and when the input loses focus for text fields.
+The [`react_on`](./field-options-api.html#react_on) option re-evaluates a field when other fields change in the form, refreshing `@record` with the latest form values. Updates run when the watched field changes: on selection for selects, checkboxes and radios, and 300 ms after typing pauses (or on blur) for text inputs and textareas.
 
-This feature is provided by the **`avo-reactive_fields`** add-on. Add the gem to your app before using `react_on` (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#gems) for the `packager.dev` source).
+This feature is provided by the **`avo-reactive_fields`** add-on. Add the gem to your app before using `react_on` (see the [Avo 4 upgrade guide](./avo-3-avo-4-upgrade.html#upgrade-your-gems) for the `packager.dev` source).
 
 ### Dependent select
 
@@ -530,7 +586,7 @@ end
 
 ### Derived value (slug from name)
 
-Pair `react_on` with [`format_using`](./field-options-api.html#format_using) to re-compute a derived value whenever another field changes. When the user fills in **name** (for example `Hello World`) and the input loses focus, **slug** updates to `hello_world` — on each reactive request, `@record` is hydrated from the submitted form params, so `format_using` always sees the latest **name**, even before save:
+Pair `react_on` with [`format_using`](./field-options-api.html#format_using) to re-compute a derived value whenever another field changes. When the user types `Hello World` into **name** and pauses, **slug** updates to `hello_world` — on each reactive request, `@record` is hydrated from the submitted form params, so `format_using` always sees the latest **name**, even before save:
 
 ```ruby
 # app/avo/resources/course.rb

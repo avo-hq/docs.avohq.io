@@ -1,7 +1,6 @@
 ---
 license: addon
 addon_link: https://avohq.io/addons/ai
-betaStatus: Beta
 outline: [2, 3]
 ---
 
@@ -42,11 +41,12 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 | `ask_user`                   | Asks you one clarifying question — free-form, or with clickable options — then ends the turn                         | —                 |
 | `schema_inspector`           | Reports the database structure — scoped to the resources the signed-in user is allowed to see                        | read-only         |
 | `resource_inspector`         | The deep report on one resource: field types, actions, filters, associations, attachments                           | read-only         |
-| `active_record_query`        | Runs read-only, paginated, policy-scoped queries against a resource — filters, scopes, grouping, and free-text search through the resource's own [configured search](./search.html), falling back to the text columns the resource's fields expose to the user when none is configured | read-only         |
+| `active_record_query`        | Runs read-only, paginated, policy-scoped queries against a resource — filters, scopes, grouping, free-text search through the resource's own [configured search](./search.html), and up to three answer-specific chip fields when the resource enables them | read-only         |
 | `count_records`              | Counts records — a total, per value, per day, week or month, distinct values, or within one parent record — with the same filters, scopes, search and field rules as `active_record_query`. Returns numbers only, never a row | read-only         |
 | `active_storage_insights`    | Storage reports — totals, orphans, duplicates, growth, biggest files — and finding/showing files                     | read-only         |
 | `active_storage_attachment`  | Attaches or detaches a Media Library blob (or a chat upload) on a record's attachment; can also fetch a URL onto one | immediately¹      |
-| `read_file`                  | Reads a markdown, text, CSV, TSV, or JSON file in windows — a file you uploaded in the chat, a file on a record you can read, or a [Media Library](./media-library.html) file — by blob id or filename | read-only         |
+| `read_file`                  | Reads a markdown, text, CSV, TSV, or JSON file in windows — a file you uploaded in the chat, a file on a record you can open, or a [Media Library](./media-library.html) file — by blob id or filename | read-only         |
+| `create_skill`               | Proposes a reusable skill from pasted instructions or a `.md` or `.txt` upload in this chat; respects the skill creation policy⁴ | after you confirm |
 | `create_record`              | Creates a record                                                                                                     | immediately       |
 | `update_record`              | Changes a record's attributes                                                                                        | after you confirm |
 | `update_records`             | Proposes the same field changes across many records of one resource, as a single card                                | after you confirm³ |
@@ -54,7 +54,7 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 | `run_action`                 | Lists the [actions](./actions.html) available — one resource's, or [every action in the app](./ai.html#finding-an-action-without-naming-its-resource) — and proposes running one on the records you name | after you confirm |
 | `import_records`             | Proposes creating records for one resource from a CSV or TSV file, with a column-to-field mapping                    | after you confirm² |
 | `write_history`              | Lists the writes made earlier in the conversation and proposes undoing one, or a whole batch on one card           | after you confirm |
-| `rename_conversation`        | Renames the current conversation — with your exact title, or by regenerating one                                     | immediately       |
+| `rename_conversation`        | Renames the current conversation — with your exact title, or by regenerating one⁴                                    | immediately       |
 
 "After you confirm" means the tool call produces a card describing the pending change; your click applies it, not the model. "Immediately" is reserved for actions that are reversible (a detached file can be re-attached, a conversation can be renamed again) or additive (creating a record).
 
@@ -63,6 +63,18 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 ² An import is the one create that waits for you: the call produces a card naming the file and where it came from, the resource, the row count, the mapping, and the first rows, and nothing is created until you click **Confirm**. The rows are then created on the server — the model never carries them — under the same authorization and field rules a single create uses; a row that fails validation is skipped and reported on the card with its row number and reason, and the rest are still created. See [Reading files and importing from them](./ai.html#reading-files-and-importing-from-them).
 
 ³ A batch update is one card for the whole set: it names the change once and then every record it will touch, capped at `config.ai.max_update_records` (50 by default, at most 500). Nothing is written until you click **Confirm**, and the records are then updated on the server one at a time, under the same authorization and field rules a single update uses — a record that fails validation is skipped and named on the card, and the rest are still updated. Each updated record is recorded on its own, but `write_history` lists the batch as one entry and undoes it on one card, restoring every record or only the ones you name. If something that isn't about one record stops the run partway — the database going away, say — the records already saved are kept and counted, and the card reads as stopped rather than done, naming the ones it never reached. When the resource registers an action that does what you asked, the assistant runs that instead — see `run_action` above.
+
+⁴ Rarely needed mid-chat, so the chat agent doesn't spend every request's context on its definition: on a provider that supports tool search, the model loads the tool when it needs it, and a provider without tool search gets it up front. Asking for it works either way. The [conversation renamer](#the-conversation-renamer) always gets `rename_conversation` up front, since it's that agent's only tool.
+
+### Tools from connected MCP servers
+
+When your app has [MCP connections](./ai.html#connect-other-tools-with-mcp) turned on and the chat's user can use a connected one, two tools join the roster: `search_tool` and `execute_tool`. The servers' own tools never join it. The assistant searches the tool list stored for each connection, gets back the best matches with their arguments, and calls one by its connection and name. A connection with dozens of tools costs a request nothing until the assistant needs one of them.
+
+Each connection's tool list is stored when it connects and when its owner clicks **Refresh tools**, and it's read again just before every call, so a tool the server dropped or changed is never called on an old definition. A tool its owner switched **Off** never comes back from a search. A server that's down is found on the call that needs it: nothing is sent, Avo's own tools keep working, and the assistant says which connection failed.
+
+Every remote call waits on a card unless the user always-allowed that tool, and that card only takes a click. See [Approve a call](./ai.html#approve-a-call).
+
+`config.ai.excluded_tools` can't name a remote tool, or `search_tool` and `execute_tool`. To take one remote tool away, set it to **Off** on its connection's page. To take them all away, turn the setting off.
 
 ### The shapes an ask can take
 
@@ -85,13 +97,15 @@ A tool only accepts from the model the arguments listed in its schema — a reso
 
 That is a deliberate security boundary. There is no argument the model could invent to act as a different user, and no id it could pass to rename or read a conversation other than the one it is speaking in. Combined with [authorization at the tool layer](./ai.html#how-the-assistant-works), it means a prompt-injection attempt riding in on your data has no lever to reach beyond what the chat's owner could already do in the Avo UI.
 
+The same goes for a connected MCP server. Its tool descriptions and results are text an outside system wrote, and the assistant treats them as data. Whatever they say, a remote call waits for the user's click, and connection records are out of the tools' reach.
+
 ### Schema comes back with the answer
 
 Every result the query, write, and action tools return carries the resource it touched under `resource_schema`: its real columns and their types, the model's named scopes, and the attributes a create cannot omit. Success or error alike — a query that names a column you don't have comes back with the ones you do. This is done in the tools, not merely requested in the prompt, and is what makes the assistant work from your real columns and scopes instead of guessed ones, without spending a round trip asking first.
 
 It is sent once per resource per turn, and only for resources the signed-in user is allowed to list. `resource_inspector` remains for the deeper report — field types, a resource's actions and filters, its associations and attachments — when the assistant wants structure it cannot get from a result. Excluding it costs you that report, not the grounding: every result still comes back with its schema.
 
-`run_action` adds two checks of its own: the resource's `act_on?` policy method and the action's `self.authorize` block, both checked when the run is proposed and again when you confirm it. See [What it's allowed to run](./ai.html#what-it-s-allowed-to-run).
+`run_action` adds two checks of its own: the resource's `act_on?` policy method and the action's `self.visible` and `self.authorize` blocks, both checked when the run is proposed and again when you confirm it. See [What it's allowed to run](./ai.html#what-it-s-allowed-to-run).
 
 ## Renaming conversations
 
@@ -126,6 +140,8 @@ A list that surprises you reads like this:
 | An error message where the names should be | An `extra_tools` entry naming a class that won't load, isn't a `RubyLLM::Tool`, or claims a wire name another tool already has |
 
 That last row is deliberate: the field renders the error instead of failing the page, because this is the page you came to in order to read it. The same configuration raises on an actual chat run — a missing tool the app asked for isn't something to pass over quietly.
+
+Tools from [connected MCP servers](#tools-from-connected-mcp-servers) aren't listed: they depend on which servers answer at the start of a reply. `/mcp` in the chat lists each connection's tools.
 
 The roster doesn't change with your authorization policies. Every tool checks permissions when it's called, rather than being withheld from the list, so a policy change shows up in what a tool *does* — not in what's listed here.
 

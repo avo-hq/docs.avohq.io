@@ -1,7 +1,6 @@
 ---
 license: addon
 addon_link: https://avohq.io/addons/ai
-betaStatus: Beta
 outline: [2, 3]
 ---
 
@@ -21,7 +20,7 @@ The feature and docs are both work in progress.
 
 - Avo 4
 - An API key for an LLM provider supported by [RubyLLM](https://rubyllm.com) (OpenAI, Anthropic, Gemini, and others)
-- RubyLLM 2, installed for you as a dependency.
+- RubyLLM 2.1 or newer within the 2.x line, installed for you as a dependency.
 - PostgreSQL
 
 ## Installation
@@ -47,7 +46,7 @@ bin/rails generate avo:ai install
 bin/rails db:migrate
 ```
 
-This creates the `avo_ai_*` tables — plus RubyLLM 2.0's internal `ruby_llm_*` tables (model registry, tool calls, usage ledger, batches), unless the app already has them — and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
+This creates the `avo_ai_*` tables — plus RubyLLM's internal `ruby_llm_*` tables (model registry, tool calls, usage ledger, batches, MCP credentials), unless the app already has them — and writes `config/initializers/ruby_llm.rb` (skipped if it already exists). It also appends every AI setting — commented out, at its default — to the end of `config/initializers/avo.rb`, so the options are in the file waiting to be uncommented rather than in terminal output that scrolls away. If the file already configures `config.ai`, it's left untouched.
 
 ### 3. Set your provider API key
 
@@ -55,7 +54,7 @@ The generated `config/initializers/ruby_llm.rb` reads `OPENAI_API_KEY` by defaul
 
 ```ruby
 RubyLLM.configure do |config|
-  config.openai_api_key = ENV.fetch("OPENAI_API_KEY", nil) # [!code focus]
+  config.openai_api_key = ENV.fetch("OPENAI_API_KEY", nil) # [!code highlight]
   # config.anthropic_api_key = ENV.fetch("ANTHROPIC_API_KEY", nil)
   # config.gemini_api_key = ENV.fetch("GEMINI_API_KEY", nil)
 end
@@ -158,6 +157,10 @@ Avo.configure do |config|
   # Close chat-bar pills nobody has opened for this long (see "Closing idle tabs automatically").
   # Unset (the default), nil, or false keeps them until closed.
   config.ai.tab_expiry = 30.days
+
+  # Let people connect remote MCP servers from the chat (see "Turn on MCP connections").
+  # Off by default. Needs Active Record encryption keys and the installer's migrations.
+  config.ai.connectors_enabled = true
 end
 ```
 
@@ -247,19 +250,25 @@ Every message you send starts a fresh turn against the provider, built from thre
 
 **It works from your real schema, not a guess at it.** Every query, write, and action result carries the resource's real columns, model scopes, and required attributes back to the assistant — so it builds what comes next from your names. This is done by the tools, not merely requested in the prompt: it arrives with the answer rather than being asked for first, which is why a question rarely spends a round trip on structure, and why the assistant uses your scopes — `cancelled`, `published` — instead of guessing at column filters. A query that gets a column wrong comes back with the real ones attached, so the retry is built from names too.
 
-**Reading.** Query results are paginated, and "how many" goes to `count_records`, which returns the number and never a row — so a capped result set doesn't become a wrong number, and a count sends no record to the model provider. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](#record-chips).
+**Reading.** Query results are paginated, and "how many" goes to `count_records`, which returns the number and never a row — so a capped result set doesn't become a wrong number, and a count sends no record to the model provider. Any record the assistant names in its answer is rendered as a chip in the sentence itself — see [Record chips](./record-chips.html).
+
+**Images load only from your app.** An image in an answer loads when its address is a path on your app, a `data:` image, or a URL on the host set in `Rails.application.routes.default_url_options`. Any other image renders as a link naming its host, so an image address written into a record, a document, or a [connected server's](#connect-other-tools-with-mcp) reply can't make the reader's browser send a request to that host. If `default_url_options` has no host, full URLs to your own app render as links too.
 
 **Writing.** Updates and deletes show you a card describing the change and run only when you confirm it; the confirmation applies the change, not the model. A delete works one record at a time; an update works on one record or on many, and a batch is one card covering the whole set. Creates apply immediately, since there's nothing to preview for a record that doesn't exist yet, and creating is the one write it will repeat: "add 15 cities" creates fifteen without stopping between them. The exception is an [import from a CSV](#reading-files-and-importing-from-them), which is proposed as one card and creates its rows only when you confirm. Every executed write is recorded in an audit log, and the assistant can undo one through the same confirmation card.
 
-**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "commit", "apply it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does and the card flips in place; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions). A typed confirmation reaches the latest card while nothing else has happened since: if an earlier "go ahead" of yours reached the assistant and it only reminded you to confirm, the next "do it" still confirms the card. Once you ask about something else, or the assistant looks something up or asks you a question, click the card's button instead. When one reply shows several cards, typing confirms none of them, because it can't know which one you mean; click each card you want.
+**Writes go through your fields.** A create or update is saved the way the edit form saves it, so each field's save rules run: [`update_using`](./field-options-api.html#update_using), a `belongs_to` found through its resource's own finder and attach scope (a slug resolves), a key-value field's locks. The assistant writes the names the form takes — a field's id, or the param the form submits (`user_id`, a polymorphic field's `commentable_type` and `commentable_id` together). A column a field writes under another name (`tag_list`, `price_cents`) is refused, never silently dropped. Undo is the exception: it puts back the stored copy of the row.
+
+**Confirming a card — click or type.** Every card that waits on you — an update, a delete, an undo, an action run, an attach-by-URL, an import — settles the same two ways: click its button (**Confirm**, or **Run** on an action, **Attach** on a file), or just tell the assistant to go ahead in the composer — "do it", "go for it", "run it", "commit", "apply it", "yes". A typed confirmation is *your* word, so it counts exactly as the click does; the assistant still can't confirm on its own, and it can't talk its way past a Cancel. The two read differently in the transcript: a click settles the card where it sits, while what you typed is saved as your message, the card above it settles reading **Confirmed**, and the outcome arrives as a new card under your words. Either way, the card reads **Working…** while the write runs and its buttons come off, so a slow action can't look like nothing happened and get confirmed a second time. It only reads as a confirmation when that's all you say — "run it, but change the reason to budget cut" carries a fresh instruction, so the assistant re-proposes with your change instead of running the old card. An answer sent from a question card is never a confirmation either, however it reads — see [Answering the assistant's questions](#answering-the-assistant-s-questions). A typed confirmation reaches the latest card while nothing else has happened since: if an earlier "go ahead" of yours reached the assistant and it only reminded you to confirm, the next "do it" still confirms the card. Once you ask about something else, or the assistant looks something up or asks you a question, click the card's button instead. When one reply shows several cards, typing confirms none of them, because it can't know which one you mean; click each card you want. Typing never approves a call to a connected MCP server: that card takes a click, because what the server sends back is text an outside system wrote. See [Approve a call](#approve-a-call).
 
 **Running your actions.** The assistant can also run the [actions](./actions.html) a resource registers, not just write columns — see [Your actions, from the chat](#your-actions-from-the-chat).
 
 **Authorization is enforced at the tool layer, on every call.** Each read and write goes through your Avo policies for the signed-in user who owns the chat — per-resource and per-field. Instructions are guidance for the model; your policies are what actually decides. A resource the user can't list is invisible to the assistant rather than refused, so it can't be used to probe for what exists.
 
-**Per-field means the policy's field lists too.** A field the resource's policy withholds with `whitelisted_fields` / `blacklisted_fields` is not returned by any tool, not named in a record context or a confirmation card, and cannot be written. A column no field declares does not exist for the chat at all: it is not returned, filtered, sorted, grouped, searched, written, imported, or named in a schema, an inspector report or a validation message. What the panel shows or accepts without a field counts as declared: the timestamps or id a resource lists in `discreet_information` are readable, `created_at` stays a sort key whenever the column exists, and the columns a resource opens through `extra_params` are writable. Associations are reachable only through an association field the user may reach, and a model with no Avo resource is never queried or described. Undo reverses exactly what the chat did: a deleted record comes back whole, and an update or action is restored column for column, refused only where a restored column now belongs to a field the user may not write. `Avo::Current.interface` is `:ai` for the whole of a response and for a confirmed write, so a policy can withhold more from the chat than from the panel. See [Field authorization](./authorization.html#field-authorization).
+**Per-field means the policy's field lists too.** A field the resource's policy withholds with `whitelisted_fields` / `blacklisted_fields` is not returned by any tool, not named in a record context or a confirmation card, and cannot be written. A column no field declares does not exist for the chat at all: it is not returned, filtered, sorted, grouped, searched, written, imported, or named in a schema, an inspector report or a validation message. What the panel shows or accepts without a field counts as declared: the timestamps or id a resource lists in `discreet_information` are readable, `created_at` stays a sort key whenever the column exists, and the columns a resource opens through `extra_params` are writable. Associations are reachable only through an association field the user may reach, and a model with no Avo resource is never queried or described. Undo reverses exactly what the chat did: a deleted record comes back whole, and an update or action is restored column for column, refused only where a restored column now belongs to a field the user may not write. `Avo::Current.interface` is `:ai` for the whole of a response and for a confirmed write, so a policy can withhold more from the chat than from the panel. See [Field authorization](./authorization.html#hide-fields-from-a-user).
 
-The assistant reads the same rows the resource's Index shows: its [`index_query`](./resources-api.html#self.index_query) first, then the policy scope on top. Rows, counts, grouped answers, "has any" checks, and the records a write or action can target all stay inside that set, so tenant or soft-delete scoping you put in `index_query` bounds the chat too. Avo's show page finds a record through the policy alone, so a rule that must hold on every page still belongs in the policy's scope.
+The assistant reads the same rows the resource's Index shows: its [`index_query`](./resources-api.html#self.index_query) first, then the policy scope on top. Rows, counts, grouped answers, "has any" checks, and the records a write or action can target all stay inside that set, so tenant or soft-delete scoping you put in `index_query` bounds the chat too. Avo's show page finds a record through the policy alone, so a rule that must hold on every page still belongs in the policy's scope. Reading a row's field values, its files, or its chip fields also needs [`show?`](./authorization-api.html#show) on that record: a row the user may list but not open comes back with only its id and reference.
+
+Querying on a column reads it too. A filter, a "has any" check, a sort, a grouping, or a distinct count on a column the Index doesn't show matches, counts, and orders only the rows the user may open, so a row they can only list never reveals that column through which rows come back. Columns the Index shows filter every listed row as before, and sorting by `created_at` stays a sort the Index already does. To keep this bounded, a query that would have to check more than 1,000 listed rows is refused, and the assistant asks to narrow it with a filter on a column the list shows, a scope, or a search. A resource's own [configured search](./search.html) runs as the admin runs it and isn't checked row by row. Without one, the assistant's search matches the text columns the Index shows on every row and the others only on rows the user may open; past the same 1,000 rows it searches the Index's columns alone rather than refusing. Without an authorization client every row opens, so none of this applies.
 
 The chat runs in a background job, with no request. A resource whose field definitions read request-only context (`Avo::Current.context[:account]`, `params`) can't have its field rules checked there, so the assistant refuses that resource rather than read it without them. A single field whose `visible:` proc raises is treated as hidden.
 
@@ -267,172 +276,13 @@ For the full reference — both agents, every tool and its gates, and how conver
 
 ### Record chips
 
-A record the assistant mentions is drawn inline as a **chip** — its picture, its title, and
-whatever status you choose to put on it — and clicking it opens that record. The chip is part of
-the sentence, so an answer reads as one thought rather than as a paragraph followed by a card.
+A record the assistant mentions is drawn inline as a chip. By default it contains the record's
+picture and title, and clicking it opens the record. Resources can customize stable parts and let
+the assistant add current, answer-relevant Avo fields such as population or status. Sets of records
+render as full-width rows instead of inline chips.
 
-A chip appears because the assistant named that record. A count or a total names none, so it brings
-no chip with it.
-
-A chip is looked up through the viewer's policy, the same `index?` and scope the query tool reads
-with, so a reference to a record the viewer is not allowed to read renders as the plain label text
-rather than as a chip. That holds for a reference the assistant wrote, one typed into a message, and
-one that arrived through record data or an uploaded file.
-
-A chip names its record the way your Avo pages do: by `to_param`, looked up through the resource's
-own `find_record_method`. If your app hides its primary keys behind friendly_id, hashids, or its own
-`to_param`, the assistant's references and the chip's link carry that same slug or hashid, never the
-raw key. A raw key such a resource doesn't answer to — `avo:Post/12` typed into a message — renders
-as plain text, the same as a record that doesn't exist. Resources on Avo's default finder are
-unaffected: their param is the primary key.
-
-**A set of records comes back as a list of rows.** When the answer *is* a set — "the last three
-users", "which projects are running", "show me the cities" — the assistant names one record per
-line, and the transcript draws those lines as a stack of rows instead of a bulleted paragraph: the
-same chip, given the whole width, so each row is scannable and clickable end to end the way an
-index table's rows are. A line that carries a sentence beside its record stays an ordinary bullet —
-there the record really is a word in a sentence.
-
-:::warning `def chip` is alpha
-The DSL is new and still moving. Expect it to change before it settles — the part vocabulary, the
-tones, and the names on this page are all still up for revision — and expect at least one change
-that a chip you wrote today will not survive untouched. Every one of them will be written down: a
-breaking change to `chip` ships with the release note that says what to do about it, the same as
-any other Avo API. Declare a chip where it earns its keep today, and plan on revisiting those
-declarations at an upgrade.
-:::
-
-**Declare what it carries.** A chip is a row of parts. Every resource has a default one — the
-record's picture and its title — and `def chip` replaces it, declaring one `part` per piece, the
-same shape as [`fields`](./resources.html#fields):
-
-```ruby
-class Avo::Resources::Project < Avo::BaseResource
-  def chip # [!code focus]
-    part resource.avatar # [!code focus]
-    part resource.record_title # [!code focus]
-    part record.status, tone: :danger # [!code focus]
-  end # [!code focus]
-end
-```
-
-`chip` is an ordinary instance method, so **`record` and `resource` are in scope** — the same two
-names Avo injects into every lambda you write on a resource. Everything a part is built from is
-reached through one of them, so a declaration says out loud where each piece came from and there
-is nothing new to learn:
-
-```ruby
-part resource.avatar              # the picture, or the initials Avo derives
-part resource.record_title        # what Avo calls this record
-part record.status                # anything the record answers to
-part "in review"                  # a literal
-part record.status, tone: :danger # coloured
-part icon: "tabler/outline/moon"  # a glyph, alone or beside text
-```
-
-Because it is an instance method on the hydrated resource, the rest of what Avo hands a lambda is
-there too — `view`, `params`, `request`, `context`, `current_user`, `view_context`, `main_app`,
-`avo`, `helpers` and `t`. Nothing is injected for them; the resource already delegates them.
-
-```ruby
-def chip
-  part resource.avatar
-  part resource.record_title
-  part view_context.number_to_currency(record.budget), tone: :muted # [!code focus]
-  part t("my_app.draft"), tone: :muted if record.draft? # [!code focus]
-end
-```
-
-:::info
-The one thing a `def chip` body does *not* get is a lambda's implicit forwarding to the view
-context, so a bare `number_to_currency(...)` won't resolve — name `view_context`, as above, or
-reach your app's own helpers through `helpers`.
-:::
-
-**What hovering shows.** A chip's tooltip is its title, so the hover repeats what the chip already
-spells out. A resource with something better to say declares `chip_tooltip`; a skill's chip uses
-this to show the skill's description. Blank falls back to the title, and a `chip_tooltip` that
-raises loses the tooltip, never the chip.
-
-```ruby
-class Avo::Resources::Project < Avo::BaseResource
-  def chip_tooltip # [!code focus]
-    record.summary # [!code focus]
-  end # [!code focus]
-end
-```
-
-**A chip renders in two places**, and that is worth knowing before you reach for anything
-request-scoped — it is drawn by two different things:
-
-| When | Rendered by |
-| ---- | ----------- |
-| The answer streaming in, live | a background job, broadcasting over Turbo Stream |
-| Opening or reloading the conversation | the usual controller and request |
-
-The whole vocabulary above works in **both** — including `view_context`, `main_app` and `avo`,
-which Avo lends the chip when there is no request to take them from. Your declaration behaves the
-same whether you watched the answer arrive or came back to the conversation a day later, which is
-the point: a chip that worked on every reload and came back empty mid-stream would be a miserable
-thing to catch.
-
-**Where the title sits is just where you declare it** — there is no "before" or "after" option,
-only order, and no limit on either side:
-
-```ruby
-class Avo::Resources::Issue < Avo::BaseResource
-  def chip
-    part resource.avatar
-    part icon: "tabler/outline/circle-dot", tone: :success # [!code focus]
-    part record.identifier, tone: :muted # [!code focus]
-    part resource.record_title # [!code focus]
-    part record.assignee_name, tone: :muted # [!code focus]
-  end
-end
-```
-
-Because the body is ordinary Ruby against those two objects, a part can be computed rather than
-read off a column. Keep the computing on the model, though, and let the declaration say only how
-the answer looks — "is it night there?" is a question about a city, not about how one is drawn.
-The chip is rarely the only place that wants the answer, either: the same `night?` can feed a
-[discreet information](./discreet-information.html) entry on the record's header without
-computing it twice.
-
-```ruby
-class City < ApplicationRecord
-  def night? # [!code focus]
-    local_hour < 6 || local_hour >= 20 # [!code focus]
-  end # [!code focus]
-end
-
-class Avo::Resources::City < Avo::BaseResource
-  def chip
-    part resource.avatar
-    part icon: record.night? ? "tabler/outline/moon" : "tabler/outline/sun", # [!code focus]
-         tone: record.night? ? :info : :warning # [!code focus]
-    part resource.record_title
-    part record.local_time, tone: :muted
-  end
-end
-```
-
-| Argument       | Values                                                                                          |
-| -------------- | ----------------------------------------------------------------------------------------------- |
-| first argument | The part's text — anything, used verbatim. `resource.avatar` is the one value that draws a picture instead |
-| `icon:`        | An [icon](./icons.html) name, e.g. `tabler/outline/moon`                                        |
-| `tone:`        | `:neutral` (default, the record's own ink), `:muted`, `:success`, `:warning`, `:danger`, `:info` |
-
-:::warning
-Defining `chip` replaces the default entirely — including the picture and the title. Declare
-`part resource.avatar` and `part resource.record_title` if you want them, and an empty `def chip`
-renders an empty chip.
-:::
-
-:::info
-A part with neither text nor an icon is skipped, so `part(record.draft? ? "draft" : nil)` is a
-normal thing to write. An unknown `tone:` falls back to `:neutral`. And if `chip` raises, the
-record still renders as a link rather than taking the answer down with it.
-:::
+See the [Record chips guide](./record-chips.html) to customize their content, appearance, dynamic
+fields, tooltips, and behavior in streamed or reloaded conversations.
 
 ## Answering the assistant's questions
 
@@ -466,11 +316,35 @@ end
 
 Ask for it in whatever words you'd use with a colleague — "archive the Orbit project" — and the assistant finds the matching action, reads the inputs it declares, and shows you a confirmation card naming the action and the record, with the action's own fields rendered right on the card. They're the same fields its modal would show — a tags field is a tags field here too — prefilled with the values the assistant took from your message and the action's own `default`s. When you name a value it's the one on the card: "extend the trial by 3 days" lands `3` where the action would default to 7, "don't notify the user" leaves that box unchecked. Every field is editable before you run. Nothing runs until you confirm it — click **Run**, or tell the assistant to go ahead — and what runs is exactly what the fields hold at that moment; your confirmation executes it, not the model, exactly as with updates and deletes.
 
+<Image src="/assets/img/4_0/ai/run-action.webm" dark-src="/assets/img/4_0/ai/run-action-dark.webm" width="1600" height="1000" alt="An Avo Posts index in grid view with the chat open. The message Toggle published on the smoke bomb post gets a card naming the post, marked Action pending, that reads: Runs the Toggle post published action on this Post, above Run and Cancel buttons." />
+
 **It collects rather than guesses.** An input your action marks `required: true` that you didn't mention arrives on the card as an empty field for you to fill — the assistant never invents a value, because an action does real work with it. A run submitted with a required field still blank isn't performed; the card simply asks for it again.
 
 **The action's messages are the outcome.** Whatever your action reports — `succeed`, `warn`, `inform`, `error` — lands on the card once it has run, each with its severity, the same messages the Avo UI would toast. An action may report several at once, and an `error` message is part of the outcome, not a failure of the run. The values the action was handed stay on the settled card too, folded behind a click.
 
+**Get the chat window out of the way.** If your action leads the user somewhere else, or there's nothing left to say once it has run, call `close_chat_window` from `handle` and the window minimizes once the run is confirmed. The chat stays in the bar, one click away. Pass `remove_from_bar: true` to take it off the bar as well; the chat itself isn't deleted and stays in the recent-chats menu.
+
+```ruby
+# app/avo/actions/publish_post.rb
+class Avo::Actions::PublishPost < Avo::BaseAction
+  def handle(query:, **)
+    query.each { |post| post.update!(published_at: Time.current) }
+
+    succeed "Published"
+    close_chat_window
+  end
+end
+```
+
+```ruby
+close_chat_window(remove_from_bar: true)
+```
+
+It composes with the other response methods: `reload` together with `close_chat_window` reloads the page and minimizes the window. Run from the Actions dropdown instead of the chat, the action ignores it.
+
 [Actions that run without records](./actions.html#run-an-action-without-records) work too — the assistant runs them with no record at all.
+
+**It runs on the view it would have been started from.** [`view`](./actions.html#control-visibility-and-authorization) is `show` when the run targets one record and `index` for a bulk run or one that takes no records — the page you would have clicked the action from, never `new`. The action's `visible` and `authorize` blocks, its `fields`, and `handle` all read that value, so an action that branches on `view.show?` or `view.index?` behaves in the chat as it does on a click. A display-only field the action declares, such as a badge or a key-value, shows read-only on the card beside the inputs, the way Avo's own modal renders it.
 
 ### Finding an action without naming its resource
 
@@ -489,7 +363,7 @@ Naming the action alone is enough when one resource registers it. When two do, t
 Two gates, both yours, both checked when the run is proposed and again when you confirm it:
 
 - **`act_on?` on the record**, the same policy method that decides whether the Actions dropdown appears in the UI. It's checked per record, so an owner-gated policy behaves in the chat exactly as it does on the page.
-- **The action's own `self.authorize` block**, evaluated with the record in place.
+- **The action's own `self.visible` and `self.authorize` blocks**, evaluated with the record in place. An action the panel would hide from the signed-in user is left out of the assistant's lists too.
 
 :::warning A policy with no `act_on?` refuses every action
 `act_on?` fails closed. If a resource has a policy that doesn't define it, the assistant can't run that resource's actions — the same way Avo hides the Actions dropdown. Add `act_on?` to the policy to allow it.
@@ -584,6 +458,8 @@ Files are named by blob id, as everywhere else in the chat, and a filename works
 
 Nothing is created until you click **Confirm**. The rows are then created on the server — the model never carries them, so the import costs a handful of turns whatever the row count — under the same authorization and field rules a single create uses, and the mapping is checked again at that moment against what you can write. A row that fails validation is skipped and reported on the card with its row number and reason; the rest are still created. When it's done the card reports how many records were created and lists the failed rows, and each created record lands in the write history like a single create, so any one of them can be [undone](./ai-what-you-can-ask.html#undo-something) on its own.
 
+<Image src="/assets/img/4_0/ai/csv-import.webm" dark-src="/assets/img/4_0/ai/csv-import-dark.webm" width="1600" height="1000" alt="The Avo chat on a Projects index. A CSV file is attached with the message Import these as new projects, and the assistant answers with a card titled Import 6 rows into Project: the file, the resource, the row count, the column-to-field mapping and a preview of the first five rows, above Import and Cancel buttons." />
+
 :::info
 An import creates records only — updating or upserting from a file isn't offered — and it takes CSV and TSV files, not JSON. One import is capped at `max_import_rows` data rows (1,000 by default); a bigger file is refused with the count and the cap named, so split it and import it in parts.
 
@@ -606,7 +482,7 @@ Onboard the Avo AI assistant onto this app.
 
 It runs `bin/rails avo:ai:inventory` (below), reads your README and your initializer, tells you what it thinks the app is and asks whether it got that right, then interviews you in short rounds — a few related questions at a time, its best guess first — about the things the schema can't say. It writes the file once, at the end, after you've confirmed. Run it again after the app has changed and it proposes a diff rather than a rewrite.
 
-The same interview settles what a record's status means here, which is exactly what a [chip](#record-chips) should carry — so it also proposes a `def chip` on the resources people look up, and a record the assistant names in the chat shows its status beside its title.
+The same interview settles what a record's status means here, which is exactly what a [chip](./record-chips.html) should carry — so it also proposes a `def chip` on the resources people look up, and a record the assistant names in the chat shows its status beside its title.
 
 ### The inventory
 
@@ -763,7 +639,7 @@ Set neither and the assistant gets every tool the gem ships. The roster is assem
 config.ai.excluded_tools = [:delete_record, :update_record]
 ```
 
-The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
+The names are **wire names** — what the model sees, and what every call is stored under on the message that made it (the **Tool calls** field on a message's show page). [The tools table](./ai-agents-and-tools.html#the-tools) is the full list — `ask_user`, `schema_inspector`, `resource_inspector`, `active_record_query`, `count_records`, `active_storage_insights`, `active_storage_attachment`, `read_file`, `create_skill`, `create_record`, `update_record`, `update_records`, `delete_record`, `run_action`, `import_records`, `write_history`, `rename_conversation`; symbols and strings are both accepted.
 
 `update_record` and `update_records` are separate names, so excluding the first leaves the second attached. An app that excludes `update_record` to stop the assistant writing columns wants both.
 
@@ -807,6 +683,18 @@ It wraps your `execute` by prepending to the class it's included in. Included in
 
 Fill in the `description` — the model reads it to decide whether to call the tool, and a vague one is the usual reason a tool never gets called — then the `parameters` schema and `execute`.
 
+A tool that writes a record goes through the resource's fields, as the shipped write tools do — never `assign_attributes`, `Model.new(attrs)` or `update(attrs)`:
+
+```ruby
+# app/tools/crm_tool.rb
+scope = Avo::Ai::FieldScope.new(Avo::Resources::Contact, user: acting_user, view: :edit, record: contact)
+refused = attributes.keys.map(&:to_s) - scope.writable_params.keys
+return {error: "Not writable: #{refused.join(", ")}"} if refused.any?
+
+scope.fill(contact, attributes) # runs each field's fill_field, as a panel save does
+contact.save
+```
+
 Then register the class in your initializer:
 
 ```ruby
@@ -832,7 +720,7 @@ Three things the server decides for you, whatever the entry says:
 - **Authorization is yours to call.** Nothing in the gem stops a tool reading the whole table — reach data through `authorized_relation` and `authorize_record_action!` so your tool sees exactly what the signed-in user sees in Avo, and rescue `Avo::Ai::ToolAuthorization::IdentityError` to report "not allowed" as a result instead of failing the run.
 - **Two tools can't share a wire name.** Registering a tool whose name collides with a shipped one raises when the roster is built. To replace a shipped tool, exclude it first — that's what [ejecting](#replace-a-shipped-tool-with-your-own-copy) does for you.
 
-**Returning records? Hand back a reference.** Put the string that names each record in your result — `"avo:#{short_name(resource_class)}/#{record.to_param}"` — and the model copies it into its answer, where it renders as a [chip](#record-chips). Build it from `to_param`, not `id`, so an app that hides its keys behind a slug or hashid keeps them hidden. When the model passes an id back to your tool, look it up with `find_authorized_record_by_param(resource_class, model_class, id)`: it takes the param out of a reference, or a primary key the model selected, and reads either through the signed-in user's scope.
+**Returning records? Hand back a reference.** Put the string that names each record in your result — `"avo:#{short_name(resource_class)}/#{record.to_param}"` — and the model copies it into its answer, where it renders as a [chip](./record-chips.html). Build it from `to_param`, not `id`, so an app that hides its keys behind a slug or hashid keeps them hidden. When the model passes an id back to your tool, look it up with `find_authorized_record_by_param(resource_class, model_class, id)`: it takes the param out of a reference, or a primary key the model selected, and reads either through the signed-in user's scope.
 
 ```ruby
 # app/tools/crm_tool.rb
@@ -858,12 +746,13 @@ Everything `execute` returns is sent to the provider on that turn and on every l
 
 ### Serve the same tool over MCP
 
-Running the [MCP Server](./mcp.html) too? The class you just wrote can answer connected MCP clients as well. Declare which consent capability unlocks it — `avo:read`, `avo:write` or `avo:actions` — and register it with that gem beside this one:
+Running the [MCP Server](./mcp.html) too? The class you just wrote can answer connected MCP clients as well. Declare which consent capability unlocks it — `avo:read`, `avo:write` or `avo:actions` — and the resources it touches, and register it with that gem beside this one:
 
 ```ruby
 # app/tools/crm_tool.rb
 class CrmTool < RubyLLM::Tool
-  def self.capability = "avo:read" # [!code focus]
+  def self.capability = "avo:read" # [!code highlight]
+  def self.resources = %w[Ticket Project] # [!code highlight]
   # ...
 end
 ```
@@ -871,10 +760,14 @@ end
 ```ruby
 # config/initializers/avo.rb
 config.ai.extra_tools = ["CrmTool"]
-config.mcp_server.extra_tools = ["CrmTool"] # [!code focus]
+config.mcp_server.extra_tools = ["CrmTool"] # [!code highlight]
 ```
 
-The chat ignores `capability`. Over MCP the server injects the connecting admin as `user:` the way the chat does, runs the capability gate first, and serves a Hash as structured content, a String as text, and an `{error: "..."}` Hash as a tool error. `chat` and `inspection_tracker` are never set there, so a tool that can run over MCP mustn't depend on either. See [Share a tool with Avo AI](./mcp.html#share-a-tool-with-avo-ai) for the details.
+The chat ignores both. A connection [narrowed to named resources](./mcp.html#add-tools-of-your-own) must grant everything `resources` lists, and refuses a call that names no resource. A tool that takes a `resource:` argument, like the `execute` above, is checked on the resource each call names, so list in `resources` only what it reads on every call. Over MCP the server injects the connecting admin as `user:` the way the chat does, runs the capability gate first, and serves a Hash as structured content, a String as text, and an `{error: "..."}` Hash as a tool error. `chat` and `inspection_tracker` are never set there, so a tool that can run over MCP mustn't depend on either. See [Share a tool with Avo AI](./mcp.html#share-a-tool-with-avo-ai) for the details.
+
+:::info This is MCP in the other direction
+Here your app is the MCP *server*, and outside clients connect to it. To have the assistant call somebody else's MCP server from a chat, see [Connect other tools with MCP](#connect-other-tools-with-mcp).
+:::
 
 ### Replace a shipped tool with your own copy
 
@@ -913,7 +806,19 @@ Open a chat in the **Chats** resource and read its **Agent tools** field: it's c
 
 ## Replace the assistant's icon
 
-The avocado is a single partial, rendered everywhere the assistant appears: the **Agent** button, the collapsed bar, the empty state on new and full-page chats, and the *Open in assistant bar* button on a chat's record page. Create the same path in your application and all of them change at once:
+The assistant's mark is two partials:
+
+| Partial                       | Rendered on                                                                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `avo/ai/_pit_core_icon`       | The **Agent** button, the round button the dock collapses to when you hide the toolbar, and the full-page new-chat page   |
+| `avo/ai/_avocado_icon`        | The greeting above a chat with no messages yet, the empty chat list, and the *Open in assistant bar* button on a chat's record page |
+
+Create the same paths in your application and every place that renders them changes at once. Override both to rebrand the assistant everywhere:
+
+```erb
+<%# app/views/avo/ai/_pit_core_icon.html.erb %>
+<%= svg "tabler/outline/robot", class: local_assigns[:classes] %>
+```
 
 ```erb
 <%# app/views/avo/ai/_avocado_icon.html.erb %>
@@ -927,7 +832,7 @@ An image file works the same way:
 <%= image_tag "assistant-mark.svg", class: local_assigns.fetch(:classes, "size-4") %>
 ```
 
-Each place that renders the icon passes a `classes` local, because the sizes differ — `size-4` in the bar, `size-6` on the empty states. Pass it through to whatever you render, as both examples do, or the icon comes out the wrong size in half of them.
+Each place that renders an icon passes a `classes` local, because the sizes differ: `size-5` on the **Agent** button and `size-7` on the new-chat page for `_pit_core_icon`, `size-6` on the empty states and `size-4` on the record page for `_avocado_icon`. Pass it through to whatever you render, as the examples do, or the icon comes out the wrong size in half of them. Don't add a size utility of your own to `_pit_core_icon`: on the collapsed dock's button the stylesheet sizes the mark as a share of the button so it grows with it, and a size class in your markup outranks that rule.
 
 The icon on the chat pages' breadcrumb isn't part of the partial and stays an avocado.
 
@@ -1020,13 +925,52 @@ repeats from it. The tools accept either.
 
 ## Open the chat
 
-The chat bar sits at the bottom of every Avo page. **Cmd+J** (or **Ctrl+J**) opens it from anywhere, including from inside a field you're typing in — that's the point, so you can pull the assistant up mid-edit without losing your place. Clicking **Agent** does the same.
+The chat bar sits at the bottom of every Avo page. **Cmd+J** on macOS (**Ctrl+J** elsewhere) opens it from anywhere, including from inside a field you're typing in — that's the point, so you can pull the assistant up mid-edit without losing your place. Clicking **Agent** does the same.
+
+On smaller screens, opening the sidebar temporarily hides the chat bar so the profile menu stays reachable. Closing the sidebar restores the bar without clearing your conversation or draft.
 
 Every chat you open becomes a pill in the dock, newest first, so several conversations can stay open at once and you can switch between them without losing any. Drag a pill to reorder them. The chat window lines its end edge up with the pill it was opened from and slides across when you switch, so it's always clear which conversation you're looking at. The chevron at the bar's end collapses the whole dock down to that one button when you want the page to yourself; click it again to bring the bar back. The open chats, their order, and the collapsed state are all remembered per device.
 
 Clicking the window's own title bar minimizes it — the conversation stays in the dock, it just gets out of your way. The **×** in the title bar does the same thing: it closes the window, not the conversation. To take a chat out of the dock, use the × on its own pill; the conversation itself is kept either way, and it's still on your [chat list](#full-page-chats).
 
+**The window sizes itself to the screen, and remembers what you drag it to.** Its default size is a share of the viewport rather than a fixed box: floored so a laptop still gets a usable panel, capped so a large monitor doesn't hand the chat half the page. Drag its top edge, its start edge, or the corner between them to resize it. The size you land on is kept per device and restored on your next page load, shrunk to fit if you come back on a smaller screen. The window never reaches under Avo's top navbar, however far you drag.
+
 To clear the dock in one go, open the history menu (the clock button next to **Agent**) and pick **Clear open chats** at the bottom. It does what every pill's × does, all at once, and closes the chat window: the pills go, and every conversation stays in the history list right above the button, one click from reopening. The entry only shows when there's at least one pill to close.
+
+### Use only full-page chats
+
+To offer AI chat only through your menu, disable the floating bar in your initializer:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.ai.chat_bar_enabled = false
+end
+```
+
+The bar is enabled by default. Setting this to `false` removes the dock, its Cmd+J / Ctrl+J shortcut,
+and the controls that open or minimize a conversation into the bar. Full-page chats, their composers,
+and existing conversations remain available.
+
+With the default configuration, the floating **Agent** dock appears on resource pages too.
+The red outline highlights it in the bottom-right corner of this Projects page:
+
+<Image src="/assets/img/4_0/ai/chat-bar-enabled.webp" width="1280" height="820" alt="The Projects index with a red outline highlighting the floating Agent dock in the bottom-right corner. The sidebar Chats link is also visible." />
+
+With `config.ai.chat_bar_enabled = false`, the same page has no floating dock. The red outline marks
+where it used to be. The **Chats** link in the sidebar still opens the full-page chat list:
+
+<Image src="/assets/img/4_0/ai/chat-bar-disabled.webp" width="1280" height="820" alt="The same Projects index with the floating Agent dock removed. A red outline marks its former bottom-right location, while the sidebar Chats link remains visible." />
+
+Add a link to the end-user chat list inside your `config.main_menu` block:
+
+```ruby
+# config/initializers/avo.rb
+link "AI chat", path: "/admin/chats", icon: "tabler/outline/message"
+```
+
+Replace `/admin` if your Avo mount path differs. This opens the full-page chat product, not the
+`avo_ai/chats` resource used by super admins to inspect raw chat records.
 
 ### Closing idle tabs automatically
 
@@ -1052,7 +996,7 @@ The button is there before you've sent anything, too. On the new-chat view it po
 A new conversation opens with a short greeting and a few suggested prompts. Clicking a suggestion types it into the composer and submits it — it takes exactly the same path as a typed message. The greeting text is translated through i18n (`avo.ai.empty_state.title` / `.subtitle`) like any other copy; the suggested prompts themselves are generic by default but can be replaced with your own via [`config.ai.empty_state_suggestions`](#configuration).
 
 :::info
-Cmd/Ctrl+J follows Avo's own hotkey setting. If you've set `config.hotkeys = {enabled: false}` in `config/initializers/avo.rb`, the shortcut is off along with the rest — the Agent button still works.
+The shortcut is `ai.toggle_assistant` in Avo's hotkey settings. If you've set `config.hotkeys = {enabled: false}` in `config/initializers/avo.rb`, it is off along with the rest — the Agent button still works — and you can [rebind or disable it](./keyboard-shortcuts.html#change-or-disable-a-shortcut) on its own through `config.hotkeys[:bindings]`.
 :::
 
 ## Full-page chats
@@ -1061,7 +1005,7 @@ Chats are also real pages, at `/chats` under your Avo mount point (`/avo/chats` 
 
 The list is scoped to the signed-in user. It's not an admin view of everyone's conversations — for that, browse the `Avo::Ai::Chat` resource from the sidebar.
 
-Avo's resource hotkeys work here too: **C** starts a new chat from the list or from a conversation, and **I** takes you from a conversation back to the list.
+Avo's resource hotkeys work here too: **C** starts a new chat from the list or from a conversation, and **I** takes you from a conversation back to the list. They are `resource.new` and `resource.go_to_index`, so a rebinding in `config.hotkeys[:bindings]` applies here as well.
 
 ## The conversation menu
 
@@ -1094,7 +1038,7 @@ The one thing to check is the model: reading an image takes a vision model. The 
 
 ### What the composer accepts
 
-By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files — markdown, plain text, CSV, TSV, JSON — which it reads in windows. Files can be up to 25 MB.
+By default the composer takes what the assistant can do something with: images (PNG, JPEG, GIF, WebP) and PDFs, which go to the model, and text files - markdown, plain text, CSV, TSV, JSON - which it reads in windows. Files can be up to 25 MB.
 
 Anything else is refused as you add it, before it uploads, with a line under the draft naming the file and why — so a 2 GB video never leaves the browser. The same rule is checked again when the message is sent, so a request that skips the composer can't attach a file it would have refused.
 
@@ -1149,7 +1093,7 @@ end
 
 A **skill** is a reusable instruction — a title, an optional one-line description, and a markdown body, written once by an admin and dropped into any chat. The description is for the person choosing and is never sent to the assistant. Type `/` at the start of a line or after a space to open a menu of every skill you're allowed to see, filtered by title and description as you type; pick one with the keyboard or a click and it lands in the composer as a chip. The **Skills** dropdown in the composer's toolbar, beside the model picker, lists the same skills and inserts the same chip at the cursor, for anyone who'd rather not remember the slash. It only appears once there's a skill to pick. Backspace removes the whole chip in one press, never one letter of its title.
 
-Write around the chip, or send it on its own — a message that's nothing but a skill chip is a valid send, the way a `/`-style slash command carries its own instruction. In the sent bubble the chip renders like any other [record chip](#record-chips) and links to the skill's page. Hover a skill chip, in the draft or in the transcript, to read its description.
+Write around the chip, or send it on its own — a message that's nothing but a skill chip is a valid send, the way a `/`-style slash command carries its own instruction. In the sent bubble the chip renders like any other [record chip](./record-chips.html) and links to the skill's page. Hover a skill chip, in the draft or in the transcript, to read its description.
 
 Picking a skill isn't a one-turn thing: its body joins the assistant's instructions for the **rest of the conversation**, and every later message in that chat reuses it too. Attach a second skill later and both apply together — there's no per-message detach in this version.
 
@@ -1174,6 +1118,10 @@ Summarise the attached record as a changelog entry…
 
 `name` works in place of `title`, so an agent `SKILL.md` pastes in unchanged. Other frontmatter keys are ignored. Without frontmatter there is no title to read, and the import says so rather than guessing one. Importing is creating — the action is available to whoever passes `create?` on the skill policy.
 
+You can also ask the chat to **"Add this as a skill"**, followed by the skill's text, or upload a `.md` or `.txt` file and ask **"Import the attached file as a skill"**. The assistant proposes it through `create_skill`, and a card shows the title, the description and the full text. Nothing is saved until you click **Save skill**, because a skill's text becomes instructions for every chat that picks it. The skill policy's `create?` permission is checked when the card is proposed and again when you confirm it. Files are imported directly from this conversation, without the assistant rewriting their contents. For plain instructions without frontmatter, give a title or let the assistant supply one. An existing skill with the same title is never overwritten.
+
+Only `.md` and `.txt` files are supported; `create_skill` returns an error for any other file. Additional frontmatter settings do not install tools, dependencies, or scripts. The card warns that everyone who can use the chat can pick the skill. A saved skill is listed in the conversation's write history, so the assistant can undo it. The assistant can't edit an existing skill; change it on the Skills page. Creating a skill does not apply it to the current chat; reload the page to refresh the skills menu, then select it when you want to use it.
+
 **Export skill**, on a skill's own page, goes the other way: it downloads that skill as a `.md` file in exactly this shape, ready to import into another app or keep in a repository.
 
 Ejecting `instructions` (see [Replace the shipped prompts](#replace-the-shipped-prompts)) also gives you `app/prompts/avo/ai/chat_agent/skills.txt.erb`, the partial that renders the bodies into the system prompt. It receives one local:
@@ -1182,11 +1130,104 @@ Ejecting `instructions` (see [Replace the shipped prompts](#replace-the-shipped-
 | -------- | ------------------------- | ------------------------------------------------------------------------------------ |
 | `skills` | Array of `Avo::Ai::Skill` | The chat has at least one skill attached, deduplicated and in first-attached order    |
 
+## Connect other tools with MCP
+
+Connect a remote [MCP](https://modelcontextprotocol.io) server from the chat, and the assistant can use that server's tools alongside Avo's own in the same turn, with the record you started the chat from as context. Every call it makes to the server waits for your approval on a card.
+
+Connections are off until your app turns them on and decides who may connect a server. See [Turn on MCP connections](#turn-on-mcp-connections).
+
+Type `/mcp` in the composer to open the **Connections** panel. On its own, `/mcp` lists the connections you can use, with each one's status and tools. With an address, `/mcp https://mcp.linear.app/mcp` starts connecting that server. `/mcp` is also a row in the `/` menu, next to your [skills](#attach-a-skill-with-a-message).
+
+**`/mcp` never reaches the model.** Avo answers it before anything is stored: no message is added to the conversation, no chat is created when you type it into a new-chat composer, and the assistant isn't told. The assistant has no tool that connects, shares, or disconnects a server, approves a call, or changes a tool's setting, and it can't read or change connection records. People do all of that with clicks.
+
+### Connect a server
+
+Give the panel the server's address and click **Connect**. The address must start with `https://`. Avo refuses anything else before it sends a request. It then asks the server what it needs:
+
+| The server needs | What happens                                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Nothing          | It connects right away                                                                                                               |
+| A sign-in        | **Continue to sign in** takes you to the provider's consent screen and back to the chat you started from. The link lasts ten minutes |
+| An access token  | A masked **Access token** field. Paste a token the provider gave you and click **Connect**                                           |
+
+A server that offers a sign-in Avo can't use, for example one that needs a client registered with it ahead of time, gets the token field instead, with the reason.
+
+Nothing is saved until the server accepts the connection. A rejected token, a sign-in that fails or that you abandon, or a server that doesn't answer within 15 seconds leaves no connection behind. When it works, the panel says so, the chat you connected from gets a line naming the server and how many tools it offers, and the assistant can use them from your next message.
+
+You have one connection per server address. Typing `/mcp` with the address of a server you already connected points you to **Reconnect** instead of adding a second one.
+
+People who can't connect servers still see the connections they can use, and a line telling them to ask an admin.
+
+### Share a connection
+
+A new connection is yours alone. It shows up only in your chats and your `/mcp` list. If your app lets you share, **Share with everyone** in the panel makes it usable in everyone's chats, and **Make private** takes it back. The connection's page on the **Connectors** resource has the same choice.
+
+A shared connection sends every call with your credential, so on the server's side a colleague's call looks like yours. Each card names whose connection the call goes through, and the audit log records the colleague whose chat made the call. Making a connection private again takes back the always-allows other people gave its tools.
+
+Only the owner can share a connection, make it private, or reconnect it.
+
+### Approve a call
+
+When the assistant calls a remote tool, the turn stops on a card showing the server and its host, the tool, whose connection the call goes through ("Your connection", or "Maria's connection" for a shared one), and the exact arguments that will leave your app. Nothing is sent until you click one of three buttons:
+
+| Button           | What it does                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| **Approve once** | Sends this call. The result comes back and the assistant carries on                        |
+| **Always allow** | Sends this call, and skips the card for this tool from now on                              |
+| **Decline**      | Sends nothing. The assistant is told you declined and carries on with what it can still do |
+
+:::warning A remote card only takes a click
+Typing "yes" or "do it" confirms Avo's own cards but never a remote one. What a server returns, and what the assistant reads in a record or a document, is text someone else wrote, and it could contain those words. A message you send while a remote card is open settles the card as **Not sent**, and the assistant answers your message instead.
+:::
+
+When one reply makes several calls, each gets its own card, and the assistant carries on once you've answered all of them.
+
+**Always allow is yours, for one tool.** It doesn't cover other people, other tools, or other connections. It stops applying when the connection's owner sets the tool to **Always ask**, when the server changes the tool's name, description, or arguments, and when the connection is reconnected. The next call then shows a card again.
+
+**Ten in a row, then a card.** At most ten always-allowed calls run in a row before a card appears again. The count starts over when you send a message or answer a card.
+
+**A call that may have gone through isn't repeated behind your back.** A remote call ends after 30 seconds without an answer, or after a minute in all. If the server doesn't answer in time, or the connection drops after the call was sent, the assistant is told the call may have happened and not to repeat it, and its card, if it had one, reads **Outcome unknown**. The next call to that tool shows a card even if you always-allowed it, so check the other system before you approve it.
+
+A card left for more than an hour can't be approved anymore and reads **Expired**. If a server asks for more input in the middle of a call, the assistant tells you what it asked, and the call counts as not done.
+
+### Manage a connection
+
+Each connection has a page on the **Connectors** resource, once your app adds it to the menu. It shows the owner, who can use the connection, its status, and its tools. Everyone who can use a shared connection can read its page. The credential is never shown, and neither is any part of the address after a `?`.
+
+The owner, or whoever else your app lets manage the connection, sets each tool:
+
+| Setting        | Means                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------- |
+| **On**         | The assistant can call it. Each call shows a card unless the user always-allowed the tool         |
+| **Always ask** | Every call shows a card, and **Always allow** isn't offered. Existing always-allows stop applying |
+| **Off**        | The assistant isn't offered the tool                                                              |
+
+Tools a server adds later arrive **On**. Switch off the tools nobody should use from a chat, especially on a shared connection. A change applies from the next call, even in a reply that's already running: always-allows stop at once, and a tool switched **Off** is no longer sent.
+
+They also get three actions on the connection's page:
+
+- **Refresh tools** reads the server's tool list now. That list is what the assistant searches: a new tool arrives switched on, a tool the server no longer lists is removed unless it's set to **Always ask** or **Off** (a list with no tools at all removes nothing), and a tool the server changed shows a card before its next call. Chats also read the list just before each call, so a change on the server is never missed for long.
+- **Revoke always-allows** takes back every always-allow anyone gave the connection's tools. The next call to each one shows a card.
+- **Disconnect** removes the connection, its credential, its tools, and the always-allows on them. Its tools leave every chat from the next message, and past messages that used them stay readable.
+
+The `/mcp` panel has **Reconnect** and **Disconnect** too.
+
+### When a connection stops working
+
+A connection that fails never breaks the chat. Avo's own tools keep working, and when the assistant calls a tool on a server it can't reach, nothing is sent and it tells you which connection failed and that it can be reconnected with `/mcp`.
+
+| What happened                                            | What you see                                                                      |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| The server didn't answer in time, or couldn't be reached | That call isn't sent, and the assistant can try it again once the server answers  |
+| The server rejected the credential, or it can't be read  | The connection reads **Needs reconnecting** in `/mcp`                             |
+
+Only the owner can reconnect. **Reconnect** in the `/mcp` panel signs in again, takes a new token, or simply asks again for a server that needs neither. Other people see who to ask. Reconnecting takes back every always-allow on the connection, since the new credential may belong to a different account on the server.
+
 ## Dictate a message
 
 The microphone in every composer — the bar, the new-chat page, and open conversations — transcribes speech into the message box: click to start, click to stop. Pauses don't end the session, and the text lands on top of whatever draft is already there, so you can type half a message and speak the rest.
 
-Minimizing the chat window ends an open session, so the mic never keeps listening behind a closed window.
+An open session ends the moment you stop needing it: sending the message stops the mic, and so does minimizing the window or switching to another chat in the dock, so nothing keeps listening behind a window you've left.
 
 It dictates in your admin's language: the recognizer follows the page's `lang` attribute, falling back to the browser's own language setting.
 
@@ -1208,7 +1249,11 @@ In Chrome and Edge, dictating means uploading admin-panel audio to Google. If th
 
 ## While the assistant is replying
 
-Your message lands on the transcript the moment you send it, with a **Thinking** indicator underneath — it's saved as part of the send, not by the background job, so it never blinks out for the second or two the queue takes. Starting a fresh conversation keeps the composer you typed into on screen until the conversation is ready, then trades one for the other, so there's no empty panel in between. A second **Enter** while that's happening doesn't start a second chat.
+Your message lands on the transcript the moment you send it, with a **Thinking** indicator underneath. The browser puts it there as the request leaves, and the saved message replaces that copy when it arrives, so the turn is on screen for the whole round trip and never blinks out for the second or two the queue takes.
+
+Starting a fresh conversation does the same with the whole opening turn: your prompt and the **Thinking** indicator take the place of the greeting and its suggestions, and the real conversation replaces them once it's ready, so there's no empty panel in between. A second **Enter** while that's happening doesn't start a second chat.
+
+If the send fails, the prompt comes back out of the transcript, the greeting returns, and what you typed is back in the composer to retry.
 
 When answering takes real work — a lookup, an inspection, a write — the assistant leaves short progress hints while it works: *Inspecting the schema*, *Checking today's signups*. They render small and muted, alongside the reasoning trace, so they read as status rather than replies — and they name the goal in your terms, never the tool it reaches for. It's what you read while the work happens instead of watching an empty panel.
 
@@ -1228,12 +1273,16 @@ The row carries one sentence, chosen by what went wrong:
 
 | What happened                                                             | What the row says                                              | Try again |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------- | --------- |
-| Rate limit, overload, a 5xx, a timeout, or the network                    | The provider is busy or unreachable                            | Yes       |
-| A missing or rejected API key, a billing problem, a forbidden request     | The provider rejected the request; someone with access to the AI settings needs to look | Yes |
-| The chat's model isn't in the registry                                    | The model isn't available; pick another or refresh the models  | Yes       |
+| Rate limit, overload, a 5xx, a timeout, or the network                    | Names the provider and says it is busy or unreachable          | Yes       |
+| The provider is not configured                                            | Names the provider; someone with access to the AI settings needs to finish its setup | Yes |
+| The provider rejected the app's credentials                               | Names the provider; someone with access to the AI settings needs to check the API key | Yes |
+| The provider reports a billing or quota problem                           | Names the provider; someone with access to the provider account needs to look | Yes |
+| The app cannot use the requested model or feature                         | Names the provider; someone with access to the provider account needs to look | Yes |
+| The chat's model isn't in the registry                                    | Names the provider; pick another model or refresh the models   | Yes       |
 | The conversation is longer than the model's context window                | Start a new chat                                               | No        |
-| The provider called the request invalid, or refused an attachment type    | Start a new chat, or resend without the attachment             | No        |
-| Anything else                                                             | Something went wrong                                           | Yes       |
+| The provider called the request invalid, or refused an attachment type    | Names the provider; start a new chat, or resend without the attachment | No |
+| The chat was [turned off for this user](#turn-the-chat-on-or-off-per-user) while a reply was queued | Says the assistant is turned off for their account | No |
+| Anything else                                                             | Something went wrong                                           | Yes                                       |
 
 **Try again** starts a new run for the message that went unanswered. It adds nothing to the transcript. The button only shows on the last row of the conversation, and only when running the same conversation again can work: a rejected API key gets one because someone can fix the key, a conversation that is too long doesn't. Sending a new message works too. The assistant then answers both.
 
@@ -1251,7 +1300,7 @@ A failed run is handled inside the job, so it does **not** raise. Your queue won
 # config/initializers/error_subscriber.rb
 class AiFailureSubscriber
   def report(error, handled:, severity:, context:, source: nil)
-    return unless context[:chat_id] # [!code focus]
+    return unless context[:chat_id] # [!code highlight]
 
     Rails.logger.error("AI chat #{context[:chat_id]} failed: #{error.class}")
   end
@@ -1313,7 +1362,7 @@ section "AI", icon: "heroicons/outline/sparkles" do
   resource "avo_ai/messages"
   resource "avo_ai/models"
   resource "avo_ai/skills"
-  resource "avo_ai/feedbacks" # [!code focus]
+  resource "avo_ai/feedbacks" # [!code highlight]
 end
 ```
 
@@ -1429,6 +1478,8 @@ Give your `Avo::Ai::ChatPolicy` an `#available_models` method to curate a shortl
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
 class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.present?
+
   def available_models
     return nil if user.admin? # every model in the registry
 
@@ -1477,7 +1528,7 @@ Leave it off and the id still resolves, just not to a provider you chose: RubyLL
 def available_models
   [
     "gpt-4o-mini", # whichever provider RubyLLM prefers for this id
-    {model: "gemini-2.5-flash", provider: :vertexai} # [!code focus] VertexAI's, not Gemini's
+    {model: "gemini-2.5-flash", provider: :vertexai} # VertexAI's, not Gemini's [!code highlight]
   ]
 end
 ```
@@ -1514,7 +1565,7 @@ section "AI", icon: "heroicons/outline/sparkles" do
   resource "avo_ai/chats"
   resource "avo_ai/messages"
   resource "avo_ai/models"
-  resource "avo_ai/skills" # [!code focus]
+  resource "avo_ai/skills" # [!code highlight]
 end
 ```
 
@@ -1559,6 +1610,205 @@ end
 
 Narrowing `Scope#resolve` reaches past the resource's own index: a skill the scope excludes also drops out of the composer's `/` menu, and out of any chat that already referenced it — the same way a deleted skill does (see [Attach a skill with a message](#attach-a-skill-with-a-message)).
 
+## Turn on MCP connections
+
+[MCP connections](#connect-other-tools-with-mcp) are off by default. While they're off, nobody sees any of it: no `/mcp`, no connection pages, and no remote tools in any chat. Turning them on takes encryption keys, the installer's tables, one setting, and a policy that says who may connect.
+
+### Set it up
+
+Connections store each server's credential with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html). If your app has no encryption keys yet, generate them and add them to your credentials:
+
+```bash
+bin/rails db:encryption:init
+```
+
+A new install already has the tables. An app that installed avo-ai earlier runs the installer again, which writes only the migrations it's missing: avo-ai's connection tables and RubyLLM's MCP credentials table.
+
+```bash
+bin/rails generate avo:ai install
+bin/rails db:migrate
+```
+
+Turn the setting on:
+
+```ruby
+# config/initializers/avo.rb
+config.ai.connectors_enabled = true
+```
+
+Add the **Connectors** resource to the menu beside the others:
+
+```ruby
+# config/initializers/avo.rb
+section "AI", icon: "heroicons/outline/sparkles" do
+  resource "avo_ai/chats"
+  resource "avo_ai/messages"
+  resource "avo_ai/models"
+  resource "avo_ai/skills"
+  resource "avo_ai/connectors" # [!code highlight]
+end
+```
+
+Migrate before you turn the setting on, since every chat reads the connection tables while it's on. If the encryption keys or RubyLLM's credentials table are missing, connecting a server tells the user the app isn't set up yet instead of failing.
+
+When someone signs in to a server, Avo registers itself with that provider on the spot, once per connection. The consent screen shows your Avo `app_name`.
+
+### Choose who can connect and share
+
+The setting alone lets nobody connect. `Avo::Ai::ConnectorPolicy` ships with `create?` (connecting a server) and `share?` (sharing one with everyone) both closed. Define your own class to open them. It wins over the gem's copy and, like the gem's, it's a plain class rather than one that inherits your `ApplicationPolicy`:
+
+```ruby
+# app/policies/avo/ai/connector_policy.rb
+class Avo::Ai::ConnectorPolicy
+  attr_reader :user, :record
+
+  def initialize(user, record)
+    @user = user
+    @record = record
+  end
+
+  # Connecting a server.
+  def create?
+    enabled? && admin?
+  end
+
+  # Sharing a connection with everyone.
+  def share?
+    enabled? && admin?
+  end
+
+  def index?
+    enabled?
+  end
+
+  def show?
+    enabled?
+  end
+
+  def new?
+    create?
+  end
+
+  def edit?
+    update?
+  end
+
+  # Tool settings, Refresh tools, and Revoke always-allows.
+  def update?
+    enabled? && owner?
+  end
+
+  # Disconnecting.
+  def destroy?
+    enabled? && owner?
+  end
+
+  def search?
+    enabled?
+  end
+
+  def act_on?
+    enabled?
+  end
+
+  # Tool rows come from the server, so the tools table on a connection's page
+  # offers no attach, detach, or create.
+  def attach_connector_tools? = false
+
+  def detach_connector_tools? = false
+
+  def create_connector_tools? = false
+
+  private
+
+  def enabled?
+    Avo.configuration.ai.connectors_enabled
+  end
+
+  def admin?
+    !!user&.admin?
+  end
+
+  def owner?
+    record.respond_to?(:owned_by?) && record.owned_by?(user)
+  end
+
+  class Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    # The user's own connections, plus shared ones whose owner may still connect.
+    def resolve
+      return @scope.none unless Avo.configuration.ai.connectors_enabled
+
+      mine = @scope.where(user_type: @user.class.name, user_id: @user.id)
+      usable = @scope.where(audience: "everyone").includes(:user).select do |connector|
+        connector.user && Avo::Ai::ConnectorPolicy.new(connector.user, connector).create?
+      end
+
+      mine.or(@scope.where(id: usable.map(&:id)))
+    end
+  end
+end
+```
+
+Keep the `enabled?` check in every method and the early return in `Scope#resolve`. The gem's policy answers no to everything while `config.ai.connectors_enabled` is off, and your class replaces it. The Connectors pages and the servers a chat can call both go through this policy, so without the check they keep working with the setting off.
+
+`Scope#resolve` decides what each person can use, in the chat and on the Connectors pages alike. Checking the owner's `create?` for shared connections is what stops a shared connection for everyone when its owner loses the permission.
+
+:::warning Answer from `user`, never from a current-user global
+`Scope#resolve` asks `create?` about the owner of somebody else's connection. A policy that reads `Current.user` answers about the wrong person and keeps sharing a connection whose owner should no longer have one.
+:::
+
+Sharing, making a connection private, and reconnecting stay with the owner whatever the policy says: each one decides whose credential everyone's calls go out with. If you want someone else to manage every connection, return `@scope.all` from `resolve` for them and let `update?` and `destroy?` through. That widens the admin pages only: a chat still reaches just its user's own connections and the shared ones, so no one's assistant calls out on another person's private credential. A narrower scope does narrow the chat.
+
+### Record remote calls in the audit log
+
+With [Audit Logging](./audit-logging.html) installed, every remote call leaves one activity when it ends, whether or not it was sent. It's recorded against the connection, under the person whose chat made the call, with the chat as its origin. It names the connection, its host, the tool, whether the call was approved on a card or always-allowed, and how it ended. The arguments are left out: they're the part most likely to carry customer data, and more people read the audit log than the chat. The gem's Connectors resource turns this on with `self.audit_logging`, so keep that line if you replace the resource with your own.
+
+### Before you open it up
+
+Weigh these before you grant `create?` and `share?`:
+
+- **Always-allowed calls send arguments nobody reviewed.** Once someone always-allows a tool, the assistant sends whatever arguments it chooses, with no card, up to ten calls in a row. Set tools that change or send things to **Always ask**, especially on shared connections.
+- **Sharing puts a server's text in front of everyone's assistant.** A server writes its own tool names and descriptions, and a shared connection puts them into the assistant's context in the chats of everyone it's shared with. The assistant treats them as data and every call still waits for a card, but a hostile or compromised server can still try to steer the conversation. Give `share?` to people you'd trust to vet a server for the whole team.
+- **HTTPS is the only network check.** Avo refuses plain `http`, follows no redirects, and verifies certificates, which keeps out cloud metadata endpoints and most internal services. An internal service with a publicly trusted certificate can still be reached from a connection address, so keep `create?` to people you'd trust with your network.
+- **A remote action takes one more step.** The assistant searches a connection's stored tools before it calls one. Until it does, nothing about the connections goes to your model provider beyond two tools and a line per connection in its instructions. A search returns at most five tools, with their arguments.
+- **Remote results go to your model provider.** Like any tool result, what a server returns is sent to the provider and stored on the tool call. A result over 100 KB is cut short.
+
+## Turn the chat on or off per user
+
+`use?` on your `Avo::Ai::ChatPolicy` decides whether a user can use the chat. Key it off a role, a plan, or a feature flag:
+
+```ruby
+# app/policies/avo/ai/chat_policy.rb
+class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.admin? || user.support? # [!code highlight]
+
+  # ...the rest of the policy
+end
+```
+
+Its record is always the `Avo::Ai::Chat` class, so key it off `user`. The chat bar asks it on every panel page, so keep it cheap: read a column or a memoized flag. It also runs in background jobs, so don't read a tenant or other request state from it. If it raises, the chat reads as off for that user, and nothing is logged. A user it refuses:
+
+- sees no chat bar, and Cmd+J / Ctrl+J opens nothing;
+- is told they're not authorized on every chat page, and on every request behind them, sending a message included;
+- gets no reply to a message still queued when you turned the chat off. The queued reply doesn't call the model. It posts an [error row](#when-a-reply-fails), *The assistant is turned off for your account, so this message wasn't answered.*, with no **Try again**, and no title is generated for it. A reply already running finishes.
+
+`use?` only decides whether they can use the chat. Beyond the chat's own controls, including the composer and the open-in-bar button on a chat's resource page, it doesn't hide anything: the **Chats**, **Messages**, **Models**, **Skills**, **Feedback** and **Connectors** menu entries and pages keep following their own policy methods, so a super admin can still review conversations there. To take an entry away, refuse `index?` for the same users.
+
+If your menu links to the chats, hide the link for the same users with `visible: -> { Avo::Ai::Chat.usable_by?(current_user) }`.
+
+`use?` needs an authorization client. With `config.authorization_client = nil` no policy runs, so nobody is blocked.
+
+With `avo-permissions` as the client, no policy is asked, the shipped one included: a role needs a `use?` permission on `Avo::Resources::AvoAi::Chat`, or the chat is off for it. The permissions screen doesn't offer it yet, so add it from a console as the [upgrade guide](./upgrade.html#avo-ai-4-3-0-beta-10) shows.
+
+:::warning Your own `ChatPolicy` needs `use?`
+The chat asks `use?` the way Avo asks any policy method, so a `ChatPolicy` of your own without it **turns the chat off for every user**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ChatPolicy`, add `def use? = user.present?` when you upgrade to keep the chat on for everyone. The policy avo-ai ships, used when you have none, answers `true` for every signed-in user.
+:::
+
 ## Who can see a chat
 
 The chat UI only ever loads the signed-in user's own conversations, and the **Chats** and **Messages** admin resources list only theirs. Those resources still open any record by id, though, so close them with policies that scope to the owner:
@@ -1566,6 +1816,7 @@ The chat UI only ever loads the signed-in user's own conversations, and the **Ch
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
 class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.present?
   def index? = user.present?
   def show? = owner?
   def create? = user.present?
@@ -1608,6 +1859,8 @@ Chats are owner-scoped already — nobody sees anyone else's — so by default a
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
 class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.present?
+
   def destroy?
     user.admin?
   end
@@ -1642,6 +1895,8 @@ The level is decided by your app's policy for `Avo::Ai::Chat`. It's never stored
 ```ruby
 # app/policies/avo/ai/chat_policy.rb
 class Avo::Ai::ChatPolicy < ApplicationPolicy
+  def use? = user.present?
+
   def debug_level
     user.admin? ? :tools : :off
   end

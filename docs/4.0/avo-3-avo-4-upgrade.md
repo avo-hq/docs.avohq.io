@@ -690,7 +690,7 @@ If you use global search and have hardcoded search URLs, see [Avo Pro mount poin
 
 #### Policy helpers
 
-If you use [`inherit_association_from_policy`](./authorization#removing-duplication) in your policies, update the concern's namespace:
+If you use [`inherit_association_from_policy`](./authorization-api.html#inherit_association_from_policy) in your policies, update the concern's namespace:
 
 ```ruby
 include Avo::Pro::Concerns::PolicyHelpers # [!code --]
@@ -1131,15 +1131,13 @@ More info on the [View object](./views.html) section.
 
 ## Dynamic Filters `always_expanded` default changed to `true`
 
-In Avo 3 the dynamic filters bar was collapsed by default behind a toggle button. In Avo 4 the default for `Avo::DynamicFilters.configuration.always_expanded` was flipped from `false` to `true`, so the filters bar is now shown expanded out of the box and the toggle button is hidden.
+In Avo 3 the dynamic filters bar was collapsed by default behind a toggle button. In Avo 4 the default for `config.dynamic_filters.always_expanded` was flipped from `false` to `true`, so the filters bar is now shown expanded out of the box and the toggle button is hidden.
 
 If you want to restore the previous behavior (collapsed by default, with a toggle button), set the option to `false` explicitly in your `config/initializers/avo.rb`:
 
 ```ruby
-if defined?(Avo::DynamicFilters)
-  Avo::DynamicFilters.configure do |config|
-    config.always_expanded = false
-  end
+Avo.configure do |config|
+  config.dynamic_filters.always_expanded = false
 end
 ```
 
@@ -1159,4 +1157,4 @@ Avo.configure do |config|
 end
 ```
 
-More info on the [`explicit_authorization` option](./authorization.html#explicit_authorization) section.
+More info on the [`explicit_authorization` option](./authorization-api.html#explicit_authorization) section.

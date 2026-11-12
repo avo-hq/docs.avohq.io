@@ -2,75 +2,44 @@
 license: community
 description: "Renders a number input element."
 fieldTags: [number]
+outline: [2, 3]
+api_docs: ./number-api.html
 ---
 
 # Number
 
-The `number` field renders a `input[type="number"]` element.
+The `number` field renders an `input[type="number"]` element in forms and displays numeric values on the <Index /> and <Show /> views.
 
 ```ruby
+# app/avo/resources/user.rb
 field :age, as: :number
 ```
 
-## Options
+By default, values are unformatted and Avo sets no minimum, maximum, or step constraint.
 
-<Option name="`min`">
+## Limit the input range
 
-Set the `min` attribute.
+<span id="min"></span>
+<span id="max"></span>
+<span id="step"></span>
 
-#### Default value
+For a bounded value such as an age, set [`min`](./number-api.html#min) and [`max`](./number-api.html#max). Set [`step`](./number-api.html#step) to control valid increments:
 
-`nil`
+```ruby
+# app/avo/resources/user.rb
+field :age, as: :number, min: 0, max: 120, step: 5
+```
 
-#### Possible values
-
-Any number.
-</Option>
-
-<Option name="`max`">
-
-Set the `max` attribute.
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-Any number.
-</Option>
-
-<Option name="`step`">
-
-Set the `step` attribute.
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-Any number.
-</Option>
-
-<Option name="`format`">
-
-Formats the value on the <Index /> and <Show /> views. Form inputs always keep the raw number.
-
-#### Default value
-
-`nil`
-
-#### Possible values
-
-`:delimited`, `:percentage`, or `:human`.
-</Option>
+These are browser input constraints, not model validations. Add model validations when the limits must also be enforced on the server. Leaving `step` unset lets the browser apply its default step behavior; it does not enable arbitrary decimal input.
 
 ## Formatting numbers
 
-Use `format` for the common display formats provided by Rails:
+<span id="format"></span>
+
+Use [`format`](./number-api.html#format) for the common display formats provided by Rails:
 
 ```ruby
+# app/avo/resources/statistic.rb
 field :population, as: :number, format: :delimited
 field :margin, as: :number, format: :percentage
 field :downloads, as: :number, format: :human
@@ -85,6 +54,7 @@ On the <Index /> view, formatted numbers and their headers are end-aligned. Bare
 For formatting that these three values do not cover, use [`format_display_using`](../field-options.html#on-specific-views). Rails helpers are available directly inside the block:
 
 ```ruby
+# app/avo/resources/product.rb
 field :price_in_cents,
   as: :number,
   format_display_using: -> { number_to_currency(value / 100.0) }
@@ -92,8 +62,6 @@ field :price_in_cents,
 
 `format_display_using` affects only <Index /> and <Show />, so the <Edit /> and <New /> inputs keep a valid raw numeric value. A custom display formatter takes precedence when it is combined with `format`.
 
-## Examples
+## Link a number to its record
 
-```ruby
-field :age, as: :number, min: 0, max: 120, step: 5
-```
+On the <Index /> view, set `link_to_record: true` to make the displayed number a link to the record. See [common field options](../field-options.html) for linking, placeholders, and shared display formatters.

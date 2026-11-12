@@ -6,7 +6,7 @@ outline: [2, 3]
 
 Avo comes in a few tiers. The Community tier is a free gem available on rubygems.org, and a few paid tiers ship as private gems hosted on our own private gems server ([`packager.dev`](https://packager.dev)).
 
-To access the paid gems you must authenticate using the **Gem Server Token** found on your [dashboard](https://avohq.io/dashboard).
+To access the paid gems you must authenticate using the **Gem Server Token** found on your [dashboard](https://avohq.io/licenses).
 
 There are a few ways to do that. We focus on the most important and secure ones: [on the server and CI systems](#on-the-server-and-ci-systems) and [on your local development environment](#on-your-local-development-environment).
 
@@ -178,6 +178,12 @@ Now you are ready to add Avo to your `Gemfile`.
 <!-- @include: ./common/avo_in_gemfile.md-->
 
 Run `bundle install` and `bundler` picks up the token and uses it to authenticate on the server.
+
+## Rotate the gem server token
+
+If someone outside your team may have your gem server token, replace it from your [dashboard](https://avohq.io/licenses). Open the license and click **Rotate** next to the gem server token. In the dialog, also tick **License key** if you want to replace both at once, read the warnings, tick **I understand and agree** and confirm. Only account admins see the button.
+
+The old token stops working right away, so every `bundle install` that fetches the paid gems fails until `BUNDLE_PACKAGER__DEV` holds the new one. Update it on developer machines, in CI and in your Docker builds. Apps that are already running are not affected.
 
 ## Bundle without the paid gems
 
