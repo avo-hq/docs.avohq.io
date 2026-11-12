@@ -488,6 +488,27 @@ Search, filters, sorting, pagination, and view switches then stay asynchronous i
 
 To add a summary or notice around the existing index UI, declare [`index_slot`](./resources-api.html#index_slot) on the resource. See [Slots](./slots.html) for partial rendering, loaded-record summaries, and custom component support.
 
+## Keep the Index up to date
+
+<VersionReq package="avo" version="4.4.5" />
+
+If people keep an `Index` open while its records change, such as orders coming in or jobs changing status, reload the records on a timer with [`self.index_refresh_every`](./resources-api.html#self.index_refresh_every):
+
+```ruby
+# app/avo/resources/order.rb
+class Avo::Resources::Order < Avo::BaseResource
+  self.index_refresh_every = 30.seconds
+end
+```
+
+Only the records reload. The search, filters, scope, sorting, and page the user picked stay as they are, and association panels that list the resource refresh too. To refresh only the resource's own `Index`, return the interval from a block that checks `parent_record`:
+
+```ruby
+self.index_refresh_every = -> { 30.seconds if parent_record.nil? }
+```
+
+A reload waits for the next turn while the list isn't visible, while rows are selected or a row menu is open, and while the user is typing or moving through the list with the keyboard.
+
 ## Record previews
 
 Let users peek at a record from the `Index` view without opening it. Add a [`preview` field](./fields/preview.html) to the resource and mark the fields you want in the popover with `show_on: :preview`.
