@@ -82,46 +82,11 @@ The attach, detach, create, destroy, and actions buttons on association panels a
 
 ## Single Table Inheritance (STI)
 
-When you have models that share behavior and fields with STI, Rails will cast the model as the final class no matter how you query it.
-
-```ruby
-# app/models/user.rb
-class User < ApplicationRecord
-end
-
-# app/models/super_user.rb
-class SuperUser < User
-end
-
-# User.all.map(&:class) => [User, SuperUser]
-```
-
-For example, when you have two models, `User` and `SuperUser` with STI, when you call `User.all`, Rails will return an instance of `User` and an instance of `SuperUser`. That confuses Avo in producing the proper resource of `User`. That's why when you deal with STI, the final resource `Avo::Resources::SuperUser` should receive the underlying `model_class` so Avo knows which model it represents.
-
-```ruby{5}
-# app/avo/resources/super_user.rb
-class Avo::Resources::SuperUser < Avo::BaseResource
-  self.title = :name
-  self.includes = []
-  self.model_class = "SuperUser"
-
-  def fields
-    field :id, as: :id
-    field :name, as: :text
-  end
-end
-```
+Give the parent model and each of its subclasses their own resource, and set [`self.model_class`](./resources-api.html#self.model_class) on each child resource to its subclass. The [Single Table Inheritance guide](./guides/single-table-inheritance.html) walks through the full setup.
 
 ## Link to child resource when using STI
 
-Let's take another example. We have a `Person` model and `Sibling` and `Spouse` models that inherit from it.
-
-You may want to use the `Avo::Resources::Person` to list all the records, but when your user clicks on a person, you want to use the inherited resources (`Avo::Resources::Sibiling` and `Avo::Resources::Spouse`) to display the details. The reason is that you may want to display different fields or resource tools for each resource type.
-
-There are two ways you can use this:
-
-1. `self.link_to_child_resource = true` Declare this option on the parent resource. When a user is on the <Index /> view of your the `Avo::Resources::Person` and clicks on the view button of a `Person` they will be redirected to a `Child` or `Spouse` resource instead of a `Person` resource.
-2. `field :peoples, as: :has_many, link_to_child_resource: false` Use it on a `has_many` field. On the `Avo::Resources::Person` you may want to show all the related people on the <Show /> page, but when someone click on a record, they are redirected to the inherited `Child` or `Spouse` resource.
+A parent resource with [`self.link_to_child_resource = true`](./resources-api.html#self.link_to_child_resource) opens each record on its Index in the resource for the record's class, so a spouse on the `Person` Index opens in `Avo::Resources::Spouse`. The [`belongs_to`](./associations/belongs_to-api.html#link_to_child_resource), [`has_many`](./associations/has_many-api.html#link_to_child_resource) and [`has_and_belongs_to_many`](./associations/has_and_belongs_to_many-api.html#link_to_child_resource) fields take a `link_to_child_resource` option that makes the same choice for their links. See [open records in their own resource](./guides/single-table-inheritance.html#open-records-in-their-own-resource) for how the field and resource settings combine.
 
 ## Add custom labels to the associations' pages
 

@@ -77,14 +77,12 @@ All in all **we're confident you'll have the necessary instruments** you need to
 
 ### STI example
 
-For **STI** you can check out the models and resources in the [demo app](https://main.avodemo.com/).
+The [Single Table Inheritance guide](./guides/single-table-inheritance.html) sets up a `Person` model with `Spouse` and `Sibling` subclasses, a resource for each, and links from the parent resource to the children. The [demo app](https://main.avodemo.com/) runs the `Person` and `Spouse` part of it:
 
  - [app/models/person.rb](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/person.rb)
  - [app/models/spouse.rb](https://github.com/avo-hq/main.avodemo.com/blob/main/app/models/spouse.rb)
  - [app/avo/resources/person.rb](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/person.rb)
  - [app/avo/resources/spouse.rb](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/spouse.rb)
-
-One thing you should do is for the derived model (`Spouse` in this case) add the `model_class` to [the Avo resource](https://github.com/avo-hq/main.avodemo.com/blob/main/app/avo/resources/spouse.rb).
 
 ## Try a pre-release version
 
