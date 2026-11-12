@@ -41,10 +41,14 @@ verify the migrations and routes, and tell me what was added.
 ```
 
 The command opens a short-lived activation flow on Avo HQ. Sign in or create an account, review the
-app name and included add-ons, and approve the installation. Your agent resumes automatically, so
-you do not need to paste a license key or gem server credential into the chat.
+app name and included add-ons, and approve the installation as an admin of the selected Avo account.
+Your agent resumes automatically, so you do not need to paste a license key or gem server credential
+into the chat.
 
-This starts a 14-day Stripe trial with no card required and installs:
+This starts a 14-day trial of the all-add-ons bundle with no card required. If the account has a card
+on file, the trial converts to a paid subscription when it ends. Without a card, the trial stops.
+
+The installer adds the gems your license includes, along with starter configuration. Highlights include:
 
 - Avo, authorization, menu, advanced search, dynamic filters, and scopes
 - dashboards and audit logging
