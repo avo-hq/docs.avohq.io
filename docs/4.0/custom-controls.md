@@ -204,6 +204,40 @@ self.show_controls = -> do
 end
 ```
 
+### Actions in an association panel
+
+An association panel draws the listed resource's [`index_controls`](./custom-controls-api.html#index_controls) and [`row_controls`](./custom-controls-api.html#row_controls), so an [`action`](./custom-controls-api.html#action) control there knows the record that holds the panel. `parent_record` and `parent_resource` are available in the action's [`name`](./actions-api.html#name) and [`visible`](./actions-api.html#visible) blocks while Avo draws the button, and in its `fields` and `handle` when it runs — the same inside a [`list`](./custom-controls-api.html#list) dropdown as on the bar. <VersionReq package="avo-custom_controls" version="4.4.1" />
+
+```ruby
+# app/avo/actions/review_team.rb
+class Avo::Actions::ReviewTeam < Avo::BaseAction
+  self.standalone = true
+  self.name = -> { parent_record.present? ? "Review #{parent_record.name}" : "Review" }
+  # No parent outside a panel, so the button stays out of the resource's own index.
+  self.visible = -> { parent_record.present? }
+
+  def handle(**)
+    succeed "Reviewed #{parent_record.name}"
+  end
+end
+```
+
+```ruby
+# app/avo/resources/review.rb
+class Avo::Resources::Review < Avo::BaseResource
+  self.index_controls = -> do
+    action Avo::Actions::ReviewTeam
+    actions_list
+  end
+end
+```
+
+Both are `nil` on the resource's own <Index />, <Show />, and <Edit /> views, so guard for that in an action that runs there too. The parent travels in the button's link, so Avo checks it again when the action runs — see [Use the panel's parent record](./actions.html#use-the-panel-s-parent-record) for the field and policy checks it makes. Needs `avo` <Version version="4.4.4" /> as well.
+
+:::info
+The controls block itself runs before the panel attaches its parent, so it has no `parent_record` of its own. Keep the condition on the action's `visible` block, as above, rather than wrapping the control in an `if`.
+:::
+
 ### Turbo triggers
 
 A `link_to` forwards its `data` hash to the `<a>`, so any `data-turbo-*` attribute works. Load a response into a Turbo Frame, or turn a link into a `POST`/`DELETE` button:
