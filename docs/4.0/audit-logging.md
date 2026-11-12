@@ -214,10 +214,12 @@ A common use case is to configure audit logging for specific users, for example 
 # app/avo/resources/product.rb
 class Avo::Resources::Product < Avo::BaseResource
   self.audit_logging = { # [!code highlight]
-    activity: -> { current_user.audit_avo_activity? } # [!code highlight]
+    activity: -> { current_user&.audit_avo_activity? } # [!code highlight]
   } # [!code highlight]
 end
 ```
+
+The block also runs for [changes made outside Avo](#log-changes-made-outside-avo), such as in a job or the console, where `current_user` is `nil`. Hence the `&.`, which skips them.
 
 All resources and actions with audit logging activity enabled are being tracked now.
 
@@ -525,7 +527,7 @@ These labels win over your locale file and are the same in every language. If yo
 
 <VersionReq package="avo-audit_logging" version="4.3.2" />
 
-Changes made outside the panel, such as in a background job, an importer, or a service object, aren't logged on their own unless the resource [logs changes made outside Avo](#log-changes-made-outside-avo). Record them with `Avo::AuditLogging.record`:
+A resource that opts in already [logs changes made outside Avo](#log-changes-made-outside-avo), such as in a background job, an importer, or a service object, when its model has PaperTrail. For a model without PaperTrail, or a resource with `outside_avo: false`, record them with `Avo::AuditLogging.record`:
 
 ```ruby
 # app/services/price_updater.rb
@@ -593,19 +595,7 @@ The record's timeline names the origin as the author, so these entries read *Nig
 
 <VersionReq package="avo-audit_logging" version="4.3.2" />
 
-Calling `Avo::AuditLogging.record` yourself works when you know where the changes happen. To log every create, update, and delete on a model wherever it happens (a job, an importer, another API, the console), set `outside_avo: true` on its resource:
-
-```ruby
-# app/avo/resources/product.rb
-class Avo::Resources::Product < Avo::BaseResource
-  self.audit_logging = {
-    activity: true,
-    outside_avo: true # [!code ++]
-  }
-end
-```
-
-It's off by default. It needs [PaperTrail](#enable-change-logs-and-revert-changes) on the model, because the entry is written when PaperTrail writes the change's version:
+A resource that opts in with [`self.audit_logging`](#enable-specific-resources-and-actions) also logs every create, update, and delete on its model wherever it happens, such as in a job, an importer, another API, or the console. It needs [PaperTrail](#enable-change-logs-and-revert-changes) on the model, because the entry is written when PaperTrail writes the change's version:
 
 ```ruby
 # app/models/product.rb
@@ -614,9 +604,21 @@ class Product < ApplicationRecord
 end
 ```
 
+<VersionReq package="avo-audit_logging" version="4.4.2" /> It's on by default. Before `4.4.2` it was off, and a resource turned it on with `outside_avo: true` (see the [upgrade guide](./upgrade.html#avo-audit-logging-4-4-2)). To log only what happens in Avo, turn it off on the resource:
+
+```ruby
+# app/avo/resources/product.rb
+class Avo::Resources::Product < Avo::BaseResource
+  self.audit_logging = {
+    activity: true,
+    outside_avo: false # [!code ++]
+  }
+end
+```
+
 Each change gets its own entry, linked to its version, so its page shows the [change log and the revert action](#enable-change-logs-and-revert-changes) like a change made in the panel. A create's page shows what the record was created with, and no revert, since there's nothing to go back to. The entry is saved in the same transaction as the change, so a change that's rolled back leaves no entry. The payload is empty unless a [payload modifier](#change-what-an-entry-stores) adds to it, because what changed is in the change log.
 
-The resource that sets `outside_avo` is the one whose settings are asked and whose timeline shows the entries, even when another resource uses the same model. In the panel or through the API, a change the panel logs links its version to the panel's own entry, as before. A version written while the panel logs the request, even a `show` visit, links to that entry. A change made where the panel logs nothing, such as an action that doesn't opt in, is logged by `outside_avo` under the signed-in user.
+The resource is the one whose settings are asked and whose timeline shows the entries. When several resources use the same model and opt in, set `outside_avo: false` on all but the one that should log. In the panel or through the API, a change the panel logs links its version to the panel's own entry, as before. A version written while the panel logs the request, even a `show` visit, links to that entry. A change made where the panel logs nothing, such as an action that doesn't opt in, is logged by `outside_avo` under the signed-in user.
 
 The resource's opt-in is asked the same way the panel asks it. The `create`, `update`, and `destroy` switches in [`actions`](#disable-specific-actions-logging) turn single events off, and your `activity` block runs for each change. In a job or the console `current_user` is `nil`, so make the block handle `nil`. A block that raises logs the error and records nothing.
 
@@ -650,11 +652,11 @@ en:
         request: "Storefront"
 ```
 
-On a resource that sets `outside_avo`, the panel's create, the AI chat, and MCP clients claim the saves they record. Each entry they record links the version of its own change (a create's, the destroy, or the first update), so it has the change log. Every other version written during the claim is logged by `outside_avo` on its own, as it would be outside one: another record a callback changes, an earlier save of the same record, or the records an action changes when the action doesn't opt in. That holds even when the writer raises after saving.
+On a resource that logs changes made outside Avo, the panel's create, the AI chat, and MCP clients claim the saves they record. Each entry they record links the version of its own change (a create's, the destroy, or the first update), so it has the change log. Every other version written during the claim is logged by `outside_avo` on its own, as it would be outside one: another record a callback changes, an earlier save of the same record, or the records an action changes when the action doesn't opt in. That holds even when the writer raises after saving.
 
-<VersionReq package="avo-audit_logging" version="4.4.1" /> A version of a model that doesn't set `outside_avo`, such as a stock movement an action creates, joins the entry as one of its **Impacted records**, as it does in the panel. That takes a claim that recorded one entry. With several, Avo can't tell whose the change is, and leaves it out.
+<VersionReq package="avo-audit_logging" version="4.4.1" /> A version of a model whose resource doesn't log changes made outside Avo, such as a stock movement an action creates, joins the entry as one of its **Impacted records**, as it does in the panel. That takes a claim that recorded one entry. With several, Avo can't tell whose the change is, and leaves it out.
 
-When your own code records a change with `Avo::AuditLogging.record` on a resource that sets `outside_avo`, claim the save the same way, or the change is logged twice:
+When your own code records a change with `Avo::AuditLogging.record` on a resource that logs changes made outside Avo, claim the save the same way, or the change is logged twice:
 
 ```ruby
 Avo::AuditLogging::Recorder.claiming do
@@ -663,7 +665,7 @@ Avo::AuditLogging::Recorder.claiming do
 end
 ```
 
-An STI subclass is logged under its own resource when that one sets `outside_avo`, and otherwise under its base class's resource when that one does. A model with PaperTrail but no Avo resource is skipped. If recording fails, the error is logged and the change is kept.
+An STI subclass is logged under its own resource when that one logs changes made outside Avo, and otherwise under its base class's resource when that one does. A model with PaperTrail but no Avo resource is skipped. If recording fails, the error is logged and the change is kept.
 
 Writes PaperTrail doesn't version aren't logged: `update_column`, `update_columns`, `update_all`, `insert_all`, `upsert_all`, `delete`, `delete_all`, and `dependent: :delete_all`. Use `update!` and `destroy` where the log has to see the change, or `record.paper_trail.update_columns(...)` to skip callbacks and still write a version. A model that has PaperTrail version its destroys after the delete (`paper_trail.on_destroy(:after)`) has its deletes skipped, because the row is gone by then.
 
