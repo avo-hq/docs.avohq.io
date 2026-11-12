@@ -19,6 +19,56 @@ To open this page at your release, add `?since=` with a date or a gem version: `
 
 <UpgradeFilter />
 
+## `avo-audit_logging` 4.4.2 <span class="tl-date">Unreleased</span> {#avo-audit-logging-4-4-2 data-gems="avo-audit_logging" data-version="4.4.2"}
+
+<Option headingSize="3" name="Changes made outside Avo are logged by default">
+
+#### Breaking Change
+
+`outside_avo` now defaults to `true`. A resource that opts in with `self.audit_logging` logs every create, update and delete on its model wherever it happens, such as in a job, an importer, the console or your app's own pages. It needs PaperTrail on the model, so a model without `has_paper_trail` logs what it did before. In the panel, a create's entry now links its version, so its page shows what the record was created with. See [Log changes made outside Avo](./audit-logging.html#log-changes-made-outside-avo).
+
+#### Action Required
+
+Check each resource that opts in and whose model has PaperTrail.
+
+If your code calls `Avo::AuditLogging.record` after its own saves, each of those changes is now logged twice. Wrap the save and the call in `Avo::AuditLogging::Recorder.claiming`, so the call's entry takes the save's version, or set `outside_avo: false` on the resource as shown below.
+
+```ruby
+# app/services/price_updater.rb
+Avo::AuditLogging::Recorder.claiming do # [!code ++]
+  product.update!(price: price)
+  Avo::AuditLogging.record(action: :update, record: product, author: user, payload: {price: price})
+end # [!code ++]
+```
+
+An `activity` block now also runs for changes made outside Avo, where `current_user` is `nil`. A block that calls a method on it, such as `current_user.audit_avo_activity?`, raises there. The change is still saved, but nothing is logged and the error goes to your log. Make the block handle `nil`. With `&.` it skips those changes, and `current_user.nil? || current_user.audit_avo_activity?` logs them.
+
+```ruby
+# app/avo/resources/product.rb
+self.audit_logging = {
+  activity: -> { current_user.audit_avo_activity? } # [!code --]
+  activity: -> { current_user&.audit_avo_activity? } # [!code ++]
+}
+```
+
+Expect more entries in the audit log, one for each change your jobs and imports make. Your test suite logs the records its setup creates too, so a spec that counts entries may count more. Wrap work you don't want logged, such as an import or a factory call, in `Avo::AuditLogging.disabled { ... }`.
+
+#### Maintaining Previous Behavior
+
+Set `outside_avo: false` on each resource that should log only what happens in Avo.
+
+```ruby
+# app/avo/resources/product.rb
+class Avo::Resources::Product < Avo::BaseResource
+  self.audit_logging = {
+    activity: true,
+    outside_avo: false # [!code ++]
+  }
+end
+```
+
+</Option>
+
 ## `avo-ai` 4.4.1 <span class="tl-date">Unreleased</span> {#avo-ai-4-4-1 data-gems="avo-ai" data-version="4.4.1"}
 
 <Option headingSize="3" name="The chat bar yields to mobile navigation">
