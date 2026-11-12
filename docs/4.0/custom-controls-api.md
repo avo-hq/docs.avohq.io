@@ -336,7 +336,10 @@ Sets the `style` attribute for the [`Avo::ButtonComponent`](https://github.com/a
 
 - **Type:** Symbol
 - **Default:** `:text` (`:outline` for `actions_list` and `list`)
-- **Values:** `:primary`, `:outline`, `:text`, `:icon` (icon-only, used in row controls)
+- **Values:** `:primary`, `:outline`, `:text`, `:flat`, `:icon` (icon-only, used in row controls)
+
+`:flat` carries no gradient or inset shadow, and without a [`color`](#color) it tints itself from the
+surrounding text color, so it stays legible on a tinted panel in either mode. <VersionReq package="avo" version="4.4.0" />
 
 </Option>
 

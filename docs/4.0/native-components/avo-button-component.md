@@ -47,9 +47,16 @@ The visual style of the button.
 <%= a_button(style: :primary) { "Primary" } %>
 <%= a_button(style: :outline) { "Outline" } %>
 <%= a_button(style: :text) { "Text" } %>
+<%= a_button(style: :flat) { "Flat" } %>
 ```
 
-- **Type:** Symbol — one of `:primary`, `:outline`, `:text`
+`:flat` drops the gradient and inset shadow the other styles carry, which suits dense
+controls such as a segmented toggle. Left without a `color`, every one of its states is a
+see-through tint of the current text color, so it reads against whatever sits behind it —
+the page, a card, or a tinted panel — in both light and dark mode. Mark the chosen button
+in a group with the `button--active` class. <VersionReq package="avo" version="4.4.0" />
+
+- **Type:** Symbol — one of `:primary`, `:outline`, `:text`, `:flat`
 - **Default:** `:outline`
 </Option>
 
