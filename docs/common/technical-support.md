@@ -1,12 +1,12 @@
 # Technical support
 
-Avo is designed to be a self-serve product with [comprehensive documentation](https://docs.avohq.io) and [demo apps](#demo-apps) to be used as references.
+Avo is designed to be a self-serve product with [comprehensive documentation](https://docs.avohq.io) and [demo apps](#3-demo-apps) to be used as references.
 
 But, even the best of us get stuck at some point and you might need a nudge in the right direction. There are a few levels of how can get help.
 
-1. [Open Source Software Support Policy](#open-source-software-support-policy)
+1. [Open Source Software Support Policy](#open-source-software-support)
 1. [Self-help](#self-help)
-1. [Help from the official team](#official-support)
+1. [Help from the official team](#help-from-the-official-team)
 
 ## Open Source Software Support
 
