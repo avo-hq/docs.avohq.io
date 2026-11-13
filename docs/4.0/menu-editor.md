@@ -331,7 +331,7 @@ end
 
 ## Profile menu
 
-The profile menu allows you to add items to the menu displayed in the profile component. **The sign-out link is automatically added for you.**
+The profile menu allows you to add items to the menu displayed in the profile component. It opens when you click the profile widget in the sidebar footer and is at least as wide as that widget. **The sign-out link is automatically added for you**, and so is the **Avo Status** item for the users who may see it (see [admin users](./authentication.html#1-admin-user)). <VersionReq package="avo" version="4.4.2" />
 
 Only `link_to` items are rendered here; other item types are ignored.
 

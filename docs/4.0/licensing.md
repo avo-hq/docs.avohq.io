@@ -84,7 +84,7 @@ end
 
 Avo keeps the last valid answer from the license server and checks again once it is 24 hours old. If that check fails, because the server can't be reached or because it answers that the license is invalid, your admin keeps running on the last valid answer for 72 more hours and retries every hour. In production that is 96 hours after the last successful check. <VersionReq package="avo-licensing" version="4.4.0" />
 
-While the grace runs, the sidebar indicator turns amber and the [status page](./license-troubleshooting.html#check-the-license-status-page) shows **Action needed before** with the date access stops.
+While the grace runs, the status badge on the sidebar's profile widget turns amber and the [status page](./license-troubleshooting.html#check-the-license-status-page) shows **Action needed before** with the date access stops.
 
 After the grace, access to the admin is paused. The same happens when Avo has never held a valid answer, for example on the first boot while the license server is unreachable, after a deploy that lost the cached answer, or with an invalid key. Every admin page then shows **Temporarily unavailable**, and requests that aren't HTML (JSON, API, MCP) get a `503`. Admin and developer users also see a link to the status page. It says why access stopped, when the last successful check was, and that the app retries every minute. Press **Refresh license** there to retry at once. The first successful check unblocks the admin right away.
 
@@ -131,7 +131,7 @@ The [license status page](./license-troubleshooting.html#check-the-license-statu
 
 ### Fix a trial at risk
 
-The **Avo Status** indicator in the sidebar footer is green while everything is in order, amber while a trial needs attention, and orange when the license is invalid. Amber means one of three things, and the remedy is different for each:
+The **Avo Status** badge on the profile widget in the sidebar footer is green while everything is in order, amber while a trial needs attention, and orange when the license is invalid. Click the widget and pick **Avo Status** to open the page. Amber means one of three things, and the remedy is different for each:
 
 - **No payment method on file.** Access stops on the trial's end date. Add a payment method on the [Avo HQ Licenses](https://avohq.io/licenses) page.
 - **The subscription behind the trial was cancelled.** Access stops on the cancellation date, which the status page reports as the trial's end date. Adding a payment method does not change that — resume the subscription, or resubscribe, on the same page.

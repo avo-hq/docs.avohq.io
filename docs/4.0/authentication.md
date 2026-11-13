@@ -67,13 +67,15 @@ end
 
 The sidebar footer shows a small profile widget displaying three pieces of information about the current user — `name`, `photo`, and `title` — all read from the object returned by your [`current_user_method`](#customize-the-current-user-method).
 
+Clicking the widget opens the [profile menu](./menu-editor.html#profile-menu), which spans the sidebar's width. <VersionReq package="avo" version="4.4.2" />
+
 - **Name:** Avo calls the `name` method. If the object doesn't respond to it, it tries `email`, then falls back to `Avo user`.
 - **Photo:** the `avatar` method, used as the `src` of the photo.
 - **Title:** the `avo_title` method, displayed under the name.
 
 ## Customize the sign-out link
 
-If your app responds to `destroy_user_session_path`, a sign-out menu item will be added on the bottom sidebar (when you click the three dots). If your app does not respond to this method, the link will be hidden unless you provide a custom sign-out path. There are two ways to customize the sign-out path.
+If your app responds to `destroy_user_session_path`, a sign-out item will be added to the profile menu (click the profile widget in the sidebar footer to open it). If your app does not respond to this method, the link will be hidden unless you provide a custom sign-out path. There are two ways to customize the sign-out path.
 
 ### Customize the current user resource name
 
@@ -170,7 +172,7 @@ You can do that check yourself using the `Avo::Current.user_is_admin?`.
 
 #### When does Avo check if the use is an admin (`is_admin?`)
 
-Admin users can access the private **Avo Status** page at `/status` (under your Avo mount path) and see the status link in the sidebar on production.
+Admin users can access the private **Avo Status** page at `/status` (under your Avo mount path) and see the **Avo Status** item in the sidebar profile menu on production, with a colored status badge on the profile widget. <VersionReq package="avo" version="4.4.2" />
 
 </Option>
 
@@ -189,7 +191,7 @@ You can do that check yourself using the `Avo::Current.user_is_developer?`.
 Avo uses this role to display long backtraces on non-validation errors.
 Ex: on record save, you might call an API which by some reason errors out. Instead of just getting a generic "Something went wrong" error, the developer user will see the error message and backtrace
 
-Developer users can also access the private **Avo Status** page and see the status link in the sidebar on production (same access as [admin users](#1-admin-user)). In development, the status link is visible to everyone.
+Developer users can also access the private **Avo Status** page and see its profile menu item on production (same access as [admin users](#1-admin-user)). In development, the item is visible to everyone.
 
 <Image src="/assets/img/4_0/authentication/backtrace.webp" dark-src="/assets/img/4_0/authentication/backtrace-dark.webp" alt="Backtrace alert" width="1060" height="484" />
 
