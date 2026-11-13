@@ -54,6 +54,8 @@ bin/rails generate avo:eject --component avo/index/table_row_component
 
 Both the `.rb` and `.html.erb` files are copied. Components are ejected into the directory set by [`config.view_component_path`](./customization.html#custom-view_component-path) (`app/components` by default).
 
+For a worked example, see [Customize the empty state](./guides/customize-the-empty-state.html), which ejects `Avo::EmptyStateComponent` to change what empty lists show.
+
 ## Eject field components
 
 Use the `--field-components` option with a field name to eject all of that field's components at once:
