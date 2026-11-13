@@ -20,6 +20,8 @@ end
 
 With no options, a field shows up on the <Index />, <Show />, <New />, and <Edit /> views with a humanized version of its id as the label.
 
+To give every field of a type the same options, set [`config.field_defaults`](./customization.html#field-defaults) in the initializer. A field's own options win.
+
 Besides the common options, some fields respond to **field-specific options** — like `options` on the [select field](./fields/select.html) — documented on each field's page.
 
 ## Change the field label
