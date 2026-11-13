@@ -74,7 +74,7 @@ end
 If you don't need surface-specific behavior, ignore the local and write a single query that runs everywhere. Branching is mandatory in one case: if your proc returns the array shape used by [custom search providers](./search-api.html#custom-search-providers), return it only for `:global` and `:association` — the index and kanban surfaces need an `ActiveRecord::Relation`.
 
 :::info
-The `search_type` local is injected by Avo for the index, global, association, and [kanban board](./kanban-boards.html) card picker surfaces. On a Community-only install it isn't defined at all, and referencing it raises an error. Guard with `defined?(search_type)` or write a plain query.
+The `search_type` local is injected by Avo for the index, global, association, and [kanban board](./kanban-boards.html) card picker surfaces. The index, global, and association surfaces get it from the [global search add-on](./search.html#global-search). Without it, the index search bar has no `search_type` local, and referencing it raises an error. Guard with `defined?(search_type)` or write a plain query.
 :::
 
 ## Search within associations
