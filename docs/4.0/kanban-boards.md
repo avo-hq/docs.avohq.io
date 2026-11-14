@@ -104,7 +104,7 @@ If you want to tailor the scope specifically for the board picker, branch on the
 class Avo::Resources::Project < Avo::BaseResource
   self.search = {
     query: -> {
-      if search_type == :kanban
+      if defined?(search_type) && search_type == :kanban
         # tailor the scope for the board picker
         query.where(active: true).ransack(name_cont: q).result
       else
@@ -116,7 +116,7 @@ end
 ```
 
 :::info
-The index, global, and association search surfaces get `search_type` from the [global search add-on](./search.html#global-search). Without it, the index search bar runs this block with no `search_type` local, and referencing it there raises an error. Guard with `defined?(search_type) && search_type == :kanban`.
+Not every search sets the `search_type` local. Avo's own search without the [global search add-on](./search.html#global-search), the [AI assistant](./ai.html), and the [MCP server](./mcp.html) run this block without it, and referencing it there raises an error. Keep the `defined?(search_type)` guard.
 :::
 
 When an item is added to a column, an `Avo::Kanban::Item` record is created for it. This `Item` record keeps track of the board, column, position, and more.
