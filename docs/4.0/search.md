@@ -58,7 +58,7 @@ The same `query` proc runs from every search surface. If you want, say, a wider 
 class Avo::Resources::User < Avo::BaseResource
   self.search = {
     query: -> {
-      case search_type
+      case (search_type if defined?(search_type))
       when :global      # navbar ⌘K — widest, includes email
         query.ransack(first_name_cont: q, last_name_cont: q, email_cont: q, m: "or").result(distinct: false)
       when :association # picker — tightest
