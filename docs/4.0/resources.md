@@ -228,6 +228,8 @@ Avo::Resources::PhotoComment -> /avo/resources/photo_comments
 
 If you change the resource name, you should change the generated controller name too.
 
+To change only the name Avo shows in the sidebar, titles and breadcrumbs, and keep the class and the URL, see [Rename a resource](./guides/rename-a-resource.html).
+
 ## Name and describe records
 
 Avo figures out a record's display name by trying the `name`, `title`, and `label` attributes in order, falling back to `id`. If that guess is wrong for your model, point [`self.title`](./resources-api.html#self.title) to another attribute:
