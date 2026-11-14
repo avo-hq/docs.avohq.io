@@ -226,7 +226,7 @@ Branch on [`search_type`](#search_type) so the Array is only returned where it i
 # app/avo/resources/comment.rb
 self.search = {
   query: -> do
-    case search_type
+    case (search_type if defined?(search_type))
     when :global, :association
       [
         {_id: 1, _label: "Record One", _url: "https://example.com/1"},
