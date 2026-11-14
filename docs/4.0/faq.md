@@ -175,7 +175,7 @@ end
 
 ## Getting `No valid predicate for combinator` error when filtering
 
-This error comes from Ransack. It occurs when your Ransack configuration sets `ignore_unknown_conditions = false`. To fix it, set it to `true`, Ransack's default.
+Ransack raises this error when its `ignore_unknown_conditions` option is `false`. Set it to `true`, Ransack's default:
 
 ```ruby
 # config/initializers/ransack.rb
