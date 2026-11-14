@@ -125,9 +125,10 @@ A local injected into the [`query`](#query) proc identifying which surface trigg
 | `:resource` | resource-index search bar |
 | `:global` | navbar ⌘K palette and its dedicated results page |
 | `:association` | [searchable association picker](./associations/searchable) on edit forms and the attach modal |
+| `:kanban` | [kanban board](./kanban-boards) card picker |
 
 :::info
-`search_type` is injected by Avo. On a Community-only install the local is not defined and referencing it in the proc raises an error. The [kanban board](./kanban-boards) card picker also does not inject `search_type` (or a `q` local) — read the term from `params[:q]` and detect the board with `params[:for_kanban_board]`.
+`search_type` is injected by add-ons: the [global search add-on](./search.html#global-search) sets it for the index, global, and association surfaces, and the kanban board sets `:kanban`. Other callers run the proc without it: Avo's own search without the global search add-on, the [AI assistant](./ai.html), and the [MCP server](./mcp.html). Referencing it there raises an error, so guard with `defined?(search_type)`.
 :::
 
 ## Global search configuration
@@ -225,7 +226,7 @@ Branch on [`search_type`](#search_type) so the Array is only returned where it i
 # app/avo/resources/comment.rb
 self.search = {
   query: -> do
-    case search_type
+    case (search_type if defined?(search_type))
     when :global, :association
       [
         {_id: 1, _label: "Record One", _url: "https://example.com/1"},

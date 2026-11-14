@@ -95,20 +95,20 @@ You change the column names and their values from the same settings screen (thro
 
 This is best done on the board. Under each column you'll find the search field. It searches through the resources that you selected in the [board configuration](#configure-the-board), using each resource's `self.search[:query]` block. A resource without a `search` block can't be added from the board.
 
-The block runs with the standard `params` and `query` locals — the same ones your index search bar uses. The user's search term is available as `params[:q]`.
+The block runs with the `params`, `query`, and `q` locals, the same ones your index search bar uses. `q` holds the user's search term.
 
-If you want to tailor the scope specifically for the board picker, detect it with `params[:for_kanban_board]`, which the board's search field sets:
+If you want to tailor the scope specifically for the board picker, branch on the [`search_type`](./search-api.html#search_type) local, which the board picker sets to `:kanban`:
 
 ```ruby
 # app/avo/resources/project.rb
 class Avo::Resources::Project < Avo::BaseResource
   self.search = {
     query: -> {
-      if params[:for_kanban_board]
+      if defined?(search_type) && search_type == :kanban
         # tailor the scope for the board picker
-        query.where(active: true).ransack(name_cont: params[:q]).result
+        query.where(active: true).ransack(name_cont: q).result
       else
-        query.ransack(name_cont: params[:q]).result
+        query.ransack(name_cont: q).result
       end
     }
   }
@@ -116,7 +116,7 @@ end
 ```
 
 :::info
-Unlike the index, global, and association search surfaces, the board picker does **not** inject `search_type` or a `q` local into the block. Read the term from `params[:q]` and detect the board with `params[:for_kanban_board]`.
+Not every search sets the `search_type` local. Avo's own search without the [global search add-on](./search.html#global-search), the [AI assistant](./ai.html), and the [MCP server](./mcp.html) run this block without it, and referencing it there raises an error. Keep the `defined?(search_type)` guard.
 :::
 
 When an item is added to a column, an `Avo::Kanban::Item` record is created for it. This `Item` record keeps track of the board, column, position, and more.
