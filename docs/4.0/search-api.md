@@ -128,7 +128,7 @@ A local injected into the [`query`](#query) proc identifying which surface trigg
 | `:kanban` | [kanban board](./kanban-boards) card picker |
 
 :::info
-`search_type` is injected by Avo. The index, global, and association surfaces get it from the [global search add-on](./search.html#global-search). Without it, the index search bar has no `search_type` local, and referencing it in the proc raises an error.
+`search_type` is injected by add-ons: the [global search add-on](./search.html#global-search) sets it for the index, global, and association surfaces, and the kanban board sets `:kanban`. Other callers run the proc without it: Avo's own search without the global search add-on, the [AI assistant](./ai.html), and the [MCP server](./mcp.html). Referencing it there raises an error, so guard with `defined?(search_type)`.
 :::
 
 ## Global search configuration
