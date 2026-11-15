@@ -293,7 +293,7 @@ end
 
 ##### Use `search_type` instead of `params[:global]` / `params[:via_association]`
 
-Avo 4 injects a `search_type` local into every `self.search[:query]` proc, with one of four values depending on which surface triggered the search:
+Avo 4 add-ons inject a `search_type` local into the `self.search[:query]` proc, with one of four values depending on which surface triggered the search:
 
 | `search_type`  | Surface                          | v3 detection                                    |
 | -------------- | -------------------------------- | ----------------------------------------------- |
@@ -308,17 +308,21 @@ Avo 4 injects a `search_type` local into every `self.search[:query]` proc, with 
 
 `params[:global]` still works but is superseded. It can't distinguish `:resource` from `:association`, so `search_type` is the preferred option going forward.
 
+:::warning
+Not every search sets `search_type`. The [global search add-on](./search.html#global-search) sets it for the index, global, and association surfaces, and the [kanban board](./kanban-boards.html) sets `:kanban`. Avo's own search without the global search add-on, the [AI assistant](./ai.html), and the [MCP server](./mcp.html) run the proc without it, and referencing it there raises an error. Guard it with `defined?(search_type)`, as below.
+:::
+
 ```ruby
 self.search = {
   query: -> {
-    if params[:global]                            # [!code --]
-    if search_type == :global                     # [!code ++]
+    if params[:global]                                         # [!code --]
+    if defined?(search_type) && search_type == :global         # [!code ++]
       query.ransack(id_eq: q, m: "or").result(distinct: false)
-    elsif params[:via_association] == 'has_many' # [!code --]
-    elsif search_type == :association             # [!code ++]
+    elsif params[:via_association] == 'has_many'               # [!code --]
+    elsif defined?(search_type) && search_type == :association # [!code ++]
       query.ransack(name_cont: q).result.order(name: :asc)
-    elsif params[:for_kanban_board] == '1'        # [!code --]
-    elsif search_type == :kanban                  # [!code ++]
+    elsif params[:for_kanban_board] == '1'                     # [!code --]
+    elsif defined?(search_type) && search_type == :kanban      # [!code ++]
       query.where(active: true).ransack(name_cont: q).result
     else # :resource
       query.ransack(id_eq: q, details_cont: q, m: "or").result(distinct: false)
