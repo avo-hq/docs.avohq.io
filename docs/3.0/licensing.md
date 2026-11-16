@@ -34,16 +34,14 @@ The features are separated by their level of complexity and maintenance needs. S
 
 Each license can be used to run one application in one `production` environment on one URL. So when an app is in the `production` environment (`Rails.env.production?` is `true`), we only need to check that the license key and URL match the purchased license you're using for that app.
 
-:::info
-More info [here](https://avohq.io/faq/one-production-environment.html).
-:::
-
 ### More installations/environments per site
 
-You might have the same site running in multiple environments (`development`, `staging`, `test`, `QA`, etc.) for non-production purposes. You don't need extra licenses for those environments as long as they are not production environments (`Rails.env.production?` returns `false`).
+You might have the same site running in multiple environments (`development`, `staging`, `test`, `QA`, etc.) for non-production purposes. You don't need extra licenses for those environments as long as they serve no real customers. That holds even when one of them runs with `Rails.env` set to `production`.
+
+Add the URLs of the deployed ones, like staging or QA, in the **URLs** section of your license on the [dashboard](https://avohq.io/licenses).
 
 :::info
-More info [here](https://avohq.io/faq/one-license-per-url.html).
+See [How many licenses do I need across environments and URLs?](https://avohq.io/faq/licensing-environments-and-urls.html) for examples.
 :::
 
 ### Sites
