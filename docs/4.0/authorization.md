@@ -242,6 +242,8 @@ class PostPolicy < ApplicationPolicy
 end
 ```
 
+In an [Action Policy](#use-action-policy) policy, ask `allowed_to?(:edit?, record, with: CommentPolicy)` instead.
+
 Keeping the two sets of rules separate is sometimes what you want. If `ContractPolicy#edit?` lets admins edit any contract, `UserPolicy#edit_contracts?` can still hide the edit button when those contracts are listed on a user.
 
 ## Authorize file attachments
@@ -543,19 +545,20 @@ end
 ```
 
 :::warning Beta
-The Action Policy client ships in the `avo-authorization` `4.5.0.beta.1` prerelease and is tested with `action_policy` `0.7.8`. Bundler installs a prerelease only when the `Gemfile` asks for one:
+The Action Policy client ships in the `avo-authorization` `4.5.0.beta.1` prerelease and is tested with `action_policy` `0.7.8`. Bundler installs a prerelease only when the `Gemfile` asks for one, so change the `avo-authorization` line you already have instead of adding a second one:
 
 ```ruby
 # Gemfile
 source "https://packager.dev/avo-hq/" do
-  gem "avo-authorization", ">= 4.5.0.beta.1"
+  gem "avo-authorization", ">= 4.0.0" # [!code --]
+  gem "avo-authorization", ">= 4.5.0.beta.1" # [!code ++]
 end
 ```
 
-[avo-ai](./ai.html) ships its own policies, written for Pundit, so avo-ai's pages don't work under this client yet.
+Every policy the client uses must be an Action Policy policy. A Pundit-style class raises an error instead of answering, and [avo-ai](./ai.html) ships its own policies written for Pundit, so avo-ai's pages don't work under this client yet.
 :::
 
-If Action Policy is new to the app, run `bin/rails g action_policy:install` to generate `ApplicationPolicy`. If the `action_policy` gem isn't in the bundle, Avo raises `Avo::MissingGemError`.
+If Action Policy is new to the app, run `bin/rails g action_policy:install` to generate `ApplicationPolicy`, and `bin/rails g action_policy:policy Post` for each model Avo shows. If the `action_policy` gem isn't in the bundle, Avo raises `Avo::MissingGemError`.
 
 Avo looks policies up at the top level, as it does with Pundit, so `Post` gets `PostPolicy`. It asks them the same [resource](#write-a-policy), [association](#authorize-association-controls) and [file](#authorize-file-attachments) rules. [`explicit_authorization`](./authorization-api.html#explicit_authorization), [`raise_error_on_missing_policy`](./authorization-api.html#raise_error_on_missing_policy) and a resource's [`authorization_policy`](./authorization-api.html#authorization_policy) work as they do with Pundit. The sections below cover what an Action Policy policy writes differently.
 
@@ -574,7 +577,7 @@ class PostPolicy < ApplicationPolicy
 end
 ```
 
-A policy without a `relation_scope` behaves like a Pundit policy without a `Scope`. Avo doesn't filter the records, or raises `Avo::NoPolicyError` when `raise_error_on_missing_policy` is on.
+A policy without a `relation_scope` makes every page that lists that model raise `ActionPolicy::UnknownScopeType`, rather than list every row. `bin/rails g action_policy:policy` leaves the scope commented out, so write one, or `relation_scope { |relation| relation }` to list every record on purpose. A model with no policy at all behaves as it does with Pundit: Avo doesn't filter its records, or raises `Avo::NoPolicyError` when `raise_error_on_missing_policy` is on.
 
 ### Field lists and inherited association rules
 
@@ -604,7 +607,7 @@ The inherited rules go through Action Policy, so `CommentPolicy`'s aliases and p
 
 A rule you name in `alias_rule` counts as defined for `explicit_authorization`, the same as a method.
 
-Avo checks an association rule (`view_comments?`, `attach_comments?`, `detach_comments?`, `create_comments?`, `act_on_comments?` and the rest) only when the policy defines it as a method or names it in `alias_rule`. Action Policy's `default_rule` (`manage?`) and `pre_check` never make a missing association rule exist. With `explicit_authorization = true`, a control whose rule is missing is hidden. With `false`, it's allowed, whatever `manage?` says.
+Avo checks an association rule (`view_comments?`, `attach_comments?`, `detach_comments?`, `create_comments?`, `act_on_comments?` and the rest) only when the policy defines it as a method or names it in `alias_rule`. Action Policy's `default_rule` (`manage?`) and `pre_check` never make a missing association rule exist. With `explicit_authorization = true`, a control whose rule is missing is hidden. With `false`, it's allowed, whatever `manage?` says. A `has_one` field's Create and Attach buttons are the exception, with either library: they show unless `create_{association}?` or `attach_{association}?` denies.
 
 Resource and file rules are different. Avo asks the policy for them directly, so Action Policy resolves them as it does anywhere else in your app, `default_rule` and pre-checks included.
 
@@ -654,7 +657,9 @@ Avo.configure do |config|
 end
 ```
 
-Avo now uses `Avo::PostPolicy` for `Post`. Because `authorization_strict_namespace` returns `true`, Action Policy doesn't fall back to a top-level `PostPolicy` when `Avo::PostPolicy` is missing.
+Avo now uses `Avo::PostPolicy` for `Post`. Because `authorization_strict_namespace` returns `true`, Action Policy doesn't fall back to a top-level `PostPolicy` when `Avo::PostPolicy` is missing, so a model with no `Avo::` policy counts as having none, and under `explicit_authorization = false` it's allowed everything.
+
+The adapter earlier versions of this page showed looked policies up at the top level. If you copied it, your `Avo::` policies may never have run, and this subclass turns them on. Check which policies answered before you switch.
 
 ### Pass more context than the user
 
@@ -678,7 +683,7 @@ class ApplicationPolicy < ActionPolicy::Base
 end
 ```
 
-Then set `config.authorization_client = "AccountActionPolicyClient"`. `current_account` runs in the client, not in a controller, so read the account from wherever the request stored it, such as a `Current` attributes class.
+Then set `config.authorization_client = "AccountActionPolicyClient"`. `current_account` runs in the client, not in a controller. Avo's controllers don't inherit your `ApplicationController`, so a `before_action` there that sets `Current.account` doesn't run on Avo's pages, and every check raises `ActionPolicy::AuthorizationContextMissing`. Set the account in a concern you [include in `Avo::ApplicationController`](./avo-application-controller.html#responsibly-extending-the-applicationcontroller), or derive it from the user, such as `Avo::Current.user&.account`.
 
 ## Use a different authorization library
 

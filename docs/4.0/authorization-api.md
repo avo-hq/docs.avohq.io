@@ -516,7 +516,7 @@ A list that can't be resolved raises rather than falling back to no restriction.
 
 ## Client contract
 
-Methods a custom [`authorization_client`](#authorization_client) implements. The built-in `:pundit` and `:action_policy` clients follow the same contract.
+Methods a custom [`authorization_client`](#authorization_client) implements. The built-in `:pundit` and `:action_policy` clients implement these methods.
 
 Every method must accept keyword arguments it doesn't use, usually through `**`. Avo passes keys such as `policy_class:`, `raise_exception:` and `resource_class:`, and a method that doesn't accept them raises `ArgumentError`, which a UI check can swallow as a denial.
 
