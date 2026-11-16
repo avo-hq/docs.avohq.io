@@ -172,6 +172,8 @@ Whether typing in the palette triggers the search automatically. When `false`, t
 
 For a non-empty query, "Show all results for..." is highlighted by default. Arrow keys select a matching resource in the "Go to" section; <kbd>Enter</kbd> then opens that resource instead.
 
+The palette tells users about it. It shows "Press Enter to search" under its opening hint and beside "Show all results for...", translated in every locale Avo ships.
+
 ```ruby
 config.global_search = {
   search_on_type: false
