@@ -776,7 +776,7 @@ can :read, User, [:id, :name, :email]
 - A `cannot :read` with attributes is the denylist. It withholds those fields whatever order the rules are in.
 - A `can :read` with attributes is the allowlist. A `can :read` or `can :manage` with none allows every field. Once an allowlist exists, a record no `can :read` rule covers gets no field.
 - With no `:read` rule that lists attributes, Avo restricts no field.
-- Where Avo has no record to test conditions on, such as the index columns or an audit trail preview, it reads them strictly: a `cannot :read` with conditions withholds its fields, and a `can :read` with conditions allows only the attributes it names, never every field.
+- Where Avo has no record to test conditions on, such as the index columns or an audit trail preview, it reads them strictly: a `cannot :read` with conditions withholds its fields, and a `can :read` with conditions allows none. Give the fields every user may see a rule without conditions, such as `can :read, User, [:id, :name]` beside `can :read, User, [:email], id: user.id`.
 - Name field ids, not columns, as in the lists: `:author` covers `author_id` for a `belongs_to`.
 - Only rules that cover `:read` count, so `can :show, Post, [:title]` restricts nothing. A rule with conditions counts only for the records that meet them.
 - Attribute rules on other actions aren't read. A list decides both whether a user sees a field and whether they can set it, so `cannot :update, User, [:role]` doesn't stop an edit. To show a field a user can't change, see [Let a user see a field but not change it](#let-a-user-see-a-field-but-not-change-it).
