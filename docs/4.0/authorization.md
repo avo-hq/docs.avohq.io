@@ -64,8 +64,8 @@ Avo.configure do |config|
 end
 ```
 
-:::info Pundit alternative
-If you'd rather use another library, such as Action Policy, see [Use a different authorization library](#use-a-different-authorization-library).
+:::info Action Policy and other libraries
+If your app authorizes with Action Policy, Avo has a built-in client for it. See [Use Action Policy](#use-action-policy). For another library, see [Use a different authorization library](#use-a-different-authorization-library).
 :::
 
 ## Write a policy
@@ -241,6 +241,8 @@ class PostPolicy < ApplicationPolicy
   end
 end
 ```
+
+In an [Action Policy](#use-action-policy) policy, ask `allowed_to?(:edit?, record, with: CommentPolicy)` instead.
 
 Keeping the two sets of rules separate is sometimes what you want. If `ContractPolicy#edit?` lets admins edit any contract, `UserPolicy#edit_contracts?` can still hide the edit button when those contracts are listed on a user.
 
@@ -524,85 +526,183 @@ In production, the entry names only the policy and the action:
 web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
 ```
 
-## Use a different authorization library
+## Use Action Policy
 
-Write a small client class that adapts your library to Avo, and point [`authorization_client`](./authorization-api.html#authorization_client) at it:
+<VersionReq package="avo-authorization" version="4.5.0.beta.1" />
+
+If your app authorizes with [Action Policy](https://github.com/palkan/action_policy), set [`authorization_client`](./authorization-api.html#authorization_client) to `:action_policy`. Avo ships the client, so you don't write an adapter.
+
+```ruby
+# Gemfile
+gem "action_policy"
+```
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
-  config.authorization_client = "Avo::ActionPolicyAuthorizationClient"
+  config.authorization_client = :action_policy
 end
 ```
 
-The client implements `authorize`, `policy`, `policy!` and `apply_policy`, and raises `Avo::NotAuthorizedError` on denial rather than returning `false`. The [client contract](./authorization-api.html#client-contract) has the signatures and rules. Here's a complete [Action Policy](https://github.com/palkan/action_policy) client:
+:::warning Beta
+The Action Policy client ships in the `avo-authorization` `4.5.0.beta.1` prerelease and is tested with `action_policy` `0.7.8`. Bundler installs a prerelease only when the `Gemfile` asks for one, so change the `avo-authorization` line you already have instead of adding a second one:
 
 ```ruby
-# app/services/avo/action_policy_authorization_client.rb
-module Avo
-  class ActionPolicyAuthorizationClient
-    include ::ActionPolicy::Behaviour
+# Gemfile
+source "https://packager.dev/avo-hq/" do
+  gem "avo-authorization", ">= 4.0.0" # [!code --]
+  gem "avo-authorization", ">= 4.5.0.beta.1" # [!code ++]
+end
+```
 
-    authorize :user
-    attr_accessor :user
+Every policy the client uses must be an Action Policy policy. A Pundit-style class raises an error instead of answering, and [avo-ai](./ai.html) ships its own policies written for Pundit, so avo-ai's pages don't work under this client yet.
+:::
 
-    def authorize(user, record, action, policy_class: nil, **)
-      self.user = user
-      authorize!(record, to: action.to_sym, with: policy_class)
-    rescue ActionPolicy::Unauthorized => error
-      raise Avo::NotAuthorizedError, error.message
-    end
+If Action Policy is new to the app, run `bin/rails g action_policy:install` to generate `ApplicationPolicy`, and `bin/rails g action_policy:policy Post` for each model Avo shows. If the `action_policy` gem isn't in the bundle, Avo raises `Avo::MissingGemError`.
 
-    def policy(user, record, **)
-      policy!(user, record)
-    rescue Avo::NoPolicyError
-      nil
-    end
+Avo looks policies up at the top level, as it does with Pundit, so `Post` gets `PostPolicy`. It asks them the same [resource](#write-a-policy), [association](#authorize-association-controls) and [file](#authorize-file-attachments) rules. [`explicit_authorization`](./authorization-api.html#explicit_authorization), [`raise_error_on_missing_policy`](./authorization-api.html#raise_error_on_missing_policy) and a resource's [`authorization_policy`](./authorization-api.html#authorization_policy) work as they do with Pundit. The sections below cover what an Action Policy policy writes differently.
 
-    def policy!(user, record, **)
-      self.user = user
-      policy_for(record:)
-    rescue ActionPolicy::NotFound => error
-      raise Avo::NoPolicyError, error.message
-    end
+### Scope records with `relation_scope`
 
-    def apply_policy(user, model, policy_class: nil, **)
-      policy = if policy_class.present?
-        policy_class.new(model, user:)
-      else
-        policy!(user, model)
-      end
+Where a Pundit policy has a `Scope` class, an Action Policy policy has a `relation_scope`. Avo uses it wherever it would use the Pundit `Scope`, as [Limit which records a user sees](#limit-which-records-a-user-sees) describes.
 
-      policy.apply_scope(model, type: :active_record_relation)
-    end
+```ruby
+# app/policies/post_policy.rb
+class PostPolicy < ApplicationPolicy
+  relation_scope do |relation|
+    next relation if user.admin?
+
+    relation.where(published: true)
   end
 end
 ```
 
-Avo passes `action` as a String (`"index?"`), and Action Policy looks up `alias_rule` and `default_rule` by Symbol. Without `to_sym`, an aliased rule skips its alias and is denied.
+A policy without a `relation_scope` makes every page that lists that model raise `ActionPolicy::UnknownScopeType`, rather than list every row. `bin/rails g action_policy:policy` leaves the scope commented out, so write one, or `relation_scope { |relation| relation }` to list every record on purpose. A model with no policy at all behaves as it does with Pundit: Avo doesn't filter its records, or raises `Avo::NoPolicyError` when `raise_error_on_missing_policy` is on.
 
-Place policies under the `Avo` namespace, or configure Action Policy's lookup to match your app:
+### Field lists and inherited association rules
+
+[`whitelisted_fields`](./authorization-api.html#whitelisted_fields) and [`blacklisted_fields`](./authorization-api.html#blacklisted_fields) work the same on an Action Policy policy, and so does [`inherit_association_from_policy`](./authorization-api.html#inherit_association_from_policy). Include the helpers in `ApplicationPolicy` as you would with Pundit:
 
 ```ruby
-# app/policies/avo/equipment_policy.rb
-module Avo
-  class EquipmentPolicy < ApplicationPolicy
-    def index?
-      true
-    end
+# app/policies/application_policy.rb
+class ApplicationPolicy < ActionPolicy::Base
+  include Avo::Authorization::Concerns::PolicyHelpers
 
-    def new?
-      user.admin?
-    end
-
-    def create?
-      user.admin?
-    end
+  def blacklisted_fields
+    [:api_secret]
   end
 end
 ```
 
-If you also want [field lists](#hide-fields-from-a-user), add the two optional [field methods](./authorization-api.html#permitted_field_ids) to the client. More community examples are in [this issue](https://github.com/avo-hq/avo/issues/1922).
+```ruby
+# app/policies/post_policy.rb
+class PostPolicy < ApplicationPolicy
+  inherit_association_from_policy :comments, CommentPolicy
+end
+```
+
+The inherited rules go through Action Policy, so `CommentPolicy`'s aliases and pre-checks apply to them.
+
+### Authorize association controls with `alias_rule`
+
+A rule you name in `alias_rule` counts as defined for `explicit_authorization`, the same as a method.
+
+Avo checks an association rule (`view_comments?`, `attach_comments?`, `detach_comments?`, `create_comments?`, `act_on_comments?` and the rest) only when the policy defines it as a method or names it in `alias_rule`. Action Policy's `default_rule` (`manage?`) and `pre_check` never make a missing association rule exist. With `explicit_authorization = true`, a control whose rule is missing is hidden. With `false`, it's allowed, whatever `manage?` says. A `has_one` field's Create and Attach buttons are the exception, with either library: they show unless `create_{association}?` or `attach_{association}?` denies.
+
+Resource and file rules are different. Avo asks the policy for them directly, so Action Policy resolves them as it does anywhere else in your app, `default_rule` and pre-checks included.
+
+To send association rules through `manage?` and your pre-checks too, alias them:
+
+```ruby
+# app/policies/post_policy.rb
+class PostPolicy < ApplicationPolicy
+  alias_rule :view_comments?, :attach_comments?, to: :manage?
+end
+```
+
+### Authorize without a signed-in user
+
+`ActionPolicy::Base` declares `authorize :user` without `allow_nil`, so a check with no user fails with `ActionPolicy::AuthorizationContextMissing`. If your app authorizes without a user, for example in an API request or a background job, allow a nil user in `ApplicationPolicy` and handle it in your rules:
+
+```ruby
+# app/policies/application_policy.rb
+class ApplicationPolicy < ActionPolicy::Base
+  authorize :user, allow_nil: true
+end
+```
+
+Field lists treat that error the way they treat a Pundit policy that refuses a nil user. See [Allow or deny fields](#allow-or-deny-fields).
+
+### Keep policies under the `Avo` namespace
+
+Avo looks up `PostPolicy`, not `Avo::PostPolicy`. If your Avo policies live under `Avo::`, as earlier versions of this page advised, subclass the client and point Action Policy's namespace lookup at `Avo`:
+
+```ruby
+# app/services/namespaced_action_policy_client.rb
+class NamespacedActionPolicyClient < Avo::Authorization::Clients::ActionPolicyClient
+  def authorization_namespace
+    ::Avo
+  end
+
+  def authorization_strict_namespace
+    true
+  end
+end
+```
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.authorization_client = "NamespacedActionPolicyClient"
+end
+```
+
+Avo now uses `Avo::PostPolicy` for `Post`. Because `authorization_strict_namespace` returns `true`, Action Policy doesn't fall back to a top-level `PostPolicy` when `Avo::PostPolicy` is missing, so a model with no `Avo::` policy counts as having none, and under `explicit_authorization = false` it's allowed everything.
+
+The adapter earlier versions of this page showed looked policies up at the top level. If you copied it, your `Avo::` policies may never have run, and this subclass turns them on. Check which policies answered before you switch.
+
+### Pass more context than the user
+
+The client hands each policy the `user`. If your policies need more, such as the current account, subclass the client and declare it with `authorize`:
+
+```ruby
+# app/services/account_action_policy_client.rb
+class AccountActionPolicyClient < Avo::Authorization::Clients::ActionPolicyClient
+  authorize :account, through: :current_account
+
+  def current_account
+    Current.account
+  end
+end
+```
+
+```ruby
+# app/policies/application_policy.rb
+class ApplicationPolicy < ActionPolicy::Base
+  authorize :account
+end
+```
+
+Then set `config.authorization_client = "AccountActionPolicyClient"`. `current_account` runs in the client, not in a controller. Avo's controllers don't inherit your `ApplicationController`, so a `before_action` there that sets `Current.account` doesn't run on Avo's pages, and every check raises `ActionPolicy::AuthorizationContextMissing`. Set the account in a concern you [include in `Avo::ApplicationController`](./avo-application-controller.html#responsibly-extending-the-applicationcontroller), or derive it from the user, such as `Avo::Current.user&.account`.
+
+## Use a different authorization library
+
+Avo has built-in clients for Pundit and [Action Policy](#use-action-policy). For any other library, write a class that adapts it and point [`authorization_client`](./authorization-api.html#authorization_client) at its name:
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.authorization_client = "CustomAuthorizationClient"
+end
+```
+
+The client implements `authorize`, `policy`, `policy!` and `apply_policy`. The [client contract](./authorization-api.html#client-contract) has the signatures. Three rules keep it working:
+
+- `authorize` raises `Avo::NotAuthorizedError` on denial. Avo ignores its return value, so a client that returns `false` allows the action.
+- Every method accepts keyword arguments it doesn't use, through `**`. Avo passes keys such as `policy_class:` and `raise_exception:`.
+- Avo passes the rule as a String, such as `"index?"`. Convert it if your library looks rules up by Symbol.
+
+If you also want [field lists](#hide-fields-from-a-user), add the two optional [field methods](./authorization-api.html#permitted_field_ids) to the client.
 
 ## Manage roles with Rolify
 
