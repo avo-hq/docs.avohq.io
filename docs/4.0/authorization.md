@@ -552,7 +552,7 @@ If Action Policy is new to the app, run `bin/rails g action_policy:install` to g
 
 Avo looks policies up at the top level, as it does with Pundit, so `Post` gets `PostPolicy`. It asks them the same [resource](#write-a-policy), [association](#authorize-association-controls) and [file](#authorize-file-attachments) rules. [`explicit_authorization`](./authorization-api.html#explicit_authorization), [`raise_error_on_missing_policy`](./authorization-api.html#raise_error_on_missing_policy) and a resource's [`authorization_policy`](./authorization-api.html#authorization_policy) work as they do with Pundit. The sections below cover what an Action Policy policy writes differently.
 
-A plain Ruby policy written Pundit-style, without `ActionPolicy::Base`, works too, such as the ones [avo-ai](./ai.html) ships. Avo builds it with `new(user, record)`, asks each rule as a method, and scopes records with its `Scope` class.
+A plain Ruby policy written Pundit-style, without `ActionPolicy::Base`, works too, such as the ones [avo-ai](./ai.html) ships. Avo builds it with `new(user, record)`, asks each rule as a method, and scopes records with its `Scope` class. Without a `Scope`, a page that lists its model raises, as a policy without `relation_scope` does.
 
 ### Scope records with `relation_scope`
 
@@ -807,7 +807,7 @@ class Avo::Resources::PhotoComment < Avo::BaseResource
 end
 ```
 
-It can also name a plain Ruby policy written Pundit-style, such as the ones [avo-ai](./ai.html) ships. Avo builds it with `new(user, record)`, asks each rule as a method, and scopes records with its `Scope` class, so that resource follows its policy instead of your `Ability`.
+It can also name a plain Ruby policy written Pundit-style, such as the ones [avo-ai](./ai.html) ships. Avo builds it with `new(user, record)`, asks each rule as a method, and scopes records with its `Scope` class, so that resource follows its policy instead of your `Ability`. Without a `Scope`, its records come from your Ability's `:index` rules.
 
 ### Handle a nil user
 

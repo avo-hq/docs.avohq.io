@@ -1803,7 +1803,7 @@ If your menu links to the chats, hide the link for the same users with `visible:
 
 `use?` needs an authorization client. With `config.authorization_client = nil` no policy runs, so nobody is blocked.
 
-With `avo-permissions` as the client, no policy is asked, the shipped one included: a role needs a `use?` permission on `Avo::Resources::AvoAi::Chat`, or the chat is off for it. The permissions screen doesn't offer it yet, so add it from a console as the [upgrade guide](./upgrade.html#avo-ai-4-3-0-beta-10) shows.
+With `avo-permissions` as the client, permissions answer `use?`, the shipped policy's included: a role needs a `use?` permission on `Avo::Resources::AvoAi::Chat`, or the chat is off for it. The permissions screen doesn't offer it yet, so add it from a console as the [upgrade guide](./upgrade.html#avo-ai-4-3-0-beta-10) shows.
 
 :::warning Your own `ChatPolicy` needs `use?`
 The chat asks `use?` the way Avo asks any policy method, so a `ChatPolicy` of your own without it **turns the chat off for every user**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ChatPolicy`, add `def use? = user.present?` when you upgrade to keep the chat on for everyone. The policy avo-ai ships, used when you have none, answers `true` for every signed-in user.
@@ -1812,7 +1812,7 @@ The chat asks `use?` the way Avo asks any policy method, so a `ChatPolicy` of yo
 :::info Under Action Policy and CanCanCan
 <VersionReq package="avo-ai" version="4.4.1" />
 
-avo-ai's resources name the policies it ships, so those answer under every [authorization client](./authorization-api.html#authorization_client): `:pundit`, `:action_policy` and `:cancancan`. A copy of your own replaces the gem's under each of them. Write it like the examples on this page, on a plain `ApplicationPolicy`, or on one built on `ActionPolicy::Base` if your app uses Action Policy. With CanCanCan, these resources follow their policies, not your `Ability`.
+avo-ai's resources name the policies it ships, so those answer under every [authorization client](./authorization-api.html#authorization_client): `:pundit`, `:action_policy` and `:cancancan`. A copy of your own replaces the gem's under each of them. Under Action Policy and CanCanCan, write it as a plain class with `initialize(user, record)` and a `Scope`, like the [`FeedbackPolicy` example](#choose-who-can-review-feedback), not on your `ApplicationPolicy`: avo-ai builds some of its policies itself with `new(user, record)`. With CanCanCan, these resources follow their policies, not your `Ability`, so a copy of the policy is how you change who may use them.
 :::
 
 ## Who can see a chat

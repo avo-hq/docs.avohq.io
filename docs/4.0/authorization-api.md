@@ -519,7 +519,7 @@ A list that can't be resolved raises rather than falling back to no restriction.
 
 ## Client contract
 
-Methods a custom [`authorization_client`](#authorization_client) implements. The built-in `:pundit` and `:action_policy` clients implement all of them. The `:cancancan` client implements `authorize` and `apply_policy`, since an Ability is not a per-record policy object.
+Methods a custom [`authorization_client`](#authorization_client) implements. The built-in `:pundit` and `:action_policy` clients implement all of them. The `:cancancan` client implements all of them except `policy` and `policy!`, since an Ability is not a per-record policy object.
 
 Every method must accept keyword arguments it doesn't use, usually through `**`. Avo passes keys such as `policy_class:`, `raise_exception:` and `resource_class:`, and a method that doesn't accept them raises `ArgumentError`, which a UI check can swallow as a denial.
 
