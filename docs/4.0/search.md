@@ -162,7 +162,7 @@ The global search palette searches every resource that has `self.search` configu
 - <kbd>Enter</kbd> - Visit the selected record
 - <kbd>Esc</kbd> - Close the search modal
 
-The dropdown shows a limited number of quick results per resource, with each resource's header displaying the result count — "Users (8 of 21)" — and a link to a dedicated results page that lists every match without limits and can be sorted by newest or oldest. Turn the counting off per resource with [`display_count`](./search-api.html#display_count) if it's expensive on large datasets.
+The dropdown shows a limited number of quick results per resource, with each resource's header displaying the result count — "Users (8 of 21)" when the resource has more matches than the dropdown shows, a single number when it doesn't — and a link to a dedicated results page that lists every match without limits and can be sorted by newest or oldest. Only a resource whose results fill the limit costs a `COUNT` query for its total; turn the counting off per resource with [`display_count`](./search-api.html#display_count) if that is still expensive on large datasets.
 
 If the palette looks like it's searching resources it shouldn't (or missing ones it should), note that in development Avo renders a dismissible panel inside the palette listing resources with no search configuration and resources hidden from global search.
 

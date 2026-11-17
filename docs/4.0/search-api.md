@@ -94,7 +94,7 @@ self.search = {
 
 <Option name="`display_count`" headingSize="3">
 
-Whether the global search shows result counts in each resource's header — "Users (8 of 21)". Counting runs an extra query per resource; disable it on large datasets or when a [custom search provider](#custom-search-providers) can't count.
+Whether the global search shows result counts in each resource's header. The shown count is the number of rows the palette loaded, so a resource with fewer matches than the [`search_results_count`](#search_results_count) limit shows a single number — "Users (5)" — and costs no extra query. A resource whose results fill the limit shows how many of the total matched — "Users (8 of 21)" — and pays for one `COUNT` query to get that total. Disable it on large datasets or when a [custom search provider](#custom-search-providers) can't count.
 
 ```ruby
 self.search = {
