@@ -1758,6 +1758,8 @@ Keep the `enabled?` check in every method and the early return in `Scope#resolve
 
 `Scope#resolve` decides what each person can use, in the chat and on the Connectors pages alike. Checking the owner's `create?` for shared connections is what stops a shared connection for everyone when its owner loses the permission.
 
+The tools table on a connection's page lists `Avo::Ai::ConnectorTool` records, which have no policy of their own. Under CanCanCan, grant them in your `Ability`, or the table stays empty: `can %i[read update], Avo::Ai::ConnectorTool`. Which tools a user sees and may change still follows this policy.
+
 :::warning Answer from `user`, never from a current-user global
 `Scope#resolve` asks `create?` about the owner of somebody else's connection. A policy that reads `Current.user` answers about the wrong person and keeps sharing a connection whose owner should no longer have one.
 :::

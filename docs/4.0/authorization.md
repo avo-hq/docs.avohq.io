@@ -552,7 +552,7 @@ If Action Policy is new to the app, run `bin/rails g action_policy:install` to g
 
 Avo looks policies up at the top level, as it does with Pundit, so `Post` gets `PostPolicy`. It asks them the same [resource](#write-a-policy), [association](#authorize-association-controls) and [file](#authorize-file-attachments) rules. [`explicit_authorization`](./authorization-api.html#explicit_authorization), [`raise_error_on_missing_policy`](./authorization-api.html#raise_error_on_missing_policy) and a resource's [`authorization_policy`](./authorization-api.html#authorization_policy) work as they do with Pundit. The sections below cover what an Action Policy policy writes differently.
 
-A plain Ruby policy written Pundit-style, without `ActionPolicy::Base`, works too, such as the ones [avo-ai](./ai.html) ships. Avo builds it with `new(user, record)`, asks each rule as a method, and scopes records with its `Scope` class. Without a `Scope`, a page that lists its model raises, as a policy without `relation_scope` does.
+A plain Ruby policy written Pundit-style, without `ActionPolicy::Base`, works too, such as the ones [avo-ai](./ai.html) ships. Avo builds it with `new(user, record)`, asks each rule as a method, and scopes records with its `Scope` class. Give it a `Scope`, or a page that lists its model raises, as it does for a policy without `relation_scope`.
 
 ### Scope records with `relation_scope`
 
