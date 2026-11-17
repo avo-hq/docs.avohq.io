@@ -63,15 +63,24 @@ self.name = -> { I18n.t("avo.dashboard_titles.dashy", default: "Dashy") }
 
 Use the [`grid_cols`](dashboards-api#self.grid_cols) parameter to organize the cards in a grid of `3`, `4`, `5`, or `6` columns. The default is `3`.
 
-## Global ranges
+## Filters
 
-Cards each carry their own [range dropdown](cards#ranges), but you can also render a row of range buttons at the top of the dashboard that update every card at once. Pass the day counts you want as [`global_ranges`](dashboards-api#self.global_ranges):
+Render a filter bar above the cards with `def filters`. Every card reloads with the new values when one changes, and the values stay in the page URL, so a reload or a shared link keeps them.
 
-```ruby{4}
-class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
-  self.id = "dashy"
-  self.name = "Dashy"
-  self.global_ranges = [7, 30, 60, 365]
+```ruby
+class Avo::Dashboards::Sales < Avo::Dashboards::BaseDashboard
+  self.id = "sales"
+
+  def filters
+    filter :range, type: :button_group, options: {"7D" => 7, "30D" => 30, "1Y" => 365}, default: 30
+    filter :active_only, type: :boolean, label: "Active only", as_toggle: true
+    filter :signed_up_after, type: :date
+    filter :since, type: :date_time
+    filter :period, type: :date_range, default: -> { 30.days.ago.to_date..Date.current }
+    filter :country, type: :select, options: -> { Country.pluck(:name, :code) }, include_blank: "All countries"
+    filter :plans, type: :chips, options: {"Free" => "free", "Pro" => "pro", "Team" => "team"}
+    filter :internal_only, type: :boolean, visible: -> { current_user.admin? }
+  end
 
   def cards
     card Avo::Cards::UsersCount
@@ -79,7 +88,60 @@ class Avo::Dashboards::Dashy < Avo::Dashboards::BaseDashboard
 end
 ```
 
-Each entry's button label resolves the `avo.<value>` translation key, falling back to the humanized value — so `"three_days"` reads "Three days" with no translation at all. Avo ships no key for any value, so add your own under `avo.<value>` when the humanized form isn't what you want. The default is an empty array (no global range bar).
+Cards read the values through `filters`, already cast to the filter's type and with the `default` applied:
+
+```ruby
+class Avo::Cards::UsersCount < Avo::Cards::MetricCard
+  def query
+    scope = User.where(created_at: range.to_i.days.ago..)
+    scope = scope.where(active: true) if filters[:active_only]
+    scope = scope.where(created_at: filters[:signed_up_after]..) if filters[:signed_up_after]
+    scope = scope.where(created_at: filters[:period]) if filters[:period]
+    scope = scope.where(country: filters[:country]) if filters[:country]
+    scope = scope.where(plan: filters[:plans]) if filters[:plans].present?
+
+    result scope.count
+  end
+end
+```
+
+| Type            | Renders                       | `filters[:id]` holds                                        |
+| --------------- | ----------------------------- | ----------------------------------------------------------- |
+| `:button_group` | One radio per option          | The picked option's value, as declared                      |
+| `:boolean`      | A checkbox, or a toggle       | `true` or `false`                                           |
+| `:date`         | A date picker                 | A `Date`                                                    |
+| `:date_time`    | A date and time picker        | An `ActiveSupport::TimeWithZone`, in `Time.zone`            |
+| `:date_range`   | Two date pickers (from, to)   | A `Range` of `Date`s; open-ended when one side is empty     |
+| `:select`       | A dropdown                    | The picked option's value, as declared                      |
+| `:chips`        | One checkbox per option       | An `Array` of the picked values; `[]` when all are cleared  |
+
+Each filter is a pill showing its current pick; clicking it opens a dropdown with the input. A `:boolean` filter toggles in place instead. Every type returns the `default` when nothing is picked.
+
+| Option           | What it does                                                                              |
+| ---------------- | ----------------------------------------------------------------------------------------- |
+| `label`          | Defaults to the humanized id                                                              |
+| `options`        | `:button_group`, `:select` and `:chips`. A Hash of `label => value`, an Array of values, or an Array of `[label, value]` pairs |
+| `default`        | What cards get when nothing is picked                                                     |
+| `visible`        | Hides the filter. A hidden filter ignores its URL value, so cards always get its `default` |
+| `include_blank`  | `:select` only. Adds an empty first option with this label                                |
+| `as_toggle`      | `:boolean` only. Renders a toggle instead of a checkbox, like the boolean field's option  |
+
+`options`, `default` and `visible` also take a block, run per request with `current_user`, `params` and `dashboard` in scope. Array values label themselves through the `avo.<value>` translation key, falling back to the humanized value.
+
+### The `range` filter
+
+A filter named `:range` sets each card's [`range`](cards#ranges), the same value the card's own range dropdown sets. A card's `query` reads it through `range` and its dropdown shows the pick, so use values the cards already handle.
+
+:::warning
+`self.global_ranges` is deprecated and will be removed in Avo 5. It still renders a `:range` button group and logs a warning. Move it to `def filters`:
+
+```ruby
+self.global_ranges = [7, 30, 60, 365] # [!code --]
+def filters # [!code ++]
+  filter :range, type: :button_group, options: [7, 30, 60, 365] # [!code ++]
+end # [!code ++]
+```
+:::
 
 ## Localization
 
