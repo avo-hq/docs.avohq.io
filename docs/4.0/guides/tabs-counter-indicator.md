@@ -10,13 +10,10 @@ Every tab accepts a [`badge`](../fields-layout-api.html#badge) that Avo renders 
 
 Pass `Avo::UI::CountComponent` — the count pill Avo ships — with the association's size:
 
-```ruby{8,12,18-22}
+```ruby{5,9,15-19}
 # app/avo/resources/user.rb
 class Avo::Resources::User < Avo::BaseResource
   def fields
-    main_panel do
-    end
-
     tabs do
       tab title: "Teams", badge: count_badge(record&.teams&.size) do
         field :teams, as: :has_and_belongs_to_many
@@ -52,13 +49,10 @@ When you want full control over the markup, put the counter inside the tab's tit
 
 <Image src="/assets/img/4_0/guides/tabs-counter-indicator/tabs_counter.webp" dark-src="/assets/img/4_0/guides/tabs-counter-indicator/tabs_counter-dark.webp" width="522" height="85" alt="A tabs switcher whose Teams and People labels show a grey record-count badge" />
 
-```ruby{8,12,18-25}
+```ruby{5,9,15-22}
 # app/avo/resources/user.rb
 class Avo::Resources::User < Avo::BaseResource
   def fields
-    main_panel do
-    end
-
     tabs do
       tab title: name_with_counter("Teams", record&.teams&.size) do
         field :teams, as: :has_and_belongs_to_many
