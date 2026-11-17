@@ -37,13 +37,14 @@ config.authorization_client = :action_policy
 | Value | Behavior |
 | --- | --- |
 | `:pundit` | Uses the built-in Pundit client. Requires `gem "pundit"` in the `Gemfile`. |
-| `:action_policy` | Uses the built-in Action Policy client. Requires `gem "action_policy"` in the `Gemfile`. <VersionReq package="avo-authorization" version="4.5.0.beta.1" /> |
+| `:action_policy` | Uses the built-in Action Policy client. Requires `gem "action_policy"` in the `Gemfile`. <VersionReq package="avo-authorization" version="4.4.1" /> |
+| `:cancancan` | Uses the built-in CanCanCan client, which asks your `Ability`. Requires `gem "cancancan"` in the `Gemfile`. See [Use CanCanCan](./authorization.html#use-cancancan). <VersionReq package="avo-authorization" version="4.4.1" /> |
 | `nil` | Uses the built-in nil client, which applies no policies. |
 | `String` | The class name of a custom client that implements the [client contract](#client-contract), or of a subclass of a built-in client. |
 
 - **Type:** `Symbol`, `String`, or `nil`
 - **Default:** `:pundit` (the generated initializer sets it to `nil`)
-- **Validation:** `:pundit` and `:action_policy` raise `Avo::MissingGemError` when their gem isn't loaded.
+- **Validation:** `:pundit`, `:action_policy` and `:cancancan` raise `Avo::MissingGemError` when their gem isn't loaded.
 - **Without the add-on on your license:** a client set in the initializer refuses every resource, and no policy runs. Left unset or `nil`, policies are skipped. See [When the license lapses](./authorization.html#when-the-license-lapses).
 
 </Option>
@@ -128,6 +129,7 @@ end
 
 - **Type:** `Class`
 - **Default:** `nil`
+- **CanCanCan:** under the [`:cancancan`](#authorization_client) client, the Ability class the resource asks instead of `Ability`.
 
 </Option>
 
@@ -450,6 +452,7 @@ end
 - **Type:** `Class` with a `resolve` method returning a relation
 - **Applies to:** the resource's own views, and the rows of `has_many` and `has_and_belongs_to_many` panels that list this resource. The association field's [`scope` option](./associations/has_many.html#add-scopes-to-associations) runs after it, on the narrowed query.
 - **Action Policy:** under the [`:action_policy`](#authorization_client) client, the policy's `relation_scope` takes this place. See [Scope records with `relation_scope`](./authorization.html#scope-records-with-relation-scope).
+- **CanCanCan:** under the [`:cancancan`](#authorization_client) client, `accessible_by(ability, :index)` takes this place. See [Scope records with `:index` rules](./authorization.html#scope-records-with-index-rules).
 
 </Option>
 
@@ -516,7 +519,7 @@ A list that can't be resolved raises rather than falling back to no restriction.
 
 ## Client contract
 
-Methods a custom [`authorization_client`](#authorization_client) implements. The built-in `:pundit` and `:action_policy` clients implement these methods.
+Methods a custom [`authorization_client`](#authorization_client) implements. The built-in `:pundit` and `:action_policy` clients implement all of them. The `:cancancan` client implements all of them except `policy` and `policy!`, since an Ability is not a per-record policy object.
 
 Every method must accept keyword arguments it doesn't use, usually through `**`. Avo passes keys such as `policy_class:`, `raise_exception:` and `resource_class:`, and a method that doesn't accept them raises `ArgumentError`, which a UI check can swallow as a denial.
 
