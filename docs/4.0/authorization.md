@@ -717,7 +717,9 @@ end
 Every class the client asks must include `CanCan::Ability`. [avo-ai](./ai.html) ships its own policies written for Pundit, so avo-ai's pages don't work under this client yet.
 :::
 
-Avo builds `Ability.new(user)` with the current user and asks it each rule by name, without the question mark: `index?` becomes `:index` and `view_comments?` becomes `:view_comments`. CanCanCan's aliases apply, so `can :read, Post` answers `index` and `show`, and `can :manage, Post` answers every rule on posts, association and file rules included.
+Avo builds `Ability.new(user)` with the current user and asks it each rule by name, without the question mark: `index?` becomes `:index` and `view_comments?` becomes `:view_comments`. A rule the Ability doesn't grant is denied, on a model it names no rule for too, so [`raise_error_on_missing_policy`](./authorization-api.html#raise_error_on_missing_policy) never raises under this client. If the `cancancan` gem isn't in the bundle, Avo raises `Avo::MissingGemError`.
+
+CanCanCan's own aliases cover part of what Avo asks: `:read` covers `index` and `show`, `:create` covers `new`, and `:update` covers `edit`. Avo also asks `search`, `preview`, `act_on` and `reorder`, and the [association](#authorize-association-controls) and [file](#authorize-file-attachments) rules, which no alias covers. Grant them, or alias them to a rule you already write:
 
 ```ruby
 # app/models/ability.rb
@@ -725,6 +727,7 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+    alias_action :search, :preview, to: :read
     return if user.nil?
 
     can :read, Post
@@ -733,7 +736,27 @@ class Ability
 end
 ```
 
-A rule the Ability doesn't grant is denied, on a model it names no rule for too. An Ability always exists, so [`raise_error_on_missing_policy`](./authorization-api.html#raise_error_on_missing_policy) never raises under this client. If the `cancancan` gem isn't in the bundle, Avo raises `Avo::MissingGemError`.
+If you rename the methods with [`authorization_methods`](./authorization-api.html#authorization_methods), Avo asks the new names: `search: "avo_search?"` asks `:avo_search`.
+
+Avo looks for a class named `Ability` and passes it the user alone. If yours has another name, subclass the client and point `authorization_client` at it:
+
+```ruby
+# app/services/admin_ability_client.rb
+class AdminAbilityClient < Avo::Authorization::Clients::CancancanClient
+  def find_policy_class(_record)
+    AdminAbility
+  end
+end
+```
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.authorization_client = "AdminAbilityClient"
+end
+```
+
+If the Ability needs more than the user, such as the current account, read it from your app's `Current` attributes, set in a concern you [include in `Avo::ApplicationController`](./avo-application-controller.html#responsibly-extending-the-applicationcontroller).
 
 ### Scope records with `:index` rules
 
@@ -747,23 +770,32 @@ can :read, Post, user_id: user.id
 
 Avo finds the record for the <Show /> and <Edit /> views through the same scope, so a user who can't `:index` a record can't open it either, even with `can :show`.
 
-A rule with only a block has no SQL, so a page that lists that model raises `CanCan::Error` instead of listing every row. Give the rule hash conditions.
+A rule that covers `:index` with only a block has no SQL, so a page that lists that model raises `CanCan::Error` instead of listing every row. Give the rule hash conditions.
 
 ### Name association rules on the record Avo asks about
 
-Avo asks an [association rule](#authorize-association-controls) about the parent record for `view_`, `create_`, `attach_` and `act_on_`, and about the associated record for `show_`, `edit_`, `destroy_`, `detach_` and `reorder_`. On a post's comments panel:
+Avo asks an [association rule](#authorize-association-controls) about the parent record for the panel's own controls, `view_`, `create_`, `attach_` and `act_on_`, and about each associated record for its row controls, `show_`, `edit_`, `destroy_`, `detach_` and `reorder_`. On a post's comments panel:
 
 ```ruby
 # app/models/ability.rb
 can %i[view_comments create_comments attach_comments], Post
+can :show_comments, Comment
 can %i[edit_comments destroy_comments], Comment, user_id: user.id
 ```
 
-An association rule counts as defined for [`explicit_authorization`](./authorization-api.html#explicit_authorization) when a `can` or `cannot` rule covers it on the record Avo asks about, through `:manage` or `:all` too. For `show_`, `edit_`, `destroy_`, `detach_` and `reorder_`, a rule on the associated model counts as well, so `cannot :manage, Comment` covers `edit_comments`. When none does, `explicit_authorization` decides as it does with Pundit: `false` shows the control and `true` hides it. A `has_one` field's Create and Attach buttons are the exception, as with the other clients: they show unless their rule denies.
+To answer a row rule with a rule the Ability already has, alias it. Then `can :update, Comment, user_id: user.id` decides `edit_comments` too, as [`inherit_association_from_policy`](./authorization-api.html#inherit_association_from_policy) does for a Pundit policy:
+
+```ruby
+# app/models/ability.rb
+alias_action :edit_comments, to: :update
+alias_action :destroy_comments, to: :destroy
+```
+
+An association rule counts as defined for [`explicit_authorization`](./authorization-api.html#explicit_authorization) when a `can` or `cannot` rule covers it on the model Avo asks about: the parent for the panel's controls, the associated model for row controls. `:manage` and `:all` count, so `can :manage, Comment` covers `edit_comments`, but `can :manage, Post` doesn't. When no rule covers it, `explicit_authorization` decides as it does with Pundit: `false` shows the control and `true`, the default, hides it. A `has_one` field's Create and Attach buttons are the exception, as with the other clients: they show unless their rule denies.
 
 ### Hide fields with `:read` rules
 
-Instead of `whitelisted_fields` and `blacklisted_fields`, list attributes on `:read` rules. Avo reads them as the same two lists, so a field they withhold is withheld everywhere [Hide fields from a user](#hide-fields-from-a-user) describes:
+Instead of `whitelisted_fields` and `blacklisted_fields`, list attributes on the rules that cover `:index` or `:show`, which `:read`, `:manage` and your own aliases of either do. Avo reads them as the same two lists, so a field they withhold is withheld everywhere [Hide fields from a user](#hide-fields-from-a-user) describes:
 
 ```ruby
 # app/models/ability.rb
@@ -773,12 +805,12 @@ cannot :read, Post, [:budget, :internal_notes] unless user.admin?
 can :read, User, [:id, :name, :email]
 ```
 
-- A `cannot :read` with attributes is the denylist. It withholds those fields whatever order the rules are in.
-- A `can :read` with attributes is the allowlist. A `can :read` or `can :manage` with none allows every field. Once an allowlist exists, a record no `can :read` rule covers gets no field.
-- With no `:read` rule that lists attributes, Avo restricts no field.
-- Where Avo has no record to test conditions on, such as the index columns or an audit trail preview, it reads them strictly: a `cannot :read` with conditions withholds its fields, and a `can :read` with conditions allows none. Give the fields every user may see a rule without conditions, such as `can :read, User, [:id, :name]` beside `can :read, User, [:email], id: user.id`.
+- A `cannot` with attributes is the denylist. It withholds those fields whatever order the rules are in.
+- A `can` with attributes is the allowlist. A `can` with none allows every field. Once an allowlist exists, a record no `can` covers gets no field.
+- With no rule that lists attributes, Avo restricts no field.
 - Name field ids, not columns, as in the lists: `:author` covers `author_id` for a `belongs_to`.
-- Only rules that cover `:read` count, so `can :show, Post, [:title]` restricts nothing. A rule with conditions counts only for the records that meet them.
+- A rule with conditions counts only for the records that meet them. Each row of an index is checked against its own record.
+- Where Avo has no record to check, such as an audit trail preview, or conditions Ruby can't check, such as raw SQL, it reads rules strictly. A `cannot` withholds its fields, and a `can` allows none unless it has no conditions and names the model itself, not a subclass. Give the fields every user may see a rule without conditions, such as `can :read, User, [:id, :name]` beside `can :read, User, [:email], id: user.id`.
 - Attribute rules on other actions aren't read. A list decides both whether a user sees a field and whether they can set it, so `cannot :update, User, [:role]` doesn't stop an edit. To show a field a user can't change, see [Let a user see a field but not change it](#let-a-user-see-a-field-but-not-change-it).
 
 ### Use a different Ability for a resource
@@ -795,11 +827,13 @@ end
 
 ### Handle a nil user
 
-Where there is no user, such as an API request or a background job, Avo builds `Ability.new(nil)`, so write the Ability to handle a nil user. An Ability that raises for a nil user makes field lists raise instead of restricting nothing, as a Pundit policy that refuses a nil user does. See [Allow or deny fields](#allow-or-deny-fields).
+Where there is no user, such as an API request or a background job, Avo builds `Ability.new(nil)`, so write the Ability to handle a nil user. An Ability that returns early for a nil user, as the one above does, grants it nothing, so it reads no record and its field rules don't matter. If a nil user may read records, put its `cannot :read` lists before the return.
+
+An Ability that raises for a nil user makes field lists raise instead of restricting nothing, as a Pundit policy that refuses a nil user does. See [Allow or deny fields](#allow-or-deny-fields).
 
 ## Use a different authorization library
 
-Avo has built-in clients for Pundit and [Action Policy](#use-action-policy). For any other library, write a class that adapts it and point [`authorization_client`](./authorization-api.html#authorization_client) at its name:
+Avo has built-in clients for Pundit, [Action Policy](#use-action-policy) and [CanCanCan](#use-cancancan). For any other library, write a class that adapts it and point [`authorization_client`](./authorization-api.html#authorization_client) at its name:
 
 ```ruby
 # config/initializers/avo.rb
