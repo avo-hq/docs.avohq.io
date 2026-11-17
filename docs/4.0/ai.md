@@ -1809,6 +1809,12 @@ With `avo-permissions` as the client, no policy is asked, the shipped one includ
 The chat asks `use?` the way Avo asks any policy method, so a `ChatPolicy` of your own without it **turns the chat off for every user**. That is on purpose: a typo in a switch that guards access should refuse, not allow. If you already have a `ChatPolicy`, add `def use? = user.present?` when you upgrade to keep the chat on for everyone. The policy avo-ai ships, used when you have none, answers `true` for every signed-in user.
 :::
 
+:::info Under Action Policy and CanCanCan
+<VersionReq package="avo-ai" version="4.4.1" />
+
+avo-ai's resources name the policies it ships, so those answer under every [authorization client](./authorization-api.html#authorization_client): `:pundit`, `:action_policy` and `:cancancan`. A copy of your own replaces the gem's under each of them. Write it like the examples on this page, on a plain `ApplicationPolicy`, or on one built on `ActionPolicy::Base` if your app uses Action Policy. With CanCanCan, these resources follow their policies, not your `Ability`.
+:::
+
 ## Who can see a chat
 
 The chat UI only ever loads the signed-in user's own conversations, and the **Chats** and **Messages** admin resources list only theirs. Those resources still open any record by id, though, so close them with policies that scope to the owner:

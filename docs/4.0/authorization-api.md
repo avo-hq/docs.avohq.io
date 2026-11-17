@@ -37,8 +37,8 @@ config.authorization_client = :action_policy
 | Value | Behavior |
 | --- | --- |
 | `:pundit` | Uses the built-in Pundit client. Requires `gem "pundit"` in the `Gemfile`. |
-| `:action_policy` | Uses the built-in Action Policy client. Requires `gem "action_policy"` in the `Gemfile`. <VersionReq package="avo-authorization" version="4.5.0.beta.1" /> |
-| `:cancancan` | Uses the built-in CanCanCan client, which asks your `Ability`. Requires `gem "cancancan"` in the `Gemfile`. See [Use CanCanCan](./authorization.html#use-cancancan). <VersionReq package="avo-authorization" version="4.5.0.beta.2" /> |
+| `:action_policy` | Uses the built-in Action Policy client. Requires `gem "action_policy"` in the `Gemfile`. <VersionReq package="avo-authorization" version="4.4.1" /> |
+| `:cancancan` | Uses the built-in CanCanCan client, which asks your `Ability`. Requires `gem "cancancan"` in the `Gemfile`. See [Use CanCanCan](./authorization.html#use-cancancan). <VersionReq package="avo-authorization" version="4.4.1" /> |
 | `nil` | Uses the built-in nil client, which applies no policies. |
 | `String` | The class name of a custom client that implements the [client contract](#client-contract), or of a subclass of a built-in client. |
 

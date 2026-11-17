@@ -528,7 +528,7 @@ web     | [Avo->] Unauthorized action 'act_on?' for 'UserPolicy'
 
 ## Use Action Policy
 
-<VersionReq package="avo-authorization" version="4.5.0.beta.1" />
+<VersionReq package="avo-authorization" version="4.4.1" />
 
 If your app authorizes with [Action Policy](https://github.com/palkan/action_policy), set [`authorization_client`](./authorization-api.html#authorization_client) to `:action_policy`. Avo ships the client, so you don't write an adapter.
 
@@ -545,22 +545,14 @@ end
 ```
 
 :::warning Beta
-The Action Policy client ships in the `avo-authorization` `4.5.0.beta.1` prerelease and is tested with `action_policy` `0.7.8`. Bundler installs a prerelease only when the `Gemfile` asks for one, so change the `avo-authorization` line you already have instead of adding a second one:
-
-```ruby
-# Gemfile
-source "https://packager.dev/avo-hq/" do
-  gem "avo-authorization", ">= 4.0.0" # [!code --]
-  gem "avo-authorization", ">= 4.5.0.beta.1" # [!code ++]
-end
-```
-
-Every policy the client uses must be an Action Policy policy. A Pundit-style class raises an error instead of answering, and [avo-ai](./ai.html) ships its own policies written for Pundit, so avo-ai's pages don't work under this client yet.
+The Action Policy client is a beta feature of `avo-authorization`, tested with `action_policy` `0.7.8`.
 :::
 
 If Action Policy is new to the app, run `bin/rails g action_policy:install` to generate `ApplicationPolicy`, and `bin/rails g action_policy:policy Post` for each model Avo shows. If the `action_policy` gem isn't in the bundle, Avo raises `Avo::MissingGemError`.
 
 Avo looks policies up at the top level, as it does with Pundit, so `Post` gets `PostPolicy`. It asks them the same [resource](#write-a-policy), [association](#authorize-association-controls) and [file](#authorize-file-attachments) rules. [`explicit_authorization`](./authorization-api.html#explicit_authorization), [`raise_error_on_missing_policy`](./authorization-api.html#raise_error_on_missing_policy) and a resource's [`authorization_policy`](./authorization-api.html#authorization_policy) work as they do with Pundit. The sections below cover what an Action Policy policy writes differently.
+
+A plain Ruby policy written Pundit-style, without `ActionPolicy::Base`, works too, such as the ones [avo-ai](./ai.html) ships. Avo builds it with `new(user, record)`, asks each rule as a method, and scopes records with its `Scope` class.
 
 ### Scope records with `relation_scope`
 
@@ -687,7 +679,7 @@ Then set `config.authorization_client = "AccountActionPolicyClient"`. `current_a
 
 ## Use CanCanCan
 
-<VersionReq package="avo-authorization" version="4.5.0.beta.2" />
+<VersionReq package="avo-authorization" version="4.4.1" />
 
 If your app authorizes with [CanCanCan](https://github.com/CanCanCommunity/cancancan), set [`authorization_client`](./authorization-api.html#authorization_client) to `:cancancan`. Avo asks your `Ability` the questions it asks a Pundit policy, so you write no adapter and no policy classes.
 
@@ -704,17 +696,7 @@ end
 ```
 
 :::warning Beta
-The CanCanCan client ships in the `avo-authorization` `4.5.0.beta.2` prerelease and is tested with `cancancan` `3.7.0`. Bundler installs a prerelease only when the `Gemfile` asks for one, so change the `avo-authorization` line you already have instead of adding a second one:
-
-```ruby
-# Gemfile
-source "https://packager.dev/avo-hq/" do
-  gem "avo-authorization", ">= 4.0.0" # [!code --]
-  gem "avo-authorization", ">= 4.5.0.beta.2" # [!code ++]
-end
-```
-
-Every class the client asks must include `CanCan::Ability`. [avo-ai](./ai.html) ships its own policies written for Pundit, so avo-ai's pages don't work under this client yet.
+The CanCanCan client is a beta feature of `avo-authorization`, tested with `cancancan` `3.7.0`.
 :::
 
 Avo builds `Ability.new(user)` with the current user and asks it each rule by name, without the question mark: `index?` becomes `:index` and `view_comments?` becomes `:view_comments`. A rule the Ability doesn't grant is denied, on a model it names no rule for too, so [`raise_error_on_missing_policy`](./authorization-api.html#raise_error_on_missing_policy) never raises under this client. If the `cancancan` gem isn't in the bundle, Avo raises `Avo::MissingGemError`.
@@ -824,6 +806,8 @@ class Avo::Resources::PhotoComment < Avo::BaseResource
   self.authorization_policy = PhotoCommentAbility
 end
 ```
+
+It can also name a plain Ruby policy written Pundit-style, such as the ones [avo-ai](./ai.html) ships. Avo builds it with `new(user, record)`, asks each rule as a method, and scopes records with its `Scope` class, so that resource follows its policy instead of your `Ability`.
 
 ### Handle a nil user
 
