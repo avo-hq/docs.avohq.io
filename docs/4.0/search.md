@@ -58,7 +58,7 @@ The same `query` proc runs from every search surface. If you want, say, a wider 
 class Avo::Resources::User < Avo::BaseResource
   self.search = {
     query: -> {
-      case search_type
+      case (search_type if defined?(search_type))
       when :global      # navbar ⌘K — widest, includes email
         query.ransack(first_name_cont: q, last_name_cont: q, email_cont: q, m: "or").result(distinct: false)
       when :association # picker — tightest
@@ -74,7 +74,7 @@ end
 If you don't need surface-specific behavior, ignore the local and write a single query that runs everywhere. Branching is mandatory in one case: if your proc returns the array shape used by [custom search providers](./search-api.html#custom-search-providers), return it only for `:global` and `:association` — the index and kanban surfaces need an `ActiveRecord::Relation`.
 
 :::info
-The `search_type` local is injected by Avo for the index, global, and association surfaces. It is **not** injected by the [kanban board](./kanban-boards.html) card picker, and on a Community-only install it isn't defined at all. Referencing `search_type` in those contexts raises an error — guard with `defined?(search_type)` or write a plain query. The kanban picker also reads the term from `params[:q]` rather than a `q` local.
+The `search_type` local is injected by the [global search add-on](./search.html#global-search) for the index, global, and association surfaces, and by the [kanban board](./kanban-boards.html) card picker. Other callers run the proc without it: Avo's own search without the global search add-on, the [AI assistant](./ai.html), and the [MCP server](./mcp.html). Referencing it there raises an error, so guard with `defined?(search_type)` or write a plain query.
 :::
 
 ## Search within associations
