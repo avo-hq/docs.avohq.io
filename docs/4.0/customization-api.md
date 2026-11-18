@@ -131,6 +131,22 @@ config.time_format = "HH:mm"
 
 </Option>
 
+<Option name="`field_defaults`" headingSize="3">
+
+The options every field of a type starts with, keyed by the field type you pass to `as:`. A field's own options win, `false` and `nil` included. See [Field defaults](./customization.html#field-defaults). <VersionReq package="avo" version="4.4.5" />
+
+```ruby
+config.field_defaults = {
+  belongs_to: {can_create: false},
+  textarea: {rows: 3}
+}
+```
+
+- **Type:** Hash of field types to hashes of [field options](./field-options-api.html)
+- **Default:** `{}`
+
+</Option>
+
 <Option name="`home_path`" headingSize="3">
 
 Where users are redirected when they click the logo or visit Avo's root path. Also accepts a block, which has access to route helpers.
