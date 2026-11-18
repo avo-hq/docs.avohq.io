@@ -502,6 +502,33 @@ end
 
 </Option>
 
+<Option name="`self.index_refresh_every`" headingSize="3">
+
+<VersionReq package="avo" version="4.4.5" />
+
+How often the records on the `Index` view reload, without reloading the page. Only the list (the table, grid, or other view type and its pagination) is replaced, so the search, filters, scope, sorting, and page stay as the user left them. Association panels that list the resource reload the same way.
+
+```ruby
+class Avo::Resources::Order < Avo::BaseResource
+  self.index_refresh_every = 30.seconds
+end
+```
+
+The block form runs each time the list renders. It has access to `parent_record` and `parent_resource`, which are `nil` on the resource's own `Index`, so a resource can refresh in some places only:
+
+```ruby
+class Avo::Resources::Order < Avo::BaseResource
+  self.index_refresh_every = -> { 30.seconds if parent_record.nil? }
+end
+```
+
+A reload is skipped, and tried again after the next interval, while the browser tab is in the background or the list sits in an inactive tab of the page, while records are selected (so the selection isn't lost) or a row's menu is open, and while the user is moving through the list with the keyboard or typing anywhere on the page, such as in the search, a filter, or an action's fields.
+
+- **Type:** Integer (seconds), `ActiveSupport::Duration`, or Proc returning one of them
+- **Default:** `nil`, which doesn't refresh. `false` and `0` don't refresh either.
+
+</Option>
+
 ## Forms and saving
 
 <Option name="`self.confirm_on_save`" headingSize="3">
