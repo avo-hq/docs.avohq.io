@@ -97,7 +97,7 @@ force = false
 # 4.0 layout pages consolidated into fields-layout + fields-layout-api
 [[redirects]]
 from = "/4.0/resource-header.html"
-to = "/4.0/fields-layout.html#place-the-header"
+to = "/4.0/fields-layout.html#header"
 status = 301
 force = false
 
@@ -484,5 +484,55 @@ force = false
 [[redirects]]
 from = "/4.0/rest-api/authentication.html"
 to = "/4.0/rest-api.html#authentication"
+status = 301
+force = false
+
+# Avo 3 URL shapes under /4.0/
+# -------------------------
+# Tutorials, blog posts and READMEs written against Avo 3 keep these paths and only
+# swap the version segment. avo-hq/avo#5035 fixed two of them in Avo's own README.
+
+# the actions directory became one guide; actions.html links its API page
+[[redirects]]
+from = "/4.0/actions/*"
+to = "/4.0/actions.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/custom-asset-pipeline.html"
+to = "/4.0/asset-handling.html"
+status = 301
+force = false
+
+# cache and views-performance merged into performance.html
+[[redirects]]
+from = "/4.0/cache.html"
+to = "/4.0/performance.html#cache-store-selection"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/views-performance.html"
+to = "/4.0/performance.html#log-viewcomponent-loading-times-and-allocations"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/cover-and-profile-photos.html"
+to = "/4.0/cover-and-avatar.html"
+status = 301
+force = false
+
+[[redirects]]
+from = "/4.0/stimulus-integration.html"
+to = "/4.0/javascript.html"
+status = 301
+force = false
+
+# cluster and its alias row are gone in Avo 4; the upgrade guide names the replacement
+[[redirects]]
+from = "/4.0/resource-clusters.html"
+to = "/4.0/avo-3-avo-4-upgrade.html#removed-cluster-and-its-alias-row-in-favor-of-width"
 status = 301
 force = false
