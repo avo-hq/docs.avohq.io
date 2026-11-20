@@ -168,6 +168,48 @@ WebMock.disable_net_connect!(
 
 See [Testing → Allow the license check host in your test suite](./testing.html#allow-the-license-check-host-in-your-test-suite) for the full details, including the VCR equivalent.
 
+## Avo's assets go through your asset pipeline
+
+Avo 3 served its CSS and JavaScript straight from the gem under `/avo-assets`. Avo 4 serves them through your app's asset pipeline instead: `avo/application.css`, `avo/application.js`, `avo/dependencies.css`, `avo-overrides.css`, and Avo's images and sounds all come from the folders under the gem's `app/assets`. Two Avo 3 settings stop working because of that.
+
+### Remove Avo's folders from Propshaft's `excluded_paths`
+
+With Avo 3, Propshaft apps could keep Avo's files out of `public/assets` by excluding Avo's folders from the load path. Avo 4 needs those folders, so with the exclusion in place every Avo page fails with:
+
+```
+Propshaft::MissingAssetError: The asset 'avo/dependencies.css' was not found in the load path.
+```
+
+Remove the Avo lines:
+
+```ruby
+# config/initializers/assets.rb
+Rails.application.config.assets.excluded_paths += [ # [!code --]
+  Avo::Engine.root.join("app/assets/builds"), # [!code --]
+  Avo::Engine.root.join("app/assets/config"), # [!code --]
+  Avo::Engine.root.join("app/assets/stylesheets"), # [!code --]
+  Avo::Engine.root.join("app/assets/svgs") # [!code --]
+] # [!code --]
+```
+
+After the upgrade, `bin/rails assets:precompile` copies Avo's files into `public/assets`. That is expected.
+
+### Update the path you skip in `asset_host`
+
+If your `config.action_controller.asset_host` skips Avo's files to keep them off a CDN, it matched the Avo 3 `/avo-assets` path. Avo 4's files arrive with their pipeline paths, such as `/assets/avo/application.css` and `/assets/avo-overrides.css`, so a check for `/avo` no longer matches them and they go to the CDN:
+
+```ruby
+# config/environments/production.rb
+config.action_controller.asset_host = Proc.new do |source|
+  next nil if source.start_with?("/avo") # [!code --]
+  next nil if source.start_with?("/assets/avo") # [!code ++]
+
+  ENV.fetch("ASSET_HOST")
+end
+```
+
+See [Exclude Avo's assets from a CDN](./asset-handling.html#exclude-avo-s-assets-from-a-cdn).
+
 ## Search
 
 Avo 4 introduces significant improvements to the search functionality, with enhanced resource search and global search capabilities.

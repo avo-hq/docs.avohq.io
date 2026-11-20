@@ -112,20 +112,24 @@ For quick, no-build tweaks — restyling with CSS variables or a small Stimulus 
 
 ## Exclude Avo's assets from a CDN
 
-If you serve assets through a Content Delivery Network (CDN) and want to keep Avo's paths off it, exclude the `/avo` path from your asset host:
+If you serve assets through a Content Delivery Network (CDN) and want to keep Avo's files off it, skip them in your asset host. Avo's files go through your asset pipeline, so the asset host receives their pipeline paths: `/assets/avo/application.css`, `/assets/avo-overrides.css`, and so on.
 
 ```ruby
-# config/initializers/avo.rb (or wherever you set asset_host)
+# config/environments/production.rb
 config.action_controller.asset_host = Proc.new do |source|
-  # Exclude assets under the "/avo" path from the CDN
-  next nil if source.start_with?("/avo")
+  # Serve Avo's files (/assets/avo/..., /assets/avo-overrides...) from the app
+  next nil if source.start_with?("/assets/avo")
 
   # Serve everything else from the CDN
   ENV.fetch("ASSET_HOST")
 end
 ```
 
-Adjust the path and environment variable to match your app.
+If you changed `config.assets.prefix` from `/assets`, use your prefix in the check. Adjust the environment variable to match your app.
+
+## Keep Avo's folders in the Propshaft load path
+
+With Propshaft, `bin/rails assets:precompile` copies Avo's files into `public/assets`, including the CSS, JavaScript, images and sounds its pages load. That is expected. Don't add Avo's folders to `config.assets.excluded_paths`, or every Avo page fails with `Propshaft::MissingAssetError: The asset 'avo/dependencies.css' was not found in the load path`. If you're upgrading an Avo 3 app that excluded them, see [Avo's assets go through your asset pipeline](./avo-3-avo-4-upgrade.html#avo-s-assets-go-through-your-asset-pipeline) in the upgrade guide.
 
 ## Add assets from a plugin
 
