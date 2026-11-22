@@ -59,6 +59,30 @@ Tokens are bound to the address they were minted under. After a change, every li
 
 </Option>
 
+<Option name="`issuer_path`" headingSize="3">
+
+<VersionReq package="avo-mcp_server" version="4.4.1" />
+
+Makes the MCP endpoint's URL the OAuth issuer instead of the bare origin, for apps whose own OAuth server already owns `/.well-known/oauth-authorization-server`. The authorization server metadata moves to the RFC 8414 path-inserted URL, and the bare path is not drawn.
+
+```ruby
+config.mcp_server.issuer_path = true
+```
+
+| Value   | Issuer                                | Authorization server metadata at                            |
+| ------- | ------------------------------------- | ----------------------------------------------------------- |
+| `false` | `https://app.example.com`             | `/.well-known/oauth-authorization-server`                   |
+| `true`  | `https://app.example.com/avo/mcp`     | `/.well-known/oauth-authorization-server/avo/mcp`           |
+
+- **Type:** `Boolean`
+- **Default:** `false`
+
+:::info
+Dynamic Client Registrations are kept per issuer, so a client registered before the switch registers again on its next connection.
+:::
+
+</Option>
+
 <Option name="`tool_calls_per_minute`" headingSize="3">
 
 How many JSON-RPC requests one connection may make in a minute before the endpoint answers `429` with a `Retry-After` header. The counter runs through `Rails.cache`: on `:null_store` nothing is counted, and on a per-process store each worker keeps its own count.
@@ -147,7 +171,7 @@ mount_avo_mcp_server at: "/admin/mcp"   # moved
 | Endpoint                       | Path                                                      | Authentication |
 | ------------------------------ | --------------------------------------------------------- | -------------- |
 | Protected resource metadata    | `/.well-known/oauth-protected-resource` (origin root)     | None           |
-| Authorization server metadata  | `/.well-known/oauth-authorization-server` (origin root)   | None           |
+| Authorization server metadata  | `/.well-known/oauth-authorization-server` (origin root), or with the mount path appended under [`issuer_path`](#issuer_path) | None |
 | Token endpoint                 | `<mount path>/token`                                      | None           |
 | Client registration (RFC 7591) | `<mount path>/register`                                   | None           |
 | Token revocation (RFC 7009)    | `<mount path>/revoke`                                     | None           |

@@ -558,6 +558,19 @@ Its path must match the path you mount at, or boot raises. Once pinned, a reques
 
 Every issued token is bound to the address it was minted under, so **changing the address is a migration**: every live connection's next call is refused with `421`, and admins reconnect through the authorize page. Announce it.
 
+### Share the domain with your own OAuth server
+
+<VersionReq package="avo-mcp_server" version="4.4.1" />
+
+If your app already runs an OAuth server, such as Doorkeeper, it owns `/.well-known/oauth-authorization-server` on your origin, and AI clients connecting to Avo's MCP server read its metadata instead of Avo's. Turn on [`issuer_path`](./mcp-api.html#issuer_path) to move Avo's authorization server to the MCP endpoint's path:
+
+```ruby
+# config/initializers/avo.rb
+config.mcp_server.issuer_path = true
+```
+
+Avo then serves its metadata at `/.well-known/oauth-authorization-server/admin/mcp` (your mount path) and no longer draws the bare path, so your OAuth server keeps it whatever order the routes are drawn in. Clients registered through Dynamic Client Registration before the switch register again on their next connection.
+
 ### Behind a proxy or load balancer
 
 A TLS-terminating proxy that doesn't pass the original scheme and host through leaves the app seeing `http` and an internal hostname — and plain `http` is refused outside `localhost`, because tokens would travel in the clear. Forward `X-Forwarded-Proto` and `X-Forwarded-Host`, allow the public hostname in `config.hosts`, or pin the address.
@@ -681,6 +694,7 @@ This is the Pundit setup: every admin can use the server, and sees and revokes t
 | --------------------------------------------------------------- | --------- | ------- |
 | [`enabled`](./mcp-api.html#enabled)                             | `Boolean` | `false` |
 | [`resource_identifier`](./mcp-api.html#resource_identifier)     | `String`  | `nil`   |
+| [`issuer_path`](./mcp-api.html#issuer_path)                     | `Boolean` | `false` |
 | [`tool_calls_per_minute`](./mcp-api.html#tool_calls_per_minute) | `Integer` | `300`   |
 | [`connection_log`](./mcp-api.html#connection_log)               | `Boolean` | `true`  |
 | [`connection_log_size`](./mcp-api.html#connection_log_size)     | `Integer` | `500`   |
