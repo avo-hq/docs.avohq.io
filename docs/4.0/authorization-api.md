@@ -130,6 +130,7 @@ end
 - **Type:** `Class`
 - **Default:** `nil`
 - **CanCanCan:** under the [`:cancancan`](#authorization_client) client, the Ability class the resource asks instead of `Ability`.
+- **Plain policy class:** under the [`:action_policy`](#authorization_client) and [`:cancancan`](#authorization_client) clients, it can also name a plain Ruby policy written Pundit-style, such as the ones [avo-ai](./ai.html) ships. Avo builds it with `new(user, record)`, asks each rule as a method, and scopes records with its `Scope` class. See [Use Action Policy](./authorization.html#use-action-policy) and [Use a different Ability for a resource](./authorization.html#use-a-different-ability-for-a-resource).
 
 </Option>
 
