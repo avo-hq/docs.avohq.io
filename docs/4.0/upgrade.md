@@ -351,6 +351,18 @@ Update API clients that read these ids as numbers or compare them with numbers. 
 
 </Option>
 
+## `avo` 4.4.2 <span class="tl-date">Nov 10, 2026</span> {#avo-4-4-2 data-gems="avo" data-date="2026-11-10" data-version="4.4.2"}
+
+<Option headingSize="3" name="Avo Status moved into the sidebar profile menu">
+
+The standalone **Avo Status** link in the sidebar footer is gone. Clicking anywhere on the profile row now opens the [profile menu](./menu-editor.html#profile-menu), which spans the row's width and holds an **Avo Status** item for the users who may see it. The colored status dot moved onto that row as a badge. A custom `config.profile_menu` keeps working — the item is added either way.
+
+The page, its `/status` path and who can reach it are unchanged. See [Admin user](./authentication.html#1-admin-user).
+
+**Action required:** None, unless your own CSS targets the old markup. The status dot's classes went from `sidebar-status__indicator--ok` to `sidebar-status--ok` (same for `--warning` and `--error`), and the `sidebar-profile__actions` wrapper is gone.
+
+</Option>
+
 ## `avo-ai` 4.3.0.beta.10 <span class="tl-date">Nov 9, 2026</span> {#avo-ai-4-3-0-beta-10 data-gems="avo-ai" data-date="2026-11-09" data-version="4.3.0.beta.10"}
 
 <a id="upgrade-to-avo-ai-4-3-0-beta-10"></a>
