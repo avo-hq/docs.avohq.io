@@ -90,17 +90,43 @@ self.grid_cols = 4
 
 </Option>
 
-## Ranges
+## Filters and ranges
+
+<Option name="`def filters`" headingSize="3">
+
+Declares the dashboard's filter bar. Each `filter` call adds one input, and cards read the values through `filters[:id]`. See [Filters](./dashboards#filters).
+
+```ruby
+def filters
+  filter :range, type: :button_group, options: {"7D" => 7, "30D" => 30}, default: 30
+  filter :active_only, type: :boolean, label: "Active only"
+  filter :signed_up_after, type: :date
+end
+```
+
+- **`type`:** `:button_group`, `:boolean`, `:date`, `:date_time`, `:date_range`, `:select` or `:chips`
+- **`label`:** defaults to the humanized id
+- **`options`:** `:button_group`, `:select` and `:chips`. A Hash of `label => value`, an Array of values, or a block
+- **`default`:** the value cards get when nothing is picked. A value or a block
+- **`visible`:** a block. A hidden filter ignores its URL value, so cards get its `default`
+- **`include_blank`:** `:select` only. The label of an empty first option
+- **`as_toggle`:** `:boolean` only. Renders a toggle instead of a checkbox. Default `false`
+
+A filter named `:range` sets each card's [`range`](./cards#ranges) instead of `filters[:range]`.
+
+</Option>
 
 <Option name="`self.global_ranges`" headingSize="3">
 
-Renders a row of range buttons at the top of the dashboard that update every card's range at once. Each entry is a number of days; its button label comes from the `avo.<days>` translation key.
+**Deprecated**, removed in Avo 5. Use `filter :range, type: :button_group, options: [...]` in [`def filters`](./dashboards#filters) instead; it does the same thing. Setting it logs a warning.
+
+Shorthand for `filter :range, type: :button_group, options: global_ranges`. Clicking a button reloads every card with that value as its [`range`](./cards#ranges), so pick values your cards' `query` already handles. Each button's label comes from the `avo.<value>` translation key, falling back to the humanized value.
 
 ```ruby
 self.global_ranges = [7, 30, 60, 365]
 ```
 
-- **Type:** Array of Integers
+- **Type:** Array of Integers or Strings
 - **Default:** `[]` (no global range bar)
 
 </Option>
