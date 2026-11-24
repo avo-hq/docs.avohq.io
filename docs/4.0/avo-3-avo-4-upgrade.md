@@ -22,7 +22,7 @@ You can follow it yourself or let your LLM do the heavy lifting:
 Upgrade this Avo 3 app to Avo 4 using https://docs.avohq.io/4.0/avo-3-avo-4-upgrade.html as the source of truth. You may run shell commands (grep, bundle, the test suite, git) without asking each time — but ask before anything destructive or ambiguous.
 
 Setup
-- Confirm all incremental Avo 3 upgrades are applied up to the current version (https://docs.avohq.io/3.0/avo-2-avo-3-upgrade.html). If not, stop and tell me.
+- Confirm all incremental Avo 3 upgrades are applied up to the current version (https://docs.avohq.io/3.0/upgrade.html). If not, stop and tell me.
 - Create a new branch. Run the test suite to capture a baseline; if it's already red, stop and tell me.
 - Commit after each chapter, with the chapter name in the message.
 
