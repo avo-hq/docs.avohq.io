@@ -101,6 +101,21 @@ end
 
 If both `current_user_resource_name` and `sign_out_path_name` are set, `sign_out_path_name` takes precedence.
 
+### What signing out clears in the browser
+
+<VersionReq version="3.34.3" />
+
+Browsers keep whole pages in memory so the Back button can show them at once. After a sign-out, those pages would put the admin back on screen. So before it signs the user out, the sign-out menu item does two things:
+
+- It empties the page it is on. If the browser brings that page back, it loads again and the visitor lands on your sign-in page.
+- It asks the browser to drop the pages opened earlier, with the [`Clear-Site-Data: "cache"`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Clear-Site-Data) response header.
+
+:::info
+That header also clears the files the browser cached for your domain, so your CSS, JavaScript and images download once more after a sign-out. Browsers honor it over HTTPS and on `localhost` only.
+:::
+
+Only this menu item does it. A sign-out link of your own, a session that expires, or a sign-out in another tab leave those pages in the browser until it drops them on its own.
+
 ## Filter out requests
 
 You probably do not want to allow Avo access to everybody. If you're using [devise](https://github.com/heartcombo/devise) in your app, use this block to filter out requests in your `routes.rb` file.
