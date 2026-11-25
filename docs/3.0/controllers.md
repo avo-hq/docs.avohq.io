@@ -185,6 +185,8 @@ def destroy_fail_action
   end
 end
 ```
+
+<VersionReq version="3.34.4" /> Avo clears `params[:referrer]` when it points outside your app, so it is safe to redirect to it.
 </Option>
 
 <Option name="`destroy_success_message`">
