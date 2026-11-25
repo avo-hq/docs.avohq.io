@@ -257,6 +257,13 @@ If your app lets you connect MCP servers, type `/mcp` and a server's address to 
 
 - **"Rename this conversation to 'Q3 invoices'"** — your exact wording, applied everywhere the title shows.
 - **"Rename this conversation"** — with no name given, a fresh title is generated from where the conversation actually went.
+- **"Close this chat"** — takes the conversation's tab off the chat bar and closes its window.
+- **"Close the other chats"** — keeps this conversation's tab and clears the rest from the bar.
+- **"Clear my open chats"** — empties the bar, this conversation included.
+- **"Close the first and the last tab"** or **"close the third one"** — by position on the bar, counted from the left.
+- **"Close all the tabs except the fifth"** — keeps the tabs you name and closes the rest.
+
+The assistant can't see your tabs, so it counts positions as they are when it acts. Closing a tab doesn't delete anything: the conversations stay in the recent-chats menu, one click from reopening.
 
 New conversations title themselves after your first message. See [Renaming conversations](./ai-agents-and-tools.html#renaming-conversations).
 
