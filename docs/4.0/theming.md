@@ -200,6 +200,10 @@ bin/rails generate avo:eject --partial :head
 
 Avo renders the `:head` partial after its bundled stylesheets, so these take precedence too. The full list of component variables, with defaults and descriptions, lives in the [CSS variables reference](./appearance-api.html#css-variables).
 
+### Give each resource its own card colors
+
+To color one resource's cards without changing the whole admin, follow [Give each resource its own card colors](./guides/style-resource-cards.html). The guide uses `data-resource-name` selectors, resource-scoped CSS variables, and a derived inner-border tint, including sidebar cards and dark mode.
+
 ### Set a background image
 
 The main content panel takes a solid color from [`--color-main-content-background`](./appearance-api.html#css-variables). For an **image or gradient** instead, there's no config option — set `background-image` on `.main-content` in `avo-overrides.css`. It layers over that color, so keep an opaque image or leave the color as the fallback for any area the image doesn't cover:
