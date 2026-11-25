@@ -17,6 +17,8 @@ field :description, as: :easy_mde
 
 By default, the spell checker is off, long content is collapsed on the Show view, and the field is hidden from the Index view.
 
+The preview shows HTML written in the markdown, but cleans it first, so scripts and event handlers such as `onerror` are removed. <VersionReq package="avo" version="4.4.9" />
+
 :::info
 Before Avo 3.17 this field was called `markdown`. It was renamed to `easy_mde` to make room for Avo's own `markdown` implementation.
 :::

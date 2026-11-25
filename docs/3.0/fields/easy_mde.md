@@ -18,6 +18,8 @@ The `easy_mde` field renders a [EasyMDE Markdown Editor](https://github.com/Iona
 field :description, as: :easy_mde
 ```
 
+<VersionReq version="3.34.6" /> The preview shows HTML written in the markdown, but cleans it first, so scripts and event handlers such as `onerror` are removed.
+
 :::info
 The `easy_mde` field is hidden from the **Index** view.
 :::
