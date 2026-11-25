@@ -148,6 +148,7 @@ end
 ```
 
 - **Default behavior:** returns `params[:return_to]` when present, then `params[:referrer]` when present. Otherwise honors the resource's [`self.after_update_path`](./resources-api.html#self.after_update_path) option, falling back to the record's <Show /> view (or <Edit />, when `config.resource_default_view` is `:edit`).
+- **Referrer:** a `referrer` that points outside your app is ignored, so the next rule applies. <VersionReq package="avo" version="4.4.7" />
 
 :::warning
 Overriding this method disables the `return_to` mechanism Avo uses to send users back where they came from. Return `super` when `params[:return_to]` is present to keep it.
@@ -231,6 +232,7 @@ end
 ```
 
 - **Default behavior:** returns `params[:referrer]` when present, otherwise the resource's <Index /> view.
+- **Referrer:** a `referrer` that points outside your app is ignored, and the <Index /> view is used. <VersionReq package="avo" version="4.4.7" />
 
 </Option>
 
