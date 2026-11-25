@@ -198,6 +198,32 @@ In the week view today's column is a pinned header that never leaves the screen,
 
 Two cases have nothing to reveal, and both are quiet rather than broken: `hide_weekends` can drop today from the grid entirely, and visitors who ask for reduced motion get the same jumps without the animation.
 
+## Translate the calendar
+
+The calendar ships in every language Avo does, so switching Avo's locale translates its buttons, headings, month and day names and the week view's labels with no setup. It doesn't need `rails-i18n`: the month and day names come from the add-on's own locale files, not from Rails' `date` translations.
+
+To change any of its strings, override the `avo.calendar.*` key in your app's locale files. Each language also sets the order of its headings and its hour format, which you can override the same way:
+
+```yaml
+# config/locales/avo.de.yml
+de:
+  avo:
+    calendar:
+      more_events: "+%{count} Termine"
+      week_end_date: "%{day}. %{month} %{year}"
+```
+
+| Key | English | Used for |
+| --- | --- | --- |
+| `month_heading` | `%{month} %{year}` | The month view's heading |
+| `week_heading` | `%{start_date} – %{end_date}` | The week view's heading |
+| `week_start_date`, `week_end_date` | `%{month} %{day}`, `%{month} %{day}, %{year}` | The two dates in the week heading |
+| `month_names`, `abbr_month_names`, `abbr_day_names` | `January`…, `Jan`…, `Sun`… | Month and day names, with Sunday first |
+| `time_format` | `%H:%M` | Event times and the week view's hours, as `strftime` directives |
+| `timezone` | `GMT%{offset}` | The week view's corner label |
+
+`time_format` is passed to `strftime`, which prints `%p`, `%B` and other word directives in English only, so keep it to numbers.
+
 ## Customize the calendar index
 
 See the [Slots guide](./slots.html) for shared registrations, wrapping defaults, and all refresh and replacement caveats. The boundaries below are specific to Calendar.
