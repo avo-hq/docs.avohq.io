@@ -13,6 +13,17 @@ prompt: Use this page (${link}) to install Avo in my Ruby on Rails app.
 - `propshaft` or `sprockets` gem
 - Have the `secret_key_base` defined in any of the following `ENV["SECRET_KEY_BASE"]`, `Rails.application.credentials.secret_key_base`, or `Rails.application.secrets.secret_key_base`
 
+:::warning Rails 7.1 breaks dashboards, reordering and dynamic filters
+Rails 7.1 has a [bug](https://github.com/rails/rails/issues/51910) ([explanation](https://github.com/avo-hq/avo/issues/2844)) that breaks path helpers for nested mounted engines. Avo mounts each of its gems as one, so on Rails 7.1 [dashboards](./dashboards), [record reordering](./record-reordering) and [dynamic filters](./dynamic-filters) don't work. Avo shows a banner in the admin when it detects that version.
+
+Upgrade to Rails 7.2 or later:
+
+```ruby
+# Gemfile
+gem "rails", ">= 7.2"
+```
+:::
+
 :::warning Zeitwerk autoloading is required.
 When adding Avo to a Rails app that was previously a Rails 5 app you must ensure that it uses zeitwerk for autoloading and Rails 6.1 or higher defaults.
 
