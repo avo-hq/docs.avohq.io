@@ -55,7 +55,7 @@ A tool's name is the stable part of it: the model calls the tool by that name, e
 | `import_records`             | Proposes creating records for one resource from a CSV or TSV file, with a column-to-field mapping                    | after you confirm² |
 | `write_history`              | Lists the writes made earlier in the conversation and proposes undoing one, or a whole batch on one card           | after you confirm |
 | `rename_conversation`        | Renames the current conversation — with your exact title, or by regenerating one⁴                                    | immediately       |
-| `close_chat_tabs`            | Closes tabs in your chat bar: this conversation's, every other one, or all of them. The chats stay in the recent-chats menu⁴ | immediately       |
+| `close_chat_tabs`            | Closes tabs in your chat bar: this conversation's, every other one, all of them, the ones at given positions, or all but those. The chats stay in the recent-chats menu⁴ | immediately       |
 
 "After you confirm" means the tool call produces a card describing the pending change; your click applies it, not the model. "Immediately" is reserved for actions that are reversible (a detached file can be re-attached, a conversation can be renamed again, a closed tab reopened) or additive (creating a record).
 
