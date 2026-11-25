@@ -94,7 +94,7 @@ A valid license that doesn't include an add-on doesn't pause anything. That add-
 
 Avo keeps the license answer in your Rails cache. Use a persistent cache store shared by all your processes, like Solid Cache, Redis or Memcached. With a per-process memory store, a deploy or a worker restart loses the answer, and an app that can't reach the license server at that moment is blocked. The status page shows which cache store the app uses.
 
-The answer belongs to the app that asked for it, tied to its `secret_key_base`. When you change the secret, Avo checks the license again on the next request, so deploy the change while the license server is reachable. <VersionReq package="avo-licensing" version="4.5.0" />
+Changing `secret_key_base` makes Avo check the license again on the next request, and so does upgrading to avo-licensing 4.5.0. Deploy either change while the license server is reachable. <VersionReq package="avo-licensing" version="4.5.0" />
 
 ### Run the admin without a valid license
 
