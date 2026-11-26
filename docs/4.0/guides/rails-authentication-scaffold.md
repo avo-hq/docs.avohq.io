@@ -18,17 +18,19 @@ Avo.configure do |config|
 end
 ```
 
-## 2. Set the sign out link
+## 2. The sign out link
 
-The scaffold uses the `SessionsController` to sign out the user so the link should be `sessions_path`. We need to add that to Avo as well.
+The scaffold signs the user out through `SessionsController#destroy`, whose route helper is `session_path`. Avo recognizes the `Authentication` concern the scaffold generates and uses that helper on its own, so the sign-out link works with no configuration.
+
+Set [`sign_out_path_name`](../customization-api.html#sign_out_path_name) only if you renamed the route:
 
 ```ruby
 # config/initializers/avo.rb
 Avo.configure do |config|
   # other pieces of configuration
 
-  # tell Avo how to sign out the authenticated user.
-  config.sign_out_path_name = :session_path
+  # only needed when the sign-out route is not `session_path`
+  config.sign_out_path_name = :logout_path
 end
 ```
 

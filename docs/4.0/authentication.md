@@ -73,7 +73,15 @@ The sidebar footer shows a small profile widget displaying three pieces of infor
 
 ## Customize the sign-out link
 
-If your app responds to `destroy_user_session_path`, a sign-out menu item will be added on the bottom sidebar (when you click the three dots). If your app does not respond to this method, the link will be hidden unless you provide a custom sign-out path. There are two ways to customize the sign-out path.
+A sign-out menu item is added on the bottom sidebar (when you click the three dots). Avo picks the route helper behind it in this order:
+
+| Order | Route helper | When |
+| ----- | ------------ | ---- |
+| 1 | [`sign_out_path_name`](./customization-api.html#sign_out_path_name) | You set it. It always wins. |
+| 2 | `session_path` | Your app uses Rails' [authentication generator](./guides/rails-authentication-scaffold). Avo recognizes the generated `Authentication` concern, so there is nothing to configure. |
+| 3 | `destroy_<current_user_resource_name>_session_path` | Neither of the above applies. With the default [`current_user_resource_name`](./customization-api.html#current_user_resource_name) that is `destroy_user_session_path`, the helper Devise provides. |
+
+The item is submitted with `DELETE`, and it renders only when your app actually routes the helper Avo picked. If it doesn't, the link is hidden until you point Avo at the right one. There are two ways to do that.
 
 ### Customize the current user resource name
 
