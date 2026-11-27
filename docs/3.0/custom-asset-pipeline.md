@@ -40,6 +40,30 @@ end
 
 This configuration ensures that assets are served through the specified CDN, except for those under the `/avo` path. Adjust the paths and environment variable as needed for your application.
 
+## Keep Avo's files out of `public/assets` with Propshaft
+
+Propshaft copies every file from every folder in `config.assets.paths` into `public/assets` when you run `bin/rails assets:precompile`, and it adds each folder under every gem's `app/assets` to that list. For Avo that is a hundred files or more: its icons, the source stylesheets of its own build, and a Sprockets manifest.
+
+Avo doesn't load any of them from there. It serves its CSS and JavaScript from the gem under `/avo-assets` and reads its icons straight from the gem. To keep them out of `public/assets`, take Avo's folders off the load path:
+
+```ruby
+# config/initializers/assets.rb
+Rails.application.config.assets.excluded_paths += [
+  Avo::Engine.root.join("app/assets/builds"),
+  Avo::Engine.root.join("app/assets/config"),
+  Avo::Engine.root.join("app/assets/stylesheets"),
+  Avo::Engine.root.join("app/assets/svgs")
+]
+```
+
+Use `+=`. `<<` would add the whole array as a single entry, and nothing would be excluded.
+
+This only touches the files inside the Avo gem. Your own `avo.tailwind.css` build, `avo.custom.js` and other files under your app's `app/assets` are still compiled.
+
+:::warning Avo 4
+Avo 4 serves its CSS and JavaScript through your asset pipeline from these folders. Remove these lines when you upgrade, or Avo's pages fail with `Propshaft::MissingAssetError`. See the [Avo 4 upgrade guide](/4.0/avo-3-avo-4-upgrade.html#avo-s-assets-go-through-your-asset-pipeline).
+:::
+
 ## Your custom assets
 
 Avo makes it easy to use your own styles and javascript through your already set up asset pipeline. It just hooks on to it to inject the new assets to be used in Avo.
