@@ -63,6 +63,7 @@ class Avo::Resources::Event < Avo::BaseResource
     week_start: :monday,         # or :sunday (default :monday)
     default_period: :month,        # or :week — which grid opens first
     hide_weekends: false,        # true renders Monday–Friday only
+    week_numbers: false,         # show ISO week numbers until the visitor changes it
     color: -> { record.status == "urgent" ? :red : :blue }, # optional chip color
     on_click: :preview           # or :show / :edit — what clicking an event opens
   }
@@ -123,6 +124,15 @@ Renders Monday–Friday only. Events falling on a weekend are not displayed.
 
 </Option>
 
+<Option name="`week_numbers`">
+
+Whether week numbers show before the visitor picks for themselves in the calendar's settings menu. Once they do, their choice wins for the rest of their session. See [Show week numbers](#show-week-numbers).
+
+- **Type:** Boolean
+- **Default:** `false`
+
+</Option>
+
 <Option name="`color`">
 
 A proc returning the chip's color token, evaluated with `record` in scope. Valid tokens: `:blue`, `:green`, `:red`, `:orange`, `:purple`, `:pink`, `:teal`, `:gray` — anything else renders the default chip. The color tints filled pills and sets the dot on single-day hour-based chips.
@@ -177,6 +187,14 @@ The header's Month/Week toggle switches between a month grid and a week time gri
 
 A month cell shows as many event lanes as fit its row and collapses the rest behind a **+N more** toggle. Activate it and the week row expands in place to reveal every event it holds — the other rows keep their height and the page scrolls — then **Show less** fits it back. Expansion is view state only: navigating or reloading resets it.
 
+### Show week numbers
+
+The sliders button left of the Month/Week toggle opens the calendar's settings. Its **Week numbers** toggle adds a **Wk** column down the left of the month view, the way Outlook and Google Calendar show them, and puts the number next to the week view's heading. Each number in the column opens that week. Hover **Wk** or a day name to read it in full.
+
+The choice is stored in the visitor's session, so it holds as they switch between month and week, page through dates and come back to the resource. `week_numbers:` only sets what they see before they first use the toggle.
+
+Numbers follow ISO 8601: weeks start on Monday and week 1 holds the year's first Thursday. With `week_start: :sunday`, each row shows the number of the ISO week its Monday belongs to.
+
 ## Event previews
 
 Clicking an event chip opens a popover with the record's preview — the fields marked `show_on: :preview` — and a link to the record. Cmd/Ctrl-click still opens the record directly.
@@ -219,6 +237,8 @@ de:
 | `week_heading` | `%{start_date} – %{end_date}` | The week view's heading |
 | `week_start_date`, `week_end_date` | `%{month} %{day}`, `%{month} %{day}, %{year}` | The two dates in the week heading |
 | `month_names`, `abbr_month_names`, `abbr_day_names` | `January`…, `Jan`…, `Sun`… | Month and day names, with Sunday first |
+| `day_names` | `Sunday`… | The full day name shown when hovering a day header |
+| `week_number`, `week_abbr` | `W%{number}`, `Wk` | The week view's number badge and the month view's column header |
 | `time_format` | `%H:%M` | Event times and the week view's hours, as `strftime` directives |
 | `timezone` | `GMT%{offset}` | The week view's corner label |
 
