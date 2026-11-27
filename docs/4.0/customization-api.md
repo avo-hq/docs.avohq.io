@@ -933,7 +933,7 @@ config.sign_out_path_name = :logout_path
 ```
 
 - **Type:** Symbol
-- **Default:** `nil` — Avo tries `destroy_user_session_path`
+- **Default:** `nil` — Avo uses `session_path` when it detects Rails' authentication generator, and `destroy_<current_user_resource_name>_session_path` otherwise
 
 Full guide: [Authentication](./authentication.html#customize-the-sign-out-link).
 
