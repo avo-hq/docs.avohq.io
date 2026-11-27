@@ -53,6 +53,27 @@ The new heading keys take `%{month}`, `%{day}` and `%{year}` in place of `strfti
 
 </Option>
 
+<Option headingSize="3" name="The preview link's arrow moved into `avo.calendar.view_record`">
+
+#### Breaking Change
+
+The arrow on the preview popover's "View record" link used to be appended after the label; it is now part of the `avo.calendar.view_record` translation, so right-to-left languages can point it their way. See [Translate the calendar](./calendar-view.html#translate-the-calendar).
+
+#### Action Required
+
+None, unless your app overrides `avo.calendar.view_record`. Add the arrow to your own string to keep it:
+
+```yaml
+# config/locales/en.yml
+en:
+  avo:
+    calendar:
+      view_record: "Open record"   # [!code --]
+      view_record: "Open record →" # [!code ++]
+```
+
+</Option>
+
 ## `avo-audit_logging` 4.4.2 <span class="tl-date">Unreleased</span> {#avo-audit-logging-4-4-2 data-gems="avo-audit_logging" data-version="4.4.2"}
 
 <Option headingSize="3" name="Changes made outside Avo are logged by default">
