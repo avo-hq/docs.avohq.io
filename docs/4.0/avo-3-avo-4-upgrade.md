@@ -375,7 +375,7 @@ self.confirmation = -> { arguments.key?(:confirmation) ? arguments[:confirmation
 
 The `main_panel` DSL has been removed in Avo 4. Previously, `main_panel` was responsible for holding the header component (title, description, controls, etc.) along with your fields.
 
-Te migration depends on your current setup:
+The migration depends on your current setup:
 
 #### `main_panel` is the first panel and has no sidebar
 
@@ -406,7 +406,7 @@ class Avo::Resources::User < Avo::BaseResource
     panel do # [!code ++]
       card do # [!code ++]
         field :id, as: :id
-        field :id, as: :id
+        field :name, as: :text
       end # [!code ++]
 
       sidebar do
@@ -414,6 +414,7 @@ class Avo::Resources::User < Avo::BaseResource
       end
     end
   end
+end
 ```
 
 #### Content above `main_panel`
