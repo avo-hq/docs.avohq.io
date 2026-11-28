@@ -86,6 +86,38 @@ field :published_at, as: :date_time, format: "LLL d, yyyy" # shows Feb 10, 2026
 
 The options change Index and Show only. The picker on New and Edit uses [flatpickr tokens](https://flatpickr.js.org/formatting) instead, so set its [`picker_format`](./fields/date-api.html#picker_format) on each field.
 
+## Field defaults
+
+To give every field of a type the same options, set them once in the initializer instead of repeating them on each field. Key them by the field type you pass to `as:`. <VersionReq package="avo" version="4.4.5" />
+
+```ruby
+# config/initializers/avo.rb
+Avo.configure do |config|
+  config.field_defaults = {
+    belongs_to: {can_create: false},
+    textarea: {rows: 3},
+    text: {copyable: true}
+  }
+end
+```
+
+The options are the ones the field already takes, lambdas included, and they apply wherever the `field` DSL runs: in resources, in actions and through `avo_field` in custom views.
+
+A field's own option always wins, `false` and `nil` included, so a single field can still go its own way.
+
+```ruby
+# app/avo/resources/post.rb
+field :user, as: :belongs_to # no create button
+field :team, as: :belongs_to, can_create: true # create button
+field :body, as: :textarea, rows: 10 # 10 rows
+```
+
+A few things to keep in mind:
+
+- A field declared without `as:` is a `text` field, so it gets the `text` defaults.
+- A field declared with a class, like `as: Avo::Fields::TextField`, gets the defaults of that class's field name (`text`). For a [custom field](./custom-fields.html), use the name you pass to `as:`.
+- The defaults aren't deep merged. A field that sets its own `html:` replaces the default `html:` hash.
+
 ## Resource Index view
 
 There are a few customization options to change how resources are displayed in the **Index** view.
