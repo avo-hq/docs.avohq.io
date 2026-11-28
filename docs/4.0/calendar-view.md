@@ -216,6 +216,14 @@ In the week view today's column is a pinned header that never leaves the screen,
 
 Two cases have nothing to reveal, and both are quiet rather than broken: `hide_weekends` can drop today from the grid entirely, and visitors who ask for reduced motion get the same jumps without the animation.
 
+### Inside a `has_many` panel
+
+A resource with the calendar view enabled also brings it to the association panels that list it, with no extra setup. A `has_many` field pointing at that resource shows the panel's own records on the calendar, with the same `calendar_view` options and the same `default_view_type` the index uses.
+
+Avo names each panel's Turbo Frame after its field, so the Month/Week toggle, the arrows and the week number links reload that panel alone — two calendar panels on one <Show /> page navigate independently, and the rest of the page stays where it is. Each link keeps the panel's own URL and changes only the query, so the panel's date and period belong to the panel rather than to the parent record's URL.
+
+Week numbers are the deliberate exception: the setting is stored per visitor, not per calendar, so turning it on inside a panel turns it on for every calendar that visitor opens.
+
 ## Translate the calendar
 
 The calendar ships in every language Avo does, so switching Avo's locale translates its buttons, headings, month and day names and the week view's labels with no setup. It doesn't need `rails-i18n`: the month and day names come from the add-on's own locale files, not from Rails' `date` translations.
