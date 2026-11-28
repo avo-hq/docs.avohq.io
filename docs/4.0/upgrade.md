@@ -19,40 +19,6 @@ To open this page at your release, add `?since=` with a date or a gem version: `
 
 <UpgradeFilter />
 
-## `avo-calendar_view` 4.4.1 <span class="tl-date">Unreleased</span> {#avo-calendar-view-4-4-1 data-gems="avo-calendar_view" data-version="4.4.1"}
-
-<Option headingSize="3" name="Calendar dates moved from `date.formats` and `time.formats` to `avo.calendar.*`">
-
-#### Breaking Change
-
-The calendar now ships in every language Avo does. In any language but English it used to render "Translation missing", because it read month and day names from Rails' `date` translations, which Avo doesn't ship. Its month and day names, heading formats and time format now live under `avo.calendar.*`, and the `date.formats.avo_calendar_month`, `date.formats.avo_calendar_week_start`, `date.formats.avo_calendar_week_end` and `time.formats.avo_calendar` keys are no longer read. See [Translate the calendar](./calendar-view.html#translate-the-calendar).
-
-#### Action Required
-
-None, unless your app overrides one of the old keys. Move each override to its new key:
-
-```yaml
-# config/locales/en.yml
-en:
-  date:
-    formats:
-      avo_calendar_month: "%B %Y" # [!code --]
-  avo:
-    calendar:
-      month_heading: "%{month} %{year}" # [!code ++]
-```
-
-| Old key | New key |
-| --- | --- |
-| `date.formats.avo_calendar_month` | `avo.calendar.month_heading` |
-| `date.formats.avo_calendar_week_start` | `avo.calendar.week_start_date` |
-| `date.formats.avo_calendar_week_end` | `avo.calendar.week_end_date` |
-| `time.formats.avo_calendar` | `avo.calendar.time_format` |
-
-The new heading keys take `%{month}`, `%{day}` and `%{year}` in place of `strftime` directives.
-
-</Option>
-
 ## `avo-audit_logging` 4.4.2 <span class="tl-date">Unreleased</span> {#avo-audit-logging-4-4-2 data-gems="avo-audit_logging" data-version="4.4.2"}
 
 <Option headingSize="3" name="Changes made outside Avo are logged by default">
@@ -382,6 +348,40 @@ A `belongs_to` write takes that value back, also on a resource found by slug alo
 #### Action Required
 
 Update API clients that read these ids as numbers or compare them with numbers. Send back the value a read returns.
+
+</Option>
+
+## `avo-calendar_view` 4.4.1 <span class="tl-date">Nov 27, 2026</span> {#avo-calendar-view-4-4-1 data-gems="avo-calendar_view" data-date="2026-11-27" data-version="4.4.1"}
+
+<Option headingSize="3" name="Calendar dates moved from `date.formats` and `time.formats` to `avo.calendar.*`">
+
+#### Breaking Change
+
+The calendar now ships in every language Avo does. In any language but English it used to render "Translation missing", because it read month and day names from Rails' `date` translations, which Avo doesn't ship. Its month and day names, heading formats and time format now live under `avo.calendar.*`, and the `date.formats.avo_calendar_month`, `date.formats.avo_calendar_week_start`, `date.formats.avo_calendar_week_end` and `time.formats.avo_calendar` keys are no longer read. See [Translate the calendar](./calendar-view.html#translate-the-calendar).
+
+#### Action Required
+
+None, unless your app overrides one of the old keys. Move each override to its new key:
+
+```yaml
+# config/locales/en.yml
+en:
+  date:
+    formats:
+      avo_calendar_month: "%B %Y" # [!code --]
+  avo:
+    calendar:
+      month_heading: "%{month} %{year}" # [!code ++]
+```
+
+| Old key | New key |
+| --- | --- |
+| `date.formats.avo_calendar_month` | `avo.calendar.month_heading` |
+| `date.formats.avo_calendar_week_start` | `avo.calendar.week_start_date` |
+| `date.formats.avo_calendar_week_end` | `avo.calendar.week_end_date` |
+| `time.formats.avo_calendar` | `avo.calendar.time_format` |
+
+The new heading keys take `%{month}`, `%{day}` and `%{year}` in place of `strftime` directives.
 
 </Option>
 
